@@ -1,3 +1,3 @@
 #!/bin/bash
-docker build -t hassbuildroot -f Dockerfile.vm .
+docker build -t hassbuildroot .
 docker run -it --rm hassbuildroot /bin/bash
