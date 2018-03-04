@@ -9,7 +9,7 @@ ARG BUILDROOT_BOARD=vm
 # Get buildroot
 WORKDIR /buildroot
 RUN wget https://buildroot.org/downloads/buildroot-${BUILDROOT_VERSION}.tar.gz \
-    tar xvzf buildroot-${BUILDROOT_VERSION}.tar.gz
+    && tar xvzf buildroot-${BUILDROOT_VERSION}.tar.gz
 
 # Download all the required files
 COPY $BUILDROOT_BOARD/buildroot.config /buildroot/buildroot-$BUILDROOT_VERSION/.config
