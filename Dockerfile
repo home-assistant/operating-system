@@ -15,6 +15,5 @@ RUN wget https://buildroot.org/downloads/buildroot-${BUILDROOT_VERSION}.tar.gz \
 COPY $BUILDROOT_BOARD/buildroot.config /buildroot/buildroot-$BUILDROOT_VERSION/.config
 COPY $BUILDROOT_BOARD/linux.config /buildroot/buildroot-$BUILDROOT_VERSION/linux.config
 WORKDIR /buildroot/buildroot-$BUILDROOT_VERSION
-RUN make source
 
 # CMD /buildroot/buildroot-$BUILDROOT_VERSION/make
