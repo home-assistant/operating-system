@@ -1,0 +1,74 @@
+From 6a48f06457a12bd306ca721c7c673183c3a62783 Mon Sep 17 00:00:00 2001
+From: Christian Stewart <christian@paral.in>
+Date: Wed, 20 Sep 2017 03:10:11 +0100
+Subject: [PATCH] runc: bump to 9f9c96235cc
+
+This commit bumps runc to the requisite version for Docker 2018.03.
+
+Signed-off-by: Christian Stewart <christian@paral.in>
+---
+ package/runc/runc.hash |  2 +-
+ package/runc/runc.mk   | 17 +++++++++++------
+ 2 files changed, 12 insertions(+), 7 deletions(-)
+
+diff --git a/package/runc/runc.hash b/package/runc/runc.hash
+index 3e188c5..f762707 100644
+--- a/package/runc/runc.hash
++++ b/package/runc/runc.hash
+@@ -1,2 +1,2 @@
+ # Locally computed
+-sha256	b5c50d7d9a5f610d5424f96196efa306ec708fd9299302dd919545099c16b7c1	runc-9c2d8d184e5da67c95d601382adf14862e4f2228.tar.gz
++sha256	df8e7cd1d332d97b468ee455164f3959246bb5fc639dd8042d0db3bded621ad7	runc-6c55f98695e902427906eed2c799e566e3d3dfb5.tar.gz
+diff --git a/package/runc/runc.mk b/package/runc/runc.mk
+index fb3fec2..f19fc5f 100644
+--- a/package/runc/runc.mk
++++ b/package/runc/runc.mk
+@@ -4,14 +4,14 @@
+ #
+ ################################################################################
+ 
+-RUNC_VERSION = 9c2d8d184e5da67c95d601382adf14862e4f2228
++RUNC_VERSION = 6c55f98695e902427906eed2c799e566e3d3dfb5
+ RUNC_SITE = $(call github,opencontainers,runc,$(RUNC_VERSION))
+ RUNC_LICENSE = Apache-2.0
+ RUNC_LICENSE_FILES = LICENSE
+ 
+ RUNC_DEPENDENCIES = host-go
+ 
+-RUNC_GOPATH = "$(@D)/Godeps/_workspace"
++RUNC_GOPATH = $(@D)/gopath
+ RUNC_MAKE_ENV = $(HOST_GO_TARGET_ENV) \
+ 	CGO_ENABLED=1 \
+ 	GOBIN="$(@D)/bin" \
+@@ -23,9 +23,10 @@ RUNC_GLDFLAGS = \
+ 
+ ifeq ($(BR2_STATIC_LIBS),y)
+ RUNC_GLDFLAGS += -extldflags '-static'
++RUNC_GOTAGS += static_build
+ endif
+ 
+-RUNC_GOTAGS = cgo static_build
++RUNC_GOTAGS = cgo
+ 
+ ifeq ($(BR2_PACKAGE_LIBSECCOMP),y)
+ RUNC_GOTAGS += seccomp
+@@ -38,9 +39,13 @@ define RUNC_CONFIGURE_CMDS
+ endef
+ 
+ define RUNC_BUILD_CMDS
+-	cd $(@D) && $(RUNC_MAKE_ENV) $(HOST_DIR)/bin/go \
+-		build -v -o $(@D)/bin/runc \
+-		-tags "$(RUNC_GOTAGS)" -ldflags "$(RUNC_GLDFLAGS)" .
++	cd $(RUNC_GOPATH)/src/github.com/opencontainers/runc; \
++		$(RUNC_MAKE_ENV) \
++		$(HOST_DIR)/bin/go build -v -i \
++		-o $(@D)/bin/runc \
++		-tags "$(RUNC_GOTAGS)" \
++		-ldflags "$(RUNC_GLDFLAGS)" \
++		./
+ endef
+ 
+ define RUNC_INSTALL_TARGET_CMDS
+-- 
+2.9.0.windows.1
+
