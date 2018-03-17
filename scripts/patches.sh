@@ -1,8 +1,6 @@
 #!/bin/bash
 set -e
 
-BUILDROOT_PATCHES="buildroot-patches/"
-
-for patch_file in "$BUILDROOT_PATCHES"; do
+for patch_file in buildroot-patches/*; do
       patch -d buildroot/ -p1 < ${patch_file};
 done
