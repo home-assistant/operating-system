@@ -1,0 +1,4 @@
+# From http://cairographics.org/releases/cairo-1.14.10.tar.xz.sha1
+sha1	28c59d85d6b790c21b8b59ece73a6a1dda28d69a	cairo-1.14.10.tar.xz
+# Calculated based on the hash above
+sha256	7e87878658f2c9951a14fc64114d4958c0e65ac47530b8ac3078b2ce41b66a09	cairo-1.14.10.tar.xz

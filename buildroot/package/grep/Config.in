@@ -1,0 +1,12 @@
+config BR2_PACKAGE_GREP
+	bool "grep"
+	depends on BR2_USE_WCHAR
+	depends on BR2_PACKAGE_BUSYBOX_SHOW_OTHERS
+	help
+	  The GNU regular expression matcher.
+
+	  http://www.gnu.org/software/grep/grep.html
+
+comment "grep needs a toolchain w/ wchar"
+	depends on !BR2_USE_WCHAR
+	depends on BR2_PACKAGE_BUSYBOX_SHOW_OTHERS

@@ -1,0 +1,15 @@
+config BR2_PACKAGE_ETHTOOL
+	bool "ethtool"
+	help
+	  ethtool is a small utility for examining and tuning your
+	  ethernet-based network interface.
+
+	  https://www.kernel.org/pub/software/network/ethtool/
+
+config BR2_PACKAGE_ETHTOOL_PRETTY_PRINT
+	bool "enable pretty printing"
+	default y
+	depends on BR2_PACKAGE_ETHTOOL
+	help
+	  Enables ethtool's pretty printing for drivers
+	  and SFP modules.

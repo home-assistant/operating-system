@@ -1,0 +1,8 @@
+config BR2_PACKAGE_PYTHON_DATAPROPERTY
+	bool "python-dataproperty"
+	select BR2_PACKAGE_PYTHON_LOGBOOK # runtime
+	select BR2_PACKAGE_PYTHON_TYPEPY # runtime
+	help
+	  Python library for extract property from data.
+
+	  https://github.com/thombashi/DataProperty

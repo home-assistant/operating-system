@@ -1,0 +1,27 @@
+From 08e14a662b9e75daec29722e49150869952ba1b6 Mon Sep 17 00:00:00 2001
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Date: Mon, 20 Nov 2017 22:09:39 +0100
+Subject: [PATCH] Makefile: remove -Werror to avoid build failures
+
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+[Matthew: Refactoring of Thomas Petazzoni's original.]
+Signed-off-by: Matthew Weber <matthew.weber@rockwellcollins.com>
+---
+ Makefile | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+index 7231334..d9ad42b 100644
+--- a/Makefile
++++ b/Makefile
+@@ -53,7 +53,6 @@ cc-option = $(shell if $(CC) $(1) -S -o /dev/null -xc /dev/null \
+ COMMON_CFLAGS += -g $(autodepend-flags)
+ COMMON_CFLAGS += -Wall -Wwrite-strings -Wclobbered -Wempty-body -Wuninitialized
+ COMMON_CFLAGS += -Wignored-qualifiers -Wunused-but-set-parameter
+-COMMON_CFLAGS += -Werror
+ frame-pointer-flag=-f$(if $(KEEP_FRAME_POINTER),no-,)omit-frame-pointer
+ fomit_frame_pointer := $(call cc-option, $(frame-pointer-flag), "")
+ fnostack_protector := $(call cc-option, -fno-stack-protector, "")
+-- 
+2.14.2
+

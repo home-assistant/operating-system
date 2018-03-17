@@ -1,0 +1,3 @@
+# Locally calculated, after verifying against
+# https://github.com/rauc/rauc/releases/download/v0.2/rauc-0.2.tar.xz.asc
+sha256 83aa3ac3716e1c29315162e3cbf5d4db79f26dd95efe1bc634bbce364b95491a rauc-0.2.tar.xz

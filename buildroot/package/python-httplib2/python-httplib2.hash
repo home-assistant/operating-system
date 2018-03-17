@@ -1,0 +1,3 @@
+# md5 from https://pypi.python.org/pypi/httplib2/json, sha256 locally computed
+md5 709c305e1b00e9c0af49ee816429569c httplib2-0.10.3.tar.gz
+sha256 e404d3b7bd86c1bc931906098e7c1305d6a3a6dcef141b8bb1059903abb3ceeb httplib2-0.10.3.tar.gz

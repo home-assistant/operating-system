@@ -1,0 +1,5 @@
+# From https://lists.freedesktop.org/archives/input-tools/2018-January/001447.html
+md5 c25a8c3939e4ad59a5e9e5e1e354832d libevdev-1.5.8.tar.xz
+sha1 a60e7a43570cdbc64af5adf99ca80023d21a1174 libevdev-1.5.8.tar.xz
+sha256 6083d81e46609da8ba80cb826c02d9080764a6dec33c8267ccb7e158833d4c6d libevdev-1.5.8.tar.xz
+sha512 e9485d8c6b48ebf762b32b003bc6b761c548024ad3bc34a0793485b53383746881fcc9b206a078d571937291e519d9822e50c5d8816778d347094691b65ec3fa libevdev-1.5.8.tar.xz

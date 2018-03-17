@@ -1,0 +1,12 @@
+config BR2_PACKAGE_QT5X11EXTRAS
+	bool "qt5x11extras"
+	depends on BR2_PACKAGE_QT5BASE_XCB
+	select BR2_PACKAGE_QT5BASE_WIDGETS
+	help
+	  Qt is a cross-platform application and UI framework for
+	  developers using C++.
+
+	  Qt X11 Extras enables the Qt programmer to write
+	  applications for the Linux/X11 platform.
+
+	  http://doc.qt.io/qt-5/qtx11extras-index.html

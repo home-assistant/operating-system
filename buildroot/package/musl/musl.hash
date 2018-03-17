@@ -1,0 +1,3 @@
+# Locally calculated after checking pgp signature from
+# http://www.musl-libc.org/releases/musl-1.1.18.tar.gz.asc
+sha256	d017ee5d01aec0c522a1330fdff06b1e428cb409e1db819cc4935d5da4a5a118  musl-1.1.18.tar.gz

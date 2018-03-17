@@ -1,0 +1,9 @@
+config BR2_PACKAGE_PYTHON_MSGPACK
+	bool "python-msgpack"
+	help
+	  MessagePack (http://msgpack.org/) is a fast, compact binary
+	  serialization format, suitable for similar data to JSON.
+	  This package provides a pure python library for reading
+	  and writing MessagePack data.
+
+	  https://pypi.python.org/pypi/msgpack-python/

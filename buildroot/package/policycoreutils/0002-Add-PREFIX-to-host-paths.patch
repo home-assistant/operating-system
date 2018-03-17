@@ -1,0 +1,69 @@
+From a221304344b3f9db7e86d928cf97d77542bcf456 Mon Sep 17 00:00:00 2001
+From: Adam Duskett <Adamduskett@outlook.com>
+Date: Mon, 9 Oct 2017 16:47:19 -0400
+Subject: [PATCH] Add PREFIX to host paths
+
+Updates the remaining hardcoded host paths used in the build to be
+prefixed with a PREFIX path to allow cross compilation.
+
+Updated to work with version 2.5
+
+Signed-off-by: Clayton Shotwell <clayton.shotwell@rockwellcollins.com>
+Signed-off-by: Niranjan Reddy <niranjan.reddy@rockwellcollins.com>
+Signed-off-by: Adam Duskett <AdamDuskett@outlook.com>
+---
+ load_policy/Makefile | 2 +-
+ newrole/Makefile     | 6 +++---
+ run_init/Makefile    | 6 +++---
+ 3 files changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/load_policy/Makefile b/load_policy/Makefile
+index b85833c..6a45f31 100644
+--- a/load_policy/Makefile
++++ b/load_policy/Makefile
+@@ -2,7 +2,7 @@
+ PREFIX ?= $(DESTDIR)/usr
+ SBINDIR ?= $(DESTDIR)/sbin
+ MANDIR ?= $(PREFIX)/share/man
+-LOCALEDIR ?= /usr/share/locale
++LOCALEDIR ?= $(PREFIX)/share/locale
+ 
+ CFLAGS ?= -Werror -Wall -W
+ override CFLAGS += $(LDFLAGS) -DUSE_NLS -DLOCALEDIR="\"$(LOCALEDIR)\"" -DPACKAGE="\"policycoreutils\""
+diff --git a/newrole/Makefile b/newrole/Makefile
+index 196af92..896708f 100644
+--- a/newrole/Makefile
++++ b/newrole/Makefile
+@@ -3,9 +3,9 @@ PREFIX ?= $(DESTDIR)/usr
+ BINDIR ?= $(PREFIX)/bin
+ MANDIR ?= $(PREFIX)/share/man
+ ETCDIR ?= $(DESTDIR)/etc
+-LOCALEDIR = /usr/share/locale
+-PAMH ?= $(shell test -f /usr/include/security/pam_appl.h && echo y)
+-AUDITH ?= $(shell test -f /usr/include/libaudit.h && echo y)
++LOCALEDIR = $(PREFIX)/share/locale
++PAMH ?= $(shell test -f $(PREFIX)/include/security/pam_appl.h && echo y)
++AUDITH ?= $(shell test -f $(PREFIX)/include/libaudit.h && echo y)
+ # Enable capabilities to permit newrole to generate audit records.
+ # This will make newrole a setuid root program.
+ # The capabilities used are: CAP_AUDIT_WRITE.
+diff --git a/run_init/Makefile b/run_init/Makefile
+index 921f0b0..e1566fc 100644
+--- a/run_init/Makefile
++++ b/run_init/Makefile
+@@ -4,9 +4,9 @@ PREFIX ?= $(DESTDIR)/usr
+ SBINDIR ?= $(PREFIX)/sbin
+ MANDIR ?= $(PREFIX)/share/man
+ ETCDIR ?= $(DESTDIR)/etc
+-LOCALEDIR ?= /usr/share/locale
+-PAMH ?= $(shell test -f /usr/include/security/pam_appl.h && echo y)
+-AUDITH ?= $(shell test -f /usr/include/libaudit.h && echo y)
++LOCALEDIR ?= $(PREFIX)/share/locale
++PAMH ?= $(shell test -f $(PREFIX)/include/security/pam_appl.h && echo y)
++AUDITH ?= $(shell test -f $(PREFIX)/include/libaudit.h && echo y)
+ 
+ CFLAGS ?= -Werror -Wall -W
+ override CFLAGS += -DUSE_NLS -DLOCALEDIR="\"$(LOCALEDIR)\"" -DPACKAGE="\"policycoreutils\""
+-- 
+2.13.6
+

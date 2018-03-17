@@ -1,0 +1,8 @@
+config BR2_PACKAGE_KBD
+	bool "kbd"
+	# Uses fork()
+	depends on BR2_USE_MMU
+	help
+	  Keytable files and keyboard utilities.
+
+	  http://kernel.org/pub/linux/utils/kbd/

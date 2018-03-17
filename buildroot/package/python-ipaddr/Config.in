@@ -1,0 +1,9 @@
+config BR2_PACKAGE_PYTHON_IPADDR
+	bool "python-ipaddr"
+	depends on BR2_PACKAGE_PYTHON # included since python3.3
+	help
+	  An IPv4/IPv6 manipulation library in Python. This library is
+	  used to create/poke/manipulate IPv4 and IPv6 addresses and
+	  prefixes.
+
+	  https://github.com/google/ipaddr-py

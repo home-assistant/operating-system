@@ -1,0 +1,7 @@
+config BR2_PACKAGE_HOST_E2FSPROGS
+	bool "host e2fsprogs"
+	select BR2_PACKAGE_HOST_UTIL_LINUX
+	help
+	  The EXT2/3/4 file system utilities.
+
+	  http://e2fsprogs.sourceforge.net

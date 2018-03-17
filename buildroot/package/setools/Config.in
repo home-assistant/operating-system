@@ -1,0 +1,27 @@
+config BR2_PACKAGE_SETOOLS
+	bool "setools"
+	depends on !BR2_arc # arc: libselinux not available
+	depends on !BR2_STATIC_LIBS
+	depends on BR2_TOOLCHAIN_HAS_THREADS
+	depends on BR2_USE_WCHAR
+	depends on BR2_TOOLCHAIN_USES_GLIBC # libselinux
+	depends on BR2_USE_MMU
+	select BR2_PACKAGE_PYTHON3 if !BR2_PACKAGE_PYTHON
+	select BR2_PACKAGE_PYTHON_ENUM34 if !BR2_PACKAGE_PYTHON3
+	select BR2_PACKAGE_PYTHON_SETUPTOOLS
+	select BR2_PACKAGE_LIBSELINUX
+	help
+	  SETools is an open source project designed to facilitate
+	  SELinux policy analysis. The primary tools are:
+	   * apol - analyze a SELinux policy. (requires python-qt5)
+	   * sediff - semantic policy difference tool for SELinux.
+	   * sedta - Perform domain transition analyses
+	   * sesearch - Search rules (allow, type_transition, etc.)
+
+	  https://github.com/TresysTechnology/setools
+
+comment "setools needs a glibc toolchain w/ threads, C++, wchar, dynamic library"
+	depends on BR2_USE_MMU && !BR2_arc
+	depends on !BR2_TOOLCHAIN_HAS_THREADS || BR2_STATIC_LIBS || \
+		!BR2_USE_WCHAR || !BR2_TOOLCHAIN_USES_GLIBC || \
+		!BR2_INSTALL_LIBSTDCPP

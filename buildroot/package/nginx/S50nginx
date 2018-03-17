@@ -1,0 +1,31 @@
+#!/bin/sh
+#
+# Start/stop nginx
+#
+
+NGINX=/usr/sbin/nginx
+PIDFILE=/var/run/nginx.pid
+
+case "$1" in
+  start)
+	echo "Starting nginx..."
+	mkdir -p /var/log/nginx /var/tmp/nginx
+	start-stop-daemon -S -x "$NGINX" -p "$PIDFILE"
+	;;
+  stop)
+	echo "Stopping nginx..."
+	start-stop-daemon -K -x "$NGINX" -p "$PIDFILE" -o
+	;;
+  reload|force-reload)
+	echo "Reloading nginx configuration..."
+	"$NGINX" -s reload
+	;;
+  restart)
+	"$0" stop
+	sleep 1 # Prevent race condition: ensure nginx stops before start.
+	"$0" start
+	;;
+  *)
+	echo "Usage: $0 {start|stop|restart|reload|force-reload}"
+	exit 1
+esac

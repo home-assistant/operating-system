@@ -1,0 +1,227 @@
+From 38493fceb39ac33e12c9c69d78f5584413b479f4 Mon Sep 17 00:00:00 2001
+From: Bernd Kuhls <bernd.kuhls@t-online.de>
+Date: Wed, 1 Mar 2017 10:03:40 +0100
+Subject: [PATCH] Various fixes to compile libsidplay2 with newer gcc compilers
+
+Downloaded from
+http://tsubasa.googlecode.com/svn/trunk/tsubasa/sidplay2-libs/sidplay2-libs-2.1.1.diff
+
+Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
+[Thomas: adjusted to avoid the need to autoreconf, which doesn't work
+properly on this package.]
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+---
+ builders/hardsid-builder/src/hardsid-builder.cpp |  1 +
+ builders/resid-builder/src/resid-builder.cpp     |  1 +
+ builders/resid-builder/src/resid.cpp             |  1 +
+ configure                                        |  2 +-
+ libsidplay/configure                             |  5 +++--
+ libsidplay/include/sidplay/SmartPtr.h            | 28 ++++++++++++------------
+ libsidplay/include/sidplay/sidendian.h           | 18 +++++++++------
+ libsidutils/include/sidplay/utils/SidUsage.h     |  2 +-
+ 8 files changed, 33 insertions(+), 25 deletions(-)
+
+diff --git a/builders/hardsid-builder/src/hardsid-builder.cpp b/builders/hardsid-builder/src/hardsid-builder.cpp
+index f54d0a9..9375e40 100644
+--- a/builders/hardsid-builder/src/hardsid-builder.cpp
++++ b/builders/hardsid-builder/src/hardsid-builder.cpp
+@@ -47,6 +47,7 @@
+  ***************************************************************************/
+ 
+ #include <stdio.h>
++#include <cstring>
+ #include "config.h"
+ 
+ #ifdef HAVE_EXCEPTIONS
+diff --git a/builders/resid-builder/src/resid-builder.cpp b/builders/resid-builder/src/resid-builder.cpp
+index e6e4eaa..4c7650f 100644
+--- a/builders/resid-builder/src/resid-builder.cpp
++++ b/builders/resid-builder/src/resid-builder.cpp
+@@ -37,6 +37,7 @@
+  ***************************************************************************/
+ 
+ #include <stdio.h>
++#include <cstring>
+ 
+ #include "config.h"
+ #ifdef HAVE_EXCEPTIONS
+diff --git a/builders/resid-builder/src/resid.cpp b/builders/resid-builder/src/resid.cpp
+index 8c27850..d3123c5 100644
+--- a/builders/resid-builder/src/resid.cpp
++++ b/builders/resid-builder/src/resid.cpp
+@@ -16,6 +16,7 @@
+  *                                                                         *
+  ***************************************************************************/
+ 
++#include <cstring>
+ #include "config.h"
+ 
+ #ifdef HAVE_EXCEPTIONS
+diff --git a/configure b/configure
+index 1200eaf..77948b4 100755
+--- a/configure
++++ b/configure
+@@ -1227,7 +1227,7 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
+ 
+ #Variables
+ pwd=`pwd`
+-builders='${libdir}'/sidplay/builders
++builders='${libdir}'/
+ ac_configure_args="$ac_configure_args --disable-library-checks"
+ 
+ ac_aux_dir=
+diff --git a/libsidplay/configure b/libsidplay/configure
+index 05a8ea6..3d93956 100755
+--- a/libsidplay/configure
++++ b/libsidplay/configure
+@@ -23466,8 +23466,9 @@ _ACEOF
+ cat confdefs.h >>conftest.$ac_ext
+ cat >>conftest.$ac_ext <<_ACEOF
+ /* end confdefs.h.  */
+-#include <fstream.h>
+-             #include <iomanip.h>
++#include <fstream>
++             #include <iomanip>
++             using namespace std;
+ int
+ main ()
+ {
+diff --git a/libsidplay/include/sidplay/SmartPtr.h b/libsidplay/include/sidplay/SmartPtr.h
+index c0cbb1a..15efd10 100644
+--- a/libsidplay/include/sidplay/SmartPtr.h
++++ b/libsidplay/include/sidplay/SmartPtr.h
+@@ -17,16 +17,16 @@ class SmartPtrBase_sidtt
+ 		doFree = bufOwner;
+ 		if ( bufferLen >= 1 )
+ 		{
+-			pBufCurrent = ( bufBegin = buffer );
+-			bufEnd = bufBegin + bufferLen;
+-			bufLen = bufferLen;
+-			status = true;
++			this->pBufCurrent = ( this->bufBegin = buffer );
++			this->bufEnd = this->bufBegin + bufferLen;
++			this->bufLen = bufferLen;
++			this->status = true;
+ 		}
+ 		else
+ 		{
+-			pBufCurrent = ( bufBegin = ( bufEnd = 0 ));
+-			bufLen = 0;
+-			status = false;
++			this->pBufCurrent = ( this->bufBegin = ( this->bufEnd = 0 ));
++			this->bufLen = 0;
++			this->status = false;
+ 		}
+ 	}
+ 	
+@@ -211,16 +211,16 @@ class SmartPtr_sidtt : public SmartPtrBase_sidtt<T>
+ 	{
+ 		if ( bufferLen >= 1 )
+ 		{
+-			pBufCurrent = ( bufBegin = buffer );
+-			bufEnd = bufBegin + bufferLen;
+-			bufLen = bufferLen;
+-			status = true;
++			this->pBufCurrent = ( this->bufBegin = buffer );
++			this->bufEnd = this->bufBegin + bufferLen;
++			this->bufLen = bufferLen;
++			this->status = true;
+ 		}
+ 		else
+ 		{
+-			pBufCurrent = bufBegin = bufEnd = 0;
+-			bufLen = 0;
+-			status = false;
++			this->pBufCurrent = this->bufBegin = this->bufEnd = 0;
++			this->bufLen = 0;
++			this->status = false;
+ 		}
+ 	}
+ };
+diff --git a/libsidplay/include/sidplay/sidendian.h b/libsidplay/include/sidplay/sidendian.h
+index 9fa8582..6115282 100644
+--- a/libsidplay/include/sidplay/sidendian.h
++++ b/libsidplay/include/sidplay/sidendian.h
+@@ -16,6 +16,10 @@
+  ***************************************************************************/
+ /***************************************************************************
+  *  $Log: sidendian.h,v $
++ *  Revision 1.6  2005/11/20 11:02:06  s_a_white
++ *  Work around for bug in gcc 4 (optimiser breaks if variable never has a
++ *  direct assignment).
++ *
+  *  Revision 1.5  2001/07/03 22:44:13  s_a_white
+  *  Added endian_16 to convert a 16 bit value to an array of 8s.
+  *
+@@ -141,7 +145,7 @@ inline void endian_16swap8 (uint_least16_t &word)
+ // Convert high-byte and low-byte to 16-bit word.
+ inline uint_least16_t endian_16 (uint8_t hi, uint8_t lo)
+ {
+-    uint_least16_t word;
++    uint_least16_t word = 0;
+     endian_16lo8 (word, lo);
+     endian_16hi8 (word, hi);
+     return word;
+@@ -165,7 +169,7 @@ inline void endian_16 (uint8_t ptr[2], uint_least16_t word)
+ 
+ inline void endian_16 (char ptr[2], uint_least16_t word)
+ {
+-	endian_16 ((uint8_t *) ptr, word);
++    endian_16 ((uint8_t *) ptr, word);
+ }
+ 
+ // Convert high-byte and low-byte to 16-bit little endian word.
+@@ -334,7 +338,7 @@ inline void endian_32swap16 (uint_least32_t &dword)
+ // Swap word endian.
+ inline void endian_32swap8 (uint_least32_t &dword)
+ {
+-    uint_least16_t lo, hi;
++    uint_least16_t lo = 0, hi = 0;
+     lo = endian_32lo16 (dword);
+     hi = endian_32hi16 (dword);
+     endian_16swap8 (lo);
+@@ -346,8 +350,8 @@ inline void endian_32swap8 (uint_least32_t &dword)
+ // Convert high-byte and low-byte to 32-bit word.
+ inline uint_least32_t endian_32 (uint8_t hihi, uint8_t hilo, uint8_t hi, uint8_t lo)
+ {
+-    uint_least32_t dword;
+-    uint_least16_t word;
++    uint_least32_t dword = 0;
++    uint_least16_t word  = 0;
+     endian_32lo8  (dword, lo);
+     endian_32hi8  (dword, hi);
+     endian_16lo8  (word,  hilo);
+@@ -374,7 +378,7 @@ inline void endian_little32 (uint8_t ptr[4], uint_least32_t dword)
+     defined(SID_WORDS_LITTLEENDIAN)
+     *((uint_least32_t *) ptr) = dword;
+ #else
+-    uint_least16_t word;
++    uint_least16_t word = 0;
+     ptr[0] = endian_32lo8  (dword);
+     ptr[1] = endian_32hi8  (dword);
+     word   = endian_32hi16 (dword);
+@@ -401,7 +405,7 @@ inline void endian_big32 (uint8_t ptr[4], uint_least32_t dword)
+     defined(SID_WORDS_BIGENDIAN)
+     *((uint_least32_t *) ptr) = dword;
+ #else
+-    uint_least16_t word;
++    uint_least16_t word = 0;
+     word   = endian_32hi16 (dword);
+     ptr[1] = endian_16lo8  (word);
+     ptr[0] = endian_16hi8  (word);
+diff --git a/libsidutils/include/sidplay/utils/SidUsage.h b/libsidutils/include/sidplay/utils/SidUsage.h
+index 2afb0f3..0496eea 100755
+--- a/libsidutils/include/sidplay/utils/SidUsage.h
++++ b/libsidutils/include/sidplay/utils/SidUsage.h
+@@ -33,7 +33,7 @@ struct sid2_usage_t: public sid_usage_t
+     uint_least16_t length;  // usage scan length
+ 
+     // Copy common parts of basic usage to extended usage.
+-    sid2_usage_t &sid2_usage_t::operator= (const sid_usage_t &usage)
++    sid2_usage_t &operator= (const sid_usage_t &usage)
+     {
+         *((sid_usage_t *) this) = usage;
+         return *this;
+-- 
+2.7.4
+

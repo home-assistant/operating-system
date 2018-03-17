@@ -1,0 +1,13 @@
+config BR2_PACKAGE_SED
+	bool "sed"
+	depends on BR2_USE_WCHAR
+	depends on BR2_PACKAGE_BUSYBOX_SHOW_OTHERS
+	help
+	  sed (stream editor) is a non-interactive command-line text
+	  editor.
+
+	  https://www.gnu.org/software/sed/
+
+comment "sed needs a toolchain w/ wchar"
+	depends on !BR2_USE_WCHAR
+	depends on BR2_PACKAGE_BUSYBOX_SHOW_OTHERS

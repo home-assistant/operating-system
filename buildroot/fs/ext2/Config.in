@@ -1,0 +1,133 @@
+config BR2_TARGET_ROOTFS_EXT2
+	bool "ext2/3/4 root filesystem"
+	select BR2_PACKAGE_HOST_E2FSPROGS
+	help
+	  Build an ext2/3/4 root filesystem
+
+if BR2_TARGET_ROOTFS_EXT2
+
+config BR2_TARGET_ROOTFS_EXT2_2
+	bool
+
+choice
+	bool "ext2/3/4 variant"
+	default BR2_TARGET_ROOTFS_EXT2_2r1
+
+config BR2_TARGET_ROOTFS_EXT2_2r0
+	bool "ext2 (rev0)"
+	select BR2_TARGET_ROOTFS_EXT2_2
+
+config BR2_TARGET_ROOTFS_EXT2_2r1
+	bool "ext2 (rev1)"
+	select BR2_TARGET_ROOTFS_EXT2_2
+
+config BR2_TARGET_ROOTFS_EXT2_3
+	bool "ext3"
+
+config BR2_TARGET_ROOTFS_EXT2_4
+	bool "ext4"
+
+endchoice
+
+config BR2_TARGET_ROOTFS_EXT2_GEN
+	int
+	default 2 if BR2_TARGET_ROOTFS_EXT2_2
+	default 3 if BR2_TARGET_ROOTFS_EXT2_3
+	default 4 if BR2_TARGET_ROOTFS_EXT2_4
+
+# All ext generations are revision 1, except ext2r0, which is revision 0
+config BR2_TARGET_ROOTFS_EXT2_REV
+	int
+	default 0   if BR2_TARGET_ROOTFS_EXT2_2r0
+	default 1   if !BR2_TARGET_ROOTFS_EXT2_2r0
+
+config BR2_TARGET_ROOTFS_EXT2_LABEL
+	string "filesystem label"
+
+config BR2_TARGET_ROOTFS_EXT2_SIZE
+	string "exact size"
+	default BR2_TARGET_ROOTFS_EXT2_BLOCKS if BR2_TARGET_ROOTFS_EXT2_BLOCKS_WRAP # legacy 2017.08
+	default "60M"
+	help
+	  The size of the filesystem image. If it does not have a suffix,
+	  it is interpreted as power-of-two kilobytes. If it is suffixed
+	  by 'k', 'm', 'g', 't' (either upper-case or lower-case), then
+	  it is interpreted in power-of-two kilobytes, megabytes,
+	  gigabytes, terabytes, etc.
+
+config BR2_TARGET_ROOTFS_EXT2_INODES
+	int "exact number of inodes (leave at 0 for auto calculation)"
+	default 0
+
+config BR2_TARGET_ROOTFS_EXT2_RESBLKS
+	int "reserved blocks percentage"
+	default 5
+	help
+	  The number of blocks on the filesystem (as a percentage of the
+	  total number of blocks), that are reserved for use by root.
+	  Traditionally, this has been 5%, and all ext-related tools still
+	  default to reserving 5% when creating a new ext filesystem.
+
+config BR2_TARGET_ROOTFS_EXT2_MKFS_OPTIONS
+	string "additional mke2fs options"
+	default "-O ^64bit"
+	help
+	  Specify a space-separated list of mke2fs options, including any
+	  ext2/3/4 filesystem features.
+
+	  For more information about the mke2fs options, see the manual
+	  page mke2fs(8).
+
+	  For more information about the ext2/3/4 features which can be
+	  set, see the manual page ext4(5).
+
+	  The default is "-O ^64bit", i.e. disable 64-bit filesystem
+	  support. This default value has been chosen because U-Boot
+	  versions before 2017.02 don't support this filesystem
+	  option: using it may make the filesystem unreadable by
+	  U-Boot.
+
+choice
+	prompt "Compression method"
+	default BR2_TARGET_ROOTFS_EXT2_NONE
+	help
+	  Select compressor for ext2/3/4 filesystem of the root filesystem
+
+config BR2_TARGET_ROOTFS_EXT2_NONE
+	bool "no compression"
+	help
+	  Do not compress the ext2/3/4 filesystem.
+
+config BR2_TARGET_ROOTFS_EXT2_GZIP
+	bool "gzip"
+	help
+	  Do compress the ext2/3/4 filesystem with gzip.
+
+config BR2_TARGET_ROOTFS_EXT2_BZIP2
+	bool "bzip2"
+	help
+	  Do compress the ext2/3/4 filesystem with bzip2.
+
+config BR2_TARGET_ROOTFS_EXT2_LZ4
+	bool "lz4"
+	help
+	  Do compress the ext2 filesystem with lz4.
+
+config BR2_TARGET_ROOTFS_EXT2_LZMA
+	bool "lzma"
+	help
+	  Do compress the ext2/3/4 filesystem with lzma.
+
+config BR2_TARGET_ROOTFS_EXT2_LZO
+	bool "lzo"
+	help
+	  Do compress the ext2 filesystem with lzop.
+
+config BR2_TARGET_ROOTFS_EXT2_XZ
+	bool "xz"
+	help
+	  Do compress the ext2 filesystem with xz.
+
+endchoice
+
+endif # BR2_TARGET_ROOTFS_EXT2
