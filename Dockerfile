@@ -1,9 +1,9 @@
-FROM ubuntu:16.04
+FROM alpine:3.7
 
-RUN apt-get update && apt-get install -y \
-    wget patch vimp cpio python unzip rsync bc bzip2 ncurses-dev \
-    git make g++ python-matplotlib python-numpy graphviz
+
+RUN apk add --no-cache \
+    wget patch vim cpio python unzip rsync bc bzip2 ncurses-dev \
+    git make g++ file perl bash binutils
 
 # Get buildroot
 WORKDIR /build
-COPY . /build
