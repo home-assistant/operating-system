@@ -1,9 +1,9 @@
-FROM alpine:3.7
+FROM ubuntu:16.04
 
 
-RUN apk add --no-cache \
+RUN apt-get update && apt-get install -y \
     wget patch vim cpio python unzip rsync bc bzip2 ncurses-dev \
-    git make g++ file perl bash binutils
+    git make g++ file perl bash binutils locales
 
 # Get buildroot
 WORKDIR /build
