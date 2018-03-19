@@ -5,7 +5,16 @@ BOARD_DIR="$(dirname $0)"
 GENIMAGE_CFG="$BOARD_DIR/genimage.cfg"
 GENIMAGE_TMP="$BASE_DIR/genimage.tmp"
 
-rm -rf "$GENIMAGE_TMP"
+OVERLAY_IMG="$BINARIES_DIR/overlay.ext4"
+DATA_IMG="$BINARIES_DIR/data.ext4"
+
+rm -rf "$GENIMAGE_TMP" "$OVERLAY_IMG" "$DATA_IMG"
+
+dd if=/dev/zero of="$OVERLAY_IMG" bs=4k count=16000
+dd if=/dev/zero of="$DATA_IMG" bs=4k count=16000
+
+mkfs.ext4 "$OVERLAY_IMG" && tune2fs -c0 -i0 "$OVERLAY_IMG"
+mkfs.ext4 "$DATA_IMG" && tune2fs -c0 -i0 "$DATA_IMG"
 
 genimage \
     --rootpath "$TARGET_DIR" \
