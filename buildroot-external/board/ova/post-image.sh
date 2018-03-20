@@ -22,3 +22,6 @@ genimage \
     --inputpath "$BINARIES_DIR" \
     --outputpath "$BINARIES_DIR" \
     --config "$GENIMAGE_CFG"
+
+qemu-img convert -O vmdk "$BINARIES_DIR/sdcard.img" "$BINARIES_DIR/hassio-os.vmdk"
+
