@@ -13,8 +13,8 @@ rm -rf "$GENIMAGE_TMP" "$OVERLAY_IMG" "$DATA_IMG"
 dd if=/dev/zero of="$OVERLAY_IMG" bs=4k count=16000
 dd if=/dev/zero of="$DATA_IMG" bs=4k count=16000
 
-mkfs.ext4 "$OVERLAY_IMG" && tune2fs -c0 -i0 "$OVERLAY_IMG"
-mkfs.ext4 "$DATA_IMG" && tune2fs -c0 -i0 "$DATA_IMG"
+mkfs.ext4 "$OVERLAY_IMG" && tune2fs -L "overlay" -c0 -i0 "$OVERLAY_IMG"
+mkfs.ext4 "$DATA_IMG" && tune2fs -L "data" -c0 -i0 "$DATA_IMG"
 
 genimage \
     --rootpath "$TARGET_DIR" \
@@ -23,5 +23,6 @@ genimage \
     --outputpath "$BINARIES_DIR" \
     --config "$GENIMAGE_CFG"
 
+qemu-img resize -f raw "$BINARIES_DIR/sdcard.img" 1G
 qemu-img convert -O vmdk "$BINARIES_DIR/sdcard.img" "$BINARIES_DIR/hassio-os.vmdk"
 
