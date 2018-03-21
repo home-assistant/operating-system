@@ -1,0 +1,3 @@
+
+global bootm.image="/dev/disk0.2/boot/bzImage"
+global linux.bootargs.base="root=/dev/sda3 rootfstype=squashfs ro"
