@@ -16,6 +16,8 @@ dd if=/dev/zero of="$DATA_IMG" bs=4k count=16000
 mkfs.ext4 "$OVERLAY_IMG" && tune2fs -L "overlay" -c0 -i0 "$OVERLAY_IMG"
 mkfs.ext4 "$DATA_IMG" && tune2fs -L "data" -c0 -i0 "$DATA_IMG"
 
+cp "$BOARD_DIR/barebox-state.dtb" "$BINARIES_DIR/"
+
 genimage \
     --rootpath "$TARGET_DIR" \
     --tmppath "$GENIMAGE_TMP" \
