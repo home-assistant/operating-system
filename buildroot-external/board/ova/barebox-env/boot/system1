@@ -1,3 +1,4 @@
+#!/bin/sh
 
-global bootm.image="/dev/disk0.2/boot/bzImage"
-global linux.bootargs.base="root=/dev/sda3 rootfstype=squashfs ro"
+global.bootm.image="/mnt/disk0.4/boot/bzImage"
+global.linux.bootargs.dyn.root="root=/dev/sda4 rootfstype=squashfs ro"
