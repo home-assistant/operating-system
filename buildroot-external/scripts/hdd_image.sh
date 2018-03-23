@@ -71,7 +71,7 @@ function hassio_hdd_image() {
     echo "System1 formating done"
 
     # BootState
-    sgdisk -n 4:0:$bootstate_size -c 4:"hassio-bootstate" -t 4:"0FC63DAF-8483-4772-8E79-3D69D8477DE4" -u 4:$BOOTSTATE_UUID "$hdd_img"
+    sgdisk -n 4:0:$bootstate_size -c 4:"hassio-bootstate" -u 4:$BOOTSTATE_UUID "$hdd_img"
     echo "BootState formating done"
 
     # Overlay

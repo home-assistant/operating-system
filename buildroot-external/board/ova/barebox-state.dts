@@ -1,18 +1,19 @@
 /dts-v1/;
 / {
-	#address-cells = <1>;
-	#size-cells = <1>;
 
 	aliases {
 		state = &state;
 	};
 
 	state: state {
-                magic = <0xef784236>;
+		#address-cells = <1>;
+		#size-cells = <1>;
+                magic = <0xef98423f>;
                 compatible = "barebox,state";
-                backend-type = "raw";
                 backend = <&backend_state>;
-                backend-stridesize = <4096>;
+                backend-type = "raw";
+                backend-stridesize = <1024>;
+		backend-storage-type = "direct";
 
 		bootstate {
 			#address-cells = <1>;
@@ -29,7 +30,7 @@
 				priority@4 {
 					reg = <0x4 0x4>;
 					type = "uint32";
-					default = <10>;
+					default = <20>;
 				};
 			};
 			system1 {
@@ -43,7 +44,7 @@
 				priority@c {
 					reg = <0xc 0x4>;
 					type = "uint32";
-					default = <20>;
+					default = <10>;
 				};
 			};
 			last_chosen@10 {
@@ -59,9 +60,10 @@
 		compatible = "fixed-partitions";
 
 		backend_state: state {
-			partuuid = "19652333-327f-ff4d-8002-3390b62c309d";
+			partuuid = "33236519-7f32-4dff-8002-3390b62c309d";
 
 		};
 	};
+
 };
 
