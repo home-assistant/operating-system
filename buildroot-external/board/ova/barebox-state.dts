@@ -4,20 +4,15 @@
 	#size-cells = <1>;
 
 	aliases {
-		state = &state_sd;
+		state = &state;
 	};
 
-	backend_state_sd: bootstate@0x111000 {
-		reg = <0x111000 0x418>;
-		label = "state-sd";
-	};
-
-	state_sd: state_memory {
+	state: state {
                 magic = <0xef784236>;
                 compatible = "barebox,state";
                 backend-type = "raw";
-                backend = <&backend_state_sd>;
-                backend-stridesize = <1024>;
+                backend = <&backend_state>;
+                backend-stridesize = <4096>;
 
 		bootstate {
 			#address-cells = <1>;
@@ -55,6 +50,17 @@
 				reg = <0x10 0x4>;
 				type = "uint32";
 			};
+		};
+	};
+
+	partitions {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		compatible = "fixed-partitions";
+
+		backend_state: state {
+			partuuid = "19652333-327f-ff4d-8002-3390b62c309d";
+
 		};
 	};
 };
