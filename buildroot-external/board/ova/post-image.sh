@@ -1,30 +1,32 @@
 #!/bin/bash
 set -e
 
+SCRIPT_DIR="$BR2_EXTERNAL_HASSIO_PATH/scripts"
 BOARD_DIR="$(dirname $0)"
-GENIMAGE_CFG="$BOARD_DIR/genimage.cfg"
-GENIMAGE_TMP="$BASE_DIR/genimage.tmp"
 
 OVERLAY_IMG="$BINARIES_DIR/overlay.ext4"
 DATA_IMG="$BINARIES_DIR/data.ext4"
+BOOT_IMG="$BINARIES_DIR/boot.vfat"
 
-rm -rf "$GENIMAGE_TMP" "$OVERLAY_IMG" "$DATA_IMG"
+BOOT_DATA="$BINARIES_DIR/boot-data"
 
-dd if=/dev/zero of="$OVERLAY_IMG" bs=4k count=16000
-dd if=/dev/zero of="$DATA_IMG" bs=4k count=16000
+. "$SCRIPT_DIR"/hdd_image.sh
 
-mkfs.ext4 "$OVERLAY_IMG" && tune2fs -L "overlay" -c0 -i0 "$OVERLAY_IMG"
-mkfs.ext4 "$DATA_IMG" && tune2fs -L "data" -c0 -i0 "$DATA_IMG"
+rm -rf "$BOOT_DATA"
 
-cp "$BOARD_DIR/barebox-state.dtb" "$BINARIES_DIR/"
+# Init boot data
+mkdir -p "$BOOT_DATA/EFI/BOOT"
+mkdir -p "$BOOT_DATA/EFI/barebox"
 
-genimage \
-    --rootpath "$TARGET_DIR" \
-    --tmppath "$GENIMAGE_TMP" \
-    --inputpath "$BINARIES_DIR" \
-    --outputpath "$BINARIES_DIR" \
-    --config "$GENIMAGE_CFG"
+cp "$BINARIES_DIR/barebox.bin" "$BOOT_DATA/EFI/BOOT/BOOTx64.EFI"
+cp "$BOARD_DIR/barebox-state.dtb" "$BOOT_DATA/EFI/barebox/state.dtb"
 
-qemu-img resize -f raw "$BINARIES_DIR/sdcard.img" 1G
-qemu-img convert -O vmdk "$BINARIES_DIR/sdcard.img" "$BINARIES_DIR/hassio-os.vmdk"
+hassio_boot_image "$BOOT_DATA" "$BOOT_IMG"
+hassio_overlay_image "$OVERLAY_IMG"
+hassio_data_image "$DATA_IMG"
+
+
+hassio_hdd_image "$BOOT_IMG" "$BINARIES_DIR/rootfs.squashfs" "$OVERLAY_IMG" "$DATA_IMG" "$BINARIES_DIR/harddisk.img"
+
+qemu-img convert -O vmdk "$BINARIES_DIR/harddisk.img" "$BINARIES_DIR/hassio-os.vmdk"
 
