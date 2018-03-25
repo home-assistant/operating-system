@@ -10,6 +10,9 @@ Hass.io OS based on buildroot
 - SquashFS LZ4 for filesystem
 - Docker 17.12.1
 
+# Schemas
+![](misc/hassio-os-partition.png?raw=true)
+
 # Building
 Running sudo `./enter.sh` will get you into the build docker container.   
 `make -C /build/buildroot BR2_EXTERNAL=/build/buildroot-external xy_defconfig`
