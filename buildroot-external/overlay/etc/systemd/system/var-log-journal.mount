@@ -1,0 +1,16 @@
+[Unit]
+Description=Systemd persistent logging
+DefaultDependencies=no
+Requires=mnt-overlay.mount
+After=mnt-overlay.mount
+Before=umount.target
+Conflicts=umount.target
+
+[Mount]
+What=/mnt/overlay/var/log/journal
+Where=/var/log/journal
+Type=None
+Options=bind
+
+[Install]
+WantedBy=multi-user.target
