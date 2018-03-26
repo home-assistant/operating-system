@@ -1,0 +1,10 @@
+[Unit]
+Description=Hassio data partition
+
+[Mount]
+What=/dev/disk/by-label/hassio-data
+Where=/mnt/data
+Type=auto
+
+[Install]
+WantedBy=multi-user.target
