@@ -1,0 +1,14 @@
+[Unit]
+Description=Dropbear Host Key
+Requires=mnt-state.mount
+After=mnt-state.mount
+Before=dropbearkey.service
+
+[Mount]
+What=/mnt/overlay/etc/dropbear
+Where=/etc/dropbear
+Type=none
+Options=bind
+
+[Install]
+WantedBy=multi-user.target
