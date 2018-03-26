@@ -1,0 +1,16 @@
+[Unit]
+Description=Systemd persistent state
+DefaultDependencies=no
+Requires=mnt-overlay.mount
+After=mnt-overlay.mount
+Before=umount.target
+Conflicts=umount.target
+
+[Mount]
+What=/mnt/overlay/var/lib/systemd
+Where=/var/lib/systemd
+Type=None
+Options=bind
+
+[Install]
+WantedBy=multi-user.target
