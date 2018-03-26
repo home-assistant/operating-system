@@ -1,0 +1,13 @@
+[Unit]
+Description=Hassio overlay partition
+DefaultDependencies=no
+Before=umount.target
+Conflicts=umount.target
+
+[Mount]
+What=/dev/disk/by-label/hassio-overlay
+Where=/mnt/overlay
+Type=auto
+
+[Install]
+WantedBy=multi-user.target
