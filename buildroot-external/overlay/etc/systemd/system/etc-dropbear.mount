@@ -1,7 +1,7 @@
 [Unit]
 Description=Dropbear Host Key
-Requires=mnt-state.mount
-After=mnt-state.mount
+Requires=mnt-overlay.mount
+After=mnt-overlay.mount
 Before=dropbearkey.service
 
 [Mount]
