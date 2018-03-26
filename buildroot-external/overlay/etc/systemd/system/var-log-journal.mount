@@ -1,9 +1,10 @@
 [Unit]
 Description=Systemd persistent logging
 DefaultDependencies=no
-Requires=mnt-overlay.mount systemd-journald.service
+Requires=mnt-overlay.mount
 After=mnt-overlay.mount
-Before=systemd-journald.service
+Before=umount.target
+Conflicts=umount.target
 
 [Mount]
 What=/mnt/overlay/var/log/journal
