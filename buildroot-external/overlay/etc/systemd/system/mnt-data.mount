@@ -4,7 +4,7 @@ Description=Hassio data partition
 [Mount]
 What=/dev/disk/by-label/hassio-data
 Where=/mnt/data
-Type=auto
+Type=ext4
 
 [Install]
 WantedBy=multi-user.target
