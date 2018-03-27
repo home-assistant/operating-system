@@ -1,5 +1,8 @@
 [Unit]
 Description=Hassio data partition
+DefaultDependencies=no
+Before=umount.target
+Conflicts=umount.target
 
 [Mount]
 What=LABEL=hassio-data
