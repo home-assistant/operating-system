@@ -1,5 +1,8 @@
 [Unit]
 Description=Hassio boot partition
+DefaultDependencies=no
+Before=umount.target
+Conflicts=umount.target
 
 [Mount]
 What=LABEL=hassio-boot
