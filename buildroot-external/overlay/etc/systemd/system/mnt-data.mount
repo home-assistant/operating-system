@@ -2,7 +2,7 @@
 Description=Hassio data partition
 
 [Mount]
-What=/dev/disk/by-label/hassio-data
+What=LABEL=hassio-data
 Where=/mnt/data
 Type=ext4
 
