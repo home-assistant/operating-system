@@ -5,7 +5,7 @@ Before=umount.target
 Conflicts=umount.target
 
 [Mount]
-What=/dev/disk/by-label/hassio-overlay
+What=LABEL=hassio-overlay
 Where=/mnt/overlay
 Type=ext4
 
