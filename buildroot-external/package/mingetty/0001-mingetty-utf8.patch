@@ -1,0 +1,156 @@
+diff -Nru mingetty-1.07.orig/mingetty.c mingetty-1.07/mingetty.c
+--- mingetty-1.07.orig/mingetty.c	2004-01-03 15:15:56.000000000 +0200
++++ mingetty-1.07/mingetty.c	2006-11-22 22:13:26.967910100 +0200
+@@ -16,10 +16,15 @@
+  * - autologin only at first login
+  * - /etc/mingetty.conf that can be used instead of /etc/inittab for
+  *   command line options
+- * - Can UTF-8 setup be done within mingetty?
++ * - Can UTF-8 setup be done within mingetty? Let's try now :-) (VinzC)
+  * - Also add /bin/login-type functionality in here?
+  */
+ 
++/* Additional comments: Vincent Cadet <vcadet@hotmail.com> (2006-11-21)
++ * - Attempt to make mingetty support UTF-8. Modifications were imported
++ *   from Suse migetty.c 0.9.6s.
++ */
++
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <unistd.h>
+@@ -39,6 +44,19 @@
+ #include <syslog.h>
+ #include <sys/utsname.h>
+ #include <time.h>
++#include <locale.h>
++#include <iconv.h>
++#include <wctype.h>
++#include <sys/kd.h>
++#include <sys/ttydefaults.h>
++
++#ifndef IUTF8
++# ifndef ASM_IUTF8
++#  error ASM_IUTF8 input flag not defined - Cannot define IUTF8
++# else
++#  define IUTF8	ASM_IUTF8
++# endif
++#endif
+ 
+ /* name of this program (argv[0]) */
+ static char *progname;
+@@ -74,6 +92,8 @@
+ static char *autologin = NULL;
+ /* try to read a char before dropping to login prompt */
+ static int loginpause = 0;
++/* terminal mode */
++static int mode = K_RAW;
+ 
+ /* error() - output error messages */
+ static void error (const char *fmt, ...)
+@@ -187,10 +207,21 @@
+ 	if (fd > 2)
+ 		close (fd);
+ 
++	/* Detect mode of current keyboard setup, e.g. for UTF-8 */
++	if (ioctl(0, KDGKBMODE, &mode) < 0)
++		mode = K_RAW;
++
+ 	/* Write a reset string to the terminal. This is very linux-specific
+ 	   and should be checked for other systems. */
+ 	if (noclear == 0)
+-		write (0, "\033c", 2);
++		/* don't write a full reset (ESC c) because this leaves the 
++		   unicode mode again if the terminal was in unicode mode
++		   and also undos the ESC sequences in CONSOLE_MAGIC which
++		   are needed for some languages/console-fonts.
++		   Just put the cursor to the home position (ESC [ H),
++		   erase everything below the cursor (ESC [ J), and set the
++		   scrolling region to the full window (ESC [ r) */
++		write (0, "\033[r\033[H\033[J", 9);
+ 
+ 	sigaction (SIGHUP, &sa_old, NULL);
+ }
+@@ -292,32 +323,75 @@
+ 
+ static char *get_logname (void)
+ {
+-	static char logname[40];
++	static char logname[4*UT_NAMESIZE];
+ 	char *bp;
+ 	unsigned char c;
++	int ascii;
++	iconv_t ic;
+ 
+ 	tcflush (0, TCIFLUSH);		/* flush pending input */
++
++	/* Check for UTF-8 mode */
++	switch(mode) {
++		case K_UNICODE:
++			ascii = 0;
++			setlocale(LC_CTYPE, "en_US.UTF-8");
++			break;
++		case K_RAW:
++		case K_MEDIUMRAW:
++		case K_XLATE:
++		default:
++			ascii = 1;
++			setlocale(LC_CTYPE, "POSIX");
++			break;
++	}
++
+ 	for (*logname = 0; *logname == 0;) {
+ 		do_prompt (1);
+ 		for (bp = logname;;) {
+ 			if (read (0, &c, 1) < 1) {
+-				if (errno == EINTR || errno == EIO
+-					|| errno == ENOENT)
++				if (errno == EINTR || errno == EAGAIN) {
++					usleep(1000);
++					continue;
++				}
++				if (errno == EIO || errno == ENOENT)
+ 					exit (EXIT_SUCCESS);
+ 				error ("%s: read: %s", tty, strerror (errno));
+ 			}
+ 			if (c == '\n' || c == '\r') {
+ 				*bp = 0;
+ 				break;
+-			} else if (!isprint (c))
+-				error ("%s: invalid character 0x%x in login"
+-					" name", tty, c);
++			}
++
++			if (ascii && !isprint (c))
++				error ("%s: invalid character 0x%x in login name", tty, c);
+ 			else if ((size_t)(bp - logname) >= sizeof (logname) - 1)
+ 				error ("%s: too long login name", tty);
+-			else
+-				*bp++ = c;
++
++			*bp++ = c;
+ 		}
+ 	}
++
++	if (!ascii && (ic = iconv_open("WCHAR_T", "UTF-8"))) {
++		char tmpbuf[4*sizeof(logname)], *op, *lp;
++		size_t len = bp - logname;
++		size_t out = sizeof(tmpbuf) - 1;
++		size_t wcl;
++		wint_t *wcp;
++
++		op = tmpbuf;
++		lp = logname;
++		if ((wcl = iconv(ic , &lp, &len, &op, &out)) == (size_t)-1)
++			error ("%s: invalid character conversion for login name", tty);
++		iconv_close(ic);
++
++		wcp = (wint_t*)tmpbuf;
++		wcp[wcl] = (wint_t)0;
++		while (*wcp) {
++			if (!iswprint(*wcp++))
++				error ("%s: invalid character for login name found", tty);
++ 		}
++ 	}
+ 	return logname;
+ }
+
