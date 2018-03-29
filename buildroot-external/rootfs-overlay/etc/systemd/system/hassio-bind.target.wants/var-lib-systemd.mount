@@ -13,4 +13,4 @@ Type=None
 Options=bind
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=hassio-bind.target

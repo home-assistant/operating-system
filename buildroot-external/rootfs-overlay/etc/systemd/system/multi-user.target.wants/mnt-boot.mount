@@ -2,6 +2,7 @@
 Description=Hassio boot partition
 DefaultDependencies=no
 Before=umount.target
+After=local-fs.target
 Conflicts=umount.target
 
 [Mount]

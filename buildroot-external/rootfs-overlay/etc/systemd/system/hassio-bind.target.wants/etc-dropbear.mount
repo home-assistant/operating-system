@@ -2,7 +2,7 @@
 Description=Dropbear Host Key
 Requires=mnt-overlay.mount
 After=mnt-overlay.mount
-Before=dropbearkey.service
+Before=dropbear.service
 
 [Mount]
 What=/mnt/overlay/etc/dropbear
@@ -11,4 +11,4 @@ Type=none
 Options=bind
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=hassio-bind.target
