@@ -1,14 +1,1 @@
-[Unit]
-Description=Hassio boot partition
-DefaultDependencies=no
-Before=umount.target
-After=local-fs.target
-Conflicts=umount.target
-
-[Mount]
-What=LABEL=hassio-boot
-Where=/mnt/boot
-Type=auto
-
-[Install]
-WantedBy=multi-user.target
+usr/lib/systemd/system/mnt-boot.mount

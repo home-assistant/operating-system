@@ -1,14 +1,1 @@
-[Unit]
-Description=NetworkManager system connections
-Requires=mnt-overlay.mount
-After=mnt-overlay.mount
-Before=NetworkManager.service
-
-[Mount]
-What=/mnt/overlay/etc/NetworkManager/system-connections
-Where=/etc/NetworkManager/system-connections
-Type=None
-Options=bind
-
-[Install]
-WantedBy=hassio-bind.target
+usr/lib/systemd/system/etc-NetworkManager-system\x2dconnections.mount
