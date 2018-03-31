@@ -1,7 +1,7 @@
 [Unit]
 Description=Docker persistent data
-Requires=mnt-data.mount systemd-tmpfiles-setup.service
-After=mnt-data.mount systemd-tmpfiles-setup.service
+Requires=mnt-data.mount docker.service
+After=mnt-data.mount
 Before=docker.service
 
 [Mount]

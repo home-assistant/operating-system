@@ -1,9 +1,9 @@
 [Unit]
 Description=Systemd persistent logging
 DefaultDependencies=no
-Requires=mnt-overlay.mount systemd-tmpfiles-setup.service
-After=mnt-overlay.mount systemd-tmpfiles-setup.service
-Before=umount.target
+Requires=mnt-overlay.mount
+After=mnt-overlay.mount
+Before=umount.target systemd-journal-flush.service
 Conflicts=umount.target
 
 [Mount]

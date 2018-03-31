@@ -1,8 +1,8 @@
 [Unit]
 Description=Systemd persistent state
 DefaultDependencies=no
-Requires=mnt-overlay.mount systemd-tmpfiles-setup.service
-After=mnt-overlay.mount systemd-tmpfiles-setup.service
+Requires=mnt-overlay.mount
+After=mnt-overlay.mount
 Before=umount.target
 Conflicts=umount.target
 
