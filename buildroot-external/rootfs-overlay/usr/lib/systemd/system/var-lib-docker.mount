@@ -1,0 +1,14 @@
+[Unit]
+Description=Docker persistent data
+Requires=mnt-data.mount
+After=mnt-data.mount
+Before=docker.service
+
+[Mount]
+What=/mnt/data/docker
+Where=/var/lib/docker
+Type=none
+Options=bind
+
+[Install]
+WantedBy=hassio-bind.target

@@ -1,5 +1,5 @@
 [Unit]
-Description=Dropbear Host Key
+Description=Dropbear persistent keys
 Requires=mnt-overlay.mount dropbear.service
 After=mnt-overlay.mount
 Before=dropbear.service
