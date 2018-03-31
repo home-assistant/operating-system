@@ -93,6 +93,7 @@ endef
 
 define NETWORK_MANAGER_INSTALL_INIT_SYSTEMD
 	mkdir -p $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants
+	mkdir -p $(TARGET_DIR)/etc/systemd/system/network-online.target.wants
 
 	ln -sf /usr/lib/systemd/system/NetworkManager.service \
 		$(TARGET_DIR)/etc/systemd/system/dbus-org.freedesktop.NetworkManager.service
@@ -101,7 +102,7 @@ define NETWORK_MANAGER_INSTALL_INIT_SYSTEMD
 		$(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/NetworkManager.service
 
 	ln -sf /usr/lib/systemd/system/NetworkManager-wait-online.service \
-		$(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/NetworkManager-wait-online.service
+		$(TARGET_DIR)/etc/systemd/system/network-online.target.wants/NetworkManager-wait-online.service
 
 	ln -sf /usr/lib/systemd/system/NetworkManager-dispatcher.service \
 		$(TARGET_DIR)/etc/systemd/system/dbus-org.freedesktop.nm-dispatcher.service
