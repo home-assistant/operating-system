@@ -100,14 +100,11 @@ define NETWORK_MANAGER_INSTALL_INIT_SYSTEMD
 	ln -sf /usr/lib/systemd/system/NetworkManager.service \
 		$(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/NetworkManager.service
 
+	ln -sf /usr/lib/systemd/system/NetworkManager-wait-online.service \
+		$(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/NetworkManager-wait-online.service
+
 	ln -sf /usr/lib/systemd/system/NetworkManager-dispatcher.service \
 		$(TARGET_DIR)/etc/systemd/system/dbus-org.freedesktop.nm-dispatcher.service
-
-	if [ $(BR2_PACKAGE_NETWORK_MANAGER_WAIT_BOOT) == y ]; \
-	then \
-		ln -sf /usr/lib/systemd/system/NetworkManager-wait-online.service \
-		$(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/NetworkManager-wait-online.service; \
-	fi
 endef
 
 $(eval $(autotools-package))

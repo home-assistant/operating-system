@@ -62,12 +62,6 @@ config BR2_PACKAGE_NETWORK_MANAGER_OVS
 	help
 	  This option enables support for OpenVSwitch
 
-config BR2_PACKAGE_NETWORK_MANAGER_WAIT_BOOT
-	bool "Wait on boot support"
-	depends on BR2_INIT_SYSTEMD
-	help
-	  This option allow NetworkManager to wait on boot
-
 endif
 
 comment "NetworkManager needs udev /dev management and a glibc toolchain w/ headers >= 3.7, dynamic library"
