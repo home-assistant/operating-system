@@ -1,4 +1,5 @@
 [Unit]
 Description=Hassio overlay targets
 Documentation=man:systemd.target(5)
-After: local-fs.target
+After=local-fs.target
+Before=sysinit.target
