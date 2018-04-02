@@ -1,17 +1,25 @@
-## WORK IN PROGRESS!
+# WORK IN PROGRESS!
 
 # HassioOS
 Hass.io OS based on buildroot
 
-# Focus
+## Focus
 - Linux kernel 4.15
 - Barebox as bootloader
 - RAUC for OTA updates
 - SquashFS LZ4 for filesystem
 - Docker 17.12.1
+- ZRAM LZ4 for /tmp, /var, /run
 
-# Schemas
+## Schemas
 ![](misc/hassio-os-partition.png?raw=true)
+
+## Config
+
+Create a USB stick with a partition "hassio-config". This partition can include follow files:
+
+- network-*.config
+- swap.config
 
 # Building
 Running sudo `./enter.sh` will get you into the build docker container.   
