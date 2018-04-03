@@ -1,0 +1,12 @@
+[Unit]
+Description=Hassio ZRAM run
+Requires=run.mount
+Before=run.mount
+
+[Service]
+Type=oneshot
+ExecStart=/sbin/hassio-zram -t sf -m run -s 16M
+RemainAfterExit=true
+
+[Install]
+WantedBy=hassio-zram.target
