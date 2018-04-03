@@ -1,0 +1,4 @@
+#!/bin/sh
+
+global linux.bootargs.zswap="zswap.enabled=1 zswap.compressor=lz4 zswap.max_pool_percent=25 zswap.zpool=z3fold"
+global linux.bootargs.zram="zram.enabled=1 zram.num_devices=4"
