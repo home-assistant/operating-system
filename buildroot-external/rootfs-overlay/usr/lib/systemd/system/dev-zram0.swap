@@ -1,0 +1,10 @@
+[Unit]
+Description=Hassio ZRAM swap
+Requires=zram-swap.service
+After=zram-swap.service
+
+[Swap]
+What=/dev/zram0
+
+[Install]
+WantedBy=swap.target
