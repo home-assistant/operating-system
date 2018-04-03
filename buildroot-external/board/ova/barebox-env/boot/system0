@@ -2,6 +2,6 @@
 
 global bootm.image="/mnt/disk1/boot/bzImage"
 
-global linux.bootargs.zswap="zswap.enabled=1 zswap.compressor=lz4 zswap.max_pool_percent=20 zswap.zpool=z3fold"
+global linux.bootargs.zswap="zswap.enabled=1 zswap.compressor=lz4 zswap.max_pool_percent=25 zswap.zpool=z3fold"
 global linux.bootargs.dyn.root="root=/dev/sda2 rootfstype=squashfs ro"
 
