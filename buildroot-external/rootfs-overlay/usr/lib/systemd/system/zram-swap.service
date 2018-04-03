@@ -1,0 +1,12 @@
+[Unit]
+Description=Hassio ZRAM swap
+Requires=dev-zram0.swap
+Before=dev-zram0.swap
+
+[Service]
+Type=oneshot
+ExecStart=/sbin/hassio-zram -t swap
+RemainAfterExit=true
+
+[Install]
+WantedBy=hassio-zram.target
