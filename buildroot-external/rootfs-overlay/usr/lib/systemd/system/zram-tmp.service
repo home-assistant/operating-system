@@ -1,0 +1,12 @@
+[Unit]
+Description=Hassio ZRAM tmp
+Requires=tmp.mount
+Before=tmp.mount
+
+[Service]
+Type=oneshot
+ExecStart=/sbin/hassio-zram -t sf -m tmp -s 16M
+RemainAfterExit=true
+
+[Install]
+WantedBy=hassio-zram.target
