@@ -1,0 +1,15 @@
+[Unit]
+Description=Hassio ZRAM var
+DefaultDependencies=no
+Requires=zram-var.service systemd-tmpfiles-setup.service
+After=zram-var.service
+Before=umount.target systemd-tmpfiles-setup.service
+Conflicts=umount.target
+
+[Mount]
+What=/dev/zram2
+Where=/var
+Type=ext4
+
+[Install]
+WantedBy=local-fs.target
