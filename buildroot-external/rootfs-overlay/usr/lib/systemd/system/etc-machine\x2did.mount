@@ -1,7 +1,7 @@
 [Unit]
 Description=Systemd persistent machine-id
 DefaultDependencies=no
-Requires=mnt-overlay.mount systemd-machine-id-commit.service
+Requires=mnt-overlay.mount
 After=mnt-overlay.mount
 Before=umount.target systemd-machine-id-commit.service
 Conflicts=umount.target
