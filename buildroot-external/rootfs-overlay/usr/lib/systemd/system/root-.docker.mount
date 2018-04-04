@@ -1,0 +1,16 @@
+[Unit]
+Description=Docker persistent user
+DefaultDependencies=no
+Requires=mnt-overlay.mount
+After=mnt-overlay.mount
+Before=umount.target
+Conflicts=umount.target
+
+[Mount]
+What=/mnt/overlay/root/.docker
+Where=/root/.docker
+Type=None
+Options=bind
+
+[Install]
+WantedBy=hassio-bind.target
