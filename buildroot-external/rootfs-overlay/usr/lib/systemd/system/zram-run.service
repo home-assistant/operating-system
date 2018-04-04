@@ -1,7 +1,5 @@
 [Unit]
 Description=Hassio ZRAM run
-Requires=run.mount
-Before=run.mount
 
 [Service]
 Type=oneshot

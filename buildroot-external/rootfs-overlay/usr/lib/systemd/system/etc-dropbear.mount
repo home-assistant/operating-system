@@ -1,6 +1,6 @@
 [Unit]
 Description=Dropbear persistent keys
-Requires=mnt-overlay.mount dropbear.service
+Requires=mnt-overlay.mount
 After=mnt-overlay.mount
 Before=dropbear.service
 

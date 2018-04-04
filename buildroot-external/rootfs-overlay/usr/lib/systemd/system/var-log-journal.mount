@@ -1,10 +1,8 @@
 [Unit]
 Description=Systemd persistent logging
-DefaultDependencies=no
 Requires=mnt-overlay.mount
 After=mnt-overlay.mount
-Before=umount.target systemd-journal-flush.service
-Conflicts=umount.target
+Before=systemd-journal-flush.service
 
 [Mount]
 What=/mnt/overlay/var/log/journal

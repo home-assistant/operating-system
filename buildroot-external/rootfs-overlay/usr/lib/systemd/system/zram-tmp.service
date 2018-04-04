@@ -1,6 +1,5 @@
 [Unit]
 Description=Hassio ZRAM tmp
-Requires=tmp.mount
 Before=tmp.mount
 
 [Service]

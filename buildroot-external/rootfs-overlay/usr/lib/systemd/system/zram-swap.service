@@ -1,6 +1,5 @@
 [Unit]
 Description=Hassio ZRAM swap
-Requires=dev-zram0.swap
 Before=dev-zram0.swap
 
 [Service]
