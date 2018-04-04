@@ -1,6 +1,5 @@
 [Unit]
 Description=Hassio ZRAM var
-Requires=var.mount
 Before=var.mount
 
 [Service]
