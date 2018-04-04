@@ -1,9 +1,9 @@
 [Unit]
 Description=Hassio ZRAM var
 DefaultDependencies=no
-Requires=zram-var.service systemd-tmpfiles-setup.service
+Requires=zram-var.service
 After=zram-var.service
-Before=umount.target systemd-tmpfiles-setup.service
+Before=umount.target
 Conflicts=umount.target
 
 [Mount]
