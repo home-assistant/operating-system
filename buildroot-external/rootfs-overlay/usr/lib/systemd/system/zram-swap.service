@@ -1,5 +1,6 @@
 [Unit]
-Description=Hassio ZRAM swap
+Description=Hassio ZRAM
+DefaultDependencies=no
 Before=dev-zram0.swap
 
 [Service]

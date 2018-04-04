@@ -7,9 +7,10 @@ Before=umount.target
 Conflicts=umount.target
 
 [Mount]
-What=/dev/zram2
+What=/dev/zram1
 Where=/var
 Type=ext4
+Options=nobarrier
 
 [Install]
 WantedBy=local-fs.target
