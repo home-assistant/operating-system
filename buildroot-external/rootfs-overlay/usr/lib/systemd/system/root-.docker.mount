@@ -1,10 +1,8 @@
 [Unit]
 Description=Docker persistent user
-DefaultDependencies=no
 Requires=mnt-overlay.mount
 After=mnt-overlay.mount
-Before=umount.target
-Conflicts=umount.target
+Before=docker.service
 
 [Mount]
 What=/mnt/overlay/root/.docker
