@@ -9,7 +9,7 @@ Hass.io OS based on buildroot
 - RAUC for OTA updates
 - SquashFS LZ4 for filesystem
 - Docker 17.12.1
-- ZRAM LZ4 for /tmp, /var, /run, swap
+- ZRAM LZ4 for /tmp, /var, swap
 
 ## Schemas
 ![](misc/hassio-os-partition.png?raw=true)

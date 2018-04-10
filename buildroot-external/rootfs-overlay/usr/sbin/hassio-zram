@@ -46,8 +46,6 @@ elif [ "$MOUNT" = "var" ]; then
     DEVICE="/dev/zram1"
 elif [ "$MOUNT" = "tmp" ]; then
     DEVICE="/dev/zram2"
-elif [ "$MOUNT" = "run" ]; then
-    DEVICE="/dev/zram3"
 else
     echo "[Error] No device for lookup!"
     exit 1
