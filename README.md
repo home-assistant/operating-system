@@ -1,7 +1,7 @@
 # WORK IN PROGRESS!
 
-# HassioOS
-Hass.io OS based on buildroot
+# Hass.io OS
+Hass.io OS based on buildroot. It's a hypervisor for docker and support many kind of IoT hardware. It is also available as Virtual Appliance. It's optimazed for embedded system and high security. You can update the system simple with OTA updates or offline Updates.
 
 ## Focus
 - Linux kernel 4.15
