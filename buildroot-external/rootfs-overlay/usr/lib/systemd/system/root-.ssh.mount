@@ -2,7 +2,7 @@
 Description=Dropbear persistent user
 Requires=mnt-overlay.mount
 After=mnt-overlay.mount
-Before=dropbear.service
+Before=dropbear.service hassio-config.service
 
 [Mount]
 What=/mnt/overlay/root/.ssh
