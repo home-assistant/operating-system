@@ -16,7 +16,7 @@ runSupervisor() {
         -v $HASSIO_DATA:/data \
         -e SUPERVISOR_SHARE=$HASSIO_DATA \
         -e SUPERVISOR_NAME=hassio_supervisor \
-        -e HOMEASSISTANT_REPOSITORY=$HOMEASSISTANT \
+        $DOCKER_ARGS \
         $SUPERVISOR
 }
 
