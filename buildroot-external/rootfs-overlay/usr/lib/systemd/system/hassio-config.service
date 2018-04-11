@@ -1,6 +1,6 @@
 [Unit]
 Description=Hassio Configuration Manager
-After=hassio-bind.target
+After=hassio-bind.target network.target
 
 [Service]
 Type=oneshot
