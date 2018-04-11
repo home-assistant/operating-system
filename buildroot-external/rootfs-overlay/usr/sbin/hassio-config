@@ -3,6 +3,22 @@ set -e
 
 # Check if hassio-config is present
 if ! findfs LABEL="hassio-config" > /dev/null; then
-    echo "[WARN] No hassio-config partition found."
+    echo "[Warning] No hassio-config partition found!"
     exit 0
 fi
+
+# Mount config partition
+mount -o ro LABEL="hassio-config" /mnt/config
+
+##
+# NetworkManager
+
+##
+# SSH know hosts
+
+##
+# Firmware update
+
+
+# Cleanup config partition
+umount /mnt/config
