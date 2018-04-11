@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 set -e
 
 # Load configs
@@ -21,4 +21,4 @@ runSupervisor() {
 }
 
 mkdir -p $HASSIO_DATA
-([ "$HASSIO_IMAGE_ID" == "$HASSIO_CONTAINER_ID" ] && docker start --attach hassio_supervisor) || runSupervisor
+([ "$HASSIO_IMAGE_ID" = "$HASSIO_CONTAINER_ID" ] && docker start --attach hassio_supervisor) || runSupervisor
