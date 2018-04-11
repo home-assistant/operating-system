@@ -2,7 +2,7 @@
 Description=NetworkManager system connections
 Requires=mnt-overlay.mount
 After=mnt-overlay.mount
-Before=NetworkManager.service
+Before=NetworkManager.service hassio-config.service
 
 [Mount]
 What=/mnt/overlay/etc/NetworkManager/system-connections
