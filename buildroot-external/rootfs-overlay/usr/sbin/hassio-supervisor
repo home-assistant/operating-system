@@ -2,8 +2,13 @@
 set -e
 
 # Load configs
-. /mnt/data/supervisor.config
+CONFIG_FILE=/mnt/data/supervisor.json
 
+SUPERVISOR="$(jq --raw-output '.supervisor' $CONFIG_FILE)"
+DATA_FOLDER="$(jq --raw-output '.data_folder' $CONFIG_FILE)"
+DOCKER_ARGS="$(jq --raw-output '.docker_args // empty' $CONFIG_FILE)"
+
+# Init supervisor
 HASSIO_DATA=/mnt/data/$DATA_FOLDER
 HASSIO_IMAGE_ID=$(docker inspect --format='{{.Id}}' $SUPERVISOR)
 HASSIO_CONTAINER_ID=$(docker inspect --format='{{.Image}}' hassio_supervisor || echo "")
@@ -20,5 +25,6 @@ runSupervisor() {
         $SUPERVISOR
 }
 
+# Run supervisor
 mkdir -p $HASSIO_DATA
 ([ "$HASSIO_IMAGE_ID" = "$HASSIO_CONTAINER_ID" ] && docker start --attach hassio_supervisor) || runSupervisor
