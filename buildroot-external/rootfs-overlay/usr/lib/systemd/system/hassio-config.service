@@ -1,0 +1,10 @@
+[Unit]
+Description=Hassio Configuration Manager
+After=hassio-bind.target
+
+[Service]
+Type=oneshot
+ExecStart=/sbin/hassio-config
+
+[Install]
+WantedBy=multi-user.target
