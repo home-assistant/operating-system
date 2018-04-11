@@ -17,7 +17,7 @@ if ls /mnt/config/network-* > /dev/null; then
 
     rm -rf /etc/NetworkManager/system-connections/*
     cp -f /mnt/config/network-* /etc/NetworkManager/system-connections/
-if
+fi
 
 ##
 # SSH know hosts
