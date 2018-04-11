@@ -12,6 +12,12 @@ mount -o ro LABEL="hassio-config" /mnt/config
 
 ##
 # NetworkManager
+if ls /mnt/config/network-* > /dev/null; then
+    echo "[Info] Update NetworkManager connections!"
+
+    rm -rf /etc/NetworkManager/system-connections/*
+    cp -f /mnt/config/network-* /etc/NetworkManager/system-connections/
+if
 
 ##
 # SSH know hosts
