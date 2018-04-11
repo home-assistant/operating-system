@@ -1,0 +1,14 @@
+[Unit]
+Description=Dropbear persistent user
+Requires=mnt-overlay.mount
+After=mnt-overlay.mount
+Before=dropbear.service
+
+[Mount]
+What=/mnt/overlay/root/.ssh
+Where=/root/.ssh
+Type=None
+Options=bind
+
+[Install]
+WantedBy=hassio-bind.target
