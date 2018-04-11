@@ -15,6 +15,12 @@ mount -o ro LABEL="hassio-config" /mnt/config
 
 ##
 # SSH know hosts
+if [ -f /mnt/config/known_hosts ]; then
+    echo "[Info] Update SSH known_hosts!"
+
+    cp -f /mnt/config/known_hosts /root/.ssh/known_hosts
+    chmod 600 /root/.ssh/known_hosts
+fi
 
 ##
 # Firmware update
