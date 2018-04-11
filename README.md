@@ -10,6 +10,7 @@ Hass.io OS based on buildroot. It's a hypervisor for docker and support many kin
 - SquashFS LZ4 for filesystem
 - Docker 17.12.1
 - ZRAM LZ4 for /tmp, /var, swap
+- Run every supervisor
 
 ## Schemas
 ![](misc/hassio-os-partition.png?raw=true)
@@ -21,6 +22,16 @@ Create a USB stick with a partition "hassio-config". This partition can include 
 - network-* (NetworkManager keyfiles)
 - known_hosts (SSH)
 - hassio-os-*.ota (Firmware updates)
+
+## Custom supervisor
+Provide a `supervisor.json` on your data partition they can/need follow struct:
+```json
+{
+  "supervisor": "repo/image",
+  "data_folder": "name_of_data_folder",
+  "docker_args": "optional / custom docker arguments"
+}
+```
 
 # Building
 Running sudo `./enter.sh` will get you into the build docker container.   
