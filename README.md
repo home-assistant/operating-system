@@ -18,7 +18,9 @@ Hass.io OS based on buildroot. It's a hypervisor for docker and support many kin
 
 Create a USB stick with a partition "hassio-config". This partition can include follow files:
 
-- network-*.config
+- network-* (NetworkManager keyfiles)
+- known_hosts (SSH)
+- hassio-os-*.ota (Firmware updates)
 
 # Building
 Running sudo `./enter.sh` will get you into the build docker container.   
