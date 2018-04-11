@@ -1,0 +1,8 @@
+#!/bin/sh
+set -e
+
+# Check if hassio-config is present
+if ! findfs LABEL="hassio-config" > /dev/null; then
+    echo "[WARN] No hassio-config partition found."
+    exit 0
+fi
