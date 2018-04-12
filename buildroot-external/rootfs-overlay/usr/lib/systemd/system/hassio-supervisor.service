@@ -1,0 +1,14 @@
+[Unit]
+Description=Hass.io supervisor
+Requires=docker.service
+After=docker.service
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=5s
+ExecStart=/usr/sbin/hassio-supervisor
+ExecStop=-/usr/bin/docker stop hassio_supervisor
+
+[Install]
+WantedBy=multi-user.target
