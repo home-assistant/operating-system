@@ -6,14 +6,24 @@ CONFIG_FILE=/mnt/data/supervisor.json
 CLI="$(jq --raw-output '.cli' $CONFIG_FILE)"
 DOCKER_ARGS="$(jq --raw-output '.cli_args // empty' $CONFIG_FILE)"
 
-# Update CLI
-if docker --pull $CLI > /dev/null 2>&1; then
-    # FIXME: cleanup
-fi
+##
+# Main program
+run_cli() {
 
-docker run --rm -ti $DOCKER_ARGS $CLI
-if [ $? -eq 10 ]; then
-    sh
-fi
+    # Update CLI
+    if $(docker --pull $CLI); then
+        # FIXME: cleanup
+    fi
 
-logout
+    # Run CLI
+    docker run --rm -ti $DOCKER_ARGS $CLI
+    if [ $? -eq 10 ]; then
+        sh
+    fi
+}
+
+##
+# Run endless CLI
+while true; do
+    run_cli
+done
