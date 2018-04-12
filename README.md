@@ -32,8 +32,7 @@ Provide a `supervisor.json` on your data partition they can/need follow struct:
   "supervisor": "repo/image",
   "supervisor_args": "optional / custom docker arguments",
   "cli": "repo/image",
-  "cli_args": "optional / custom docker arguments",
-  "data_folder": "name_of_data_folder"
+  "cli_args": "optional / custom docker arguments"
 }
 ```
 
