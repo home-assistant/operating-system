@@ -8,6 +8,7 @@ RequiresMountsFor=/mnt/data
 Type=simple
 Restart=always
 RestartSec=5s
+ExecStartPre=-/usr/bin/docker stop hassio_supervisor
 ExecStart=/usr/sbin/hassio-supervisor
 ExecStop=-/usr/bin/docker stop hassio_supervisor
 
