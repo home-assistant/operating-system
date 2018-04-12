@@ -22,7 +22,9 @@ Create a USB stick with a partition "hassio-config". This partition can include 
 - known_hosts (SSH)
 - hassio-os-*.ota (Firmware updates)
 
-# Customize: Supervisor/Cli
+# Customize
+
+## Supervisor/Cli
 
 Provide a `supervisor.json` on your data partition they can/need follow struct:
 ```json
