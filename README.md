@@ -16,20 +16,22 @@ Hass.io OS based on buildroot. It's a hypervisor for docker and support many kin
 ![](misc/hassio-os-partition.png?raw=true)
 
 ## Config
-
 Create a USB stick with a partition "hassio-config". This partition can include follow files:
 
 - network-* (NetworkManager keyfiles)
 - known_hosts (SSH)
 - hassio-os-*.ota (Firmware updates)
 
-## Custom supervisor
+# Customize: Supervisor/Cli
+
 Provide a `supervisor.json` on your data partition they can/need follow struct:
 ```json
 {
   "supervisor": "repo/image",
   "data_folder": "name_of_data_folder",
-  "docker_args": "optional / custom docker arguments"
+  "supervisor_args": "optional / custom docker arguments",
+  "cli": "repo/image",
+  "cli_args": "optional / custom docker arguments"
 }
 ```
 
