@@ -1,0 +1,14 @@
+#!/bin/sh
+
+# Load configs
+CONFIG_FILE=/mnt/data/supervisor.json
+
+CLI="$(jq --raw-output '.cli' $CONFIG_FILE)"
+DOCKER_ARGS="$(jq --raw-output '.cli_args // empty' $CONFIG_FILE)"
+
+# Update CLI
+if docker --pull $CLI > /dev/null 2>&1; then
+  # FIXME: cleanup
+fi
+
+docker run --rm -ti $DOCKER_ARGS $CLI
