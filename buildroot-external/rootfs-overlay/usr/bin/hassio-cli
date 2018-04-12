@@ -8,7 +8,12 @@ DOCKER_ARGS="$(jq --raw-output '.cli_args // empty' $CONFIG_FILE)"
 
 # Update CLI
 if docker --pull $CLI > /dev/null 2>&1; then
-  # FIXME: cleanup
+    # FIXME: cleanup
 fi
 
 docker run --rm -ti $DOCKER_ARGS $CLI
+if [ $? -eq 10 ]; then
+    sh
+fi
+
+logout
