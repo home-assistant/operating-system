@@ -6,7 +6,7 @@ CONFIG_FILE=/mnt/data/supervisor.json
 
 SUPERVISOR="$(jq --raw-output '.supervisor' $CONFIG_FILE)"
 DATA_FOLDER="$(jq --raw-output '.data_folder' $CONFIG_FILE)"
-DOCKER_ARGS="$(jq --raw-output '.docker_args // empty' $CONFIG_FILE)"
+DOCKER_ARGS="$(jq --raw-output '.supervisor_args // empty' $CONFIG_FILE)"
 
 # Init supervisor
 HASSIO_DATA=/mnt/data/$DATA_FOLDER
