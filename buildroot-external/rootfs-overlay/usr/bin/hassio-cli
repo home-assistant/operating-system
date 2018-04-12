@@ -5,6 +5,7 @@ CONFIG_FILE=/mnt/data/supervisor.json
 
 CLI="$(jq --raw-output '.cli' $CONFIG_FILE)"
 DOCKER_ARGS="$(jq --raw-output '.cli_args // empty' $CONFIG_FILE)"
+CLI_DATA=/mnt/data/cli
 
 ##
 # Main program
@@ -16,7 +17,13 @@ run_cli() {
     fi
 
     # Run CLI
-    docker run --rm -ti $DOCKER_ARGS $CLI
+    docker run --name cli \
+        --rm -ti \
+        -v $CLI_DATA:/data \
+        $DOCKER_ARGS \
+        $CLI
+
+    # Jump to root shell
     if [ $? -eq 10 ]; then
         sh
     fi
@@ -24,6 +31,8 @@ run_cli() {
 
 ##
 # Run endless CLI
+mkdir -p $CLI_DATA
+
 while true; do
     run_cli
 done
