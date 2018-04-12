@@ -10,12 +10,6 @@ CLI_DATA=/mnt/data/cli
 ##
 # Main program
 run_cli() {
-
-    # Update CLI
-    if $(docker --pull $CLI); then
-        # FIXME: cleanup
-    fi
-
     # Run CLI
     docker run --name cli \
         --rm -ti \
