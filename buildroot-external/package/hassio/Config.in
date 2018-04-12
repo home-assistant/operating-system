@@ -1,4 +1,4 @@
-config BR2_PACKAGE_HASSIO_APP
+config BR2_PACKAGE_HASSIO
 	bool "hassio-app"
 	help
 	  This is the Application layer they build the
@@ -6,34 +6,34 @@ config BR2_PACKAGE_HASSIO_APP
 
 	  https://github.com/home-assistant/hassio-os
 
-if BR2_PACKAGE_HASSIO_APP
+if BR2_PACKAGE_HASSIO
 
-config BR2_PACKAGE_HASSIO_APP_SUPERVISOR
+config BR2_PACKAGE_HASSIO_SUPERVISOR
 	string "supervisor docker image"
 	help
 	  Name of supervisor docker image they will be build in.
 
-config BR2_PACKAGE_HASSIO_APP_SUPERVISOR_VERSION
+config BR2_PACKAGE_HASSIO_SUPERVISOR_VERSION
 	string "supervisor docker image version"
 	help
 	  Version of supervisor docker image they will be build in.
 
-config BR2_PACKAGE_HASSIO_APP_SUPERVISOR_ARGS
+config BR2_PACKAGE_HASSIO_SUPERVISOR_ARGS
 	string "supervisor docker arguments"
 	help
 	  Extended docker arguments to run the supervisor.
 
-config BR2_PACKAGE_HASSIO_APP_CLI
+config BR2_PACKAGE_HASSIO_CLI
 	string "cli docker image"
 	help
 	  Name of cli docker image they will be build in.
 
-config BR2_PACKAGE_HASSIO_APP_CLI_VERSION
+config BR2_PACKAGE_HASSIO_CLI_VERSION
 	string "cli docker image version"
 	help
 	  Version of cli docker image they will be build in.
 
-config BR2_PACKAGE_HASSIO_APP_CLI_ARGS
+config BR2_PACKAGE_HASSIO_CLI_ARGS
 	string "cli docker arguments"
 	help
 	  Extended docker arguments to run the cli.
