@@ -2,6 +2,7 @@
 Description=Hass.io supervisor
 Requires=docker.service
 After=docker.service
+RequiresMountsFor=/mnt/data
 
 [Service]
 Type=simple
