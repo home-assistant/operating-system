@@ -45,7 +45,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 # Make image
-dd if=/dev/zero of=${DATA_IMG} bs=1024M count=1
+dd if=/dev/zero of=${DATA_IMG} bs=1G count=1
 mkfs.ext4 -L "hassio-data" -E lazy_itable_init=0,lazy_journal_init=0 ${DATA_IMG}
 
 # Mount / init file structs
