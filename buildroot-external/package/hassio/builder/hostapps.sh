@@ -1,6 +1,12 @@
 #!/bin/bash
 set -e
 
+SUPERVISOR=""
+SUPERVISOR_VERSION=""
+SUPERVISOR_ARGS=""
+CLI=""
+CLI_VERSION=""
+CLI_ARGS=""
 DATA_IMG="/export/data.img"
 
 # Make image
@@ -20,7 +26,7 @@ DOCKER_PID=$!
 starttime="$(date +%s)"
 endtime="$(date +%s)"
 until docker info >/dev/null 2>&1; do
-    if [ $((endtime - starttime)) -le $DOCKER_TIMEOUT ]; then
+    if [ $((endtime - starttime)) -le 30 ]; then
         sleep 1
         endtime=$(date +%s)
     else
@@ -28,3 +34,23 @@ until docker info >/dev/null 2>&1; do
     fi
 done
 
+# Install supervisor
+docker pull ${SUPERVISOR}:${SUPERVISOR_VERSION}
+docker tag ${SUPERVISOR}:${SUPERVISOR_VERSION} ${SUPERVISOR}:latest
+
+# Install cli
+docker pull ${CLI}:${CLI_VERSION}
+docker tag ${CLI}:${CLI_VERSION} ${CLI}:latest
+
+# Write config
+echo << EOF
+{
+    "supervisor": "${SUPERVISOR}",
+    "supervisor_args": "${SUPERVISOR_ARGS}",
+    "cli": "${CLI}",
+    "cli_args": "${CLI_ARGS}"
+}
+EOF > /mnt/hassio.json
+
+# Finish
+kill -TERM $DOCKER_PID && wait $DOCKER_PID && umount /mnt
