@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-HASSIO_VERSION = 0.1
+HASSIO_VERSION = 1.0.0
 HASSIO_LICENSE = Apache License 2.0
 HASSIO_LICENSE_FILES = $(BR2_EXTERNAL_HASSIO_PATH)/../LICENSE
 HASSIO_SITE = $(BR2_EXTERNAL_HASSIO_PATH)/package/hassio
