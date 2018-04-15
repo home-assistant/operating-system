@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Load configs
-CONFIG_FILE=/mnt/data/supervisor.json
+CONFIG_FILE=/mnt/data/hassio.json
 
 CLI="$(jq --raw-output '.cli' $CONFIG_FILE)"
 DOCKER_ARGS="$(jq --raw-output '.cli_args // empty' $CONFIG_FILE)"
