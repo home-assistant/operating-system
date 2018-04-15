@@ -12,7 +12,7 @@ CLI_DATA=/mnt/data/cli
 run_cli() {
     # Run CLI
     docker run --name cli \
-        --rm -ti \
+        --rm -ti --init \
         -v $CLI_DATA:/data \
         $DOCKER_ARGS \
         $CLI
