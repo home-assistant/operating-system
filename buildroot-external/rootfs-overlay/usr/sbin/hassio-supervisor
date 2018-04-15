@@ -2,14 +2,14 @@
 set -e
 
 # Load configs
-CONFIG_FILE=/mnt/data/supervisor.json
+CONFIG_FILE=/mnt/data/hassio.json
 
-SUPERVISOR="$(jq --raw-output '.supervisor' $CONFIG_FILE)"
-DOCKER_ARGS="$(jq --raw-output '.supervisor_args // empty' $CONFIG_FILE)"
+SUPERVISOR="$(jq --raw-output '.supervisor' ${CONFIG_FILE})"
+DOCKER_ARGS="$(jq --raw-output '.supervisor_args // empty' ${CONFIG_FILE})"
 
 # Init supervisor
 HASSIO_DATA=/mnt/data/supervisor
-HASSIO_IMAGE_ID=$(docker inspect --format='{{.Id}}' $SUPERVISOR)
+HASSIO_IMAGE_ID=$(docker inspect --format='{{.Id}}' ${SUPERVISOR})
 HASSIO_CONTAINER_ID=$(docker inspect --format='{{.Image}}' hassio_supervisor || echo "")
 
 runSupervisor() {
@@ -17,13 +17,13 @@ runSupervisor() {
     docker run --name hassio_supervisor \
         -v /var/run/docker.sock:/var/run/docker.sock \
         -v /var/run/dbus:/var/run/dbus \
-        -v $HASSIO_DATA:/data \
-        -e SUPERVISOR_SHARE=$HASSIO_DATA \
+        -v ${HASSIO_DATA}:/data \
+        -e SUPERVISOR_SHARE=${HASSIO_DATA} \
         -e SUPERVISOR_NAME=hassio_supervisor \
         $DOCKER_ARGS \
-        $SUPERVISOR
+        ${SUPERVISOR}
 }
 
 # Run supervisor
-mkdir -p $HASSIO_DATA
-([ "$HASSIO_IMAGE_ID" = "$HASSIO_CONTAINER_ID" ] && docker start --attach hassio_supervisor) || runSupervisor
+mkdir -p ${HASSIO_DATA}
+([ "${HASSIO_IMAGE_ID}" = "${HASSIO_CONTAINER_ID}" ] && docker start --attach hassio_supervisor) || runSupervisor
