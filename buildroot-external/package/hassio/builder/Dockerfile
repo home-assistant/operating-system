@@ -6,5 +6,5 @@ RUN apk add --no-cache \
 RUN apk add --no-cache --repository http://nl.alpinelinux.org/alpine/v3.7/community \
         docker
 
-COPY hostapp.sh /
-ENTRYPOINT ["hostapp.sh"]
+COPY hostapp.sh /usr/bin/
+ENTRYPOINT ["/usr/bin/hostapp.sh"]
