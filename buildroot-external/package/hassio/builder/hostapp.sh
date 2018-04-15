@@ -7,7 +7,7 @@ SUPERVISOR_ARGS=""
 CLI=""
 CLI_VERSION=""
 CLI_ARGS=""
-DATA_IMG="/export/data.img"
+DATA_IMG="/export/data.ext4"
 
 # Parse
 while [[ $# -gt 0 ]]; do
