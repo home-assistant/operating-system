@@ -2,7 +2,7 @@ config BR2_PACKAGE_HASSIO
 	bool "hassio-app"
 	help
 	  This is the Application layer they build the
-    data partition with configurations.
+	  data partition with configurations.
 
 	  https://github.com/home-assistant/hassio-os
 
