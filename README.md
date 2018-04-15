@@ -26,7 +26,7 @@ Create a USB stick with a partition "hassio-config". This partition can include 
 
 ## Supervisor/Cli
 
-Provide a `supervisor.json` on your data partition they can/need follow struct:
+Provide a `hassio.json` on your data partition they can/need follow struct:
 ```json
 {
   "supervisor": "repo/image",
