@@ -23,8 +23,6 @@ cp ${BOARD_DIR}/barebox-state.dtb ${BOOT_DATA}/EFI/barebox/state.dtb
 
 hassio_boot_image ${BOOT_DATA} ${BOOT_IMG}
 hassio_overlay_image ${OVERLAY_IMG}
-hassio_data_image ${DATA_IMG}
-
 
 hassio_hdd_image ${BOOT_IMG} ${BINARIES_DIR}/rootfs.squashfs ${OVERLAY_IMG} ${DATA_IMG} ${BINARIES_DIR}/harddisk.img
 
