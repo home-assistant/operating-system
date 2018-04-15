@@ -1,16 +1,19 @@
 #!/bin/bash
 
+BOOT_SIZE=32M
 BOOTSTATE_UUID="33236519-7F32-4DFF-8002-3390B62C309D"
-OVERLAY_BLOCK=131071
-DATA_BLOCK=131071
-BOOT_BLOCK=65535
+BOOTSTATE_SIZE=8M
+SYSTEM_SIZE=256M
+OVERLAY_SIZE=64M
+DATA_SIZE=1G
+IMAGE_SIZE=2G
 
 function hassio_boot_image() {
     local boot_data=$1
     local boot_img=$2
 
     echo "mtools_skip_check=1" > ~/.mtoolsrc
-    dd if=/dev/zero of=${boot_img} bs=512 count=${BOOT_BLOCK}
+    dd if=/dev/zero of=${boot_img} bs=${BOOT_SIZE} count=1
     mkfs.vfat -n "hassio-boot" ${boot_img}
     mcopy -i ${boot_img} -sv ${boot_data}/* ::
 }
@@ -18,17 +21,8 @@ function hassio_boot_image() {
 function hassio_overlay_image() {
     local overlay_img=$1
 
-    dd if=/dev/zero of=${overlay_img} bs=512 count=${OVERLAY_BLOCK}
-    mkfs.ext4 ${overlay_img}
-    tune2fs -L "hassio-overlay" -c0 -i0 ${overlay_img}
-}
-
-function hassio_data_image() {
-    local data_img=$1
-
-    dd if=/dev/zero of=${data_img} bs=512 count=${DATA_BLOCK}
-    mkfs.ext4 ${data_img}
-    tune2fs -L "hassio-data" -c0 -i0 ${data_img}
+    dd if=/dev/zero of=${overlay_img} bs=${OVERLAY_SIZE} count=1
+    mkfs.ext4 -L "hassio-overlay" -E lazy_itable_init=0,lazy_journal_init=0 ${overlay_img}
 }
 
 function hassio_hdd_image() {
@@ -38,52 +32,30 @@ function hassio_hdd_image() {
     local data_img=$4
     local hdd_img=$5
 
-    local boot_size="+32M"
-    local boot_offset=0
-    local rootfs_size="+256M"
-    local rootfs_offset=0
-    local overlay_size="+64M"
-    local overlay_offset=0
-    local data_size="+64M"
-    local data_offset=0
-    local bootstate_size="+8M"
-
+    local loop_dev=$(losetup -f)
 
     # Write new image & GPT
-    dd if=/dev/zero of=${hdd_img} bs=1024K count=800
+    dd if=/dev/zero of=${hdd_img} bs={IMAGE_SIZE} count=1
     sgdisk -o ${hdd_img}
-    echo "GPT formating done"
 
-    # Boot
-    boot_offset="$(sgdisk -F ${hdd_img})"
-    sgdisk -n 1:${boot_offset}:${boot_size} -c 1:"hassio-boot" -t 1:"C12A7328-F81F-11D2-BA4B-00A0C93EC93B" ${hdd_img}
-    dd if=${boot_img} of=${hdd_img} conv=notrunc bs=512 seek=${boot_offset}
-    echo "Boot formating done"
+    # Partition layout
+    sgdisk -n 1:0:+${BOOT_SIZE} -c 1:"hassio-boot" -t 1:"C12A7328-F81F-11D2-BA4B-00A0C93EC93B" ${hdd_img}
+    sgdisk -n 2:0:+${SYSTEM_SIZE} -c 2:"hassio-system0" -t 2:"0FC63DAF-8483-4772-8E79-3D69D8477DE4" ${hdd_img}
+    sgdisk -n 3:0:+${SYSTEM_SIZE} -c 3:"hassio-system1" -t 3:"0FC63DAF-8483-4772-8E79-3D69D8477DE4" ${hdd_img}
+    sgdisk -n 4:0:+${BOOTSTATE_SIZE} -c 4:"hassio-bootstate" -u 4:${BOOTSTATE_UUID} ${hdd_img}
+    sgdisk -n 5:0:+${OVERLAY_SIZE} -c 5:"hassio-overlay" -t 5:"0FC63DAF-8483-4772-8E79-3D69D8477DE4" ${hdd_img}
+    sgdisk -n 6:0:+${DATA_SIZE} -c 6:"hassio-data" -t 6:"0FC63DAF-8483-4772-8E79-3D69D8477DE4" ${hdd_img}
 
-    # System0
-    rootfs_offset="$(sgdisk -F ${hdd_img})"
-    sgdisk -n 2:${rootfs_offset}:${rootfs_size} -c 2:"hassio-system0" -t 2:"0FC63DAF-8483-4772-8E79-3D69D8477DE4" ${hdd_img}
-    dd if=${rootfs_img} of=${hdd_img} conv=notrunc bs=512 seek=${rootfs_offset}
-    echo "System0 formating done"
+    # Mount image
+    losetup ${loop_dev} ${hdd_img}
 
-    # System1
-    sgdisk -n 3:0:${rootfs_size} -c 3:"hassio-system1" -t 3:"0FC63DAF-8483-4772-8E79-3D69D8477DE4" ${hdd_img}
-    echo "System1 formating done"
-
-    # BootState
-    sgdisk -n 4:0:${bootstate_size} -c 4:"hassio-bootstate" -u 4:${BOOTSTATE_UUID} ${hdd_img}
-    echo "BootState formating done"
-
-    # Overlay
-    overlay_offset="$(sgdisk -F ${hdd_img})"
-    sgdisk -n 5:${overlay_offset}:${overlay_size} -c 5:"hassio-overlay" -t 5:"0FC63DAF-8483-4772-8E79-3D69D8477DE4" ${hdd_img}
-    dd if=${overlay_img} of=${hdd_img} conv=notrunc bs=512 seek=${overlay_offset}
-    echo "Overlay formating done"
-
-    # Data
-    data_offset="$(sgdisk -F ${hdd_img})"
-    sgdisk -n 6:${data_offset}:${data_size} -c 6:"hassio-data" -t 6:"0FC63DAF-8483-4772-8E79-3D69D8477DE4" ${hdd_img}
-    dd if=${data_img} of=${hdd_img} conv=notrunc bs=512 seek=${data_offset}
-    echo "Data formating done"
+    # Copy data
+    dd if=${boot_img} of=${loop_dev}p1 bs=512
+    dd if=${rootfs_img} of=${loop_dev}p2 bs=512
+    dd if=${overlay_img} of=${loop_dev}p5 bs=512
+    dd if=${data_img} of=${loop_dev}p5 bs=512
+    
+    # Cleanup
+    losetup -d ${loop_dev}
 }
 
