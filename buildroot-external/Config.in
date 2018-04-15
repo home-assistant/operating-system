@@ -1,1 +1,2 @@
 source "$BR2_EXTERNAL_HASSIO_PATH/package/mingetty/Config.in"
+source "$BR2_EXTERNAL_HASSIO_PATH/package/hassio/Config.in"
