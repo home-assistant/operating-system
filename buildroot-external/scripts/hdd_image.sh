@@ -9,8 +9,8 @@ DATA_SIZE=1G
 IMAGE_SIZE=2G
 
 function hassio_boot_image() {
-    local boot_data="$1/boot"
-    local boot_img="$1/boot.vfat"
+    local boot_data="${1}/boot"
+    local boot_img="${1}/boot.vfat"
 
     echo "mtools_skip_check=1" > ~/.mtoolsrc
     dd if=/dev/zero of=${boot_img} bs=${BOOT_SIZE} count=1
@@ -19,7 +19,7 @@ function hassio_boot_image() {
 }
 
 function hassio_overlay_image() {
-    local overlay_img="$1/overlay.ext4"
+    local overlay_img="${1}/overlay.ext4"
 
     dd if=/dev/zero of=${overlay_img} bs=${OVERLAY_SIZE} count=1
     mkfs.ext4 -L "hassio-overlay" -E lazy_itable_init=0,lazy_journal_init=0 ${overlay_img}
@@ -30,7 +30,7 @@ function hassio_hdd_image() {
     local rootfs_img="${1}/rootfs.squashfs"
     local overlay_img="${1}/overlay.ext4"
     local data_img="${1}/data.ext4"
-    local hdd_img="${1}/${2}"
+    local hdd_img="${2}"
 
     local loop_dev=$(losetup -f)
 
