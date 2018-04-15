@@ -9,6 +9,41 @@ CLI_VERSION=""
 CLI_ARGS=""
 DATA_IMG="/export/data.img"
 
+# Parse
+while [[ $# -gt 0 ]]; do
+    key=$1
+    case $key in 
+        --supervisor)
+            SUPERVISOR=$2
+            shift
+            ;;
+        --supervisor-version)
+            SUPERVISOR_VERSION=$2
+            shift
+            ;;
+        --supervisor-args)
+            SUPERVISOR_ARGS=$2
+            shift
+            ;;
+        --cli)
+            CLI=$2
+            shift
+            ;;
+        --cli-version)
+            CLI_VERSION=$2
+            shift
+            ;;
+        --cli-args)
+            CLI_ARGS=$2
+            shift
+            ;;
+        *)
+            exit 1
+            ;;
+    esac
+    shift
+done
+
 # Make image
 dd if=/dev/zero of=${DATA_IMG} bs=1024M count=1
 mkfs.ext4 -E lazy_itable_init=0,lazy_journal_init=0 -i 8192 ${DATA_IMG}
@@ -23,15 +58,14 @@ mkdir -p /mnt/cli
 dockerd -s overlay2 -g /mnt/docker 2> /dev/null &
 DOCKER_PID=$!
 
-starttime="$(date +%s)"
-endtime="$(date +%s)"
 until docker info >/dev/null 2>&1; do
-    if [ $((endtime - starttime)) -le 30 ]; then
-        sleep 1
-        endtime=$(date +%s)
-    else
+    DOCKER_COUNT=0
+    if [ ! ${DOCKER_COUNT} -le 30 ]; then
         exit 1
     fi
+        
+    sleep 1
+    DOCKER_COUNT=$((${DOCKER_COUNT} +1))
 done
 
 # Install supervisor
