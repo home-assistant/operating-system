@@ -65,26 +65,26 @@ until docker info >/dev/null 2>&1; do
     fi
         
     sleep 1
-    DOCKER_COUNT=$((${DOCKER_COUNT} +1))
+    DOCKER_COUNT=$((DOCKER_COUNT + 1))
 done
 
 # Install supervisor
-docker pull ${SUPERVISOR}:${SUPERVISOR_VERSION}
-docker tag ${SUPERVISOR}:${SUPERVISOR_VERSION} ${SUPERVISOR}:latest
+docker pull "${SUPERVISOR}:${SUPERVISOR_VERSION}"
+docker tag "${SUPERVISOR}:${SUPERVISOR_VERSION}" "${SUPERVISOR}:latest"
 
 # Install cli
-docker pull ${CLI}:${CLI_VERSION}
-docker tag ${CLI}:${CLI_VERSION} ${CLI}:latest
+docker pull "${CLI}:${CLI_VERSION}"
+docker tag "${CLI}:${CLI_VERSION}" "${CLI}:latest"
 
 # Write config
-echo << EOF
+cat > /mnt/hassio.json <<- EOF
 {
     "supervisor": "${SUPERVISOR}",
     "supervisor_args": "${SUPERVISOR_ARGS}",
     "cli": "${CLI}",
     "cli_args": "${CLI_ARGS}"
 }
-EOF > /mnt/hassio.json
+EOF
 
 # Finish
 kill -TERM $DOCKER_PID && wait $DOCKER_PID && umount /mnt
