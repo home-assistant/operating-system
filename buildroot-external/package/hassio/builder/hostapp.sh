@@ -46,7 +46,7 @@ done
 
 # Make image
 dd if=/dev/zero of=${DATA_IMG} bs=1024M count=1
-mkfs.ext4 -E lazy_itable_init=0,lazy_journal_init=0 -i 8192 ${DATA_IMG}
+mkfs.ext4 -L "hassio-data" -E lazy_itable_init=0,lazy_journal_init=0 ${DATA_IMG}
 
 # Mount / init file structs
 mount -o loop ${DATA_IMG} /mnt
