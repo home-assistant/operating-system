@@ -3,19 +3,20 @@
 # Load configs
 CONFIG_FILE=/mnt/data/hassio.json
 
-CLI="$(jq --raw-output '.cli' $CONFIG_FILE)"
-DOCKER_ARGS="$(jq --raw-output '.cli_args // empty' $CONFIG_FILE)"
+CLI="$(jq --raw-output '.cli' ${CONFIG_FILE})"
+DOCKER_ARGS="$(jq --raw-output '.cli_args // empty' ${CONFIG_FILE})"
 CLI_DATA=/mnt/data/cli
 
 ##
 # Main program
 run_cli() {
     # Run CLI
+    docker rm --force cli || true
     docker run --name cli \
         --rm -ti --init \
-        -v $CLI_DATA:/data \
+        -v ${CLI_DATA}:/data \
         $DOCKER_ARGS \
-        $CLI
+        ${CLI}
 
     # Jump to root shell
     if [ $? -eq 10 ]; then
@@ -25,7 +26,7 @@ run_cli() {
 
 ##
 # Run endless CLI
-mkdir -p $CLI_DATA
+mkdir -p ${CLI_DATA}
 
 while true; do
     run_cli
