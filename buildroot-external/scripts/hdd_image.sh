@@ -33,30 +33,32 @@ function hassio_hdd_image() {
     local hdd_img="${2}"
 
     local loop_dev="/dev/mapper/$(losetup -f | cut -d'/' -f3)"
+    local boot_offset=0
+    local rootfs_offset=0
+    local overlay_offset=0
+    local data_offset=0
 
     # Write new image & GPT
     dd if=/dev/zero of=${hdd_img} bs=${IMAGE_SIZE} count=1
     sgdisk -o ${hdd_img}
 
     # Partition layout
+    boot_offset="$(sgdisk -F ${hdd_img})"
     sgdisk -n 1:0:+${BOOT_SIZE} -c 1:"hassio-boot" -t 1:"C12A7328-F81F-11D2-BA4B-00A0C93EC93B" ${hdd_img}
+    rootfs_offset="$(sgdisk -F ${hdd_img})"
     sgdisk -n 2:0:+${SYSTEM_SIZE} -c 2:"hassio-system0" -t 2:"0FC63DAF-8483-4772-8E79-3D69D8477DE4" ${hdd_img}
     sgdisk -n 3:0:+${SYSTEM_SIZE} -c 3:"hassio-system1" -t 3:"0FC63DAF-8483-4772-8E79-3D69D8477DE4" ${hdd_img}
     sgdisk -n 4:0:+${BOOTSTATE_SIZE} -c 4:"hassio-bootstate" -u 4:${BOOTSTATE_UUID} ${hdd_img}
+    overlay_offset="$(sgdisk -F ${hdd_img})"
     sgdisk -n 5:0:+${OVERLAY_SIZE} -c 5:"hassio-overlay" -t 5:"0FC63DAF-8483-4772-8E79-3D69D8477DE4" ${hdd_img}
+    data_offset="$(sgdisk -F ${hdd_img})"
     sgdisk -n 6:0:+${DATA_SIZE} -c 6:"hassio-data" -t 6:"0FC63DAF-8483-4772-8E79-3D69D8477DE4" ${hdd_img}
     sgdisk -v
 
-    # Mount image
-    kpartx -a ${hdd_img}
-
-    # Copy data
-    dd if=${boot_img} of=${loop_dev}p1 bs=512
-    dd if=${rootfs_img} of=${loop_dev}p2 bs=512
-    dd if=${overlay_img} of=${loop_dev}p5 bs=512
-    dd if=${data_img} of=${loop_dev}p6 bs=512
-    
-    # Cleanup
-    kpartx -d ${loop_dev}
+    # Write Images
+    dd if=${boot_img} of=${hdd_img} conv=notrunc bs=512 obs=512 seek=${boot_offset}
+    dd if=${rootfs_img} of=${hdd_img} conv=notrunc bs=512 obs=512 seek=${rootfs_offset}
+    dd if=${overlay_img} of=${hdd_img} conv=notrunc bs=512 obs=512 seek=${overlay_offset}
+    dd if=${data_img} of=${hdd_img} conv=notrunc bs=512 obs=512 seek=${data_offset}
 }
 
