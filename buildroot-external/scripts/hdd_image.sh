@@ -48,7 +48,7 @@ function hassio_hdd_image() {
     sgdisk -v
 
     # Mount image
-    losetup -P -f ${hdd_img}
+    kpartx -l ${hdd_img}
 
     # Copy data
     dd if=${boot_img} of=${loop_dev}p1 bs=512
@@ -57,6 +57,6 @@ function hassio_hdd_image() {
     dd if=${data_img} of=${loop_dev}p6 bs=512
     
     # Cleanup
-    losetup -d ${loop_dev}
+    kpartx -d ${loop_dev}
 }
 
