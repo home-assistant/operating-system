@@ -60,7 +60,7 @@ DOCKER_PID=$!
 
 until docker info >/dev/null 2>&1; do
     DOCKER_COUNT=0
-    if [ ! ${DOCKER_COUNT} -le 30 ]; then
+    if [ ! ${DOCKER_COUNT} -gt 30 ]; then
         exit 1
     fi
         
