@@ -48,7 +48,7 @@ function hassio_hdd_image() {
     sgdisk -v
 
     # Mount image
-    kpartx -l ${hdd_img}
+    kpartx -a ${hdd_img}
 
     # Copy data
     dd if=${boot_img} of=${loop_dev}p1 bs=512
