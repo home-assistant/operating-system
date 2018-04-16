@@ -35,7 +35,7 @@ function hassio_hdd_image() {
     local loop_dev=$(losetup -f)
 
     # Write new image & GPT
-    dd if=/dev/zero of=${hdd_img} bs={IMAGE_SIZE} count=1
+    dd if=/dev/zero of=${hdd_img} bs=${IMAGE_SIZE} count=1
     sgdisk -o ${hdd_img}
 
     # Partition layout
