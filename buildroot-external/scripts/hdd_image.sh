@@ -32,7 +32,7 @@ function hassio_hdd_image() {
     local data_img="${1}/data.ext4"
     local hdd_img="${2}"
 
-    local loop_dev="$(losetup -f)"
+    local loop_dev="/dev/mapper/$(losetup -f | cut -d'/' -f3)"
 
     # Write new image & GPT
     dd if=/dev/zero of=${hdd_img} bs=${IMAGE_SIZE} count=1
@@ -48,7 +48,7 @@ function hassio_hdd_image() {
     sgdisk -v
 
     # Mount image
-    kpartx -al ${hdd_img}
+    kpartx -a ${hdd_img}
 
     # Copy data
     dd if=${boot_img} of=${loop_dev}p1 bs=512
