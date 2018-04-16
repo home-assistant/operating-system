@@ -18,5 +18,9 @@ RUN apt-get update && apt-get install -y \
         git make g++ file perl bash binutils locales qemu-utils \
     && rm -rf /var/lib/apt/lists/*
 
+# Init entry
+COPY scripts/entry.sh /usr/sbin/
+ENTRYPOINT ["/usr/sbin/entry.sh"]
+
 # Get buildroot
 WORKDIR /build
