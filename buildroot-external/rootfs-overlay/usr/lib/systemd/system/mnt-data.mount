@@ -1,6 +1,6 @@
 [Unit]
 Description=Hassio data partition
-Required=hassio-expand.service
+Requires=hassio-expand.service
 DefaultDependencies=no
 After=hassio-expand.service
 Before=umount.target
