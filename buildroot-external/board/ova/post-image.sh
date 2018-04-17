@@ -19,7 +19,6 @@ cp ${BOARD_DIR}/barebox-state.dtb ${BOOT_DATA}/EFI/barebox/state.dtb
 hassio_boot_image ${BINARIES_DIR}
 hassio_overlay_image ${BINARIES_DIR}
 
-hassio_hdd_image ${BINARIES_DIR} ${BINARIES_DIR}/harddisk.img
+hassio_hdd_image ${BINARIES_DIR} ${BINARIES_DIR}/harddisk.img 6
 
-qemu-img resize ${BINARIES_DIR}/harddisk.img +6G
 qemu-img convert -O vmdk ${BINARIES_DIR}/harddisk.img ${BINARIES_DIR}/hassio-os.vmdk

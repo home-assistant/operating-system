@@ -6,7 +6,6 @@ BOOTSTATE_SIZE=8M
 SYSTEM_SIZE=256M
 OVERLAY_SIZE=64M
 DATA_SIZE=1G
-IMAGE_SIZE=2G
 
 function hassio_boot_image() {
     local boot_data="${1}/boot"
@@ -30,7 +29,8 @@ function hassio_hdd_image() {
     local rootfs_img="${1}/rootfs.squashfs"
     local overlay_img="${1}/overlay.ext4"
     local data_img="${1}/data.ext4"
-    local hdd_img="${2}"
+    local hdd_img=${2}
+    local hdd_count=${3:-2}
 
     local loop_dev="/dev/mapper/$(losetup -f | cut -d'/' -f3)"
     local boot_offset=0
@@ -39,7 +39,7 @@ function hassio_hdd_image() {
     local data_offset=0
 
     # Write new image & GPT
-    dd if=/dev/zero of=${hdd_img} bs=${IMAGE_SIZE} count=1
+    dd if=/dev/zero of=${hdd_img} bs=1G count=${hdd_count}
     sgdisk -o ${hdd_img}
 
     # Partition layout

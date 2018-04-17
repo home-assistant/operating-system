@@ -9,4 +9,4 @@ ExecStart=-/sbin/hassio-expand
 RemainAfterExit=true
 
 [Install]
-WantedBy=local-fs-pre.target
+WantedBy=local-fs.target

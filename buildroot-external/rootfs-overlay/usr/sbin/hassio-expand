@@ -3,10 +3,9 @@ set -e
 
 DEVICE_CHILD=$(findfs LABEL="hassio-data")
 DEVICE_ROOT="/dev/$(lsblk -no pkname ${DEVICE_CHILD})"
-LAST_FREE_SECTOR=$(sgdisk -E ${DEVICE_ROOT})
 
 # Need resize
-if [ $LAST_FREE_SECTOR -le 2048 ]; then
+if [ $(sgdisk -E ${DEVICE_ROOT}) -le 2048 ]; then
     echo "[INFO] No resize of data partition needed"
     exit
 fi
@@ -14,8 +13,8 @@ fi
 # Resize & Reload partition
 echo "[INFO] Update hassio-data partition"
 sgdisk -d 6 -n 6:0:0 -c 6:"hassio-data" -t 6:"0FC63DAF-8483-4772-8E79-3D69D8477DE4" ${DEVICE_ROOT}
-sgdisk -v
-blockdev --rereadpt ${DEVICE_ROOT}
+sgdisk -v ${DEVICE_ROOT}
+partx -u ${DEVICE_ROOT}
 
 # Resize filesystem
 echo "[INFO] Resize hassio-data filesystem"
