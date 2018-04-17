@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 
-DEVICE_CHILD=$(findfs NAME="hassio-data")
+DEVICE_CHILD=$(findfs LABEL="hassio-data")
 DEVICE_ROOT="/dev/$(lsblk -no pkname ${DEVICE_CHILD})"
 LAST_FREE_SECTOR=$(sgdisk -E ${DEVICE_ROOT})
 
