@@ -1,7 +1,7 @@
 [Unit]
 Description=Hassio overlay partition
 DefaultDependencies=no
-Before=umount.target
+Before=umount.target systemd-tmpfiles-setup.service
 Conflicts=umount.target
 
 [Mount]

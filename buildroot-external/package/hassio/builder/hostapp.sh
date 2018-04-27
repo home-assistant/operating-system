@@ -55,11 +55,11 @@ mkdir -p /mnt/supervisor
 mkdir -p /mnt/cli
 
 # Run dockerd
-dockerd -s overlay2 -g /mnt/docker 2> /dev/null &
+dockerd -s overlay2 -g /mnt/docker &
 DOCKER_PID=$!
 
+DOCKER_COUNT=0
 until docker info >/dev/null 2>&1; do
-    DOCKER_COUNT=0
     if [ ${DOCKER_COUNT} -gt 30 ]; then
         exit 1
     fi
