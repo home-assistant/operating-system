@@ -1,0 +1,41 @@
+From 525b60af3320de3cc1f1145fe31a2de07b61faf6 Mon Sep 17 00:00:00 2001
+From: Pascal Vizeli <pvizeli@syshack.ch>
+Date: Sat, 28 Apr 2018 00:20:08 +0200
+Subject: [PATCH 1/1] Allow hostname on ro
+
+---
+ src/hostname/hostnamed.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
+
+diff --git a/src/hostname/hostnamed.c b/src/hostname/hostnamed.c
+index d9ad2fb..87fae35 100644
+--- a/src/hostname/hostnamed.c
++++ b/src/hostname/hostnamed.c
+@@ -289,6 +289,7 @@ static int context_update_kernel_hostname(Context *c) {
+ static int context_write_data_static_hostname(Context *c) {
+ 
+         assert(c);
++        FILE *f = NULL;
+ 
+         if (isempty(c->data[PROP_STATIC_HOSTNAME])) {
+ 
+@@ -297,7 +298,15 @@ static int context_write_data_static_hostname(Context *c) {
+ 
+                 return 0;
+         }
+-        return write_string_file_atomic_label("/etc/hostname", c->data[PROP_STATIC_HOSTNAME]);
++
++        f = fopen("/etc/hostname", "w");
++        if (f == NULL)
++                return -ENOENT;
++
++        fputs(c->data[PROP_STATIC_HOSTNAME], f);
++        fclose(f);
++
++	return 0;
+ }
+ 
+ static int context_write_data_machine_info(Context *c) {
+-- 
+2.7.4
+
