@@ -1,13 +1,14 @@
 # WORK IN PROGRESS!
 
 # Hass.io OS
-Hass.io OS based on buildroot. It's a hypervisor for docker and support many kind of IoT hardware. It is also available as Virtual Appliance. It's optimazed for embedded system and high security. You can update the system simple with OTA updates or offline Updates.
+Hass.io OS based on [buildroot](https://buildroot.org/). It's a hypervisor for Docker and supports various kind of IoT hardware. It is also available as virtual appliance. The whole system is optimized for embedded system and  security. You can update the system simple with OTA updates or offline updates.
 
 ## Focus
+
 - Linux kernel 4.15
 - Barebox as bootloader
 - RAUC for OTA updates
-- SquashFS LZ4 for filesystem
+- SquashFS LZ4 as filesystem
 - Docker 17.12.1
 - ZRAM LZ4 for /tmp, /var, swap
 - Run every supervisor
@@ -15,8 +16,9 @@ Hass.io OS based on buildroot. It's a hypervisor for docker and support many kin
 ## Schemas
 ![](misc/hassio-os-partition.png?raw=true)
 
-## Config
-Create a USB stick with a partition "hassio-config". This partition can include follow files:
+## Configuration
+
+Create a USB stick with a partition named "hassio-config". This partition can include follow files:
 
 - network-* (NetworkManager keyfiles)
 - known_hosts (SSH)
@@ -26,7 +28,8 @@ Create a USB stick with a partition "hassio-config". This partition can include 
 
 ## Supervisor/Cli
 
-Provide a `hassio.json` on your data partition they can/need follow struct:
+Provide a file with the name `hassio.json` in your data partition and the following structure:
+
 ```json
 {
   "supervisor": "repo/image",
@@ -37,10 +40,10 @@ Provide a `hassio.json` on your data partition they can/need follow struct:
 ```
 
 # Building
-Running sudo `./enter.sh` will get you into the build docker container.   
+Running `sudo ./enter.sh` will get you into the build Docker container.   
 `make -C /build/buildroot BR2_EXTERNAL=/build/buildroot-external xy_defconfig`
 
-From outside the docker container, while it is still running you can use `./getimage.sh` to get the output image.
+From outside the Docker container, while it is still running you can use `./getimage.sh` to get the output image.
 
 ## Helpers
 
