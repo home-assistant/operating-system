@@ -6,3 +6,10 @@ config BR2_PACKAGE_APPARMOR
 	  of software flaws and compromised systems.
 
 	  http://apparmor.net
+
+if BR2_PACKAGE_APPARMOR
+
+config BR2_PACKAGE_APPARMOR_PARSER
+	bool "apparmor parser"
+	help
+	  Parse and load profiles from filesystem.
