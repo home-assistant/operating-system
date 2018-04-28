@@ -5,4 +5,4 @@ config BR2_PACKAGE_APPARMOR
 	  access control for programs, protecting against the exploitation 
 	  of software flaws and compromised systems.
 
-	  https://launchpad.net/apparmor
+	  http://apparmor.net
