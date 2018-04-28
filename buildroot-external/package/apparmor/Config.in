@@ -13,3 +13,5 @@ config BR2_PACKAGE_APPARMOR_PARSER
 	bool "apparmor parser"
 	help
 	  Parse and load profiles from filesystem.
+
+endif
