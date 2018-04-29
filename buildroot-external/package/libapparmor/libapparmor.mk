@@ -13,5 +13,6 @@ LIBAPPARMOR_DEPENDENCIES = host-flex
 LIBAPPARMOR_SUBDIR = libraries/libapparmor
 LIBAPPARMOR_CONF_ENV = ac_cv_func_reallocarray=no
 LIBAPPARMOR_AUTORECONF = YES
+LIBAPPARMOR_CONF_OPTS = --enable-static
 
 $(eval $(autotools-package))
