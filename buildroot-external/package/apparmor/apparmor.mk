@@ -3,9 +3,8 @@
 # apparmor
 #
 #############################################################
-APPARMOR_VERSION_MAJOR = 2.13
-APPARMOR_VERSION = $(APPARMOR_VERSION_MAJOR).0
-APPARMOR_SITE    = https://launchpad.net/apparmor/$(APPARMOR_VERSION_MAJOR)/$(APPARMOR_VERSION)/+download
+APPARMOR_VERSION = v2.13
+APPARMOR_SITE = git://git.launchpad.net/apparmor
 APPARMOR_LICENSE = GPL-2
 APPARMOR_LICENSE_FILES = LICENSE
 APPARMOR_INSTALL_STAGING = YES
