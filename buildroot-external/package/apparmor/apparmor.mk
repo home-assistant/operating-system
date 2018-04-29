@@ -14,8 +14,8 @@ APPARMOR_CONF_OPTS = \
 
 define APPARMOR_CONFIGURE_CMDS
 	cd $(@D)/libraries/libapparmor && \
-	$(STAGING_CONFIGURE_OPTS) ./autogen.sh && \
-	$(STAGING_CONFIGURE_OPTS) ./configure $(APPARMOR_CONF_OPTS)
+	PATH=$(BR_PATH) ./autogen.sh && \
+	PATH=$(BR_PATH) ./configure $(APPARMOR_CONF_OPTS)
 endef
 
 define APPARMOR_BUILD_CMDS
@@ -25,12 +25,12 @@ define APPARMOR_BUILD_CMDS
 endef
 
 define APPARMOR_INSTALL_STAGING_CMDS
-	$(STAGING_CONFIGURE_OPTS) $(MAKE) -C $(@D)/libraries/libapparmor DESTDIR=$(STAGING_DIR) install
+	$(STAGING_CONFIGURE_OPTS) $(MAKE) -C $(@D)/libraries/libapparmor DESTDIR=$(STAGING_DIR) PREFIX=/usr install
 endef
 
 define APPARMOR_INSTALL_TARGET_CMDS
-	$(TARGET_CONFIGURE_OPTS) $(MAKE) -C $(@D)/parser DESTDIR=$(TARGET_DIR) install
-	$(TARGET_CONFIGURE_OPTS) $(MAKE) -C $(@D)/profiles DESTDIR=$(TARGET_DIR) install
+	$(TARGET_CONFIGURE_OPTS) $(MAKE) -C $(@D)/parser DESTDIR=$(TARGET_DIR) PREFIX=/usr install
+	$(TARGET_CONFIGURE_OPTS) $(MAKE) -C $(@D)/profiles DESTDIR=$(TARGET_DIR) PREFIX=/usr install
 endef
 
 $(eval $(generic-package))
