@@ -1,6 +1,5 @@
-config BR2_PACKAGE_APPARMOR
-	bool "apparmor"
-	depends on BR2_PACKAGE_LIBAPPARMOR
+config BR2_PACKAGE_LIBAPPARMOR
+	bool "libapparmor"
 	help
 	  AppArmor gives you network application security via mandatory 
 	  access control for programs, protecting against the exploitation 
