@@ -21,15 +21,15 @@ define APPARMOR_BUILD_CMDS
 	$(MAKE) $(STAGING_CONFIGURE_OPTS) -C libraries/libapparmor
 	$(MAKE) $(TARGET_CONFIGURE_OPTS) -C parser
 	$(MAKE) $(TARGET_CONFIGURE_OPTS) -C profile
-endif
+endef
 
 define APPARMOR_INSTALL_STAGING_CMDS
 	$(STAGING_MAKE_ENV) $(MAKE) -C DESTDIR=$(STAGING_DIR) libraries/libapparmor install
-endif
+endef
 
 define APPARMOR_INSTALL_TARGET_CMDS
 	$(TARGET_MAKE_ENV) $(MAKE) -C DESTDIR=$(TARGET_DIR) parser install
 	$(TARGET_MAKE_ENV) $(MAKE) -C DESTDIR=$(TARGET_DIR) profile install
-endif
+endef
 
 $(eval $(generic-package))
