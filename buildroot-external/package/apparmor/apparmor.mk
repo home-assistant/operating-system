@@ -8,9 +8,12 @@ APPARMOR_SITE = git://git.launchpad.net/apparmor
 APPARMOR_LICENSE = GPL-2
 APPARMOR_LICENSE_FILES = LICENSE
 APPARMOR_INSTALL_STAGING = YES
+APPARMOR_DEPENDENCIES = host-flex
 
+APPARMOR_CONF_ENV = ac_cv_func_reallocarray=no
 APPARMOR_CONF_OPTS = \
-	--prefix=/usr
+	--prefix=/usr \
+	--disable-doc
 
 define APPARMOR_CONFIGURE_CMDS
 	cd $(@D)/libraries/libapparmor && \
