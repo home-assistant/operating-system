@@ -12,23 +12,25 @@ APPARMOR_INSTALL_STAGING = YES
 APPARMOR_CONF_OPTS = \
 	--prefix=/usr
 
-define APPARMOR_BUILD_CMDS
+define APPARMOR_CONFIGURE_CMDS
 	cd $(@D)/libraries/libapparmor && \
-	./autogen.sh && \
-	./configure $(APPARMOR_CONF_OPTS)
-	
-	$(MAKE) $(STAGING_CONFIGURE_OPTS) -C $(@D)/libraries/libapparmor
-	$(MAKE) $(TARGET_CONFIGURE_OPTS) -C $(@D)/parser
-	$(MAKE) $(TARGET_CONFIGURE_OPTS) -C $(@D)/profiles
+	$(STAGING_CONFIGURE_OPTS) ./autogen.sh && \
+	$(STAGING_CONFIGURE_OPTS) ./configure $(APPARMOR_CONF_OPTS)
+endef
+
+define APPARMOR_BUILD_CMDS
+	$(STAGING_CONFIGURE_OPTS) $(MAKE) -C $(@D)/libraries/libapparmor
+	$(TARGET_CONFIGURE_OPTS) $(MAKE) -C $(@D)/parser
+	$(TARGET_CONFIGURE_OPTS) $(MAKE) -C $(@D)/profiles
 endef
 
 define APPARMOR_INSTALL_STAGING_CMDS
-	$(STAGING_MAKE_ENV) $(MAKE) -C $(@D)/libraries/libapparmor DESTDIR=$(STAGING_DIR) install
+	$(STAGING_CONFIGURE_OPTS) $(MAKE) -C $(@D)/libraries/libapparmor DESTDIR=$(STAGING_DIR) install
 endef
 
 define APPARMOR_INSTALL_TARGET_CMDS
-	$(TARGET_MAKE_ENV) $(MAKE) -C $(@D)/parser DESTDIR=$(TARGET_DIR) install
-	$(TARGET_MAKE_ENV) $(MAKE) -C $(@D)/profiles DESTDIR=$(TARGET_DIR) install
+	$(TARGET_CONFIGURE_OPTS) $(MAKE) -C $(@D)/parser DESTDIR=$(TARGET_DIR) install
+	$(TARGET_CONFIGURE_OPTS) $(MAKE) -C $(@D)/profiles DESTDIR=$(TARGET_DIR) install
 endef
 
 $(eval $(generic-package))
