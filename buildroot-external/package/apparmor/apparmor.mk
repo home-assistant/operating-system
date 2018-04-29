@@ -19,13 +19,13 @@ define APPARMOR_CONFIGURE_CMDS
 endef
 
 define APPARMOR_BUILD_CMDS
-	$(STAGING_CONFIGURE_OPTS) $(MAKE) -C $(@D)/libraries/libapparmor
+	$(TARGET_CONFIGURE_OPTS) $(MAKE) -C $(@D)/libraries/libapparmor
 	$(TARGET_CONFIGURE_OPTS) $(MAKE) -C $(@D)/parser
 	$(TARGET_CONFIGURE_OPTS) $(MAKE) -C $(@D)/profiles
 endef
 
 define APPARMOR_INSTALL_STAGING_CMDS
-	$(STAGING_CONFIGURE_OPTS) $(MAKE) -C $(@D)/libraries/libapparmor DESTDIR=$(STAGING_DIR) PREFIX=/usr install
+	$(TARGET_CONFIGURE_OPTS) $(MAKE) -C $(@D)/libraries/libapparmor DESTDIR=$(STAGING_DIR) PREFIX=/usr install
 endef
 
 define APPARMOR_INSTALL_TARGET_CMDS
