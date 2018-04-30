@@ -51,9 +51,6 @@ mkfs.ext4 -L "hassio-data" -E lazy_itable_init=0,lazy_journal_init=0 ${DATA_IMG}
 # Mount / init file structs
 mount -o loop ${DATA_IMG} /mnt
 mkdir -p /mnt/docker
-mkdir -p /mnt/supervisor
-mkdir -p /mnt/cli
-mkdir -p /mnt/apparmor
 
 # Run dockerd
 dockerd -s overlay2 -g /mnt/docker &
