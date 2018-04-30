@@ -1,0 +1,31 @@
+From aafaf2b8efb069387afcbea5d70f3a7a7f6fd8c4 Mon Sep 17 00:00:00 2001
+From: Pascal Vizeli <pvizeli@syshack.ch>
+Date: Mon, 30 Apr 2018 13:46:07 +0200
+Subject: [PATCH 1/1] Autostart
+
+---
+ .../rootfs-overlay/etc/systemd/system/apparmor.service.d/hassio.conf    | 2 ++
+ .../system/hassio-bind.target.wants/etc-apparmor.d-containers.mount     | 1 +
+ 2 files changed, 3 insertions(+)
+ create mode 100644 buildroot-external/rootfs-overlay/etc/systemd/system/apparmor.service.d/hassio.conf
+ create mode 120000 buildroot-external/rootfs-overlay/etc/systemd/system/hassio-bind.target.wants/etc-apparmor.d-containers.mount
+
+diff --git a/buildroot-external/rootfs-overlay/etc/systemd/system/apparmor.service.d/hassio.conf b/buildroot-external/rootfs-overlay/etc/systemd/system/apparmor.service.d/hassio.conf
+new file mode 100644
+index 0000000..13ed578
+--- /dev/null
++++ b/buildroot-external/rootfs-overlay/etc/systemd/system/apparmor.service.d/hassio.conf
+@@ -0,0 +1,2 @@
++[Unit]
++RequiresMountsFor=/etc/apparmor.d/containers
+diff --git a/buildroot-external/rootfs-overlay/etc/systemd/system/hassio-bind.target.wants/etc-apparmor.d-containers.mount b/buildroot-external/rootfs-overlay/etc/systemd/system/hassio-bind.target.wants/etc-apparmor.d-containers.mount
+new file mode 120000
+index 0000000..834306a
+--- /dev/null
++++ b/buildroot-external/rootfs-overlay/etc/systemd/system/hassio-bind.target.wants/etc-apparmor.d-containers.mount
+@@ -0,0 +1 @@
++/usr/lib/systemd/system/etc-apparmor.d-containers.mount
+\ No newline at end of file
+-- 
+2.7.4
+
