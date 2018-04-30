@@ -1,0 +1,14 @@
+[Unit]
+Description=Supervisor persistent apparmor profiles
+Requires=mnt-data.mount apparmor.service
+After=mnt-data.mount
+Before=apparmor.service
+
+[Mount]
+What=/mnt/data/apparmor
+Where=/etc/apparmor.d/containers
+Type=none
+Options=bind
+
+[Install]
+WantedBy=hassio-bind.target
