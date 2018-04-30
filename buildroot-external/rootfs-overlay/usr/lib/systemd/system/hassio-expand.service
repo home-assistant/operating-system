@@ -5,7 +5,7 @@ Before=mnt-data.mount
 
 [Service]
 Type=oneshot
-ExecStart=-/sbin/hassio-expand
+ExecStart=/sbin/hassio-expand
 RemainAfterExit=true
 
 [Install]
