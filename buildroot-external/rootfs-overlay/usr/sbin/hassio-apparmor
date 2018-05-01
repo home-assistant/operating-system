@@ -5,7 +5,7 @@ set -e
 CONFIG_FILE=/mnt/data/hassio.json
 
 # Read configs
-PROFILES_DIR="$(jq --raw-output '.apparmor_profiles // empty' ${CONFIG_FILE})"
+PROFILES_DIR="$(jq --raw-output '.apparmor // empty' ${CONFIG_FILE})"
 if [ -z "${PROFILES_DIR}" ]; then
     exit 0
 fi
