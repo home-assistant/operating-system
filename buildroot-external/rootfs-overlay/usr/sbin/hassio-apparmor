@@ -19,9 +19,19 @@ mkdir -p ${PROFILES_DIR}
 mkdir -p ${CACHE_DIR}
 mkdir -p ${REMOVE_DIR}
 
-# Load/Update exists
-for profile in PROFILES_DIR/*; do
+# Load/Update exists/new profiles
+for profile in ${PROFILES_DIR}/*; do
     if ! apparmor_parser -r -W -L ${CACHE_DIR} ${profile}; then
         echo "[Error]: Can't load profile ${profile}"
     fi
+done
+
+# Cleanup old profiles
+for profile in ${REMOVE_DIR}/*; do
+    if apparmor_parser -R -W -L ${CACHE_DIR} ${profile}; then
+        if rm ${profile}; then
+            continue
+        fi
+    fi
+    echo "[Error]: Can't remove profile ${profile}"
 done
