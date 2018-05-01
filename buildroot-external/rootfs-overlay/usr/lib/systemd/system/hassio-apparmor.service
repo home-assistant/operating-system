@@ -5,7 +5,8 @@ Before=docker.service hassio-supervisor.service
 RequiresMountsFor=/mnt/data
 
 [Service]
-Type=simple
+Type=oneshot
+RemainAfterExit=true
 ExecStart=/usr/sbin/hassio-apparmor
 
 [Install]
