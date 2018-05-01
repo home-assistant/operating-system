@@ -16,8 +16,9 @@ endef
 
 define APPARMOR_INSTALL_TARGET_CMDS
 	$(TARGET_MAKE_ENV) $(TARGET_CONFIGURE_OPTS) $(MAKE) -C $(@D)/parser DESTDIR=$(TARGET_DIR) USE_SYSTEM=1 PREFIX=/usr install
-	$(TARGET_MAKE_ENV) $(TARGET_CONFIGURE_OPTS) $(MAKE) -C $(@D)/parser DESTDIR=$(TARGET_DIR) USE_SYSTEM=1 PREFIX=/usr install-systemd
 	$(TARGET_MAKE_ENV) $(TARGET_CONFIGURE_OPTS) $(MAKE) -C $(@D)/profiles DESTDIR=$(TARGET_DIR) PREFIX=/usr install
+
+	rm -rf $(TARGET_DIR)/usr/lib/apparmor
 endef
 
 $(eval $(generic-package))

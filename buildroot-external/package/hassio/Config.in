@@ -1,4 +1,4 @@
-config BR2_PACKAGE_HASSIO
+menuconfig BR2_PACKAGE_HASSIO
 	bool "hassio-app"
 	help
 	  This is the Application layer they build the
@@ -23,6 +23,11 @@ config BR2_PACKAGE_HASSIO_SUPERVISOR_ARGS
 	help
 	  Extended docker arguments to run the supervisor.
 
+config BR2_PACKAGE_HASSIO_SUPERVISOR_PROFILE
+	string "AppArmor supervisor profile"
+	help
+	  AppArmor profile for supervisor.
+
 config BR2_PACKAGE_HASSIO_CLI
 	string "cli docker image"
 	help
@@ -37,5 +42,15 @@ config BR2_PACKAGE_HASSIO_CLI_ARGS
 	string "cli docker arguments"
 	help
 	  Extended docker arguments to run the cli.
+
+config BR2_PACKAGE_HASSIO_CLI_PROFILE
+	string "AppArmor cli profile"
+	help
+	  AppArmor profile for cli.
+
+config BR2_PACKAGE_HASSIO_APPARMOR_DIR
+	string "AppArmor profiles folder"
+	help
+	  AppArmor profiles folder for supervisor.
 
 endif
