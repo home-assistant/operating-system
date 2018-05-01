@@ -10,9 +10,9 @@ if [ -z "${PROFILES_DIR}" ]; then
     exit 0
 fi
 
-PROFILES_DIR=/mnt/data/${PROFILES_DIR}
-CACHE_DIR=${PROFILES_DIR}/cache
-REMOVE_DIR=${PROFILES_DIR}/remove
+PROFILES_DIR="/mnt/data/${PROFILES_DIR}"
+CACHE_DIR="${PROFILES_DIR}/cache"
+REMOVE_DIR="${PROFILES_DIR}/remove"
 
 # Check folder structure
 mkdir -p ${PROFILES_DIR}
