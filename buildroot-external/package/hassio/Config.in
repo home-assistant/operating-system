@@ -38,4 +38,14 @@ config BR2_PACKAGE_HASSIO_CLI_ARGS
 	help
 	  Extended docker arguments to run the cli.
 
+config BR2_PACKAGE_HASSIO_APPARMOR_DIR
+	string "AppArmor profiles folder"
+	help
+	  AppArmor profiles folder for supervisor.
+
+config BR2_PACKAGE_HASSIO_SUPERVISOR_PROFILE
+	string "AppArmor supervisor profile"
+	help
+	  AppArmor profile for supervisor.
+
 endif
