@@ -4,15 +4,24 @@ set -e
 # Load configs
 CONFIG_FILE=/mnt/data/hassio.json
 
+# Read configs
 PROFILES_DIR="$(jq --raw-output '.apparmor_profiles // empty' ${CONFIG_FILE})"
 if [ -z "${PROFILES_DIR}" ]; then
     exit 0
 fi
 
+PROFILES_DIR=/mnt/data/${PROFILES_DIR}
 CACHE_DIR=${PROFILES_DIR/cache}
 REMOVE_DIR=${PROFILES_DIR/remove}
 
 # Check folder structure
-mkdir -p PROFILES_DIR
-mkdir -p CACHE_DIR
-mkdir -p REMOVE_DIR
+mkdir -p ${PROFILES_DIR}
+mkdir -p ${CACHE_DIR}
+mkdir -p ${REMOVE_DIR}
+
+# Load/Update exists
+for profile in PROFILES_DIR/*; do
+    if ! apparmor_parser -r -W -L ${CACHE_DIR} ${profile}; then
+        echo "[Error]: Can't load profile ${profile}"
+    fi
+done
