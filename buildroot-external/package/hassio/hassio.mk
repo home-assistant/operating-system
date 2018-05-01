@@ -16,8 +16,9 @@ endef
 
 define HASSIO_INSTALL_TARGET_CMDS
 	docker run --rm --privileged \
-		-v $(BINARIES_DIR):/export hassio-hostapps \
+		-v $(BINARIES_DIR):/export \
 		-v $(BR2_EXTERNAL_HASSIO_PATH)/apparmor:apparmor \
+		hassio-hostapps \
 		--supervisor $(BR2_PACKAGE_HASSIO_SUPERVISOR) \
 		--supervisor-version $(BR2_PACKAGE_HASSIO_SUPERVISOR_VERSION) \
 		--supervisor-args $(BR2_PACKAGE_HASSIO_SUPERVISOR_ARGS) \
