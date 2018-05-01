@@ -19,11 +19,12 @@ define HASSIO_INSTALL_TARGET_CMDS
 		--supervisor $(BR2_PACKAGE_HASSIO_SUPERVISOR) \
 		--supervisor-version $(BR2_PACKAGE_HASSIO_SUPERVISOR_VERSION) \
 		--supervisor-args $(BR2_PACKAGE_HASSIO_SUPERVISOR_ARGS) \
+		--supervisor-profile $(BR2_PACKAGE_HASSIO_SUPERVISOR_PROFILE) \
 		--cli $(BR2_PACKAGE_HASSIO_CLI) \
 		--cli-version $(BR2_PACKAGE_HASSIO_CLI_VERSION) \
 		--cli-args $(BR2_PACKAGE_HASSIO_CLI_ARGS) \
-		--apparmor $(BR2_PACKAGE_HASSIO_APPARMOR_DIR) \
-		--apparmor-supervisor $(BR2_PACKAGE_HASSIO_SUPERVISOR_PROFILE)
+		--cli-profile $(BR2_PACKAGE_HASSIO_CLI_PROFILE) \
+		--apparmor $(BR2_PACKAGE_HASSIO_APPARMOR_DIR)
 endef
 
 $(eval $(generic-package))
