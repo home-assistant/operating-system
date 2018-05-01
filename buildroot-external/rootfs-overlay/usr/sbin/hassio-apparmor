@@ -5,6 +5,10 @@ set -e
 CONFIG_FILE=/mnt/data/hassio.json
 
 PROFILES_DIR="$(jq --raw-output '.apparmor_profiles // empty' ${CONFIG_FILE})"
+if [ -z "${PROFILES_DIR}" ]; then
+    exit 0
+fi
+
 CACHE_DIR=${PROFILES_DIR/cache}
 REMOVE_DIR=${PROFILES_DIR/remove}
 
