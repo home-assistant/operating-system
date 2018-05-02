@@ -30,6 +30,8 @@ profile hassio-supervisor flags=(attach_disconnected,mediate_deleted) {
   /data/** rw,
   /var/run/docker.sock rw,
 
+  capability net_bind_service,
+
   profile /usr/bin/socat {
     #include <abstractions/base>
 
@@ -40,6 +42,8 @@ profile hassio-supervisor flags=(attach_disconnected,mediate_deleted) {
     deny network packet,
 
     /usr/bin/socat mr,
+
+    capability net_bind_service,
   }
 
   profile /usr/bin/gdbus {
