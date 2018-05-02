@@ -10,7 +10,6 @@ profile hassio-supervisor flags=(attach_disconnected,mediate_deleted) {
   deny network raw,
   deny network packet,
 
-  /bin/busybox ix,
   /usr/bin/python{,3,3.[0-9]} ix,
   /usr/bin/socat cx,
   /usr/bin/gdbus cx,
@@ -28,9 +27,8 @@ profile hassio-supervisor flags=(attach_disconnected,mediate_deleted) {
   deny /tmp/** wl,
   deny /sys/** wl,
   deny /usr/** wl,
+  /** r,
 
-  /proc/** r,
-  /sys/** r,
   /data/** rw,
   /var/run/docker.sock rw,
 
@@ -42,8 +40,6 @@ profile hassio-supervisor flags=(attach_disconnected,mediate_deleted) {
 
     deny network raw,
     deny network packet,
-
-    deny /data/** r,
   }
 
   profile /usr/bin/gdbus {
@@ -53,7 +49,5 @@ profile hassio-supervisor flags=(attach_disconnected,mediate_deleted) {
     deny network inet,
 
     /var/run/dbus/system_bus_socket rw,
-
-    deny /data/** r,
   }
 }
