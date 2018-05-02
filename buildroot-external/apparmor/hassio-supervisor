@@ -55,6 +55,7 @@ profile hassio-supervisor flags=(attach_disconnected,mediate_deleted) {
     network,
     deny network raw,
 
+    /usr/bin/git mr,
     /usr/libexec/git-core/* ix,
     /data/addons/** rw,
   }
