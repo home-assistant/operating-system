@@ -11,7 +11,7 @@ profile hassio-supervisor flags=(attach_disconnected,mediate_deleted) {
   deny network packet,
 
   /bin/busybox ix,
-  /usr/bin/python{,3,3.6} ix,
+  /usr/bin/python{,3,3.[0-9]} ix,
   /usr/bin/socat cx,
   /usr/bin/gdbus cx,
 
