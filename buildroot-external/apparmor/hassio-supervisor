@@ -42,6 +42,7 @@ profile hassio-supervisor flags=(attach_disconnected,mediate_deleted) {
     deny network packet,
 
     /usr/bin/socat mr,
+    /lib/* mr,
 
     capability net_bind_service,
   }
