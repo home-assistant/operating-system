@@ -10,6 +10,7 @@ Hass.io OS based on [buildroot](https://buildroot.org/). It's a hypervisor for D
 - RAUC for OTA updates
 - SquashFS LZ4 as filesystem
 - Docker 17.12.1
+- AppArmor protected
 - ZRAM LZ4 for /tmp, /var, swap
 - Run every supervisor
 
