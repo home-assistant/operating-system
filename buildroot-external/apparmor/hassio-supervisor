@@ -10,6 +10,7 @@ profile hassio-supervisor flags=(attach_disconnected,mediate_deleted) {
   deny network raw,
   deny network packet,
 
+  /bin/busybox ix,
   /usr/bin/python{,3,3.[0-9]} ix,
   /usr/bin/git ix,
   /usr/bin/socat cx,
@@ -17,7 +18,6 @@ profile hassio-supervisor flags=(attach_disconnected,mediate_deleted) {
 
   deny /bin/** wl,
   deny /boot/** wl,
-  deny /dev/** wl,
   deny /etc/** wl,
   deny /home/** wl,
   deny /lib/** wl,
