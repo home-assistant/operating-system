@@ -63,11 +63,15 @@ profile hassio-supervisor flags=(attach_disconnected,mediate_deleted) {
     network,
     deny network raw,
 
+    /bin/busybox ix,
     /usr/bin/git mr,
     /usr/libexec/git-core/* ix,
     /lib/* mr,
     /** r,
 
     /data/addons/** rw,
+
+    deny /data/homeassistant rw,
+    deny /data/ssl rw,
   }
 }
