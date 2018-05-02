@@ -1,6 +1,5 @@
 #include <tunables/global>
 
-
 profile hassio-supervisor flags=(attach_disconnected,mediate_deleted) {
   #include <abstractions/base>
   #include <abstractions/python>
@@ -57,6 +56,8 @@ profile hassio-supervisor flags=(attach_disconnected,mediate_deleted) {
 
     /usr/bin/git mr,
     /usr/libexec/git-core/* ix,
+    /lib/* mr,
+
     /data/addons/** rw,
   }
 }
