@@ -38,6 +38,8 @@ profile hassio-supervisor flags=(attach_disconnected,mediate_deleted) {
 
     deny network raw,
     deny network packet,
+
+    /usr/bin/socat mr,
   }
 
   profile /usr/bin/gdbus {
