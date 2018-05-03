@@ -13,20 +13,11 @@ profile hassio-supervisor flags=(attach_disconnected,mediate_deleted) {
   /usr/bin/socat cx,
   /usr/bin/gdbus cx,
 
-  deny /bin/** wl,
-  deny /boot/** wl,
-  deny /etc/** wl,
-  deny /home/** wl,
-  deny /lib/** wl,
-  deny /mnt/** wl,
   deny /proc/** wl,
   deny /root/** wl,
-  deny /sbin/** wl,
-  deny /tmp/** wl,
   deny /sys/** wl,
-  deny /usr/** wl,
-  /** r,
 
+  /** r,
   /data/** rw,
   /var/run/docker.sock rw,
 
@@ -66,12 +57,12 @@ profile hassio-supervisor flags=(attach_disconnected,mediate_deleted) {
     /bin/busybox ix,
     /usr/bin/git mr,
     /usr/libexec/git-core/* ix,
-    /lib/* mr,
-    /** r,
-
-    /data/addons/** rw,
 
     deny /data/homeassistant rw,
     deny /data/ssl rw,
+
+    /lib/* mr,
+    /** r,
+    /data/addons/** rw,
   }
 }
