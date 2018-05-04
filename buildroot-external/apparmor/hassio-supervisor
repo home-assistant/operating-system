@@ -65,6 +65,6 @@ profile hassio-supervisor flags=(attach_disconnected,mediate_deleted) {
     /lib/* mr,
     /data/addons/** lrw,
 
-    capability dac_override
+    capability dac_override,
   }
 }
