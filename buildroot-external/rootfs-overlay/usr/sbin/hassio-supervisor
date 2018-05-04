@@ -13,6 +13,11 @@ HASSIO_DATA=/mnt/data/supervisor
 HASSIO_IMAGE_ID=$(docker inspect --format='{{.Id}}' ${SUPERVISOR})
 HASSIO_CONTAINER_ID=$(docker inspect --format='{{.Image}}' hassio_supervisor || echo "")
 
+# Fix wrong AppArmor profiles
+if ! grep ${APPARMOR} /sys/kernel/security/apparmor/profiles > /dev/null; then
+    APPARMOR=docker-default
+if
+
 runSupervisor() {
     docker rm --force hassio_supervisor || true
     docker run --name hassio_supervisor \
