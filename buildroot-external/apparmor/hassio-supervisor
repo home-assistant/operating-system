@@ -42,6 +42,8 @@ profile hassio-supervisor flags=(attach_disconnected,mediate_deleted) {
     #include <abstractions/base>
     #include <abstractions/dbus>
 
+    unix (send, receive) type=stream,
+
     /usr/bin/gdbus mr,
     /lib/* mr,
 
