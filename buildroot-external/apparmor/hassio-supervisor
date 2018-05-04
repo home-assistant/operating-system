@@ -7,6 +7,8 @@ profile hassio-supervisor flags=(attach_disconnected,mediate_deleted) {
   network,
   deny network raw,
 
+  signal (send) set=(kill,term),
+
   /bin/busybox ix,
   /usr/bin/python{,3,3.[0-9]} ix,
   /usr/bin/git cx,
@@ -31,6 +33,8 @@ profile hassio-supervisor flags=(attach_disconnected,mediate_deleted) {
 
     deny network raw,
     deny network packet,
+
+    signal (receive) set=(kill,term),
 
     /usr/bin/socat mr,
     /lib/* mr,
