@@ -61,9 +61,9 @@ profile hassio-supervisor flags=(attach_disconnected,mediate_deleted) {
     deny /data/homeassistant rw,
     deny /data/ssl rw,
 
-    /lib/* mr,
     /** r,
-    /data/addons/** rw,
+    /lib/* mr,
+    /data/addons/** lrw,
 
     capability dac_override
   }
