@@ -16,7 +16,7 @@ HASSIO_CONTAINER_ID=$(docker inspect --format='{{.Image}}' hassio_supervisor || 
 # Fix wrong AppArmor profiles
 if ! grep ${APPARMOR} /sys/kernel/security/apparmor/profiles > /dev/null; then
     APPARMOR=docker-default
-if
+fi
 
 runSupervisor() {
     docker rm --force hassio_supervisor || true
