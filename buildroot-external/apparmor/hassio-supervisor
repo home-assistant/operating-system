@@ -37,6 +37,7 @@ profile hassio-supervisor flags=(attach_disconnected,mediate_deleted) {
     signal (receive) set=(kill,term),
     capability net_bind_service,
 
+    /lib/* rm,
     /usr/bin/socat mr,
   }
 
@@ -47,6 +48,7 @@ profile hassio-supervisor flags=(attach_disconnected,mediate_deleted) {
     unix (send, receive) type=stream,
 
     /usr/bin/gdbus mr,
+    /lib/* rm,
     /{,var/}run/dbus/system_bus_socket rw,
   }
 
@@ -64,6 +66,7 @@ profile hassio-supervisor flags=(attach_disconnected,mediate_deleted) {
     deny /data/ssl rw,
 
     /** r,
+    /lib/* rm,
     /data/addons/** lrw,
 
     capability dac_override,
