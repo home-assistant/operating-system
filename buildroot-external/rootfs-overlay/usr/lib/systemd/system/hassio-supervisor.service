@@ -5,6 +5,7 @@ After=docker.service dbus.socket
 RequiresMountsFor=/mnt/data
 StartLimitIntervalSec=60
 StartLimitBurst=5
+OnFailure=rauc-bad.service
 
 [Service]
 Type=simple
