@@ -7,7 +7,7 @@ RefuseManualStop=true
 
 [Service]
 Type=oneshot
-ExecStartPre=/bin/sleep 30
+ExecStartPre=/bin/sleep 60
 ExecStart=/usr/bin/rauc status mark-good
 
 [Install]
