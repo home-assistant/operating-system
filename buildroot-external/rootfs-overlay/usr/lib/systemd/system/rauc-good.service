@@ -1,5 +1,5 @@
 [Unit]
-Description=Hassio rauc
+Description=Hassio rauc good 
 Requires=hassio-supervisor.service
 After=rauc.service hassio-supervisor.service
 RefuseManualStart=true
@@ -7,8 +7,8 @@ RefuseManualStop=true
 
 [Service]
 Type=oneshot
+ExecStartPre=/bin/sleep 30
 ExecStart=/usr/bin/rauc status mark-good
-RemainAfterExit=true
 
 [Install]
 WantedBy=multi-user.target
