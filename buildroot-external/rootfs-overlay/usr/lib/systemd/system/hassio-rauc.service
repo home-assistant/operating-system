@@ -1,0 +1,11 @@
+[Unit]
+Description=Hassio rauc
+After=rauc.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/rauc status mark-good
+RemainAfterExit=true
+
+[Install]
+WantedBy=multi-user.target
