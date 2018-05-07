@@ -8,6 +8,7 @@ RefuseManualStop=true
 [Service]
 Type=oneshot
 ExecStart=/usr/bin/rauc status mark-bad
+ExecStartPost=/usr/bin/systemctl reboot
 
 [Install]
 WantedBy=multi-user.target
