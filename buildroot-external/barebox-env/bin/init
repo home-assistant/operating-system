@@ -19,7 +19,7 @@ timeout -a 1 -v key
 
 # Run menu
 if [ "${key}" != "m" ]; then
-    menutree
+    boot
 fi
 
-boot
+menutree
