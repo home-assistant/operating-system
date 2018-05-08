@@ -3,7 +3,6 @@
 export PATH=/env/bin
 
 global linux.bootargs.base
-global linux.bootargs.console
 global linux.bootargs.dyn.root
 
 # Init board specific stuff
