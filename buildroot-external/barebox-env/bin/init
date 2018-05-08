@@ -14,5 +14,12 @@ for i in /env/init/*; do
 	. $i
 done
 
+echo -e -n "\nHit m for menu or wait for autoboot: "
+timeout -a 1 -v key
+
 # Run menu
-menutree
+if [ "${key}" != "m" ]; then
+    menutree
+fi
+
+boot
