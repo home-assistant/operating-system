@@ -1,0 +1,123 @@
+From 405590bdb7ae434798010458e810c415e4e99db4 Mon Sep 17 00:00:00 2001
+From: Steffen Trumtrar <s.trumtrar@pengutronix.de>
+Date: Fri, 30 Jun 2017 16:53:34 +0200
+Subject: barebox-state: get devicetree from file
+
+Signed-off-by: Steffen Trumtrar <s.trumtrar@pengutronix.de>
+
+diff --git a/src/barebox-state.c b/src/barebox-state.c
+index e68b8cb..3622e76 100644
+--- a/src/barebox-state.c
++++ b/src/barebox-state.c
+@@ -308,7 +308,7 @@ static int state_set_var(struct state *state, const char *var, const char *val)
+ }
+ 
+ 
+-struct state *state_get(const char *name, bool readonly, bool auth)
++struct state *state_get(const char *name, const char *filename, bool readonly, bool auth)
+ {
+ 	struct device_node *root, *node, *partition_node;
+ 	char *path;
+@@ -320,11 +320,19 @@ struct state *state_get(const char *name, bool readonly, bool auth)
+ 	off_t offset;
+ 	size_t size;
+ 
+-	root = of_read_proc_devicetree();
+-	if (IS_ERR(root)) {
+-		pr_err("Unable to read devicetree. %s\n",
+-				strerror(-PTR_ERR(root)));
+-		return ERR_CAST(root);
++	if (filename) {
++		void *fdt;
++
++		fdt = read_file(filename, NULL);
++		if (fdt)
++			root = of_unflatten_dtb(fdt);
++	} else {
++		root = of_read_proc_devicetree();
++		if (IS_ERR(root)) {
++			pr_err("Unable to read devicetree. %s\n",
++			       strerror(-PTR_ERR(root)));
++			return ERR_CAST(root);
++		}
+ 	}
+ 
+ 	of_set_root_node(root);
+@@ -387,6 +395,7 @@ static struct option long_options[] = {
+ 	{"get",		required_argument,	0,	'g' },
+ 	{"set",		required_argument,	0,	's' },
+ 	{"name",	required_argument,	0,	'n' },
++	{"input",	required_argument,	0,	'i' },
+ 	{"dump",	no_argument,		0,	'd' },
+ 	{"dump-shell",	no_argument,		0,	OPT_DUMP_SHELL },
+ 	{"verbose",	no_argument,		0,	'v' },
+@@ -402,6 +411,7 @@ static void usage(char *name)
+ "-g, --get <variable>                      get the value of a variable\n"
+ "-s, --set <variable>=<value>              set the value of a variable\n"
+ "-n, --name <name>                         specify the state to use (default=\"state\"). Multiple states are allowed.\n"
++"-i, --input <name>                        load the devicetree from a file instead of using the system devicetree.\n"
+ "-d, --dump                                dump the state\n"
+ "--dump-shell                              dump the state suitable for shell sourcing\n"
+ "-v, --verbose                             increase verbosity\n"
+@@ -439,12 +449,13 @@ int main(int argc, char *argv[])
+ 	bool readonly = true;
+ 	int pr_level = 5;
+ 	int auth = 1;
++	const char *dtb = NULL;
+ 
+ 	INIT_LIST_HEAD(&sg_list);
+ 	INIT_LIST_HEAD(&state_list.list);
+ 
+ 	while (1) {
+-		c = getopt_long(argc, argv, "hg:s:dvn:qf", long_options, &option_index);
++		c = getopt_long(argc, argv, "hg:s:i:dvn:qf", long_options, &option_index);
+ 		if (c < 0)
+ 			break;
+ 		switch (c) {
+@@ -490,6 +501,9 @@ int main(int argc, char *argv[])
+ 			++nr_states;
+ 			break;
+ 		}
++		case 'i':
++			dtb = strdup(optarg);
++			break;
+ 		case ':':
+ 		case '?':
+ 		default:
+@@ -530,7 +544,7 @@ int main(int argc, char *argv[])
+ 	}
+ 
+ 	list_for_each_entry(state, &state_list.list, list) {
+-		state->state = state_get(state->name, readonly, auth);
++		state->state = state_get(state->name, dtb, readonly, auth);
+ 		if (!IS_ERR(state->state) && !state->name)
+ 			state->name = state->state->name;
+ 		if (IS_ERR(state->state)) {
+diff --git a/src/barebox-state.h b/src/barebox-state.h
+index bd89cf4..a0f49a5 100644
+--- a/src/barebox-state.h
++++ b/src/barebox-state.h
+@@ -1,7 +1,7 @@
+ #ifndef __BAREBOX_STATE__
+ #define __BAREBOX_STATE__
+ 
+-struct state *state_get(const char *name, bool readonly, bool auth);
++struct state *state_get(const char *name, const char *file, bool readonly, bool auth);
+ char *state_get_var(struct state *state, const char *var);
+ 
+ #endif /* __BAREBOX_STATE__ */
+diff --git a/src/keystore-blob.c b/src/keystore-blob.c
+index 028dd8b..4572431 100644
+--- a/src/keystore-blob.c
++++ b/src/keystore-blob.c
+@@ -30,7 +30,7 @@ int keystore_get_secret(const char *name, const unsigned char **key, int *key_le
+ 	if (!state) {
+ 		struct state *tmp;
+ 
+-		tmp = state_get(keystore_state_name, true, false);
++		tmp = state_get(keystore_state_name, NULL, true, false);
+ 		if (IS_ERR(tmp))
+ 			return  PTR_ERR(tmp);
+ 		state = tmp;
+-- 
+cgit v0.10.2
