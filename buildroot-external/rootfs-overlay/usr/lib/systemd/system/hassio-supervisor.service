@@ -1,8 +1,11 @@
 [Unit]
 Description=Hass.io supervisor
 Requires=docker.service
-After=docker.service
+After=docker.service dbus.socket
 RequiresMountsFor=/mnt/data
+StartLimitIntervalSec=60
+StartLimitBurst=5
+OnFailure=rauc-bad.service
 
 [Service]
 Type=simple

@@ -12,8 +12,7 @@
                 compatible = "barebox,state";
                 backend = <&backend_state>;
                 backend-type = "raw";
-                backend-stridesize = <1024>;
-		backend-storage-type = "direct";
+                backend-stridesize = <4048>;
 
 		bootstate {
 			#address-cells = <1>;

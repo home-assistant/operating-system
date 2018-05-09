@@ -1,0 +1,5 @@
+#!/bin/sh
+
+echo "Enter 'exit' to get back to the menu"
+
+sh
