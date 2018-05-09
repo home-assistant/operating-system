@@ -1,5 +1,4 @@
 #!/bin/sh
 
 global bootm.image="/mnt/disk2/boot/bzImage"
-global bootm.oftree="/boot/EFI/barebox/state.dtb"
 global linux.bootargs.dyn.root="root=/dev/sda3 rootfstype=squashfs ro"
