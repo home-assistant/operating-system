@@ -18,6 +18,9 @@ function fix_rootfs() {
     rm -rf ${TARGET_DIR}/media
     rm -rf ${TARGET_DIR}/srv
     rm -rf ${TARGET_DIR}/opt
+
+    # Other stuff
+    rm -f ${TARGET_DIR}/usr/lib/os-release
 }
 
 
