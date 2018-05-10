@@ -2,7 +2,7 @@
 set -e
 
 SCRIPT_DIR=${BR2_EXTERNAL_HASSIO_PATH}/scripts
-BOARD_DIR="$(dirname $0)"
+BOARD_DIR=${2}
 BOOT_DATA=${BINARIES_DIR}/boot
 
 . ${SCRIPT_DIR}/hdd_image.sh
