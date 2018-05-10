@@ -17,7 +17,7 @@ install_hassio_cli
     echo "ID=hassio-os"
     echo "VERSION_ID=${VERSION_MAJOR}.${VERSION_BUILD}"
     echo "PRETTY_NAME=\"${HASSIO_NAME} ${VERSION_MAJOR}.${VERSION_BUILD}\""
-    echo "CPE_NAME="
+    echo "CPE_NAME=cpe:2.3:o:home_assistant:hassio:${VERSION_MAJOR}.${VERSION_BUILD}:*:${DEPLOYMENT}:*:*:*:${BOARD_ID}:*"
     echo "HOME_URL=https://hass.io/"
     echo "VARIANT=\"Hass.io ${BOARD_NAME}\""
     echo "VARIANT_ID=${BOARD_ID}"
