@@ -10,6 +10,7 @@ BOARD_DIR=${2}
 fix_rootfs
 install_hassio_cli
 
+# Write os-release
 (
     echo "NAME=Hass.io"
     echo "VERSION=\"${BOARD} ${VERSION_MAJOR}.${VERSION_BUILD}\""
@@ -21,3 +22,9 @@ install_hassio_cli
     echo "VARIANT=\"Hass.io ${BOARD_NAME}\""
     echo "VARIANT_ID=${BOARD_ID}"
 ) > /etc/os-release
+
+# Write machine-info
+(
+    echo "CHASSIS=${CHASSIS}"
+    echo "DEPLOYMENT=${DEPLOYMENT}"
+) > /etc/machine-info
