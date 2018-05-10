@@ -14,7 +14,7 @@ for i in /env/init/*; do
 done
 
 echo "- Hit m for menu or wait for autoboot -"
-timeout -a 1 -v key
+timeout -a 1 -s -v key
 
 # Run menu
 if [ "${key}" != "m" ]; then
