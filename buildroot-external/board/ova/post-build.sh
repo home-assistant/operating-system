@@ -9,5 +9,3 @@ BOARD_DIR="$(dirname $0)"
 # HassioOS tasks
 fix_rootfs
 install_hassio_cli
-
-cp ${BOARD_DIR}/rauc.conf ${TARGET_DIR}/etc/rauc/system.conf
