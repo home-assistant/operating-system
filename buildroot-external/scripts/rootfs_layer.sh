@@ -5,10 +5,23 @@ function fix_rootfs() {
     # Cleanup DHCP service, we don't need this with NetworkManager
     rm -rf ${TARGET_DIR}/etc/systemd/system/multi-user.target.wants/dhcpcd.service
     rm -rf ${TARGET_DIR}/usr/lib/systemd/system/dhcpcd.service
+
+    # Cleanup etc
+    rm -rf ${TARGET_DIR}/etc/init.d
+    rm -rf ${TARGET_DIR}/etc/modules-load.d
+    rm -rf ${TARGET_DIR}/etc/network
+    rm -rf ${TARGET_DIR}/etc/X11
+    rm -rf ${TARGET_DIR}/etc/xdg
+    rm -f ${TARGET_DIR}/etc/mtab
+
+    # Cleanup root
+    rm -rf ${TARGET_DIR}/media
+    rm -rf ${TARGET_DIR}/srv
+    rm -rf ${TARGET_DIR}/opt
 }
 
 
 function install_hassio_cli() {
 
-    sed -i "s|\(root.*\)/bin/sh|\1/usr/bin/hassio-cli|" ${TARGET_DIR}/etc/passwd
+    sed -i "s|\(root.*\)/bin/sh|\1/usr/sbin/hassio-cli|" ${TARGET_DIR}/etc/passwd
 }
