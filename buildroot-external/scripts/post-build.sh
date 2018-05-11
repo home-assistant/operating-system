@@ -13,7 +13,7 @@ install_hassio_cli
 # Write os-release
 (
     echo "NAME=Hass.io"
-    echo "VERSION=\"${BOARD} ${VERSION_MAJOR}.${VERSION_BUILD}\""
+    echo "VERSION=\"${VERSION_MAJOR}.${VERSION_BUILD} (${BOARD_NAME})\""
     echo "ID=hassio-os"
     echo "VERSION_ID=${VERSION_MAJOR}.${VERSION_BUILD}"
     echo "PRETTY_NAME=\"${HASSIO_NAME} ${VERSION_MAJOR}.${VERSION_BUILD}\""
