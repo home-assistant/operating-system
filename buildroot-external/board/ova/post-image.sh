@@ -6,6 +6,11 @@ BOARD_DIR=${2}
 BOOT_DATA=${BINARIES_DIR}/boot
 
 . ${SCRIPT_DIR}/hdd_image.sh
+. ${BR2_EXTERNAL_HASSIO_PATH}/info
+. ${BOARD_DIR}/info
+
+# Filename
+IMAGE_FILE=hassio-${BOARD_ID}_${VERSION_MAJOR}.${VERSION_BUILD}.vmdk
 
 # Init boot data
 rm -rf ${BOOT_DATA}
@@ -21,4 +26,4 @@ hassio_overlay_image ${BINARIES_DIR}
 
 hassio_hdd_image ${BINARIES_DIR} ${BINARIES_DIR}/harddisk.img 6
 
-qemu-img convert -O vmdk ${BINARIES_DIR}/harddisk.img ${BINARIES_DIR}/hassio-os.vmdk
+qemu-img convert -O vmdk ${BINARIES_DIR}/harddisk.img ${BINARIES_DIR}/${IMAGE_FILE}
