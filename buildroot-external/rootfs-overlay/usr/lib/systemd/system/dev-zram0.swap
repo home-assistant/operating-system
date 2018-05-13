@@ -1,5 +1,5 @@
 [Unit]
-Description=Hassio ZRAM swap
+Description=HassOS ZRAM swap
 Requires=zram-swap.service
 After=zram-swap.service
 
