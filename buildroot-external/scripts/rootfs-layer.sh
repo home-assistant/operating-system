@@ -23,7 +23,7 @@ function fix_rootfs() {
 }
 
 
-function install_hassio_cli() {
+function install_hassos_cli() {
 
-    sed -i "s|\(root.*\)/bin/sh|\1/usr/sbin/hassio-cli|" ${TARGET_DIR}/etc/passwd
+    sed -i "s|\(root.*\)/bin/sh|\1/usr/sbin/hassos-cli|" ${TARGET_DIR}/etc/passwd
 }
