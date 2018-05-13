@@ -13,24 +13,24 @@ SYSTEM_SIZE=256M
 OVERLAY_SIZE=64M
 DATA_SIZE=1G
 
-function hassio_boot_image() {
+function create_boot_image() {
     local boot_data="${1}/boot"
     local boot_img="${1}/boot.vfat"
 
     echo "mtools_skip_check=1" > ~/.mtoolsrc
     dd if=/dev/zero of=${boot_img} bs=${BOOT_SIZE} count=1
-    mkfs.vfat -n "hassio-boot" ${boot_img}
+    mkfs.vfat -n "hassos-boot" ${boot_img}
     mcopy -i ${boot_img} -sv ${boot_data}/* ::
 }
 
-function hassio_overlay_image() {
+function create_overlay_image() {
     local overlay_img="${1}/overlay.ext4"
 
     dd if=/dev/zero of=${overlay_img} bs=${OVERLAY_SIZE} count=1
-    mkfs.ext4 -L "hassio-overlay" -E lazy_itable_init=0,lazy_journal_init=0 ${overlay_img}
+    mkfs.ext4 -L "hassos-overlay" -E lazy_itable_init=0,lazy_journal_init=0 ${overlay_img}
 }
 
-function hassio_hdd_image() {
+function create_hdd_image() {
     local boot_img="${1}/boot.vfat"
     local rootfs_img="${1}/rootfs.squashfs"
     local overlay_img="${1}/overlay.ext4"
@@ -50,15 +50,15 @@ function hassio_hdd_image() {
 
     # Partition layout
     boot_offset="$(sgdisk -F ${hdd_img})"
-    sgdisk -n 1:0:+${BOOT_SIZE} -c 1:"hassio-boot" -t 1:"C12A7328-F81F-11D2-BA4B-00A0C93EC93B" -u 1:${BOOT_UUID} ${hdd_img}
+    sgdisk -n 1:0:+${BOOT_SIZE} -c 1:"hassos-boot" -t 1:"C12A7328-F81F-11D2-BA4B-00A0C93EC93B" -u 1:${BOOT_UUID} ${hdd_img}
     rootfs_offset="$(sgdisk -F ${hdd_img})"
-    sgdisk -n 2:0:+${SYSTEM_SIZE} -c 2:"hassio-system0" -t 2:"0FC63DAF-8483-4772-8E79-3D69D8477DE4" -u 2:${SYSTEM0_UUID} ${hdd_img}
-    sgdisk -n 3:0:+${SYSTEM_SIZE} -c 3:"hassio-system1" -t 3:"0FC63DAF-8483-4772-8E79-3D69D8477DE4" -u 3:${SYSTEM1_UUID} ${hdd_img}
-    sgdisk -n 4:0:+${BOOTSTATE_SIZE} -c 4:"hassio-bootstate" -u 4:${BOOTSTATE_UUID} ${hdd_img}
+    sgdisk -n 2:0:+${SYSTEM_SIZE} -c 2:"hassos-system0" -t 2:"0FC63DAF-8483-4772-8E79-3D69D8477DE4" -u 2:${SYSTEM0_UUID} ${hdd_img}
+    sgdisk -n 3:0:+${SYSTEM_SIZE} -c 3:"hassos-system1" -t 3:"0FC63DAF-8483-4772-8E79-3D69D8477DE4" -u 3:${SYSTEM1_UUID} ${hdd_img}
+    sgdisk -n 4:0:+${BOOTSTATE_SIZE} -c 4:"hassos-bootstate" -u 4:${BOOTSTATE_UUID} ${hdd_img}
     overlay_offset="$(sgdisk -F ${hdd_img})"
-    sgdisk -n 5:0:+${OVERLAY_SIZE} -c 5:"hassio-overlay" -t 5:"0FC63DAF-8483-4772-8E79-3D69D8477DE4" -u 5:${OVERLAY_UUID} ${hdd_img}
+    sgdisk -n 5:0:+${OVERLAY_SIZE} -c 5:"hassos-overlay" -t 5:"0FC63DAF-8483-4772-8E79-3D69D8477DE4" -u 5:${OVERLAY_UUID} ${hdd_img}
     data_offset="$(sgdisk -F ${hdd_img})"
-    sgdisk -n 6:0:+${DATA_SIZE} -c 6:"hassio-data" -t 6:"0FC63DAF-8483-4772-8E79-3D69D8477DE4" -u 6:${DATA_UUID} ${hdd_img}
+    sgdisk -n 6:0:+${DATA_SIZE} -c 6:"hassos-data" -t 6:"0FC63DAF-8483-4772-8E79-3D69D8477DE4" -u 6:${DATA_UUID} ${hdd_img}
     sgdisk -v
 
     # Write Images
