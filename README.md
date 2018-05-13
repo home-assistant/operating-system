@@ -41,10 +41,15 @@ Provide a file with the name `hassio.json` in your data partition and the follow
 ```
 
 # Building
-Running `sudo ./enter.sh` will get you into the build Docker container.   
+Running `sudo scripts/enter.sh` will get you into the build Docker container.   
 `make -C /build/buildroot BR2_EXTERNAL=/build/buildroot-external xy_defconfig`
 
-From outside the Docker container, while it is still running you can use `./getimage.sh` to get the output image.
+# Alternative
+Install doit via pip/pip3 `pip3 install doit`  
+Run `doit enter`  
+In the docker container run `doit build`  
+
+From outside the Docker container, while it is still running you can use `scripts/getimage.sh` to get the output image.
 
 ## Helpers
 

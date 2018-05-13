@@ -1,1 +1,3 @@
 buildroot/ccache
+.doit.json
+__pycache__
