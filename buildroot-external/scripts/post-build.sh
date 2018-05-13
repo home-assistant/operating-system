@@ -23,7 +23,7 @@ install_hassio_cli
     echo "HOME_URL=https://hass.io/"
     echo "VARIANT=\"Hass.io ${BOARD_NAME}\""
     echo "VARIANT_ID=${BOARD_ID}"
-) > /etc/os-release
+) > /usr/lib/os-release
 
 # Write machine-info
 (
