@@ -10,7 +10,7 @@ BOOT_DATA=${BINARIES_DIR}/boot
 . ${BOARD_DIR}/info
 
 # Filename
-IMAGE_FILE=hassio-${BOARD_ID}_${VERSION_MAJOR}.${VERSION_BUILD}.vmdk
+IMAGE_FILE=hassio-os_${BOARD_ID}-${VERSION_MAJOR}.${VERSION_BUILD}.vmdk
 
 # Init boot data
 rm -rf ${BOOT_DATA}
