@@ -10,7 +10,7 @@ BOARD_DIR=${2}
 
 # HassOS tasks
 fix_rootfs
-install_hassio_cli
+install_hassos_cli
 
 # Write os-release
 (
