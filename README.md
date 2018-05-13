@@ -38,7 +38,7 @@ Provide a file with the name `hassos.json` in your data partition and the follow
 ```
 
 # Building
-Running `sudo ./enter.sh` will get you into the build Docker container.   
+Running `sudo scripts/enter.sh` will get you into the build Docker container.   
 `make -C /build/buildroot BR2_EXTERNAL=/build/buildroot-external xy_defconfig`
 
 ## Helpers
