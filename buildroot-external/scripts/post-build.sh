@@ -1,9 +1,11 @@
 #!/bin/bash
+set -e
 
+SCRIPT_DIR=${BR2_EXTERNAL_HASSIO_PATH}/scripts
 BOARD_DIR=${2}
 
-. rootfs_layer.sh
-. ../info
+. ${SCRIPT_DIR}/rootfs_layer.sh
+. ${BR2_EXTERNAL_HASSIO_PATH}/info
 . ${BOARD_DIR}/info
 
 # Hass.io OS tasks
