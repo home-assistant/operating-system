@@ -1,0 +1,8 @@
+[Unit]
+Description=Rauc mark boot partition as good
+
+[Timer]
+OnBootSec=1min
+
+[Install]
+WantedBy=timers.target

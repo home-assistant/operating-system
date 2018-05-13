@@ -12,8 +12,7 @@
                 compatible = "barebox,state";
                 backend = <&backend_state>;
                 backend-type = "raw";
-                backend-stridesize = <1024>;
-		backend-storage-type = "direct";
+                backend-stridesize = <4048>;
 
 		bootstate {
 			#address-cells = <1>;
@@ -39,7 +38,7 @@
 				remaining_attempts@8 {
 					reg = <0x8 0x4>;
 					type = "uint32";
-					default = <3>;
+					default = <0>;
 				};
 				priority@c {
 					reg = <0xc 0x4>;

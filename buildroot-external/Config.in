@@ -1,2 +1,4 @@
 source "$BR2_EXTERNAL_HASSIO_PATH/package/mingetty/Config.in"
 source "$BR2_EXTERNAL_HASSIO_PATH/package/hassio/Config.in"
+source "$BR2_EXTERNAL_HASSIO_PATH/package/libapparmor/Config.in"
+source "$BR2_EXTERNAL_HASSIO_PATH/package/apparmor/Config.in"

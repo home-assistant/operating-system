@@ -2,19 +2,10 @@
 
 export PATH=/env/bin
 
-global autoboot_timeout
-global boot.default
 global linux.bootargs.base
-global linux.bootargs.console
-#linux.bootargs.dyn.* will be cleared at the beginning of boot
 global linux.bootargs.dyn.root
-global editcmd
 
-[ -z "${global.autoboot_timeout}" ] && global.autoboot_timeout=3
-magicvar -a global.autoboot_timeout "timeout in seconds before automatic booting"
-[ -z "${global.boot.default}" ] && global.boot.default="system0"
-[ -z "${global.editcmd}" ] && global.editcmd=sedit
-
+# Init board specific stuff
 [ -e /env/config-board ] && /env/config-board
 
 # Autostart
@@ -22,11 +13,12 @@ for i in /env/init/*; do
 	. $i
 done
 
-echo -e -n "\nHit any key to stop autoboot: "
-timeout -a $global.autoboot_timeout
-autoboot="$?"
+echo "- Hit m for menu or wait for autoboot -"
+timeout -a 1 -s -v key
 
-if [ "$autoboot" = 0 ]; then
-	boot
+# Run menu
+if [ "${key}" != "m" ]; then
+    boot
 fi
 
+menutree

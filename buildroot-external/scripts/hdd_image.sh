@@ -1,7 +1,13 @@
 #!/bin/bash
 
-BOOT_SIZE=32M
+BOOT_UUID="b3dd0952-733c-4c88-8cba-cab9b8b4377f"
 BOOTSTATE_UUID="33236519-7F32-4DFF-8002-3390B62C309D"
+SYSTEM0_UUID="8d3d53e3-6d49-4c38-8349-aff6859e82fd"
+SYSTEM1_UUID="a3ec664e-32ce-4665-95ea-7ae90ce9aa20"
+OVERLAY_UUID="f1326040-5236-40eb-b683-aaa100a9afcf"
+DATA_UUID="a52a4597-fa3a-4851-aefd-2fbe9f849079"
+
+BOOT_SIZE=32M
 BOOTSTATE_SIZE=8M
 SYSTEM_SIZE=256M
 OVERLAY_SIZE=64M
@@ -44,15 +50,15 @@ function hassio_hdd_image() {
 
     # Partition layout
     boot_offset="$(sgdisk -F ${hdd_img})"
-    sgdisk -n 1:0:+${BOOT_SIZE} -c 1:"hassio-boot" -t 1:"C12A7328-F81F-11D2-BA4B-00A0C93EC93B" ${hdd_img}
+    sgdisk -n 1:0:+${BOOT_SIZE} -c 1:"hassio-boot" -t 1:"C12A7328-F81F-11D2-BA4B-00A0C93EC93B" -u 1:${BOOT_UUID} ${hdd_img}
     rootfs_offset="$(sgdisk -F ${hdd_img})"
-    sgdisk -n 2:0:+${SYSTEM_SIZE} -c 2:"hassio-system0" -t 2:"0FC63DAF-8483-4772-8E79-3D69D8477DE4" ${hdd_img}
-    sgdisk -n 3:0:+${SYSTEM_SIZE} -c 3:"hassio-system1" -t 3:"0FC63DAF-8483-4772-8E79-3D69D8477DE4" ${hdd_img}
+    sgdisk -n 2:0:+${SYSTEM_SIZE} -c 2:"hassio-system0" -t 2:"0FC63DAF-8483-4772-8E79-3D69D8477DE4" -u 2:${SYSTEM0_UUID} ${hdd_img}
+    sgdisk -n 3:0:+${SYSTEM_SIZE} -c 3:"hassio-system1" -t 3:"0FC63DAF-8483-4772-8E79-3D69D8477DE4" -u 3:${SYSTEM1_UUID} ${hdd_img}
     sgdisk -n 4:0:+${BOOTSTATE_SIZE} -c 4:"hassio-bootstate" -u 4:${BOOTSTATE_UUID} ${hdd_img}
     overlay_offset="$(sgdisk -F ${hdd_img})"
-    sgdisk -n 5:0:+${OVERLAY_SIZE} -c 5:"hassio-overlay" -t 5:"0FC63DAF-8483-4772-8E79-3D69D8477DE4" ${hdd_img}
+    sgdisk -n 5:0:+${OVERLAY_SIZE} -c 5:"hassio-overlay" -t 5:"0FC63DAF-8483-4772-8E79-3D69D8477DE4" -u 5:${OVERLAY_UUID} ${hdd_img}
     data_offset="$(sgdisk -F ${hdd_img})"
-    sgdisk -n 6:0:+${DATA_SIZE} -c 6:"hassio-data" -t 6:"0FC63DAF-8483-4772-8E79-3D69D8477DE4" ${hdd_img}
+    sgdisk -n 6:0:+${DATA_SIZE} -c 6:"hassio-data" -t 6:"0FC63DAF-8483-4772-8E79-3D69D8477DE4" -u 6:${DATA_UUID} ${hdd_img}
     sgdisk -v
 
     # Write Images

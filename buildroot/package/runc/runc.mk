@@ -18,6 +18,7 @@ RUNC_MAKE_ENV = $(HOST_GO_TARGET_ENV) \
 	GOPATH="$(RUNC_GOPATH)" \
 	PATH=$(BR_PATH)
 
+RUNC_GOTAGS = cgo apparmor
 RUNC_GLDFLAGS = \
 	-X main.gitCommit=$(RUNC_VERSION)
 
@@ -25,8 +26,6 @@ ifeq ($(BR2_STATIC_LIBS),y)
 RUNC_GLDFLAGS += -extldflags '-static'
 RUNC_GOTAGS += static_build
 endif
-
-RUNC_GOTAGS = cgo
 
 ifeq ($(BR2_PACKAGE_LIBSECCOMP),y)
 RUNC_GOTAGS += seccomp

@@ -27,7 +27,7 @@ DOCKER_ENGINE_GLDFLAGS = \
 	-X github.com/docker/cli/cli.GitCommit=$(DOCKER_ENGINE_VERSION) \
 	-X github.com/docker/cli/cli.Version=$(DOCKER_ENGINE_VERSION)
 
-DOCKER_ENGINE_BUILD_TAGS = cgo exclude_graphdriver_zfs autogen
+DOCKER_ENGINE_BUILD_TAGS = cgo exclude_graphdriver_zfs autogen apparmor
 DOCKER_ENGINE_BUILD_TARGETS = cli:docker
 DOCKER_ENGINE_BUILD_TARGET_PARSE = \
 		export targetpkg=$$(echo $(target) | cut -d: -f1); \

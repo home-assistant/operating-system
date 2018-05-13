@@ -1,0 +1,10 @@
+[Unit]
+Description=Rauc mark bad
+Requires=rauc.service
+RefuseManualStart=true
+RefuseManualStop=true
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/rauc status mark-bad
+ExecStartPost=/usr/bin/systemctl reboot

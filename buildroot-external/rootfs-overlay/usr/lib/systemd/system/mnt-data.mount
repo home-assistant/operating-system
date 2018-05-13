@@ -1,9 +1,9 @@
 [Unit]
 Description=Hassio data partition
-Requires=hassio-expand.service
+Wants=hassio-expand.service
 DefaultDependencies=no
 After=hassio-expand.service
-Before=umount.target
+Before=umount.target systemd-tmpfiles-setup.service
 Conflicts=umount.target
 
 [Mount]
