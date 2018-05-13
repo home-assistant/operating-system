@@ -20,6 +20,9 @@ function fix_rootfs() {
 
     # Other stuff
     rm -f ${TARGET_DIR}/usr/lib/os-release
+
+    # Fix tempfs
+    sed -i "/srv/d" ${TARGET_DIR}/usr/lib/tmpfiles.d/home.conf
 }
 
 
