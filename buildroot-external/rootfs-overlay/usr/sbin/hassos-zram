@@ -61,10 +61,10 @@ zramctl "$DEVICE" -s "$SIZE" -a lz4
 
 # Swap
 if [ "$TYPE" = "swap" ]; then
-    mkswap -L "hassio-zramswap" "$DEVICE"
+    mkswap -L "hassos-zramswap" "$DEVICE"
 fi
 
 # FileSystem
 if [ "$TYPE" = "fs" ]; then
-    mkfs.ext4 -L "hassio-$MOUNT" -O ^has_journal "$DEVICE"
+    mkfs.ext4 -L "hassos-$MOUNT" -O ^has_journal "$DEVICE"
 fi
