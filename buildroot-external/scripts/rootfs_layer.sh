@@ -12,7 +12,6 @@ function fix_rootfs() {
     rm -rf ${TARGET_DIR}/etc/network
     rm -rf ${TARGET_DIR}/etc/X11
     rm -rf ${TARGET_DIR}/etc/xdg
-    rm -f ${TARGET_DIR}/etc/mtab
 
     # Cleanup root
     rm -rf ${TARGET_DIR}/media
