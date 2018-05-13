@@ -1,5 +1,5 @@
 [Unit]
-Description=HassOS rauc mark as bad
+Description=HassOS rauc bad
 Requires=rauc.service
 RefuseManualStart=true
 RefuseManualStop=true
