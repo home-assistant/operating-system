@@ -4,7 +4,7 @@ set -e
 SCRIPT_DIR=${BR2_EXTERNAL_HASSOS_PATH}/scripts
 BOARD_DIR=${2}
 
-. ${SCRIPT_DIR}/rootfs_layer.sh
+. ${SCRIPT_DIR}/rootfs-layer.sh
 . ${BR2_EXTERNAL_HASSOS_PATH}/info
 . ${BOARD_DIR}/info
 
