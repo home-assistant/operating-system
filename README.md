@@ -45,11 +45,11 @@ Running `sudo ./enter.sh` will get you into the build Docker container.
 
 ## Helpers
 
-- `make -C /build/buildroot BR2_EXTERNAL=/build/buildroot-external defconfig BR2_DEFCONFIG=/build/buildroot-external/configs/xy_defconfig`
+- `make -C /build/buildroot BR2_EXTERNAL=/build/buildroot-external xy_defconfig`
 - `make -C /build/buildroot BR2_EXTERNAL=/build/buildroot-external menuconfig`
 - `make -C /build/buildroot BR2_EXTERNAL=/build/buildroot-external linux-menuconfig`
 - `make -C /build/buildroot BR2_EXTERNAL=/build/buildroot-external barebox-menuconfig`
 
-- `make -C /build/buildroot BR2_EXTERNAL=/build/buildroot-external savedefconfig BR2_DEFCONFIG=/build/buildroot-external/configs/xy_defconfig`
+- `make -C /build/buildroot BR2_EXTERNAL=/build/buildroot-external savedefconfig`
 - `make -C /build/buildroot BR2_EXTERNAL=/build/buildroot-external linux-update-defconfig`
 - `make -C /build/buildroot BR2_EXTERNAL=/build/buildroot-external barebox-update-defconfig`
