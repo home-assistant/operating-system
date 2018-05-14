@@ -18,8 +18,11 @@ function fix_rootfs() {
     rm -rf ${TARGET_DIR}/srv
     rm -rf ${TARGET_DIR}/opt
 
-    # Fix tempfs
+    # Fix: tempfs with /srv
     sed -i "/srv/d" ${TARGET_DIR}/usr/lib/tmpfiles.d/home.conf
+
+    # Fix: Could not generate persistent MAC address
+    sed -i "s/MACAddressPolicy=persistent/MACAddressPolicy=none/g" ${TARGET_DIR}/usr/lib/systemd/network/99-default.link
 }
 
 
