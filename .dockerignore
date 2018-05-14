@@ -1,3 +1,4 @@
 buildroot
 buildroot-external
 buildroot-patches
+buildroot-cache
