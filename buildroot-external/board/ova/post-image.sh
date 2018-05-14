@@ -1,12 +1,12 @@
 #!/bin/bash
 set -e
 
-SCRIPT_DIR=${BR2_EXTERNAL_HASSIO_PATH}/scripts
+SCRIPT_DIR=${BR2_EXTERNAL_HASSOS_PATH}/scripts
 BOARD_DIR=${2}
 BOOT_DATA=${BINARIES_DIR}/boot
 
 . ${SCRIPT_DIR}/hdd-image.sh
-. ${BR2_EXTERNAL_HASSIO_PATH}/info
+. ${BR2_EXTERNAL_HASSOS_PATH}/info
 . ${BOARD_DIR}/info
 
 # Filename
