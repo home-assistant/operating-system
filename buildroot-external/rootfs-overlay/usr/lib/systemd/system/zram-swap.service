@@ -5,7 +5,7 @@ Before=dev-zram0.swap
 
 [Service]
 Type=oneshot
-ExecStart=/sbin/hassos-zram -t swap
+ExecStart=/usr/sbin/hassos-zram -t swap
 RemainAfterExit=true
 StandardOutput=null
 
