@@ -4,7 +4,7 @@ After=hassos-bind.target network.target
 
 [Service]
 Type=oneshot
-ExecStart=/sbin/hassos-config
+ExecStart=/usr/sbin/hassos-config
 
 [Install]
 WantedBy=multi-user.target
