@@ -1,13 +1,13 @@
 [Unit]
-Description=Hassio ZRAM
+Description=HassOS ZRAM swap
 DefaultDependencies=no
 Before=dev-zram0.swap
 
 [Service]
 Type=oneshot
-ExecStart=/sbin/hassio-zram -t swap
+ExecStart=/usr/sbin/hassos-zram -t swap
 RemainAfterExit=true
 StandardOutput=null
 
 [Install]
-WantedBy=hassio-zram.target
+WantedBy=hassos-zram.target

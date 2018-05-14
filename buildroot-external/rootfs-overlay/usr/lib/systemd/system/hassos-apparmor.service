@@ -1,0 +1,13 @@
+[Unit]
+Description=HassOS AppArmor
+Wants=hassos-supervisor.service
+Before=docker.service hassos-supervisor.service
+RequiresMountsFor=/mnt/data
+
+[Service]
+Type=oneshot
+RemainAfterExit=true
+ExecStart=/usr/sbin/hassos-apparmor
+
+[Install]
+WantedBy=multi-user.target

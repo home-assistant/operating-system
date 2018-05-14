@@ -1,11 +1,11 @@
 [Unit]
-Description=Hassio overlay partition
+Description=HassOS overlay partition
 DefaultDependencies=no
 Before=umount.target systemd-tmpfiles-setup.service
 Conflicts=umount.target
 
 [Mount]
-What=LABEL=hassio-overlay
+What=LABEL=hassos-overlay
 Where=/mnt/overlay
 Type=ext4
 

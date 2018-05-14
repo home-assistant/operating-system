@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 
-DEVICE_CHILD=$(findfs LABEL="hassio-data")
+DEVICE_CHILD=$(findfs LABEL="hassos-data")
 DEVICE_ROOT="/dev/$(lsblk -no pkname ${DEVICE_CHILD})"
 
 # Need resize
@@ -11,14 +11,14 @@ if [ $(sgdisk -E ${DEVICE_ROOT}) -le 2048 ]; then
 fi
 
 # Resize & Reload partition
-echo "[INFO] Update hassio-data partition"
-sgdisk -d 6 -n 6:0:0 -c 6:"hassio-data" -t 6:"0FC63DAF-8483-4772-8E79-3D69D8477DE4" ${DEVICE_ROOT}
+echo "[INFO] Update hassos-data partition"
+sgdisk -d 6 -n 6:0:0 -c 6:"hassos-data" -t 6:"0FC63DAF-8483-4772-8E79-3D69D8477DE4" -u 6:"a52a4597-fa3a-4851-aefd-2fbe9f849079" ${DEVICE_ROOT}
 sgdisk -v ${DEVICE_ROOT}
 partx -u ${DEVICE_ROOT}
 
 # Resize filesystem
-echo "[INFO] Resize hassio-data filesystem"
+echo "[INFO] Resize hassos-data filesystem"
 e2fsck -y ${DEVICE_CHILD}
 resize2fs -f ${DEVICE_CHILD}
 
-echo "[INFO] Finish hassio-data resizing"
+echo "[INFO] Finish hassos-data resizing"

@@ -2,16 +2,16 @@
 set -e
 
 # Load configs
-CONFIG_FILE=/mnt/data/hassio.json
+CONFIG_FILE=/mnt/data/hassos.json
 
 SUPERVISOR="$(jq --raw-output '.supervisor' ${CONFIG_FILE})"
 DOCKER_ARGS="$(jq --raw-output '.supervisor_args // empty' ${CONFIG_FILE})"
 APPARMOR="$(jq --raw-output '.supervisor_apparmor // "docker-default"' ${CONFIG_FILE})"
 
 # Init supervisor
-HASSIO_DATA=/mnt/data/supervisor
-HASSIO_IMAGE_ID=$(docker inspect --format='{{.Id}}' ${SUPERVISOR})
-HASSIO_CONTAINER_ID=$(docker inspect --format='{{.Image}}' hassio_supervisor || echo "")
+HASSOS_DATA=/mnt/data/supervisor
+HASSOS_IMAGE_ID=$(docker inspect --format='{{.Id}}' ${SUPERVISOR})
+HASSOS_CONTAINER_ID=$(docker inspect --format='{{.Image}}' hassos_supervisor || echo "")
 
 # Fix wrong AppArmor profiles
 if ! grep ${APPARMOR} /sys/kernel/security/apparmor/profiles > /dev/null; then
@@ -19,18 +19,18 @@ if ! grep ${APPARMOR} /sys/kernel/security/apparmor/profiles > /dev/null; then
 fi
 
 runSupervisor() {
-    docker rm --force hassio_supervisor || true
-    docker run --name hassio_supervisor \
+    docker rm --force hassos_supervisor || true
+    docker run --name hassos_supervisor \
         --security-opt apparmor="${APPARMOR}" \
         -v /var/run/docker.sock:/var/run/docker.sock \
         -v /var/run/dbus:/var/run/dbus \
-        -v ${HASSIO_DATA}:/data \
-        -e SUPERVISOR_SHARE=${HASSIO_DATA} \
-        -e SUPERVISOR_NAME=hassio_supervisor \
+        -v ${HASSOS_DATA}:/data \
+        -e SUPERVISOR_SHARE=${HASSOS_DATA} \
+        -e SUPERVISOR_NAME=hassos_supervisor \
         $DOCKER_ARGS \
         ${SUPERVISOR}
 }
 
 # Run supervisor
-mkdir -p ${HASSIO_DATA}
-([ "${HASSIO_IMAGE_ID}" = "${HASSIO_CONTAINER_ID}" ] && docker start --attach hassio_supervisor) || runSupervisor
+mkdir -p ${HASSOS_DATA}
+([ "${HASSOS_IMAGE_ID}" = "${HASSOS_CONTAINER_ID}" ] && docker start --attach hassos_supervisor) || runSupervisor

@@ -1,6 +1,4 @@
-# WORK IN PROGRESS!
-
-# Hass.io OS
+# HassOS
 Hass.io OS based on [buildroot](https://buildroot.org/). It's a hypervisor for Docker and supports various kind of IoT hardware. It is also available as virtual appliance. The whole system is optimized for embedded system and  security. You can update the system simple with OTA updates or offline updates.
 
 ## Focus
@@ -29,22 +27,21 @@ Create a USB stick with a partition named "hassio-config". This partition can in
 
 ## Supervisor/Cli
 
-Provide a file with the name `hassio.json` in your data partition and the following structure:
+Provide a file with the name `hassos.json` in your data partition and the following structure:
 
 ```json
 {
   "supervisor": "repo/image",
   "supervisor_args": "optional / custom docker arguments",
   "cli": "repo/image",
-  "cli_args": "optional / custom docker arguments"
+  "cli_args": "optional / custom docker arguments",
+  "hostname": "default hostname"
 }
 ```
 
 # Building
 Running `sudo ./enter.sh` will get you into the build Docker container.   
 `make -C /build/buildroot BR2_EXTERNAL=/build/buildroot-external xy_defconfig`
-
-From outside the Docker container, while it is still running you can use `./getimage.sh` to get the output image.
 
 ## Helpers
 

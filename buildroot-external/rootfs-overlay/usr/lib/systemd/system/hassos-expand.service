@@ -1,11 +1,11 @@
 [Unit]
-Description=Hassio data resizing
+Description=HassOS data resizing
 DefaultDependencies=no
 Before=mnt-data.mount
 
 [Service]
 Type=oneshot
-ExecStart=/sbin/hassio-expand
+ExecStart=/usr/sbin/hassos-expand
 RemainAfterExit=true
 
 [Install]

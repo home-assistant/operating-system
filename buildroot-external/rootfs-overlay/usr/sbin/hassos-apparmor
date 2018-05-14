@@ -2,7 +2,7 @@
 set -e
 
 # Load configs
-CONFIG_FILE=/mnt/data/hassio.json
+CONFIG_FILE=/mnt/data/hassos.json
 
 # Read configs
 PROFILES_DIR="$(jq --raw-output '.apparmor // empty' ${CONFIG_FILE})"

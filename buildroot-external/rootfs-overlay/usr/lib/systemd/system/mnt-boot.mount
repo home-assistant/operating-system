@@ -1,12 +1,12 @@
 [Unit]
-Description=Hassio boot partition
+Description=HassOS boot partition
 DefaultDependencies=no
 Before=umount.target
 After=local-fs.target
 Conflicts=umount.target
 
 [Mount]
-What=LABEL=hassio-boot
+What=LABEL=hassos-boot
 Where=/mnt/boot
 Type=auto
 

@@ -61,7 +61,7 @@ done
 
 # Make image
 dd if=/dev/zero of=${DATA_IMG} bs=1G count=1
-mkfs.ext4 -L "hassio-data" -E lazy_itable_init=0,lazy_journal_init=0 ${DATA_IMG}
+mkfs.ext4 -L "hassos-data" -E lazy_itable_init=0,lazy_journal_init=0 ${DATA_IMG}
 
 # Mount / init file structs
 mkdir -p /mnt/data/
@@ -91,7 +91,7 @@ docker pull "${CLI}:${CLI_VERSION}"
 docker tag "${CLI}:${CLI_VERSION}" "${CLI}:latest"
 
 # Write config
-cat > /mnt/data/hassio.json <<- EOF
+cat > /mnt/data/hassos.json <<- EOF
 {
     "supervisor": "${SUPERVISOR}",
     "supervisor_args": "${SUPERVISOR_ARGS}",

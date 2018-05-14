@@ -1,0 +1,10 @@
+[Unit]
+Description=HassOS Configuration Manager
+After=hassos-bind.target network.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/sbin/hassos-config
+
+[Install]
+WantedBy=multi-user.target
