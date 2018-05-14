@@ -30,7 +30,7 @@ def task_docker_rebuild():
         return {'actions':['echo "In docker container skipping..."'],'verbosity': 2}
     return {
         'actions': ['docker build --no-cache -t hassbuildroot .'],
-        'verbosity': 2,            
+        'verbosity': 2,
     }
 
 
@@ -42,10 +42,19 @@ def task_enter():
             'actions': ['modprobe overlayfs',
                         'docker build -t hassbuildroot .', 
                         Interactive('docker run -it --rm --privileged -v "$(pwd):/build" hassbuildroot bash')],
-            'verbosity': 2,            
+            'verbosity': 2,
         }
     return {
         'actions': ['docker build -t hassbuildroot .', 
                     Interactive('docker run -it --rm --privileged -v "$(pwd):/build" hassbuildroot bash')],
-        'verbosity': 2,            
+        'verbosity': 2,
     }
+
+
+def task_build_clean():
+    if _isdocker():
+        return {
+            'actions': ['make -C /build/buildroot BR2_EXTERNAL=/build/buildroot-external clean'],
+            'verbosity': 2,
+        }
+    return {'actions':['echo "Must run in docker"'],'verbosity': 2}
