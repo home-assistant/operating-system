@@ -5,7 +5,7 @@ Before=var.mount
 
 [Service]
 Type=oneshot
-ExecStart=/sbin/hassos-zram -t fs -m var -s 32M
+ExecStart=/usr/sbin/hassos-zram -t fs -m var -s 32M
 RemainAfterExit=true
 StandardOutput=null
 
