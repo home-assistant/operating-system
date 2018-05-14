@@ -5,7 +5,7 @@ Before=tmp.mount
 
 [Service]
 Type=oneshot
-ExecStart=/sbin/hassos-zram -t fs -m tmp -s 16M
+ExecStart=/usr/sbin/hassos-zram -t fs -m tmp -s 16M
 RemainAfterExit=true
 StandardOutput=null
 
