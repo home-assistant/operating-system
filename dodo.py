@@ -16,6 +16,7 @@ def _islinux():
 
 
 def task_build_ova():
+    """Build an HASSOS targetting an OVA file"""
     if _isdocker():
         return {
             'actions': ['make -C /build/buildroot BR2_EXTERNAL=/build/buildroot-external ova_defconfig',
@@ -26,6 +27,7 @@ def task_build_ova():
 
 
 def task_docker_rebuild():
+    """Rebuild the docker container, maybe needed at times"""
     if _isdocker():
         return {'actions':['echo "In docker container skipping..."'],'verbosity': 2}
     return {
@@ -34,7 +36,8 @@ def task_docker_rebuild():
     }
 
 
-def task_enter():
+def task_docker_enter():
+    """Enter the build docker container"""
     if _isdocker():
         return {'actions':['echo "In docker container skipping..."'],'verbosity': 2}
     if _islinux():
@@ -52,6 +55,7 @@ def task_enter():
 
 
 def task_build_clean():
+    """Do a buildroot clean"""
     if _isdocker():
         return {
             'actions': ['make -C /build/buildroot BR2_EXTERNAL=/build/buildroot-external clean'],
