@@ -15,10 +15,11 @@ def _islinux():
     return platform.system() == 'Linux'
 
 
-def task_build():
+def task_build_ova():
     if _isdocker():
         return {
-            'actions': ['make -C /build/buildroot BR2_EXTERNAL=/build/buildroot-external xy_defconfig'],
+            'actions': ['make -C /build/buildroot BR2_EXTERNAL=/build/buildroot-external ova_defconfig',
+                        'make -C /build/buildroot BR2_EXTERNAL=/build/buildroot-external'],
             'verbosity': 2, 
         } 
     return {'actions':['echo "Must run in docker"'],'verbosity': 2}
