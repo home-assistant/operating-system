@@ -5,7 +5,7 @@ Before=mnt-data.mount
 
 [Service]
 Type=oneshot
-ExecStart=/sbin/hassos-expand
+ExecStart=/usr/sbin/hassos-expand
 RemainAfterExit=true
 
 [Install]
