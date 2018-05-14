@@ -43,8 +43,6 @@ Provide a file with the name `hassos.json` in your data partition and the follow
 Running `sudo ./enter.sh` will get you into the build Docker container.   
 `make -C /build/buildroot BR2_EXTERNAL=/build/buildroot-external xy_defconfig`
 
-From outside the Docker container, while it is still running you can use `./getimage.sh` to get the output image.
-
 ## Helpers
 
 - `make -C /build/buildroot BR2_EXTERNAL=/build/buildroot-external defconfig BR2_DEFCONFIG=/build/buildroot-external/configs/xy_defconfig`
