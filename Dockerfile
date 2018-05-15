@@ -19,11 +19,11 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 #Install VirtualBox
-RUN echo "deb http://download.virtualbox.org/virtualbox/debian xenial contrib" >> /etc/apt/sources.list
-RUN wget -q https://www.virtualbox.org/download/oracle_vbox_2016.asc -O- | apt-key add -
-RUN apt-get update && apt-get install -y \
-        virtualbox-5.0 \
-    && rm -rf /var/lib/apt/lists/*
+#RUN echo "deb http://download.virtualbox.org/virtualbox/debian xenial contrib" >> /etc/apt/sources.list
+#RUN wget -q https://www.virtualbox.org/download/oracle_vbox_2016.asc -O- | apt-key add -
+#RUN apt-get update && apt-get install -y \
+#        virtualbox-5.0 \
+#    && rm -rf /var/lib/apt/lists/*
 
 RUN pip3 install doit
 
