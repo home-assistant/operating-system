@@ -25,8 +25,6 @@ Create a USB stick with a partition named "hassos-config". This partition can in
 
 # Customize
 
-## Supervisor/Cli
-
 Provide a file with the name `hassos.json` in your data partition and the following structure:
 
 ```json
