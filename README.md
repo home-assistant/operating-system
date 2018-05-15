@@ -17,11 +17,11 @@ Hass.io OS based on [buildroot](https://buildroot.org/). It's a hypervisor for D
 
 ## Configuration
 
-Create a USB stick with a partition named "hassio-config". This partition can include follow files:
+Create a USB stick with a partition named "hassos-config". This partition can include follow files:
 
 - network-* (NetworkManager keyfiles)
 - known_hosts (SSH)
-- hassio-os-*.ota (Firmware updates)
+- hassos*.ota (Firmware updates)
 
 # Customize
 
