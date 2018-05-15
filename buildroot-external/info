@@ -4,4 +4,4 @@ VERSION_BUILD=3
 HASSOS_NAME="HassOS"
 HASSOS_ID="hassos"
 
-DEPLOYMENT=development
+DEPLOYMENT="development"
