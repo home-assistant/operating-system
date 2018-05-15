@@ -30,3 +30,13 @@ install_hassos_cli
     echo "CHASSIS=${CHASSIS}"
     echo "DEPLOYMENT=${DEPLOYMENT}"
 ) > ${TARGET_DIR}/etc/machine-info
+
+# Settup rauc
+sed -i "s/%COMPATIBLE%/${HASSIO_ID}-${BOARD_ID}/g" ${TARGET_DIR}/rauc/system.conf
+
+# Settup the correct CA
+if [ "${DEPLOYMENT}" == "development"]; then
+    cp ${BR2_EXTERNAL_HASSOS_PATH}/ca/provisioning-ca.pem ${TARGET_DIR}/rauc/keyring.pem
+else
+    cp ${BR2_EXTERNAL_HASSOS_PATH}/ca/re-ca.pem ${TARGET_DIR}/rauc/keyring.pem
+fi
