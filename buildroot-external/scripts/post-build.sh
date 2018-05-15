@@ -32,7 +32,7 @@ install_hassos_cli
 ) > ${TARGET_DIR}/etc/machine-info
 
 # Settup rauc
-sed -i "s/%COMPATIBLE%/${HASSIO_ID}-${BOARD_ID}/g" ${TARGET_DIR}/etc/rauc/system.conf
+sed -i "s/%COMPATIBLE%/${HASSOS_ID}-${BOARD_ID}/g" ${TARGET_DIR}/etc/rauc/system.conf
 
 # Settup the correct CA
 if [ "${DEPLOYMENT}" == "development" ]; then
