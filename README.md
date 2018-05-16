@@ -3,7 +3,7 @@ Hass.io OS based on [buildroot](https://buildroot.org/). It's a hypervisor for D
 
 ## Focus
 
-- Linux kernel 4.15
+- Linux kernel 4.14 (LT)
 - Barebox as bootloader
 - RAUC for OTA updates
 - SquashFS LZ4 as filesystem
