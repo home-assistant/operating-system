@@ -1,5 +1,5 @@
 [Unit]
-Description=Kernel Modules-load
+Description=Kernel persistent modules-load.d
 Requires=mnt-overlay.mount
 After=mnt-overlay.mount
 Before=systemd-modules-load.service hassos-config.service
