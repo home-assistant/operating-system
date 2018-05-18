@@ -17,6 +17,9 @@ function fix_rootfs() {
     rm -rf ${TARGET_DIR}/srv
     rm -rf ${TARGET_DIR}/opt
 
+    # Cleanup miscs
+    rm -rf ${TARGET_DIR}/usr/lib/modules-load.d
+
     # Fix: tempfs with /srv
     sed -i "/srv/d" ${TARGET_DIR}/usr/lib/tmpfiles.d/home.conf
 

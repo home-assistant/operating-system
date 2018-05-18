@@ -10,20 +10,21 @@ BOOT_DATA=${BINARIES_DIR}/boot
 . ${BOARD_DIR}/info
 
 # Filename
-IMAGE_FILE=${HASSOS_ID}_${BOARD_ID}-${VERSION_MAJOR}.${VERSION_BUILD}.vmdk
+IMAGE_FILE=${HASSOS_ID}_${BOARD_ID}-${VERSION_MAJOR}.${VERSION_BUILD}.img
 
 # Init boot data
 rm -rf ${BOOT_DATA}
-mkdir -p ${BOOT_DATA}/EFI/BOOT
-mkdir -p ${BOOT_DATA}/EFI/barebox
 
-cp ${BINARIES_DIR}/barebox.bin ${BOOT_DATA}/EFI/BOOT/BOOTx64.EFI
-cp ${BOARD_DIR}/barebox-state.dtb ${BOOT_DATA}/EFI/barebox/state.dtb
+cp ${BINARIES_DIR}/barebox.bin ${BOOT_DATA}/
+cp -t ${BOOT_DATA} bcm2710-rpi-3-b.dtb bcm2710-rpi-3-b-plus.dtb bcm2710-rpi-cm3.dtb 
+cp -t ${BOOT_DATA} rpi-firmware/bootcode.bin rpi-firmware/config.txt rpi-firmware/fixup.dat rpi-firmware/start.elf
+cp -r rpi-firmware/overlays ${BOOT_DATA}/
+
+# Update Boot options
+
 
 # Create other layers
 create_boot_image ${BINARIES_DIR}
 create_overlay_image ${BINARIES_DIR}
 
-create_hdd_image ${BINARIES_DIR} ${BINARIES_DIR}/harddisk.img 6
-
-qemu-img convert -O vmdk ${BINARIES_DIR}/harddisk.img ${BINARIES_DIR}/${IMAGE_FILE}
+create_hdd_image ${BINARIES_DIR} ${BINARIES_DIR}/${IMAGE_FILE} 6
