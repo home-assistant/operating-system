@@ -1,4 +1,0 @@
-#!/bin/sh
-
-global bootm.image="/mnt/disk2/boot/bzImage"
-global linux.bootargs.dyn.root="root=PARTUUID=a3ec664e-32ce-4665-95ea-7ae90ce9aa20 rootfstype=squashfs ro"

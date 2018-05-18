@@ -8,7 +8,6 @@ function fix_rootfs() {
 
     # Cleanup etc
     rm -rf ${TARGET_DIR}/etc/init.d
-    rm -rf ${TARGET_DIR}/etc/modules-load.d
     rm -rf ${TARGET_DIR}/etc/network
     rm -rf ${TARGET_DIR}/etc/X11
     rm -rf ${TARGET_DIR}/etc/xdg
