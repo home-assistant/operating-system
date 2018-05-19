@@ -24,6 +24,6 @@ cp ${BOARD_DIR}/barebox-state.dtb ${BOOT_DATA}/EFI/barebox/state.dtb
 create_boot_image ${BINARIES_DIR}
 create_overlay_image ${BINARIES_DIR}
 
-create_hdd_image ${BINARIES_DIR} ${BINARIES_DIR}/harddisk.img 6
+create_disk_image ${BINARIES_DIR} ${BINARIES_DIR}/harddisk.img 6
 
 qemu-img convert -O vmdk ${BINARIES_DIR}/harddisk.img ${BINARIES_DIR}/${IMAGE_FILE}
