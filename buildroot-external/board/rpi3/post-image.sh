@@ -17,9 +17,15 @@ rm -rf ${BOOT_DATA}
 mkdir -p ${BOOT_DATA}
 
 cp ${BINARIES_DIR}/barebox.bin ${BOOT_DATA}/
-cp -t ${BOOT_DATA} bcm2710-rpi-3-b.dtb bcm2710-rpi-3-b-plus.dtb bcm2710-rpi-cm3.dtb 
-cp -t ${BOOT_DATA} rpi-firmware/bootcode.bin rpi-firmware/config.txt rpi-firmware/fixup.dat rpi-firmware/start.elf
-cp -r rpi-firmware/overlays ${BOOT_DATA}/
+cp -t ${BOOT_DATA} \
+    ${BINARIES_DIR}/bcm2710-rpi-3-b.dtb \
+    ${BINARIES_DIR}/bcm2710-rpi-3-b-plus.dtb \
+    ${BINARIES_DIR}/bcm2710-rpi-cm3.dtb \
+    ${BINARIES_DIR}/rpi-firmware/bootcode.bin \
+    ${BINARIES_DIR}/rpi-firmware/config.txt \
+    ${BINARIES_DIR}/rpi-firmware/fixup.dat \
+    ${BINARIES_DIR}/rpi-firmware/start.elf
+cp -r ${BINARIES_DIR}/rpi-firmware/overlays ${BOOT_DATA}/
 
 # Update Boot options
 
