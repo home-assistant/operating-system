@@ -29,3 +29,4 @@ create_boot_image ${BINARIES_DIR}
 create_overlay_image ${BINARIES_DIR}
 
 create_hdd_image ${BINARIES_DIR} ${BINARIES_DIR}/${IMAGE_FILE} 6
+bzip2 ${BINARIES_DIR}/${IMAGE_FILE}
