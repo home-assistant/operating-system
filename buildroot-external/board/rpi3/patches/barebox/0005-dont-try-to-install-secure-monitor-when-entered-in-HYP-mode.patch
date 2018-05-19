@@ -1,0 +1,25 @@
+When Barebox has been entered in HYP mode, the CPU is already switched
+to the non-secure world and it's not possible for Barebox to install
+it's own secure monitor.
+
+Signed-off-by: Lucas Stach <l.stach at pengutronix.de>
+---
+ arch/arm/cpu/sm.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/arch/arm/cpu/sm.c b/arch/arm/cpu/sm.c
+index 5808dfd92bdc..71bb394c8540 100644
+--- a/arch/arm/cpu/sm.c
++++ b/arch/arm/cpu/sm.c
+@@ -184,6 +184,9 @@ int armv7_secure_monitor_install(void)
+ 		return -EINVAL;
+ 	}
+ 
++	if (__boot_cpu_mode == HYP_MODE)
++		return 0;
++
+ 	mmuon = get_cr() & CR_M;
+ 
+ 	vbar = get_vbar();
+-- 
+2.15.1
