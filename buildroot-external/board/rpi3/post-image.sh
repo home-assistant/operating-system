@@ -14,6 +14,7 @@ IMAGE_FILE=${HASSOS_ID}_${BOARD_ID}-${VERSION_MAJOR}.${VERSION_BUILD}.img
 
 # Init boot data
 rm -rf ${BOOT_DATA}
+mkdir -p ${BOOT_DATA}
 
 cp ${BINARIES_DIR}/barebox.bin ${BOOT_DATA}/
 cp -t ${BOOT_DATA} bcm2710-rpi-3-b.dtb bcm2710-rpi-3-b-plus.dtb bcm2710-rpi-cm3.dtb 
