@@ -13,6 +13,7 @@ SYSTEM_SIZE=256M
 OVERLAY_SIZE=64M
 DATA_SIZE=1G
 
+
 function create_boot_image() {
     local boot_data="${1}/boot"
     local boot_img="${1}/boot.vfat"
@@ -23,6 +24,7 @@ function create_boot_image() {
     mcopy -i ${boot_img} -sv ${boot_data}/* ::
 }
 
+
 function create_overlay_image() {
     local overlay_img="${1}/overlay.ext4"
 
@@ -30,7 +32,8 @@ function create_overlay_image() {
     mkfs.ext4 -L "hassos-overlay" -E lazy_itable_init=0,lazy_journal_init=0 ${overlay_img}
 }
 
-function create_hdd_image() {
+
+function create_disk_image() {
     local boot_img="${1}/boot.vfat"
     local rootfs_img="${1}/rootfs.squashfs"
     local overlay_img="${1}/overlay.ext4"
@@ -68,3 +71,9 @@ function create_hdd_image() {
     dd if=${data_img} of=${hdd_img} conv=notrunc bs=512 obs=512 seek=${data_offset}
 }
 
+
+function fix_disk_image_mbr() {
+    local hdd_img=${2}
+
+    #sgdisk -h 1 ${hdd_img}
+}
