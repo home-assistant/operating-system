@@ -2,6 +2,7 @@ This adds basic support at the same feature level as the other
 supported raspberry pi boards.
 
 Signed-off-by: Lucas Stach <l.stach at pengutronix.de>
+Tested-by: Roland Hieber <r.hieber at pengutronix.de>
 ---
  arch/arm/boards/raspberry-pi/lowlevel.c | 14 ++++++++++++--
  arch/arm/configs/rpi_defconfig          |  2 ++
@@ -42,7 +43,7 @@ index 4e71e29e0c0b..5ca0d3877069 100644
 +	barebox_arm_entry(BCM2835_SDRAM_BASE, SZ_512M, fdt);
 +}
 diff --git a/arch/arm/configs/rpi_defconfig b/arch/arm/configs/rpi_defconfig
-index 6dc90c59b36d..34070a05abe7 100644
+index f3aef4290425..cd88b4ac751c 100644
 --- a/arch/arm/configs/rpi_defconfig
 +++ b/arch/arm/configs/rpi_defconfig
 @@ -1,9 +1,11 @@
