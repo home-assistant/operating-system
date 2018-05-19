@@ -10,7 +10,7 @@ BOOT_DATA=${BINARIES_DIR}/boot
 . ${BOARD_DIR}/info
 
 # Filename
-IMAGE_FILE=${HASSOS_ID}_${BOARD_ID}-${VERSION_MAJOR}.${VERSION_BUILD}.img
+IMAGE_FILE=${BINARIES_DIR}/${HASSOS_ID}_${BOARD_ID}-${VERSION_MAJOR}.${VERSION_BUILD}.img
 
 # Init boot data
 rm -rf ${BOOT_DATA}
@@ -22,19 +22,28 @@ cp -t ${BOOT_DATA} \
     ${BINARIES_DIR}/bcm2710-rpi-3-b-plus.dtb \
     ${BINARIES_DIR}/bcm2710-rpi-cm3.dtb \
     ${BINARIES_DIR}/rpi-firmware/bootcode.bin \
-    ${BINARIES_DIR}/rpi-firmware/config.txt \
     ${BINARIES_DIR}/rpi-firmware/fixup.dat \
     ${BINARIES_DIR}/rpi-firmware/start.elf
 cp -r ${BINARIES_DIR}/rpi-firmware/overlays ${BOOT_DATA}/
 
 # Update Boot options
+(
+    echo "kernel=barebox.bin"
+    echo "cmdline=\"\""
+    echo "gpu_mem=16"
+    echo "disable_splash=1"
+    echo "dtparam=i2c_arm=on"
+    echo "dtparam=spi=on"
+    echo "dtparam=audio=on"
+) > ${BOOT_DATA}/config.txt
 
 
 # Create other layers
 create_boot_image ${BINARIES_DIR}
 create_overlay_image ${BINARIES_DIR}
 
-create_disk_image ${BINARIES_DIR} ${BINARIES_DIR}/${IMAGE_FILE} 6
-fix_disk_image_mbr ${BINARIES_DIR}/${IMAGE_FILE}
+create_disk_image ${BINARIES_DIR} ${IMAGE_FILE} 6
+fix_disk_image_mbr ${IMAGE_FILE}
 
-bzip2 ${BINARIES_DIR}/${IMAGE_FILE}
+rm -rf ${IMAGE_FILE}.bz2
+bzip2 ${IMAGE_FILE}

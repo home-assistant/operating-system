@@ -73,7 +73,8 @@ function create_disk_image() {
 
 
 function fix_disk_image_mbr() {
-    local hdd_img=${2}
+    local hdd_img=${1}
 
-    #sgdisk -h 1 ${hdd_img}
+    sgdisk -t 1:"E3C9E316-0B5C-4DB8-817D-F92DF00215AE" ${hdd_img}
+    dd if=${BR2_EXTERNAL_HASSOS_PATH}/scripts/mbr.img of=${hdd_img} conv=notrunc bs=512 count=1
 }
