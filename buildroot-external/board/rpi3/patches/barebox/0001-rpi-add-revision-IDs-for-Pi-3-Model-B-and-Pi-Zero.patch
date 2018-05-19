@@ -1,0 +1,40 @@
+From: Enrico Joerns <ejo at pengutronix.de>
+
+Signed-off-by: Enrico Joerns <ejo at pengutronix.de>
+Signed-off-by: Lucas Stach <l.stach at pengutronix.de>
+Tested-by: Roland Hieber <r.hieber at pengutronix.de>
+---
+ arch/arm/boards/raspberry-pi/rpi-common.c | 2 ++
+ arch/arm/mach-bcm283x/include/mach/mbox.h | 4 ++++
+ 2 files changed, 6 insertions(+)
+
+diff --git a/arch/arm/boards/raspberry-pi/rpi-common.c b/arch/arm/boards/raspberry-pi/rpi-common.c
+index 6e375bc984de..aec8cb27ed40 100644
+--- a/arch/arm/boards/raspberry-pi/rpi-common.c
++++ b/arch/arm/boards/raspberry-pi/rpi-common.c
+@@ -174,6 +174,8 @@ const struct rpi_model rpi_models_old_scheme[] = {
+ const struct rpi_model rpi_models_new_scheme[] = {
+ 	RPI_MODEL(0, "Unknown model", NULL),
+ 	RPI_MODEL(BCM2836_BOARD_REV_2_B, "2 Model B", rpi_b_plus_init),
++	RPI_MODEL(BCM2837_BOARD_REV_3_B, "3 Model B", rpi_b_plus_init),
++	RPI_MODEL(BCM2837_BOARD_REV_ZERO, "Zero", rpi_b_plus_init),
+ };
+ 
+ static int rpi_board_rev = 0;
+diff --git a/arch/arm/mach-bcm283x/include/mach/mbox.h b/arch/arm/mach-bcm283x/include/mach/mbox.h
+index 2b5aea88ee0a..4cddf99a8429 100644
+--- a/arch/arm/mach-bcm283x/include/mach/mbox.h
++++ b/arch/arm/mach-bcm283x/include/mach/mbox.h
+@@ -129,6 +129,10 @@ struct bcm2835_mbox_tag_hdr {
+ 
+ /* RPi 2 */
+ #define BCM2836_BOARD_REV_2_B		0x4
++/* RPi 3 */
++#define BCM2837_BOARD_REV_3_B		0x8
++/* Zero */
++#define BCM2837_BOARD_REV_ZERO		0x9
+ 
+ /*
+  * 0x2..0xf from:
+-- 
+2.16.1
