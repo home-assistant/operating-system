@@ -42,7 +42,7 @@ cp -r ${BINARIES_DIR}/rpi-firmware/overlays ${BOOT_DATA}/
 create_boot_image ${BINARIES_DIR}
 create_overlay_image ${BINARIES_DIR}
 
-create_disk_image ${BINARIES_DIR} ${IMAGE_FILE} 6
+create_disk_image ${BINARIES_DIR} ${IMAGE_FILE} 2
 fix_disk_image_mbr ${IMAGE_FILE}
 
 rm -rf ${IMAGE_FILE}.bz2
