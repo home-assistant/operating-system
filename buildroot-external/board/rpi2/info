@@ -1,0 +1,3 @@
+BOARD_ID=rpi2
+BOARD_NAME="RaspberryPi 2"
+CHASSIS=embedded
