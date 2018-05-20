@@ -15,7 +15,7 @@ index 833a7fb..6466a1f 100644
 @@ -1,2 +1,2 @@
  # Locally computed
 -sha256 0451e1a843bf02df81126a1625d9a15dfdf19dcb2f9e95b0613a63e59fd31ca8 rpi-firmware-2067241bc7cdf238fdeab7f5a3c22faa57dd5617.tar.gz
-+sha256 c4051418e122984548b80bf60d41abc2ed16c2dfb12025c06168455c72a5e58c rpi-firmware-a46b1f9521229ec26a1377aab7d013df1ade2791.tar.gz
++sha256 f2b0f8ec8e73f8fa399f2c72c574ea5fe7fa57ab6151b139842a3ba783cd2140 rpi-firmware-a46b1f9521229ec26a1377aab7d013df1ade2791.tar.gz
 diff --git a/package/rpi-firmware/rpi-firmware.mk b/package/rpi-firmware/rpi-firmware.mk
 index 22eaaa2..7c95321 100644
 --- a/package/rpi-firmware/rpi-firmware.mk
