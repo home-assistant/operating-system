@@ -1,5 +1,5 @@
 BR2_arm=y
-BR2_cortex_a53=y
+BR2_cortex_a7=y
 BR2_ARM_FPU_VFPV4=y
 BR2_DL_DIR="/cache/dl"
 BR2_CCACHE=y
