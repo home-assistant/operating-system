@@ -45,5 +45,5 @@ create_overlay_image ${BINARIES_DIR}
 create_disk_image ${BINARIES_DIR} ${IMAGE_FILE} 2
 fix_disk_image_mbr ${IMAGE_FILE}
 
-rm -rf ${IMAGE_FILE}.bz2
-bzip2 ${IMAGE_FILE}
+rm -rf ${IMAGE_FILE}.gz
+gzip ${IMAGE_FILE}
