@@ -35,6 +35,7 @@ cp -r ${BINARIES_DIR}/rpi-firmware/overlays ${BOOT_DATA}/
     echo "dtparam=audio=on"
 ) > ${BOOT_DATA}/config.txt
 
+touch ${BOOT_DATA}/cmdline.txt
 
 # Create other layers
 create_boot_image ${BINARIES_DIR}
