@@ -1,0 +1,88 @@
+From af010303ac0e920ac517dc6d742b5ed703841005 Mon Sep 17 00:00:00 2001
+From: Pascal Vizeli <pvizeli@syshack.ch>
+Date: Tue, 22 May 2018 21:08:15 +0000
+Subject: [PATCH 1/1] Add HassOS bootchoiser state
+
+---
+ arch/arm/dts/bcm2836-rpi-2.dts | 68 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 68 insertions(+)
+
+diff --git a/arch/arm/dts/bcm2836-rpi-2.dts b/arch/arm/dts/bcm2836-rpi-2.dts
+index 2fa1c8bb4..d882a9f86 100644
+--- a/arch/arm/dts/bcm2836-rpi-2.dts
++++ b/arch/arm/dts/bcm2836-rpi-2.dts
+@@ -18,3 +18,71 @@
+ 	status = "disabled";
+ };
+ 
++/ {
++
++	aliases {
++		state = &state;
++	};
++
++	state: state {
++		#address-cells = <1>;
++		#size-cells = <1>;
++                magic = <0xef98423f>;
++                compatible = "barebox,state";
++                backend = <&backend_state>;
++                backend-type = "raw";
++                backend-stridesize = <4048>;
++
++		bootstate {
++			#address-cells = <1>;
++			#size-cells = <1>;
++
++			system0 {
++				#address-cells = <1>;
++				#size-cells = <1>;
++				remaining_attempts@0 {
++					reg = <0x0 0x4>;
++					type = "uint32";
++					default = <3>;
++				};
++				priority@4 {
++					reg = <0x4 0x4>;
++					type = "uint32";
++					default = <20>;
++				};
++			};
++			system1 {
++				#address-cells = <1>;
++				#size-cells = <1>;
++				remaining_attempts@8 {
++					reg = <0x8 0x4>;
++					type = "uint32";
++					default = <0>;
++				};
++				priority@c {
++					reg = <0xc 0x4>;
++					type = "uint32";
++					default = <10>;
++				};
++			};
++			last_chosen@10 {
++				reg = <0x10 0x4>;
++				type = "uint32";
++			};
++		};
++	};
++};
++
++&sdhci {
++	partitions {
++		#address-cells = <1>;
++		#size-cells = <1>;
++		compatible = "fixed-partitions";
++
++		backend_state: partition@22100000 {
++			label = "state";
++			reg = <0x22100000 0x800000>;
++		};
++	};
++};
++
+-- 
+2.17.0
+
