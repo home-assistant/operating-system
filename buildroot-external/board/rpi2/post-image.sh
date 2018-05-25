@@ -27,8 +27,6 @@ cp -r ${BINARIES_DIR}/rpi-firmware/overlays ${BOOT_DATA}/
 # Update Boot options
 (
     echo "kernel=barebox.bin"
-    echo "cmdline=\"\""
-    echo "gpu_mem=16"
     echo "disable_splash=1"
     echo "dtparam=i2c_arm=on"
     echo "dtparam=spi=on"

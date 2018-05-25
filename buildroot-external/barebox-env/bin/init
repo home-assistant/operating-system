@@ -5,9 +5,6 @@ export PATH=/env/bin
 global linux.bootargs.base
 global linux.bootargs.dyn.root
 
-# Init board specific stuff
-[ -e /env/config-board ] && /env/config-board
-
 # Autostart
 for i in /env/init/*; do
 	. $i
