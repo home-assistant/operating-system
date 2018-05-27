@@ -16,6 +16,7 @@ config BR2_PACKAGE_DOCKER_ENGINE_DAEMON
 	default y
 	depends on BR2_USE_MMU # docker-containerd
 	select BR2_PACKAGE_DOCKER_CONTAINERD # runtime dependency
+	select BR2_PACKAGE_DOCKER_PROXY # runtime dependency
 	select BR2_PACKAGE_IPTABLES # runtime dependency
 	select BR2_PACKAGE_SQLITE # runtime dependency
 	help
@@ -32,32 +33,6 @@ config BR2_PACKAGE_DOCKER_ENGINE_STATIC_CLIENT
 	  Build a static docker client.
 
 if BR2_PACKAGE_DOCKER_ENGINE_DAEMON
-
-choice
-	bool "docker-init to use"
-	default BR2_PACKAGE_DOCKER_ENGINE_INIT_TINI
-	help
-	  The docker engine uses a minimal init process as PID 1
-	  inside containers. There are several implementations
-	  of this init process.
-
-config BR2_PACKAGE_DOCKER_ENGINE_INIT_TINI
-	bool "tini"
-	select BR2_PACKAGE_TINI
-	help
-	  Use Tini as the container init process.
-
-	  https://github.com/krallin/tini
-
-config BR2_PACKAGE_DOCKER_ENGINE_INIT_DUMB_INIT
-	bool "dumb-init"
-	select BR2_PACKAGE_DUMB_INIT
-	help
-	  Use dumb-init as the container init process.
-
-	  https://github.com/Yelp/dumb-init
-
-endchoice
 
 config BR2_PACKAGE_DOCKER_ENGINE_DRIVER_BTRFS
 	bool "btrfs filesystem driver"

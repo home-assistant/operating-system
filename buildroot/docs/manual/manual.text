@@ -113,13 +113,14 @@ III. Developer guide
         17.14. Infrastructure for Waf-based packages
         17.15. Integration of Meson-based packages
         17.16. Integration of Cargo-based packages
-        17.17. Infrastructure for packages building kernel modules
-        17.18. Infrastructure for asciidoc documents
-        17.19. Infrastructure specific to the Linux kernel package
-        17.20. Hooks available in the various build steps
-        17.21. Gettext integration and interaction with packages
-        17.22. Tips and tricks
-        17.23. Conclusion
+        17.17. Infrastructure for Go packages
+        17.18. Infrastructure for packages building kernel modules
+        17.19. Infrastructure for asciidoc documents
+        17.20. Infrastructure specific to the Linux kernel package
+        17.21. Hooks available in the various build steps
+        17.22. Gettext integration and interaction with packages
+        17.23. Tips and tricks
+        17.24. Conclusion
 
     18. Patching a package
 
@@ -160,8 +161,8 @@ List of Examples
 
 ---------------------------------------------------------------------
 
-Buildroot 2018.02 manual generated on 2018-03-04 21:31:09 UTC from
-git revision 8a94ff12d2
+Buildroot 2018.05-rc2 manual generated on 2018-05-22 21:28:17 UTC
+from git revision c11ed3a4d9
 
 The Buildroot manual is written by the Buildroot developers. It is
 licensed under the GNU General Public License, version 2. Refer to
@@ -1398,11 +1399,11 @@ are:
     the graph.
   * --transitive, --no-transitive, to draw (or not) the transitive
     dependencies. The default is to not draw transitive dependencies.
-  * --colours R,T,H, the comma-separated list of colours to draw the
+  * --colors R,T,H, the comma-separated list of colors to draw the
     root package (R), the target packages (T) and the host packages
     (H). Defaults to: lightblue,grey,gainsboro
 
-BR2_GRAPH_DEPS_OPTS='-d 3 --no-transitive --colours=red,green,blue' make graph-depends
+BR2_GRAPH_DEPS_OPTS='-d 3 --no-transitive --colors=red,green,blue' make graph-depends
 
 8.9. Graphing the build duration
 
@@ -1804,6 +1805,20 @@ make busybox-rebuild all
 
 the root filesystem image in output/images contains the updated
 BusyBox.
+
+Source trees for big projects often contain hundreds or thousands of
+files which are not needed for building, but will slow down the
+process of copying the sources with rsync. Optionally, it is possible
+define <pkg>_OVERRIDE_SRCDIR_RSYNC_EXCLUSIONS to skip syncing certain
+files from the source tree. For example, when working on the
+webkitgtk package, the following will exclude the tests and in-tree
+builds from a local WebKit source tree:
+
+WEBKITGTK_OVERRIDE_SRCDIR = /home/bob/WebKit
+WEBKITGTK_OVERRIDE_SRCDIR_RSYNC_EXCLUSIONS = \
+        --exclude JSTests --exclude ManualTests --exclude PerformanceTests \
+        --exclude WebDriverTests --exclude WebKitBuild --exclude WebKitLibraries \
+        --exclude WebKit.xcworkspace --exclude Websites --exclude Examples
 
 Chapter 9. Project-specific customization
 
@@ -3135,13 +3150,14 @@ Table of Contents
     17.14. Infrastructure for Waf-based packages
     17.15. Integration of Meson-based packages
     17.16. Integration of Cargo-based packages
-    17.17. Infrastructure for packages building kernel modules
-    17.18. Infrastructure for asciidoc documents
-    17.19. Infrastructure specific to the Linux kernel package
-    17.20. Hooks available in the various build steps
-    17.21. Gettext integration and interaction with packages
-    17.22. Tips and tricks
-    17.23. Conclusion
+    17.17. Infrastructure for Go packages
+    17.18. Infrastructure for packages building kernel modules
+    17.19. Infrastructure for asciidoc documents
+    17.20. Infrastructure specific to the Linux kernel package
+    17.21. Hooks available in the various build steps
+    17.22. Gettext integration and interaction with packages
+    17.23. Tips and tricks
+    17.24. Conclusion
 
 18. Patching a package
 
@@ -3390,8 +3406,10 @@ applications) can be integrated into Buildroot. It also shows how
 existing packages are integrated, which is needed for fixing issues
 or tuning their configuration.
 
-When you add a new package, be sure to test it in various conditions;
-see Section 17.22.2, “How to test your package”
+When you add a new package, be sure to test it in various conditions
+(see Section 17.23.3, “How to test your package”) and also check it
+for coding style (see Section 17.23.2, “How to check the coding
+style”).
 
 17.1. Package directory
 
@@ -3662,14 +3680,13 @@ the text to use in the comment.
 
       + Dependency symbol: BR2_TOOLCHAIN_HEADERS_AT_LEAST_X_Y,
         (replace X_Y with the proper version, see toolchain/
-        toolchain-common.in)
+        Config.in)
       + Comment string: headers >= X.Y and/or headers <= X.Y (replace
         X.Y with the proper version)
   * GCC version
 
       + Dependency symbol: BR2_TOOLCHAIN_GCC_AT_LEAST_X_Y, (replace
-        X_Y with the proper version, see toolchain/
-        toolchain-common.in)
+        X_Y with the proper version, see toolchain/Config.in)
       + Comment string: gcc >= X.Y and/or gcc <= X.Y (replace X.Y
         with the proper version)
   * Host GCC version
@@ -4076,6 +4093,8 @@ packages, if they depend on libfoo or host-libfoo.
 
 The call to the generic-package and/or host-generic-package macro 
 must be at the end of the .mk file, after all variable definitions.
+The call to host-generic-package must be after the call to
+generic-package, if any.
 
 For the target package, the generic-package uses the variables
 defined by the .mk file and prefixed by the uppercased package name:
@@ -4092,10 +4111,14 @@ information is (assuming the package name is libfoo) :
   * LIBFOO_VERSION, mandatory, must contain the version of the
     package. Note that if HOST_LIBFOO_VERSION doesn’t exist, it is
     assumed to be the same as LIBFOO_VERSION. It can also be a
-    revision number, branch or tag for packages that are fetched
-    directly from their revision control system. Examples:
-    LIBFOO_VERSION = 0.1.2 LIBFOO_VERSION =
-    cb9d6aa9429e838f0e54faa3d455bcbab5eef057 LIBFOO_VERSION = stable
+    revision number or a tag for packages that are fetched directly
+    from their version control system. Do not use a branch name as
+    version; it does not work. Examples:
+
+      + a version for a release tarball: LIBFOO_VERSION = 0.1.2
+      + a sha1 for a git tree: LIBFOO_VERSION =
+        cb9d6aa9429e838f0e54faa3d455bcbab5eef057
+      + a tag for a git tree LIBFOO_VERSION = v0.1.2
   * LIBFOO_SOURCE may contain the name of the tarball of the package,
     which Buildroot will use to download the tarball from
     LIBFOO_SITE. If HOST_LIBFOO_SOURCE is not specified, it defaults
@@ -4123,7 +4146,7 @@ information is (assuming the package name is libfoo) :
     Mercurial, and Bazaar are supported URL types for retrieving
     packages directly from source code management systems. There is a
     helper function to make it easier to download source tarballs
-    from GitHub (refer to Section 17.22.3, “How to add a package from
+    from GitHub (refer to Section 17.23.4, “How to add a package from
     GitHub” for details). A filesystem path may be used to specify
     either a tarball or a directory containing the package source
     code. See LIBFOO_SITE_METHOD below for more details on how
@@ -4148,7 +4171,7 @@ information is (assuming the package name is libfoo) :
     file to be downloaded is located at LIBFOO_SITE. Buildroot will
     not do anything with those additional files, except download
     them: it will be up to the package recipe to use them from $
-    (DL_DIR).
+    (LIBFOO_DL_DIR).
   * LIBFOO_SITE_METHOD determines the method used to fetch or copy
     the package source code. In many cases, Buildroot guesses the
     method from the contents of LIBFOO_SITE and setting
@@ -4200,7 +4223,7 @@ information is (assuming the package name is libfoo) :
         source directory into the package’s build directory. Note
         that for local packages, no patches are applied. If you need
         to still patch the source code, use LIBFOO_POST_RSYNC_HOOKS,
-        see Section 17.20.1, “Using the POST_RSYNC hook”.
+        see Section 17.21.1, “Using the POST_RSYNC hook”.
   * LIBFOO_GIT_SUBMODULES can be set to YES to create an archive with
     the git submodules in the repository. This is only available for
     packages downloaded with git (i.e. when LIBFOO_SITE_METHOD=git).
@@ -4224,6 +4247,13 @@ information is (assuming the package name is libfoo) :
     installed before the configuration of the current package starts.
     In a similar way, HOST_LIBFOO_DEPENDENCIES lists the dependencies
     for the current host package.
+  * LIBFOO_EXTRACT_DEPENDENCIES lists the dependencies (in terms of
+    package name) that are required for the current target package to
+    be extracted. These dependencies are guaranteed to be compiled
+    and installed before the extract step of the current package
+    starts. This is only used internally by the package
+    infrastructure, and should typically not be used directly by
+    packages.
   * LIBFOO_PATCH_DEPENDENCIES lists the dependencies (in terms of
     package name) that are required for the current package to be
     patched. These dependencies are guaranteed to be extracted and
@@ -4324,6 +4354,13 @@ information is (assuming the package name is libfoo) :
     The default stack size for the FLAT binary format is only 4k
     bytes. If the application consumes more stack, append the
     required number here.
+  * LIBFOO_BIN_ARCH_EXCLUDE is a space-separated list of paths
+    (relative to the target directory) to ignore when checking that
+    the package installs correctly cross-compiled binaries. You
+    seldom need to set this variable, unless the package installs
+    binary blobs outside the default locations, /lib/firmware, /usr/
+    lib/firmware, /lib/modules, /usr/lib/modules, and /usr/share,
+    which are automatically excluded.
 
 The recommended way to define these variables is to use the following
 syntax:
@@ -4399,15 +4436,15 @@ In the action definitions, you can use the following variables:
     runtime configuration file, a splashscreen image…
   * $(@D), which contains the directory in which the package source
     code has been uncompressed.
-  * $(DL_DIR) contains the path to the directory where all the
-    downloads made by Buildroot are stored.
+  * $(LIBFOO_DL_DIR) contains the path to the directory where all the
+    downloads made by Buildroot for libfoo are stored in.
   * $(TARGET_CC), $(TARGET_LD), etc. to get the target
     cross-compilation utilities
   * $(TARGET_CROSS) to get the cross-compilation toolchain prefix
   * Of course the $(HOST_DIR), $(STAGING_DIR) and $(TARGET_DIR)
     variables to install the packages properly.
 
-Finally, you can also use hooks. See Section 17.20, “Hooks available
+Finally, you can also use hooks. See Section 17.21, “Hooks available
 in the various build steps” for more information.
 
 17.6. Infrastructure for autotools-based packages
@@ -4552,7 +4589,7 @@ well for most autotools-based packages. However, when required, it is
 still possible to customize what is done in any particular step:
 
   * By adding a post-operation hook (after extract, patch, configure,
-    build or install). See Section 17.20, “Hooks available in the
+    build or install). See Section 17.21, “Hooks available in the
     various build steps” for details.
   * By overriding one of the steps. For example, even if the
     autotools infrastructure is used, if the package .mk file defines
@@ -4691,7 +4728,7 @@ well for most CMake-based packages. However, when required, it is
 still possible to customize what is done in any particular step:
 
   * By adding a post-operation hook (after extract, patch, configure,
-    build or install). See Section 17.20, “Hooks available in the
+    build or install). See Section 17.21, “Hooks available in the
     various build steps” for details.
   * By overriding one of the steps. For example, even if the CMake
     infrastructure is used, if the package .mk file defines its own
@@ -4844,7 +4881,7 @@ well for most Python-based packages. However, when required, it is
 still possible to customize what is done in any particular step:
 
   * By adding a post-operation hook (after extract, patch, configure,
-    build or install). See Section 17.20, “Hooks available in the
+    build or install). See Section 17.21, “Hooks available in the
     various build steps” for details.
   * By overriding one of the steps. For example, even if the Python
     infrastructure is used, if the package .mk file defines its own
@@ -5419,7 +5456,7 @@ well for most rebar-based packages. However, when required, it is
 still possible to customize what is done in any particular step:
 
   * By adding a post-operation hook (after extract, patch, configure,
-    build or install). See Section 17.20, “Hooks available in the
+    build or install). See Section 17.21, “Hooks available in the
     various build steps” for details.
   * By overriding one of the steps. For example, even if the rebar
     infrastructure is used, if the package .mk file defines its own
@@ -5521,7 +5558,7 @@ for such a package. Let’s start with an example:
 07: FOO_VERSION = 1.0
 08: FOO_SOURCE = foo-$(FOO_VERSION).tar.gz
 09: FOO_SITE = http://www.foosoftware.org/download
-10: FOO_LICENSE = GPLv3+
+10: FOO_LICENSE = GPL-3.0+
 11: FOO_LICENSE_FILES = COPYING
 12: FOO_INSTALL_STAGING = YES
 13:
@@ -5532,7 +5569,7 @@ for such a package. Let’s start with an example:
 18:     --buildtype $(if $(BR2_ENABLE_DEBUG),debug,release) \
 19:     --cross-file $(HOST_DIR)/etc/meson/cross-compilation.conf
 20:
-21: FOO_NINJA_OPTS = $(if $(VERBOSE),-v)
+21: FOO_NINJA_OPTS = $(if $(VERBOSE),-v) -j$(PARALLEL_JOBS)
 22:
 23: ifeq ($(BR2_PACKAGE_BAZ),y)
 24: FOO_CONF_OPTS += -Dbaz
@@ -5629,7 +5666,7 @@ for such a package. Let’s start with an example:
 07: FOO_VERSION = 1.0
 08: FOO_SOURCE = foo-$(FOO_VERSION).tar.gz
 09: FOO_SITE = http://www.foosoftware.org/download
-10: FOO_LICENSE = GPLv3+
+10: FOO_LICENSE = GPL-3.0+
 11: FOO_LICENSE_FILES = COPYING
 12:
 13: FOO_DEPENDENCIES = host-cargo
@@ -5695,7 +5732,113 @@ an offline build, as Cargo will fail to fetch the dependencies. In
 that case, it is advised to generate a tarball of the dependencies
 using the cargo vendor and add it to FOO_EXTRA_DOWNLOADS.
 
-17.17. Infrastructure for packages building kernel modules
+17.17. Infrastructure for Go packages
+
+This infrastructure applies to Go packages that use the standard
+build system and use bundled dependencies.
+
+17.17.1. golang-package tutorial
+
+First, let’s see how to write a .mk file for a go package, with an
+example :
+
+01: ################################################################################
+02: #
+03: # foo
+04: #
+05: ################################################################################
+06:
+07: FOO_VERSION = 1.0
+08: FOO_SITE = $(call github,bar,foo,$(FOO_VERSION))
+09: FOO_LICENSE = BSD-3-Clause
+10: FOO_LICENSE_FILES = LICENSE
+11:
+12: $(eval $(golang-package))
+
+On line 7, we declare the version of the package.
+
+On line 8, we declare the upstream location of the package, here
+fetched from Github, since a large number of Go packages are hosted
+on Github.
+
+On line 9 and 10, we give licensing details about the package.
+
+Finally, on line 12, we invoke the golang-package macro that
+generates all the Makefile rules that actually allow the package to
+be built.
+
+17.17.2. golang-package reference
+
+In their Config.in file, packages using the golang-package
+infrastructure should depend on BR2_PACKAGE_HOST_GO_ARCH_SUPPORTS and
+BR2_PACKAGE_HOST_GO_CGO_LINKING_SUPPORTS because Buildroot will
+automatically add a dependency on host-go to such packages.
+
+The main macro of the Go package infrastructure is golang-package. It
+is similar to the generic-package macro. Only target packages are
+supported with golang-package.
+
+Just like the generic infrastructure, the Go infrastructure works by
+defining a number of variables before calling the golang-package.
+
+All the package metadata information variables that exist in the
+generic package infrastructure Section 17.5.2, “generic-package
+reference” also exist in the Go infrastructure: FOO_VERSION,
+FOO_SOURCE, FOO_PATCH, FOO_SITE, FOO_SUBDIR, FOO_DEPENDENCIES,
+FOO_LICENSE, FOO_LICENSE_FILES, FOO_INSTALL_STAGING, etc.
+
+Note that it is not necessary to add host-go in the FOO_DEPENDENCIES
+variable of a package, since this basic dependency is automatically
+added as needed by the Go package infrastructure.
+
+A few additional variables, specific to the Go infrastructure, can
+optionally be defined, depending on the package’s needs. Many of them
+are only useful in very specific cases, typical packages will
+therefore only use a few of them, or none.
+
+  * If your package need a custom GOPATH to be compiled in, you can
+    use the FOO_WORKSPACE variable. The GOPATH being used will be
+    <package-srcdir>/<FOO_WORKSPACE>. If FOO_WORKSPACE is not
+    specified, it defaults to _gopath.
+  * FOO_SRC_SUBDIR is the sub-directory where your source will be
+    compiled relatively to the GOPATH. An example value is github.com
+    /bar/foo. If FOO_SRC_SUBDIR is not specified, it defaults to a
+    value infered from the FOO_SITE variable.
+  * FOO_LDFLAGS and FOO_TAGS can be used to pass respectively the
+    LDFLAGS or the TAGS to the go build command.
+  * FOO_BUILD_TARGETS can be used to pass the list of targets that
+    should be built. If FOO_BUILD_TARGETS is not specified, it
+    defaults to .. We then have two cases:
+
+      + FOO_BUILD_TARGETS is .. In this case, we assume only one
+        binary will be produced, and that by default we name it after
+        the package name. If that is not appropriate, the name of the
+        produced binary can be overridden using FOO_BIN_NAME.
+      + FOO_BUILD_TARGETS is not .. In this case, we iterate over the
+        values to build each target, and for each produced a binary
+        that is the non-directory component of the target. For
+        example if FOO_BUILD_TARGETS = cmd/docker cmd/dockerd the
+        binaries produced are docker and dockerd.
+  * FOO_INSTALL_BINS can be used to pass the list of binaries that
+    should be installed in /usr/bin on the target. If
+    FOO_INSTALL_BINS is not specified, it defaults to the lower-case
+    name of package.
+
+With the Go infrastructure, all the steps required to build and
+install the packages are already defined, and they generally work
+well for most Go-based packages. However, when required, it is still
+possible to customize what is done in any particular step:
+
+  * By adding a post-operation hook (after extract, patch, configure,
+    build or install). See Section 17.21, “Hooks available in the
+    various build steps” for details.
+  * By overriding one of the steps. For example, even if the Go
+    infrastructure is used, if the package .mk file defines its own
+    FOO_BUILD_CMDS variable, it will be used instead of the default
+    Go one. However, using this method should be restricted to very
+    specific cases. Do not use it in the general case.
+
+17.18. Infrastructure for packages building kernel modules
 
 Buildroot offers a helper infrastructure to make it easy to write
 packages that build and install Linux kernel modules. Some packages
@@ -5703,7 +5846,7 @@ only contain a kernel module, other packages contain programs and
 libraries in addition to kernel modules. Buildroot’s helper
 infrastructure supports either case.
 
-17.17.1. kernel-module tutorial
+17.18.1. kernel-module tutorial
 
 Let’s start with an example on how to prepare a simple package that
 only builds a kernel module, and no other component:
@@ -5779,7 +5922,7 @@ libbar is enabled, the kernel module located in sub-directory driver/
 bar, and defines the variable KVERSION to be passed to the Linux
 buildsystem when building the module(s).
 
-17.17.2. kernel-module reference
+17.18.2. kernel-module reference
 
 The main macro for the kernel module infrastructure is kernel-module.
 Unlike other package infrastructures, it is not stand-alone, and
@@ -5827,7 +5970,7 @@ You may also reference (but you may not set!) those variables:
   * KERNEL_ARCH contains the name of the current architecture, like
     arm, mips…
 
-17.18. Infrastructure for asciidoc documents
+17.19. Infrastructure for asciidoc documents
 
 The Buildroot manual, which you are currently reading, is entirely
 written using the AsciiDoc [http://asciidoc.org/] mark-up syntax. The
@@ -5849,7 +5992,7 @@ Buildroot”. This allows documentation for a br2-external tree to
 match the Buildroot documentation, as it will be rendered to the same
 formats and use the same layout and theme.
 
-17.18.1. asciidoc-document tutorial
+17.19.1. asciidoc-document tutorial
 
 Whereas package infrastructures are suffixed with -package, the
 document infrastructures are suffixed with -document. So, the
@@ -5876,7 +6019,7 @@ structure.
 On line 8, we call the asciidoc-document function, which generates
 all the Makefile code necessary to render the document.
 
-17.18.2. asciidoc-document reference
+17.19.2. asciidoc-document reference
 
 The list of variables that can be set in a .mk file to give metadata
 information is (assuming the document name is foo) :
@@ -5891,7 +6034,7 @@ information is (assuming the document name is foo) :
     If a hook of your document needs to access the Kconfig structure,
     you may add prepare-kconfig to the list of dependencies.
 
-There are also additional hooks (see Section 17.20, “Hooks available
+There are also additional hooks (see Section 17.21, “Hooks available
 in the various build steps” for general information on hooks), that a
 document may set to define extra actions to be done at various steps:
 
@@ -5944,13 +6087,13 @@ Here is a complete example that uses all variables and all hooks:
 30:
 31: $(eval $(call asciidoc-document))
 
-17.19. Infrastructure specific to the Linux kernel package
+17.20. Infrastructure specific to the Linux kernel package
 
 The Linux kernel package can use some specific infrastructures based
 on package hooks for building Linux kernel tools or/and building
 Linux kernel extensions.
 
-17.19.1. linux-kernel-tools
+17.20.1. linux-kernel-tools
 
 Buildroot offers a helper infrastructure to build some userspace
 tools for the target available within the Linux kernel sources. Since
@@ -6027,7 +6170,7 @@ Note. One must not call $(eval $(generic-package)) or any other
 package infrastructure! Linux tools are not packages by themselves,
 they are part of the linux-tools package.
 
-17.19.2. linux-kernel-extensions
+17.20.2. linux-kernel-extensions
 
 Some packages provide new features that require the Linux kernel tree
 to be modified. This can be in the form of patches to be applied on
@@ -6082,10 +6225,10 @@ modify the Linux kernel tree; this is specific to the linux extension
 and can use the variables defined by the foo package, like: $
 (FOO_DIR) or $(FOO_VERSION)… as well as all the Linux variables,
 like: $(LINUX_VERSION) or $(LINUX_VERSION_PROBED), $(KERNEL_ARCH)…
-See the definition of those kernel variables Section 17.17.2,
+See the definition of those kernel variables Section 17.18.2,
 “kernel-module reference”.
 
-17.20. Hooks available in the various build steps
+17.21. Hooks available in the various build steps
 
 The generic infrastructure (and as a result also the derived
 autotools and cmake infrastructures) allow packages to specify hooks.
@@ -6130,7 +6273,7 @@ endef
 
 LIBFOO_POST_PATCH_HOOKS += LIBFOO_POST_PATCH_FIXUP
 
-17.20.1. Using the POST_RSYNC hook
+17.21.1. Using the POST_RSYNC hook
 
 The POST_RSYNC hook is run only for packages that use a local source,
 either through the local site method or the OVERRIDE_SRCDIR
@@ -6150,14 +6293,14 @@ among others, use the following variables:
   * $(SRCDIR): the path to the overridden source directory
   * $(@D): the path to the build directory
 
-17.20.2. Target-finalize hook
+17.21.2. Target-finalize hook
 
 Packages may also register hooks in LIBFOO_TARGET_FINALIZE_HOOKS.
 These hooks are run after all packages are built, but before the
 filesystem images are generated. They are seldom used, and your
 package probably do not need them.
 
-17.21. Gettext integration and interaction with packages
+17.22. Gettext integration and interaction with packages
 
 Many packages that support internationalization use the gettext
 library. Dependencies for this library are fairly complicated and
@@ -6214,9 +6357,9 @@ package should:
   * not add any gettext dependency in the DEPENDENCIES variable of
     their .mk file.
 
-17.22. Tips and tricks
+17.23. Tips and tricks
 
-17.22.1. Package name, config entry name and makefile variable
+17.23.1. Package name, config entry name and makefile variable
 relationship
 
 In Buildroot, there is some relationship between:
@@ -6240,7 +6383,33 @@ the following rules:
     . and - characters substituted with _ (e.g.:
     FOO_BAR_BOO_VERSION).
 
-17.22.2. How to test your package
+17.23.2. How to check the coding style
+
+Buildroot provides a script in utils/check-package that checks new or
+changed files for coding style. It is not a complete language
+validator, but it catches many common mistakes. It is meant to run in
+the actual files you created or modified, before creating the patch
+for submission.
+
+This script can be used for packages, filesystem makefiles, Config.in
+files, etc. It does not check the files defining the package
+infrastructures and some other files containing similar common code.
+
+To use it, run the check-package script, by telling which files you
+created or changed:
+
+$ ./utils/check-package package/new-package/*
+
+If you have the utils directory in your path you can also run:
+
+$ cd package/new-package/
+$ check-package *
+
+The tool can also be used for packages in a br2-external:
+
+$ check-package -b /path/to/br2-ext-tree/package/my-package/*
+
+17.23.3. How to test your package
 
 Once you have added your new package, it is important that you test
 it under various conditions: does it build for all architectures?
@@ -6278,10 +6447,15 @@ use and what package to test:
 
 $ ./utils/test-pkg -c libcurl.config -p libcurl
 
-This will try to build your package against all the toolchains used
-by the autobuilders (except for the internal toolchains, because it
-takes too long to do so). The output lists all toolchains and the
-corresponding result (excerpt, results are fake):
+By default, test-pkg will build your package against a subset of the
+toolchains used by the autobuilders, which has been selected by the
+Buildroot developers as being the most useful and representative
+subset. If you want to test all toolchains, pass the -a option. Note
+that in any case, internal toolchains are excluded as they take too
+long to build.
+
+The output lists all toolchains that are tested and the corresponding
+result (excerpt, results are fake):
 
 $ ./utils/test-pkg -c libcurl.config -p libcurl
                 armv5-ctng-linux-gnueabi [ 1/11]: OK
@@ -6326,7 +6500,7 @@ help by running:
 
 $ ./utils/test-pkg -h
 
-17.22.3. How to add a package from GitHub
+17.23.4. How to add a package from GitHub
 
 Packages on GitHub often don’t have a download area with release
 tarballs. However, it is possible to download tarballs directly from
@@ -6366,7 +6540,7 @@ tag:
     then it’s an automatically generated tarball and you should use
     the github helper function.
 
-17.23. Conclusion
+17.24. Conclusion
 
 As you can see, adding a software package to Buildroot is simply a
 matter of writing a Makefile using an existing example and modifying
@@ -6830,6 +7004,11 @@ further changes in the packages you added or modified, please add
 yourself to the DEVELOPERS file. This should be done in the same
 patch creating or modifying the package. See the DEVELOPERS file
 Chapter 22, DEVELOPERS file and get-developers for more information.
+
+Buildroot provides a handy tool to check for common coding style
+mistakes on files you created or modified, called check-package (see
+Section 17.23.2, “How to check the coding style” for more
+information).
 
 21.5.2. Preparing a patch series
 

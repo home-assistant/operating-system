@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-APACHE_VERSION = 2.4.29
+APACHE_VERSION = 2.4.33
 APACHE_SOURCE = httpd-$(APACHE_VERSION).tar.bz2
 APACHE_SITE = http://archive.apache.org/dist/httpd
 APACHE_LICENSE = Apache-2.0
@@ -40,7 +40,6 @@ APACHE_CONF_OPTS = \
 	--without-suexec-bin \
 	--enable-mods-shared=all \
 	--with-mpm=$(APACHE_MPM) \
-	--disable-lua \
 	--disable-luajit
 
 ifeq ($(BR2_PACKAGE_LIBXML2),y)
@@ -55,6 +54,13 @@ else
 APACHE_CONF_OPTS += \
 	--disable-xml2enc \
 	--disable-proxy-html
+endif
+
+ifeq ($(BR2_PACKAGE_LUA),y)
+APACHE_CONF_OPTS += --enable-lua
+APACHE_DEPENDENCIES += lua
+else
+APACHE_CONF_OPTS += --disable-lua
 endif
 
 ifeq ($(BR2_PACKAGE_OPENSSL),y)

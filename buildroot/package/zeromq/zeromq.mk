@@ -4,14 +4,14 @@
 #
 ################################################################################
 
-ZEROMQ_VERSION = 4.1.6
-ZEROMQ_SITE = https://github.com/zeromq/zeromq4-1/releases/download/v$(ZEROMQ_VERSION)
+ZEROMQ_VERSION = 4.2.5
+ZEROMQ_SITE = https://github.com/zeromq/libzmq/releases/download/v$(ZEROMQ_VERSION)
 ZEROMQ_INSTALL_STAGING = YES
 ZEROMQ_DEPENDENCIES = util-linux
 ZEROMQ_CONF_OPTS = --without-documentation
 ZEROMQ_LICENSE = LGPL-3.0+ with exceptions
 ZEROMQ_LICENSE_FILES = COPYING COPYING.LESSER
-# For 0001-acinclude.m4-make-kernel-specific-flags-cacheable.patch
+# 0001-configure.ac-serach-for-dladdr-only-on-libunwind.patch touches configure.ac
 ZEROMQ_AUTORECONF = YES
 
 # Assume these flags are always available. It is true, at least for
@@ -49,6 +49,13 @@ ZEROMQ_DEPENDENCIES += libsodium
 ZEROMQ_CONF_OPTS += --with-libsodium="$(STAGING_DIR)/usr"
 else
 ZEROMQ_CONF_OPTS += --without-libsodium
+endif
+
+ifeq ($(BR2_PACKAGE_LIBUNWIND),y)
+ZEROMQ_DEPENDENCIES += libunwind
+ZEROMQ_CONF_OPTS += --enable-libunwind
+else
+ZEROMQ_CONF_OPTS += --disable-libunwind
 endif
 
 $(eval $(autotools-package))
