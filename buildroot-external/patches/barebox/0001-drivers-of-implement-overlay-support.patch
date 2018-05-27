@@ -1,0 +1,429 @@
+From 059762285f200a6e2527a4447d35f34d66b07bc2 Mon Sep 17 00:00:00 2001
+From: Pascal Vizeli <pvizeli@syshack.ch>
+Date: Sun, 27 May 2018 09:33:20 +0000
+Subject: [PATCH 1/2] drivers: of: implement overlay support
+
+Signed-off-by: Pascal Vizeli <pvizeli@syshack.ch>
+---
+ Documentation/user/devicetree.rst | 101 +++++++++++++++++++++++++++++-
+ arch/sandbox/dts/Makefile         |   5 +-
+ arch/sandbox/dts/sandbox.dts      |   6 ++
+ commands/oftree.c                 |  65 +++++++++++++++++--
+ drivers/of/Kconfig                |   6 ++
+ drivers/of/Makefile               |   1 +
+ include/of.h                      |  71 +++++++++++++++++++++
+ scripts/Makefile.lib              |   5 +-
+ 8 files changed, 251 insertions(+), 9 deletions(-)
+
+diff --git a/Documentation/user/devicetree.rst b/Documentation/user/devicetree.rst
+index 17934d86e..b2220997d 100644
+--- a/Documentation/user/devicetree.rst
++++ b/Documentation/user/devicetree.rst
+@@ -21,7 +21,7 @@ The internal devicetree
+ -----------------------
+ 
+ The devicetree consulted by barebox plays a special role. It is referred to
+-as the "internal devicetree." The barebox devicetree commands work on this
++as the "internal devicetree". The barebox devicetree commands work on this
+ devicetree. The devicetree source (DTS) files are kept in sync with the kernel DTS
+ files. As the FDT files are meant to be backward compatible, it should always be possible
+ to start a kernel with the barebox internal devicetree. However, since the barebox
+@@ -83,3 +83,102 @@ you can exchange the internal devicetree during runtime using the
+ 
+    oftree -f
+    oftree -l /new/dtb
++
++Devicetree overlays
++-------------------
++
++Since version 3.19, the Linux kernel supports applying "devicetree overlays" to
++its loaded device tree. This can be used to inform the kernel about additional
++non-discoverable devices after the system has booted, which is useful for modular
++boards and FPGAs. The details of the overlay format are specified in the Linux
++`kernel documentation <https://www.kernel.org/doc/Documentation/devicetree/overlay-notes.txt>`_
++and an updated DTC is required to compile the overlays.
++
++The use cases for overlays in barebox are a bit different:
++
++* some of the modular devices are needed to boot Linux to userspace, but barebox
++  can detect which module variant is connected
++* one of several parallel or LVDS displays (which use timing data from devicetree)
++  can be connected to the SoC and should be used for boot messages
++* a generic Linux (distribution) kernel should be booted on a modular
++  system and support additional hardware on modules
++
++barebox supports applying overlays in the internal devicetree was well using the
++:ref:`command_oftree` command with option ``-o``:
++
++.. code-block:: sh
++
++   $ ./barebox -d arch/sandbox/dts/sandbox.dtb -i arch/sandbox/dts/sandbox-overlay.dtbo
++   add fd0 backed by file arch/sandbox/dts/sandbox-overlay.dtbo
++
++   barebox 2015.02.0 #26 Wed Mar 4 09:41:19 CET 2015
++   ...
++   barebox@barebox sandbox:/ of_dump
++   ...
++     dummy@0 {
++       status = "disabled";
++       linux,phandle = <0x1>;
++       phandle = <0x1>;
++     };
++     dummy@1 {
++       status = "disabled";
++       linux,phandle = <0x2>;
++       phandle = <0x2>;
++     };
++     __symbols__ {
++       dummy0 = "/dummy@0";
++       dummy1 = "/dummy@1";
++     };
++   ...
++   barebox@barebox sandbox:/ of_dump -f /dev/fd0
++    {
++     fragment@0 {
++       target = <0xdeadbeef>;
++       __overlay__ {
++         status = "okay";
++         child {
++           compatible = "barebox,dummy";
++         };
++       };
++     };
++     fragment@1 {
++       target = <0xdeadbeef>;
++       __overlay__ {
++         status = "okay";
++         child {
++           compatible = "barebox,dummy";
++         };
++       };
++     };
++     __fixups__ {
++       dummy0 = "/fragment@0:target:0";
++       dummy1 = "/fragment@1:target:0";
++     };
++   };
++   barebox@barebox sandbox:/ oftree -o /dev/fd0
++   barebox@barebox sandbox:/ of_dump
++   ...
++     dummy@0 {
++       linux,phandle = <0x1>;
++       phandle = <0x1>;
++       status = "okay";
++       child {
++         compatible = "barebox,dummy";
++       };
++     };
++     dummy@1 {
++       linux,phandle = <0x2>;
++       phandle = <0x2>;
++       status = "okay";
++       child {
++         compatible = "barebox,dummy";
++       };
++     };
++     __symbols__ {
++       dummy0 = "/dummy@0";
++       dummy1 = "/dummy@1";
++     };
++   ...
++
++If you need to use a different base devicetree instead of the one compiled into
++barebox, it needs to be replaced as described in the previous section.
+diff --git a/arch/sandbox/dts/Makefile b/arch/sandbox/dts/Makefile
+index 6f6838857..ede219e6f 100644
+--- a/arch/sandbox/dts/Makefile
++++ b/arch/sandbox/dts/Makefile
+@@ -1,6 +1,7 @@
+ ifeq ($(CONFIG_OFTREE),y)
+ dtb-y += \
+-	sandbox.dtb
++	sandbox.dtb \
++	sandbox-overlay.dtbo
+ endif
+ 
+ # just to build a built-in.o. Otherwise compilation fails when no devicetree is
+@@ -8,4 +9,4 @@ endif
+ obj- += dummy.o
+ 
+ always := $(dtb-y)
+-clean-files := *.dtb *.dtb.S .*.dtc .*.pre .*.dts
++clean-files := *.dtb *.dtb.S .*.dtc .*.pre .*.dts *.dtbo
+diff --git a/arch/sandbox/dts/sandbox.dts b/arch/sandbox/dts/sandbox.dts
+index 2595aa13f..1b99a4960 100644
+--- a/arch/sandbox/dts/sandbox.dts
++++ b/arch/sandbox/dts/sandbox.dts
+@@ -3,5 +3,11 @@
+ #include "skeleton.dtsi"
+ 
+ / {
++	dummy0: dummy@0 {
++		status = "disabled";
++	};
+ 
++	dummy1: dummy@1 {
++		status = "disabled";
++	};
+ };
+diff --git a/commands/oftree.c b/commands/oftree.c
+index 8a47c0be5..e0624ad34 100644
+--- a/commands/oftree.c
++++ b/commands/oftree.c
+@@ -2,6 +2,7 @@
+  * oftree.c - device tree command support
+  *
+  * Copyright (c) 2011 Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix
++ * Copyright (C) 2015 Pengutronix, Jan Luebbe <jlu@pengutronix.de>
+  *
+  * based on U-Boot code by:
+  *
+@@ -48,11 +49,14 @@ static int do_oftree(int argc, char *argv[])
+ 	int probe = 0;
+ 	char *load = NULL;
+ 	char *save = NULL;
++	char *overlay = NULL;
+ 	int free_of = 0;
+ 	int ret;
+ 	struct device_node *root;
++	int ovinfo_cnt;
++	struct of_overlay_info *ovinfo;
+ 
+-	while ((opt = getopt(argc, argv, "pfl:s:")) > 0) {
++	while ((opt = getopt(argc, argv, "pfl:o:s:")) > 0) {
+ 		switch (opt) {
+ 		case 'l':
+ 			load = optarg;
+@@ -68,6 +72,9 @@ static int do_oftree(int argc, char *argv[])
+ 		case 'f':
+ 			free_of = 1;
+ 			break;
++		case 'o':
++			overlay = optarg;
++			break;
+ 		case 's':
+ 			save = optarg;
+ 			break;
+@@ -84,7 +91,7 @@ static int do_oftree(int argc, char *argv[])
+ 			return 0;
+ 	}
+ 
+-	if (!probe && !load && !save)
++	if (!probe && !load && !save && !overlay)
+ 		return COMMAND_ERROR_USAGE;
+ 
+ 	if (save) {
+@@ -123,6 +130,53 @@ static int do_oftree(int argc, char *argv[])
+ 		}
+ 	}
+ 
++	if (IS_ENABLED(CONFIG_OFTREE_OVERLAY) && overlay) {
++		struct device_node *ov;
++
++		root = of_get_root_node();
++		if (!root) {
++			printf("no oftree loaded\n");
++			goto out;
++		}
++
++		fdt = read_file(overlay, &size);
++		if (!fdt) {
++			printf("unable to read %s\n", overlay);
++			return 1;
++		}
++
++		ov = of_unflatten_dtb(fdt);
++		free(fdt);
++
++		if (IS_ERR(ov)) {
++			printf("parse oftree: %s\n", strerror(-ret));
++			return PTR_ERR(ov);
++		}
++
++		ret = of_resolve(ov);
++		if (ret) {
++			printf("resolve oftree overlay: %s\n", strerror(-ret));
++			of_delete_node(ov);
++			goto out;
++		}
++
++		ret = of_build_overlay_info(ov, &ovinfo_cnt, &ovinfo);
++		if (ret) {
++			printf("prepare oftree overlay: %s\n", strerror(-ret));
++			of_delete_node(ov);
++			goto out;
++		}
++
++		ret = of_overlay(ovinfo_cnt, ovinfo);
++		if (ret) {
++			printf("apply oftree overlay: %s\n", strerror(-ret));
++			of_delete_node(ov);
++			goto out;
++		}
++
++		of_delete_node(ov);
++	}
++
+ 	if (probe) {
+ 		ret = of_probe();
+ 		if (ret)
+@@ -137,8 +191,9 @@ out:
+ 
+ BAREBOX_CMD_HELP_START(oftree)
+ BAREBOX_CMD_HELP_TEXT("Options:")
+-BAREBOX_CMD_HELP_OPT ("-l <DTB>",  "Load <DTB> to internal devicetree\n")
+-BAREBOX_CMD_HELP_OPT ("-s <DTB>",  "save internal devicetree to <DTB>\n")
++BAREBOX_CMD_HELP_OPT ("-l <DTB>",  "load <DTB> to internal devicetree")
++BAREBOX_CMD_HELP_OPT ("-s <DTB>",  "save internal devicetree to <DTB>")
++BAREBOX_CMD_HELP_OPT ("-o <DTBO>",  "apply overlay <DTBO> to internal devicetree")
+ BAREBOX_CMD_HELP_OPT ("-p",  "probe devices from stored device tree")
+ BAREBOX_CMD_HELP_OPT ("-f",  "free stored device tree")
+ BAREBOX_CMD_HELP_END
+@@ -146,7 +201,7 @@ BAREBOX_CMD_HELP_END
+ BAREBOX_CMD_START(oftree)
+ 	.cmd		= do_oftree,
+ 	BAREBOX_CMD_DESC("handle device trees")
+-	BAREBOX_CMD_OPTS("[-lspf]")
++	BAREBOX_CMD_OPTS("[-lsopf]")
+ 	BAREBOX_CMD_GROUP(CMD_GRP_MISC)
+ 	BAREBOX_CMD_HELP(cmd_oftree_help)
+ BAREBOX_CMD_END
+diff --git a/drivers/of/Kconfig b/drivers/of/Kconfig
+index a1fac0e61..d90bd9c6b 100644
+--- a/drivers/of/Kconfig
++++ b/drivers/of/Kconfig
+@@ -15,6 +15,12 @@ config OFDEVICE
+ 	select DTC
+ 	bool "Enable probing of devices from the devicetree"
+ 
++config OFTREE_OVERLAY
++	bool "Enable support for devicetree overlays"
++	depends on OFTREE
++	help
++	  Allows you to modify the live tree using overlays.
++
+ config OF_ADDRESS_PCI
+ 	bool
+ 
+diff --git a/drivers/of/Makefile b/drivers/of/Makefile
+index ec4387006..323543461 100644
+--- a/drivers/of/Makefile
++++ b/drivers/of/Makefile
+@@ -6,3 +6,4 @@ obj-y += partition.o
+ obj-y += of_net.o
+ obj-$(CONFIG_MTD) += of_mtd.o
+ obj-$(CONFIG_OF_BAREBOX_DRIVERS) += barebox.o
++obj-$(CONFIG_OFTREE_OVERLAY) += resolver.o overlay.o
+diff --git a/include/of.h b/include/of.h
+index fec51bb94..91476ae47 100644
+--- a/include/of.h
++++ b/include/of.h
+@@ -730,6 +730,8 @@ static inline struct device_node *of_find_matching_node(
+ #define for_each_available_child_of_node(parent, child) \
+ 	for (child = of_get_next_available_child(parent, NULL); child != NULL; \
+ 	     child = of_get_next_available_child(parent, child))
++#define for_each_property_of_node(dn, pp) \
++	list_for_each_entry(pp, &dn->properties, list)
+ 
+ /**
+  * of_property_read_bool - Findfrom a property
+@@ -850,4 +852,73 @@ static inline struct device_node *of_find_root_node(struct device_node *node)
+ 
+ 	return node;
+ }
++
++/* illegal phandle value (set when unresolved) */
++#define OF_PHANDLE_ILLEGAL      0xdeadbeef
++
++#ifdef CONFIG_OFTREE_OVERLAY
++
++extern int of_resolve(struct device_node *resolve);
++
++#else
++
++static inline int of_resolve(struct device_node *resolve)
++{
++	return -ENOSYS;
++}
++
++#endif
++
++/**
++ * Overlay support
++ */
++
++/**
++ * struct of_overlay_info       - Holds a single overlay info
++ * @target:     target of the overlay operation
++ * @overlay:    pointer to the overlay contents node
++ *
++ * Holds a single overlay state.
++ */
++struct of_overlay_info {
++	struct device_node *target;
++	struct device_node *overlay;
++};
++
++#ifdef CONFIG_OFTREE_OVERLAY
++
++extern int of_overlay(int count, struct of_overlay_info *ovinfo_tab);
++
++extern int of_fill_overlay_info(struct device_node *info_node,
++		struct of_overlay_info *ovinfo);
++extern int of_build_overlay_info(struct device_node *tree,
++		int *cntp, struct of_overlay_info **ovinfop);
++extern int of_free_overlay_info(int cnt, struct of_overlay_info *ovinfo);
++
++#else
++
++static inline int of_overlay(int count, struct of_overlay_info *ovinfo_tab)
++{
++	return -ENOSYS;
++}
++
++static inline int of_fill_overlay_info(struct device_node *info_node,
++		struct of_overlay_info *ovinfo)
++{
++	return -ENOSYS;
++}
++
++static inline int of_build_overlay_info(struct device_node *tree,
++		int *cntp, struct of_overlay_info **ovinfop)
++{
++	return -ENOSYS;
++}
++
++static inline int of_free_overlay_info(int cnt, struct of_overlay_info *ovinfo)
++{
++	return -ENOSYS;
++}
++
++#endif
++
+ #endif /* __OF_H */
+diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
+index 272b5981e..e7cea55c4 100644
+--- a/scripts/Makefile.lib
++++ b/scripts/Makefile.lib
+@@ -261,7 +261,7 @@ $(obj)/%.dtb.S: $(obj)/%.dtb $(srctree)/scripts/gen-dtb-s FORCE
+ 
+ quiet_cmd_dtc = DTC     $@
+ cmd_dtc = $(CPP) $(dtc_cpp_flags) -x assembler-with-cpp -o $(dtc-tmp) $< ; \
+-	$(objtree)/scripts/dtc/dtc -O dtb -o $@ -b 0 \
++	$(objtree)/scripts/dtc/dtc -@ -O dtb -o $@ -b 0 \
+ 		-i $(srctree)/arch/$(SRCARCH)/dts $(DTC_FLAGS) \
+ 		-i $(srctree)/dts/src/$(SRCARCH) \
+ 		-d $(depfile).dtc $(dtc-tmp) ; \
+@@ -270,6 +270,9 @@ cmd_dtc = $(CPP) $(dtc_cpp_flags) -x assembler-with-cpp -o $(dtc-tmp) $< ; \
+ $(obj)/%.dtb: $(src)/%.dts FORCE
+ 	$(call if_changed_dep,dtc)
+ 
++$(obj)/%.dtbo: $(src)/%.dtso FORCE
++	$(call if_changed_dep,dtc)
++
+ dtc-tmp = $(subst $(comma),_,$(dot-target).dts)
+ 
+ obj-y += $(patsubst %,%.bbenv$(DEFAULT_COMPRESSION_SUFFIX).o,$(bbenv-y))
+-- 
+2.17.0
+
