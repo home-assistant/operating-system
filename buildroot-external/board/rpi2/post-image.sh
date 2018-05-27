@@ -43,4 +43,4 @@ create_disk_image ${BINARIES_DIR} ${IMAGE_FILE} 2
 fix_disk_image_mbr ${IMAGE_FILE}
 
 rm -rf ${IMAGE_FILE}.gz
-gzip ${IMAGE_FILE}
+gzip --best ${IMAGE_FILE}
