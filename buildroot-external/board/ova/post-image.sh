@@ -18,7 +18,7 @@ mkdir -p ${BOOT_DATA}/EFI/BOOT
 mkdir -p ${BOOT_DATA}/EFI/barebox
 
 cp ${BINARIES_DIR}/barebox.bin ${BOOT_DATA}/EFI/BOOT/BOOTx64.EFI
-cp ${BOARD_DIR}/barebox-state.dtb ${BOOT_DATA}/EFI/barebox/state.dtb
+cp ${BR2_EXTERNAL_HASSOS_PATH}/fdt/barebox-state-efi.dtb ${BOOT_DATA}/EFI/barebox/state.dtb
 
 # Create other layers
 create_boot_image ${BINARIES_DIR}

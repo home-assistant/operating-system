@@ -1,3 +1,3 @@
 #!/bin/sh
 
-dtc -O dtb -o buildroot-external/board/ova/barebox-state.dtb buildroot-external/board/ova/barebox-state.dts
+dtc -O dtb -o buildroot-external/fdt/barebox-state-efi.dtb buildroot-external/fdt/barebox-state-efi.dts

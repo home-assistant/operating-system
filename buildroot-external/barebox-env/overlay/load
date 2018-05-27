@@ -1,0 +1,5 @@
+#!/bin/sh
+
+for i in /env/overlay/*.dbto; do
+	oftree -o $i
+done
