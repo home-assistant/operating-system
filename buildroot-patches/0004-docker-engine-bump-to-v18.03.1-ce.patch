@@ -1,0 +1,54 @@
+From 09db540a2be99d026d9ec246e8012c32772a00f1 Mon Sep 17 00:00:00 2001
+From: Pascal Vizeli <pvizeli@syshack.ch>
+Date: Sun, 27 May 2018 20:24:40 +0000
+Subject: [PATCH 1/1] docker-engine: bump to v18.03.1-ce
+
+Signed-off-by: Pascal Vizeli <pvizeli@syshack.ch>
+---
+ package/docker-engine/docker-engine.hash |  2 +-
+ package/docker-engine/docker-engine.mk   | 11 +++--------
+ 2 files changed, 4 insertions(+), 9 deletions(-)
+
+diff --git a/package/docker-engine/docker-engine.hash b/package/docker-engine/docker-engine.hash
+index 6c0ed338a5..b47115b808 100644
+--- a/package/docker-engine/docker-engine.hash
++++ b/package/docker-engine/docker-engine.hash
+@@ -1,2 +1,2 @@
+ # Locally calculated
+-sha256	4716df117d867b82ddab2e82395cd40aa3d0925a689eedcec8919729e4c9f121	docker-engine-v17.05.0-ce.tar.gz
++sha256	b05f3709844c45d49922914cf6eb71d4131d0bd5389361376ff6a86aa186f4a0	docker-ce-18.03.1-ce.tar.gz
+diff --git a/package/docker-engine/docker-engine.mk b/package/docker-engine/docker-engine.mk
+index ba84b4cf0a..2d663a6073 100644
+--- a/package/docker-engine/docker-engine.mk
++++ b/package/docker-engine/docker-engine.mk
+@@ -4,24 +4,19 @@
+ #
+ ################################################################################
+ 
+-DOCKER_ENGINE_VERSION = v17.05.0-ce
+-DOCKER_ENGINE_COMMIT = 89658bed64c2a8fe05a978e5b87dbec409d57a0f
+-DOCKER_ENGINE_SITE = $(call github,docker,docker,$(DOCKER_ENGINE_VERSION))
++DOCKER_ENGINE_VERSION = v18.03.1-ce
++DOCKER_ENGINE_SITE = $(call github,docker,docker-ce,$(DOCKER_ENGINE_VERSION))
+ 
+ DOCKER_ENGINE_LICENSE = Apache-2.0
+ DOCKER_ENGINE_LICENSE_FILES = LICENSE
+ 
+ DOCKER_ENGINE_DEPENDENCIES = host-go host-pkgconf
+ 
+-DOCKER_ENGINE_LDFLAGS = \
+-	-X main.GitCommit=$(DOCKER_ENGINE_VERSION) \
+-	-X main.Version=$(DOCKER_ENGINE_VERSION)
+-
+ ifeq ($(BR2_PACKAGE_DOCKER_ENGINE_STATIC_CLIENT),y)
+ DOCKER_ENGINE_LDFLAGS += -extldflags '-static'
+ endif
+ 
+-DOCKER_ENGINE_TAGS = cgo exclude_graphdriver_zfs autogen
++DOCKER_ENGINE_TAGS = cgo exclude_graphdriver_zfs autogen apparmor
+ DOCKER_ENGINE_BUILD_TARGETS = cmd/docker
+ 
+ ifeq ($(BR2_PACKAGE_LIBSECCOMP),y)
+-- 
+2.17.0
+

@@ -1,0 +1,35 @@
+From f30a3b5f35455aa391360671e75c89b636f0a110 Mon Sep 17 00:00:00 2001
+From: Pascal Vizeli <pvizeli@syshack.ch>
+Date: Sun, 27 May 2018 20:39:49 +0000
+Subject: [PATCH 1/1] docker-proxy: bump to 0.7.2-rc1
+
+Signed-off-by: Pascal Vizeli <pvizeli@syshack.ch>
+---
+ package/docker-proxy/docker-proxy.hash | 2 +-
+ package/docker-proxy/docker-proxy.mk   | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/package/docker-proxy/docker-proxy.hash b/package/docker-proxy/docker-proxy.hash
+index 3ec184f54f..8889c9606f 100644
+--- a/package/docker-proxy/docker-proxy.hash
++++ b/package/docker-proxy/docker-proxy.hash
+@@ -1,2 +1,2 @@
+ # Locally calculated
+-sha256	2eee331b6ded567a36e7db708405b34032b93938682cf049025f48b96d755bf6	docker-proxy-7b2b1feb1de4817d522cc372af149ff48d25028e.tar.gz
++sha256	8e0126e653e95e961df8f3f239fd5013191a07cf74a72e0454b2e716a2354435	libnetwork-0.7.2-rc.1.tar.gz
+diff --git a/package/docker-proxy/docker-proxy.mk b/package/docker-proxy/docker-proxy.mk
+index dfa9d4347d..182b9c9cb7 100644
+--- a/package/docker-proxy/docker-proxy.mk
++++ b/package/docker-proxy/docker-proxy.mk
+@@ -4,7 +4,7 @@
+ #
+ ################################################################################
+ 
+-DOCKER_PROXY_VERSION = 7b2b1feb1de4817d522cc372af149ff48d25028e
++DOCKER_PROXY_VERSION = v0.7.2-rc.1
+ DOCKER_PROXY_SITE = $(call github,docker,libnetwork,$(DOCKER_PROXY_VERSION))
+ 
+ DOCKER_PROXY_LICENSE = Apache-2.0
+-- 
+2.17.0
+
