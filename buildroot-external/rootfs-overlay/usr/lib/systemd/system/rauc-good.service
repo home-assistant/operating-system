@@ -7,3 +7,4 @@ RefuseManualStop=true
 [Service]
 Type=oneshot
 ExecStart=/usr/bin/rauc status mark-good
+RemainAfterExit=true
