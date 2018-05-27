@@ -1,0 +1,37 @@
+/dts-v1/;
+/plugin/;
+
+/ {
+
+	fragment@0 {
+		target = <&sdhci>;
+		__overlay__ {
+			status = "disabled";
+		};
+	};
+
+	fragment@1 {
+		target = <&sdhost>;
+		__overlay__ {
+			status = "okay";
+			partitions {
+				#address-cells = <1>;
+				#size-cells = <1>;
+				compatible = "fixed-partitions";
+
+				backend_state_sdhost: partition@22100000 {
+					label = "state";
+					reg = <0x22100000 0x800000>;
+				};
+			};
+		};
+	};
+
+	fragment@2 {
+		target = <&state>;
+		__overlay__ {
+			backend = <&backend_state_sdhost>;
+		};
+	};
+};
+

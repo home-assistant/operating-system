@@ -1,3 +1,0 @@
-#!/bin/sh
-
-of_fixup_status /soc/mmc@7e202000/
