@@ -60,7 +60,6 @@
 
 		backend_state: state {
 			partuuid = "33236519-7f32-4dff-8002-3390b62c309d";
-
 		};
 	};
 
