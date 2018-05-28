@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LUAROCKS_VERSION = 2.4.3
+LUAROCKS_VERSION = 2.4.4
 LUAROCKS_SITE = http://luarocks.org/releases
 LUAROCKS_LICENSE = MIT
 LUAROCKS_LICENSE_FILES = COPYING
@@ -22,10 +22,6 @@ HOST_LUAROCKS_CONF_OPTS = \
 	--prefix=$(HOST_DIR) \
 	--sysconfdir=$(LUAROCKS_CONFIG_DIR) \
 	--with-lua=$(HOST_DIR)
-
-ifeq ($(BR2_PACKAGE_LUAJIT),y)
-HOST_LUAROCKS_CONF_OPTS += --lua-suffix=jit
-endif
 
 define HOST_LUAROCKS_CONFIGURE_CMDS
 	cd $(@D) && ./configure $(HOST_LUAROCKS_CONF_OPTS)

@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBCURL_VERSION = 7.58.0
+LIBCURL_VERSION = 7.60.0
 LIBCURL_SOURCE = curl-$(LIBCURL_VERSION).tar.xz
 LIBCURL_SITE = https://curl.haxx.se/download
 LIBCURL_DEPENDENCIES = host-pkgconf \
@@ -74,6 +74,13 @@ LIBCURL_DEPENDENCIES += libssh2
 LIBCURL_CONF_OPTS += --with-libssh2
 else
 LIBCURL_CONF_OPTS += --without-libssh2
+endif
+
+ifeq ($(BR2_PACKAGE_BROTLI),y)
+LIBCURL_DEPENDENCIES += brotli
+LIBCURL_CONF_OPTS += --with-brotli
+else
+LIBCURL_CONF_OPTS += --without-brotli
 endif
 
 define LIBCURL_FIX_DOT_PC

@@ -1,0 +1,45 @@
+From dd1fe57cbdb9b7f67eb786f62fd165e332f69d99 Mon Sep 17 00:00:00 2001
+From: Pascal Vizeli <pvizeli@syshack.ch>
+Date: Sun, 27 May 2018 19:52:05 +0000
+Subject: [PATCH 1/1] runc: bump to 1.0-rc5
+
+Signed-off-by: Pascal Vizeli <pvizeli@syshack.ch>
+---
+ package/runc/runc.hash | 2 +-
+ package/runc/runc.mk   | 6 ++----
+ 2 files changed, 3 insertions(+), 5 deletions(-)
+
+diff --git a/package/runc/runc.hash b/package/runc/runc.hash
+index 3e188c5c79..26fdd9727b 100644
+--- a/package/runc/runc.hash
++++ b/package/runc/runc.hash
+@@ -1,2 +1,2 @@
+ # Locally computed
+-sha256	b5c50d7d9a5f610d5424f96196efa306ec708fd9299302dd919545099c16b7c1	runc-9c2d8d184e5da67c95d601382adf14862e4f2228.tar.gz
++sha256	770e180d1cca1f3c1a67512ebf9720caafe97af4fc2fe12fa43a3cf7bfa77522	runc-v1.0.0-rc5.tar.gz
+diff --git a/package/runc/runc.mk b/package/runc/runc.mk
+index f1586f32b2..aa23fce3b0 100644
+--- a/package/runc/runc.mk
++++ b/package/runc/runc.mk
+@@ -4,16 +4,14 @@
+ #
+ ################################################################################
+ 
+-RUNC_VERSION = 9c2d8d184e5da67c95d601382adf14862e4f2228
++RUNC_VERSION = v1.0.0-rc5
+ RUNC_SITE = $(call github,opencontainers,runc,$(RUNC_VERSION))
+ RUNC_LICENSE = Apache-2.0
+ RUNC_LICENSE_FILES = LICENSE
+ 
+ RUNC_WORKSPACE = Godeps/_workspace
+ 
+-RUNC_LDFLAGS = -X main.gitCommit=$(RUNC_VERSION)
+-
+-RUNC_TAGS = cgo static_build
++RUNC_TAGS = cgo static_build apparmor
+ 
+ ifeq ($(BR2_PACKAGE_LIBSECCOMP),y)
+ RUNC_TAGS += seccomp
+-- 
+2.17.0
+

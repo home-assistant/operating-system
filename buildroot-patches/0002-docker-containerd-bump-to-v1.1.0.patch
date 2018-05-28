@@ -1,0 +1,54 @@
+From 534557f34b9ab95fb38fc2cd0fe04829264ee653 Mon Sep 17 00:00:00 2001
+From: Pascal Vizeli <pvizeli@syshack.ch>
+Date: Mon, 28 May 2018 12:40:28 +0000
+Subject: [PATCH 1/1] docker-containerd: bump to v1.1.0
+
+Signed-off-by: Pascal Vizeli <pvizeli@syshack.ch>
+---
+ package/docker-containerd/docker-containerd.hash |  2 +-
+ package/docker-containerd/docker-containerd.mk   | 13 +++++--------
+ 2 files changed, 6 insertions(+), 9 deletions(-)
+
+diff --git a/package/docker-containerd/docker-containerd.hash b/package/docker-containerd/docker-containerd.hash
+index 992eb5b01a..257c607841 100644
+--- a/package/docker-containerd/docker-containerd.hash
++++ b/package/docker-containerd/docker-containerd.hash
+@@ -1,2 +1,2 @@
+ # Computed locally
+-sha256	da89086a7c643702a2ddecec67a45d3d8e4b0d610dd19036be63e6bd54cc1a85	docker-containerd-9048e5e50717ea4497b757314bad98ea3763c145.tar.gz
++sha256	08f057ece7e518b14cce2e9737228a5a899a7b58b78248a03e02f4a6c079eeaf	docker-containerd-v1.1.0.tar.gz
+diff --git a/package/docker-containerd/docker-containerd.mk b/package/docker-containerd/docker-containerd.mk
+index 88e27b5ed4..49c3d8ec0d 100644
+--- a/package/docker-containerd/docker-containerd.mk
++++ b/package/docker-containerd/docker-containerd.mk
+@@ -4,22 +4,19 @@
+ #
+ ################################################################################
+ 
+-DOCKER_CONTAINERD_VERSION = 9048e5e50717ea4497b757314bad98ea3763c145
+-DOCKER_CONTAINERD_SITE = $(call github,docker,containerd,$(DOCKER_CONTAINERD_VERSION))
++DOCKER_CONTAINERD_VERSION = v1.1.0
++DOCKER_CONTAINERD_SITE = $(call github,containerd,containerd,$(DOCKER_CONTAINERD_VERSION))
+ DOCKER_CONTAINERD_LICENSE = Apache-2.0
+ DOCKER_CONTAINERD_LICENSE_FILES = LICENSE.code
+ 
+-DOCKER_CONTAINERD_WORKSPACE = vendor
+-
+-DOCKER_CONTAINERD_LDFLAGS = \
+-	-X github.com/docker/containerd.GitCommit=$(DOCKER_CONTAINERD_VERSION)
+-
+-DOCKER_CONTAINERD_BUILD_TARGETS = ctr containerd containerd-shim
++DOCKER_CONTAINERD_BUILD_TARGETS = cmd/ctr cmd/containerd cmd/containerd-shim
++DOCKER_CONTAINERD_TAGS = apparmor no_btrfs
+ 
+ DOCKER_CONTAINERD_INSTALL_BINS = containerd containerd-shim
+ 
+ define DOCKER_CONTAINERD_INSTALL_SYMLINKS
+ 	ln -fs runc $(TARGET_DIR)/usr/bin/docker-runc
++	ln -fs containerd $(TARGET_DIR)/usr/bin/docker-containerd
+ 	ln -fs containerd-shim $(TARGET_DIR)/usr/bin/docker-containerd-shim
+ endef
+ 
+-- 
+2.17.0
+
