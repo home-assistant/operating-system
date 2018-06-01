@@ -2,9 +2,6 @@
 
 export PATH=/env/bin
 
-global linux.bootargs.base
-global linux.bootargs.dyn.root
-
 # Autostart
 for i in /env/init/*; do
 	. $i

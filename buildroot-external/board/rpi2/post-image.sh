@@ -28,9 +28,6 @@ cp -r ${BINARIES_DIR}/rpi-firmware/overlays ${BOOT_DATA}/
 (
     echo "kernel=barebox.bin"
     echo "disable_splash=1"
-    echo "dtparam=i2c_arm=on"
-    echo "dtparam=spi=on"
-    echo "dtparam=audio=on"
 ) > ${BOOT_DATA}/config.txt
 
 touch ${BOOT_DATA}/cmdline.txt
