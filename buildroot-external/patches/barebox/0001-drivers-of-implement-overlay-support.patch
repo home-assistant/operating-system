@@ -1,7 +1,7 @@
-From 0ea63818330f3ebe989a56df89c1f49c63e7d761 Mon Sep 17 00:00:00 2001
+From 3ded097df1dea022510f072a02f4f99b139d5efa Mon Sep 17 00:00:00 2001
 From: Pascal Vizeli <pvizeli@syshack.ch>
-Date: Sun, 27 May 2018 14:40:45 +0000
-Subject: [PATCH 1/2] drivers: of: implement overlay support
+Date: Sat, 2 Jun 2018 20:52:06 +0000
+Subject: [PATCH 1/3] drivers: of: implement overlay support
 
 Signed-off-by: Pascal Vizeli <pvizeli@syshack.ch>
 ---
