@@ -1,0 +1,5 @@
+buildroot/ccache
+.doit.json
+__pycache__
+.vscode/settings.json
+.DS_Store
