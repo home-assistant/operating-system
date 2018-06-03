@@ -1,0 +1,3 @@
+#!/bin/sh
+
+global linux.bootargs.rpi="cma=64M"
