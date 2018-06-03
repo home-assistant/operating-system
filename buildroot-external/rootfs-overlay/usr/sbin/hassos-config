@@ -12,13 +12,22 @@ mount -o ro LABEL="hassos-config" /mnt/config
 
 ##
 # NetworkManager
-if ls /mnt/config/network-* > /dev/null; then
+if [ -d /mnt/config/network ]; then
     echo "[Info] Update NetworkManager connections!"
 
     rm -rf /etc/NetworkManager/system-connections/*
-    cp -f /mnt/config/network-* /etc/NetworkManager/system-connections/
+    cp -f /mnt/config/network/* /etc/NetworkManager/system-connections/
 
     nmcli con reload || true
+fi
+
+##
+# Modules
+if [ -d /mnt/config/modules ]; then
+    echo "[Info] Update Modules configuration!"
+
+    rm -rf /etc/modules-load.d/*
+    cp -f /mnt/config/modules/* /etc/modules-load.d/*
 fi
 
 ##
@@ -32,7 +41,12 @@ fi
 
 ##
 # Firmware update
+if ls /mnt/config/*.rauc > /dev/null; then
+    echo "[Info] Performe a firmware update"
 
+    rauc_filename=$(ls /mnt/config/*.rauc | head -n 1)
+    rauc install /mnt/config/$rauc_filename
+fi
 
 # Cleanup config partition
 umount /mnt/config
