@@ -6,8 +6,9 @@ CONFIG_FILE=/mnt/data/hassos.json
 CLI="$(jq --raw-output '.cli' ${CONFIG_FILE})"
 DOCKER_ARGS="$(jq --raw-output '.cli_args // empty' ${CONFIG_FILE})"
 APPARMOR="$(jq --raw-output '.cli_apparmor // "docker-default"' ${CONFIG_FILE})"
-CLI_DATA=/mnt/data/cli
+MACHINE_ID="$(cat /etc/machine-id)"
 
+CLI_DATA=/mnt/data/cli
 mkdir -p ${CLI_DATA}
 
 # Run CLI
@@ -15,6 +16,7 @@ docker run \
     --rm -ti --init \
     --security-opt apparmor="${APPARMOR}" \
     -v ${CLI_DATA}:/data \
+    -e MACHINE_ID=${MACHINE_ID} \
     $DOCKER_ARGS \
     ${CLI}
 
