@@ -7,6 +7,7 @@ CONFIG_FILE=/mnt/data/hassos.json
 SUPERVISOR="$(jq --raw-output '.supervisor' ${CONFIG_FILE})"
 DOCKER_ARGS="$(jq --raw-output '.supervisor_args // empty' ${CONFIG_FILE})"
 APPARMOR="$(jq --raw-output '.supervisor_apparmor // "docker-default"' ${CONFIG_FILE})"
+MACHINE_ID="$(cat /etc/machine-id)"
 
 # Init supervisor
 HASSOS_DATA=/mnt/data/supervisor
@@ -27,6 +28,7 @@ runSupervisor() {
         -v ${HASSOS_DATA}:/data \
         -e SUPERVISOR_SHARE=${HASSOS_DATA} \
         -e SUPERVISOR_NAME=hassos_supervisor \
+        -e MACHINE_ID=${MACHINE_ID} \
         $DOCKER_ARGS \
         ${SUPERVISOR}
 }
