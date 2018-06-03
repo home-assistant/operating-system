@@ -161,8 +161,8 @@ List of Examples
 
 ---------------------------------------------------------------------
 
-Buildroot 2018.05-rc2 manual generated on 2018-05-22 21:28:17 UTC
-from git revision c11ed3a4d9
+Buildroot 2018.05 manual generated on 2018-06-01 20:24:17 UTC from
+git revision f3d114a1ef
 
 The Buildroot manual is written by the Buildroot developers. It is
 licensed under the GNU General Public License, version 2. Refer to

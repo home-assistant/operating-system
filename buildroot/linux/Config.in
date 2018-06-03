@@ -8,6 +8,10 @@ config BR2_LINUX_KERNEL
 
 if BR2_LINUX_KERNEL
 
+comment "Linux kernel in thumb mode may be broken with binutils >= 2.29"
+	depends on BR2_arm || BR2_armeb
+	depends on !BR2_BINUTILS_VERSION_2_28_X
+
 # Packages that need to have a kernel with support for loadable modules,
 # but do not use the kernel-modules infrastructure, should select that
 # option.
@@ -29,7 +33,7 @@ config BR2_LINUX_KERNEL_LATEST_VERSION
 	bool "Latest version (4.16)"
 
 config BR2_LINUX_KERNEL_LATEST_CIP_VERSION
-	bool "Latest CIP SLTS version (v4.4.112-cip18)"
+	bool "Latest CIP SLTS version (v4.4.130-cip23)"
 	help
 	  CIP launched in the spring of 2016 to address the needs of
 	  organizations in industries such as power generation and
@@ -116,8 +120,8 @@ endif
 
 config BR2_LINUX_KERNEL_VERSION
 	string
-	default "4.16.10" if BR2_LINUX_KERNEL_LATEST_VERSION
-	default "v4.4.112-cip18" if BR2_LINUX_KERNEL_LATEST_CIP_VERSION
+	default "4.16.13" if BR2_LINUX_KERNEL_LATEST_VERSION
+	default "v4.4.130-cip23" if BR2_LINUX_KERNEL_LATEST_CIP_VERSION
 	default BR2_LINUX_KERNEL_CUSTOM_VERSION_VALUE \
 		if BR2_LINUX_KERNEL_CUSTOM_VERSION
 	default "custom" if BR2_LINUX_KERNEL_CUSTOM_TARBALL
