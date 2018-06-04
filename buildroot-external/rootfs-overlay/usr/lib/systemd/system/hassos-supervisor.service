@@ -1,0 +1,18 @@
+[Unit]
+Description=HassOS supervisor
+Requires=docker.service
+After=docker.service dbus.socket
+RequiresMountsFor=/mnt/data
+StartLimitIntervalSec=60
+StartLimitBurst=5
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=5s
+ExecStartPre=-/usr/bin/docker stop hassos_supervisor
+ExecStart=/usr/sbin/hassos-supervisor
+ExecStop=-/usr/bin/docker stop hassos_supervisor
+
+[Install]
+WantedBy=multi-user.target

@@ -1,13 +1,13 @@
 [Unit]
-Description=Hassio ZRAM var
+Description=HassOS ZRAM var
 DefaultDependencies=no
 Before=var.mount
 
 [Service]
 Type=oneshot
-ExecStart=/sbin/hassio-zram -t fs -m var -s 32M
+ExecStart=/usr/sbin/hassos-zram -t fs -m var -s 32M
 RemainAfterExit=true
 StandardOutput=null
 
 [Install]
-WantedBy=hassio-zram.target
+WantedBy=hassos-zram.target

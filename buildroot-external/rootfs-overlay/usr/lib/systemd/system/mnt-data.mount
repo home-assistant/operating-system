@@ -1,13 +1,13 @@
 [Unit]
-Description=Hassio data partition
-Wants=hassio-expand.service
+Description=HassOS data partition
+Wants=hassos-expand.service
 DefaultDependencies=no
-After=hassio-expand.service
+After=hassos-expand.service
 Before=umount.target systemd-tmpfiles-setup.service
 Conflicts=umount.target
 
 [Mount]
-What=LABEL=hassio-data
+What=LABEL=hassos-data
 Where=/mnt/data
 Type=ext4
 

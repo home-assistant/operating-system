@@ -1,27 +1,27 @@
 #!/bin/bash
 set -e
 
-SCRIPT_DIR=${BR2_EXTERNAL_HASSIO_PATH}/scripts
+SCRIPT_DIR=${BR2_EXTERNAL_HASSOS_PATH}/scripts
 BOARD_DIR=${2}
 
-. ${SCRIPT_DIR}/rootfs_layer.sh
-. ${BR2_EXTERNAL_HASSIO_PATH}/info
+. ${SCRIPT_DIR}/rootfs-layer.sh
+. ${BR2_EXTERNAL_HASSOS_PATH}/info
 . ${BOARD_DIR}/info
 
-# Hass.io OS tasks
+# HassOS tasks
 fix_rootfs
-install_hassio_cli
+install_hassos_cli
 
 # Write os-release
 (
-    echo "NAME=Hass.io"
+    echo "NAME=${HASSOS_NAME}"
     echo "VERSION=\"${VERSION_MAJOR}.${VERSION_BUILD} (${BOARD_NAME})\""
-    echo "ID=hassio-os"
+    echo "ID=${HASSOS_ID}"
     echo "VERSION_ID=${VERSION_MAJOR}.${VERSION_BUILD}"
-    echo "PRETTY_NAME=\"${HASSIO_NAME} ${VERSION_MAJOR}.${VERSION_BUILD}\""
-    echo "CPE_NAME=cpe:2.3:o:home_assistant:hassio:${VERSION_MAJOR}.${VERSION_BUILD}:*:${DEPLOYMENT}:*:*:*:${BOARD_ID}:*"
+    echo "PRETTY_NAME=\"${HASSOS_NAME} ${VERSION_MAJOR}.${VERSION_BUILD}\""
+    echo "CPE_NAME=cpe:2.3:o:home_assistant:${HASSOS_ID}:${VERSION_MAJOR}.${VERSION_BUILD}:*:${DEPLOYMENT}:*:*:*:${BOARD_ID}:*"
     echo "HOME_URL=https://hass.io/"
-    echo "VARIANT=\"Hass.io ${BOARD_NAME}\""
+    echo "VARIANT=\"${HASSOS_NAME} ${BOARD_NAME}\""
     echo "VARIANT_ID=${BOARD_ID}"
 ) > ${TARGET_DIR}/usr/lib/os-release
 
@@ -30,3 +30,13 @@ install_hassio_cli
     echo "CHASSIS=${CHASSIS}"
     echo "DEPLOYMENT=${DEPLOYMENT}"
 ) > ${TARGET_DIR}/etc/machine-info
+
+# Settup rauc
+sed -i "s/%COMPATIBLE%/${HASSOS_ID}-${BOARD_ID}/g" ${TARGET_DIR}/etc/rauc/system.conf
+
+# Settup the correct CA
+if [ "${DEPLOYMENT}" == "development" ]; then
+    cp ${BR2_EXTERNAL_HASSOS_PATH}/ca/provisioning-ca.pem ${TARGET_DIR}/etc/rauc/keyring.pem
+else
+    cp ${BR2_EXTERNAL_HASSOS_PATH}/ca/rel-ca.pem ${TARGET_DIR}/etc/rauc/keyring.pem
+fi

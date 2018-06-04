@@ -1,0 +1,70 @@
+#!/bin/sh
+set -e
+
+#### Options ####
+
+TYPE=""
+MOUNT=""
+DEVICE=""
+SIZE=0
+
+#### Parse arguments ####
+
+while [ "$1" != "" ]; do
+    key=$1
+    case $key in
+        -t|--type)
+            TYPE=$2
+            shift
+            ;;
+        -s|--size)
+            SIZE=$2
+            shift
+            ;;
+        -m|--mount)
+            MOUNT=$2
+            shift
+            ;;
+        *)
+            echo "[Error] $0 : Argument '$1' unknown"
+            exit 1
+            ;;
+    esac
+    shift
+done
+
+# Valide Type
+if [ "$TYPE" != "swap" ] && [ "$TYPE" != "fs" ]; then
+    echo "[Error] Type unknown!"
+    exit 1
+fi
+
+# Lookup device
+if [ "$TYPE" = "swap" ]; then
+    DEVICE="/dev/zram0"
+elif [ "$MOUNT" = "var" ]; then
+    DEVICE="/dev/zram1"
+elif [ "$MOUNT" = "tmp" ]; then
+    DEVICE="/dev/zram2"
+else
+    echo "[Error] No device for lookup!"
+    exit 1
+fi
+
+# Calc 20% of memory for ZRAM swap partition
+if [ "$TYPE" = "swap" ] && [ "$SIZE" -eq "0" ]; then
+    SIZE="$(awk '/MemTotal/{ print $2 * 0.20 }' /proc/meminfo)K"
+fi
+
+# Init device
+zramctl "$DEVICE" -s "$SIZE" -a lz4
+
+# Swap
+if [ "$TYPE" = "swap" ]; then
+    mkswap -L "hassos-zramswap" "$DEVICE"
+fi
+
+# FileSystem
+if [ "$TYPE" = "fs" ]; then
+    mkfs.ext4 -L "hassos-$MOUNT" -O ^has_journal "$DEVICE"
+fi

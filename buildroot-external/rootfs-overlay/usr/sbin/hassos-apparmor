@@ -1,0 +1,47 @@
+#!/bin/sh
+set -e
+
+# Load configs
+CONFIG_FILE=/mnt/data/hassos.json
+
+# Read configs
+PROFILES_DIR="$(jq --raw-output '.apparmor // empty' ${CONFIG_FILE})"
+if [ -z "${PROFILES_DIR}" ]; then
+    exit 0
+fi
+
+PROFILES_DIR="/mnt/data/${PROFILES_DIR}"
+CACHE_DIR="${PROFILES_DIR}/cache"
+REMOVE_DIR="${PROFILES_DIR}/remove"
+
+# Check folder structure
+mkdir -p ${PROFILES_DIR}
+mkdir -p ${CACHE_DIR}
+mkdir -p ${REMOVE_DIR}
+
+# Load/Update exists/new profiles
+for profile in ${PROFILES_DIR}/*; do
+    if [ ! -f ${profile} ]; then
+        continue
+    fi
+
+    # Load Profile
+    if ! apparmor_parser -r -W -L ${CACHE_DIR} ${profile}; then
+        echo "[Error]: Can't load profile ${profile}"
+    fi
+done
+
+# Cleanup old profiles
+for profile in ${REMOVE_DIR}/*; do
+    if [ ! -f ${profile} ]; then
+        continue
+    fi
+
+    # Unload Profile
+    if apparmor_parser -R -W -L ${CACHE_DIR} ${profile}; then
+        if rm ${profile}; then
+            continue
+        fi
+    fi
+    echo "[Error]: Can't remove profile ${profile}"
+done

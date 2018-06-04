@@ -1,9 +1,10 @@
 [Unit]
-Description=Hassio rauc good 
-Requires=hassio-supervisor.service rauc.service
+Description=HassOS rauc good 
+Requires=hassos-supervisor.service rauc.service
 RefuseManualStart=true
 RefuseManualStop=true
 
 [Service]
 Type=oneshot
 ExecStart=/usr/bin/rauc status mark-good
+RemainAfterExit=true

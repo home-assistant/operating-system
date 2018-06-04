@@ -1,0 +1,12 @@
+[Unit]
+Description=HassOS data resizing
+DefaultDependencies=no
+Before=mnt-data.mount
+
+[Service]
+Type=oneshot
+ExecStart=/usr/sbin/hassos-expand
+RemainAfterExit=true
+
+[Install]
+WantedBy=local-fs.target

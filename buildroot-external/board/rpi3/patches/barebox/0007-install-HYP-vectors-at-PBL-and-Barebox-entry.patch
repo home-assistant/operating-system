@@ -1,0 +1,84 @@
+From f984f8cf4c07f24af7855a4fd69afa3e656238c2 Mon Sep 17 00:00:00 2001
+From: Pascal Vizeli <pvizeli@syshack.ch>
+Date: Sat, 19 May 2018 17:24:42 +0200
+Subject: [PATCH 1/1] p4
+
+---
+ arch/arm/cpu/lowlevel.S   | 3 +++
+ arch/arm/cpu/start-pbl.c  | 3 +++
+ arch/arm/cpu/start.c      | 3 +++
+ arch/arm/cpu/uncompress.c | 4 ++++
+ 4 files changed, 13 insertions(+)
+
+diff --git a/arch/arm/cpu/lowlevel.S b/arch/arm/cpu/lowlevel.S
+index 194ce0e..28ad850 100644
+--- a/arch/arm/cpu/lowlevel.S
++++ b/arch/arm/cpu/lowlevel.S
+@@ -8,6 +8,9 @@ ENTRY(arm_cpu_lowlevel_init)
+ 	/* save lr, since it may be banked away with a processor mode change */
+ 	mov	r2, lr
+ 
++	/* careful: the hyp install corrupts r0 and r1 */
++	bl	__hyp_install
++
+ 	/* set the cpu to SVC32 mode, mask irq and fiq */
+ 	mrs	r12 , cpsr
+ 	eor	r12, r12, #HYP_MODE
+diff --git a/arch/arm/cpu/start-pbl.c b/arch/arm/cpu/start-pbl.c
+index 16159d7..3f9959e 100644
+--- a/arch/arm/cpu/start-pbl.c
++++ b/arch/arm/cpu/start-pbl.c
+@@ -98,5 +98,8 @@ __noreturn void barebox_single_pbl_start(unsigned long membase,
+ 	else
+ 		barebox = (void *)barebox_base;
+ 
++	if (__boot_cpu_mode == HYP_MODE)
++		armv7_switch_to_hyp();
++
+ 	barebox(membase, memsize, boarddata);
+ }
+diff --git a/arch/arm/cpu/start.c b/arch/arm/cpu/start.c
+index 68fff89..1ee13c0 100644
+--- a/arch/arm/cpu/start.c
++++ b/arch/arm/cpu/start.c
+@@ -24,6 +24,7 @@
+ #include <asm/barebox-arm-head.h>
+ #include <asm-generic/memory_layout.h>
+ #include <asm/sections.h>
++#include <asm/secure.h>
+ #include <asm/unaligned.h>
+ #include <asm/cache.h>
+ #include <asm/mmu.h>
+@@ -145,6 +146,8 @@ __noreturn void barebox_non_pbl_start(unsigned long membase,
+ 	unsigned long malloc_start, malloc_end;
+ 	unsigned long barebox_size = barebox_image_size + MAX_BSS_SIZE;
+ 
++	armv7_hyp_install();
++
+ 	if (IS_ENABLED(CONFIG_RELOCATABLE)) {
+ 		unsigned long barebox_base = arm_mem_barebox_image(membase,
+ 								   endmem,
+diff --git a/arch/arm/cpu/uncompress.c b/arch/arm/cpu/uncompress.c
+index b07087e..57f324b 100644
+--- a/arch/arm/cpu/uncompress.c
++++ b/arch/arm/cpu/uncompress.c
+@@ -27,6 +27,7 @@
+ #include <asm/barebox-arm-head.h>
+ #include <asm-generic/memory_layout.h>
+ #include <asm/sections.h>
++#include <asm/secure.h>
+ #include <asm/cache.h>
+ #include <asm/mmu.h>
+ #include <asm/unaligned.h>
+@@ -108,5 +109,8 @@ void __noreturn barebox_multi_pbl_start(unsigned long membase,
+ 
+ 	pr_debug("jumping to uncompressed image at 0x%p\n", barebox);
+ 
++	if (__boot_cpu_mode == HYP_MODE)
++		armv7_switch_to_hyp();
++
+ 	barebox(membase, memsize, boarddata);
+ }
+-- 
+2.7.4
+

@@ -1,3 +1,262 @@
+2018.05, Released June 1st, 2018
+
+	Minor fixes.
+
+	Download: Work around for hanging connections for packages
+	from CVS, by adding a 10 minute max timeout.
+
+	Updated/fixed packages: binutils, clang, dash, expect, git,
+	glibc, jpeg-turbo, libjpeg, log4cplus, openvmtools, xen,
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#11051: runtime issue on STM32 with usage of binutils 2.29.x
+
+2018.05-rc3, Released May 28th, 2018
+
+	Fixes all over the tree.
+
+	Toolchain: ARC tools updated to arc-2018.03-rc2.
+
+	Fs: Ensure hard links in TARGET_DIR are correctly copied for
+	filesystem input. With the recent changes to the file system
+	generation logic, hard links were "expanded" in file system
+	images leading to bloated rootfs images for setups with hard
+	links.
+
+	Infrastructure: Error out for packages using the 'local'
+	method but forgetting to specify <pkg>_SITE.
+
+	Build rpcgen for the host when needed to support distributions
+	no longer shipping rpcgen with glibc (E.G. recent Fedora).
+
+	Updated/fixed packages: autofs, bash-completion, binutils,
+	busybox, cjson, elf2flt, libcoap, libcurl, libtirpc, lrzsz,
+	poppler, procps-ng, qt-webkit-kiosk, quota, samba4, xfsprogs
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#11031: ld-elf2flt: host/bin/ld.real': execvp: No such file..
+	#11036: C compiler cannot create executables
+	#11046: Git package binaries are ~180MB (compared to ~20MB in..
+
+2018.05-rc2, Released May 22nd, 2018
+
+	Fixes all over the tree.
+
+	Dependencies: Check that the current working directory (.)
+	isn't listed in PATH as that causes various build issues.
+
+	Manual: Clarify that git branch names may not be used as
+	version identifiers. This has never been supported, but was
+	kind of working (with some limitations) before the git
+	download rework - Now it does not work at all.
+
+	Linux: Ensure host version of ncurses is picked up and not
+	host-ncurses built by buildroot, as that otherwise causes
+	widechar/non-widechar conflicts and corrupted menuconfig
+	menus.
+
+	Packages: Renamed a number of package options not prefixed
+	with BR2_PACKAGE_<pkg> for consstency.
+
+	Download infrastructure: Fix file:// protocol handling after
+	download rework.
+
+	Updated/fixed packages: acl, apr-util, asterisk, attr,
+	bluez5_utils, cifs-utils, clamav, clang, cups-filters,
+	dahdi-linux, exim, faketime, gdb, go, gst1-plugins-bad,
+	imx-mkimage, ipsec-tools, jamvm, janus-gateway,
+	jquery-ui-themes, libcap, libcurl, libftdi, libkcapi, libkrb5,
+	libmediaart, libmodbus, libmodplug, libmpd,
+	libnetfilter_cthelper, libnetfilter_cttimeout, libnfc,
+	libnfnetlink, libnss, liboauth, libogg, libosip2,
+	libpam-radius-auth, libpcap, libpciaccess, llvm, log4cplus,
+	ltrace, lynx, mbedtls, modem-manager, nfs-utils,
+	python-cython, python-websockets, qt5cinex, qt5wayland, rauc,
+	snort, strace, ti-sgx-km, transmission, wavpack, wget, woff2,
+	xen, zmqpp, znc, zstd
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#10986: Installing package attr when already supplied by...
+	#11011: BUildroot for Raspberry Pi 2
+	#11016: Wrong compiler used for external user host packages
+
+2018.05-rc1, Released May 9th, 2018
+
+	Toolchain: glibc bumped to 2.27, musl bumped to 1.1.19,
+	uClibc-ng 1.0.30, Linux kernel headers bumped to 4.16.x.
+
+	Architecture: support for the Blackfin architecture has been
+	removed, as it was removed from Linux upstream, poorly
+	maintained in binutils/gdb, and abandoned by Analog Devices.
+
+	Numerous packages updated to have hashes for their license
+	files.
+
+	Systemd can now be built with uClibc toolchains.
+
+	Linux: addition of BR2_LINUX_KERNEL_NEEDS_HOST_LIBELF and
+	BR2_LINUX_KERNEL_NEEDS_HOST_OPENSSL to support building Linux
+	kernel configurations that need libelf on the host or openssl
+	on the host.
+
+	Coding style:
+	- all Python scripts are now verified with flake8
+	- check-package extended to check all Config.in and .mk files
+	  in tree, not only the ones in package/
+
+	Infrastructure:
+
+	- The download infrastructure has seen a major overhaul, with
+	  the main visible new feature being Git caching: a package
+	  fetched from Git no longer needs to be re-cloned entirely
+	  everytime its version is changed. Anoter visible change is
+	  that the download folder now has subfolders per package. See
+	  http://lists.busybox.net/pipermail/buildroot/2018-April/217923.html
+	  for more details about those changes.
+
+	- The logic that generates the root filesystem images has been
+	  reworked, with the main goal of allowing several filesystem
+	  images to be produced in parallel, also a requirement for
+	  top-level parallel build. Now, a .tar filesystem image is
+	  always created, and re-extracted in a private directory to
+	  create each format-specific filesystem image.
+
+	- A new package infrastructure was introduced for Go-based
+	  packages: golang-package.
+
+	- Dependencies on extraction tools are now handled as proper
+	  per-package dependencies, using
+	  <pkg>_EXTRACT_DEPENDENCIES. Beyond a cleanup, this is also a
+	  preparation step for top-level parallel build support.
+
+	- When a file being downloaded is part of a package with a
+	  .hash file, but there is no hash listed for this file, the
+	  file is now preserved in the download directory rather than
+	  removed. This helps when updating a package, as it gives the
+	  ability to easily calculate the hash of the file.
+
+	- Addition of '<pkg>-show-recursive-depends' and
+	  '<pkg>-show-recursive-rdepends' make targets, to
+	  respectively display the recursive list of dependencies and
+	  the recursive list of reverse dependencies of a given
+	  package.
+
+	- The /etc/shells file is now automatically generated with the
+	  list of shell programs installed on the system.
+
+	- Addition of -Ofast optimization level as an available
+	  option.
+
+	Major updates: Go updated to 1.10, Erlang bumped to 20.3, Qt5
+	bumped to 5.10.1.
+
+	New packages: 18xx-ti-utils, abootimg, bluez-alsa, brotli,
+	chipmunk, clang, docker-compose, docker-proxy, flare-engine,
+	flare-game, gst1-interpipe, gstreamer1-editing-services,
+	hackrf, i2pd, imx-alsa-plugins, imx-mkimage, libcdio-paranoia,
+	libkrb5, llvm, pixiewps, python-backports-ssl-match-hostname,
+	python-cached-property, python-cython, python-docker,
+	python-dockerpty, python-docker-pycreds,
+	python-flask-sqlalchemy, python-functools32, python-influxdb,
+	python-json-models, python-libusb1, python-networkx,
+	python-psycopg2, python-pymodbus, python-sqlalchemy,
+	python-subprocess32, python-texttable,
+	python-websocket-client, python-yieldfrom, quotatool, reaver,
+	snort, sunxi-mali-mainline, sunxi-mali-mainline-driver, tk,
+	tpm2-abrmd, tpm2-tools, tpm2-tss, udftools, vte, woff2.
+
+	New defconfigs: ARC HS Development Kit, Arcturus ucls1012a,
+	Freescale i.MX6UL EVK (with vendor kernel), Freescale i.MX6
+	SoloLite EVK (with vendor kernel), Freescale i.MX31 3Stack,
+	Freescale i.MX8Q EVK Freescale p1025twr, Freescale t1040d4rdb,
+	Qemu PPC64 E5500, SolidRun ClearFog Base, Tinker RK3288, Vyasa
+	RK3288,
+
+	Removed packages: iqvlinux, kodi-adsp-*, mplayer
+
+	Removed defconfigs: ci40, firefly_rk3288,
+	freescale_p1010rdb_pa, freescale_mpc8315erdb, riotboard,
+	teliv_evk_pro3
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#10151: toolchain eclipse register : fails with a custom
+		BR2_HOST_DIR
+	#10511: Packages get downloaded uncompressed with wget
+	#10531: QtWebengine doesn't build if the host hasn't a 32 bits
+		C++ compiler working
+	#10846: error in compiling gnutls
+	#10886: openssl-1.0.2n fails to build
+	#10896: /bin/sh not in /etc/shells
+	#10961: Grub2 fails to build for x86_64 when BR2_SSP_ALL is
+		enabled
+
+2018.02.1, Released April 9th, 2018
+
+	Important / security related fixes.
+
+	Removed unmaintained defconfigs: Creator Ci40, Firefly rk3288,
+	Freescale mpc8315erdb / p1010rdb_pa, Riotboard, Teliv EVK
+	Pro3.
+
+	Infrastructure: Speed up instrumentation for package size by
+	comparing timestamps instead of md5 checksums, as doing
+	checksums could lead to up to 25% longer build time for big
+	configurations.
+
+	Rename the internal <pkg>_BASE_NAME variable to <pkg>_NASENAME
+	to avoid name clashes with packages ending on '-base'.
+
+	Add a better fix for build issues for autotools based packages
+	checking for C++ support on toolchains without C++ support.
+
+	Build host-tar if tar is older than 1.27 on the build machine
+	to work around reproducibility issues with git archives
+	containing long paths.
+
+	check-unique-files: Fix for filenames not representable in the
+	users' locale.
+
+	Check-bin-arch: Add support for per-package ignore paths
+	(<pkg>_BIN_ARCH_EXCLUDE).
+
+	Toolchain: Fix SSP support detection for external toolchains.
+
+	linux: Add _NEEDS_HOST_OPENSSL / LIBELF options to ensure
+	these dependencies are available for Linux configurations
+	needed these dependencies, similar to how it is done for
+	U-Boot.
+
+	Support custom (not in tree) device tree files in addition to
+	in-tree ones.
+
+	U-Boot / uboot-tools: Fix header conflict with libfdt-devel
+	installed on host.
+
+	Updated/fixed packages: apache, busybox, c-ares, cmake,
+	docker-engine, enlightenment, eudev, fbgrab, freescale-imx,
+	gtest, imagemagick, intel-microcode, irssi, jimtcl, kmod,
+	kodi, ktap, libcoap, libcurl, libfcgi, libhttpparser,
+	libminiupnpc, libopenssl, libpjsip, libss7, libssh2, libupnp
+	libupnpp, libuv, libvorbis, memcached, motion, musl, nodejs,
+	ntp, openblas, opencv3, openocd, opus-tools, patch, php,
+	pkgconf, postgresql, powerpc-utils, python-jsonschema,
+	python-webpy, qemu, qt5bsae, qt5script, qt5webkit, rapidjson,
+	rauc, sam-ba, samba4, sngrep, systemd, tremor, uboot-tools,
+	uclibc-ng-test, upmpdcli, wireshark, xerces, xterm, zstd
+
+	New packages: docker-proxy, python-functools32
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#10766: upmpdcli: Segmentation fault
+	#10776: ktap fails to build
+	#10846: error in compiling gnutls
+	#10856: openblas on qemu_x86_64_defconfig fails with "sgemm_..
+
 2018.02, Released March 4th, 2018
 
 	Fixes all over the tree.
@@ -843,6 +1102,26 @@
 	#9836: triggerhappy: systemd unit broken
 	#9846: musl libc not installed correctly in target folder
 	#9856: build libubox failed on ubuntu 17.04 64bit
+
+2017.02.11, Released April 11th, 2018
+
+	Important / security related fixes.
+
+	dependencies: Blacklist tar 1.30+ and build our own host-tar
+	if needed as tar 1.30+ changed the --numeric-owner output for
+	long path names. Build host-tar before other host-dependencies
+	as they need it to extract their source tarballs.
+
+	Updated/fixed packages: apache, busybox, clamav, dhcp,
+	dnsmasq, dovecot, exim, imagemagick, irssi, jq, libcurl,
+	libpjsip, librsvg, libtasn1, libvorbis, libxml2, lz4, mariadb,
+	mbedtls, mosquitto, ntp, openblas, opencv3, openssl, patch,
+	postgresql, python-webpy, qt53d, qt5tools, quagga, rsync,
+	samba4, sngrep, tremor, wavpack, wireshark, xerces, xterm
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#10856: openblas on qemu_x86_64_defconfig fails with "sgemm_..
 
 2017.02.10, Released January 31st, 2018
 

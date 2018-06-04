@@ -1,7 +1,0 @@
-config BR2_PACKAGE_MINGETTY
-	bool "mingetty"
-	help
-	  mingetty is a minimal getty for use on virtual consoles and is not
-	  suitable for use on serial lines.
-
-	  http://sourceforge.net/projects/mingetty/

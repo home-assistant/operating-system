@@ -1,3 +1,0 @@
-[Unit]
-Description=Hassio zram targets
-Documentation=man:systemd.target(5)

@@ -14,7 +14,7 @@ COREUTILS_LICENSE_FILES = COPYING
 COREUTILS_AUTORECONF = YES
 COREUTILS_GETTEXTIZE = YES
 
-COREUTILS_CONF_OPTS = --disable-rpath --enable-single-binary=shebangs \
+COREUTILS_CONF_OPTS = --disable-rpath --enable-single-binary=symlinks \
 	$(if $(BR2_TOOLCHAIN_USES_MUSL),--with-included-regex)
 COREUTILS_CONF_ENV = ac_cv_c_restrict=no \
 	ac_cv_func_chown_works=yes \
@@ -103,10 +103,11 @@ endif
 
 ifeq ($(BR2_ROOTFS_MERGED_USR),)
 define COREUTILS_CLEANUP_BIN
-	# some things go in root rather than usr
-	for f in $(COREUTILS_BIN_PROGS); do \
-		mv -f $(TARGET_DIR)/usr/bin/$$f $(TARGET_DIR)/bin/$$f || exit 1; \
-	done
+	# some things go in /bin rather than /usr/bin
+	$(foreach f,$(COREUTILS_BIN_PROGS), \
+		rm -f $(TARGET_DIR)/usr/bin/$(f) && \
+		ln -sf ../usr/bin/coreutils $(TARGET_DIR)/bin/$(f)
+	)
 endef
 COREUTILS_POST_INSTALL_TARGET_HOOKS += COREUTILS_CLEANUP_BIN
 endif

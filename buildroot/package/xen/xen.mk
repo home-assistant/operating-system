@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-XEN_VERSION = 4.10.0
+XEN_VERSION = 4.10.1
 XEN_SITE = https://downloads.xenproject.org/release/xen/$(XEN_VERSION)
 XEN_LICENSE = GPL-2.0
 XEN_LICENSE_FILES = COPYING
@@ -17,7 +17,9 @@ else ifeq ($(ARCH),arm)
 XEN_ARCH = arm32
 endif
 
-XEN_CONF_OPTS = --disable-ocamltools
+XEN_CONF_OPTS = \
+	--disable-ocamltools \
+	--with-initddir=/etc/init.d
 
 XEN_CONF_ENV = PYTHON=$(HOST_DIR)/bin/python2
 XEN_MAKE_ENV = \

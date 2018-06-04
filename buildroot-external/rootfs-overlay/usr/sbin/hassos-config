@@ -1,0 +1,52 @@
+#!/bin/sh
+set -e
+
+# Check if hassos-config is present
+if ! findfs LABEL="hassos-config" > /dev/null; then
+    echo "[Warning] No hassos-config partition found!"
+    exit 0
+fi
+
+# Mount config partition
+mount -o ro LABEL="hassos-config" /mnt/config
+
+##
+# NetworkManager
+if [ -d /mnt/config/network ]; then
+    echo "[Info] Update NetworkManager connections!"
+
+    rm -rf /etc/NetworkManager/system-connections/*
+    cp -f /mnt/config/network/* /etc/NetworkManager/system-connections/
+
+    nmcli con reload || true
+fi
+
+##
+# Modules
+if [ -d /mnt/config/modules ]; then
+    echo "[Info] Update Modules configuration!"
+
+    rm -rf /etc/modules-load.d/*
+    cp -f /mnt/config/modules/* /etc/modules-load.d/*
+fi
+
+##
+# SSH know hosts
+if [ -f /mnt/config/known_hosts ]; then
+    echo "[Info] Update SSH known_hosts!"
+
+    cp -f /mnt/config/known_hosts /root/.ssh/known_hosts
+    chmod 600 /root/.ssh/known_hosts
+fi
+
+##
+# Firmware update
+if ls /mnt/config/*.rauc > /dev/null; then
+    echo "[Info] Performe a firmware update"
+
+    rauc_filename=$(ls /mnt/config/*.rauc | head -n 1)
+    rauc install /mnt/config/$rauc_filename
+fi
+
+# Cleanup config partition
+umount /mnt/config

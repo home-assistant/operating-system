@@ -1,0 +1,26 @@
+When Barebox has been entered in HYP mode, there is a high chance that
+the kernel is  intended to be started in HYP mode also. Get this
+default into place.
+
+Signed-off-by: Lucas Stach <l.stach at pengutronix.de>
+---
+ arch/arm/cpu/sm.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/arch/arm/cpu/sm.c b/arch/arm/cpu/sm.c
+index 71bb394c8540..3369fbb5ff1a 100644
+--- a/arch/arm/cpu/sm.c
++++ b/arch/arm/cpu/sm.c
+@@ -264,6 +264,9 @@ static int sm_init(void)
+ 				  bootm_secure_state_names,
+ 				  ARRAY_SIZE(bootm_secure_state_names));
+ 
++	if (__boot_cpu_mode == HYP_MODE)
++		bootm_secure_state = ARM_STATE_HYP;
++
+ 	return 0;
+ }
+ device_initcall(sm_init);
+\ No newline at end of file
+-- 
+2.15.1

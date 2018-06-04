@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-ENLIGHTENMENT_VERSION = 0.22.1
+ENLIGHTENMENT_VERSION = 0.22.3
 ENLIGHTENMENT_SOURCE = enlightenment-$(ENLIGHTENMENT_VERSION).tar.xz
 ENLIGHTENMENT_SITE = http://download.enlightenment.org/rel/apps/enlightenment
 ENLIGHTENMENT_LICENSE = BSD-2-Clause
@@ -22,10 +22,12 @@ ENLIGHTENMENT_MESON_OPTS += \
 	--buildtype=$(if $(BR2_ENABLE_DEBUG),debug,release) \
 	--cross-file=$(HOST_DIR)/etc/meson/cross-compilation.conf \
 	-Dedje-cc=$(HOST_DIR)/bin/edje_cc \
-	-Deet-eet=$(HOST_DIR)/bin/eet \
-	-Deldbus_codegen=$(HOST_DIR)/bin/eldbus-codegen \
-	-Dpam=false \
-	-Drpath=false
+	-Deet=$(HOST_DIR)/bin/eet \
+	-Deldbus-codegen=$(HOST_DIR)/bin/eldbus-codegen \
+	-Dpam=false
+
+# enlightenment.pc and /usr/lib/enlightenment/modules/*.so
+ENLIGHTENMENT_INSTALL_STAGING = YES
 
 ifeq ($(BR2_PACKAGE_SYSTEMD),y)
 ENLIGHTENMENT_MESON_OPTS += -Dsystemd=true
@@ -40,6 +42,10 @@ ENLIGHTENMENT_MESON_OPTS += -Dmixer=true
 ENLIGHTENMENT_DEPENDENCIES += alsa-lib
 else
 ENLIGHTENMENT_MESON_OPTS += -Dmixer=false
+endif
+
+ifeq ($(BR2_PACKAGE_XKEYBOARD_CONFIG),y)
+ENLIGHTENMENT_DEPENDENCIES += xkeyboard-config
 endif
 
 define ENLIGHTENMENT_CONFIGURE_CMDS
