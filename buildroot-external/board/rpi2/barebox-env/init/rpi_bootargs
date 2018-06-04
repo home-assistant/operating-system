@@ -1,3 +1,3 @@
 #!/bin/sh
 
-global linux.bootargs.rpi="cma=64M"
+global linux.bootargs.rpi="bcm2708_fb.fbwidth=656 bcm2708_fb.fbheight=416 bcm2708_fb.fbswap=1 vc_mem.mem_base=0x3ec00000 vc_mem.mem_size=0x40000000"

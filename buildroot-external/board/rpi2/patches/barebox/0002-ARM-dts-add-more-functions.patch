@@ -1,15 +1,15 @@
-From e3e89d8d6fd9ba6567bccb65a9d8221b5b01492e Mon Sep 17 00:00:00 2001
+From 1f5edc2b907c89a3e27f55490479a0999b1127dc Mon Sep 17 00:00:00 2001
 From: Pascal Vizeli <pvizeli@syshack.ch>
 Date: Mon, 4 Jun 2018 09:17:25 +0000
-Subject: [PATCH 2/3] ARM: dts: add more functions
+Subject: [PATCH 2/2] ARM: dts: add more functions
 
 Signed-off-by: Pascal Vizeli <pvizeli@syshack.ch>
 ---
  arch/arm/dts/bcm2835-rpi.dts   |  4 ----
  arch/arm/dts/bcm2836-rpi-2.dts |  4 ----
- dts/src/arm/bcm2835-rpi.dtsi   |  6 ++++++
- dts/src/arm/bcm283x.dtsi       | 12 ++++--------
- 4 files changed, 10 insertions(+), 16 deletions(-)
+ dts/src/arm/bcm2835-rpi.dtsi   | 38 ++++++++++++++++++++++++++++++++--
+ dts/src/arm/bcm283x.dtsi       | 12 ++++-------
+ 4 files changed, 40 insertions(+), 18 deletions(-)
 
 diff --git a/arch/arm/dts/bcm2835-rpi.dts b/arch/arm/dts/bcm2835-rpi.dts
 index c23e7c7c1..22d60e961 100644
@@ -42,10 +42,10 @@ index 2fa1c8bb4..bdee1296e 100644
  		reg = <0x0 0x0>;
  	};
 diff --git a/dts/src/arm/bcm2835-rpi.dtsi b/dts/src/arm/bcm2835-rpi.dtsi
-index e36c392a2..2bb406e28 100644
+index e36c392a2..86f1d493c 100644
 --- a/dts/src/arm/bcm2835-rpi.dtsi
 +++ b/dts/src/arm/bcm2835-rpi.dtsi
-@@ -27,6 +27,12 @@
+@@ -27,6 +27,39 @@
  			firmware = <&firmware>;
  			#power-domain-cells = <1>;
  		};
@@ -53,11 +53,58 @@ index e36c392a2..2bb406e28 100644
 +		fb: fb {
 +			compatible = "brcm,bcm2708-fb";
 +			firmware = <&firmware>;
++			status = "okay";
++		};
++
++		vchiq: vchiq {
++			compatible = "brcm,bcm2835-vchiq";
++			reg = <0x7e00b840 0xf>;
++			interrupts = <0 2>;
++			cache-line-size = <32>;
++			firmware = <&firmware>;
++		};
++
++		vcsm: vcsm {
++			compatible = "raspberrypi,bcm2835-vcsm";
++			firmware = <&firmware>;
++			status = "okay";
++		};
++
++		/* Onboard audio */
++		audio: audio {
++			compatible = "brcm,bcm2835-audio";
++			brcm,pwm-channels = <8>;
++			status = "okay";
++		};
++
++		/* External sound card */
++		sound: sound {
 +			status = "disabled";
 +		};
++
  	};
  };
  
+@@ -91,12 +124,12 @@
+ 
+ &hdmi {
+ 	power-domains = <&power RPI_POWER_DOMAIN_HDMI>;
+-	status = "okay";
++	status = "disabled";
+ };
+ 
+ &vec {
+ 	power-domains = <&power RPI_POWER_DOMAIN_VEC>;
+-	status = "okay";
++	status = "disabled";
+ };
+ 
+ &dsi0 {
+@@ -106,3 +139,4 @@
+ &dsi1 {
+ 	power-domains = <&power RPI_POWER_DOMAIN_DSI1>;
+ };
++
 diff --git a/dts/src/arm/bcm283x.dtsi b/dts/src/arm/bcm283x.dtsi
 index 9d293decf..0abb72a47 100644
 --- a/dts/src/arm/bcm283x.dtsi
