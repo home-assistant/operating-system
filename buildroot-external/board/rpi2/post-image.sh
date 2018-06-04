@@ -28,9 +28,11 @@ cp -r ${BINARIES_DIR}/rpi-firmware/overlays ${BOOT_DATA}/
 (
     echo "kernel=barebox.bin"
     echo "disable_splash=1"
+    echo "dtparam=audio=on"
+    echo "enable_uart=1"
 ) > ${BOOT_DATA}/config.txt
 
-touch ${BOOT_DATA}/cmdline.txt
+echo "dwc_otg.lpm_enable=0 console=tty1 console=ttyAMA0,115200" > ${BOOT_DATA}/cmdline.txt
 
 # Create other layers
 create_boot_image ${BINARIES_DIR}

@@ -20,6 +20,8 @@ mkdir -p ${BOOT_DATA}/EFI/barebox
 cp ${BINARIES_DIR}/barebox.bin ${BOOT_DATA}/EFI/BOOT/BOOTx64.EFI
 cp ${BOARD_DIR}/barebox-state-efi.dtb ${BOOT_DATA}/EFI/barebox/state.dtb
 
+echo "console=tty1" > ${BOARD_DIR}/cmdline.txt
+
 # Create other layers
 create_boot_image ${BINARIES_DIR}
 create_overlay_image ${BINARIES_DIR}
