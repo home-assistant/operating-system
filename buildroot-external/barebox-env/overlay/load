@@ -1,5 +1,5 @@
 #!/bin/sh
 
 for i in /env/overlay/*.dtbo; do
-	oftree -o $i
+	of_overlay $i
 done
