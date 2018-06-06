@@ -1,17 +1,18 @@
-From 679ad93a2297a953cdbd9d04b216a33d24b87385 Mon Sep 17 00:00:00 2001
+From c02be471430936674acba23ad18e3a4178c2c45a Mon Sep 17 00:00:00 2001
 From: Pascal Vizeli <pvizeli@syshack.ch>
-Date: Sat, 2 Jun 2018 20:52:06 +0000
-Subject: [PATCH 1/2] drivers: of: implement overlay support
+Date: Tue, 5 Jun 2018 22:43:53 +0000
+Subject: [PATCH 2/2] drivers: of: implement overlay support
 
-Origin by Jan Luebbe:
-http://lists.infradead.org/pipermail/barebox/2015-March/022674.html
+Origin patches are from Jan Luebbe.
 
-I rebase the patches and fix the resolve for __local_fixups__, they
-was wrong copy/ported from linux kernel.
+This is based on Pantelis Antoniou's overlay support for the kernel. It
+has been simplified by leaving out transaction support, locking and
+other details required by the Linux DT support.
 
-I merge the overlay code from oftree into own command: of_overlay
+Pascal Vizeli fix some parts of resolver they was wrong ported from
+linux source.
 
-Signed-off-by: Pascal Vizeli <pvizeli@syshack.ch>
+Signed-off-by: Jan Luebbe <jlu@pengutronix.de>
 ---
  Documentation/user/devicetree.rst     | 101 ++++++++-
  arch/sandbox/dts/Makefile             |   5 +-
@@ -250,14 +251,14 @@ index eb4796389..f404338fa 100644
  obj-$(CONFIG_CMD_OF_DISPLAY_TIMINGS)	+= of_display_timings.o
 diff --git a/commands/of_overlay.c b/commands/of_overlay.c
 new file mode 100644
-index 000000000..6c74c72bc
+index 000000000..1b3e857bb
 --- /dev/null
 +++ b/commands/of_overlay.c
 @@ -0,0 +1,106 @@
 +/*
 + * of_overlay.c - device tree overlay command support
 + *
-+ * Copyright (c) 2018 Pascal Vizeli <pvizeli@syshack.ch>, Hass.io
++ * Copyright (C) 2015 Pengutronix, Jan Luebbe <jlu@pengutronix.de>
 + *
 + * See file CREDITS for list of people who contributed to this
 + * project.
@@ -299,7 +300,7 @@ index 000000000..6c74c72bc
 +	struct device_node *overlay = NULL, *root;
 +	struct of_overlay_info *ovinfo;
 +
-+	if (argc != 2 || !IS_ENABLED(CONFIG_OFTREE_OVERLAY))
++	if (argc != 2)
 +		return COMMAND_ERROR_USAGE;
 +
 +	filename = argv[1];
@@ -307,7 +308,7 @@ index 000000000..6c74c72bc
 +	root = of_get_root_node();
 +	if (!root) {
 +		printf("no oftree loaded\n");
-+		goto out;
++		return 1;
 +	}
 +
 +	fdt = read_file(filename, &size);
@@ -325,19 +326,19 @@ index 000000000..6c74c72bc
 +	}
 +
 +	ret = of_resolve(overlay);
-+	if (ret) {
++	if (ret != 0) {
 +		printf("resolve oftree overlay: %s\n", strerror(-ret));
 +		goto out;
 +	}
 +
 +	ret = of_build_overlay_info(overlay, &ovinfo_cnt, &ovinfo);
-+	if (ret) {
++	if (ret != 0) {
 +		printf("prepare oftree overlay: %s\n", strerror(-ret));
 +		goto out;
 +	}
 +
 +	ret = of_overlay(ovinfo_cnt, ovinfo);
-+	if (ret) {
++	if (ret != 0) {
 +		printf("apply oftree overlay: %s\n", strerror(-ret));
 +		goto out;
 +	}

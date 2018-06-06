@@ -1,7 +1,7 @@
-From ec731512831fba48b9cc5f07cd47be6426821733 Mon Sep 17 00:00:00 2001
+From 33d62d2531ec28a54acd9392c38e621d2a72472b Mon Sep 17 00:00:00 2001
 From: Pascal Vizeli <pvizeli@syshack.ch>
-Date: Tue, 5 Jun 2018 17:34:46 +0000
-Subject: [PATCH 2/2] scripts/dtc: Update to upstream version 1.4.6
+Date: Tue, 5 Jun 2018 22:35:03 +0000
+Subject: [PATCH 1/2] scripts/dtc: Update to upstream version 1.4.6
 
 Signed-off-by: Pascal Vizeli <pvizeli@syshack.ch>
 ---
