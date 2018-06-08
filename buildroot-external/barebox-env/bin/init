@@ -7,9 +7,6 @@ for i in /env/init/*; do
 	. $i
 done
 
-# Overlays
-. /env/overlay/load
-
 echo "- Hit m for menu or wait for autoboot -"
 timeout -a 1 -s -v key
 
