@@ -28,6 +28,8 @@ cp -r ${BINARIES_DIR}/rpi-firmware/overlays ${BOOT_DATA}/
 (
     echo "kernel=barebox.bin"
     echo "device_tree_address=0x02008000"
+    echo "device_tree_end=0x0200ff00"
+    echo "cmdline=\"\""
     echo "disable_splash=1"
     echo "dtparam=audio=on"
     echo "enable_uart=1"
