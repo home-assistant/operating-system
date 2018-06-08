@@ -27,6 +27,7 @@ cp -r ${BINARIES_DIR}/rpi-firmware/overlays ${BOOT_DATA}/
 # Update Boot options
 (
     echo "kernel=barebox.bin"
+    echo "device_tree_address=0x02008000"
     echo "disable_splash=1"
     echo "dtparam=audio=on"
     echo "enable_uart=1"

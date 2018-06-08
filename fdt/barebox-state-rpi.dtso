@@ -5,13 +5,6 @@
 	compatible = "brcm,bcm2835", "brcm,bcm2708", "brcm,bcm2709";
 
 	fragment@0 {
-		target = <&sdhci>;
-		__overlay__ {
-			status = "disabled";
-		};
-	};
-
-	fragment@1 {
 		target = <&sdhost>;
 		__overlay__ {
 			status = "okay";
@@ -20,7 +13,7 @@
 				#size-cells = <1>;
 				compatible = "fixed-partitions";
 
-				backend_state_sdhost: partition@22100000 {
+				backend_state: partition@22100000 {
 					label = "state";
 					reg = <0x22100000 0x800000>;
 				};
@@ -28,10 +21,64 @@
 		};
 	};
 
-	fragment@2 {
-		target = <&state>;
+
+	fragment@1 {
+		target-path = "/";
 		__overlay__ {
-			backend = <&backend_state_sdhost>;
+			state: state {
+				#address-cells = <1>;
+				#size-cells = <1>;
+				magic = <0xef98423f>;
+				compatible = "barebox,state";
+				backend = <&backend_state>;
+				backend-type = "raw";
+				backend-stridesize = <4048>;
+
+				bootstate {
+					#address-cells = <1>;
+					#size-cells = <1>;
+
+					system0 {
+						#address-cells = <1>;
+						#size-cells = <1>;
+						remaining_attempts@0 {
+							reg = <0x0 0x4>;
+							type = "uint32";
+							default = <3>;
+						};
+						priority@4 {
+							reg = <0x4 0x4>;
+							type = "uint32";
+							default = <20>;
+						};
+					};
+					system1 {
+						#address-cells = <1>;
+						#size-cells = <1>;
+						remaining_attempts@8 {
+							reg = <0x8 0x4>;
+							type = "uint32";
+							default = <0>;
+						};
+						priority@c {
+							reg = <0xc 0x4>;
+							type = "uint32";
+							default = <10>;
+						};
+					};
+					last_chosen@10 {
+						reg = <0x10 0x4>;
+						type = "uint32";
+					};
+				};
+			};
+		};
+	};
+
+	fragment@3 {
+		target-path = "/aliases";
+		__overlay__ {
+			state = "/state";
 		};
 	};
 };
