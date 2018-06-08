@@ -1,0 +1,4 @@
+#!/bin/sh
+
+memcpy -d /tmp/rpi.dtb 0x02008000 0 0x8000
+oftree -f -l /tmp/rpi.dtb
