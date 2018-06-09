@@ -33,7 +33,7 @@ cp -r ${BINARIES_DIR}/rpi-firmware/overlays ${BOOT_DATA}/
     echo "dtparam=audio=on"
 ) > ${BOOT_DATA}/config.txt
 
-echo "dwc_otg.lpm_enable=0 console=tty1 console=ttyAMA0,115200" > ${BOOT_DATA}/cmdline.txt
+echo "dwc_otg.lpm_enable=0 console=tty1" > ${BOOT_DATA}/cmdline.txt
 
 # Create other layers
 create_boot_image ${BINARIES_DIR}

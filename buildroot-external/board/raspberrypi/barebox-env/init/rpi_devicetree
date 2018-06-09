@@ -2,5 +2,5 @@
 
 memcpy -d /tmp/rpi.dtb 0x02008000 0 0x8000
 oftree -f -l /tmp/rpi.dtb
-of_overlay /data/barebox-state-rpi.dtbo
+of_overlay /env/data/barebox-state-rpi.dtbo
 fix_bootargs
