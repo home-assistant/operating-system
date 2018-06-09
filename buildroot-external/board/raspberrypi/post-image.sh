@@ -18,7 +18,7 @@ mkdir -p ${BOOT_DATA}
 
 cp ${BINARIES_DIR}/barebox.bin ${BOOT_DATA}/
 cp -t ${BOOT_DATA} \
-    ${BINARIES_DIR}/bcm2709-rpi-2-b.dtb \
+    ${BINARIES_DIR}/*.dtb \
     ${BINARIES_DIR}/rpi-firmware/bootcode.bin \
     ${BINARIES_DIR}/rpi-firmware/fixup.dat \
     ${BINARIES_DIR}/rpi-firmware/start.elf
@@ -29,10 +29,8 @@ cp -r ${BINARIES_DIR}/rpi-firmware/overlays ${BOOT_DATA}/
     echo "kernel=barebox.bin"
     echo "device_tree_address=0x02008000"
     echo "device_tree_end=0x0200ff00"
-    echo "cmdline=\"\""
     echo "disable_splash=1"
     echo "dtparam=audio=on"
-    echo "enable_uart=1"
 ) > ${BOOT_DATA}/config.txt
 
 echo "dwc_otg.lpm_enable=0 console=tty1 console=ttyAMA0,115200" > ${BOOT_DATA}/cmdline.txt

@@ -1,0 +1,4 @@
+#!/bin/sh
+
+# Ignore cmdline.txt on raspberry pi
+global linux.bootargs.base=""
