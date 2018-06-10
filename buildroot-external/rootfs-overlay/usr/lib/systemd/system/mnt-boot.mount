@@ -11,4 +11,4 @@ Where=/mnt/boot
 Type=auto
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=local-fs.target

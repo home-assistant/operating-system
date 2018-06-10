@@ -18,13 +18,15 @@ mkdir -p ${BOOT_DATA}/EFI/BOOT
 mkdir -p ${BOOT_DATA}/EFI/barebox
 
 cp ${BINARIES_DIR}/barebox.bin ${BOOT_DATA}/EFI/BOOT/BOOTx64.EFI
-cp ${BOARD_DIR}/barebox-state-efi.dtb ${BOOT_DATA}/EFI/barebox/state.dtb
+cp ${BR2_EXTERNAL_HASSOS_PATH}/misc/barebox-state-efi.dtb ${BOOT_DATA}/EFI/barebox/state.dtb
 
-echo "console=tty1" > ${BOOT_DIR}/cmdline.txt
+echo "console=tty1" > ${BOOT_DATA}/cmdline.txt
 
 # Create other layers
 create_boot_image ${BINARIES_DIR}
 create_overlay_image ${BINARIES_DIR}
+create_kernel_image ${BINARIES_DIR} bzImage
+create_barebox_state_image ${BINARIES_DIR}
 
 create_disk_image ${BINARIES_DIR} ${BINARIES_DIR}/harddisk.img 6
 
