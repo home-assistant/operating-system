@@ -2,7 +2,7 @@
 Description=HassOS mark boot partition as good
 
 [Timer]
-OnBootSec=30sec
+OnBootSec=1min
 
 [Install]
 WantedBy=timers.target

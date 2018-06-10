@@ -13,7 +13,7 @@ BOOT_SIZE=32M
 BOOTSTATE_SIZE=8M
 SYSTEM_SIZE=256M
 KERNEL_SIZE=16M
-OVERLAY_SIZE=64M
+OVERLAY_SIZE=96M
 DATA_SIZE=1G
 
 
@@ -66,7 +66,8 @@ function create_uboot_state_image() {
     local bootstate_img="${1}/bootstate.img"
 
     dd if=/dev/zero of=${bootstate_img} bs=${BOOTSTATE_SIZE} count=1
-    mkfs.ext4 -L "hassos-bootstate" -E lazy_itable_init=0,lazy_journal_init=0 ${bootstate_img}
+    #mkfs.ext4 -L "hassos-bootstate" -E lazy_itable_init=0 -O ^has_journal ${bootstate_img}
+    mkfs.ext2 -L "hassos-bootstate" -E lazy_itable_init=0 ${bootstate_img}
 }
 
 
