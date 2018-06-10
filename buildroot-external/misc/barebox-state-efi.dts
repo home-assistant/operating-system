@@ -18,7 +18,7 @@
 			#address-cells = <1>;
 			#size-cells = <1>;
 
-			system0 {
+			A {
 				#address-cells = <1>;
 				#size-cells = <1>;
 				remaining_attempts@0 {
@@ -32,7 +32,7 @@
 					default = <20>;
 				};
 			};
-			system1 {
+			B {
 				#address-cells = <1>;
 				#size-cells = <1>;
 				remaining_attempts@8 {
