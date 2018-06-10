@@ -1,4 +1,4 @@
-BOARD_ID=rpi1
+BOARD_ID=rpi
 BOARD_NAME="RaspberryPi"
 CHASSIS=embedded
 BOOTLOADER=uboot
