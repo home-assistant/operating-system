@@ -4,10 +4,11 @@ Hass.io OS based on [buildroot](https://buildroot.org/). It's a hypervisor for D
 ## Focus
 
 - Linux kernel 4.14 (LT)
-- Barebox as bootloader
+- Barebox as bootloader on EFI
+- U-Boot as bootloader on IoT
 - RAUC for OTA updates
 - SquashFS LZ4 as filesystem
-- Docker 17.12.1
+- Docker 18.03.1
 - AppArmor protected
 - ZRAM LZ4 for /tmp, /var, swap
 - Run every supervisor
