@@ -16,7 +16,7 @@ IMAGE_FILE=${BINARIES_DIR}/${HASSOS_ID}_${BOARD_ID}-${VERSION_MAJOR}.${VERSION_B
 if [ "$BOARD_ID" == "rpi3-64" ]; then
     KERNEL_NAME="Image"
 else
-    KENREL_NAME="zImage"
+    KERNEL_NAME="zImage"
 fi
 
 # Init boot data
@@ -46,7 +46,7 @@ echo "dwc_otg.lpm_enable=0 console=tty1" > ${BOOT_DATA}/cmdline.txt
 create_boot_image ${BINARIES_DIR}
 create_overlay_image ${BINARIES_DIR}
 create_uboot_state_image ${BINARIES_DIR}
-create_kernel_image ${BINARIES_DIR} ${KENREL_NAME}
+create_kernel_image ${BINARIES_DIR} ${KERNEL_NAME}
 
 create_disk_image ${BINARIES_DIR} ${IMAGE_FILE} 2
 fix_disk_image_mbr ${IMAGE_FILE}
