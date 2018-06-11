@@ -42,6 +42,11 @@ cp -r ${BINARIES_DIR}/rpi-firmware/overlays ${BOOT_DATA}/
 
 echo "dwc_otg.lpm_enable=0 console=tty1" > ${BOOT_DATA}/cmdline.txt
 
+# Enable 64bit support
+if [ "$BOARD_ID" == "rpi3-64" ]; then
+    echo "arm_64bit=1" >> ${BOOT_DATA}/config.txt
+fi
+
 # Create other layers
 create_boot_image ${BINARIES_DIR}
 create_overlay_image ${BINARIES_DIR}
