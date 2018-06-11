@@ -55,22 +55,6 @@ function create_kernel_image() {
 }
 
 
-function create_barebox_state_image() {
-    local bootstate_img="${1}/bootstate.img"
-
-    dd if=/dev/zero of=${bootstate_img} bs=${BOOTSTATE_SIZE} count=1
-}
-
-
-function create_uboot_state_image() {
-    local bootstate_img="${1}/bootstate.img"
-
-    dd if=/dev/zero of=${bootstate_img} bs=${BOOTSTATE_SIZE} count=1
-    #mkfs.ext4 -L "hassos-bootstate" -E lazy_itable_init=0 -O ^has_journal ${bootstate_img}
-    mkfs.ext2 -L "hassos-bootstate" -E lazy_itable_init=0 ${bootstate_img}
-}
-
-
 function create_disk_image() {
     local boot_img="${1}/boot.vfat"
     local rootfs_img="${1}/rootfs.squashfs"
@@ -78,13 +62,11 @@ function create_disk_image() {
     local data_img="${1}/data.ext4"
     local kernel0_img="${1}/kernel0.ext4"
     local kernel1_img="${1}/kernel1.ext4"
-    local bootstate_img="${1}/bootstate.img"
     local hdd_img=${2}
     local hdd_count=${3:-2}
 
     local loop_dev="/dev/mapper/$(losetup -f | cut -d'/' -f3)"
     local boot_offset=0
-    local bootstate_offset=0
     local rootfs_offset=0
     local kernel0_offset=0
     local kernel1_offset=0
@@ -110,7 +92,6 @@ function create_disk_image() {
 
     sgdisk -n 5:0:+${SYSTEM_SIZE} -c 5:"hassos-system1" -t 5:"0FC63DAF-8483-4772-8E79-3D69D8477DE4" -u 5:${SYSTEM1_UUID} ${hdd_img}
 
-    bootstate_offset="$(sgdisk -F ${hdd_img})"
     sgdisk -n 6:0:+${BOOTSTATE_SIZE} -c 6:"hassos-bootstate" -u 6:${BOOTSTATE_UUID} ${hdd_img}
 
     overlay_offset="$(sgdisk -F ${hdd_img})"
@@ -122,7 +103,6 @@ function create_disk_image() {
     # Write Images
     sgdisk -v
     dd if=${boot_img} of=${hdd_img} conv=notrunc bs=512 obs=512 seek=${boot_offset}
-    dd if=${bootstate_img} of=${hdd_img} conv=notrunc bs=512 obs=512 seek=${bootstate_offset}
     dd if=${kernel0_img} of=${hdd_img} conv=notrunc bs=512 obs=512 seek=${kernel0_offset}
     dd if=${kernel1_img} of=${hdd_img} conv=notrunc bs=512 obs=512 seek=${kernel1_offset}
     dd if=${rootfs_img} of=${hdd_img} conv=notrunc bs=512 obs=512 seek=${rootfs_offset}

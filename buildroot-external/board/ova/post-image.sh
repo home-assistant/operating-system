@@ -26,7 +26,6 @@ echo "console=tty1" > ${BOOT_DATA}/cmdline.txt
 create_boot_image ${BINARIES_DIR}
 create_overlay_image ${BINARIES_DIR}
 create_kernel_image ${BINARIES_DIR} bzImage
-create_barebox_state_image ${BINARIES_DIR}
 
 create_disk_image ${BINARIES_DIR} ${BINARIES_DIR}/harddisk.img 6
 
