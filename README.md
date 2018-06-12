@@ -13,23 +13,6 @@ Hass.io OS based on [buildroot](https://buildroot.org/). It's a hypervisor for D
 - ZRAM LZ4 for /tmp, /var, swap
 - Run every supervisor
 
-## Schemas
-![](misc/hassio-os-partition.png?raw=true)
-
-# Customize
-
-Provide a file with the name `hassos.json` in your data partition and the following structure:
-
-```json
-{
-  "supervisor": "repo/image",
-  "supervisor_args": "optional / custom docker arguments",
-  "cli": "repo/image",
-  "cli_args": "optional / custom docker arguments",
-  "hostname": "default hostname"
-}
-```
-
 # Building
 Running `sudo ./enter.sh` will get you into the build Docker container.   
 `make -C /build/buildroot BR2_EXTERNAL=/build/buildroot-external xy_defconfig`
