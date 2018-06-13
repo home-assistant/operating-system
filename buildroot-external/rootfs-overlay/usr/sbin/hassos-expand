@@ -12,6 +12,7 @@ fi
 
 # Resize & Reload partition
 echo "[INFO] Update hassos-data partition"
+sgdisk -e ${DEVICE_ROOT}
 sgdisk -d 8 -n 8:0:0 -c 8:"hassos-data" -t 8:"0FC63DAF-8483-4772-8E79-3D69D8477DE4" -u 8:"a52a4597-fa3a-4851-aefd-2fbe9f849079" ${DEVICE_ROOT}
 sgdisk -v ${DEVICE_ROOT}
 partx -u ${DEVICE_ROOT}
