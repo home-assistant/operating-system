@@ -8,8 +8,8 @@ for platform in "${all_platforms[@]}"; do
     make -C /build/buildroot BR2_EXTERNAL=/build/buildroot-external \
         ${platform}_defconfig
     make -C /build/buildroot BR2_EXTERNAL=/build/buildroot-external
+    cp -f /build/buildroot/output/images/hassos_* /build/RL/
+
     make -C /build/buildroot BR2_EXTERNAL=/build/buildroot-external \
         clean
-
-    cp -f /build/buildroot/output/images/hassos_* /build/RL/
 done
