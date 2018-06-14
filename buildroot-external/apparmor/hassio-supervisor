@@ -22,6 +22,7 @@ profile hassio-supervisor flags=(attach_disconnected,mediate_deleted) {
   /** r,
   /tmp/** rw,
   /data/** rw,
+  /usr/lib/python{,3,3.[0-9]}/** mr,
   /{,var/}run/docker.sock rw,
 
   capability net_bind_service,
