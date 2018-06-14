@@ -12,13 +12,6 @@ BOOT_DATA=${BINARIES_DIR}/boot
 # Filename
 IMAGE_FILE=${BINARIES_DIR}/${HASSOS_ID}_${BOARD_ID}-${VERSION_MAJOR}.${VERSION_BUILD}.img
 
-# Eval kernel name
-if [ "$BOARD_ID" == "rpi3-64" ]; then
-    KERNEL_NAME="Image"
-else
-    KERNEL_NAME="zImage"
-fi
-
 # Init boot data
 rm -rf ${BOOT_DATA}
 mkdir -p ${BOOT_DATA}
@@ -43,8 +36,11 @@ cp -r ${BINARIES_DIR}/rpi-firmware/overlays ${BOOT_DATA}/
 echo "dwc_otg.lpm_enable=0 console=tty1" > ${BOOT_DATA}/cmdline.txt
 
 # Enable 64bit support
-if [ "$BOARD_ID" == "rpi3-64" ]; then
+if [ "${BOARD_ID}" == "rpi3-64" ]; then
     echo "arm_64bit=1" >> ${BOOT_DATA}/config.txt
+    KERNEL_NAME="Image"
+else
+    KERNEL_NAME="zImage"
 fi
 
 # Create other layers
