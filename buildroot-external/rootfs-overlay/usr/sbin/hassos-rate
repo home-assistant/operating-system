@@ -1,0 +1,26 @@
+#!/bin/sh
+set -e
+
+
+function mark_good() {
+    rauc status mark-good
+    exit 0
+}
+
+function mark_bad() {
+    rauc status mark-bad
+    exit 0
+}
+
+# Docker state
+if ! systemctl -q is-active docker; then
+    mark_bad
+fi
+
+# Docker state
+if ! systemctl -q is-active hassos-supervisor; then
+    mark_bad
+fi
+
+mark_good
+
