@@ -9,8 +9,10 @@ function mark_good() {
 
 function mark_bad() {
     rauc status mark-bad
-    exit 0
+    systemctl reboot
 }
+
+#### Check system ####
 
 # Docker state
 if ! systemctl -q is-active docker; then
@@ -23,4 +25,3 @@ if ! systemctl -q is-active hassos-supervisor; then
 fi
 
 mark_good
-
