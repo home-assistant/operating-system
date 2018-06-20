@@ -2,7 +2,7 @@ FROM alpine:3.7
 
 # Install packages
 RUN apk add --no-cache \
-    bash coreutils e2fsprogs
+    bash coreutils e2fsprogs curl
 RUN apk add --no-cache --repository http://nl.alpinelinux.org/alpine/v3.7/community \
     docker
 
