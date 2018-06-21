@@ -41,10 +41,10 @@ fi
 
 ##
 # Firmware update
-if ls /mnt/config/*.rauc > /dev/null; then
+if ls /mnt/config/*.raucb > /dev/null; then
     echo "[Info] Performe a firmware update"
 
-    rauc_filename=$(ls /mnt/config/*.rauc | head -n 1)
+    rauc_filename=$(ls /mnt/config/*.raucb | head -n 1)
     rauc install /mnt/config/$rauc_filename
 fi
 
