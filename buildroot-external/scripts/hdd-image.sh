@@ -18,8 +18,8 @@ DATA_SIZE=1G
 
 
 function create_boot_image() {
-    local boot_data="${1}/boot"
-    local boot_img="${1}/boot.vfat"
+    local boot_data="${BINARIES_DIR}/boot"
+    local boot_img="${BINARIES_DIR}/boot.vfat"
 
     echo "mtools_skip_check=1" > ~/.mtoolsrc
     dd if=/dev/zero of=${boot_img} bs=${BOOT_SIZE} count=1
@@ -29,7 +29,7 @@ function create_boot_image() {
 
 
 function create_overlay_image() {
-    local overlay_img="${1}/overlay.ext4"
+    local overlay_img="${BINARIES_DIR}/overlay.ext4"
 
     dd if=/dev/zero of=${overlay_img} bs=${OVERLAY_SIZE} count=1
     mkfs.ext4 -L "hassos-overlay" -E lazy_itable_init=0,lazy_journal_init=0 ${overlay_img}
@@ -37,9 +37,9 @@ function create_overlay_image() {
 
 
 function create_kernel_image() {
-    local kernel0_img="${1}/kernel0.ext4"
-    local kernel1_img="${1}/kernel1.ext4"
-    local kernel=${1}/${2}
+    local kernel0_img="${BINARIES_DIR}/kernel0.ext4"
+    local kernel1_img="${BINARIES_DIR}/kernel1.ext4"
+    local kernel="${BINARIES_DIR}/${2}"
 
     # Make image
     dd if=/dev/zero of=${kernel0_img} bs=${KERNEL_SIZE} count=1
@@ -56,12 +56,12 @@ function create_kernel_image() {
 
 
 function create_disk_image() {
-    local boot_img="${1}/boot.vfat"
-    local rootfs_img="${1}/rootfs.squashfs"
-    local overlay_img="${1}/overlay.ext4"
-    local data_img="${1}/data.ext4"
-    local kernel0_img="${1}/kernel0.ext4"
-    local kernel1_img="${1}/kernel1.ext4"
+    local boot_img="${BINARIES_DIR}/boot.vfat"
+    local rootfs_img="${BINARIES_DIR}/rootfs.squashfs"
+    local overlay_img="$${BINARIES_DIR}/overlay.ext4"
+    local data_img="${BINARIES_DIR}/data.ext4"
+    local kernel0_img="${BINARIES_DIR}/kernel0.ext4"
+    local kernel1_img="${BINARIES_DIR}/kernel1.ext4"
     local hdd_img=${2}
     local hdd_count=${3:-2}
 
