@@ -7,13 +7,13 @@ You can format a USB stick with FAT32 and name it with `hassos-config`. The layo
 network/
 modules/
 known_hosts
-hassos-xy.rauc
+hassos-xy.raucb
 ```
 
 - On `network` folder can hold any kind of NetworkManager connections files.
 - The folder `modules` is for modules-load configuration files.
 - `known_hosts` file activate debug SSH access of port `22222`.
-- For firmware updates you can but the `hassos-*.rauc` OTA update they should be install. 
+- For firmware updates you can but the `hassos-*.raucb` OTA update they should be install. 
 
 ## Local
 
