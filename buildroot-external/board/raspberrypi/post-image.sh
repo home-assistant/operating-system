@@ -50,3 +50,7 @@ create_disk_image 2
 fix_disk_image_mbr
 convert_disk_image_gz
 
+# Generate OTA update file
+rm -f ${BOOT_DATA}/*.txt
+
+create_ota_update ${KERNEL_NAME}
