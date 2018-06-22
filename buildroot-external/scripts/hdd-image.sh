@@ -119,7 +119,7 @@ function fix_disk_image_mbr() {
 }
 
 
-function create_disk_image_vdmk() {
+function convert_disk_image_vdmk() {
     local hdd_img="$(hassos_image_name img)"
     local hdd_vdmk="$(hassos_image_name vdmk)"
     
