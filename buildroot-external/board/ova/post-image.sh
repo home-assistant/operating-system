@@ -28,7 +28,10 @@ create_kernel_image bzImage
 
 # Create disk images
 create_disk_image 6
-create_disk_image_vdmk
+convert_disk_image_vdmk
 
 # Generate OTA update file
+rm -rf ${BOOT_DATA}/EFI/barebox
+rm ${BOOT_DATA}/cmdline.txt
+
 create_ota_update bzImage
