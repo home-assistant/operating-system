@@ -7,6 +7,8 @@ BOARD_DIR=${2}
 . ${SCRIPT_DIR}/rootfs-layer.sh
 . ${BR2_EXTERNAL_HASSOS_PATH}/info
 . ${BOARD_DIR}/info
+. ${SCRIPT_DIR}/name.sh
+
 
 # HassOS tasks
 fix_rootfs
@@ -32,7 +34,7 @@ install_hassos_cli
 ) > ${TARGET_DIR}/etc/machine-info
 
 # Settup rauc
-sed -i "s/%COMPATIBLE%/${HASSOS_ID}-${BOARD_ID}/g" ${TARGET_DIR}/etc/rauc/system.conf
+sed -i "s/%COMPATIBLE%/$(hassos_rauc_compatible)/g" ${TARGET_DIR}/etc/rauc/system.conf
 sed -i "s/%BOOTLOADER%/${BOOTLOADER}/g" ${TARGET_DIR}/etc/rauc/system.conf
 
 # Settup the correct CA
