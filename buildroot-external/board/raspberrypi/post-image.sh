@@ -6,11 +6,9 @@ BOARD_DIR=${2}
 BOOT_DATA=${BINARIES_DIR}/boot
 
 . ${SCRIPT_DIR}/hdd-image.sh
+. ${SCRIPT_DIR}/name.sh
 . ${BR2_EXTERNAL_HASSOS_PATH}/info
 . ${BOARD_DIR}/info
-
-# Filename
-IMAGE_FILE=${BINARIES_DIR}/${HASSOS_ID}_${BOARD_ID}-${VERSION_MAJOR}.${VERSION_BUILD}.img
 
 # Init boot data
 rm -rf ${BOOT_DATA}
@@ -44,12 +42,11 @@ else
 fi
 
 # Create other layers
-create_boot_image ${BINARIES_DIR}
-create_overlay_image ${BINARIES_DIR}
-create_kernel_image ${BINARIES_DIR} ${KERNEL_NAME}
+create_boot_image
+create_overlay_image
+create_kernel_image ${KERNEL_NAME}
 
-create_disk_image ${BINARIES_DIR} ${IMAGE_FILE} 2
-fix_disk_image_mbr ${IMAGE_FILE}
+create_disk_image 2
+fix_disk_image_mbr
+convert_disk_image_gz
 
-rm -rf ${IMAGE_FILE}.gz
-gzip --best ${IMAGE_FILE}
