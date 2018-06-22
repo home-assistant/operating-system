@@ -62,8 +62,8 @@ function create_disk_image() {
     local data_img="${BINARIES_DIR}/data.ext4"
     local kernel0_img="${BINARIES_DIR}/kernel0.ext4"
     local kernel1_img="${BINARIES_DIR}/kernel1.ext4"
-    local hdd_img=${2}
-    local hdd_count=${3:-2}
+    local hdd_img=${1}
+    local hdd_count=${2:-2}
 
     local loop_dev="/dev/mapper/$(losetup -f | cut -d'/' -f3)"
     local boot_offset=0
