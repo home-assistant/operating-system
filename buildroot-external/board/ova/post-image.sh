@@ -11,10 +11,6 @@ BOOT_DATA=${BINARIES_DIR}/boot
 . ${BR2_EXTERNAL_HASSOS_PATH}/info
 . ${BOARD_DIR}/info
 
-# Filename
-IMAGE_HDD=$(hassos_image_name img)
-IMAGE_VMDK=$(hassos_image_name vmdk)
-
 # Init boot data
 rm -rf ${BOOT_DATA}
 mkdir -p ${BOOT_DATA}/EFI/BOOT
@@ -30,8 +26,9 @@ create_boot_image
 create_overlay_image
 create_kernel_image bzImage
 
+# Create disk images
 create_disk_image 6
-qemu-img convert -O vmdk ${IMAGE_HDD} ${IMAGE_VMDK}
+create_disk_image_vdmk
 
 # Generate OTA update file
 create_ota_update bzImage
