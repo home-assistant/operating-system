@@ -1,7 +1,7 @@
 #!/bin/bash
 
 function hassos_image_name() {
-    echo "${HASSOS_ID}_${BOARD_ID}-${VERSION_MAJOR}.${VERSION_BUILD}"
+    echo "${BINARIES_DIR}/${HASSOS_ID}_${BOARD_ID}-${VERSION_MAJOR}.${VERSION_BUILD}.${1}"
 }
 
 function hassos_rauc_compatible() {
