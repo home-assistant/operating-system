@@ -4,7 +4,7 @@ function create_ota_update() {
     local ota_file="$(hassos_image_name raucb)"
     local rauc_folder="${BINARIES_DIR}/rauc"
     local boot_folder="${BINARIES_DIR}/boot"
-    local kernel="${BINARIES_DIR}/${4}"
+    local kernel="${BINARIES_DIR}/${KERNEL_FILE}"
     local rootfs="${BINARIES_DIR}/rootfs.squash"
     local key="/build/secure/key.pem"
     local cert="/build/secure/cert.pem"
