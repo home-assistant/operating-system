@@ -2,3 +2,4 @@ BOARD_ID=rpi
 BOARD_NAME="RaspberryPi"
 CHASSIS=embedded
 BOOTLOADER=uboot
+KERNEL_FILE=zImage
