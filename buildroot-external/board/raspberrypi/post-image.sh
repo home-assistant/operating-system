@@ -36,15 +36,10 @@ echo "dwc_otg.lpm_enable=0 console=tty1" > ${BOOT_DATA}/cmdline.txt
 # Enable 64bit support
 if [ "${BOARD_ID}" == "rpi3-64" ]; then
     echo "arm_64bit=1" >> ${BOOT_DATA}/config.txt
-    KERNEL_NAME="Image"
-else
-    KERNEL_NAME="zImage"
 fi
 
 # Create other layers
-create_boot_image
-create_overlay_image
-create_kernel_image ${KERNEL_NAME}
+prepare_disk_image
 
 create_disk_image 2
 fix_disk_image_mbr
