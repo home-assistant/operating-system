@@ -32,6 +32,6 @@ convert_disk_image_vdmk
 
 # Generate OTA update file
 rm -rf ${BOOT_DATA}/EFI/barebox
-rm ${BOOT_DATA}/cmdline.txt
+rm -f ${BOOT_DATA}/cmdline.txt
 
 create_ota_update bzImage
