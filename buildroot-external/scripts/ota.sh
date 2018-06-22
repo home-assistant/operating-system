@@ -17,7 +17,15 @@ function create_ota_update() {
     cp -f ${rootfs} ${rauc_folder}/rootfs.img
 
     (
-    
+        echo "[update]"
+        echo "compatible="
+        echo "version="
+        echo "[image.boot]"
+        echo "filename=boot.tar"
+        echo "[image.kernel]"
+        echo "filename=kernel.tar"
+        echo "[image.rootfs]"
+        echo "filename=rootfs.img"
     ) > ${rauc_folder}/manifest.raucm
 
     rauc bundle --cert=${cert} --key=${key} ${rauc_folder} ${ota_file}
