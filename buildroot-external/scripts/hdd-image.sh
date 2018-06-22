@@ -39,7 +39,7 @@ function create_overlay_image() {
 function create_kernel_image() {
     local kernel0_img="${BINARIES_DIR}/kernel0.ext4"
     local kernel1_img="${BINARIES_DIR}/kernel1.ext4"
-    local kernel="${BINARIES_DIR}/${2}"
+    local kernel="${BINARIES_DIR}/${KERNEL_FILE}"
 
     # Make image
     dd if=/dev/zero of=${kernel0_img} bs=${KERNEL_SIZE} count=1
@@ -52,6 +52,13 @@ function create_kernel_image() {
     mount -o loop ${kernel0_img} /mnt/data
     cp -f ${kernel} /mnt/data/
     umount /mnt/data
+}
+
+
+function prepare_disk_image() {
+    create_boot_image
+    create_overlay_image
+    create_kernel_image
 }
 
 
