@@ -22,9 +22,7 @@ cp ${BR2_EXTERNAL_HASSOS_PATH}/misc/barebox-state-efi.dtb ${BOOT_DATA}/EFI/bareb
 echo "console=tty1" > ${BOOT_DATA}/cmdline.txt
 
 # Create other layers
-create_boot_image
-create_overlay_image
-create_kernel_image bzImage
+prepare_disk_image
 
 # Create disk images
 create_disk_image 6
