@@ -6,12 +6,14 @@ BOARD_DIR=${2}
 BOOT_DATA=${BINARIES_DIR}/boot
 
 . ${SCRIPT_DIR}/hdd-image.sh
+. ${SCRIPT_DIR}/name.sh
+. ${SCRIPT_DIR}/ota.sh
 . ${BR2_EXTERNAL_HASSOS_PATH}/info
 . ${BOARD_DIR}/info
-. ${SCRIPT_DIR}/name.sh
 
 # Filename
 IMAGE_HDD=$(hassos_image_name img)
+IMAGE_RAUC=$(hassos_image_name raucb)
 IMAGE_VMDK=$(hassos_image_name vmdk)
 
 # Init boot data
@@ -31,3 +33,6 @@ create_kernel_image bzImage
 
 create_disk_image ${IMAGE_HDD} 6
 qemu-img convert -O vmdk ${IMAGE_HDD} ${IMAGE_VMDK}
+
+# Generate OTA update file
+create_ota_update ${IMAGE_RAUC} $(hassos_version) $(hassos_rauc_compatible) bzImage
