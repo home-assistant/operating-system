@@ -117,3 +117,11 @@ function fix_disk_image_mbr() {
     sgdisk -t 1:"E3C9E316-0B5C-4DB8-817D-F92DF00215AE" ${hdd_img}
     dd if=${BR2_EXTERNAL_HASSOS_PATH}/misc/mbr.img of=${hdd_img} conv=notrunc bs=512 count=1
 }
+
+
+function create_disk_image_vdmk() {
+    local hdd_img="$(hassos_image_name img)"
+    local hdd_vdmk="$(hassos_image_name vdmk)"
+    
+    qemu-img convert -O vmdk ${hdd_img} ${hdd_vdmk}
+}
