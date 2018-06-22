@@ -7,3 +7,7 @@ function hassos_image_name() {
 function hassos_rauc_compatible() {
     echo "${HASSOS_ID}-${BOARD_ID}"
 }
+
+function hassos_version() {
+    echo "${VERSION_MAJOR}.${VERSION_BUILD}"
+}
