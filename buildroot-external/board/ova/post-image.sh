@@ -8,9 +8,11 @@ BOOT_DATA=${BINARIES_DIR}/boot
 . ${SCRIPT_DIR}/hdd-image.sh
 . ${BR2_EXTERNAL_HASSOS_PATH}/info
 . ${BOARD_DIR}/info
+. ${SCRIPT_DIR}/name.sh
 
 # Filename
-IMAGE_BASE=${BINARIES_DIR}/${HASSOS_ID}_${BOARD_ID}-${VERSION_MAJOR}.${VERSION_BUILD}
+IMAGE_HDD=$(hassos_image_name img)
+IMAGE_VMDK=$(hassos_image_name vmdk)
 
 # Init boot data
 rm -rf ${BOOT_DATA}
@@ -27,6 +29,5 @@ create_boot_image
 create_overlay_image
 create_kernel_image bzImage
 
-create_disk_image ${IMAGE_BASE}.img 6
-
-qemu-img convert -O vmdk ${IMAGE_BASE}.img ${IMAGE_BASE}.vmdk
+create_disk_image ${IMAGE_HDD} 6
+qemu-img convert -O vmdk ${IMAGE_HDD} ${IMAGE_VMDK}
