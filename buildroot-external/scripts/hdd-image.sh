@@ -122,6 +122,15 @@ function fix_disk_image_mbr() {
 function convert_disk_image_vdmk() {
     local hdd_img="$(hassos_image_name img)"
     local hdd_vdmk="$(hassos_image_name vdmk)"
-    
+
+    rm -f ${hdd_vdmk}
     qemu-img convert -O vmdk ${hdd_img} ${hdd_vdmk}
+}
+
+
+function convert_disk_image_gz() {
+    local hdd_img="$(hassos_image_name img)"
+
+    rm -f ${hdd_img}.gz
+    gzip --best ${hdd_img}
 }
