@@ -1,10 +1,10 @@
 #!/bin/bash
 
 function create_ota_update() {
-    local ota_file="${1}"
+    local ota_file="$(hassos_image_name raucb)"
     local rauc_folder="${BINARIES_DIR}/rauc"
     local boot_folder="${BINARIES_DIR}/boot"
-    local kernel="${BINARIES_DIR}/${2}"
+    local kernel="${BINARIES_DIR}/${4}"
     local rootfs="${BINARIES_DIR}/rootfs.squash"
     local key="/build/secure/key.pem"
     local cert="/build/secure/cert.pem"
@@ -18,8 +18,8 @@ function create_ota_update() {
 
     (
         echo "[update]"
-        echo "compatible="
-        echo "version="
+        echo "compatible=$(hassos_rauc_compatible)"
+        echo "version=$(hassos_version)"
         echo "[image.boot]"
         echo "filename=boot.tar"
         echo "[image.kernel]"
