@@ -2,3 +2,4 @@ BOARD_ID=rpi0-w
 BOARD_NAME="RaspberryPi Zero-W"
 CHASSIS=embedded
 BOOTLOADER=uboot
+KERNEL_FILE=zImage
