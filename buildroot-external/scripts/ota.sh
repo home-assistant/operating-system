@@ -5,15 +5,15 @@ function create_ota_update() {
     local rauc_folder="${BINARIES_DIR}/rauc"
     local boot_folder="${BINARIES_DIR}/boot"
     local kernel="${BINARIES_DIR}/${KERNEL_FILE}"
-    local rootfs="${BINARIES_DIR}/rootfs.squash"
-    local key="/build/secure/key.pem"
-    local cert="/build/secure/cert.pem"
+    local rootfs="${BINARIES_DIR}/rootfs.squashfs"
+    local key="/build/key.pem"
+    local cert="/build/cert.pem"
 
-    rm -rf ${rauc_folder}
+    rm -rf ${rauc_folder} ${ota_file}
     mkdir -p ${rauc_folder}
 
-    tar -pcf ${rauc_folder}/kernel.tar ${kernel}
-    tar -pcf ${rauc_folder}/boot.tar ${boot_folder}
+    tar -P -cf ${rauc_folder}/kernel.tar ${kernel}
+    tar -P -cf ${rauc_folder}/boot.tar ${boot_folder}
     cp -f ${rootfs} ${rauc_folder}/rootfs.img
 
     (
@@ -28,5 +28,5 @@ function create_ota_update() {
         echo "filename=rootfs.img"
     ) > ${rauc_folder}/manifest.raucm
 
-    rauc bundle --cert=${cert} --key=${key} ${rauc_folder} ${ota_file}
+    rauc bundle -d --cert=${cert} --key=${key} ${rauc_folder} ${ota_file}
 }

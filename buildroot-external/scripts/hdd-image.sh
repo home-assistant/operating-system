@@ -65,7 +65,7 @@ function prepare_disk_image() {
 function create_disk_image() {
     local boot_img="${BINARIES_DIR}/boot.vfat"
     local rootfs_img="${BINARIES_DIR}/rootfs.squashfs"
-    local overlay_img="$${BINARIES_DIR}/overlay.ext4"
+    local overlay_img="${BINARIES_DIR}/overlay.ext4"
     local data_img="${BINARIES_DIR}/data.ext4"
     local kernel0_img="${BINARIES_DIR}/kernel0.ext4"
     local kernel1_img="${BINARIES_DIR}/kernel1.ext4"
