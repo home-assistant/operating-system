@@ -132,6 +132,7 @@ function convert_disk_image_vdmk() {
 
     rm -f ${hdd_vdmk}
     qemu-img convert -O vmdk ${hdd_img} ${hdd_vdmk}
+    rm -f ${hdd_img}
 }
 
 
