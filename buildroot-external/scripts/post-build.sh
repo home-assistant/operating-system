@@ -43,3 +43,11 @@ if [ "${DEPLOYMENT}" == "production" ]; then
 else
     cp ${BR2_EXTERNAL_HASSOS_PATH}/misc/dev-ca.pem ${TARGET_DIR}/etc/rauc/keyring.pem
 fi
+
+# Bootloader options
+if [ "${BOOTLOADER}" == "uboot" ]; then
+    cp ${BR2_EXTERNAL_HASSOS_PATH}/misc/fw_env.config ${TARGET_DIR}/etc/fw_env.config
+else
+    cp ${BR2_EXTERNAL_HASSOS_PATH}/misc/barebox-state-efi.dtb ${TARGET_DIR}/etc/barebox-state.dtb
+fi
+

@@ -15,13 +15,17 @@ function create_ota_update() {
     cp -f ${kernel} ${rauc_folder}/kernel.ext4
     cp -f ${boot} ${rauc_folder}/boot.vfat
     cp -f ${rootfs} ${rauc_folder}/rootfs.img
+    cp -f ${BR2_EXTERNAL_HASSOS_PATH}/misc/rauc-hook ${rauc_folder}/hook
 
     (
         echo "[update]"
         echo "compatible=$(hassos_rauc_compatible)"
         echo "version=$(hassos_version)"
+        echo "[hooks]"
+        echo "filename=hook"
         echo "[image.boot]"
         echo "filename=boot.vfat"
+        echo "hooks=pre-install;post-install"
         echo "[image.kernel]"
         echo "filename=kernel.ext4"
         echo "[image.rootfs]"

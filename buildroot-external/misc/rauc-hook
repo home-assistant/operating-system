@@ -1,0 +1,12 @@
+#!/bin/sh
+
+# Handle boot hocks
+if [ "${RAUC_SLOT_CLASS}" = "boot" ]; then
+    if [ "${1}" = "slot-post-install" ]; then
+        /usr/lib/rauc/post-install-boot 
+    elif [ "${1}" = "slot-pre-install" ]; then
+        /usr/lib/rauc/pre-install-boot 
+    fi
+fi
+
+exit 0
