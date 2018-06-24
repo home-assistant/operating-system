@@ -1,0 +1,8 @@
+#!/bin/sh
+
+BOOT_DATA=/tmp/boot-data
+
+rm -rf ${BOOT_DATA}
+mkdir -p ${BOOT_DATA}
+
+cp -f ${RAUC_SLOT_MOUNT_POINT}/*.txt ${BOOT_DATA}/

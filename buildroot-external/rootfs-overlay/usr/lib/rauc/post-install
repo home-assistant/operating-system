@@ -1,0 +1,4 @@
+#!/bin/sh
+
+systemctl start mnt-boot.mount
+systemctl reboot

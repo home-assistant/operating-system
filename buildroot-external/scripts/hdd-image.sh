@@ -37,19 +37,16 @@ function create_overlay_image() {
 
 
 function create_kernel_image() {
-    local kernel0_img="${BINARIES_DIR}/kernel0.ext4"
-    local kernel1_img="${BINARIES_DIR}/kernel1.ext4"
+    local kernel_img="${BINARIES_DIR}/kernel.ext4"
     local kernel="${BINARIES_DIR}/${KERNEL_FILE}"
 
     # Make image
-    dd if=/dev/zero of=${kernel0_img} bs=${KERNEL_SIZE} count=1
-    mkfs.ext4 -L "hassos-kernel0" -E lazy_itable_init=0,lazy_journal_init=0 ${kernel0_img}
-    dd if=/dev/zero of=${kernel1_img} bs=${KERNEL_SIZE} count=1
-    mkfs.ext4 -L "hassos-kernel1" -E lazy_itable_init=0,lazy_journal_init=0 ${kernel1_img}
+    dd if=/dev/zero of=${kernel_img} bs=${KERNEL_SIZE} count=1
+    mkfs.ext4 -L "hassos-kernel" -E lazy_itable_init=0,lazy_journal_init=0 ${kernel_img}
 
     # Mount / init file structs
     mkdir -p /mnt/data/
-    mount -o loop ${kernel0_img} /mnt/data
+    mount -o loop ${kernel_img} /mnt/data
     cp -f ${kernel} /mnt/data/
     umount /mnt/data
 }
@@ -67,16 +64,14 @@ function create_disk_image() {
     local rootfs_img="${BINARIES_DIR}/rootfs.squashfs"
     local overlay_img="${BINARIES_DIR}/overlay.ext4"
     local data_img="${BINARIES_DIR}/data.ext4"
-    local kernel0_img="${BINARIES_DIR}/kernel0.ext4"
-    local kernel1_img="${BINARIES_DIR}/kernel1.ext4"
+    local kernel_img="${BINARIES_DIR}/kernel.ext4"
     local hdd_img="$(hassos_image_name img)"
     local hdd_count=${1:-2}
 
     local loop_dev="/dev/mapper/$(losetup -f | cut -d'/' -f3)"
     local boot_offset=0
     local rootfs_offset=0
-    local kernel0_offset=0
-    local kernel1_offset=0
+    local kernel_offset=0
     local overlay_offset=0
     local data_offset=0
 
@@ -88,13 +83,12 @@ function create_disk_image() {
     boot_offset="$(sgdisk -F ${hdd_img})"
     sgdisk -n 1:0:+${BOOT_SIZE} -c 1:"hassos-boot" -t 1:"C12A7328-F81F-11D2-BA4B-00A0C93EC93B" -u 1:${BOOT_UUID} ${hdd_img}
 
-    kernel0_offset="$(sgdisk -F ${hdd_img})"
+    kernel_offset="$(sgdisk -F ${hdd_img})"
     sgdisk -n 2:0:+${KERNEL_SIZE} -c 2:"hassos-kernel0" -t 2:"0FC63DAF-8483-4772-8E79-3D69D8477DE4" -u 2:${KERNEL0_UUID} ${hdd_img}
 
     rootfs_offset="$(sgdisk -F ${hdd_img})"
     sgdisk -n 3:0:+${SYSTEM_SIZE} -c 3:"hassos-system0" -t 3:"0FC63DAF-8483-4772-8E79-3D69D8477DE4" -u 3:${SYSTEM0_UUID} ${hdd_img}
 
-    kernel1_offset="$(sgdisk -F ${hdd_img})"
     sgdisk -n 4:0:+${KERNEL_SIZE} -c 4:"hassos-kernel1" -t 4:"0FC63DAF-8483-4772-8E79-3D69D8477DE4" -u 4:${KERNEL1_UUID} ${hdd_img}
 
     sgdisk -n 5:0:+${SYSTEM_SIZE} -c 5:"hassos-system1" -t 5:"0FC63DAF-8483-4772-8E79-3D69D8477DE4" -u 5:${SYSTEM1_UUID} ${hdd_img}
@@ -110,8 +104,7 @@ function create_disk_image() {
     # Write Images
     sgdisk -v
     dd if=${boot_img} of=${hdd_img} conv=notrunc bs=512 obs=512 seek=${boot_offset}
-    dd if=${kernel0_img} of=${hdd_img} conv=notrunc bs=512 obs=512 seek=${kernel0_offset}
-    dd if=${kernel1_img} of=${hdd_img} conv=notrunc bs=512 obs=512 seek=${kernel1_offset}
+    dd if=${kernel_img} of=${hdd_img} conv=notrunc bs=512 obs=512 seek=${kernel_offset}
     dd if=${rootfs_img} of=${hdd_img} conv=notrunc bs=512 obs=512 seek=${rootfs_offset}
     dd if=${overlay_img} of=${hdd_img} conv=notrunc bs=512 obs=512 seek=${overlay_offset}
     dd if=${data_img} of=${hdd_img} conv=notrunc bs=512 obs=512 seek=${data_offset}
@@ -126,12 +119,12 @@ function fix_disk_image_mbr() {
 }
 
 
-function convert_disk_image_vdmk() {
+function convert_disk_image_vmdk() {
     local hdd_img="$(hassos_image_name img)"
-    local hdd_vdmk="$(hassos_image_name vdmk)"
+    local hdd_vmdk="$(hassos_image_name vmdk)"
 
-    rm -f ${hdd_vdmk}
-    qemu-img convert -O vmdk ${hdd_img} ${hdd_vdmk}
+    rm -f ${hdd_vmdk}
+    qemu-img convert -O vmdk ${hdd_img} ${hdd_vmdk}
     rm -f ${hdd_img}
 }
 

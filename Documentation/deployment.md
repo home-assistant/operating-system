@@ -3,7 +3,7 @@
 We know 3 types of release builds:
 - development (beta/dev)
 - staging (rc)
-- productive (stable)
+- production (stable)
 
 ## Versioning
 The format of version is *MAJOR.BUILD*. Everytime we create a new release with same userland, we bump the build number.

@@ -26,10 +26,5 @@ prepare_disk_image
 
 # Create disk images
 create_disk_image 6
-convert_disk_image_vdmk
-
-# Generate OTA update file
-rm -rf ${BOOT_DATA}/EFI/barebox
-rm -f ${BOOT_DATA}/cmdline.txt
-
-create_ota_update bzImage
+convert_disk_image_vmdk
+create_ota_update
