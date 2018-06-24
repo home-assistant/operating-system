@@ -38,8 +38,8 @@ sed -i "s/%COMPATIBLE%/$(hassos_rauc_compatible)/g" ${TARGET_DIR}/etc/rauc/syste
 sed -i "s/%BOOTLOADER%/${BOOTLOADER}/g" ${TARGET_DIR}/etc/rauc/system.conf
 
 # Settup the correct CA
-if [ "${DEPLOYMENT}" == "development" ]; then
-    cp ${BR2_EXTERNAL_HASSOS_PATH}/misc/provisioning-ca.pem ${TARGET_DIR}/etc/rauc/keyring.pem
-else
+if [ "${DEPLOYMENT}" == "production" ]; then
     cp ${BR2_EXTERNAL_HASSOS_PATH}/misc/rel-ca.pem ${TARGET_DIR}/etc/rauc/keyring.pem
+else
+    cp ${BR2_EXTERNAL_HASSOS_PATH}/misc/dev-ca.pem ${TARGET_DIR}/etc/rauc/keyring.pem
 fi
