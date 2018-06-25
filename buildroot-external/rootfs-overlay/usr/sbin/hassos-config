@@ -37,6 +37,11 @@ if [ -f /mnt/config/known_hosts ]; then
 
     cp -f /mnt/config/known_hosts /root/.ssh/known_hosts
     chmod 600 /root/.ssh/known_hosts
+
+    systemctl start dropbear
+else
+    rm -f /root/.ssh/known_hosts
+    systemctl stop dropbear
 fi
 
 ##
