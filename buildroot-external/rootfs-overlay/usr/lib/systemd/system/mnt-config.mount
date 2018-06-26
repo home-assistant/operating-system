@@ -5,3 +5,4 @@ Description=HassOS config partition
 What=LABEL=hassos-config
 Where=/mnt/config
 Type=auto
+Options=ro
