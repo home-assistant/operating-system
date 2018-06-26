@@ -1,0 +1,7 @@
+[Unit]
+Description=HassOS config partition
+
+[Mount]
+What=LABEL=hassos-config
+Where=/mnt/config
+Type=auto
