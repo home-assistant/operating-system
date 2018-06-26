@@ -13,7 +13,10 @@ hassos-xy.raucb
 - On `network` folder can hold any kind of NetworkManager connections files.
 - The folder `modules` is for modules-load configuration files.
 - `known_hosts` file activate debug SSH access of port `22222`.
-- For firmware updates you can but the `hassos-*.raucb` OTA update they should be install. 
+- For firmware updates you can but the `hassos-*.raucb` OTA update they should be install.
+
+You can put this USB stick into device and they will be read on startup. You can also trigger this process later over the
+API/UI or call `systemctl restart hassos-config` on host.
 
 ## Local
 
