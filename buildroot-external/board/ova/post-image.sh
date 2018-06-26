@@ -6,11 +6,10 @@ BOARD_DIR=${2}
 BOOT_DATA=${BINARIES_DIR}/boot
 
 . ${SCRIPT_DIR}/hdd-image.sh
+. ${SCRIPT_DIR}/name.sh
+. ${SCRIPT_DIR}/ota.sh
 . ${BR2_EXTERNAL_HASSOS_PATH}/info
 . ${BOARD_DIR}/info
-
-# Filename
-IMAGE_FILE=${HASSOS_ID}_${BOARD_ID}-${VERSION_MAJOR}.${VERSION_BUILD}.vmdk
 
 # Init boot data
 rm -rf ${BOOT_DATA}
@@ -23,10 +22,9 @@ cp ${BR2_EXTERNAL_HASSOS_PATH}/misc/barebox-state-efi.dtb ${BOOT_DATA}/EFI/bareb
 echo "console=tty1" > ${BOOT_DATA}/cmdline.txt
 
 # Create other layers
-create_boot_image ${BINARIES_DIR}
-create_overlay_image ${BINARIES_DIR}
-create_kernel_image ${BINARIES_DIR} bzImage
+prepare_disk_image
 
-create_disk_image ${BINARIES_DIR} ${BINARIES_DIR}/harddisk.img 6
-
-qemu-img convert -O vmdk ${BINARIES_DIR}/harddisk.img ${BINARIES_DIR}/${IMAGE_FILE}
+# Create disk images
+create_disk_image 6
+convert_disk_image_vmdk
+create_ota_update

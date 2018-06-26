@@ -17,16 +17,17 @@ endef
 define HASSOS_INSTALL_TARGET_CMDS
 	docker run --rm --privileged \
 		-v $(BINARIES_DIR):/export \
-		-v $(BR2_EXTERNAL_HASSOS_PATH)/apparmor:/apparmor \
 		hassos-hostapps \
 		--supervisor $(BR2_PACKAGE_HASSOS_SUPERVISOR) \
 		--supervisor-version $(BR2_PACKAGE_HASSOS_SUPERVISOR_VERSION) \
 		--supervisor-args $(BR2_PACKAGE_HASSOS_SUPERVISOR_ARGS) \
 		--supervisor-profile $(BR2_PACKAGE_HASSOS_SUPERVISOR_PROFILE) \
+		--supervisor-profile-url $(BR2_PACKAGE_HASSOS_SUPERVISOR_PROFILE_URL) \
 		--cli $(BR2_PACKAGE_HASSOS_CLI) \
 		--cli-version $(BR2_PACKAGE_HASSOS_CLI_VERSION) \
 		--cli-args $(BR2_PACKAGE_HASSOS_CLI_ARGS) \
 		--cli-profile $(BR2_PACKAGE_HASSOS_CLI_PROFILE) \
+		--cli-profile-url $(BR2_PACKAGE_HASSOS_CLI_PROFILE_URL) \
 		--apparmor $(BR2_PACKAGE_HASSOS_APPARMOR_DIR)
 endef
 

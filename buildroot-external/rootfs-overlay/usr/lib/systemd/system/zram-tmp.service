@@ -2,6 +2,8 @@
 Description=HassOS ZRAM tmp
 DefaultDependencies=no
 Before=tmp.mount
+RefuseManualStart=true
+RefuseManualStop=true
 
 [Service]
 Type=oneshot

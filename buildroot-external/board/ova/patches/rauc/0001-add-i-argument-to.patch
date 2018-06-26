@@ -17,7 +17,7 @@ index d5efc0c..c57c2f7 100644
  	g_ptr_array_add(args, g_strdup_printf(BOOTSTATE_PREFIX ".%s.remaining_attempts", bootname));
 +
 +	g_ptr_array_add(args, g_strdup("-i"));
-+	g_ptr_array_add(args, g_strdup("/mnt/boot/EFI/barebox/state.dtb"));
++	g_ptr_array_add(args, g_strdup("/etc/barebox-state.dtb"));
  	g_ptr_array_add(args, NULL);
  
  	sub = g_subprocess_newv((const gchar * const *)args->pdata,
@@ -27,7 +27,7 @@ index d5efc0c..c57c2f7 100644
  	}
 +
 +	g_ptr_array_add(args, g_strdup("-i"));
-+	g_ptr_array_add(args, g_strdup("/mnt/boot/EFI/barebox/state.dtb"));
++	g_ptr_array_add(args, g_strdup("/etc/barebox-state.dtb"));
  	g_ptr_array_add(args, NULL);
  
  	sub = g_subprocess_newv((const gchar * const *)args->pdata,

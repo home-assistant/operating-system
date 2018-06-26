@@ -28,6 +28,11 @@ config BR2_PACKAGE_HASSOS_SUPERVISOR_PROFILE
 	help
 	  AppArmor profile for supervisor.
 
+config BR2_PACKAGE_HASSOS_SUPERVISOR_PROFILE_URL
+	string "AppArmor supervisor profile URL"
+	help
+	  AppArmor profile for supervisor url.
+
 config BR2_PACKAGE_HASSOS_CLI
 	string "cli docker image"
 	help
@@ -48,9 +53,14 @@ config BR2_PACKAGE_HASSOS_CLI_PROFILE
 	help
 	  AppArmor profile for cli.
 
+config BR2_PACKAGE_HASSOS_CLI_PROFILE_URL
+	string "AppArmor cli profile url"
+	help
+	  AppArmor profile for cli url.
+
 config BR2_PACKAGE_HASSOS_APPARMOR_DIR
 	string "AppArmor profiles folder"
 	help
-	  AppArmor profiles folder for supervisor.
+	  AppArmor profiles folder for HassOS.
 
 endif

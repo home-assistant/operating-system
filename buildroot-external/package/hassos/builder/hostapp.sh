@@ -5,10 +5,12 @@ SUPERVISOR=""
 SUPERVISOR_VERSION=""
 SUPERVISOR_ARGS=""
 SUPERVISOR_PROFILE=""
+SUPERVISOR_PROFILE_URL=""
 CLI=""
 CLI_VERSION=""
 CLI_ARGS=""
 CLI_PROFILE=""
+CLI_PROFILE_URL=""
 APPARMOR=""
 DATA_IMG="/export/data.ext4"
 
@@ -32,6 +34,10 @@ while [[ $# -gt 0 ]]; do
             SUPERVISOR_PROFILE=$2
             shift
             ;;
+        --supervisor-profile-url)
+            SUPERVISOR_PROFILE_URL=$2
+            shift
+            ;;
         --cli)
             CLI=$2
             shift
@@ -46,6 +52,10 @@ while [[ $# -gt 0 ]]; do
             ;;
         --cli-profile)
             CLI_PROFILE=$2
+            shift
+            ;;
+        --cli-profile-url)
+            CLI_PROFILE_URL=$2
             shift
             ;;
         --apparmor)
@@ -106,7 +116,16 @@ EOF
 # Setup AppArmor
 if [ ! -z "${APPARMOR}" ]; then
     mkdir -p /mnt/data/${APPARMOR}
-    cp -f /apparmor/* /mnt/data/${APPARMOR}/
+
+    # Supervisor
+    if [ ! -z "${SUPERVISOR_PROFILE_URL}" ]; then
+        curl -L -o /mnt/data/${APPARMOR}/${SUPERVISOR_PROFILE} ${SUPERVISOR_PROFILE_URL}
+    fi
+
+    # CLI
+    if [ ! -z "${CLI_PROFILE_URL}" ]; then
+        curl -L -o /mnt/data/${APPARMOR}/${CLI_PROFILE} ${CLI_PROFILE_URL}
+    fi
 fi
 
 # Finish

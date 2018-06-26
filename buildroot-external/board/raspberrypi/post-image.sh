@@ -6,11 +6,9 @@ BOARD_DIR=${2}
 BOOT_DATA=${BINARIES_DIR}/boot
 
 . ${SCRIPT_DIR}/hdd-image.sh
+. ${SCRIPT_DIR}/name.sh
 . ${BR2_EXTERNAL_HASSOS_PATH}/info
 . ${BOARD_DIR}/info
-
-# Filename
-IMAGE_FILE=${BINARIES_DIR}/${HASSOS_ID}_${BOARD_ID}-${VERSION_MAJOR}.${VERSION_BUILD}.img
 
 # Init boot data
 rm -rf ${BOOT_DATA}
@@ -38,18 +36,12 @@ echo "dwc_otg.lpm_enable=0 console=tty1" > ${BOOT_DATA}/cmdline.txt
 # Enable 64bit support
 if [ "${BOARD_ID}" == "rpi3-64" ]; then
     echo "arm_64bit=1" >> ${BOOT_DATA}/config.txt
-    KERNEL_NAME="Image"
-else
-    KERNEL_NAME="zImage"
 fi
 
 # Create other layers
-create_boot_image ${BINARIES_DIR}
-create_overlay_image ${BINARIES_DIR}
-create_kernel_image ${BINARIES_DIR} ${KERNEL_NAME}
+prepare_disk_image
 
-create_disk_image ${BINARIES_DIR} ${IMAGE_FILE} 2
-fix_disk_image_mbr ${IMAGE_FILE}
-
-rm -rf ${IMAGE_FILE}.gz
-gzip --best ${IMAGE_FILE}
+create_disk_image 2
+fix_disk_image_mbr
+convert_disk_image_gz
+create_ota_update

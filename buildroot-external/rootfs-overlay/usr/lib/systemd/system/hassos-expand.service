@@ -2,6 +2,8 @@
 Description=HassOS data resizing
 DefaultDependencies=no
 Before=mnt-data.mount
+RefuseManualStart=true
+RefuseManualStop=true
 
 [Service]
 Type=oneshot

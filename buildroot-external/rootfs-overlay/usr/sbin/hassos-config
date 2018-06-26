@@ -1,14 +1,11 @@
 #!/bin/sh
-set -e
 
-# Check if hassos-config is present
-if ! findfs LABEL="hassos-config" > /dev/null; then
-    echo "[Warning] No hassos-config partition found!"
+# Mount config folder
+systemctl start mnt-config.mount
+if ! systemctl -q is-active mnt-config.mount; then
+    echo "[Warning] No config partition found"
     exit 0
 fi
-
-# Mount config partition
-mount -o ro LABEL="hassos-config" /mnt/config
 
 ##
 # NetworkManager
@@ -18,7 +15,7 @@ if [ -d /mnt/config/network ]; then
     rm -rf /etc/NetworkManager/system-connections/*
     cp -f /mnt/config/network/* /etc/NetworkManager/system-connections/
 
-    nmcli con reload || true
+    nmcli con reload
 fi
 
 ##
@@ -37,16 +34,21 @@ if [ -f /mnt/config/known_hosts ]; then
 
     cp -f /mnt/config/known_hosts /root/.ssh/known_hosts
     chmod 600 /root/.ssh/known_hosts
+
+    systemctl start dropbear
+else
+    rm -f /root/.ssh/known_hosts
+    systemctl stop dropbear
 fi
 
 ##
 # Firmware update
-if ls /mnt/config/*.rauc > /dev/null; then
+if ls /mnt/config/*.raucb > /dev/null; then
     echo "[Info] Performe a firmware update"
 
-    rauc_filename=$(ls /mnt/config/*.rauc | head -n 1)
+    rauc_filename=$(ls /mnt/config/*.raucb | head -n 1)
     rauc install /mnt/config/$rauc_filename
 fi
 
 # Cleanup config partition
-umount /mnt/config
+systemctl stop mnt-config.mount

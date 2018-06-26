@@ -2,3 +2,4 @@ BOARD_ID=rpi3-64
 BOARD_NAME="RaspberryPi 3 64bit"
 CHASSIS=embedded
 BOOTLOADER=uboot
+KERNEL_FILE=Image

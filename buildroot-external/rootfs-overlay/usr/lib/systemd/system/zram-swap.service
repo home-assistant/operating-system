@@ -2,6 +2,8 @@
 Description=HassOS ZRAM swap
 DefaultDependencies=no
 Before=dev-zram0.swap
+RefuseManualStart=true
+RefuseManualStop=true
 
 [Service]
 Type=oneshot
