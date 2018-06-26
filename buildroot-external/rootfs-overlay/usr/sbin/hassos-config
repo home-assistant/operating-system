@@ -3,7 +3,7 @@
 # Mount config folder
 systemctl start mnt-config.mount
 if ! systemctl -q is-active mnt-config.mount; then
-    echo "[Info] No config partition found"
+    echo "[Warning] No config partition found"
     exit 0
 fi
 
