@@ -50,9 +50,9 @@ method=auto
 Replace follow configs:
 ```ini
 [ipv4]
+method=manual
 address1=192.168.1.111/24,192.168.1.1
 dns=8.8.8.8;8.8.4.4;
-method=manual
 ```
 
 [keyfile]: https://developer.gnome.org/NetworkManager/stable/nm-settings.html
