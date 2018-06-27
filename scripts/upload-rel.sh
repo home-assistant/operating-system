@@ -30,7 +30,7 @@ fi
 # Upload asset
 echo "[Info] Start Uploading asset... "
 
-for filename in release/*.{gz,raucb}; do
+for filename in release/*; do
     echo "[Info] Start upload ${filename}"
 
     # Construct url
