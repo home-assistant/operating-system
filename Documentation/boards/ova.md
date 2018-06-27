@@ -9,6 +9,8 @@ until we have better OVF template to generate our OVA. This vmdk work with (mayb
 ## Virtual Machine
 
 You can use this vmdk in a virtual machine with follow requirements:
+- OS: Linux 64bit
 - UEFI boot
 - min. 1GB RAM
-- 2 vcpu
+- 2x vcpu
+- 1x Network
