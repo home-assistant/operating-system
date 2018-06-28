@@ -28,5 +28,8 @@ You can edit or create a `cmdline.txt` into your boot partition. That will be re
 
 The kernel module folder `/etc/modules-load.d` is persistent and you can add your config files there. See [Systemd modules load][systemd-modules].
 
+### Network
+
+You can manual add, edit or remove connections configs from `/etc/NetworkManager/system-connections`.
 
 [systemd-modules]: https://www.freedesktop.org/software/systemd/man/modules-load.d.html
