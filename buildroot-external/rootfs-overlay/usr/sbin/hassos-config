@@ -37,7 +37,7 @@ if [ -f /mnt/config/authorized_keys ]; then
 
     systemctl start dropbear
 else
-    rm -f /root/.ssh/known_hosts
+    rm -f /root/.ssh/authorized_keys
     systemctl stop dropbear
 fi
 
