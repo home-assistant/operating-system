@@ -29,11 +29,11 @@ fi
 
 ##
 # SSH know hosts
-if [ -f /mnt/config/known_hosts ]; then
-    echo "[Info] Update SSH known_hosts!"
+if [ -f /mnt/config/authorized_keys ]; then
+    echo "[Info] Update SSH authorized_keys!"
 
-    cp -f /mnt/config/known_hosts /root/.ssh/known_hosts
-    chmod 600 /root/.ssh/known_hosts
+    cp -f /mnt/config/known_hosts /root/.ssh/authorized_keys
+    chmod 600 /root/.ssh/authorized_keys
 
     systemctl start dropbear
 else
