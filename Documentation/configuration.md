@@ -8,13 +8,14 @@ Format a USB stick with FAT32 and name it `hassos-conf`. Use the following direc
 ```
 network/
 modules/
+authorized_keys
 known_hosts
 hassos-xy.raucb
 ```
 
 - The `network` folder can contain any kind of NetworkManager connection files. For more information see [Network][network.md]. 
 - The `modules` folder is for modules-load configuration files.
-- The `known_hosts` file activates debug SSH access on port `22222`.
+- The `authorized_keys` file activates debug SSH access on port `22222`. See [Debugging Hassio][debug-hassio].
 - The `hassos-*.raucb` file is a firmware OTA update which will be installed. These can be found on on the [release][hassos-release] page. 
 
 You can put this USB stick into the device and it will be read on startup. You can also trigger this process later over the
@@ -34,3 +35,4 @@ The kernel module folder `/etc/modules-load.d` is persistent and you can add you
 [systemd-modules]: https://www.freedesktop.org/software/systemd/man/modules-load.d.html
 [network.md]: https://github.com/home-assistant/hassos/blob/dev/Documentation/network.md
 [hassos-release]: https://github.com/home-assistant/hassos/releases/
+[debug-hassio]: https://developers.home-assistant.io/docs/en/hassio_debugging.html
