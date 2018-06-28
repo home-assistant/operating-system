@@ -2,7 +2,7 @@
 Description=HassOS config partition
 
 [Mount]
-What=LABEL=hassos-conf
+What=LABEL=config
 Where=/mnt/config
 Type=auto
 Options=ro
