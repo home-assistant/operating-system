@@ -1,10 +1,15 @@
 #!/bin/sh
 
+if ! findfs LABEL="config" > /dev/null; then
+    echo "[Warning] No config partition found"
+    exit 0
+fi
+
 # Mount config folder
 systemctl start mnt-config.mount
 if ! systemctl -q is-active mnt-config.mount; then
-    echo "[Warning] No config partition found"
-    exit 0
+    echo "[Error] Can't mount config partition"
+    exit 1
 fi
 
 ##
