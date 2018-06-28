@@ -1,10 +1,15 @@
 #!/bin/sh
 
+if ! findfs LABEL="config" > /dev/null; then
+    echo "[Warning] No config partition found"
+    exit 0
+fi
+
 # Mount config folder
 systemctl start mnt-config.mount
 if ! systemctl -q is-active mnt-config.mount; then
-    echo "[Warning] No config partition found"
-    exit 0
+    echo "[Error] Can't mount config partition"
+    exit 1
 fi
 
 ##
@@ -29,15 +34,15 @@ fi
 
 ##
 # SSH know hosts
-if [ -f /mnt/config/known_hosts ]; then
-    echo "[Info] Update SSH known_hosts!"
+if [ -f /mnt/config/authorized_keys ]; then
+    echo "[Info] Update SSH authorized_keys!"
 
-    cp -f /mnt/config/known_hosts /root/.ssh/known_hosts
-    chmod 600 /root/.ssh/known_hosts
+    cp -f /mnt/config/known_hosts /root/.ssh/authorized_keys
+    chmod 600 /root/.ssh/authorized_keys
 
     systemctl start dropbear
 else
-    rm -f /root/.ssh/known_hosts
+    rm -f /root/.ssh/authorized_keys
     systemctl stop dropbear
 fi
 
