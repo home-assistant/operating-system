@@ -2,7 +2,7 @@
 
 ## Automatic
 
-You can format a USB stick with FAT32 and name it with `hassos-config`. The layout could be look like:
+You can format a USB stick with FAT32/EXT4 and name it with `config`. The layout could be look like:
 ```
 network/
 modules/
@@ -28,5 +28,8 @@ You can edit or create a `cmdline.txt` into your boot partition. That will be re
 
 The kernel module folder `/etc/modules-load.d` is persistent and you can add your config files there. See [Systemd modules load][systemd-modules].
 
+### Network
+
+You can manual add, edit or remove connections configs from `/etc/NetworkManager/system-connections`.
 
 [systemd-modules]: https://www.freedesktop.org/software/systemd/man/modules-load.d.html
