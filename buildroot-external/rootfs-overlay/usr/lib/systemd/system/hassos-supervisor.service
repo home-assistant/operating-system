@@ -1,7 +1,7 @@
 [Unit]
 Description=HassOS supervisor
 Requires=docker.service
-After=docker.service dbus.socket
+After=docker.service rauc.service dbus.socket
 RequiresMountsFor=/mnt/data
 StartLimitIntervalSec=60
 StartLimitBurst=5
