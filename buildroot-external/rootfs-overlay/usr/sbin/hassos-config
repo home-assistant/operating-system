@@ -52,7 +52,12 @@ if ls /mnt/config/*.raucb > /dev/null; then
     echo "[Info] Performe a firmware update"
 
     rauc_filename=$(ls /mnt/config/*.raucb | head -n 1)
-    rauc install /mnt/config/$rauc_filename
+    if rauc install /mnt/config/$rauc_filename; then
+        echo "[Info] Firmware update success"
+        systemctl reboot
+    else
+        echo "[Error] Firmware update fails"
+    fi
 fi
 
 # Cleanup config partition
