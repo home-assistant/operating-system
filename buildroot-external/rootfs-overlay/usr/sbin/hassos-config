@@ -37,7 +37,7 @@ fi
 if [ -f /mnt/config/authorized_keys ]; then
     echo "[Info] Update SSH authorized_keys!"
 
-    cp -f /mnt/config/known_hosts /root/.ssh/authorized_keys
+    cp -f /mnt/config/authorized_keys /root/.ssh/authorized_keys
     chmod 600 /root/.ssh/authorized_keys
 
     systemctl start dropbear
@@ -52,7 +52,7 @@ if ls /mnt/config/*.raucb > /dev/null; then
     echo "[Info] Performe a firmware update"
 
     rauc_filename=$(ls /mnt/config/*.raucb | head -n 1)
-    if rauc install /mnt/config/$rauc_filename; then
+    if rauc install ${rauc_filename}; then
         echo "[Info] Firmware update success"
         systemctl reboot
     else
