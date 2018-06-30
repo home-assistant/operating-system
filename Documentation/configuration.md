@@ -2,7 +2,7 @@
 
 ## Automatic
 
-You can format a USB stick with FAT32/EXT4 and name it with `config`. The layout could be look like:
+You can format a USB stick with FAT32/EXT4 and name it with `CONFIG`. The layout could be look like:
 ```
 network/
 modules/
