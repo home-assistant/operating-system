@@ -24,11 +24,10 @@ runSupervisor() {
         --security-opt apparmor="${APPARMOR}" \
         -v /var/run/docker.sock:/var/run/docker.sock \
         -v /var/run/dbus:/var/run/dbus \
-        -v /etc/machine-id:/etc/machine-id \
+        -v /etc/machine-id:/etc/machine-id:ro \
         -v ${HASSOS_DATA}:/data \
         -e SUPERVISOR_SHARE=${HASSOS_DATA} \
         -e SUPERVISOR_NAME=hassos_supervisor \
-        -e MACHINE_ID=${MACHINE_ID} \
         $DOCKER_ARGS \
         ${SUPERVISOR}
 }
