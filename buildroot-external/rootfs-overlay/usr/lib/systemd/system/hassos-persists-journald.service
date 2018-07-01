@@ -1,0 +1,14 @@
+[Unit]
+Description=HassOS persists journald
+Requires=var-log-journal.mount
+After=sysinit.target systemd-journald.service
+RefuseManualStart=true
+RefuseManualStop=true
+
+[Service]
+Type=oneshot
+ExecStart=/usr/sbin/hassos-persists-journald
+RemainAfterExit=true
+
+[Install]
+WantedBy=multi-user.target
