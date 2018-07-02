@@ -55,4 +55,4 @@ dns=8.8.8.8;8.8.4.4;
 ```
 
 [keyfile]: https://developer.gnome.org/NetworkManager/stable/nm-settings.html
-[configuration-usb]: https://github.com/home-assistant/hassos/blob/rel-1/Documentation/configuration.md
+[configuration-usb]: configuration.md
