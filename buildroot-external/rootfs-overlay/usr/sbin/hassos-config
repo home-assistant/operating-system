@@ -48,7 +48,7 @@ fi
 
 ##
 # Firmware update
-UPTIME=$(awk '{print $1}' /proc/uptime)
+UPTIME=$(awk '{printf "%0.f", $1}' /proc/uptime)
 if ls /mnt/config/*.raucb > /dev/null && [ ${UPTIME} -ge 180 ]; then
     echo "[Info] Performe a firmware update"
 
