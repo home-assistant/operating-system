@@ -1,6 +1,6 @@
 #!/bin/sh
 
-if ! findfs LABEL="config" > /dev/null; then
+if ! findfs LABEL="CONFIG" > /dev/null; then
     echo "[Warning] No config partition found"
     exit 0
 fi
@@ -48,7 +48,8 @@ fi
 
 ##
 # Firmware update
-if ls /mnt/config/*.raucb > /dev/null; then
+UPTIME=$(awk '{print $1}' /proc/uptime)
+if ls /mnt/config/*.raucb > /dev/null && [ ${UPTIME} -ge 180 ]; then
     echo "[Info] Performe a firmware update"
 
     rauc_filename=$(ls /mnt/config/*.raucb | head -n 1)
