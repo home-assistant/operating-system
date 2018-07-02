@@ -5,7 +5,7 @@ MACHINE_ID=$(cat /etc/machine-id)
 CURRENT_LOGS=/var/log/journal/${MACHINE_ID}
 
 # Cleanup
-if [ ! -d ${CURRENT_LOGS} ];
+if [ ! -d ${CURRENT_LOGS} ]; then
     rm -rf /var/log/journal/*
     exit 0
 fi
