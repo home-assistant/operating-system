@@ -1,6 +1,6 @@
 #!/bin/sh
 
-if ! findfs LABEL="config" > /dev/null; then
+if ! findfs LABEL="CONFIG" > /dev/null; then
     echo "[Warning] No config partition found"
     exit 0
 fi
