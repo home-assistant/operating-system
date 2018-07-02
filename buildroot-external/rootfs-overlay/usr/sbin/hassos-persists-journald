@@ -4,12 +4,6 @@ set -e
 MACHINE_ID=$(cat /etc/machine-id)
 CURRENT_LOGS=/var/log/journal/${MACHINE_ID}
 
-# Cleanup
-if [ ! -d ${CURRENT_LOGS} ]; then
-    rm -rf /var/log/journal/*
-    exit 0
-fi
-
 # Loop all logs folder and move
 for log_folder in /var/log/journal/*; do
     # Not a log folder
@@ -22,8 +16,6 @@ for log_folder in /var/log/journal/*; do
         continue
     fi
     
-    mv ${log_folder}/* ${CURRENT_LOGS}/
     rm -rf ${log_folder}
 done
 
-journalctl --vacuum-size=20M
