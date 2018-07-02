@@ -19,7 +19,7 @@ if [ -d /mnt/config/network ]; then
 
     rm -rf /etc/NetworkManager/system-connections/*
     cp -f /mnt/config/network/* /etc/NetworkManager/system-connections/
-    chmod 664 /etc/NetworkManager/system-connections/*
+    chmod 600 /etc/NetworkManager/system-connections/*
 
     nmcli con reload
 fi
