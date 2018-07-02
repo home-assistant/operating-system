@@ -1,0 +1,35 @@
+From 5ea155f0f846694a1eab2950852655450a26c436 Mon Sep 17 00:00:00 2001
+From: Pascal Vizeli <pvizeli@syshack.ch>
+Date: Mon, 2 Jul 2018 11:13:12 +0000
+Subject: [PATCH 1/1] Fix rpi problem with serial number
+
+Signed-off-by: Pascal Vizeli <pvizeli@syshack.ch>
+---
+ common/fdt_support.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/common/fdt_support.c b/common/fdt_support.c
+index 812eca8173..a39c064215 100644
+--- a/common/fdt_support.c
++++ b/common/fdt_support.c
+@@ -196,7 +196,7 @@ int fdt_root(void *fdt)
+ 		return err;
+ 	}
+ 
+-	serial = env_get("serial#");
++	/*serial = env_get("serial#");
+ 	if (serial) {
+ 		err = fdt_setprop(fdt, 0, "serial-number", serial,
+ 				  strlen(serial) + 1);
+@@ -206,7 +206,7 @@ int fdt_root(void *fdt)
+ 			       fdt_strerror(err));
+ 			return err;
+ 		}
+-	}
++	}*/
+ 
+ 	return 0;
+ }
+-- 
+2.17.1
+
