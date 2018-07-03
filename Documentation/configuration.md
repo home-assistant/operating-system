@@ -3,15 +3,13 @@
 ## Automatic
 
 You can use a USB drive with HassOS to configure network options, ssh access to the host, and to install updates.
-Format a USB stick with FAT32 and name it `hassos-conf`. Use the following directory structure within the USB drive:
+Format a USB stick with FAT32/EXT4/NTFS and name it `CONFIG`. Use the following directory structure within the USB drive:
 
 ```
 network/
 modules/
 authorized_keys
-known_hosts
 hassos-xy.raucb
-```
 
 - The `network` folder can contain any kind of NetworkManager connection files. For more information see [Network][network.md]. 
 - The `modules` folder is for modules-load configuration files.
@@ -31,6 +29,9 @@ You can edit or create a `cmdline.txt` into your boot partition. That will be re
 
 The kernel module folder `/etc/modules-load.d` is persistent and you can add your config files there. See [Systemd modules load][systemd-modules].
 
+### Network
+
+You can manual add, edit or remove connections configs from `/etc/NetworkManager/system-connections`.
 
 [systemd-modules]: https://www.freedesktop.org/software/systemd/man/modules-load.d.html
 [network.md]: network.md
