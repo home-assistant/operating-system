@@ -1,8 +1,7 @@
 # Network
 
-HassOS use NetworkManager to control the host network. You can setup the network configuartion in future over the API/UI.
-Actual we support only manual configuration with NetworkManager connection files. Without a configuration, we run default as
-DHCP device.
+HassOS uses NetworkManager to control the host network. In future releases, you can set up the configuration using the API/UI.
+Currently only manual configuration using NetworkManager connection files is supported. Without a configuration file, the device will use DHCP by default. These network connection files can be placed on a USB drive as described in [Configuration][configuration-usb].
 
 ## Configuration Examples
 
@@ -56,3 +55,4 @@ dns=8.8.8.8;8.8.4.4;
 ```
 
 [keyfile]: https://developer.gnome.org/NetworkManager/stable/nm-settings.html
+[configuration-usb]: configuration.md
