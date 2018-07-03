@@ -1,12 +1,12 @@
 [Unit]
-Description=Docker persistent data
+Description=DHCP persistent data
 Requires=mnt-data.mount
 After=mnt-data.mount
-Before=docker.service
+Before=NetworkManager.service
 
 [Mount]
-What=/mnt/data/docker
-Where=/var/lib/docker
+What=/mnt/overlay/var/lib/dhcp
+Where=/var/lib/dhcp
 Type=none
 Options=bind
 
