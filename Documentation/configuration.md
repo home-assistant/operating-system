@@ -33,6 +33,6 @@ The kernel module folder `/etc/modules-load.d` is persistent and you can add you
 
 
 [systemd-modules]: https://www.freedesktop.org/software/systemd/man/modules-load.d.html
-[network.md]: https://github.com/home-assistant/hassos/blob/dev/Documentation/network.md
+[network.md]: network.md
 [hassos-release]: https://github.com/home-assistant/hassos/releases/
 [debug-hassio]: https://developers.home-assistant.io/docs/en/hassio_debugging.html
