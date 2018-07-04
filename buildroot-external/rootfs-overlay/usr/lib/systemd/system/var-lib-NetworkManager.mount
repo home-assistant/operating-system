@@ -1,12 +1,12 @@
 [Unit]
-Description=DHCP persistent data
+Description=NetworkManager persistent data
 Requires=mnt-data.mount
 After=mnt-data.mount
 Before=NetworkManager.service
 
 [Mount]
-What=/mnt/overlay/var/lib/dhcp
-Where=/var/lib/dhcp
+What=/mnt/overlay/var/lib/NetworkManager
+Where=/var/lib/NetworkManager
 Type=none
 Options=bind
 
