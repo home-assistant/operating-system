@@ -2,10 +2,6 @@
 
 function fix_rootfs() {
 
-    # Cleanup DHCP service, we don't need this with NetworkManager
-    rm -rf ${TARGET_DIR}/etc/systemd/system/multi-user.target.wants/dhcpcd.service
-    rm -rf ${TARGET_DIR}/usr/lib/systemd/system/dhcpcd.service
-
     # Cleanup etc
     rm -rf ${TARGET_DIR}/etc/init.d
     rm -rf ${TARGET_DIR}/etc/network
@@ -19,6 +15,9 @@ function fix_rootfs() {
 
     # Cleanup miscs
     rm -rf ${TARGET_DIR}/usr/lib/modules-load.d
+
+    # Fix: permission for system connection files
+    chmod 600 ${TARGET_DIR}/usr/share/system-connections/*
 
     # Fix: tempfs with /srv
     sed -i "/srv/d" ${TARGET_DIR}/usr/lib/tmpfiles.d/home.conf
