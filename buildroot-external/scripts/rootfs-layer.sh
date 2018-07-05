@@ -31,5 +31,8 @@ function fix_rootfs() {
 function install_hassos_cli() {
 
     sed -i "s|\(root.*\)/bin/sh|\1/usr/sbin/hassos-cli|" ${TARGET_DIR}/etc/passwd
-    echo "/usr/sbin/hassos-cli" >> /etc/shells
+    
+    if ! grep "hassos-cli" ${TARGET_DIR}//etc/shells; then
+        echo "/usr/sbin/hassos-cli" >> ${TARGET_DIR}/etc/shells
+    fi
 }
