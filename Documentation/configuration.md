@@ -10,6 +10,7 @@ network/
 modules/
 authorized_keys
 hassos-xy.raucb
+```
 
 - The `network` folder can contain any kind of NetworkManager connection files. For more information see [Network][network.md]. 
 - The `modules` folder is for modules-load configuration files.
