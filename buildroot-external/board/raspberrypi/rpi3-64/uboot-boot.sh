@@ -49,3 +49,6 @@ echo "Loading kernel"
 run load_kernel
 echo " Starting kernel"
 booti ${kernel_addr_r} - ${fdt_addr}
+
+echo "Fails on boot"
+reset
