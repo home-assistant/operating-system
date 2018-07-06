@@ -15,12 +15,12 @@ function mark_bad() {
 #### Check system ####
 
 # Docker state
-if ! systemctl -q is-active docker; then
+if systemctl -q is-failed docker; then
     mark_bad
 fi
 
 # Docker state
-if ! systemctl -q is-active hassos-supervisor; then
+if systemctl -q is-failed hassos-supervisor; then
     mark_bad
 fi
 
