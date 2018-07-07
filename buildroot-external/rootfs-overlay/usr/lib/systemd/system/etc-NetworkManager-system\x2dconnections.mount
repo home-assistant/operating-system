@@ -1,7 +1,7 @@
 [Unit]
 Description=NetworkManager persistent system connections
 Requires=mnt-overlay.mount
-After=mnt-overlay.mount
+After=mnt-overlay.mount systemd-tmpfiles-setup.service
 Before=NetworkManager.service hassos-config.service
 
 [Mount]

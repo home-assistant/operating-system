@@ -7,6 +7,7 @@ BOOT_DATA=${BINARIES_DIR}/boot
 
 . ${SCRIPT_DIR}/hdd-image.sh
 . ${SCRIPT_DIR}/name.sh
+. ${SCRIPT_DIR}/ota.sh
 . ${BR2_EXTERNAL_HASSOS_PATH}/info
 . ${BOARD_DIR}/info
 

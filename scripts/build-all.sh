@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-mkdir -p /build/RL
+mkdir -p /build/release
 
 all_platforms=(ova rpi rpi0_w rpi2 rpi3 rpi3_64)
 for platform in "${all_platforms[@]}"; do

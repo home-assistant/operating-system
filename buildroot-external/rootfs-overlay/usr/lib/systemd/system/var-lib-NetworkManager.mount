@@ -1,0 +1,14 @@
+[Unit]
+Description=NetworkManager persistent data
+Requires=mnt-data.mount
+After=mnt-data.mount
+Before=NetworkManager.service
+
+[Mount]
+What=/mnt/overlay/var/lib/NetworkManager
+Where=/var/lib/NetworkManager
+Type=none
+Options=bind
+
+[Install]
+WantedBy=hassos-bind.target

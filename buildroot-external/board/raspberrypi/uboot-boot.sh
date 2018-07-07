@@ -3,7 +3,7 @@ test -n "${BOOT_A_LEFT}" || setenv BOOT_A_LEFT 3
 test -n "${BOOT_B_LEFT}" || setenv BOOT_B_LEFT 3
 
 # HassOS bootargs
-setenv bootargs_hassos "zram.enabled=1 zram.num_devices=3 apparmor=1 security=apparmor rootwait"
+setenv bootargs_hassos "zram.enabled=1 zram.num_devices=3 apparmor=1 security=apparmor rootwait cgroup_enable=memory"
 
 # HassOS system A/B
 setenv bootargs_a "root=PARTUUID=8d3d53e3-6d49-4c38-8349-aff6859e82fd rootfstype=squashfs ro"
@@ -49,3 +49,6 @@ echo "Loading kernel"
 run load_kernel
 echo " Starting kernel"
 bootz ${kernel_addr_r} - ${fdt_addr}
+
+echo "Fails on boot"
+reset

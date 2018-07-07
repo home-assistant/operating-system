@@ -10,7 +10,7 @@ NETWORK_MANAGER_SOURCE = NetworkManager-$(NETWORK_MANAGER_VERSION).tar.xz
 NETWORK_MANAGER_SITE = http://ftp.gnome.org/pub/GNOME/sources/NetworkManager/$(NETWORK_MANAGER_VERSION_MAJOR)
 NETWORK_MANAGER_INSTALL_STAGING = YES
 NETWORK_MANAGER_DEPENDENCIES = host-pkgconf udev dbus-glib libnl gnutls \
-	libgcrypt wireless_tools util-linux host-intltool readline libndp libgudev
+	libgcrypt wpa_supplicant util-linux host-intltool readline libndp libgudev
 NETWORK_MANAGER_LICENSE = GPL-2.0+ (app), LGPL-2.0+ (libnm-util)
 NETWORK_MANAGER_LICENSE_FILES = COPYING libnm-util/COPYING
 
@@ -93,12 +93,16 @@ endef
 
 define NETWORK_MANAGER_INSTALL_INIT_SYSTEMD
 	mkdir -p $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants
+	mkdir -p $(TARGET_DIR)/etc/systemd/system/network-online.target.wants
 
 	ln -sf /usr/lib/systemd/system/NetworkManager.service \
 		$(TARGET_DIR)/etc/systemd/system/dbus-org.freedesktop.NetworkManager.service
 
 	ln -sf /usr/lib/systemd/system/NetworkManager.service \
 		$(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/NetworkManager.service
+
+	ln -sf /usr/lib/systemd/system/NetworkManager-wait-online.service \
+		$(TARGET_DIR)/etc/systemd/system/network-online.target.wants/NetworkManager-wait-online.service
 
 	ln -sf /usr/lib/systemd/system/NetworkManager-dispatcher.service \
 		$(TARGET_DIR)/etc/systemd/system/dbus-org.freedesktop.nm-dispatcher.service
