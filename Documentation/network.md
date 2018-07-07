@@ -54,5 +54,13 @@ address1=192.168.1.111/24,192.168.1.1
 dns=8.8.8.8;8.8.4.4;
 ```
 
+## Tips
+If you have trouble with powersave you can do following:
+```ini
+[wifi]
+# Values are 0 (use default), 1 (ignore/don't touch), 2 (disable) or 3 (enable).
+powersave=0
+```
+
 [keyfile]: https://developer.gnome.org/NetworkManager/stable/nm-settings.html
 [configuration-usb]: configuration.md
