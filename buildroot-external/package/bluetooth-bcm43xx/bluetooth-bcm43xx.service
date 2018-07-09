@@ -6,7 +6,7 @@ ConditionPathIsDirectory=/proc/device-tree/soc/gpio@7e200000/bt_pins
 
 [Service]
 Type=forking
-ExecStart=/usr/bin/btattach -B /dev/ttyAMA0 -P bcm -S 921600 -N
+ExecStart=/usr/sbin/btuart
 
 [Install]
 WantedBy=hassos-hardware.target
