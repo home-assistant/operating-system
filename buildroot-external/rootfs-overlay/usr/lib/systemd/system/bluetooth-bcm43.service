@@ -1,0 +1,12 @@
+[Unit]
+Description=Bluetooth for BCM43xxx
+Before=bluetooth.service
+After=dev-ttyAMA0.device
+ConditionPathIsDirectory=/proc/device-tree/soc/gpio@7e200000/bt_pins
+
+[Service]
+Type=forking
+ExecStart=/usr/bin/btattach /dev/ttyAMA0 -P bcm -S 921600 -N
+
+[Install]
+WantedBy=bluetooth.target
