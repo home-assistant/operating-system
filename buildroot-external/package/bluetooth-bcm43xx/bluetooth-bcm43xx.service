@@ -9,4 +9,4 @@ Type=forking
 ExecStart=/usr/bin/btattach /dev/ttyAMA0 -P bcm -S 921600 -N
 
 [Install]
-WantedBy=bluetooth.target
+WantedBy=hassos-hardware.target
