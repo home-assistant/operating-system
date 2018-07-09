@@ -1,0 +1,12 @@
+[Unit]
+Description=Bluetooth for BCM43xx
+Before=bluetooth.service
+After=dev-ttyAMA0.device
+ConditionPathIsDirectory=/proc/device-tree/soc/gpio@7e200000/bt_pins
+
+[Service]
+Type=forking
+ExecStart=/usr/sbin/bluetooth-bcm43xx
+
+[Install]
+WantedBy=hassos-hardware.target
