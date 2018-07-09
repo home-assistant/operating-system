@@ -1,5 +1,5 @@
 [Unit]
-Description=Bluetooth for BCM43xxx
+Description=Bluetooth for BCM43xx
 Before=bluetooth.service
 After=dev-ttyAMA0.device
 ConditionPathIsDirectory=/proc/device-tree/soc/gpio@7e200000/bt_pins
