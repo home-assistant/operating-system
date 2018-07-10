@@ -24,6 +24,9 @@ define BLUETOOTH_BCM43XX_INSTALL_TARGET_CMDS
 	mkdir -p $(TARGET_DIR)/lib/firmware/brcm
 	cp -f $(@D)/BCM43430A1.hcd $(TARGET_DIR)/lib/firmware/brcm/
 	cp -f $(@D)/BCM4345C0.hcd $(TARGET_DIR)/lib/firmware/brcm/
+
+	mkdir -p $(TARGET_DIR)/etc/udev/rules.d
+	cp -f $(@D)/bluetooth-bcm43xx.rules $(TARGET_DIR)/etc/udev/rules.d/
 endef
 
 $(eval $(generic-package))
