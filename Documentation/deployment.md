@@ -21,3 +21,7 @@ The branch `dev` ist the actual development branch and from there we never make 
 version from they we build a beta release.
 
 If we create a new staging/productive release, we create a new branch `rel-{MAJOR}`. They will be used for the hole cycle of this release.
+
+## Upload release files
+
+We use [ghr](https://github.com/tcnksm/ghr) to upload files to our repository. A binary version is available inside `scripts`.
