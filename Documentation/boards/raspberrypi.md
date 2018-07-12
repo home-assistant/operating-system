@@ -1,7 +1,8 @@
 # Raspberry PI
 
 Supported Hardware:
-| Device | Boardname | 
+
+| Device | Board | 
 |--------|-----------|
 | Raspberry Pi A+/B/B+| rpi |
 | Raspberry Pi Zero | rpi |
