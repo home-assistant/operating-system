@@ -17,7 +17,7 @@ endef
 
 define BLUETOOTH_BCM43XX_INSTALL_TARGET_CMDS
 	$(INSTALL) -d $(TARGET_DIR)/etc/systemd/system/hassos-hardware.target.wants
-	cp -f $(@D)/bluetooth-bcm43xx $(TARGET_DIR)/usr/sbin/
+	$(INSTALL) -m 0755 $(@D)/bluetooth-bcm43xx $(TARGET_DIR)/usr/sbin/
 	$(INSTALL) -m 0644 $(@D)/bluetooth-bcm43xx.service $(TARGET_DIR)/usr/lib/systemd/system/
 	ln -fs /usr/lib/systemd/system/bluetooth-bcm43xx.service $(TARGET_DIR)/etc/systemd/system/hassos-hardware.target.wants/
 
