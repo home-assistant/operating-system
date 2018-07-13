@@ -18,15 +18,14 @@ endef
 define BLUETOOTH_BCM43XX_INSTALL_TARGET_CMDS
 	$(INSTALL) -d $(TARGET_DIR)/etc/systemd/system/hassos-hardware.target.wants
 	cp -f $(@D)/bluetooth-bcm43xx $(TARGET_DIR)/usr/sbin/
-	cp -f $(@D)/bluetooth-bcm43xx.service $(TARGET_DIR)/usr/lib/systemd/system/
+	$(INSTALL) -m 0644 $(@D)/bluetooth-bcm43xx.service $(TARGET_DIR)/usr/lib/systemd/system/
 	ln -fs /usr/lib/systemd/system/bluetooth-bcm43xx.service $(TARGET_DIR)/etc/systemd/system/hassos-hardware.target.wants/
 
 	$(INSTALL) -d $(TARGET_DIR)/lib/firmware/brcm
-	cp -f $(@D)/BCM43430A1.hcd $(TARGET_DIR)/lib/firmware/brcm/
-	cp -f $(@D)/BCM4345C0.hcd $(TARGET_DIR)/lib/firmware/brcm/
+	$(INSTALL) -m 0644 $(@D)/*.hcd $(TARGET_DIR)/lib/firmware/brcm/
 
-	mkdir -p $(TARGET_DIR)/etc/udev/rules.d
-	cp -f $(@D)/bluetooth-bcm43xx.rules $(TARGET_DIR)/etc/udev/rules.d/
+	$(INSTALL) -d $(TARGET_DIR)/etc/udev/rules.d
+	$(INSTALL) -m 0644 $(@D)/bluetooth-bcm43xx.rules $(TARGET_DIR)/etc/udev/rules.d/
 endef
 
 $(eval $(generic-package))
