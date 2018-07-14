@@ -1,11 +1,10 @@
 # Network
 
-HassOS uses NetworkManager to control the host network. In future releases, you can set up the configuration using the API/UI.
-Currently only manual configuration using NetworkManager connection files is supported. Without a configuration file, the device will use DHCP by default. These network connection files can be placed on a USB drive as described in [Configuration][configuration-usb].
+HassOS uses NetworkManager to control the host network. In future releases, you will be able to set up the configuration using the API/UI. Currently only manual configuration using NetworkManager connection files is supported. Without a configuration file, the device will use DHCP by default. These network connection files can be placed on a USB drive as described in [Configuration][configuration-usb].
 
 ## Configuration Examples
 
-You can look also into [Official Manual][keyfile] or there are a lot of examples accross internet. The system is read only, if you not want change the IP address every boot, you should set the uuid property with a generic [UUID4][uuid].
+You can also read the [Official Manual][keyfile] or there are a lot of examples accross internet. The system is read only, if you don't want the IP address to change every boot, you should set the uuid property with a generic [UUID4][uuid].
 
 ### Default
 
