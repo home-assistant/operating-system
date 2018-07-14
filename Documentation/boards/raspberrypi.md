@@ -10,6 +10,10 @@ Supported Hardware:
 | Raspberry Pi 2 B | rpi2 |
 | Raspberry Pi 3 B/B+ | rpi3 / rpi3-64 |
 
+## Limitation 64bit
+
+The 64bit version is under development by RPi-Team. It work very nice but it could have some impacts. Actual we see that the SDcard access with ext4 are a bit slower than on 32bit.
+
 ## Serial console
 
 For access to terminal over serial console, add `console=ttyAMA0,115200` to `cmdline.txt` and `enable_uart=1` into `config.txt`.
