@@ -21,7 +21,7 @@ if [ -L /var/lib/systemd/timesync ]; then
 fi
 
 # u-boot first stage device tree
-if command -v fw_setenv > /dev/null 2>&1; then
+if [ -e /usr/sbin/fw_setenv ]; then
     fw_setenv fdt_addr
 fi
 
