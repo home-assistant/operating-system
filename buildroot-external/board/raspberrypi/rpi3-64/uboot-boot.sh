@@ -11,7 +11,8 @@ setenv bootargs_b "root=PARTUUID=a3ec664e-32ce-4665-95ea-7ae90ce9aa20 rootfstype
 
 # Preserve origin bootargs
 setenv bootargs_rpi
-fdt addr ${fdt_addr}
+setenv fdt_org ${fdt_addr}
+fdt addr ${fdt_org}
 fdt get value bootargs_rpi /chosen bootargs
 
 setenv bootargs
@@ -35,6 +36,7 @@ for BOOT_SLOT in "${BOOT_ORDER}"; do
   fi
 done
 
+setenv fdt_addr
 if test -n "${bootargs}"; then
   saveenv
 else
@@ -48,7 +50,7 @@ fi
 echo "Loading kernel"
 run load_kernel
 echo " Starting kernel"
-booti ${kernel_addr_r} - ${fdt_addr}
+booti ${kernel_addr_r} - ${fdt_org}
 
 echo "Fails on boot"
 reset

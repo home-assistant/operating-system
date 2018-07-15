@@ -20,4 +20,9 @@ if [ -L /var/lib/systemd/timesync ]; then
     rm -f /var/lib/systemd/timesync
 fi
 
+# u-boot first stage device tree
+if [ -e /usr/sbin/fw_setenv ]; then
+    fw_setenv fdt_addr
+fi
+
 exit 0
