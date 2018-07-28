@@ -1,0 +1,5 @@
+BOARD_ID=tinkerboard
+BOARD_NAME="Tinker Board"
+CHASSIS=embedded
+BOOTLOADER=uboot
+KERNEL_FILE=zImage
