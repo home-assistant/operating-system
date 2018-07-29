@@ -17,8 +17,8 @@ mkdir -p ${BOOT_DATA}
 
 cp -t ${BOOT_DATA} \
     ${BINARIES_DIR}/u-boot.bin \
-    ${BINARIES_DIR}/boot.scr
-    ${BINARIES_DIR}/*.dtb \
+    ${BINARIES_DIR}/boot.scr \
+    ${BINARIES_DIR}/rk3288-tinker.dtb
 
 echo "console=tty1" > ${BOOT_DATA}/cmdline.txt
 

@@ -1,5 +1,6 @@
 #!/bin/bash
 
+BOOT_RAW="dfee47dd-9988-45da-a3eb-07f16eb5769e"
 BOOT_UUID="b3dd0952-733c-4c88-8cba-cab9b8b4377f"
 BOOTSTATE_UUID="33236519-7F32-4DFF-8002-3390B62C309D"
 SYSTEM0_UUID="8d3d53e3-6d49-4c38-8349-aff6859e82fd"
@@ -9,7 +10,7 @@ KERNEL1_UUID="fc02a4f0-5350-406f-93a2-56cbed636b5f"
 OVERLAY_UUID="f1326040-5236-40eb-b683-aaa100a9afcf"
 DATA_UUID="a52a4597-fa3a-4851-aefd-2fbe9f849079"
 
-BOOT_SIZE=32M
+BOOT_RAW_SIZE=8M
 BOOTSTATE_SIZE=8M
 SYSTEM_SIZE=256M
 KERNEL_SIZE=24M
@@ -17,12 +18,21 @@ OVERLAY_SIZE=96M
 DATA_SIZE=1G
 
 
+function get_boot_size() {
+    if [ "${BOOT_SYS}" == "raw" ]; then
+        echo "24M"
+    else
+        echo "32M"
+    fi
+}
+
+
 function create_boot_image() {
     local boot_data="${BINARIES_DIR}/boot"
     local boot_img="${BINARIES_DIR}/boot.vfat"
 
     echo "mtools_skip_check=1" > ~/.mtoolsrc
-    dd if=/dev/zero of=${boot_img} bs=${BOOT_SIZE} count=1
+    dd if=/dev/zero of=${boot_img} bs=$(get_boot_size) count=1
     mkfs.vfat -n "hassos-boot" ${boot_img}
     mcopy -i ${boot_img} -sv ${boot_data}/* ::
 }

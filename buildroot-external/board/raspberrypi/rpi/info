@@ -3,3 +3,4 @@ BOARD_NAME="RaspberryPi"
 CHASSIS=embedded
 BOOTLOADER=uboot
 KERNEL_FILE=zImage
+BOOT_SYS=mbr
