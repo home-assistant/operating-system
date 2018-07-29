@@ -3,4 +3,4 @@ BOARD_NAME="Tinker Board"
 CHASSIS=embedded
 BOOTLOADER=uboot
 KERNEL_FILE=zImage
-BOOT_SYS=raw
+BOOT_SYS=spl
