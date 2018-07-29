@@ -9,6 +9,9 @@ setenv bootargs_hassos "zram.enabled=1 zram.num_devices=3 apparmor=1 security=ap
 setenv bootargs_a "root=PARTUUID=8d3d53e3-6d49-4c38-8349-aff6859e82fd rootfstype=squashfs ro"
 setenv bootargs_b "root=PARTUUID=a3ec664e-32ce-4665-95ea-7ae90ce9aa20 rootfstype=squashfs ro"
 
+# Load device tree
+fatload mmc 0:1 ${fdt_addr_r} rk3288-tinker.dtb
+
 setenv bootargs
 for BOOT_SLOT in "${BOOT_ORDER}"; do
   if test "x${bootargs}" != "x"; then
