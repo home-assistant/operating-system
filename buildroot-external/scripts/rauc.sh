@@ -32,7 +32,7 @@ function _write_rauc_boot() {
 
     (
         echo "[slot.spl.0]"
-        echo "device=/dev/disk/by-partlabel/hassos-spl"
+        echo "device=/dev/disk/by-partlabel/hassos-boot"
         echo "type=raw"
     ) >> ${TARGET_DIR}/etc/rauc/system.conf
 }

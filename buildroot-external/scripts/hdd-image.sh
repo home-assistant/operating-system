@@ -1,6 +1,5 @@
 #!/bin/bash
 
-SPL_UUID_="dfee47dd-9988-45da-a3eb-07f16eb5769e"
 BOOT_UUID="b3dd0952-733c-4c88-8cba-cab9b8b4377f"
 BOOTSTATE_UUID="33236519-7F32-4DFF-8002-3390B62C309D"
 SYSTEM0_UUID="8d3d53e3-6d49-4c38-8349-aff6859e82fd"
@@ -10,8 +9,8 @@ KERNEL1_UUID="fc02a4f0-5350-406f-93a2-56cbed636b5f"
 OVERLAY_UUID="f1326040-5236-40eb-b683-aaa100a9afcf"
 DATA_UUID="a52a4597-fa3a-4851-aefd-2fbe9f849079"
 
-SPL_SIZE=16M
-BOOT_SIZE=(32M 16M)
+SPL_SIZE=8M
+BOOT_SIZE=(32M 24M)
 BOOTSTATE_SIZE=8M
 SYSTEM_SIZE=256M
 KERNEL_SIZE=24M
@@ -31,10 +30,10 @@ function get_boot_size() {
 function create_spl_image() {
     local spl_data="${BINARIES_DIR}/${1}"
     local spl_img="${BINARIES_DIR}/spl.img"
-    local spl_seek=$(($2-4))
+    local spl_seek=$(($2-2))
 
-    dd if=/dev/zero of=${spl_img} bs=${SPL_SIZE} count=1
-    dd if=${spl_data} of=${spl_img} conv=notrunc bs=512 obs=512 seek=${spl_seek} 
+    dd if=/dev/zero of=${spl_img} bs=512 count=16382
+    dd if=${spl_data} of=${spl_img} conv=notrunc bs=512 seek=${spl_seek} 
 }
 
 
@@ -90,7 +89,6 @@ function create_disk_image() {
     local hdd_img="$(hassos_image_name img)"
     local hdd_count=${1:-2}
 
-    local spl_offset=0
     local boot_offset=0
     local rootfs_offset=0
     local kernel_offset=0
@@ -107,13 +105,12 @@ function create_disk_image() {
 
     # SPL
     if [ "${BOOT_SYS}" == "spl" ]; then
-        spl_offset="$(sgdisk -F ${hdd_img})"
-        sgdisk -n 0:0:+${SPL_SIZE} -c 0:"hassos-spl" -u 0:${SPL_UUID} ${hdd_img}
+        sgdisk -j 16384 ${hdd_img}
     fi
 
     # boot
     boot_offset="$(sgdisk -F ${hdd_img})"
-    sgdisk -n 0:0:+$(get_boot_size) -c 0:"hassos-boot" -t 0:"C12A7328-F81F-11D2-BA4B-00A0C93EC93B" -u 0:${BOOT_UUID} ${hdd_img}
+    sgdisk -n 0:${boot_offset}:+$(get_boot_size) -c 0:"hassos-boot" -t 0:"C12A7328-F81F-11D2-BA4B-00A0C93EC93B" -u 0:${BOOT_UUID} ${hdd_img}
 
     # Kernel 0
     kernel_offset="$(sgdisk -F ${hdd_img})"
@@ -143,15 +140,15 @@ function create_disk_image() {
     ##
     # Write Images
     sgdisk -v
-    dd if=${boot_img} of=${hdd_img} conv=notrunc bs=512 obs=512 seek=${boot_offset}
-    dd if=${kernel_img} of=${hdd_img} conv=notrunc bs=512 obs=512 seek=${kernel_offset}
-    dd if=${rootfs_img} of=${hdd_img} conv=notrunc bs=512 obs=512 seek=${rootfs_offset}
-    dd if=${overlay_img} of=${hdd_img} conv=notrunc bs=512 obs=512 seek=${overlay_offset}
-    dd if=${data_img} of=${hdd_img} conv=notrunc bs=512 obs=512 seek=${data_offset}
+    dd if=${boot_img} of=${hdd_img} conv=notrunc bs=512 seek=${boot_offset}
+    dd if=${kernel_img} of=${hdd_img} conv=notrunc bs=512 seek=${kernel_offset}
+    dd if=${rootfs_img} of=${hdd_img} conv=notrunc bs=512 seek=${rootfs_offset}
+    dd if=${overlay_img} of=${hdd_img} conv=notrunc bs=512 seek=${overlay_offset}
+    dd if=${data_img} of=${hdd_img} conv=notrunc bs=512 seek=${data_offset}
 
     # Write SPL
     if [ "${BOOT_SYS}" == "spl" ]; then
-        dd if=${spl_img} of=${hdd_img} conv=notrunc bs=512 obs=512 seek=${spl_offset}
+        dd if=${spl_img} of=${hdd_img} conv=notrunc bs=512 seek=2
     fi
 
     # Fix MBR

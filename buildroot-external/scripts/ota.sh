@@ -40,6 +40,7 @@ function create_ota_update() {
         (
             echo "[image.spl]"
             echo "filename=spl.img"
+            echo "hooks=install"
         ) >> ${rauc_folder}/manifest.raucm
     fi
 
