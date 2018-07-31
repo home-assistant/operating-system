@@ -1,0 +1,13 @@
+#!/bin/sh
+
+DEVICE_CHILD="$(findfs LABEL="hassos-boot")"
+DEVICE_ROOT="/dev/$(lsblk -no pkname ${DEVICE_CHILD})"
+IMAGE_FILE="${1}"
+
+# Check params
+if [ ! -f "${IMAGE_FILE}" ]; then
+    echo "[Error] Can't find image: ${IMAGE_FILE}"
+    exit 1
+fi
+
+dd if=${IMAGE_FILE} of=${DEVICE_ROOT} conv=notrunc bs=512 seek=2

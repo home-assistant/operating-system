@@ -85,7 +85,6 @@ function create_disk_image() {
     local overlay_img="${BINARIES_DIR}/overlay.ext4"
     local data_img="${BINARIES_DIR}/data.ext4"
     local kernel_img="${BINARIES_DIR}/kernel.ext4"
-    local spl_img="${BINARIES_DIR}/spl.img"
     local hdd_img="$(hassos_image_name img)"
     local hdd_count=${1:-2}
 
@@ -146,14 +145,11 @@ function create_disk_image() {
     dd if=${overlay_img} of=${hdd_img} conv=notrunc bs=512 seek=${overlay_offset}
     dd if=${data_img} of=${hdd_img} conv=notrunc bs=512 seek=${data_offset}
 
-    # Write SPL
-    if [ "${BOOT_SYS}" == "spl" ]; then
-        dd if=${spl_img} of=${hdd_img} conv=notrunc bs=512 seek=2
-    fi
-
-    # Fix MBR
+    # Fix boot
     if [ "${BOOT_SYS}" == "mbr" ]; then
-        fix_disk_mbr
+        fix_disk_image_mbr
+    elif [ "${BOOT_SYS}" == "spl" ]; then
+        fix_disk_image_spl
     fi
 }
 
@@ -163,6 +159,15 @@ function fix_disk_image_mbr() {
 
     sgdisk -t 1:"E3C9E316-0B5C-4DB8-817D-F92DF00215AE" ${hdd_img}
     dd if=${BR2_EXTERNAL_HASSOS_PATH}/misc/mbr.img of=${hdd_img} conv=notrunc bs=512 count=1
+}
+
+
+function fix_disk_image_spl() {
+    local hdd_img="$(hassos_image_name img)"
+    local spl_img="${BINARIES_DIR}/spl.img"
+
+    sgdisk -t 1:"E3C9E316-0B5C-4DB8-817D-F92DF00215AE" ${hdd_img}
+    dd if=${spl_img} of=${hdd_img} conv=notrunc bs=512 seek=2
 }
 
 

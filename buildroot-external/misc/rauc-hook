@@ -12,6 +12,11 @@ if [ "${RAUC_SLOT_CLASS}" = "boot" ]; then
     fi
 fi
 
+# Handle spl install
+if [ "${RAUC_SLOT_CLASS}" = "spl" ]; then
+    /usr/lib/rauc/install-spl "${RAUC_IMAGE_NAME}"
+fi
+
 ##
 # Fixups
 
