@@ -1,0 +1,32 @@
+diff --git a/arch/arm/boot/dts/rk3288.dtsi b/arch/arm/boot/dts/rk3288.dtsi
+index bc3601a..37ae378 100644
+--- a/arch/arm/boot/dts/rk3288.dtsi
++++ b/arch/arm/boot/dts/rk3288.dtsi
+@@ -467,13 +467,6 @@
+ 	};
+ 
+ 	thermal-zones {
+-		reserve_thermal: reserve_thermal {
+-			polling-delay-passive = <1000>; /* milliseconds */
+-			polling-delay = <5000>; /* milliseconds */
+-
+-			thermal-sensors = <&tsadc 0>;
+-		};
+-
+ 		cpu_thermal: cpu_thermal {
+ 			polling-delay-passive = <100>; /* milliseconds */
+ 			polling-delay = <5000>; /* milliseconds */
+@@ -539,6 +532,13 @@
+ 				};
+ 			};
+ 		};
++
++		reserve_thermal: reserve_thermal {
++			polling-delay-passive = <1000>; /* milliseconds */
++			polling-delay = <5000>; /* milliseconds */
++
++			thermal-sensors = <&tsadc 0>;
++		};
+ 	};
+ 
+ 	tsadc: tsadc@ff280000 {

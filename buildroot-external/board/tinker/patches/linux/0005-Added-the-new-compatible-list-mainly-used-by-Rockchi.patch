@@ -1,0 +1,42 @@
+From ef7689887c31d2b1336e14f2c089185e8f60a9f1 Mon Sep 17 00:00:00 2001
+From: Myy <myy@miouyouyou.fr>
+Date: Mon, 7 Aug 2017 19:22:39 +0000
+Subject: [PATCH] Added the new "compatible" list, mainly used by Rockchip
+
+Because, you know, all the Mali Midgard GPU used to define the GPU
+using the 'compatible = "arm,mali-midgard"' property, which worked fine.
+
+But it was removed.
+
+They replaced the "arm,mali-midgard" node by "arm,mali-tXXX" where XXX
+is the GPU series, and added "arm,rk3288-mali" which is used by nothing.
+
+Which broke the Mali Midgard GPL kernel driver.
+
+This patch fixes this issue.
+
+Signed-off-by: Myy <myy@miouyouyou.fr>
+---
+ drivers/gpu/arm/midgard/mali_kbase_core_linux.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/drivers/gpu/arm/midgard/mali_kbase_core_linux.c b/drivers/gpu/arm/midgard/mali_kbase_core_linux.c
+index 27dcd9c1..cc4932a4 100644
+--- a/drivers/gpu/arm/midgard/mali_kbase_core_linux.c
++++ b/drivers/gpu/arm/midgard/mali_kbase_core_linux.c
+@@ -4742,6 +4742,12 @@ static const struct dev_pm_ops kbase_pm_ops = {
+ static const struct of_device_id kbase_dt_ids[] = {
+ 	{ .compatible = "arm,malit6xx" },
+ 	{ .compatible = "arm,mali-midgard" },
++	{ .compatible = "arm,mali-t720" },
++	{ .compatible = "arm,mali-t760" },
++	{ .compatible = "arm,mali-t820" },
++	{ .compatible = "arm,mali-t830" },
++	{ .compatible = "arm,mali-t860" },
++	{ .compatible = "arm,mali-t880" },
+ 	{ /* sentinel */ }
+ };
+ MODULE_DEVICE_TABLE(of, kbase_dt_ids);
+-- 
+2.13.0
+

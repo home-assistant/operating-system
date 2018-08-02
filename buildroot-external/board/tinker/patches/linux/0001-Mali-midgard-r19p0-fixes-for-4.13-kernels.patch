@@ -1,0 +1,122 @@
+From 7ba71967a2678e119bcd819ac92d08bd038e1879 Mon Sep 17 00:00:00 2001
+From: Myy <myy@miouyouyou.fr>
+Date: Mon, 17 Jul 2017 18:34:33 +0000
+Subject: [PATCH 5/5] Mali midgard r19p0 fixes for 4.13 kernels
+
+Mostly due to DMA structure members renamed, and some signatures
+modifications done during the development of Linux 4.11.
+
+* mm, fs: reduce fault, page_mkwrite, and pfn_mkwrite to take only vmf
+  11bac80004499ea59f361ef2a5516c84b6eab675
+  v4.11-rc1
+
+* sched/headers: Move task->mm handling methods to <linux/sched/mm.h>
+  68e21be2916b359fd8afb536c1911dc014cfd03e
+  v4.11-rc1
+
+* sched/headers: Move task-stack related APIs from <linux/sched.h> to
+  <linux/sched/task_stack.h>
+  f3ac60671954c8d413532627b1be13a76f394c49
+  v4.11-rc1
+
+* dma-fence: Introduce drm_fence_set_error() helper
+  a009e975da5c7d42a7f5eaadc54946eb5f76c9af
+  v4.11-rc1
+
+Signed-off-by: Myy <myy@miouyouyou.fr>
+---
+ drivers/gpu/arm/midgard/mali_kbase.h           |  4 ++++
+ drivers/gpu/arm/midgard/mali_kbase_fence.h     |  4 ++++
+ drivers/gpu/arm/midgard/mali_kbase_mem_linux.c |  6 ++++++
+ drivers/gpu/arm/midgard/mali_kbase_sync_file.c | 12 ++++++++++++
+ 4 files changed, 26 insertions(+)
+
+diff --git a/drivers/gpu/arm/midgard/mali_kbase.h b/drivers/gpu/arm/midgard/mali_kbase.h
+index d77f186..5ee47c4 100644
+--- a/drivers/gpu/arm/midgard/mali_kbase.h
++++ b/drivers/gpu/arm/midgard/mali_kbase.h
+@@ -35,6 +35,10 @@
+ #include <linux/mutex.h>
+ #include <linux/rwsem.h>
+ #include <linux/sched.h>
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 11, 0)
++#include <linux/sched/task_stack.h>
++#include <linux/sched/mm.h>
++#endif
+ #include <linux/slab.h>
+ #include <linux/spinlock.h>
+ #include <linux/vmalloc.h>
+diff --git a/drivers/gpu/arm/midgard/mali_kbase_fence.h b/drivers/gpu/arm/midgard/mali_kbase_fence.h
+index 8d39299..3c2e3a9 100644
+--- a/drivers/gpu/arm/midgard/mali_kbase_fence.h
++++ b/drivers/gpu/arm/midgard/mali_kbase_fence.h
+@@ -134,7 +134,11 @@ static inline bool kbase_fence_out_is_ours(struct kbase_jd_atom *katom)
+ static inline int kbase_fence_out_signal(struct kbase_jd_atom *katom,
+ 					 int status)
+ {
++#if (LINUX_VERSION_CODE < KERNEL_VERSION(4, 11, 0))
+ 	katom->dma_fence.fence->status = status;
++#else
++	katom->dma_fence.fence->error = status;
++#endif
+ 	return dma_fence_signal(katom->dma_fence.fence);
+ }
+ 
+diff --git a/drivers/gpu/arm/midgard/mali_kbase_mem_linux.c b/drivers/gpu/arm/midgard/mali_kbase_mem_linux.c
+index b1f2c46..896aa35 100644
+--- a/drivers/gpu/arm/midgard/mali_kbase_mem_linux.c
++++ b/drivers/gpu/arm/midgard/mali_kbase_mem_linux.c
+@@ -1788,8 +1788,14 @@ static void kbase_cpu_vm_close(struct vm_area_struct *vma)
+ KBASE_EXPORT_TEST_API(kbase_cpu_vm_close);
+ 
+ 
++#if (LINUX_VERSION_CODE < KERNEL_VERSION(4, 11, 0))
+ static int kbase_cpu_vm_fault(struct vm_area_struct *vma, struct vm_fault *vmf)
+ {
++#else
++static int kbase_cpu_vm_fault(struct vm_fault *vmf)
++{
++	struct vm_area_struct *vma = vmf->vma;
++#endif
+ 	struct kbase_cpu_mapping *map = vma->vm_private_data;
+ 	pgoff_t rel_pgoff;
+ 	size_t i;
+diff --git a/drivers/gpu/arm/midgard/mali_kbase_sync_file.c b/drivers/gpu/arm/midgard/mali_kbase_sync_file.c
+index 4e1621c..d84a54e 100644
+--- a/drivers/gpu/arm/midgard/mali_kbase_sync_file.c
++++ b/drivers/gpu/arm/midgard/mali_kbase_sync_file.c
+@@ -161,8 +161,13 @@ static void kbase_fence_wait_callback(struct dma_fence *fence,
+ 	struct kbase_context *kctx = katom->kctx;
+ 
+ 	/* Cancel atom if fence is erroneous */
++#if (LINUX_VERSION_CODE < KERNEL_VERSION(4, 11, 0))
+ 	if (dma_fence_is_signaled(kcb->fence) && kcb->fence->status < 0)
+ 		katom->event_code = BASE_JD_EVENT_JOB_CANCELLED;
++#else
++	if (dma_fence_is_signaled(kcb->fence) && kcb->fence->error < 0)
++		katom->event_code = BASE_JD_EVENT_JOB_CANCELLED;
++#endif
+ 
+ 	if (kbase_fence_dep_count_dec_and_test(katom)) {
+ 		/* We take responsibility of handling this */
+@@ -273,10 +278,17 @@ static void kbase_sync_fence_info_get(struct dma_fence *fence,
+ 	 * 1 : signaled
+ 	 */
+ 	if (dma_fence_is_signaled(fence)) {
++#if (LINUX_VERSION_CODE < KERNEL_VERSION(4, 11, 0))
+ 		if (fence->status < 0)
+ 			info->status = fence->status; /* signaled with error */
+ 		else
+ 			info->status = 1; /* signaled with success */
++#else
++		if (fence->error < 0)
++			info->status = fence->error; /* signaled with error */
++		else
++			info->status = 1; /* signaled with success */
++#endif
+ 	} else  {
+ 		info->status = 0; /* still active (unsignaled) */
+ 	}
+-- 
+2.10.2
+

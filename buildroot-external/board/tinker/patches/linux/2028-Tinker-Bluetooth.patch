@@ -1,0 +1,13 @@
+diff --git a/arch/arm/boot/dts/rk3288-tinker.dts b/arch/arm/boot/dts/rk3288-tinker.dts
+index 07b4af4..7755426 100644
+--- a/arch/arm/boot/dts/rk3288-tinker.dts
++++ b/arch/arm/boot/dts/rk3288-tinker.dts
+@@ -620,7 +621,7 @@
+ &uart0 {
+ 	status = "okay";
+ 	pinctrl-names = "default";
+-	pinctrl-0 = <&uart0_xfer>, <&uart0_cts>;
++	pinctrl-0 = <&uart0_xfer>, <&uart0_cts>,  <&uart0_rts>;
+ };
+ 
+ &uart1 {

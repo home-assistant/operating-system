@@ -1,0 +1,50 @@
+From e0c5a419cf5464cd02996431afa98e3b22dc6801 Mon Sep 17 00:00:00 2001
+From: Myy <myy@miouyouyou.fr>
+Date: Mon, 17 Jul 2017 23:14:48 +0000
+Subject: [PATCH] clk: rockchip: add all known operating points to the allowed
+ CPU freqs
+
+Patch from Willy Tarreau
+
+Original commit message :
+At least 1920 MHz runs stable on the MiQi even on openssl speed -multi 4,
+which is by far the most intensive workload, and 1992/2016 work fine on
+the CS-008 until it starts to heat too much. So add all of them so that
+the device tree can simply manipulate them.
+
+Signed-off-by: Myy <myy@miouyouyou.fr>
+---
+ drivers/clk/rockchip/clk-rk3288.c | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
+
+diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip/clk-rk3288.c
+index 753c649..fd2058f 100644
+--- a/drivers/clk/rockchip/clk-rk3288.c
++++ b/drivers/clk/rockchip/clk-rk3288.c
+@@ -145,6 +145,23 @@ static struct rockchip_pll_rate_table rk3288_pll_rates[] = {
+ 	}
+ 
+ static struct rockchip_cpuclk_rate_table rk3288_cpuclk_rates[] __initdata = {
++	RK3288_CPUCLK_RATE(2208000000U, 1, 3, 1, 3, 3),
++	RK3288_CPUCLK_RATE(2184000000U, 1, 3, 1, 3, 3),
++	RK3288_CPUCLK_RATE(2160000000U, 1, 3, 1, 3, 3),
++	RK3288_CPUCLK_RATE(2136000000, 1, 3, 1, 3, 3),
++	RK3288_CPUCLK_RATE(2112000000, 1, 3, 1, 3, 3),
++	RK3288_CPUCLK_RATE(2088000000, 1, 3, 1, 3, 3),
++	RK3288_CPUCLK_RATE(2064000000, 1, 3, 1, 3, 3),
++	RK3288_CPUCLK_RATE(2040000000, 1, 3, 1, 3, 3),
++	RK3288_CPUCLK_RATE(2016000000, 1, 3, 1, 3, 3),
++	RK3288_CPUCLK_RATE(1992000000, 1, 3, 1, 3, 3),
++	RK3288_CPUCLK_RATE(1968000000, 1, 3, 1, 3, 3),
++	RK3288_CPUCLK_RATE(1944000000, 1, 3, 1, 3, 3),
++	RK3288_CPUCLK_RATE(1920000000, 1, 3, 1, 3, 3),
++	RK3288_CPUCLK_RATE(1896000000, 1, 3, 1, 3, 3),
++	RK3288_CPUCLK_RATE(1872000000, 1, 3, 1, 3, 3),
++	RK3288_CPUCLK_RATE(1848000000, 1, 3, 1, 3, 3),
++	RK3288_CPUCLK_RATE(1824000000, 1, 3, 1, 3, 3),
+ 	RK3288_CPUCLK_RATE(1800000000, 1, 3, 1, 3, 3),
+ 	RK3288_CPUCLK_RATE(1704000000, 1, 3, 1, 3, 3),
+ 	RK3288_CPUCLK_RATE(1608000000, 1, 3, 1, 3, 3),
+-- 
+2.10.2
+
