@@ -1,0 +1,5 @@
+config BR2_PACKAGE_BLUETOOTH_RTL8723
+	bool "bluetooth rtl8723"
+	depends on BR2_PACKAGE_BLUEZ5_UTILS_CLIENT
+	help
+	  Install bluetooth for rtl8723. 

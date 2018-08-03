@@ -1,0 +1,13 @@
+diff --git a/arch/arm/mm/dma-mapping.c b/arch/arm/mm/dma-mapping.c
+index bd83c53..af7cfe3
+--- a/arch/arm/mm/dma-mapping.c
++++ b/arch/arm/mm/dma-mapping.c
+@@ -374,7 +374,7 @@ static void __dma_free_remap(void *cpu_addr, size_t size)
+ 			VM_ARM_DMA_CONSISTENT | VM_USERMAP);
+ }
+
+-#define DEFAULT_DMA_COHERENT_POOL_SIZE	SZ_256K
++#define DEFAULT_DMA_COHERENT_POOL_SIZE	SZ_2M
+ static struct gen_pool *atomic_pool;
+
+ static size_t atomic_pool_size = DEFAULT_DMA_COHERENT_POOL_SIZE;

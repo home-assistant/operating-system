@@ -1,0 +1,6 @@
+BOARD_ID=tinker
+BOARD_NAME="Tinker Board"
+CHASSIS=embedded
+BOOTLOADER=uboot
+KERNEL_FILE=zImage
+BOOT_SYS=spl

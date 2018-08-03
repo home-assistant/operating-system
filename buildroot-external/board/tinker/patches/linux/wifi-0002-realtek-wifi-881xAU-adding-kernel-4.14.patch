@@ -1,0 +1,26 @@
+diff --git a/drivers/net/wireless/Kconfig b/drivers/net/wireless/Kconfig
+index 918f449..561b71c 100644
+--- a/drivers/net/wireless/Kconfig
++++ b/drivers/net/wireless/Kconfig
+@@ -39,6 +39,8 @@ source "drivers/net/wireless/cisco/Kconfig"
+ source "drivers/net/wireless/intel/Kconfig"
+ source "drivers/net/wireless/intersil/Kconfig"
+ source "drivers/net/wireless/marvell/Kconfig"
++source "drivers/net/wireless/rtl8812au/Kconfig"
++source "drivers/net/wireless/rtl8814au/Kconfig"
+ source "drivers/net/wireless/mediatek/Kconfig"
+ source "drivers/net/wireless/ralink/Kconfig"
+ source "drivers/net/wireless/realtek/Kconfig"
+diff --git a/drivers/net/wireless/Makefile b/drivers/net/wireless/Makefile
+index 59df552..614ddf4 100644
+--- a/drivers/net/wireless/Makefile
++++ b/drivers/net/wireless/Makefile
+@@ -12,6 +12,8 @@ obj-$(CONFIG_WLAN_VENDOR_CISCO) += cisco/
+ obj-$(CONFIG_WLAN_VENDOR_INTEL) += intel/
+ obj-$(CONFIG_WLAN_VENDOR_INTERSIL) += intersil/
+ obj-$(CONFIG_WLAN_VENDOR_MARVELL) += marvell/
++obj-$(CONFIG_RTL8812AU) += rtl8812au/
++obj-$(CONFIG_RTL8814AU) += rtl8814au/
+ obj-$(CONFIG_WLAN_VENDOR_MEDIATEK) += mediatek/
+ obj-$(CONFIG_WLAN_VENDOR_RALINK) += ralink/
+ obj-$(CONFIG_WLAN_VENDOR_REALTEK) += realtek/

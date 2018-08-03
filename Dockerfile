@@ -15,7 +15,7 @@ RUN apt-get update && apt-get install -y \
 # Build Tools
 RUN apt-get update && apt-get install -y \
         wget patch vim cpio python unzip rsync bc bzip2 ncurses-dev \
-        git make g++ file perl bash binutils locales qemu-utils \
+        git make g++ file perl bash binutils locales qemu-utils bison flex \
     && rm -rf /var/lib/apt/lists/*
 
 # Init entry

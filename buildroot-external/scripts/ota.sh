@@ -6,6 +6,7 @@ function create_ota_update() {
     local boot="${BINARIES_DIR}/boot.vfat"
     local kernel="${BINARIES_DIR}/kernel.ext4"
     local rootfs="${BINARIES_DIR}/rootfs.squashfs"
+    local spl="${BINARIES_DIR}/spl.img"
     local key="/build/key.pem"
     local cert="/build/cert.pem"
 
@@ -31,6 +32,17 @@ function create_ota_update() {
         echo "[image.rootfs]"
         echo "filename=rootfs.img"
     ) > ${rauc_folder}/manifest.raucm
+
+    # SPL
+    if [ "${BOOT_SYS}" != "spl" ]; then
+        cp -f ${spl} ${rauc_folder}/spl.img
+
+        (
+            echo "[image.spl]"
+            echo "filename=spl.img"
+            echo "hooks=install"
+        ) >> ${rauc_folder}/manifest.raucm
+    fi
 
     rauc bundle -d --cert=${cert} --key=${key} ${rauc_folder} ${ota_file}
 }

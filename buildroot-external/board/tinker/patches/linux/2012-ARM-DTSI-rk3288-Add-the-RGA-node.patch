@@ -1,0 +1,40 @@
+From 3fe37d29b53e3d06c8f4314cfc113bfa679f67eb Mon Sep 17 00:00:00 2001
+From: Myy Miouyouyou <myy@miouyouyou.fr>
+Date: Thu, 19 Oct 2017 21:48:05 +0200
+Subject: [PATCH 15/28] ARM: DTSI: rk3288.dtsi: Add the RGA node
+
+Imported from @wzyy2 patches.
+
+Signed-off-by: Myy Miouyouyou <myy@miouyouyou.fr>
+---
+ arch/arm/boot/dts/rk3288.dtsi | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+
+diff --git a/arch/arm/boot/dts/rk3288.dtsi b/arch/arm/boot/dts/rk3288.dtsi
+index 10ecebb4..455446f6 100644
+--- a/arch/arm/boot/dts/rk3288.dtsi
++++ b/arch/arm/boot/dts/rk3288.dtsi
+@@ -1159,6 +1159,20 @@
+ 		};
+ 	};
+ 
++	rga: rga@ff920000 {
++		compatible = "rockchip,rk3288-rga";
++		reg = <0x0 0xff920000 0x0 0x180>;
++		interrupts = <GIC_SPI 18 IRQ_TYPE_LEVEL_HIGH>;
++		interrupt-names = "rga";
++		clocks = <&cru ACLK_RGA>, <&cru HCLK_RGA>, <&cru SCLK_RGA>;
++		clock-names = "aclk", "hclk", "sclk";
++		power-domains = <&power RK3288_PD_VIO>;
++		resets = <&cru SRST_RGA_CORE>, <&cru SRST_RGA_AXI>, <&cru SRST_RGA_AHB>;
++
++		reset-names = "core", "axi", "ahb";
++		status = "disabled";
++	};
++
+ 	vpu_mmu: iommu@ff9a0800 {
+ 		compatible = "rockchip,iommu";
+ 		reg = <0x0 0xff9a0800 0x0 0x100>;
+-- 
+2.11.0
+

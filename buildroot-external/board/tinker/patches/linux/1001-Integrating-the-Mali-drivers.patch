@@ -1,0 +1,65 @@
+From 7de25b73e152830587740d8f2ffaad94c72d90ac Mon Sep 17 00:00:00 2001
+From: Myy <myy@miouyouyou.fr>
+Date: Mon, 17 Jul 2017 11:24:47 +0000
+Subject: [PATCH 1/5] Integrating the Mali drivers
+
+Changses required in order to select and compile the previously copied
+Mali Midgard drivers.
+
+Signed-off-by: Myy <myy@miouyouyou.fr>
+
+---
+ drivers/base/Kconfig  | 2 ++
+ drivers/base/Makefile | 1 +
+ drivers/gpu/Makefile  | 2 +-
+ drivers/video/Kconfig | 1 +
+ 4 files changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/base/Kconfig b/drivers/base/Kconfig
+index f046d21..b0982fc 100644
+--- a/drivers/base/Kconfig
++++ b/drivers/base/Kconfig
+@@ -348,3 +348,5 @@ config GENERIC_ARCH_TOPOLOGY
+ 	  runtime.
+ 
+ endmenu
++
++source "drivers/base/ump/Kconfig"
+diff --git a/drivers/base/Makefile b/drivers/base/Makefile
+index 397e5c3..251e0cf 100644
+--- a/drivers/base/Makefile
++++ b/drivers/base/Makefile
+@@ -24,6 +24,7 @@ obj-$(CONFIG_PINCTRL) += pinctrl.o
+ obj-$(CONFIG_DEV_COREDUMP) += devcoredump.o
+ obj-$(CONFIG_GENERIC_MSI_IRQ_DOMAIN) += platform-msi.o
+ obj-$(CONFIG_GENERIC_ARCH_TOPOLOGY) += arch_topology.o
++obj-$(CONFIG_UMP) += ump/
+ 
+ obj-y			+= test/
+ 
+diff --git a/drivers/gpu/Makefile b/drivers/gpu/Makefile
+index e9ed439..66386b4 100644
+--- a/drivers/gpu/Makefile
++++ b/drivers/gpu/Makefile
+@@ -2,5 +2,5 @@
+ # taken to initialize them in the correct order. Link order is the only way
+ # to ensure this currently.
+ obj-$(CONFIG_TEGRA_HOST1X)	+= host1x/
+-obj-y			+= drm/ vga/
++obj-y			+= drm/ vga/ arm/
+ obj-$(CONFIG_IMX_IPUV3_CORE)	+= ipu-v3/
+diff --git a/drivers/video/Kconfig b/drivers/video/Kconfig
+index 3c20af9..041e15f 100644
+--- a/drivers/video/Kconfig
++++ b/drivers/video/Kconfig
+@@ -17,6 +17,7 @@ source "drivers/gpu/vga/Kconfig"
+ 
+ source "drivers/gpu/host1x/Kconfig"
+ source "drivers/gpu/ipu-v3/Kconfig"
++source "drivers/gpu/arm/midgard/Kconfig"
+ 
+ source "drivers/gpu/drm/Kconfig"
+ 
+-- 
+2.10.2
+

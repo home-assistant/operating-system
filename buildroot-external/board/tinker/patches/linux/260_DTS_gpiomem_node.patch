@@ -1,0 +1,17 @@
+diff --git a/arch/arm/boot/dts/rk3288-tinker.dts b/arch/arm/boot/dts/rk3288-tinker.dts
+index 925b277..33b198e 100644
+--- a/arch/arm/boot/dts/rk3288-tinker.dts
++++ b/arch/arm/boot/dts/rk3288-tinker.dts
+@@ -100,6 +100,12 @@
+ 		};
+ 	};
+ 
++	rk3288-gpiomem {
++		compatible = "rockchip,rk3288-gpiomem";
++		reg = <0x0 0xff750000 0x0 0x1000>;
++		status = "okay";
++	};
++
+ 	sound {
+ 		compatible = "simple-audio-card";
+ 		simple-audio-card,format = "i2s";

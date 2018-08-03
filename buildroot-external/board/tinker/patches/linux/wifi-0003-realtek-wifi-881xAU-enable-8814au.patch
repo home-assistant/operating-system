@@ -1,0 +1,46 @@
+diff --git a/drivers/net/wireless/rtl8812au/Kconfig b/drivers/net/wireless/rtl8812au/Kconfig
+index 16d3567..f87653d 100644
+--- a/drivers/net/wireless/rtl8812au/Kconfig
++++ b/drivers/net/wireless/rtl8812au/Kconfig
+@@ -4,8 +4,3 @@ config RTL8812AU
+ 	---help---
+ 	  Help message of RTL8812AU
+ 
+-config RTL8814AU
+-	tristate "Realtek 8814A USB WiFi"
+-	depends on USB
+-	---help---
+-	  Help message of RTL8814AU
+diff --git a/drivers/net/wireless/rtl8814au/Kconfig b/drivers/net/wireless/rtl8814au/Kconfig
+index 16d3567..730c4e0 100644
+--- a/drivers/net/wireless/rtl8814au/Kconfig
++++ b/drivers/net/wireless/rtl8814au/Kconfig
+@@ -1,9 +1,3 @@
+-config RTL8812AU
+-	tristate "Realtek 8812A USB WiFi"
+-	depends on USB
+-	---help---
+-	  Help message of RTL8812AU
+-
+ config RTL8814AU
+ 	tristate "Realtek 8814A USB WiFi"
+ 	depends on USB
+diff --git a/drivers/net/wireless/rtl8814au/Makefile b/drivers/net/wireless/rtl8814au/Makefile
+index ef959e7..f71f524 100644
+--- a/drivers/net/wireless/rtl8814au/Makefile
++++ b/drivers/net/wireless/rtl8814au/Makefile
+@@ -32,11 +32,11 @@ CONFIG_AUTOCFG_CP = n
+ ########################## WIFI IC ############################
+ CONFIG_MULTIDRV = n
+ CONFIG_RTL8188E = n
+-CONFIG_RTL8812A = y
+-CONFIG_RTL8821A = y
++CONFIG_RTL8812A = n
++CONFIG_RTL8821A = n
+ CONFIG_RTL8192E = n
+ CONFIG_RTL8723B = n
+-CONFIG_RTL8814A = n
++CONFIG_RTL8814A = y
+ CONFIG_RTL8723C = n
+ CONFIG_RTL8188F = n
+ CONFIG_RTL8822B = n

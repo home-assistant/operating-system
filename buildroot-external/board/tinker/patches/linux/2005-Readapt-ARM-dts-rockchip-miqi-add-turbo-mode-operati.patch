@@ -1,0 +1,170 @@
+From de9dcd5ecab0686022eee243464f35d2c7a34c97 Mon Sep 17 00:00:00 2001
+From: Myy <myy@miouyouyou.fr>
+Date: Mon, 16 Jan 2017 12:44:56 +0000
+Subject: [PATCH 08/28] Readapt: ARM: dts: rockchip: miqi: add turbo-mode
+ operating points
+
+Readaptation of Willy Tarreau patch.
+
+Here's the original commit message:
+
+By switching to opp-v2 we can declare "turbo-mode" operating points
+which are only enabled when /sys/devices/system/cpu/cpufreq/boost is
+set. It is convenient because it allows to boot, set a safe powersave
+governor, enable boost, limit scaling_max_freq to a safe value, then
+change the governor to performance or ondemand, and the frequency can
+then be manually adjusted by only touching scaling_max_freq.
+
+New values are 1896, 1920, 1992, 2016, 2040 MHz, 2064, 2088, 2112,
+2136, 2160, 2184, 2208. MiQi boards work fine up to 2112 with a very
+good power supply (5.2V/3A real) and a strong heatsink. Higher
+frequencies may randomly work. At least 1992 is rock solid for hours
+using "openssl speed -multi 4". The other ones have only been tested
+for a few minutes. Frequencies of 1896 and 1920 MHz use 1.425V.
+1992 MHz uses 1.45V. 2016, 2040 and 2064 use 1.475V. 2088 and above
+use 1.500V. 2160, 2184 and 2208 cause the lowest frequency to be
+picked. It's obvious that it's a sign issue somewhere in the kernel
+but this one was not found yet.
+
+Signed-off-by: Myy <myy@miouyouyou.fr>
+---
+ arch/arm/boot/dts/rk3288-miqi.dts | 120 +++++++++++++++++++++++++++++++++-----
+ 1 file changed, 107 insertions(+), 13 deletions(-)
+
+diff --git a/arch/arm/boot/dts/rk3288-miqi.dts b/arch/arm/boot/dts/rk3288-miqi.dts
+index 80603a3d..d7fde483 100644
+--- a/arch/arm/boot/dts/rk3288-miqi.dts
++++ b/arch/arm/boot/dts/rk3288-miqi.dts
+@@ -122,22 +122,116 @@
+ 		regulator-always-on;
+ 		regulator-boot-on;
+ 	};
+-};
+ 
++
++	cpu0_opp_table: opp_table0 {
++		compatible = "operating-points-v2";
++		opp-shared;
++
++		opp@600000000 {
++			opp-hz = /bits/ 64 <600000000>;
++			opp-microvolt = <900000>;
++		};
++		opp@816000000 {
++			opp-hz = /bits/ 64 <816000000>;
++			opp-microvolt = <1000000>;
++		};
++		opp@1008000000 {
++			opp-hz = /bits/ 64 <1008000000>;
++			opp-microvolt = <1050000>;
++		};
++		opp@1200000000 {
++			opp-hz = /bits/ 64 <1200000000>;
++			opp-microvolt = <1100000>;
++		};
++		opp@1416000000 {
++			opp-hz = /bits/ 64 <1416000000>;
++			opp-microvolt = <1200000>;
++		};
++		opp@1512000000 {
++			opp-hz = /bits/ 64 <1512000000>;
++			opp-microvolt = <1250000>;
++		};
++		opp@1608000000 {
++			opp-hz = /bits/ 64 <1608000000>;
++			opp-microvolt = <1300000>;
++		};
++		opp@1704000000 {
++			opp-hz = /bits/ 64 <1704000000>;
++			opp-microvolt = <1350000>;
++		};
++		opp@1800000000 {
++			opp-hz = /bits/ 64 <1800000000>;
++			opp-microvolt = <1400000>;
++		};
++		/* boot-only frequencies below */
++		opp@1896000000 {
++			opp-hz = /bits/ 64 <1896000000>;
++			opp-microvolt = <1425000>;
++			turbo-mode;
++		};
++		opp@1920000000 {
++			opp-hz = /bits/ 64 <1920000000>;
++			opp-microvolt = <1425000>;
++			turbo-mode;
++		};
++		opp@1992000000 {
++			opp-hz = /bits/ 64 <1992000000>;
++			opp-microvolt = <1450000>;
++			turbo-mode;
++		};
++		opp@2016000000 {
++			opp-hz = /bits/ 64 <2016000000>;
++			opp-microvolt = <1475000>;
++			turbo-mode;
++		};
++		opp@2040000000 {
++			opp-hz = /bits/ 64 <2040000000>;
++			opp-microvolt = <1475000>;
++			turbo-mode;
++		};
++		opp@2064000000 {
++			opp-hz = /bits/ 64 <2064000000>;
++			opp-microvolt = <1475000>;
++			turbo-mode;
++		};
++		opp@2088000000 {
++			opp-hz = /bits/ 64 <2088000000>;
++			opp-microvolt = <1500000>;
++			turbo-mode;
++		};
++		opp@2112000000 {
++			opp-hz = /bits/ 64 <2112000000>;
++			opp-microvolt = <1500000>;
++			turbo-mode;
++		};
++		opp@2136000000 {
++			opp-hz = /bits/ 64 <2136000000>;
++			opp-microvolt = <1500000>;
++			turbo-mode;
++		};
++		opp@2160000000 {
++			opp-hz = /bits/ 64 <2160000000>;
++			opp-microvolt = <1500000>;
++			turbo-mode;
++		};
++		opp@2184000000 {
++			opp-hz = /bits/ 64 <2184000000>;
++			opp-microvolt = <1500000>;
++			turbo-mode;
++		};
++		opp@2208000000 {
++			opp-hz = /bits/ 64 <2208000000>;
++			opp-microvolt = <1500000>;
++			turbo-mode;
++		};
++	};
++};
++ 
+ &cpu0 {
+ 	cpu0-supply = <&vdd_cpu>;
+-	operating-points = <
+-		/* KHz    uV */
+-		1800000 1400000
+-		1704000 1350000
+-		1608000 1300000
+-		1512000 1250000
+-		1416000 1200000
+-		1200000 1100000
+-		1008000 1050000
+-		 816000 1000000
+-		 600000  900000
+-	>;
++
++	operating-points-v2 = <&cpu0_opp_table>;
+ };
+ 
+ &emmc {
+-- 
+2.11.0
+

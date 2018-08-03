@@ -1,0 +1,61 @@
+From 771bcfe1735e42650b763e52a042a9fd98b2fa5b Mon Sep 17 00:00:00 2001
+From: Myy Miouyouyou <myy@miouyouyou.fr>
+Date: Thu, 19 Oct 2017 21:20:43 +0200
+Subject: [PATCH 09/28] ARM: DTSI: rk3288.dtsi: Missing GRF handles
+
+Add missing GRF handles.
+
+This patch is taken from the patches provided by the ARMbian team.
+
+Signed-off-by: Myy Miouyouyou <myy@miouyouyou.fr>
+---
+ arch/arm/boot/dts/rk3288.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/arch/arm/boot/dts/rk3288.dtsi b/arch/arm/boot/dts/rk3288.dtsi
+index 356ed1e6..5b789528 100644
+--- a/arch/arm/boot/dts/rk3288.dtsi
++++ b/arch/arm/boot/dts/rk3288.dtsi
+@@ -547,6 +547,7 @@
+ 		pinctrl-2 = <&otp_gpio>;
+ 		#thermal-sensor-cells = <1>;
+ 		rockchip,hw-tshut-temp = <95000>;
++		rockchip,grf = <&grf>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -655,6 +656,7 @@
+ 		pinctrl-0 = <&pwm0_pin>;
+ 		clocks = <&cru PCLK_PWM>;
+ 		clock-names = "pwm";
++		rockchip,grf = <&grf>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -666,6 +668,7 @@
+ 		pinctrl-0 = <&pwm1_pin>;
+ 		clocks = <&cru PCLK_PWM>;
+ 		clock-names = "pwm";
++		rockchip,grf = <&grf>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -677,6 +680,7 @@
+ 		pinctrl-0 = <&pwm2_pin>;
+ 		clocks = <&cru PCLK_PWM>;
+ 		clock-names = "pwm";
++		rockchip,grf = <&grf>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -688,6 +692,7 @@
+ 		pinctrl-0 = <&pwm3_pin>;
+ 		clocks = <&cru PCLK_PWM>;
+ 		clock-names = "pwm";
++		rockchip,grf = <&grf>;
+ 		status = "disabled";
+ 	};
+ 
+-- 
+2.11.0
+
