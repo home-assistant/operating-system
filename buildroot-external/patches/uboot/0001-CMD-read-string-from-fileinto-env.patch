@@ -1,0 +1,80 @@
+From c5e56bfeffd5ba881e4f08dc00d8e5e10e880bdf Mon Sep 17 00:00:00 2001
+From: Pascal Vizeli <pvizeli@syshack.ch>
+Date: Fri, 3 Aug 2018 09:47:15 +0000
+Subject: [PATCH 1/1] CMD: read string from fileinto env
+
+Signed-off-by: Pascal Vizeli <pvizeli@syshack.ch>
+---
+ cmd/Kconfig   |  5 +++++
+ cmd/Makefile  |  1 +
+ cmd/fileenv.c | 30 ++++++++++++++++++++++++++++++
+ 3 files changed, 36 insertions(+)
+ create mode 100644 cmd/fileenv.c
+
+diff --git a/cmd/Kconfig b/cmd/Kconfig
+index aec209006db..d9d0d7326ac 100644
+--- a/cmd/Kconfig
++++ b/cmd/Kconfig
+@@ -1059,6 +1059,11 @@ config CMD_SETEXPR
+ 	  Also supports loading the value at a memory location into a variable.
+ 	  If CONFIG_REGEX is enabled, setexpr also supports a gsub function.
+ 
++config CMD_FILEENV
++	bool "fileenv"
++	help
++	   Read a file into memory and store it to env.
++
+ endmenu
+ 
+ if NET
+diff --git a/cmd/Makefile b/cmd/Makefile
+index 323f1fd2c77..0d721dc5a72 100644
+--- a/cmd/Makefile
++++ b/cmd/Makefile
+@@ -114,6 +114,7 @@ obj-$(CONFIG_CMD_SF) += sf.o
+ obj-$(CONFIG_CMD_SCSI) += scsi.o disk.o
+ obj-$(CONFIG_CMD_SHA1SUM) += sha1sum.o
+ obj-$(CONFIG_CMD_SETEXPR) += setexpr.o
++obj-$(CONFIG_CMD_FILEENV) += fileenv.o
+ obj-$(CONFIG_CMD_SPI) += spi.o
+ obj-$(CONFIG_CMD_STRINGS) += strings.o
+ obj-$(CONFIG_CMD_SMC) += smccc.o
+diff --git a/cmd/fileenv.c b/cmd/fileenv.c
+new file mode 100644
+index 00000000000..c52001cbe83
+--- /dev/null
++++ b/cmd/fileenv.c
+@@ -0,0 +1,30 @@
++#include <config.h>
++#include <common.h>
++#include <command.h>
++
++static char *fs_argv[5];
++
++int do_fileenv(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
++{
++	if (argc < 6)
++		return CMD_RET_USAGE;
++	char *addr = (char *)simple_strtoul(argv[3], NULL, 16);
++
++	fs_argv[0] = "fatload";
++	fs_argv[1] = argv[1];
++	fs_argv[2] = argv[2];
++	fs_argv[3] = addr;
++	fs_argv[4] = argv[4];
++
++	if (!do_fat_fsload(cmdtp, 0, 5, fs_argv))
++		return 1;
++
++	return env_set(argv[5], addr);
++}
++
++U_BOOT_CMD(
++	fileenv, 6, 0, do_fileenv,
++	"Read file and store it into env.",
++	"<interface> <dev:part> <addr> <filename> <envname>\n"
++	"    - Read file from fat32 and store it as env."
++);
+-- 
+2.17.1
+
