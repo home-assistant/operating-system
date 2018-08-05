@@ -57,6 +57,8 @@ function _write_rauc_system() {
 
 
 function write_rauc_config() {
+    mkdir -p ${TARGET_DIR}/etc/rauc
+
     _create_rauc_header
     _write_rauc_boot
     _write_rauc_system 0 A
