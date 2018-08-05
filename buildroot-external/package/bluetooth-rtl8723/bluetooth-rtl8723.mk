@@ -23,8 +23,8 @@ define BLUETOOTH_RTL8723_INSTALL_TARGET_CMDS
 	$(INSTALL) -m 0644 $(@D)/bluetooth-rtl8723.service $(TARGET_DIR)/usr/lib/systemd/system/
 	ln -fs /usr/lib/systemd/system/bluetooth-rtl8723.service $(TARGET_DIR)/etc/systemd/system/hassos-hardware.target.wants/
 
-	$(INSTALL) -d $(TARGET_DIR)/lib/firmware/rtl_bt
-	$(INSTALL) -m 0644 $(@D)/*.bin $(TARGET_DIR)/lib/firmware/rtl_bt/
+	$(INSTALL) -d $(TARGET_DIR)/lib/firmware/rtlbt
+	$(INSTALL) -m 0644 $(@D)/*.bin $(TARGET_DIR)/lib/firmware/rtlbt/
 	$(INSTALL) -m 0755 $(@D)/rtk_hciattach $(TARGET_DIR)/usr/sbin/
 endef
 

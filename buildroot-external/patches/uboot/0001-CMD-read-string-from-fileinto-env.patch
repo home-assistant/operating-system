@@ -1,6 +1,6 @@
-From c5e56bfeffd5ba881e4f08dc00d8e5e10e880bdf Mon Sep 17 00:00:00 2001
+From f76279f1d01d107972e7d1dce2ebcdfa00544da9 Mon Sep 17 00:00:00 2001
 From: Pascal Vizeli <pvizeli@syshack.ch>
-Date: Fri, 3 Aug 2018 09:47:15 +0000
+Date: Sun, 5 Aug 2018 20:43:03 +0000
 Subject: [PATCH 1/1] CMD: read string from fileinto env
 
 Signed-off-by: Pascal Vizeli <pvizeli@syshack.ch>
@@ -41,7 +41,7 @@ index 323f1fd2c77..0d721dc5a72 100644
  obj-$(CONFIG_CMD_SMC) += smccc.o
 diff --git a/cmd/fileenv.c b/cmd/fileenv.c
 new file mode 100644
-index 00000000000..c52001cbe83
+index 00000000000..77699192f93
 --- /dev/null
 +++ b/cmd/fileenv.c
 @@ -0,0 +1,30 @@
@@ -55,17 +55,17 @@ index 00000000000..c52001cbe83
 +{
 +	if (argc < 6)
 +		return CMD_RET_USAGE;
-+	char *addr = (char *)simple_strtoul(argv[3], NULL, 16);
 +
 +	fs_argv[0] = "fatload";
 +	fs_argv[1] = argv[1];
 +	fs_argv[2] = argv[2];
-+	fs_argv[3] = addr;
++	fs_argv[3] = argv[3];
 +	fs_argv[4] = argv[4];
 +
-+	if (!do_fat_fsload(cmdtp, 0, 5, fs_argv))
++	if (do_fat_fsload(cmdtp, 0, 5, fs_argv) != 0)
 +		return 1;
 +
++	char *addr = (char *)simple_strtoul(argv[3], NULL, 16);
 +	return env_set(argv[5], addr);
 +}
 +

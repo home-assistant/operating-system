@@ -3,7 +3,7 @@ test -n "${BOOT_A_LEFT}" || setenv BOOT_A_LEFT 3
 test -n "${BOOT_B_LEFT}" || setenv BOOT_B_LEFT 3
 
 # HassOS bootargs
-setenv bootargs_hassos "zram.enabled=1 zram.num_devices=3 apparmor=1 security=apparmor rootwait console=ttyS1,115200n8 console=ttyS2,115200n8"
+setenv bootargs_hassos "zram.enabled=1 zram.num_devices=3 apparmor=1 security=apparmor rootwait"
 
 # HassOS system A/B
 setenv bootargs_a "root=PARTUUID=8d3d53e3-6d49-4c38-8349-aff6859e82fd rootfstype=squashfs ro"
@@ -24,14 +24,14 @@ for BOOT_SLOT in "${BOOT_ORDER}"; do
       setexpr BOOT_A_LEFT ${BOOT_A_LEFT} - 1
       echo "Found valid slot A, ${BOOT_A_LEFT} attempts remaining"
       setenv load_kernel "ext4load mmc 1:2 ${kernel_addr_r} zImage"
-      setenv bootargs "${bootargs_hassos} ${bootargs_a} ${cmdline} rauc.slot=A"
+      setenv bootargs "${bootargs_hassos} ${bootargs_a} rauc.slot=A ${cmdline}"
     fi
   elif test "x${BOOT_SLOT}" = "xB"; then
     if test ${BOOT_B_LEFT} -gt 0; then
       setexpr BOOT_B_LEFT ${BOOT_B_LEFT} - 1
       echo "Found valid slot B, ${BOOT_B_LEFT} attempts remaining"
       setenv load_kernel "ext4load mmc 1:4 ${kernel_addr_r} zImage"
-      setenv bootargs "${bootargs_hassos} ${bootargs_b} ${cmdline} rauc.slot=B"
+      setenv bootargs "${bootargs_hassos} ${bootargs_b} rauc.slot=B ${cmdline}"
     fi
   fi
 done
