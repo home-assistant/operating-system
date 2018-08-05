@@ -16,7 +16,7 @@ The 64bit version is under development by RPi-Team. It work very nice but it cou
 
 ## Serial console
 
-For access to terminal over serial console, add `console=ttyAMA0,115200` to `cmdline.txt` and `enable_uart=1` into `config.txt`.
+For access to terminal over serial console, add `console=ttyAMA0,115200` to `cmdline.txt` and `enable_uart=1` into `config.txt`. GPIO pins are: 6 = GND / 8 = UART TXD / 10 = UART RXD.
 
 ## Tweaks
 
