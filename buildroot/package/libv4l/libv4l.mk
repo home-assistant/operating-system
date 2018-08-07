@@ -10,6 +10,10 @@ LIBV4L_SITE = https://linuxtv.org/downloads/v4l-utils
 LIBV4L_INSTALL_STAGING = YES
 LIBV4L_DEPENDENCIES = host-pkgconf
 LIBV4L_CONF_OPTS = --disable-doxygen-doc
+# We're patching contrib/test/Makefile.am
+LIBV4L_AUTORECONF = YES
+# add host-gettext for AM_ICONV macro
+LIBV4L_DEPENDENCIES += host-gettext
 
 # fix uclibc-ng configure/compile
 LIBV4L_CONF_ENV = ac_cv_prog_cc_c99='-std=gnu99'
@@ -71,6 +75,10 @@ LIBV4L_CONF_OPTS += --disable-qv4l2
 endif
 else
 LIBV4L_CONF_OPTS += --disable-v4l-utils
+endif
+
+ifeq ($(BR2_PACKAGE_SDL2_IMAGE),y)
+LIBV4L_DEPENDENCIES += sdl2_image
 endif
 
 LIBV4L_CONF_ENV += LIBS="$(LIBV4L_LIBS)"

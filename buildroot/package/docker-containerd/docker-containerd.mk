@@ -18,6 +18,7 @@ define DOCKER_CONTAINERD_INSTALL_SYMLINKS
 	ln -fs runc $(TARGET_DIR)/usr/bin/docker-runc
 	ln -fs containerd $(TARGET_DIR)/usr/bin/docker-containerd
 	ln -fs containerd-shim $(TARGET_DIR)/usr/bin/docker-containerd-shim
+	ln -fs containerd $(TARGET_DIR)/usr/bin/docker-containerd
 endef
 
 DOCKER_CONTAINERD_POST_INSTALL_TARGET_HOOKS += DOCKER_CONTAINERD_INSTALL_SYMLINKS
