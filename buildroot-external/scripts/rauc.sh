@@ -77,7 +77,7 @@ function install_rauc_certs() {
 
 function install_bootloader_config() {
     if [ "${BOOTLOADER}" == "uboot" ]; then
-        echo -e "/dev/disk/by-partlabel/hassos-bootstatei\t0x00\t${BOOT_ENV_SIZE}" > ${TARGET_DIR}/etc/fw_env.config
+        echo -e "/dev/disk/by-partlabel/hassos-bootstate\t0x00\t${BOOT_ENV_SIZE}" > ${TARGET_DIR}/etc/fw_env.config
     else
         cp ${BR2_EXTERNAL_HASSOS_PATH}/misc/barebox-state-efi.dtb ${TARGET_DIR}/etc/barebox-state.dtb
     fi
