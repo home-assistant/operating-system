@@ -18,6 +18,27 @@ OVERLAY_SIZE=96M
 DATA_SIZE=1G
 
 
+function size2sectors() {
+    s=0
+    for v in "${@}"
+    do
+    let s+=$(echo $v | awk \
+      'BEGIN{IGNORECASE = 1}
+       function printsectors(n,b,p) {printf "%u\n", n*b^p/512}
+       /B$/{     printsectors($1,  1, 0)};
+       /K(iB)?$/{printsectors($1,  2, 10)};
+       /M(iB)?$/{printsectors($1,  2, 20)};
+       /G(iB)?$/{printsectors($1,  2, 30)};
+       /T(iB)?$/{printsectors($1,  2, 40)};
+       /KB$/{    printsectors($1, 10,  3)};
+       /MB$/{    printsectors($1, 10,  6)};
+       /GB$/{    printsectors($1, 10,  9)};
+       /TB$/{    printsectors($1, 10, 12)}')
+    done
+    echo $s
+}
+
+
 function get_boot_size() {
     if [ "${BOOT_SYS}" == "spl" ]; then
         echo "${BOOT_SIZE[1]}"
@@ -33,7 +54,7 @@ function create_spl_image() {
     local spl_seek=$(($2-2))
 
     dd if=/dev/zero of=${spl_img} bs=512 count=16382
-    dd if=${spl_data} of=${spl_img} conv=notrunc bs=512 seek=${spl_seek} 
+    dd if=${spl_data} of=${spl_img} conv=notrunc bs=512 seek=${spl_seek}
 }
 
 
@@ -151,6 +172,75 @@ function create_disk_image() {
     elif [ "${BOOT_SYS}" == "spl" ]; then
         fix_disk_image_spl
     fi
+}
+
+
+function create_disk_mbr() {
+    local disk_layout="${BINARIES_DIR}/disk.layout"
+    local boot_img="${BINARIES_DIR}/boot.vfat"
+    local rootfs_img="${BINARIES_DIR}/rootfs.squashfs"
+    local overlay_img="${BINARIES_DIR}/overlay.ext4"
+    local data_img="${BINARIES_DIR}/data.ext4"
+    local kernel_img="${BINARIES_DIR}/kernel.ext4"
+    local hdd_img="$(hassos_image_name img)"
+    local hdd_count=${1:-2}
+
+    # Write new image & MBR
+    dd if=/dev/zero of=${hdd_img} bs=1G count=${hdd_count}
+
+    local boot_start=2048
+
+    let boot_size=$(size2sectors ${BOOT_SIZE})+2
+    let kernel0_size=$(size2sectors ${KERNEL_SIZE})+2
+    let system0_size=$(size2sectors ${SYSTEM_SIZE})+2
+    let kernel1_size=$(size2sectors ${KERNEL_SIZE})+2
+    let system1_size=$(size2sectors ${SYSTEM_SIZE})+2
+    let bootstate_size=$(size2sectors ${BOOTSTATE_SIZE})+2
+    let overlay_size=$(size2sectors ${OVERLAY_SIZE})+2
+    let data_size=$(size2sectors ${DATA_SIZE})+2
+    let extended_size=${kernel0_size}+${system0_size}+${kernel1_size}+${system1_size}+${bootstate_size}+2
+
+
+    let extended_start=${boot_start}+${boot_size}+1
+    let kernel0_start=${extended_start}+1 # we add one here for the extended header.
+    let system0_start=${kernel0_start}+${kernel0_size}+1
+    let kernel1_start=${system0_start}+${system0_size}+1
+    let system1_start=${kernel1_start}+${kernel1_size}+1
+    let bootstate_start=${system1_start}+${system1_size}+1
+    let overlay_start=${extended_start}+${extended_size}+1
+    let data_start=${overlay_start}+${overlay_size}+1
+
+
+    let boot_offset=${boot_start}
+    let kernel_offset=${kernel0_start}
+    let rootfs_offset=${system0_start}
+    let overlay_offset=${overlay_start}
+    let data_offset=${data_start}
+    # Update disk layout
+    (
+        echo "label: dos"
+        echo "label-id: 0x0d3e0000"
+        echo "unit: sectors"
+        echo "hassos-boot      : start= ${boot_start},      size=  ${boot_size},      type=c, bootable"   #create the boot partition
+        echo "hassos-extended  : start= ${extended_start},  size=  ${extended_size},  type=5"             #Make an extended partition
+        echo "hassos-kernela   : start= ${kernel0_start},   size=  ${kernel0_size},    type=83"            #Make a logical partition
+        echo "hassos-systema   : start= ${system0_start},   size=  ${system0_size},    type=83"            #Make a logical partition
+        echo "hassos-kernelb   : start= ${kernel1_start}    size=  ${kernel1_size},    type=83"            #Make a logical partition
+        echo "hassos-systemb   : start= ${system1_start},   size=  ${system1_size},    type=83"            #Make a logical partition
+        echo "hassos-bootstate : start= ${bootstate_start}, size=  ${bootstate_size}, type=83"            #Make a logical partition
+        echo "hassos-overlay   : start= ${overlay_start},   size=  ${overlay_size},   type=83"            #Make a logical partition
+        echo "hassos-data      : start= ${data_start},      size=  ${data_size},      type=83"            #Make a logical partition
+    ) > ${disk_layout}
+
+    # Update Labels
+    sfdisk ${hdd_img} < ${disk_layout}
+
+    # Write Images
+    dd if=${boot_img} of=${hdd_img} conv=notrunc bs=512 obs=512 seek=${boot_offset}
+    dd if=${kernel_img} of=${hdd_img} conv=notrunc bs=512 obs=512 seek=${kernel_offset}
+    dd if=${rootfs_img} of=${hdd_img} conv=notrunc bs=512 obs=512 seek=${rootfs_offset}
+    dd if=${overlay_img} of=${hdd_img} conv=notrunc bs=512 obs=512 seek=${overlay_offset}
+    dd if=${data_img} of=${hdd_img} conv=notrunc bs=512 obs=512 seek=${data_offset}
 }
 
 

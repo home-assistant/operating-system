@@ -1,0 +1,24 @@
+config BR2_PACKAGE_HARDKERNEL_SBL
+	bool "Hardkernel Secure Boot Loader"
+	depends on BR2_TARGET_UBOOT
+	help
+	  Augment uboot for secure loading on hardkernel targets.
+
+if BR2_PACKAGE_HARDKERNEL_SBL
+choice
+	prompt "Target"
+	default BR2_PACKAGE_HARDKERNEL_SBL_ODROID_C2
+
+config BR2_PACKAGE_HARDKERNEL_SBL_ODROID_C2
+	bool "Odroid-C2"
+	help
+	  For the Odroid-C2
+
+config BR2_PACKAGE_HARDKERNEL_SBL_ODROID_XU4
+	bool "Odroid-XU4"
+	help
+	  For the Odroid-XU4. NOT YET IMPLEMENTED!!
+
+endchoice
+
+endif

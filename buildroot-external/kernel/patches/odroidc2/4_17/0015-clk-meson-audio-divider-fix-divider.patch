@@ -1,0 +1,30 @@
+From bfb97011c691e09c54a6d5e98b6a81493893d185 Mon Sep 17 00:00:00 2001
+From: Koen Kooi <koen@dominion.thruhere.net>
+Date: Tue, 29 May 2018 17:27:24 +0200
+Subject: [PATCH 14/14] clk: meson: audio-divider: fix divider
+
+Signed-off-by: Koen Kooi <koen@dominion.thruhere.net>
+
+%% original patch: 0017-fix-audio-picked-from-LE-slack.patch
+
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ drivers/clk/meson/clk-audio-divider.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/meson/clk-audio-divider.c b/drivers/clk/meson/clk-audio-divider.c
+index f7ab5b1..9779c04 100644
+--- a/drivers/clk/meson/clk-audio-divider.c
++++ b/drivers/clk/meson/clk-audio-divider.c
+@@ -62,7 +62,7 @@ static unsigned long audio_divider_recalc_rate(struct clk_hw *hw,
+ 	struct meson_clk_audio_div_data *adiv = meson_clk_audio_div_data(clk);
+ 	unsigned long divider;
+ 
+-	divider = meson_parm_read(clk->map, &adiv->div);
++	divider = meson_parm_read(clk->map, &adiv->div) + 1;
+ 
+ 	return DIV_ROUND_UP_ULL((u64)parent_rate, divider);
+ }
+-- 
+2.7.4
+

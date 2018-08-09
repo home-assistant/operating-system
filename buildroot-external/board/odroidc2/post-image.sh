@@ -1,0 +1,53 @@
+#!/bin/bash
+set -e
+
+SCRIPT_DIR=${BR2_EXTERNAL_HASSOS_PATH}/scripts
+BOARD_DIR="$(dirname $0)"
+BOOT_DATA=${BINARIES_DIR}/boot
+
+. ${SCRIPT_DIR}/hdd-image.sh
+. ${SCRIPT_DIR}/name.sh
+. ${SCRIPT_DIR}/ota.sh
+. ${BR2_EXTERNAL_HASSOS_PATH}/info
+. ${BOARD_DIR}/info
+
+# Init boot data
+rm -rf ${BOOT_DATA}
+mkdir -p ${BOOT_DATA}
+
+cp ${BINARIES_DIR}/boot.scr ${BOOT_DATA}/boot.scr
+cp ${BINARIES_DIR}/meson-gxbb-odroidc2.dtb ${BOOT_DATA}/meson-gxbb-odroidc2.dtb
+
+# Update Boot options
+(
+    echo -n -e "\x41\xD9\x12\xFF"
+    echo -n -e "\x00\x00"
+) > ${BOOT_DATA}/uboot.env
+
+# Update Boot options
+(
+    echo "kernel=u-boot.bin"
+    echo "disable_splash=1"
+    echo "dtparam=audio=on"
+    echo "arm_64bit=1"
+) > ${BOOT_DATA}/config.txt
+
+echo "console=ttyS0,115200n8 console=tty0" > ${BOOT_DATA}/cmdline.txt
+
+function make_bootable() {
+    local BL1="${BINARIES_DIR}/bl1.bin.hardkernel"
+    local UBOOT_GXBB="${BINARIES_DIR}/u-boot.gxbb"
+    local hdd_img="$(hassos_image_name img)"
+
+    dd if=${BL1} of=${hdd_img} conv=notrunc bs=1 count=442
+    dd if=${BL1} of=${hdd_img} conv=notrunc bs=512 skip=1 seek=1
+    dd if=${UBOOT_GXBB} of=${hdd_img} conv=notrunc bs=512 seek=97
+}
+
+# Create other layers
+prepare_disk_image
+
+create_disk_mbr 2
+make_bootable
+convert_disk_image_gz
+create_ota_update
