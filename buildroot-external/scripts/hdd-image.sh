@@ -182,7 +182,8 @@ function convert_disk_image_vmdk() {
 
 
 function convert_disk_image_gz() {
-    local hdd_img="$(hassos_image_name img)"
+    local hdd_ext=${1:-img}
+    local hdd_img="$(hassos_image_name ${hdd_ext})"
 
     rm -f ${hdd_img}.gz
     gzip --best ${hdd_img}

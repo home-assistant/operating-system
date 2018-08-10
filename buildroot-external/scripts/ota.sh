@@ -34,7 +34,7 @@ function create_ota_update() {
     ) > ${rauc_folder}/manifest.raucm
 
     # SPL
-    if [ "${BOOT_SYS}" != "spl" ]; then
+    if [ "${BOOT_SYS}" == "spl" ]; then
         cp -f ${spl} ${rauc_folder}/spl.img
 
         (
