@@ -16,23 +16,10 @@ rm -rf ${BOOT_DATA}
 mkdir -p ${BOOT_DATA}
 
 cp ${BINARIES_DIR}/boot.scr ${BOOT_DATA}/boot.scr
+cp ${BOARD_DIR}/boot-env.txt ${BOOT_DATA}/uboot-settings.txt
 cp ${BINARIES_DIR}/meson-gxbb-odroidc2.dtb ${BOOT_DATA}/meson-gxbb-odroidc2.dtb
 
-# Update Boot options
-(
-    echo -n -e "\x41\xD9\x12\xFF"
-    echo -n -e "\x00\x00"
-) > ${BOOT_DATA}/uboot.env
-
-# Update Boot options
-(
-    echo "kernel=u-boot.bin"
-    echo "disable_splash=1"
-    echo "dtparam=audio=on"
-    echo "arm_64bit=1"
-) > ${BOOT_DATA}/config.txt
-
-echo "console=ttyS0,115200n8 console=tty0" > ${BOOT_DATA}/cmdline.txt
+echo "console=tty0 console=ttyAML0,115200n8" > ${BOOT_DATA}/cmdline.txt
 
 function make_bootable() {
     local BL1="${BINARIES_DIR}/bl1.bin.hardkernel"
