@@ -4,19 +4,19 @@
 #
 ################################################################################
 
-HARDKERNEL_SBL_VERSION = 205c7b3259559283161703a1a200b787c2c445a5
-HARDKERNEL_SBL_SOURCE = $(HARDKERNEL_SBL_VERSION).tar.gz
-HARDKERNEL_SBL_SITE = https://github.com/hardkernel/u-boot/archive
-HARDKERNEL_SBL_LICENSE = GPL-2.0+
-HARDKERNEL_SBL_LICENSE_FILES = Licenses/gpl-2.0.txt
-HARDKERNEL_SBL_INSTALL_IMAGES = YES
-HARDKERNEL_SBL_DEPENDENCIES = uboot
+HARDKERNEL_BOOT_VERSION = 205c7b3259559283161703a1a200b787c2c445a5
+HARDKERNEL_BOOT_SOURCE = $(HARDKERNEL_BOOT_VERSION).tar.gz
+HARDKERNEL_BOOT_SITE = https://github.com/hardkernel/u-boot/archive
+HARDKERNEL_BOOT_LICENSE = GPL-2.0+
+HARDKERNEL_BOOT_LICENSE_FILES = Licenses/gpl-2.0.txt
+HARDKERNEL_BOOT_INSTALL_IMAGES = YES
+HARDKERNEL_BOOT_DEPENDENCIES = uboot
 
 
-ifeq ($(BR2_PACKAGE_HARDKERNEL_SBL_ODROID_C2),y)
-HARDKERNEL_SBL_BINS += sd_fuse/bl1.bin.hardkernel \
+ifeq ($(BR2_PACKAGE_HARDKERNEL_BOOT_ODROID_C2),y)
+HARDKERNEL_BOOT_BINS += sd_fuse/bl1.bin.hardkernel \
                        u-boot.gxbb
-define HARDKERNEL_SBL_BUILD_CMDS
+define HARDKERNEL_BOOT_BUILD_CMDS
 	$(@D)/fip/fip_create --bl30  $(@D)/fip/gxb/bl30.bin \
 												--bl301 $(@D)/fip/gxb/bl301.bin \
 												--bl31  $(@D)/fip/gxb/bl31.bin \
@@ -30,8 +30,8 @@ define HARDKERNEL_SBL_BUILD_CMDS
 endef
 endif
 
-define HARDKERNEL_SBL_INSTALL_IMAGES_CMDS
-	$(foreach f,$(HARDKERNEL_SBL_BINS), \
+define HARDKERNEL_BOOT_INSTALL_IMAGES_CMDS
+	$(foreach f,$(HARDKERNEL_BOOT_BINS), \
 			cp -dpf $(@D)/$(f) $(BINARIES_DIR)/
 	)
 endef
