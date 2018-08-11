@@ -167,6 +167,7 @@ function fix_disk_image_spl() {
     local spl_img="${BINARIES_DIR}/spl.img"
 
     sgdisk -t 1:"E3C9E316-0B5C-4DB8-817D-F92DF00215AE" ${hdd_img}
+    dd if=${BR2_EXTERNAL_HASSOS_PATH}/misc/mbr-spl.img of=${hdd_img} conv=notrunc bs=512 count=1
     dd if=${spl_img} of=${hdd_img} conv=notrunc bs=512 seek=2
 }
 
