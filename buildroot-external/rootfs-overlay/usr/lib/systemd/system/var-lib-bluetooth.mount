@@ -1,0 +1,14 @@
+[Unit]
+Description=Bluetooth persistent state
+Requires=mnt-overlay.mount
+After=mnt-overlay.mount
+Before=bluetooth.service
+
+[Mount]
+What=/mnt/overlay/var/lib/bluetooth
+Where=/var/lib/bluetooth
+Type=None
+Options=bind
+
+[Install]
+WantedBy=hassos-bind.target

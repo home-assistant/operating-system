@@ -1,0 +1,165 @@
+From 2715f4a9ab5c169c546029a61eebb0bde6619b0e Mon Sep 17 00:00:00 2001
+From: Myy Miouyouyou <myy@miouyouyou.fr>
+Date: Thu, 19 Oct 2017 22:12:48 +0200
+Subject: [PATCH 18/28] ARM: DTS: rk3288-tinker.dts: Enabling SDIO, Wireless
+ and Bluetooth
+
+Adding the appropriate nodes in order to exploit the WiFi capabilities
+of the board.
+Since these capabilities are provided through SDIO, and the SDIO
+nodes were not defined, these were added too.
+
+These seems to depend on each other so they are added in one big
+patch.
+
+Split if necessary.
+
+Bluetooth and uart0 (AKA Bluetooth UART) definitions were also added
+in order to deal with all the wireless techs in one patch.
+
+Signed-off-by: Myy Miouyouyou <myy@miouyouyou.fr>
+---
+ arch/arm/boot/dts/rk3288-tinker.dts | 82 ++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 81 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm/boot/dts/rk3288-tinker.dts b/arch/arm/boot/dts/rk3288-tinker.dts
+index 346b0d8b..c552fd95 100644
+--- a/arch/arm/boot/dts/rk3288-tinker.dts
++++ b/arch/arm/boot/dts/rk3288-tinker.dts
+@@ -44,6 +44,7 @@
+ 
+ #include "rk3288.dtsi"
+ #include <dt-bindings/input/input.h>
++#include <dt-bindings/clock/rockchip,rk808.h>
+ 
+ / {
+ 	model = "Rockchip RK3288 Tinker Board";
+@@ -114,6 +115,24 @@
+ 		};
+ 	};
+ 
++	/* This is essential to get SDIO devices working.
++	   The Wifi depends on SDIO ! */
++	sdio_pwrseq: sdio-pwrseq {
++		compatible = "mmc-pwrseq-simple";
++		clocks = <&rk808 RK808_CLKOUT1>;
++		clock-names = "ext_clock";
++		pinctrl-names = "default";
++		pinctrl-0 = <&chip_enable_h>, <&wifi_enable_h>;
++
++		/*
++		 * On the module itself this is one of these (depending
++		 * on the actual card populated):
++		 * - SDIO_RESET_L_WL_REG_ON
++		 * - PDN (power down when low)
++		 */
++		reset-gpios = <&gpio4 RK_PD4 GPIO_ACTIVE_LOW>, <&gpio4 RK_PD3 GPIO_ACTIVE_LOW>;
++	};
++
+ 	vcc_sys: vsys-regulator {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vcc_sys";
+@@ -134,6 +153,28 @@
+ 		startup-delay-us = <100000>;
+ 		vin-supply = <&vcc_io>;
+ 	};
++
++	wireless-wlan {
++		compatible = "wlan-platdata";
++		rockchip,grf = <&grf>;
++		wifi_chip_type = "8723bs";
++		sdio_vref = <1800>;
++		WIFI,host_wake_irq = <&gpio4 30 GPIO_ACTIVE_HIGH>;
++		status = "okay";
++	};
++
++	wireless-bluetooth {
++		compatible = "bluetooth-platdata";
++		uart_rts_gpios = <&gpio4 19 GPIO_ACTIVE_LOW>;
++		pinctrl-names = "default","rts_gpio";
++		pinctrl-0 = <&uart0_rts>;
++		pinctrl-1 = <&uart0_gpios>;
++		BT,reset_gpio    = <&gpio4 29 GPIO_ACTIVE_HIGH>;
++		BT,wake_gpio     = <&gpio4 26 GPIO_ACTIVE_HIGH>;
++		BT,wake_host_irq = <&gpio4 31 GPIO_ACTIVE_HIGH>;
++		status = "okay";
++	};
++
+ };
+ 
+ &cpu0 {
+@@ -373,10 +414,30 @@
+ 
+ &io_domains {
+ 	status = "okay";
+-
++	rockchip,grf = <&grf>;
++	wifi-supply = <&vcc_18>;
+ 	sdcard-supply = <&vccio_sd>;
+ };
+ 
++&sdio0 {
++	status = "okay";
++	clock-frequency = <50000000>;
++	clock-freq-min-max = <200000 50000000>;
++	bus-width = <4>;
++	cap-sd-highspeed;
++	cap-sdio-irq;
++	disable-wp;
++	keep-power-in-suspend;
++	mmc-pwrseq = <&sdio_pwrseq>;
++	non-removable;
++	num-slots = <1>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&sdio0_bus4 &sdio0_cmd &sdio0_clk>;
++	sd-uhs-sdr104;
++	supports-sdio;
++
++};
++
+ &pinctrl {
+ 	pcfg_pull_none_drv_8ma: pcfg-pull-none-drv-8ma {
+ 		drive-strength = <8>;
+@@ -422,6 +483,16 @@
+ 		};
+ 	};
+ 
++	sdio-pwrseq {
++		wifi_enable_h: wifienable-h {
++			rockchip,pins = <4 28 RK_FUNC_GPIO &pcfg_pull_none>;
++		};
++
++		chip_enable_h: chip-enable-h {
++			rockchip,pins = <4 27 RK_FUNC_GPIO &pcfg_pull_none>;
++		};
++	};
++
+ 	sdmmc {
+ 		sdmmc_bus4: sdmmc-bus4 {
+ 			rockchip,pins = <6 16 RK_FUNC_1 &pcfg_pull_up_drv_8ma>,
+@@ -453,6 +524,13 @@
+ 			rockchip,pins = <7 8 RK_FUNC_GPIO &pcfg_pull_none>;
+ 		};
+ 	};
++
++	wireless-bluetooth {
++		uart0_gpios: uart0-gpios {
++			rockchip,pins = <4 19 RK_FUNC_GPIO &pcfg_pull_none>;
++		};
++	};
++
+ };
+ 
+ &pwm0 {
+@@ -485,6 +563,8 @@
+ 
+ &uart0 {
+ 	status = "okay";
++	pinctrl-names = "default";
++	pinctrl-0 = <&uart0_xfer>, <&uart0_cts>;
+ };
+ 
+ &uart1 {
+-- 
+2.11.0
+

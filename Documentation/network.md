@@ -4,7 +4,7 @@ HassOS uses NetworkManager to control the host network. In future releases, you 
 
 ## Configuration Examples
 
-You can also read the [Official Manual][keyfile] or there are a lot of examples accross internet. The system is read only, if you don't want the IP address to change every boot, you should set the uuid property with a generic [UUID4][uuid].
+You can also read the [Official Manual][keyfile] or there are a lot of examples accross internet. The system is read only, if you don't want the IP address to change every boot, you should set the uuid property with a generic [UUID4][uuid]. Inside the `network` folder create the file `my-network` and add the appropriate contents below:
 
 ### Default
 
@@ -45,11 +45,11 @@ id=hassos-network
 uuid=72111c67-4a5d-4d5c-925e-f8ee26efb3c3
 type=802-11-wireless
 
-[wifi]
+[802-11-wireless]
 mode=infrastructure
 ssid=MY_SSID
 
-[wifi-security]
+[802-11-wireless-security]
 auth-alg=open
 key-mgmt=wpa-psk
 psk=MY_WLAN_SECRED_KEY

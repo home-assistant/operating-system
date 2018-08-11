@@ -8,6 +8,7 @@ BOARD_DIR=${2}
 . ${BR2_EXTERNAL_HASSOS_PATH}/info
 . ${BOARD_DIR}/info
 . ${SCRIPT_DIR}/name.sh
+. ${SCRIPT_DIR}/rauc.sh
 
 
 # HassOS tasks
@@ -33,21 +34,9 @@ install_hassos_cli
     echo "DEPLOYMENT=${DEPLOYMENT}"
 ) > ${TARGET_DIR}/etc/machine-info
 
-# Settup rauc
-sed -i "s/%COMPATIBLE%/$(hassos_rauc_compatible)/g" ${TARGET_DIR}/etc/rauc/system.conf
-sed -i "s/%BOOTLOADER%/${BOOTLOADER}/g" ${TARGET_DIR}/etc/rauc/system.conf
 
-# Settup the correct CA
-if [ "${DEPLOYMENT}" == "production" ]; then
-    cp ${BR2_EXTERNAL_HASSOS_PATH}/misc/rel-ca.pem ${TARGET_DIR}/etc/rauc/keyring.pem
-else
-    cp ${BR2_EXTERNAL_HASSOS_PATH}/misc/dev-ca.pem ${TARGET_DIR}/etc/rauc/keyring.pem
-fi
-
-# Bootloader options
-if [ "${BOOTLOADER}" == "uboot" ]; then
-    cp ${BR2_EXTERNAL_HASSOS_PATH}/misc/fw_env.config ${TARGET_DIR}/etc/fw_env.config
-else
-    cp ${BR2_EXTERNAL_HASSOS_PATH}/misc/barebox-state-efi.dtb ${TARGET_DIR}/etc/barebox-state.dtb
-fi
+# Setup rauc
+write_rauc_config
+install_rauc_certs
+install_bootloader_config
 

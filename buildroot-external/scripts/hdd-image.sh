@@ -9,7 +9,8 @@ KERNEL1_UUID="fc02a4f0-5350-406f-93a2-56cbed636b5f"
 OVERLAY_UUID="f1326040-5236-40eb-b683-aaa100a9afcf"
 DATA_UUID="a52a4597-fa3a-4851-aefd-2fbe9f849079"
 
-BOOT_SIZE=32M
+SPL_SIZE=8M
+BOOT_SIZE=(32M 24M)
 BOOTSTATE_SIZE=8M
 SYSTEM_SIZE=256M
 KERNEL_SIZE=24M
@@ -17,12 +18,31 @@ OVERLAY_SIZE=96M
 DATA_SIZE=1G
 
 
+function get_boot_size() {
+    if [ "${BOOT_SYS}" == "spl" ]; then
+        echo "${BOOT_SIZE[1]}"
+    else
+        echo "${BOOT_SIZE[0]}"
+    fi
+}
+
+
+function create_spl_image() {
+    local spl_data="${BINARIES_DIR}/${1}"
+    local spl_img="${BINARIES_DIR}/spl.img"
+    local spl_seek=$(($2-2))
+
+    dd if=/dev/zero of=${spl_img} bs=512 count=16382
+    dd if=${spl_data} of=${spl_img} conv=notrunc bs=512 seek=${spl_seek} 
+}
+
+
 function create_boot_image() {
     local boot_data="${BINARIES_DIR}/boot"
     local boot_img="${BINARIES_DIR}/boot.vfat"
 
     echo "mtools_skip_check=1" > ~/.mtoolsrc
-    dd if=/dev/zero of=${boot_img} bs=${BOOT_SIZE} count=1
+    dd if=/dev/zero of=${boot_img} bs=$(get_boot_size) count=1
     mkfs.vfat -n "hassos-boot" ${boot_img}
     mcopy -i ${boot_img} -sv ${boot_data}/* ::
 }
@@ -68,46 +88,69 @@ function create_disk_image() {
     local hdd_img="$(hassos_image_name img)"
     local hdd_count=${1:-2}
 
-    local loop_dev="/dev/mapper/$(losetup -f | cut -d'/' -f3)"
     local boot_offset=0
     local rootfs_offset=0
     local kernel_offset=0
     local overlay_offset=0
     local data_offset=0
 
+    ##
     # Write new image & GPT
     dd if=/dev/zero of=${hdd_img} bs=1G count=${hdd_count}
     sgdisk -o ${hdd_img}
 
+    ##
     # Partition layout
+
+    # SPL
+    if [ "${BOOT_SYS}" == "spl" ]; then
+        sgdisk -j 16384 ${hdd_img}
+    fi
+
+    # boot
     boot_offset="$(sgdisk -F ${hdd_img})"
-    sgdisk -n 1:0:+${BOOT_SIZE} -c 1:"hassos-boot" -t 1:"C12A7328-F81F-11D2-BA4B-00A0C93EC93B" -u 1:${BOOT_UUID} ${hdd_img}
+    sgdisk -n 0:${boot_offset}:+$(get_boot_size) -c 0:"hassos-boot" -t 0:"C12A7328-F81F-11D2-BA4B-00A0C93EC93B" -u 0:${BOOT_UUID} ${hdd_img}
 
+    # Kernel 0
     kernel_offset="$(sgdisk -F ${hdd_img})"
-    sgdisk -n 2:0:+${KERNEL_SIZE} -c 2:"hassos-kernel0" -t 2:"0FC63DAF-8483-4772-8E79-3D69D8477DE4" -u 2:${KERNEL0_UUID} ${hdd_img}
+    sgdisk -n 0:0:+${KERNEL_SIZE} -c 0:"hassos-kernel0" -t 0:"0FC63DAF-8483-4772-8E79-3D69D8477DE4" -u 0:${KERNEL0_UUID} ${hdd_img}
 
+    # System 0
     rootfs_offset="$(sgdisk -F ${hdd_img})"
-    sgdisk -n 3:0:+${SYSTEM_SIZE} -c 3:"hassos-system0" -t 3:"0FC63DAF-8483-4772-8E79-3D69D8477DE4" -u 3:${SYSTEM0_UUID} ${hdd_img}
+    sgdisk -n 0:0:+${SYSTEM_SIZE} -c 0:"hassos-system0" -t 0:"0FC63DAF-8483-4772-8E79-3D69D8477DE4" -u 0:${SYSTEM0_UUID} ${hdd_img}
 
-    sgdisk -n 4:0:+${KERNEL_SIZE} -c 4:"hassos-kernel1" -t 4:"0FC63DAF-8483-4772-8E79-3D69D8477DE4" -u 4:${KERNEL1_UUID} ${hdd_img}
+    # Kernel 1
+    sgdisk -n 0:0:+${KERNEL_SIZE} -c 0:"hassos-kernel1" -t 0:"0FC63DAF-8483-4772-8E79-3D69D8477DE4" -u 0:${KERNEL1_UUID} ${hdd_img}
 
-    sgdisk -n 5:0:+${SYSTEM_SIZE} -c 5:"hassos-system1" -t 5:"0FC63DAF-8483-4772-8E79-3D69D8477DE4" -u 5:${SYSTEM1_UUID} ${hdd_img}
+    # System 1
+    sgdisk -n 0:0:+${SYSTEM_SIZE} -c 0:"hassos-system1" -t 0:"0FC63DAF-8483-4772-8E79-3D69D8477DE4" -u 0:${SYSTEM1_UUID} ${hdd_img}
 
-    sgdisk -n 6:0:+${BOOTSTATE_SIZE} -c 6:"hassos-bootstate" -u 6:${BOOTSTATE_UUID} ${hdd_img}
+    # Bootstate
+    sgdisk -n 0:0:+${BOOTSTATE_SIZE} -c 0:"hassos-bootstate" -u 0:${BOOTSTATE_UUID} ${hdd_img}
 
+    # Overlay
     overlay_offset="$(sgdisk -F ${hdd_img})"
-    sgdisk -n 7:0:+${OVERLAY_SIZE} -c 7:"hassos-overlay" -t 7:"0FC63DAF-8483-4772-8E79-3D69D8477DE4" -u 7:${OVERLAY_UUID} ${hdd_img}
+    sgdisk -n 0:0:+${OVERLAY_SIZE} -c 0:"hassos-overlay" -t 0:"0FC63DAF-8483-4772-8E79-3D69D8477DE4" -u 0:${OVERLAY_UUID} ${hdd_img}
 
+    # Data
     data_offset="$(sgdisk -F ${hdd_img})"
-    sgdisk -n 8:0:+${DATA_SIZE} -c 8:"hassos-data" -t 8:"0FC63DAF-8483-4772-8E79-3D69D8477DE4" -u 8:${DATA_UUID} ${hdd_img}
+    sgdisk -n 0:0:+${DATA_SIZE} -c 0:"hassos-data" -t 0:"0FC63DAF-8483-4772-8E79-3D69D8477DE4" -u 0:${DATA_UUID} ${hdd_img}
 
+    ##
     # Write Images
     sgdisk -v
-    dd if=${boot_img} of=${hdd_img} conv=notrunc bs=512 obs=512 seek=${boot_offset}
-    dd if=${kernel_img} of=${hdd_img} conv=notrunc bs=512 obs=512 seek=${kernel_offset}
-    dd if=${rootfs_img} of=${hdd_img} conv=notrunc bs=512 obs=512 seek=${rootfs_offset}
-    dd if=${overlay_img} of=${hdd_img} conv=notrunc bs=512 obs=512 seek=${overlay_offset}
-    dd if=${data_img} of=${hdd_img} conv=notrunc bs=512 obs=512 seek=${data_offset}
+    dd if=${boot_img} of=${hdd_img} conv=notrunc bs=512 seek=${boot_offset}
+    dd if=${kernel_img} of=${hdd_img} conv=notrunc bs=512 seek=${kernel_offset}
+    dd if=${rootfs_img} of=${hdd_img} conv=notrunc bs=512 seek=${rootfs_offset}
+    dd if=${overlay_img} of=${hdd_img} conv=notrunc bs=512 seek=${overlay_offset}
+    dd if=${data_img} of=${hdd_img} conv=notrunc bs=512 seek=${data_offset}
+
+    # Fix boot
+    if [ "${BOOT_SYS}" == "mbr" ]; then
+        fix_disk_image_mbr
+    elif [ "${BOOT_SYS}" == "spl" ]; then
+        fix_disk_image_spl
+    fi
 }
 
 
@@ -116,6 +159,16 @@ function fix_disk_image_mbr() {
 
     sgdisk -t 1:"E3C9E316-0B5C-4DB8-817D-F92DF00215AE" ${hdd_img}
     dd if=${BR2_EXTERNAL_HASSOS_PATH}/misc/mbr.img of=${hdd_img} conv=notrunc bs=512 count=1
+}
+
+
+function fix_disk_image_spl() {
+    local hdd_img="$(hassos_image_name img)"
+    local spl_img="${BINARIES_DIR}/spl.img"
+
+    sgdisk -t 1:"E3C9E316-0B5C-4DB8-817D-F92DF00215AE" ${hdd_img}
+    dd if=${BR2_EXTERNAL_HASSOS_PATH}/misc/mbr-spl.img of=${hdd_img} conv=notrunc bs=512 count=1
+    dd if=${spl_img} of=${hdd_img} conv=notrunc bs=512 seek=2
 }
 
 
@@ -130,7 +183,8 @@ function convert_disk_image_vmdk() {
 
 
 function convert_disk_image_gz() {
-    local hdd_img="$(hassos_image_name img)"
+    local hdd_ext=${1:-img}
+    local hdd_img="$(hassos_image_name ${hdd_ext})"
 
     rm -f ${hdd_img}.gz
     gzip --best ${hdd_img}

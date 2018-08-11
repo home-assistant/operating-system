@@ -27,4 +27,7 @@ prepare_disk_image
 # Create disk images
 create_disk_image 6
 convert_disk_image_vmdk
+convert_disk_image_gz vmdk
+
+# OTA
 create_ota_update

@@ -3,3 +3,5 @@ BOARD_NAME="RaspberryPi 3 64bit"
 CHASSIS=embedded
 BOOTLOADER=uboot
 KERNEL_FILE=Image
+BOOT_SYS=mbr
+BOOT_ENV_SIZE=0x4000

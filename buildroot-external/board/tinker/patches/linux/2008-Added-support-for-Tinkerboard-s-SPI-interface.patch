@@ -1,0 +1,27 @@
+From af8d73ec0df1dde1e2fe1674c5708d4c30385ba9 Mon Sep 17 00:00:00 2001
+From: Myy <myy@miouyouyou.fr>
+Date: Mon, 5 Jun 2017 12:37:17 +0000
+Subject: [PATCH 11/28] Added support for Tinkerboard's SPI interface
+
+Imported from ARMbian
+
+Signed-off-by: Myy <myy@miouyouyou.fr>
+---
+ drivers/spi/spidev.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/spi/spidev.c b/drivers/spi/spidev.c
+index cda10719..a6287475 100644
+--- a/drivers/spi/spidev.c
++++ b/drivers/spi/spidev.c
+@@ -669,6 +669,7 @@ static const struct of_device_id spidev_dt_ids[] = {
+ 	{ .compatible = "lineartechnology,ltc2488" },
+ 	{ .compatible = "ge,achc" },
+ 	{ .compatible = "semtech,sx1301" },
++	{ .compatible = "rockchip,spi_tinker" },
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(of, spidev_dt_ids);
+-- 
+2.11.0
+

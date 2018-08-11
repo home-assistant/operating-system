@@ -1,0 +1,40 @@
+From 7c27055687c595e9f9eca484314f4fe3866a4260 Mon Sep 17 00:00:00 2001
+From: Myy <myy@miouyouyou.fr>
+Date: Tue, 18 Jul 2017 17:35:16 +0000
+Subject: [PATCH 2/2] Don't be TOO severe when looking for the IRQ names
+
+Using strncmp with an all caps result in the driver being unable to
+initialize itself when using the mainlined RK3288 DTS files, since they
+define the IRQ names as "job", "mmu" and "gpu" instead of "JOB", "MMU"
+and "GPU".
+
+strncmp calls have been replaced by strncasecmp calls in order to
+avoid such issue.
+
+Signed-off-by: Myy <myy@miouyouyou.fr>
+---
+ drivers/gpu/arm/midgard/mali_kbase_core_linux.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/gpu/arm/midgard/mali_kbase_core_linux.c b/drivers/gpu/arm/midgard/mali_kbase_core_linux.c
+index 0cccb0b..9cc65d2 100644
+--- a/drivers/gpu/arm/midgard/mali_kbase_core_linux.c
++++ b/drivers/gpu/arm/midgard/mali_kbase_core_linux.c
+@@ -938,11 +938,11 @@ static int assign_irqs(struct platform_device *pdev)
+ 		}
+ 
+ #ifdef CONFIG_OF
+-		if (!strncmp(irq_res->name, "JOB", 4)) {
++		if (!strncasecmp(irq_res->name, "JOB", 4)) {
+ 			irqtag = JOB_IRQ_TAG;
+-		} else if (!strncmp(irq_res->name, "MMU", 4)) {
++		} else if (!strncasecmp(irq_res->name, "MMU", 4)) {
+ 			irqtag = MMU_IRQ_TAG;
+-		} else if (!strncmp(irq_res->name, "GPU", 4)) {
++		} else if (!strncasecmp(irq_res->name, "GPU", 4)) {
+ 			irqtag = GPU_IRQ_TAG;
+ 		} else {
+ 			dev_err(&pdev->dev, "Invalid irq res name: '%s'\n",
+-- 
+2.10.2
+

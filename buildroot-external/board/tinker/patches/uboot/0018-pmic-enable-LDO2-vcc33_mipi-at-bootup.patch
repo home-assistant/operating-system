@@ -1,0 +1,70 @@
+From d0d5938a3f8a524a884c460c5870c0c966daf152 Mon Sep 17 00:00:00 2001
+From: jamess_huang <Jamess_Huang@asus.com>
+Date: Fri, 11 Aug 2017 18:10:22 +0800
+Subject: [PATCH 18/50] pmic: enable LDO2 vcc33_mipi at bootup
+
+power up camera module to prevent i2c-2 SDA pulled low
+
+Change-Id: I199bef9c8aa4385dbda33117e2ca0c64dc7a13d4
+---
+ board/rockchip/tinker_rk3288/tinker-rk3288.c | 38 ++++++++++++++++++++
+ 1 file changed, 38 insertions(+)
+ mode change 100644 => 100755 board/rockchip/tinker_rk3288/tinker-rk3288.c
+
+diff --git a/board/rockchip/tinker_rk3288/tinker-rk3288.c b/board/rockchip/tinker_rk3288/tinker-rk3288.c
+index c2872e7330..5618bd9923 100644
+--- a/board/rockchip/tinker_rk3288/tinker-rk3288.c
++++ b/board/rockchip/tinker_rk3288/tinker-rk3288.c
+@@ -8,6 +8,8 @@
+ #include <dm.h>
+ #include <i2c_eeprom.h>
+ #include <netdev.h>
++#include <power/regulator.h>
++
+
+ static int get_ethaddr_from_eeprom(u8 *addr)
+ {
+@@ -33,3 +35,39 @@ int rk_board_late_init(void)
+
+ 	return 0;
+ }
++
++
++#ifdef CONFIG_DM_PMIC
++static int rockchip_set_regulator_on(const char *name, uint uv)
++{
++	struct udevice *dev;
++	int ret;
++
++	ret = regulator_get_by_platname(name, &dev);
++	if (ret) {
++		debug("%s: Cannot find regulator %s\n", __func__, name);
++		return ret;
++	}
++	ret = regulator_set_value(dev, uv);
++	if (ret) {
++		debug("%s: Cannot set regulator %s\n", __func__, name);
++		return ret;
++	}
++	ret = regulator_set_enable(dev, 1);
++	if (ret) {
++		debug("%s: Cannot enable regulator %s\n", __func__, name);
++		return ret;
++	}
++
++	return 0;
++}
++
++int power_init_board(void)
++{
++	int ret = rockchip_set_regulator_on("vcc33_mipi", 3300000);
++	if (ret)
++		return ret;
++
++	return 0;
++}
++#endif
+\ No newline at end of file
+--
+2.17.1
+

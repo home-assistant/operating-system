@@ -1,3 +1,5 @@
 source "$BR2_EXTERNAL_HASSOS_PATH/package/hassos/Config.in"
 source "$BR2_EXTERNAL_HASSOS_PATH/package/libapparmor/Config.in"
 source "$BR2_EXTERNAL_HASSOS_PATH/package/apparmor/Config.in"
+source "$BR2_EXTERNAL_HASSOS_PATH/package/bluetooth-bcm43xx/Config.in"
+source "$BR2_EXTERNAL_HASSOS_PATH/package/bluetooth-rtl8723/Config.in"

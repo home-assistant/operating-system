@@ -1,0 +1,45 @@
+From 89e5763110ca77d68a4be00cd97a638adc2401d5 Mon Sep 17 00:00:00 2001
+From: Willy Tarreau <w@1wt.eu>
+Date: Tue, 2 Aug 2016 08:31:00 +0200
+Subject: [PATCH 05/28] ARM: dts: rockchip: fix the regulator's voltage range
+ on MiQi board
+
+The board declared too narrow a voltage range for the CPU and GPU
+regulators, preventing it from using the full CPU frequency range.
+The regulators support 712500 to 1500000 microvolts.
+
+Signed-off-by: Willy Tarreau <w@1wt.eu>
+(cherry picked from commit 95330e63a9295a2632cee8cce5db80677f01857a)
+---
+ arch/arm/boot/dts/rk3288-miqi.dts | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/arch/arm/boot/dts/rk3288-miqi.dts b/arch/arm/boot/dts/rk3288-miqi.dts
+index 3cd60674..a1c3cdaa 100644
+--- a/arch/arm/boot/dts/rk3288-miqi.dts
++++ b/arch/arm/boot/dts/rk3288-miqi.dts
+@@ -168,8 +168,8 @@
+ 		fcs,suspend-voltage-selector = <1>;
+ 		reg = <0x40>;
+ 		regulator-name = "vdd_cpu";
+-		regulator-min-microvolt = <850000>;
+-		regulator-max-microvolt = <1350000>;
++		regulator-min-microvolt = <712500>;
++		regulator-max-microvolt = <1500000>;
+ 		regulator-always-on;
+ 		regulator-boot-on;
+ 		regulator-enable-ramp-delay = <300>;
+@@ -182,8 +182,8 @@
+ 		fcs,suspend-voltage-selector = <1>;
+ 		reg = <0x41>;
+ 		regulator-name = "vdd_gpu";
+-		regulator-min-microvolt = <850000>;
+-		regulator-max-microvolt = <1350000>;
++		regulator-min-microvolt = <712500>;
++		regulator-max-microvolt = <1500000>;
+ 		regulator-always-on;
+ 		vin-supply = <&vcc_sys>;
+ 	};
+-- 
+2.11.0
+

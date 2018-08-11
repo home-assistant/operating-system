@@ -1,5 +1,8 @@
 #!/bin/sh
 
+##
+# Hooks
+
 # Handle boot hocks
 if [ "${RAUC_SLOT_CLASS}" = "boot" ]; then
     if [ "${1}" = "slot-post-install" ]; then
@@ -7,6 +10,24 @@ if [ "${RAUC_SLOT_CLASS}" = "boot" ]; then
     elif [ "${1}" = "slot-pre-install" ]; then
         /usr/lib/rauc/pre-install-boot 
     fi
+fi
+
+# Handle spl install
+if [ "${RAUC_SLOT_CLASS}" = "spl" ]; then
+    /usr/lib/rauc/install-spl "${RAUC_IMAGE_NAME}"
+fi
+
+##
+# Fixups
+
+# timesyncd
+if [ -L /var/lib/systemd/timesync ]; then
+    rm -f /var/lib/systemd/timesync
+fi
+
+# u-boot first stage device tree
+if [ -e /usr/sbin/fw_setenv ]; then
+    fw_setenv fdt_addr
 fi
 
 exit 0
