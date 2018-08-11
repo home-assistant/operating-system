@@ -4,7 +4,6 @@ set -e
 DEVICE_CHILD="$(findfs LABEL="hassos-data")"
 DEVICE_ROOT="/dev/$(lsblk -no pkname ${DEVICE_CHILD})"
 PART_NUM="$(sgdisk -p ${DEVICE_ROOT} | awk '/hassos-data/ { print $1 }')"
-GPT_POS="$(sgdisk -p ${DEVICE_ROOT} | awk '/table begins at sector/ { print $7 }')"
 
 # Need resize
 if [ $(sgdisk -E ${DEVICE_ROOT}) -le 2048 ]; then
@@ -14,7 +13,7 @@ fi
 
 # Resize & Reload partition
 echo "[INFO] Update hassos-data partition ${PART_NUM}"
-sgdisk -e -j ${GPT_POS} ${DEVICE_ROOT}
+sgdisk -e ${DEVICE_ROOT}
 sgdisk -d ${PART_NUM} -n ${PART_NUM}:0:0 -c ${PART_NUM}:"hassos-data" -t ${PART_NUM}:"0FC63DAF-8483-4772-8E79-3D69D8477DE4" -u ${PART_NUM}:"a52a4597-fa3a-4851-aefd-2fbe9f849079" ${DEVICE_ROOT}
 partx -u ${DEVICE_ROOT}
 
