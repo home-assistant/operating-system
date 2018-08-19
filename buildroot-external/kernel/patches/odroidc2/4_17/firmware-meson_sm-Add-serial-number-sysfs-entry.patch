@@ -1,0 +1,227 @@
+From patchwork Thu Jul 26 13:59:16 2018
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Patchwork-Submitter: Neil Armstrong <narmstrong@baylibre.com>
+X-Patchwork-Id: 10545929
+Return-Path: 
+ <linux-amlogic-bounces+patchwork-linux-amlogic=patchwork.kernel.org@lists.infradead.org>
+Received: from mail.wl.linuxfoundation.org (pdx-wl-mail.web.codeaurora.org
+ [172.30.200.125])
+	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id C19401822
+	for <patchwork-linux-amlogic@patchwork.kernel.org>;
+ Thu, 26 Jul 2018 13:59:35 +0000 (UTC)
+Received: from mail.wl.linuxfoundation.org (localhost [127.0.0.1])
+	by mail.wl.linuxfoundation.org (Postfix) with ESMTP id ABEFC2B356
+	for <patchwork-linux-amlogic@patchwork.kernel.org>;
+ Thu, 26 Jul 2018 13:59:35 +0000 (UTC)
+Received: by mail.wl.linuxfoundation.org (Postfix, from userid 486)
+	id 9FF912B35F; Thu, 26 Jul 2018 13:59:35 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.3.1 (2010-03-16) on
+	pdx-wl-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,MAILING_LIST_MULTI autolearn=ham version=3.3.1
+Received: from bombadil.infradead.org (bombadil.infradead.org
+ [198.137.202.133])
+	(using TLSv1.2 with cipher AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mail.wl.linuxfoundation.org (Postfix) with ESMTPS id 17ADC2B356
+	for <patchwork-linux-amlogic@patchwork.kernel.org>;
+ Thu, 26 Jul 2018 13:59:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=lists.infradead.org; s=bombadil.20170209; h=Sender:
+	Content-Transfer-Encoding:Content-Type:MIME-Version:Cc:List-Subscribe:
+	List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:Message-Id:Date:
+	Subject:To:From:Reply-To:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+	References:List-Owner; bh=EqHWs/6uUjSeIR2wSdG11qTBruxOvITHjRwkGFmKmio=; b=m6/
+	RmzuHrAUPELBKQV2xaA2bgGqNZa8cDwOTJjsbOhZ/vPNg/g0e+Obi4cyCvpxNQsgoowfNnwkzWCgN
+	CfxUGmVcY2ewmZufbyjgmeZ5nlfNM0rwHvWdojwx3SiykHXlGb0XPtIBWVX01ZHqqu1SfYKD/lWHg
+	iAWz8WiywRUyV+LfZMm/cFumRjUmUYLfBIOkkBgT6ET5l7t8c+QRdcqhw5LFYpLGYFxPxqEdrzzoD
+	cGQhIrM+pfhgvLdYoviaL7PUcTRxEwDKyEFOOTXq9e/bas2gnIE/tcpnvh1MD0onk+poKeKjFkSPw
+	pkkQ3BTo1ZhioAtQcc+0xg8n0GsHEfA==;
+Received: from localhost ([127.0.0.1] helo=bombadil.infradead.org)
+	by bombadil.infradead.org with esmtp (Exim 4.90_1 #2 (Red Hat Linux))
+	id 1fignm-0005Ux-G9; Thu, 26 Jul 2018 13:59:34 +0000
+Received: from mail-wm0-x244.google.com ([2a00:1450:400c:c09::244])
+ by bombadil.infradead.org with esmtps (Exim 4.90_1 #2 (Red Hat Linux))
+ id 1fignj-0005RP-Bf
+ for linux-amlogic@lists.infradead.org; Thu, 26 Jul 2018 13:59:32 +0000
+Received: by mail-wm0-x244.google.com with SMTP id o11-v6so2073153wmh.2
+ for <linux-amlogic@lists.infradead.org>;
+ Thu, 26 Jul 2018 06:59:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+ h=from:to:cc:subject:date:message-id;
+ bh=m9CCiwR/zhrqNdJ6Qi86kfoFuPrHTGpOo/Cqk2c9lMw=;
+ b=NZkza4yogigBBOi5izjgx9CAY1ce3IXfSFLxmUy1TB4UQovCnPBny2wWmuPPw5D2Xn
+ Fkdxi2tLXl9aP+jeqy6Z6IsjNtfouzYYkn8U4lRNi7nXCqE6pd5oURI8dP6p5c98Ys6K
+ dam+D8uxPrX0AIzAnKOdI8aUWWBafjRDcFJSI4a3yWWlVKtZSUpbhq8K55GsLRxZniBm
+ 4dI6ieTTm1fNilkW4e3yvUV1ldZr4EQB6L7DBb+wZQX9LPblJ8o0ZgrGKiIBE/siPC7T
+ ZRsqjkB/Dq5/chQ254R3gqx2Mt5ibXU7/SSYJxP6khIb7Rs/vnCyuLyyO79Jrvwl7Rn7
+ lpnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20161025;
+ h=x-gm-message-state:from:to:cc:subject:date:message-id;
+ bh=m9CCiwR/zhrqNdJ6Qi86kfoFuPrHTGpOo/Cqk2c9lMw=;
+ b=XcCjbrFV/RtJwynsZyk1FsiSwm2Uu2VV2ea0pgUVfsKquDE/R3FyLSlzlBCOPZuFBg
+ dEgZpEOnd6es6gEHGaBXYSv34Ovq4xpB3r5c8pz2EWpmJ257pG4VkPVLrm/om2iBEdsO
+ bd4EM+TZh/E06Obvr8I4Di+rgc8cpJaJMCq5S++uyneQswclwPj/odwCwxwEuLRc1AEQ
+ uBFYWon12mgkw/fhkszFwXPjelgMtoqXQ1myBYdTXKSSdohhhDpnbU+1gT32jKKIx9rO
+ jua0ooXDbMirhs8yYe5HBHt8Uytxm0k2KtI8jGZeBJKzbKfee9Rj2+nya52SD7zApGEE
+ Wv4Q==
+X-Gm-Message-State: AOUpUlGUbZE1KLrOMmp9WikSS8sT5jnb7zw85sthjUIGi5iGui4wob4p
+ Th81mKR6r2Q75bTqQYDn+hTeSg==
+X-Google-Smtp-Source: 
+ AAOMgpdIZHKdxLrmyYhJum/5Lv0enqEOOoxtxcAtew9b7WQ3g8SRQ1Lkhv8AyyfbQkYIIPYSHmOwbg==
+X-Received: by 2002:a1c:c4ce:: with SMTP id
+ u197-v6mr1656860wmf.10.1532613559582;
+ Thu, 26 Jul 2018 06:59:19 -0700 (PDT)
+Received: from bender.baylibre.local ([90.63.244.31])
+ by smtp.gmail.com with ESMTPSA id s7-v6sm1754942wru.96.2018.07.26.06.59.18
+ (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+ Thu, 26 Jul 2018 06:59:18 -0700 (PDT)
+From: Neil Armstrong <narmstrong@baylibre.com>
+To: khilman@baylibre.com,
+	carlo@caione.org
+Subject: [PATCH] firmware: meson_sm: Add serial number sysfs entry
+Date: Thu, 26 Jul 2018 15:59:16 +0200
+Message-Id: <1532613556-5398-1-git-send-email-narmstrong@baylibre.com>
+X-Mailer: git-send-email 2.7.4
+X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-646709E3 
+X-CRM114-CacheID: sfid-20180726_065931_398092_3628DF7A 
+X-CRM114-Status: GOOD (  12.04  )
+X-BeenThere: linux-amlogic@lists.infradead.org
+X-Mailman-Version: 2.1.21
+Precedence: list
+List-Id: <linux-amlogic.lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-amlogic>,
+ <mailto:linux-amlogic-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-amlogic/>
+List-Post: <mailto:linux-amlogic@lists.infradead.org>
+List-Help: <mailto:linux-amlogic-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-amlogic>,
+ <mailto:linux-amlogic-request@lists.infradead.org?subject=subscribe>
+Cc: linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org,
+ Neil Armstrong <narmstrong@baylibre.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-amlogic" <linux-amlogic-bounces@lists.infradead.org>
+Errors-To: 
+ linux-amlogic-bounces+patchwork-linux-amlogic=patchwork.kernel.org@lists.infradead.org
+X-Virus-Scanned: ClamAV using ClamSMTP
+
+The Amlogic Meson SoC Secure Monitor implements a call to retrieve an unique
+SoC ID starting from the GX Family and all new families.
+
+The serial number is simply exposed as a sysfs entry under the firmware
+sysfs directory.
+
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ drivers/firmware/meson/meson_sm.c       | 56 +++++++++++++++++++++++++++++++++
+ include/linux/firmware/meson/meson_sm.h |  1 +
+ 2 files changed, 57 insertions(+)
+
+diff --git a/drivers/firmware/meson/meson_sm.c b/drivers/firmware/meson/meson_sm.c
+index 0ec2ca8..29fbc81 100644
+--- a/drivers/firmware/meson/meson_sm.c
++++ b/drivers/firmware/meson/meson_sm.c
+@@ -24,6 +24,7 @@
+ #include <linux/printk.h>
+ #include <linux/types.h>
+ #include <linux/sizes.h>
++ #include <linux/slab.h>
+ 
+ #include <linux/firmware/meson/meson_sm.h>
+ 
+@@ -48,6 +49,7 @@ struct meson_sm_chip gxbb_chip = {
+ 		CMD(SM_EFUSE_READ,	0x82000030),
+ 		CMD(SM_EFUSE_WRITE,	0x82000031),
+ 		CMD(SM_EFUSE_USER_MAX,	0x82000033),
++		CMD(SM_GET_CHIP_ID,	0x82000044),
+ 		{ /* sentinel */ },
+ 	},
+ };
+@@ -214,6 +216,57 @@ int meson_sm_call_write(void *buffer, unsigned int size, unsigned int cmd_index,
+ }
+ EXPORT_SYMBOL(meson_sm_call_write);
+ 
++#define SM_CHIP_ID_LENGTH	119
++#define SM_CHIP_ID_OFFSET	4
++#define SM_CHIP_ID_SIZE		12
++
++static ssize_t serial_show(struct device *dev, struct device_attribute *attr,
++			 char *buf)
++{
++	uint8_t *id_buf;
++	int ret;
++
++	id_buf = kmalloc(SM_CHIP_ID_LENGTH, GFP_KERNEL);
++	if (!id_buf)
++		return -ENOMEM;
++
++	ret = meson_sm_call_read(id_buf, SM_CHIP_ID_LENGTH, SM_GET_CHIP_ID,
++				 0, 0, 0, 0, 0);
++	if (ret < 0) {
++		kfree(id_buf);
++		return ret;
++	}
++
++	ret = sprintf(buf, "%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x\n",
++			id_buf[SM_CHIP_ID_OFFSET + 0],
++			id_buf[SM_CHIP_ID_OFFSET + 1],
++			id_buf[SM_CHIP_ID_OFFSET + 2],
++			id_buf[SM_CHIP_ID_OFFSET + 3],
++			id_buf[SM_CHIP_ID_OFFSET + 4],
++			id_buf[SM_CHIP_ID_OFFSET + 5],
++			id_buf[SM_CHIP_ID_OFFSET + 6],
++			id_buf[SM_CHIP_ID_OFFSET + 7],
++			id_buf[SM_CHIP_ID_OFFSET + 8],
++			id_buf[SM_CHIP_ID_OFFSET + 9],
++			id_buf[SM_CHIP_ID_OFFSET + 10],
++			id_buf[SM_CHIP_ID_OFFSET + 11]);
++
++	kfree(id_buf);
++
++	return ret;
++}
++
++static DEVICE_ATTR_RO(serial);
++
++static struct attribute *meson_sm_sysfs_attributes[] = {
++	&dev_attr_serial.attr,
++	NULL,
++};
++
++static const struct attribute_group meson_sm_sysfs_attr_group = {
++	.attrs = meson_sm_sysfs_attributes,
++};
++
+ static const struct of_device_id meson_sm_ids[] = {
+ 	{ .compatible = "amlogic,meson-gxbb-sm", .data = &gxbb_chip },
+ 	{ /* sentinel */ },
+@@ -242,6 +295,9 @@ static int __init meson_sm_probe(struct platform_device *pdev)
+ 	fw.chip = chip;
+ 	pr_info("secure-monitor enabled\n");
+ 
++	if (sysfs_create_group(&pdev->dev.kobj, &meson_sm_sysfs_attr_group))
++		goto out_in_base;
++
+ 	return 0;
+ 
+ out_in_base:
+diff --git a/include/linux/firmware/meson/meson_sm.h b/include/linux/firmware/meson/meson_sm.h
+index 37a5eae..f98c20d 100644
+--- a/include/linux/firmware/meson/meson_sm.h
++++ b/include/linux/firmware/meson/meson_sm.h
+@@ -17,6 +17,7 @@ enum {
+ 	SM_EFUSE_READ,
+ 	SM_EFUSE_WRITE,
+ 	SM_EFUSE_USER_MAX,
++	SM_GET_CHIP_ID,
+ };
+ 
+ struct meson_sm_firmware;

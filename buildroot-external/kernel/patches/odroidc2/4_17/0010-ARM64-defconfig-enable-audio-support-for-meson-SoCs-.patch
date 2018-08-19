@@ -1,0 +1,31 @@
+From e3fec781d3684fa264dfd68877b59b70a30f8929 Mon Sep 17 00:00:00 2001
+From: Jerome Brunet <jbrunet@baylibre.com>
+Date: Fri, 31 Mar 2017 15:55:03 +0200
+Subject: [PATCH 10/14] ARM64: defconfig: enable audio support for meson SoCs
+ as module
+
+Add audio support for meson SoCs. This includes the audio core
+driver and the i2s output interface
+
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ arch/arm64/configs/defconfig | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 43716e1..639cb12 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -440,6 +440,8 @@ CONFIG_SOUND=y
+ CONFIG_SND=y
+ CONFIG_SND_SOC=y
+ CONFIG_SND_BCM2835_SOC_I2S=m
++CONFIG_SND_SOC_MESON=m
++CONFIG_SND_SOC_MESON_I2S=m
+ CONFIG_SND_SOC_SAMSUNG=y
+ CONFIG_SND_SOC_RCAR=m
+ CONFIG_SND_SOC_AK4613=m
+-- 
+2.7.4
+

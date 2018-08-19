@@ -44,5 +44,9 @@ function create_ota_update() {
         ) >> ${rauc_folder}/manifest.raucm
     fi
 
+    if [ ! -f "${key}" ]; then
+        openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout ${key} -out ${cert} -outform PEM -batch
+    fi
+
     rauc bundle -d --cert=${cert} --key=${key} ${rauc_folder} ${ota_file}
 }

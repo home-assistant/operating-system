@@ -1,0 +1,124 @@
+From c9a242f21d67baf22cb113ba37e9f77b96ba1027 Mon Sep 17 00:00:00 2001
+From: Jerome Brunet <jbrunet@baylibre.com>
+Date: Wed, 20 Sep 2017 17:22:47 +0200
+Subject: [PATCH 11/14] ARM64: dts: meson-gx: add audio controller nodes
+
+Add audio controller nodes for Amlogic meson gxl.
+This includes the audio-core node, the i2s DAI and i2s
+aiu DMAs.
+
+Audio on this SoC family is still a work in progress. More nodes are likely
+to be added later on (pcm DAIs, input DMAs, SPDIF etc ...)
+
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-gx.dtsi   | 22 ++++++++++++++++++++++
+ arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi | 23 +++++++++++++++++++++++
+ arch/arm64/boot/dts/amlogic/meson-gxl.dtsi  | 23 +++++++++++++++++++++++
+ 3 files changed, 68 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gx.dtsi b/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
+index 3c31e21..e4ebc87 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
+@@ -197,6 +197,28 @@
+ 				#reset-cells = <1>;
+ 			};
+ 
++			audio: audio@5400 {
++				compatible = "amlogic,meson-audio-core";
++				reg = <0x0 0x5400 0x0 0x2ac>,
++				      <0x0 0xa000 0x0 0x304>;
++				reg-names = "aiu", "audin";
++				status = "disabled";
++
++				aiu_i2s_dma: aiu_i2s_dma {
++					#sound-dai-cells = <0>;
++					compatible = "amlogic,meson-aiu-i2s-dma";
++					interrupts = <GIC_SPI 48 IRQ_TYPE_EDGE_RISING>;
++					status = "disabled";
++				};
++
++				i2s_dai: i2s_dai {
++					#sound-dai-cells = <0>;
++					compatible = "amlogic,meson-i2s-dai";
++					status = "disabled";
++				};
++
++			};
++
+ 			uart_A: serial@84c0 {
+ 				compatible = "amlogic,meson-gx-uart";
+ 				reg = <0x0 0x84c0 0x0 0x18>;
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
+index 562c26a..67d794b 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
+@@ -702,6 +702,29 @@
+ 			       <0>; /* Do Nothing */
+ };
+ 
++&audio {
++	clocks = <&clkc CLKID_AIU>,
++		 <&clkc CLKID_AIU_GLUE>,
++		 <&clkc CLKID_I2S_SPDIF>;
++	clock-names = "aiu_top", "aiu_glue", "audin";
++	resets = <&reset RESET_AIU>,
++		 <&reset RESET_AUDIN>;
++	reset-names = "aiu", "audin";
++};
++
++&aiu_i2s_dma {
++	clocks = <&clkc CLKID_I2S_OUT>;
++	clock-names = "fast";
++};
++
++&i2s_dai {
++	clocks = <&clkc CLKID_I2S_OUT>,
++		 <&clkc CLKID_MIXER_IFACE>,
++		 <&clkc CLKID_AOCLK_GATE>,
++		 <&clkc CLKID_CTS_AMCLK>;
++	clock-names = "fast", "iface", "bclks", "mclk";
++};
++
+ &saradc {
+ 	compatible = "amlogic,meson-gxbb-saradc", "amlogic,meson-saradc";
+ 	clocks = <&xtal>,
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
+index dba365e..0a41e2e 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
+@@ -711,6 +711,29 @@
+ 			       <0>; /* Do Nothing */
+ };
+ 
++&audio {
++	clocks = <&clkc CLKID_AIU>,
++		 <&clkc CLKID_AIU_GLUE>,
++		 <&clkc CLKID_I2S_SPDIF>;
++	clock-names = "aiu_top", "aiu_glue", "audin";
++	resets = <&reset RESET_AIU>,
++		 <&reset RESET_AUDIN>;
++	reset-names = "aiu", "audin";
++};
++
++&aiu_i2s_dma {
++	clocks = <&clkc CLKID_I2S_OUT>;
++	clock-names = "fast";
++};
++
++&i2s_dai {
++	clocks = <&clkc CLKID_I2S_OUT>,
++		 <&clkc CLKID_MIXER_IFACE>,
++		 <&clkc CLKID_AOCLK_GATE>,
++		 <&clkc CLKID_CTS_AMCLK>;
++	clock-names = "fast", "iface", "bclks", "mclk";
++};
++
+ &saradc {
+ 	compatible = "amlogic,meson-gxl-saradc", "amlogic,meson-saradc";
+ 	clocks = <&xtal>,
+-- 
+2.7.4
+
