@@ -1,3 +1,5 @@
+
+
 # Custom modeline!
 # To use custom modeline you need to disable all the below resolutions
 # and setup your own!

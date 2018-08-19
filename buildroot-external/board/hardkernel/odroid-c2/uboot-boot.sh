@@ -1,11 +1,24 @@
 
 ###########################################
 
+part start mmc ${devnum} 9 mmc_env
+mmc dev ${devnum}
+setenv loadbootstate "\
+echo 'loading env...';\
+mmc read ${ramdisk_addr_r} ${mmc_env} 0x10;\
+env import -c ${ramdisk_addr_r} 0x2000;"
+
+setenv storebootstate "\
+echo 'storing env...';\
+env export -c -s 0x2000 ${ramdisk_addr_r};\
+mmc write ${ramdisk_addr_r} ${mmc_env} 0x10;"
+
+run loadbootstate
 test -n "${BOOT_ORDER}" || setenv BOOT_ORDER "A B"
 test -n "${BOOT_A_LEFT}" || setenv BOOT_A_LEFT 3
 test -n "${BOOT_B_LEFT}" || setenv BOOT_B_LEFT 3
 
-if load mmc 0:1 ${ramdisk_addr_r} uboot-settings.txt; then
+if load mmc ${devnum}:1 ${ramdisk_addr_r} uboot-settings.txt; then
   env import -t ${ramdisk_addr_r} ${filesize};
 fi
 
@@ -17,20 +30,14 @@ setenv bootargs_odroidc2 "${condev} no_console_suspend hdmimode=${m} ${cmode} m_
 setenv bootargs_hassos "zram.enabled=1 zram.num_devices=3 apparmor=1 security=apparmor cgroup_enable=memory"
 
 # HassOS system A/B
-#setenv bootargs_a "root=PARTUUID=0d3e0000-06 rootfstype=squashfs ro"
-#setenv bootargs_b "root=PARTUUID=0d3e0000-08 rootfstype=squashfs ro"
-
-#setenv bootargs_a "root=/dev/mmcblk1p6 rootfstype=squashfs ro rootwait"
-#setenv bootargs_b "root=/dev/mmcblk1p8 rootfstype=squashfs ro rootwait"
-
 setenv bootargs_a "root=PARTUUID=0d3e0000-06 rootfstype=squashfs ro rootwait"
 setenv bootargs_b "root=PARTUUID=0d3e0000-08 rootfstype=squashfs ro rootwait"
 
 usb start
 
 # Load extraargs
-fileenv mmc 0:1 ${ramdisk_addr_r} cmdline.txt cmdline
-fatload mmc 0:1 ${fdt_addr_r} meson-gxbb-odroidc2.dtb
+fileenv mmc ${devnum}:1 ${ramdisk_addr_r} cmdline.txt cmdline
+fatload mmc ${devnum}:1 ${fdt_addr_r} meson-gxbb-odroidc2.dtb
 #fdt addr ${fdt_addr_r}
 
 # logical volumes get numbered after physical ones.
@@ -51,27 +58,26 @@ for BOOT_SLOT in "${BOOT_ORDER}"; do
     if test ${BOOT_A_LEFT} -gt 0; then
       setexpr BOOT_A_LEFT ${BOOT_A_LEFT} - 1
       echo "Found valid slot A, ${BOOT_A_LEFT} attempts remaining"
-      setenv load_kernel "ext4load mmc 0:5 ${kernel_addr_r} Image"
+      setenv load_kernel "ext4load mmc ${devnum}:5 ${kernel_addr_r} Image"
       setenv bootargs "${bootargs_hassos} ${bootargs_odroidc2} ${bootargs_a} rauc.slot=A ${cmdline}"
     fi
   elif test "x${BOOT_SLOT}" = "xB"; then
     if test ${BOOT_B_LEFT} -gt 0; then
       setexpr BOOT_B_LEFT ${BOOT_B_LEFT} - 1
       echo "Found valid slot B, ${BOOT_B_LEFT} attempts remaining"
-      setenv load_kernel "ext4load mmc 0:7 ${kernel_addr_r} Image"
+      setenv load_kernel "ext4load mmc ${devnum}:7 ${kernel_addr_r} Image"
       setenv bootargs "${bootargs_hassos} ${bootargs_odroidc2} ${bootargs_b} rauc.slot=B ${cmdline}"
     fi
   fi
 done
 
-setenv fdt_addr
 if test -n "${bootargs}"; then
-  saveenv
+  run storebootstate
 else
   echo "No valid slot found, resetting tries to 3"
   setenv BOOT_A_LEFT 3
   setenv BOOT_B_LEFT 3
-  saveenv
+  run storebootstate
   reset
 fi
 
