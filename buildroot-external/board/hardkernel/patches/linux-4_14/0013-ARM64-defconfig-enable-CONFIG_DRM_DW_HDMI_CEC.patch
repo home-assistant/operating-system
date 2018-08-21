@@ -1,0 +1,28 @@
+From 139e2ed6d6b400678068394a8d059d865fba4dfa Mon Sep 17 00:00:00 2001
+From: Jerome Brunet <jbrunet@baylibre.com>
+Date: Mon, 13 Nov 2017 12:15:18 +0100
+Subject: [PATCH 13/39] ARM64: defconfig: enable CONFIG_DRM_DW_HDMI_CEC
+
+Turn on CONFIG_DRM_DW_HDMI_CEC as module
+
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ arch/arm64/configs/defconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index fdf94cbd56a2..dcf10903f634 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -388,6 +388,7 @@ CONFIG_DRM_RCAR_VSP=y
+ CONFIG_DRM_TEGRA=m
+ CONFIG_DRM_PANEL_SIMPLE=m
+ CONFIG_DRM_I2C_ADV7511=m
++CONFIG_DRM_DW_HDMI_CEC=m
+ CONFIG_DRM_VC4=m
+ CONFIG_DRM_HISI_KIRIN=m
+ CONFIG_DRM_MESON=m
+-- 
+2.16.1
+

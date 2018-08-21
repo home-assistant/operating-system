@@ -1,0 +1,28 @@
+From 1168b4f47f7b7d73729a2981c2419ee38f8e52af Mon Sep 17 00:00:00 2001
+From: Jerome Brunet <jbrunet@baylibre.com>
+Date: Mon, 13 Nov 2017 12:11:41 +0100
+Subject: [PATCH 12/39] ARM64: defconfig: enable CONFIG_VIDEO_MESON_AO_CEC
+
+Turn on CONFIG_VIDEO_MESON_AO_CEC as module
+
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ arch/arm64/configs/defconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 944b93b1c026..fdf94cbd56a2 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -366,6 +366,7 @@ CONFIG_VIDEO_SAMSUNG_EXYNOS_GSC=m
+ CONFIG_VIDEO_RENESAS_FCP=m
+ CONFIG_VIDEO_RENESAS_VSP1=m
+ CONFIG_CEC_PLATFORM_DRIVERS=y
++CONFIG_VIDEO_MESON_AO_CEC=m
+ CONFIG_DRM=m
+ CONFIG_DRM_NOUVEAU=m
+ CONFIG_DRM_EXYNOS=m
+-- 
+2.16.1
+

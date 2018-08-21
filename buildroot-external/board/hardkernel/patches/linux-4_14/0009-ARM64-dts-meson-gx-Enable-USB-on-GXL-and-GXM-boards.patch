@@ -1,0 +1,129 @@
+From ed5150180cd8751dca686737dd82b051d1fb28e8 Mon Sep 17 00:00:00 2001
+From: Neil Armstrong <narmstrong@baylibre.com>
+Date: Thu, 13 Jul 2017 15:02:33 +0200
+Subject: [PATCH 09/39] ARM64: dts: meson-gx: Enable USB on GXL and GXM boards
+
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-gx-p23x-q20x.dtsi            | 4 ++++
+ arch/arm64/boot/dts/amlogic/meson-gxl-s905x-hwacom-amazetv.dts | 4 ++++
+ arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts     | 4 ++++
+ arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts   | 4 ++++
+ arch/arm64/boot/dts/amlogic/meson-gxl-s905x-nexbox-a95x.dts    | 4 ++++
+ arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dtsi          | 4 ++++
+ arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts          | 4 ++++
+ arch/arm64/boot/dts/amlogic/meson-gxm-nexbox-a1.dts            | 4 ++++
+ arch/arm64/boot/dts/amlogic/meson-gxm-rbox-pro.dts             | 4 ++++
+ 9 files changed, 36 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gx-p23x-q20x.dtsi b/arch/arm64/boot/dts/amlogic/meson-gx-p23x-q20x.dtsi
+index 4157987f4a3d..7ce9a6267270 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gx-p23x-q20x.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gx-p23x-q20x.dtsi
+@@ -236,3 +236,7 @@
+ 	pinctrl-0 = <&uart_ao_a_pins>;
+ 	pinctrl-names = "default";
+ };
++
++&usb0 {
++	status = "okay";
++};
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-hwacom-amazetv.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-hwacom-amazetv.dts
+index 977b4240f3c1..6f2cd8e82dbc 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-hwacom-amazetv.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-hwacom-amazetv.dts
+@@ -163,3 +163,7 @@
+ 	pinctrl-0 = <&uart_ao_a_pins>;
+ 	pinctrl-names = "default";
+ };
++
++&usb0 {
++       status = "okay";
++};
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts
+index edc512ad0bac..89a5fd998262 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts
+@@ -198,3 +198,7 @@
+ 	pinctrl-0 = <&uart_ao_b_pins>;
+ 	pinctrl-names = "default";
+ };
++
++&usb0 {
++       status = "okay";
++};
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts
+index 64c54c92e214..4035891890c7 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts
+@@ -242,3 +242,7 @@
+ 	pinctrl-0 = <&uart_ao_a_pins>;
+ 	pinctrl-names = "default";
+ };
++
++&usb0 {
++       status = "okay";
++};
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-nexbox-a95x.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-nexbox-a95x.dts
+index 1b8f32867aa1..6338e6c082f5 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-nexbox-a95x.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-nexbox-a95x.dts
+@@ -251,3 +251,7 @@
+ 	pinctrl-0 = <&uart_ao_a_pins>;
+ 	pinctrl-names = "default";
+ };
++
++&usb0 {
++	status = "okay";
++};
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dtsi
+index 129af9068814..7a1c20eb319f 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dtsi
+@@ -173,3 +173,7 @@
+ 	pinctrl-0 = <&uart_ao_a_pins>;
+ 	pinctrl-names = "default";
+ };
++
++&usb0 {
++	status = "okay";
++};
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts b/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts
+index 32c138ec0e58..103575a74541 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts
+@@ -397,3 +397,7 @@
+ 	status = "okay";
+ 	vref-supply = <&vddio_ao18>;
+ };
++
++&usb0 {
++       status = "okay";
++};
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxm-nexbox-a1.dts b/arch/arm64/boot/dts/amlogic/meson-gxm-nexbox-a1.dts
+index 22c697732f66..cfde24623a7d 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxm-nexbox-a1.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-gxm-nexbox-a1.dts
+@@ -215,3 +215,7 @@
+ 	pinctrl-0 = <&uart_ao_a_pins>;
+ 	pinctrl-names = "default";
+ };
++
++&usb0 {
++	status = "okay";
++};
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxm-rbox-pro.dts b/arch/arm64/boot/dts/amlogic/meson-gxm-rbox-pro.dts
+index 470f72bb863c..9837a48e9297 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxm-rbox-pro.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-gxm-rbox-pro.dts
+@@ -237,3 +237,7 @@
+ 	pinctrl-0 = <&uart_ao_a_pins>;
+ 	pinctrl-names = "default";
+ };
++
++&usb0 {
++       status = "okay";
++};
+-- 
+2.16.1
+

@@ -1,0 +1,58 @@
+From c07db1483d8316018d64d64bdf34a8736251fb2e Mon Sep 17 00:00:00 2001
+From: Neil Armstrong <narmstrong@baylibre.com>
+Date: Mon, 16 Oct 2017 15:34:21 +0200
+Subject: [PATCH 17/39] drm/meson: Add missing VPU init
+
+The VPU init misses these configurations values.
+
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ drivers/gpu/drm/meson/meson_drv.c       | 9 +++++++++
+ drivers/gpu/drm/meson/meson_registers.h | 4 ++++
+ 2 files changed, 13 insertions(+)
+
+diff --git a/drivers/gpu/drm/meson/meson_drv.c b/drivers/gpu/drm/meson/meson_drv.c
+index 7742c7d81ed8..19a0d8df412c 100644
+--- a/drivers/gpu/drm/meson/meson_drv.c
++++ b/drivers/gpu/drm/meson/meson_drv.c
+@@ -150,6 +150,14 @@ static struct regmap_config meson_regmap_config = {
+ 	.max_register   = 0x1000,
+ };
+ 
++static void meson_vpu_init(struct meson_drm *priv)
++{
++	writel_relaxed(0x210000, priv->io_base + _REG(VPU_RDARB_MODE_L1C1));
++	writel_relaxed(0x10000, priv->io_base + _REG(VPU_RDARB_MODE_L1C2));
++	writel_relaxed(0x900000, priv->io_base + _REG(VPU_RDARB_MODE_L2C1));
++	writel_relaxed(0x20000, priv->io_base + _REG(VPU_WRARB_MODE_L2C1));
++}
++
+ static int meson_drv_bind_master(struct device *dev, bool has_components)
+ {
+ 	struct platform_device *pdev = to_platform_device(dev);
+@@ -221,6 +229,7 @@ static int meson_drv_bind_master(struct device *dev, bool has_components)
+ 
+ 	/* Hardware Initialization */
+ 
++	meson_vpu_init(priv);
+ 	meson_venc_init(priv);
+ 	meson_vpp_init(priv);
+ 	meson_viu_init(priv);
+diff --git a/drivers/gpu/drm/meson/meson_registers.h b/drivers/gpu/drm/meson/meson_registers.h
+index 284738196af9..bca87143e548 100644
+--- a/drivers/gpu/drm/meson/meson_registers.h
++++ b/drivers/gpu/drm/meson/meson_registers.h
+@@ -1363,6 +1363,10 @@
+ #define VPU_PROT3_STAT_1 0x277a
+ #define VPU_PROT3_STAT_2 0x277b
+ #define VPU_PROT3_REQ_ONOFF 0x277c
++#define VPU_RDARB_MODE_L1C1 0x2790
++#define VPU_RDARB_MODE_L1C2 0x2799
++#define VPU_RDARB_MODE_L2C1 0x279d
++#define VPU_WRARB_MODE_L2C1 0x27a2
+ 
+ /* osd super scale */
+ #define OSDSR_HV_SIZEIN 0x3130
+-- 
+2.16.1
+

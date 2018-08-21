@@ -1,0 +1,46 @@
+From 16c5d31e8fdd260a78d8dc137b1c3686077253fe Mon Sep 17 00:00:00 2001
+From: Khem Raj <raj.khem@gmail.com>
+Date: Fri, 16 Feb 2018 23:39:37 -0800
+Subject: [PATCH 39/39] dts: add ODROID-3.5 Inch touchscreen driver(sx8650)
+
+Signed-off-by: Khem Raj <raj.khem@gmail.com>
+---
+ .../arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts b/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
+index 4e0b3c7ec081..071e9711880c 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
+@@ -250,6 +250,28 @@
+ 	pinctrl-names = "default";
+ };
+ 
++&i2c_B {
++ 	status = "okay";
++
++	/* Hardkernel I2C 3.5" Touchscreen */
++	/* drivers/input/sx865x.c */
++	sx865x: sx865x@49	{
++		status = "okay";
++		compatible = "semtech,sx8650";
++		reg = <0x49>;
++		#clock-cells = <0>;
++
++		/* H/W Pin control setup */
++		gpio-pendown = <&gpio GPIOY_7 0>;
++		gpio-reset   = <&gpio GPIOY_13 0 >;
++
++		/* platform data setup */
++		invert-x = <0>;
++		invert-y = <1>;
++		swap-xy = <1>;
++	};
++};
++
+ &ir {
+ 	status = "okay";
+ 	pinctrl-0 = <&remote_input_ao_pins>;
+-- 
+2.16.1
+

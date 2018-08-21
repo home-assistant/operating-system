@@ -1,0 +1,29 @@
+From 92d8cb904dcb8fd92330e603a26188dd000730e0 Mon Sep 17 00:00:00 2001
+From: Neil Armstrong <narmstrong@baylibre.com>
+Date: Mon, 16 Oct 2017 17:00:59 +0200
+Subject: [PATCH 33/39] ARM64: dts: meson-gx: grow reset controller memory zone
+
+Now the Amlogic Meson GX SoCs datasheet documents all the Reset registers,
+grow the memory in the node to allow usage of the level registers.
+
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-gx.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gx.dtsi b/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
+index ace0e4b756b8..2e0ee17e3333 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
+@@ -220,7 +220,7 @@
+ 
+ 			reset: reset-controller@4404 {
+ 				compatible = "amlogic,meson-gx-reset", "amlogic,meson-gxbb-reset";
+-				reg = <0x0 0x04404 0x0 0x20>;
++				reg = <0x0 0x04404 0x0 0x9c>;
+ 				#reset-cells = <1>;
+ 			};
+ 
+-- 
+2.16.1
+

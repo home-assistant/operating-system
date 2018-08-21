@@ -1,0 +1,41 @@
+From 9fcba25adf46f3aeee0393dc9a3d93d1be76b718 Mon Sep 17 00:00:00 2001
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date: Thu, 12 Jan 2017 01:38:26 +0100
+Subject: [PATCH 02/39] ARM64: dts: meson-gxbb: allow child devices on the USB
+ controller
+
+Add the size and adress cells to the USB controllers to allow specifying
+child devices (for example the USB hub on the Odroid-C2 which must be
+taken out of reset to work).
+
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
+index af834cdbba79..7d38d55869c9 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
+@@ -73,6 +73,8 @@
+ 
+ 		usb0: usb@c9000000 {
+ 			compatible = "amlogic,meson-gxbb-usb", "snps,dwc2";
++			#address-cells = <1>;
++			#size-cells = <0>;
+ 			reg = <0x0 0xc9000000 0x0 0x40000>;
+ 			interrupts = <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&clkc CLKID_USB0_DDR_BRIDGE>;
+@@ -85,6 +87,8 @@
+ 
+ 		usb1: usb@c9100000 {
+ 			compatible = "amlogic,meson-gxbb-usb", "snps,dwc2";
++			#address-cells = <1>;
++			#size-cells = <0>;
+ 			reg = <0x0 0xc9100000 0x0 0x40000>;
+ 			interrupts = <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&clkc CLKID_USB1_DDR_BRIDGE>;
+-- 
+2.16.1
+
