@@ -5,11 +5,12 @@ SCRIPT_DIR=${BR2_EXTERNAL_HASSOS_PATH}/scripts
 BOARD_DIR=${2}
 BOOT_DATA=${BINARIES_DIR}/boot
 
+. ${BR2_EXTERNAL_HASSOS_PATH}/meta
+. ${BOARD_DIR}/meta
+
 . ${SCRIPT_DIR}/hdd-image.sh
 . ${SCRIPT_DIR}/name.sh
 . ${SCRIPT_DIR}/ota.sh
-. ${BR2_EXTERNAL_HASSOS_PATH}/info
-. ${BOARD_DIR}/info
 
 # Init boot data
 rm -rf ${BOOT_DATA}

@@ -3,4 +3,5 @@ BOARD_NAME="Open Virtual Appliance"
 CHASSIS=vm
 BOOTLOADER=barebox
 KERNEL_FILE=bzImage
-BOOT_SYS=gpt
+BOOT_SYS=efi
+DISK_SIZE=6

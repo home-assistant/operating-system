@@ -219,7 +219,7 @@ function create_disk_mbr() {
     # Update disk layout
     (
         echo "label: dos"
-        echo "label-id: 0x0d3e0000"
+        echo "label-id: 0x48617373"
         echo "unit: sectors"
         echo "hassos-boot      : start= ${boot_start},      size=  ${boot_size},      type=c, bootable"   #create the boot partition
         echo "hassos-extended  : start= ${extended_start},  size=  ${extended_size},  type=5"             #Make an extended partition
