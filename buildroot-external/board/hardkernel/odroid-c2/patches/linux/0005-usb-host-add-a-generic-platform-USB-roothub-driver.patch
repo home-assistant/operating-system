@@ -1,4 +1,4 @@
-From d17f86f9c990960627fbcb697b120c852ce1e7c4 Mon Sep 17 00:00:00 2001
+From 8dca632003156c7a4f2eb6238b6e299f3df03c55 Mon Sep 17 00:00:00 2001
 From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 Date: Tue, 10 Jan 2017 18:59:43 +0100
 Subject: [PATCH 05/39] usb: host: add a generic platform USB roothub driver
@@ -39,7 +39,7 @@ Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 
 diff --git a/Documentation/devicetree/bindings/usb/usb-roothub.txt b/Documentation/devicetree/bindings/usb/usb-roothub.txt
 new file mode 100644
-index 000000000000..23b24b68d74d
+index 0000000..23b24b6
 --- /dev/null
 +++ b/Documentation/devicetree/bindings/usb/usb-roothub.txt
 @@ -0,0 +1,46 @@
@@ -90,10 +90,10 @@ index 000000000000..23b24b68d74d
 +		};
 +	}
 diff --git a/drivers/usb/host/Kconfig b/drivers/usb/host/Kconfig
-index fa5692dec832..b8b05c786b2a 100644
+index 92b1972..598ca56 100644
 --- a/drivers/usb/host/Kconfig
 +++ b/drivers/usb/host/Kconfig
-@@ -805,6 +805,9 @@ config USB_HCD_SSB
+@@ -797,6 +797,9 @@ config USB_HCD_SSB
  
  	  If unsure, say N.
  
@@ -104,7 +104,7 @@ index fa5692dec832..b8b05c786b2a 100644
  	bool "HCD test mode support"
  	---help---
 diff --git a/drivers/usb/host/Makefile b/drivers/usb/host/Makefile
-index 4ab2689c8952..873ebd9250d3 100644
+index 4ab2689..873ebd9 100644
 --- a/drivers/usb/host/Makefile
 +++ b/drivers/usb/host/Makefile
 @@ -30,6 +30,8 @@ obj-$(CONFIG_USB_WHCI_HCD)	+= whci/
@@ -118,7 +118,7 @@ index 4ab2689c8952..873ebd9250d3 100644
  obj-$(CONFIG_USB_EHCI_HCD_PLATFORM)	+= ehci-platform.o
 diff --git a/drivers/usb/host/platform-roothub.c b/drivers/usb/host/platform-roothub.c
 new file mode 100644
-index 000000000000..84837e42b006
+index 0000000..84837e4
 --- /dev/null
 +++ b/drivers/usb/host/platform-roothub.c
 @@ -0,0 +1,146 @@
@@ -270,7 +270,7 @@ index 000000000000..84837e42b006
 +EXPORT_SYMBOL_GPL(platform_roothub_power_off);
 diff --git a/drivers/usb/host/platform-roothub.h b/drivers/usb/host/platform-roothub.h
 new file mode 100644
-index 000000000000..bde0bf299e3b
+index 0000000..bde0bf2
 --- /dev/null
 +++ b/drivers/usb/host/platform-roothub.h
 @@ -0,0 +1,14 @@
@@ -289,5 +289,5 @@ index 000000000000..bde0bf299e3b
 +
 +#endif /* USB_HOST_PLATFORM_ROOTHUB_H */
 -- 
-2.16.1
+2.7.4
 

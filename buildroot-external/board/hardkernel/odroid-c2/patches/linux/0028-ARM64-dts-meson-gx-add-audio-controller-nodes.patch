@@ -1,4 +1,4 @@
-From b2a5b8f579026710bd7b49230b8d2368e7829c04 Mon Sep 17 00:00:00 2001
+From 7bd8dcbb1f840fe6d4ae6a1f5f2d3708f09110f9 Mon Sep 17 00:00:00 2001
 From: Jerome Brunet <jbrunet@baylibre.com>
 Date: Wed, 20 Sep 2017 17:22:47 +0200
 Subject: [PATCH 28/39] ARM64: dts: meson-gx: add audio controller nodes
@@ -18,7 +18,7 @@ Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
  2 files changed, 45 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/amlogic/meson-gx.dtsi b/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
-index f175db846286..ff27ce00624d 100644
+index f175db8..ff27ce0 100644
 --- a/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
 +++ b/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
 @@ -224,6 +224,28 @@
@@ -51,7 +51,7 @@ index f175db846286..ff27ce00624d 100644
  				compatible = "amlogic,meson-gx-uart", "amlogic,meson-uart";
  				reg = <0x0 0x84c0 0x0 0x14>;
 diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
-index 68ea67aef0dd..9d2fb463d1b4 100644
+index 68ea67a..9d2fb46 100644
 --- a/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
 +++ b/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
 @@ -691,6 +691,29 @@
@@ -85,5 +85,5 @@ index 68ea67aef0dd..9d2fb463d1b4 100644
  	compatible = "amlogic,meson-gxl-saradc", "amlogic,meson-saradc";
  	clocks = <&xtal>,
 -- 
-2.16.1
+2.7.4
 

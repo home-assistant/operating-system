@@ -1,4 +1,4 @@
-From b6160d5b1dbae48dc0563de7b2f27c2b7ad8ac6c Mon Sep 17 00:00:00 2001
+From fc742b3d9f1b79f9e3e695f0e4bfc6a35c7ed7e3 Mon Sep 17 00:00:00 2001
 From: Neil Armstrong <narmstrong@baylibre.com>
 Date: Mon, 16 Oct 2017 15:35:00 +0200
 Subject: [PATCH 16/39] drm/meson: dw_hdmi: Add support for an optional
@@ -14,7 +14,7 @@ Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
  1 file changed, 13 insertions(+)
 
 diff --git a/drivers/gpu/drm/meson/meson_dw_hdmi.c b/drivers/gpu/drm/meson/meson_dw_hdmi.c
-index cef414466f9f..17de3afd98f6 100644
+index cef4144..17de3af 100644
 --- a/drivers/gpu/drm/meson/meson_dw_hdmi.c
 +++ b/drivers/gpu/drm/meson/meson_dw_hdmi.c
 @@ -23,6 +23,7 @@
@@ -52,5 +52,5 @@ index cef414466f9f..17de3afd98f6 100644
  						"hdmitx_apb");
  	if (IS_ERR(meson_dw_hdmi->hdmitx_apb)) {
 -- 
-2.16.1
+2.7.4
 

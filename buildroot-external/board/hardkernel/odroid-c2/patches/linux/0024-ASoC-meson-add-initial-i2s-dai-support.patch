@@ -1,4 +1,4 @@
-From d7b010b3dbc57353663d7b7580fd329c165eafeb Mon Sep 17 00:00:00 2001
+From e273b0687bfb891ca4962dfe96e174371853ae89 Mon Sep 17 00:00:00 2001
 From: Jerome Brunet <jbrunet@baylibre.com>
 Date: Thu, 30 Mar 2017 12:17:27 +0200
 Subject: [PATCH 24/39] ASoC: meson: add initial i2s dai support
@@ -17,7 +17,7 @@ Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
  create mode 100644 sound/soc/meson/i2s-dai.c
 
 diff --git a/sound/soc/meson/Kconfig b/sound/soc/meson/Kconfig
-index ad31a1152b60..604c9e2ff7a0 100644
+index ad31a11..604c9e2 100644
 --- a/sound/soc/meson/Kconfig
 +++ b/sound/soc/meson/Kconfig
 @@ -12,5 +12,5 @@ config SND_SOC_MESON_I2S
@@ -28,7 +28,7 @@ index ad31a1152b60..604c9e2ff7a0 100644
 +	  Say Y or M if you want to add support for i2s driver for Amlogic
  	  Meson SoCs.
 diff --git a/sound/soc/meson/Makefile b/sound/soc/meson/Makefile
-index 273f27590773..ea06ddee39d1 100644
+index 273f275..ea06dde 100644
 --- a/sound/soc/meson/Makefile
 +++ b/sound/soc/meson/Makefile
 @@ -1,5 +1,7 @@
@@ -41,7 +41,7 @@ index 273f27590773..ea06ddee39d1 100644
 +obj-$(CONFIG_SND_SOC_MESON_I2S)		+= snd-soc-meson-i2s-dai.o
 diff --git a/sound/soc/meson/i2s-dai.c b/sound/soc/meson/i2s-dai.c
 new file mode 100644
-index 000000000000..1008af8d3972
+index 0000000..1008af8
 --- /dev/null
 +++ b/sound/soc/meson/i2s-dai.c
 @@ -0,0 +1,465 @@
@@ -511,5 +511,5 @@ index 000000000000..1008af8d3972
 +MODULE_AUTHOR("Jerome Brunet <jbrunet@baylibre.com>");
 +MODULE_LICENSE("GPL v2");
 -- 
-2.16.1
+2.7.4
 

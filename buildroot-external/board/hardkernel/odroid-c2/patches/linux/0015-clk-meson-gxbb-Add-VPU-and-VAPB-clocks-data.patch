@@ -1,4 +1,4 @@
-From afe130e27bfeeb1ee66dfb55a10e5734bb9f67ae Mon Sep 17 00:00:00 2001
+From a3b8b7bfd775fa521425c72856b4394fb6fec518 Mon Sep 17 00:00:00 2001
 From: Neil Armstrong <narmstrong@baylibre.com>
 Date: Fri, 13 Oct 2017 14:38:37 +0200
 Subject: [PATCH 15/39] clk: meson: gxbb: Add VPU and VAPB clocks data
@@ -15,7 +15,7 @@ Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
  1 file changed, 292 insertions(+)
 
 diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-index b2d1e8ed7152..a71374464c92 100644
+index 92168348..86cb5af 100644
 --- a/drivers/clk/meson/gxbb.c
 +++ b/drivers/clk/meson/gxbb.c
 @@ -1131,6 +1131,253 @@ static struct clk_gate gxbb_sd_emmc_c_clk0 = {
@@ -353,5 +353,5 @@ index b2d1e8ed7152..a71374464c92 100644
  
  static struct meson_clk_audio_divider *const gxbb_audio_dividers[] = {
 -- 
-2.16.1
+2.7.4
 

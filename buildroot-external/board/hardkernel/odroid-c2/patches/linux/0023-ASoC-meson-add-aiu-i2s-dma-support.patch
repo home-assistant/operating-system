@@ -1,4 +1,4 @@
-From c3f39e1e99cf8d8f0e9d793272eaac4118099e99 Mon Sep 17 00:00:00 2001
+From 03285555d8cbb3eb1f4991b758e5804a3c19b4ce Mon Sep 17 00:00:00 2001
 From: Jerome Brunet <jbrunet@baylibre.com>
 Date: Thu, 30 Mar 2017 12:14:40 +0200
 Subject: [PATCH 23/39] ASoC: meson: add aiu i2s dma support
@@ -15,7 +15,7 @@ Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
  create mode 100644 sound/soc/meson/aiu-i2s-dma.c
 
 diff --git a/sound/soc/meson/Kconfig b/sound/soc/meson/Kconfig
-index 216c850c8e86..ad31a1152b60 100644
+index 216c850..ad31a11 100644
 --- a/sound/soc/meson/Kconfig
 +++ b/sound/soc/meson/Kconfig
 @@ -7,3 +7,10 @@ menuconfig SND_SOC_MESON
@@ -30,7 +30,7 @@ index 216c850c8e86..ad31a1152b60 100644
 +	  Say Y or M if you want to add support for i2s dma driver for Amlogic
 +	  Meson SoCs.
 diff --git a/sound/soc/meson/Makefile b/sound/soc/meson/Makefile
-index 22028abb5624..273f27590773 100644
+index 22028ab..273f275 100644
 --- a/sound/soc/meson/Makefile
 +++ b/sound/soc/meson/Makefile
 @@ -1,3 +1,5 @@
@@ -41,7 +41,7 @@ index 22028abb5624..273f27590773 100644
 +obj-$(CONFIG_SND_SOC_MESON_I2S)		+= snd-soc-meson-aiu-i2s-dma.o
 diff --git a/sound/soc/meson/aiu-i2s-dma.c b/sound/soc/meson/aiu-i2s-dma.c
 new file mode 100644
-index 000000000000..bab950d67f5e
+index 0000000..bab950d
 --- /dev/null
 +++ b/sound/soc/meson/aiu-i2s-dma.c
 @@ -0,0 +1,367 @@
@@ -413,5 +413,5 @@ index 000000000000..bab950d67f5e
 +MODULE_AUTHOR("Jerome Brunet <jbrunet@baylibre.com>");
 +MODULE_LICENSE("GPL v2");
 -- 
-2.16.1
+2.7.4
 

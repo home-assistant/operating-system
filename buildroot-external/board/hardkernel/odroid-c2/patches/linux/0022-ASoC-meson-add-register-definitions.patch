@@ -1,4 +1,4 @@
-From fe9c8e25f80e62fe66f3f0129d25a62c862e743d Mon Sep 17 00:00:00 2001
+From 71e89b9513f114d45fd43233039a73f678702815 Mon Sep 17 00:00:00 2001
 From: Jerome Brunet <jbrunet@baylibre.com>
 Date: Thu, 30 Mar 2017 12:00:10 +0200
 Subject: [PATCH 22/39] ASoC: meson: add register definitions
@@ -16,7 +16,7 @@ Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 
 diff --git a/sound/soc/meson/aiu-regs.h b/sound/soc/meson/aiu-regs.h
 new file mode 100644
-index 000000000000..67391e64fe1c
+index 0000000..67391e6
 --- /dev/null
 +++ b/sound/soc/meson/aiu-regs.h
 @@ -0,0 +1,182 @@
@@ -204,7 +204,7 @@ index 000000000000..67391e64fe1c
 +#endif /* _AIU_REGS_H_ */
 diff --git a/sound/soc/meson/audin-regs.h b/sound/soc/meson/audin-regs.h
 new file mode 100644
-index 000000000000..f224610e80e7
+index 0000000..f224610
 --- /dev/null
 +++ b/sound/soc/meson/audin-regs.h
 @@ -0,0 +1,148 @@
@@ -357,5 +357,5 @@ index 000000000000..f224610e80e7
 +
 +#endif /* _AUDIN_REGS_H_ */
 -- 
-2.16.1
+2.7.4
 

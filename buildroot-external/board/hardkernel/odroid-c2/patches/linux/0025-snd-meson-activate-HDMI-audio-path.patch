@@ -1,4 +1,4 @@
-From e3b90db66079fff917a68608a1e1f21a9f524d5f Mon Sep 17 00:00:00 2001
+From f40a0d725ebdad433383010d1c5ef92eb99e41a7 Mon Sep 17 00:00:00 2001
 From: Jerome Brunet <jbrunet@baylibre.com>
 Date: Fri, 7 Jul 2017 17:39:21 +0200
 Subject: [PATCH 25/39] snd: meson: activate HDMI audio path
@@ -9,7 +9,7 @@ Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
  1 file changed, 22 insertions(+)
 
 diff --git a/sound/soc/meson/i2s-dai.c b/sound/soc/meson/i2s-dai.c
-index 1008af8d3972..63fe098ecf82 100644
+index 1008af8..63fe098 100644
 --- a/sound/soc/meson/i2s-dai.c
 +++ b/sound/soc/meson/i2s-dai.c
 @@ -56,8 +56,19 @@ struct meson_i2s_dai {
@@ -51,5 +51,5 @@ index 1008af8d3972..63fe098ecf82 100644
  }
  
 -- 
-2.16.1
+2.7.4
 

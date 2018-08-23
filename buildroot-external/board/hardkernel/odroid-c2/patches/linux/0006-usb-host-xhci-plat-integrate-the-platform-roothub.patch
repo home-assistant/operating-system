@@ -1,4 +1,4 @@
-From 42cde289520dd631f37cf23b86c3aa3d2c9a92e9 Mon Sep 17 00:00:00 2001
+From 55ba20ef5868e2a1fc3cefe264539affe55ef6b7 Mon Sep 17 00:00:00 2001
 From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 Date: Wed, 11 Jan 2017 11:34:59 +0100
 Subject: [PATCH 06/39] usb: host: xhci: plat: integrate the platform-roothub
@@ -23,10 +23,10 @@ Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
  4 files changed, 36 insertions(+), 1 deletion(-)
 
 diff --git a/Documentation/devicetree/bindings/usb/usb-xhci.txt b/Documentation/devicetree/bindings/usb/usb-xhci.txt
-index 2d80b60eeabe..31b4f681e9ca 100644
+index 7a69b8b..d0d8a67c 100644
 --- a/Documentation/devicetree/bindings/usb/usb-xhci.txt
 +++ b/Documentation/devicetree/bindings/usb/usb-xhci.txt
-@@ -29,6 +29,13 @@ Optional properties:
+@@ -30,6 +30,13 @@ Optional properties:
    - usb3-lpm-capable: determines if platform is USB3 LPM capable
    - quirk-broken-port-ped: set if the controller has broken port disable mechanism
  
@@ -41,7 +41,7 @@ index 2d80b60eeabe..31b4f681e9ca 100644
  	usb@f0931000 {
  		compatible = "generic-xhci";
 diff --git a/drivers/usb/host/Kconfig b/drivers/usb/host/Kconfig
-index b8b05c786b2a..3bdc49e89c0f 100644
+index 598ca56..8c3b11f 100644
 --- a/drivers/usb/host/Kconfig
 +++ b/drivers/usb/host/Kconfig
 @@ -36,6 +36,7 @@ config USB_XHCI_PCI
@@ -53,7 +53,7 @@ index b8b05c786b2a..3bdc49e89c0f 100644
  	  Adds an xHCI host driver for a generic platform device, which
  	  provides a memory space and an irq.
 diff --git a/drivers/usb/host/xhci-plat.c b/drivers/usb/host/xhci-plat.c
-index 1cb6eaef4ae1..a80d5853ebfe 100644
+index 1cb6eae..a80d585 100644
 --- a/drivers/usb/host/xhci-plat.c
 +++ b/drivers/usb/host/xhci-plat.c
 @@ -281,10 +281,20 @@ static int xhci_plat_probe(struct platform_device *pdev)
@@ -121,7 +121,7 @@ index 1cb6eaef4ae1..a80d5853ebfe 100644
  	if (ret)
  		return ret;
 diff --git a/drivers/usb/host/xhci.h b/drivers/usb/host/xhci.h
-index 2b48aa4f6b76..f340aa0b8d6a 100644
+index 2eaf6e1..552834c 100644
 --- a/drivers/usb/host/xhci.h
 +++ b/drivers/usb/host/xhci.h
 @@ -34,6 +34,8 @@
@@ -133,7 +133,7 @@ index 2b48aa4f6b76..f340aa0b8d6a 100644
  /* xHCI PCI Configuration Registers */
  #define XHCI_SBRN_OFFSET	(0x60)
  
-@@ -1734,6 +1736,7 @@ struct xhci_hcd {
+@@ -1735,6 +1737,7 @@ struct xhci_hcd {
  	int		msix_count;
  	/* optional clock */
  	struct clk		*clk;
@@ -142,5 +142,5 @@ index 2b48aa4f6b76..f340aa0b8d6a 100644
  	struct xhci_device_context_array *dcbaa;
  	struct xhci_ring	*cmd_ring;
 -- 
-2.16.1
+2.7.4
 
