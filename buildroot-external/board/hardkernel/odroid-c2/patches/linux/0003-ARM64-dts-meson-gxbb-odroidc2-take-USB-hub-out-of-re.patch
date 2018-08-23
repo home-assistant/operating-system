@@ -1,0 +1,34 @@
+From 564bc89139a6bf0833cef64993dfe3fe2784c6a8 Mon Sep 17 00:00:00 2001
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date: Thu, 12 Jan 2017 01:39:20 +0100
+Subject: [PATCH 03/39] ARM64: dts: meson-gxbb-odroidc2: take USB hub out of
+ reset
+
+This takes the USB hub out of reset, otherwise the hub is not working.
+
+Fixes: 5a0803bd5ae ("ARM64: dts: meson-gxbb-odroidc2: Enable USB Nodes")
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts b/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
+index 08b7bb7..c3a7b7f 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
+@@ -310,4 +310,11 @@
+ 
+ &usb1 {
+ 	status = "okay";
++
++	hub@1 {
++		compatible = "usb5e3,610";
++		reg = <1>;
++		reset-gpios = <&gpio GPIOAO_4 GPIO_ACTIVE_LOW>;
++		reset-duration-us = <3000>;
++	};
+ };
+-- 
+2.7.4
+
