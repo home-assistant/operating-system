@@ -1,4 +1,4 @@
-From 272e257562d8b2d2da37ac2f980ca7eb84709b99 Mon Sep 17 00:00:00 2001
+From 547f8ce14bfc3d315dc8b64d0e2eff0c7be897d2 Mon Sep 17 00:00:00 2001
 From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 Date: Sun, 20 Nov 2016 00:23:52 +0100
 Subject: [PATCH 07/39] ARM64: dts: meson-gxl: add USB host support
@@ -25,7 +25,7 @@ Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
  1 file changed, 59 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
-index fb8d76a17bc5..68ea67aef0dd 100644
+index fb8d76a..68ea67a 100644
 --- a/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
 +++ b/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
 @@ -57,6 +57,65 @@
@@ -95,5 +95,5 @@ index fb8d76a17bc5..68ea67aef0dd 100644
  
  &ethmac {
 -- 
-2.16.1
+2.7.4
 

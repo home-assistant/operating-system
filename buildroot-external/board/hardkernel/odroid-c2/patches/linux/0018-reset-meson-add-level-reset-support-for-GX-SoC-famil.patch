@@ -1,4 +1,4 @@
-From 9b0cb5399f5a95a194a9fd1a9c3d90e2fb885244 Mon Sep 17 00:00:00 2001
+From 0689a4eaecae2831fe2cb614e102bb4ef43484a4 Mon Sep 17 00:00:00 2001
 From: Neil Armstrong <narmstrong@baylibre.com>
 Date: Fri, 13 Oct 2017 14:05:01 +0200
 Subject: [PATCH 18/39] reset: meson: add level reset support for GX SoC family
@@ -16,7 +16,7 @@ Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
  1 file changed, 58 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/reset/reset-meson.c b/drivers/reset/reset-meson.c
-index a8b915eb8b58..f3b9d6989267 100644
+index a8b915e..f3b9d69 100644
 --- a/drivers/reset/reset-meson.c
 +++ b/drivers/reset/reset-meson.c
 @@ -62,13 +62,16 @@
@@ -128,5 +128,5 @@ index a8b915eb8b58..f3b9d6989267 100644
  
  	return devm_reset_controller_register(&pdev->dev, &data->rcdev);
 -- 
-2.16.1
+2.7.4
 

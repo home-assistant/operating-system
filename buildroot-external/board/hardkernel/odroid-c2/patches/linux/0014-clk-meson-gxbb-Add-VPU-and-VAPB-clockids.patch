@@ -1,4 +1,4 @@
-From ff5628efddbf8a9e80c77dee968d4ce920d08681 Mon Sep 17 00:00:00 2001
+From 9bc414d9e18f8c9d39be44165b4926e2b2cdc1d9 Mon Sep 17 00:00:00 2001
 From: Neil Armstrong <narmstrong@baylibre.com>
 Date: Mon, 16 Oct 2017 17:29:33 +0200
 Subject: [PATCH 14/39] clk: meson: gxbb: Add VPU and VAPB clockids
@@ -12,7 +12,7 @@ Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
  2 files changed, 16 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/clk/meson/gxbb.h b/drivers/clk/meson/gxbb.h
-index 5b1d4b374d1c..aee6fbba2004 100644
+index 5b1d4b3..aee6fbb 100644
 --- a/drivers/clk/meson/gxbb.h
 +++ b/drivers/clk/meson/gxbb.h
 @@ -190,8 +190,12 @@
@@ -30,7 +30,7 @@ index 5b1d4b374d1c..aee6fbba2004 100644
  /* include the CLKIDs that have been made part of the DT binding */
  #include <dt-bindings/clock/gxbb-clkc.h>
 diff --git a/include/dt-bindings/clock/gxbb-clkc.h b/include/dt-bindings/clock/gxbb-clkc.h
-index 8c92528aa48a..8ba99a5e3fd3 100644
+index 8c92528..8ba99a5 100644
 --- a/include/dt-bindings/clock/gxbb-clkc.h
 +++ b/include/dt-bindings/clock/gxbb-clkc.h
 @@ -114,5 +114,16 @@
@@ -51,5 +51,5 @@ index 8c92528aa48a..8ba99a5e3fd3 100644
  
  #endif /* __GXBB_CLKC_H */
 -- 
-2.16.1
+2.7.4
 

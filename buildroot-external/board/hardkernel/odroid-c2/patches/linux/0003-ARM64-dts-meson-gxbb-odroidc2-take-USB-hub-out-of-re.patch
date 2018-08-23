@@ -1,4 +1,4 @@
-From f218b0bab1ee8ab25c24a42c342bf569f6eb2d72 Mon Sep 17 00:00:00 2001
+From 564bc89139a6bf0833cef64993dfe3fe2784c6a8 Mon Sep 17 00:00:00 2001
 From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 Date: Thu, 12 Jan 2017 01:39:20 +0100
 Subject: [PATCH 03/39] ARM64: dts: meson-gxbb-odroidc2: take USB hub out of
@@ -14,7 +14,7 @@ Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
  1 file changed, 7 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts b/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
-index 08b7bb7f5b74..c3a7b7f62da2 100644
+index 08b7bb7..c3a7b7f 100644
 --- a/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
 +++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
 @@ -310,4 +310,11 @@
@@ -30,5 +30,5 @@ index 08b7bb7f5b74..c3a7b7f62da2 100644
 +	};
  };
 -- 
-2.16.1
+2.7.4
 

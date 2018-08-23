@@ -1,4 +1,4 @@
-From 15676d9349ad1b295b0e3c6b97b49b98977dcf67 Mon Sep 17 00:00:00 2001
+From 61ceaf782220a596ac845483d00d50752f7c6e14 Mon Sep 17 00:00:00 2001
 From: Neil Armstrong <narmstrong@baylibre.com>
 Date: Thu, 15 Feb 2018 10:38:47 +0100
 Subject: [PATCH 37/39] drm/meson: fix vsync buffer update
@@ -11,7 +11,7 @@ Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
  3 files changed, 12 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/gpu/drm/meson/meson_crtc.c b/drivers/gpu/drm/meson/meson_crtc.c
-index 5155f0179b61..05520202c967 100644
+index 5155f01..0552020 100644
 --- a/drivers/gpu/drm/meson/meson_crtc.c
 +++ b/drivers/gpu/drm/meson/meson_crtc.c
 @@ -36,6 +36,7 @@
@@ -35,7 +35,7 @@ index 5155f0179b61..05520202c967 100644
  		writel_bits_relaxed(VPP_OSD1_POSTBLEND, VPP_OSD1_POSTBLEND,
  				    priv->io_base + _REG(VPP_MISC));
 diff --git a/drivers/gpu/drm/meson/meson_drv.h b/drivers/gpu/drm/meson/meson_drv.h
-index 5e8b392b9d1f..8450d6ac8c9b 100644
+index 5e8b392..8450d6ac 100644
 --- a/drivers/gpu/drm/meson/meson_drv.h
 +++ b/drivers/gpu/drm/meson/meson_drv.h
 @@ -43,6 +43,9 @@ struct meson_drm {
@@ -49,7 +49,7 @@ index 5e8b392b9d1f..8450d6ac8c9b 100644
  
  	struct {
 diff --git a/drivers/gpu/drm/meson/meson_plane.c b/drivers/gpu/drm/meson/meson_plane.c
-index 17e96fa47868..0b6011b8d632 100644
+index 17e96fa..0b6011b 100644
 --- a/drivers/gpu/drm/meson/meson_plane.c
 +++ b/drivers/gpu/drm/meson/meson_plane.c
 @@ -164,10 +164,9 @@ static void meson_plane_atomic_update(struct drm_plane *plane,
@@ -67,5 +67,5 @@ index 17e96fa47868..0b6011b8d632 100644
  	spin_unlock_irqrestore(&priv->drm->event_lock, flags);
  }
 -- 
-2.16.1
+2.7.4
 

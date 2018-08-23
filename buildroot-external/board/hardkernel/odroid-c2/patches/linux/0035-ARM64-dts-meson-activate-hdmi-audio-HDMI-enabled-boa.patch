@@ -1,4 +1,4 @@
-From 1f0b2f23136a50e6516f1c3eff2d22ab74ac6af8 Mon Sep 17 00:00:00 2001
+From bc1416cbeb6fb588e8573c9904b691259d173093 Mon Sep 17 00:00:00 2001
 From: Jerome Brunet <jbrunet@baylibre.com>
 Date: Wed, 20 Sep 2017 18:10:08 +0200
 Subject: [PATCH 35/39] ARM64: dts: meson: activate hdmi audio HDMI enabled
@@ -27,7 +27,7 @@ Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
  11 files changed, 408 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/amlogic/meson-gx-p23x-q20x.dtsi b/arch/arm64/boot/dts/amlogic/meson-gx-p23x-q20x.dtsi
-index 979abaf1421b..91b7ac89228e 100644
+index 979abaf..91b7ac8 100644
 --- a/arch/arm64/boot/dts/amlogic/meson-gx-p23x-q20x.dtsi
 +++ b/arch/arm64/boot/dts/amlogic/meson-gx-p23x-q20x.dtsi
 @@ -130,6 +130,31 @@
@@ -82,7 +82,7 @@ index 979abaf1421b..91b7ac89228e 100644
  	cvbs_vdac_out: endpoint {
  		remote-endpoint = <&cvbs_connector_in>;
 diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-nexbox-a95x.dts b/arch/arm64/boot/dts/amlogic/meson-gxbb-nexbox-a95x.dts
-index 9a773239dcef..2357a3872d02 100644
+index 9a77323..2357a38 100644
 --- a/arch/arm64/boot/dts/amlogic/meson-gxbb-nexbox-a95x.dts
 +++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-nexbox-a95x.dts
 @@ -143,6 +143,31 @@
@@ -138,7 +138,7 @@ index 9a773239dcef..2357a3872d02 100644
  	status = "okay";
  	pinctrl-0 = <&eth_rmii_pins>;
 diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts b/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
-index dc3d1badf9ce..4e0b3c7ec081 100644
+index dc3d1ba..4e0b3c7 100644
 --- a/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
 +++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
 @@ -146,6 +146,31 @@
@@ -193,7 +193,7 @@ index dc3d1badf9ce..4e0b3c7ec081 100644
  	status = "okay";
  	pinctrl-0 = <&eth_rgmii_pins>;
 diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-p20x.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxbb-p20x.dtsi
-index 932158a778ef..c9d48709fa82 100644
+index 932158a..c9d4870 100644
 --- a/arch/arm64/boot/dts/amlogic/meson-gxbb-p20x.dtsi
 +++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-p20x.dtsi
 @@ -149,6 +149,31 @@
@@ -248,7 +248,7 @@ index 932158a778ef..c9d48709fa82 100644
  	cvbs_vdac_out: endpoint {
  		remote-endpoint = <&cvbs_connector_in>;
 diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-wetek-play2.dts b/arch/arm64/boot/dts/amlogic/meson-gxbb-wetek-play2.dts
-index f7144fd5e03f..58a0f5159d7f 100644
+index f7144fd..58a0f51 100644
 --- a/arch/arm64/boot/dts/amlogic/meson-gxbb-wetek-play2.dts
 +++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-wetek-play2.dts
 @@ -106,6 +106,31 @@
@@ -303,7 +303,7 @@ index f7144fd5e03f..58a0f5159d7f 100644
  	cvbs_vdac_out: endpoint {
  		remote-endpoint = <&cvbs_connector_in>;
 diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts
-index f7b37de01e7a..ce92ca587b07 100644
+index f7b37de..ce92ca5 100644
 --- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts
 +++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts
 @@ -65,6 +65,31 @@
@@ -358,7 +358,7 @@ index f7b37de01e7a..ce92ca587b07 100644
  	status = "okay";
  	pinctrl-0 = <&hdmi_hpd_pins>, <&hdmi_i2c_pins>;
 diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts
-index 0c4ed4eec11a..29d8e01668e2 100644
+index 0c4ed4e..29d8e01 100644
 --- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts
 +++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts
 @@ -83,6 +83,31 @@
@@ -413,7 +413,7 @@ index 0c4ed4eec11a..29d8e01668e2 100644
  	cvbs_vdac_out: endpoint {
  		remote-endpoint = <&cvbs_connector_in>;
 diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-nexbox-a95x.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-nexbox-a95x.dts
-index 0fdebcc698a6..dcb571adba01 100644
+index 0fdebcc..dcb571a 100644
 --- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-nexbox-a95x.dts
 +++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-nexbox-a95x.dts
 @@ -138,6 +138,31 @@
@@ -468,7 +468,7 @@ index 0fdebcc698a6..dcb571adba01 100644
  	cvbs_vdac_out: endpoint {
  		remote-endpoint = <&cvbs_connector_in>;
 diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dts
-index 4f6b1c97df44..f23f1482e3a9 100644
+index 4f6b1c9..f23f148 100644
 --- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dts
 +++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dts
 @@ -69,6 +69,31 @@
@@ -523,7 +523,7 @@ index 4f6b1c97df44..f23f1482e3a9 100644
  	cvbs_vdac_out: endpoint {
  		remote-endpoint = <&cvbs_connector_in>;
 diff --git a/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts b/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts
-index 4537a81fb9de..aed2a54fb1e9 100644
+index 4537a81..aed2a54 100644
 --- a/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts
 +++ b/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts
 @@ -88,6 +88,31 @@
@@ -578,7 +578,7 @@ index 4537a81fb9de..aed2a54fb1e9 100644
  	cooling-min-level = <0>;
  	cooling-max-level = <6>;
 diff --git a/arch/arm64/boot/dts/amlogic/meson-gxm-nexbox-a1.dts b/arch/arm64/boot/dts/amlogic/meson-gxm-nexbox-a1.dts
-index e70b5e29e5fe..8444f7983675 100644
+index e70b5e2..8444f79 100644
 --- a/arch/arm64/boot/dts/amlogic/meson-gxm-nexbox-a1.dts
 +++ b/arch/arm64/boot/dts/amlogic/meson-gxm-nexbox-a1.dts
 @@ -111,6 +111,31 @@
@@ -633,5 +633,5 @@ index e70b5e29e5fe..8444f7983675 100644
  	cvbs_vdac_out: endpoint {
  		remote-endpoint = <&cvbs_connector_in>;
 -- 
-2.16.1
+2.7.4
 

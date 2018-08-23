@@ -1,4 +1,4 @@
-From 0c0683d55753b87953a6229e8d556c4f1b1887ad Mon Sep 17 00:00:00 2001
+From f9b447452943415a12055c0fca279281cd28d923 Mon Sep 17 00:00:00 2001
 From: Jerome Brunet <jbrunet@baylibre.com>
 Date: Thu, 30 Mar 2017 11:49:55 +0200
 Subject: [PATCH 21/39] ASoC: meson: add meson audio core driver
@@ -30,7 +30,7 @@ Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
  create mode 100644 sound/soc/meson/audio-core.h
 
 diff --git a/sound/soc/Kconfig b/sound/soc/Kconfig
-index c0abad2067e1..7db316faa05f 100644
+index c0abad2..7db316f 100644
 --- a/sound/soc/Kconfig
 +++ b/sound/soc/Kconfig
 @@ -55,6 +55,7 @@ source "sound/soc/kirkwood/Kconfig"
@@ -42,7 +42,7 @@ index c0abad2067e1..7db316faa05f 100644
  source "sound/soc/pxa/Kconfig"
  source "sound/soc/qcom/Kconfig"
 diff --git a/sound/soc/Makefile b/sound/soc/Makefile
-index bf8c1e2ce0bf..d4c0a511a32f 100644
+index bf8c1e2..d4c0a51 100644
 --- a/sound/soc/Makefile
 +++ b/sound/soc/Makefile
 @@ -33,6 +33,7 @@ obj-$(CONFIG_SND_SOC)	+= jz4740/
@@ -55,7 +55,7 @@ index bf8c1e2ce0bf..d4c0a511a32f 100644
  obj-$(CONFIG_SND_SOC)	+= omap/
 diff --git a/sound/soc/meson/Kconfig b/sound/soc/meson/Kconfig
 new file mode 100644
-index 000000000000..216c850c8e86
+index 0000000..216c850
 --- /dev/null
 +++ b/sound/soc/meson/Kconfig
 @@ -0,0 +1,9 @@
@@ -70,7 +70,7 @@ index 000000000000..216c850c8e86
 +	  select the audio interfaces to support below.
 diff --git a/sound/soc/meson/Makefile b/sound/soc/meson/Makefile
 new file mode 100644
-index 000000000000..22028abb5624
+index 0000000..22028ab
 --- /dev/null
 +++ b/sound/soc/meson/Makefile
 @@ -0,0 +1,3 @@
@@ -79,7 +79,7 @@ index 000000000000..22028abb5624
 +obj-$(CONFIG_SND_SOC_MESON)		+= snd-soc-meson-audio-core.o
 diff --git a/sound/soc/meson/audio-core.c b/sound/soc/meson/audio-core.c
 new file mode 100644
-index 000000000000..99993ec4a5cc
+index 0000000..99993ec
 --- /dev/null
 +++ b/sound/soc/meson/audio-core.c
 @@ -0,0 +1,190 @@
@@ -275,7 +275,7 @@ index 000000000000..99993ec4a5cc
 +MODULE_LICENSE("GPL v2");
 diff --git a/sound/soc/meson/audio-core.h b/sound/soc/meson/audio-core.h
 new file mode 100644
-index 000000000000..6e7a24cdc4a9
+index 0000000..6e7a24c
 --- /dev/null
 +++ b/sound/soc/meson/audio-core.h
 @@ -0,0 +1,28 @@
@@ -308,5 +308,5 @@ index 000000000000..6e7a24cdc4a9
 +
 +#endif /* _MESON_AUDIO_CORE_H_ */
 -- 
-2.16.1
+2.7.4
 

@@ -1,4 +1,4 @@
-From 83e2a4c8c1de8741e10c89f360910b547e943561 Mon Sep 17 00:00:00 2001
+From 563fa3aaad2752079c8ee05819bf9923370f39aa Mon Sep 17 00:00:00 2001
 From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 Date: Sat, 26 Nov 2016 15:56:32 +0100
 Subject: [PATCH 04/39] phy: meson: add USB3 PHY support for Meson GXL
@@ -20,7 +20,7 @@ Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
  create mode 100644 drivers/phy/amlogic/phy-meson-gxl-usb3.c
 
 diff --git a/drivers/phy/amlogic/Kconfig b/drivers/phy/amlogic/Kconfig
-index cb8f4501652b..5d11a3e698d4 100644
+index cb8f450..5d11a3e 100644
 --- a/drivers/phy/amlogic/Kconfig
 +++ b/drivers/phy/amlogic/Kconfig
 @@ -13,6 +13,19 @@ config PHY_MESON8B_USB2
@@ -44,7 +44,7 @@ index cb8f4501652b..5d11a3e698d4 100644
  	tristate "Meson GXL and GXM USB2 PHY drivers"
  	default ARCH_MESON
 diff --git a/drivers/phy/amlogic/Makefile b/drivers/phy/amlogic/Makefile
-index cfdc98715c30..4fd8848c194d 100644
+index cfdc987..4fd8848 100644
 --- a/drivers/phy/amlogic/Makefile
 +++ b/drivers/phy/amlogic/Makefile
 @@ -1,2 +1,3 @@
@@ -53,7 +53,7 @@ index cfdc98715c30..4fd8848c194d 100644
 +obj-$(CONFIG_PHY_MESON_GXL_USB3)	+= phy-meson-gxl-usb3.o
 diff --git a/drivers/phy/amlogic/phy-meson-gxl-usb3.c b/drivers/phy/amlogic/phy-meson-gxl-usb3.c
 new file mode 100644
-index 000000000000..9af5222fe754
+index 0000000..9af5222
 --- /dev/null
 +++ b/drivers/phy/amlogic/phy-meson-gxl-usb3.c
 @@ -0,0 +1,198 @@
@@ -256,5 +256,5 @@ index 000000000000..9af5222fe754
 +MODULE_DESCRIPTION("Meson GXL USB3 PHY driver");
 +MODULE_LICENSE("GPL");
 -- 
-2.16.1
+2.7.4
 

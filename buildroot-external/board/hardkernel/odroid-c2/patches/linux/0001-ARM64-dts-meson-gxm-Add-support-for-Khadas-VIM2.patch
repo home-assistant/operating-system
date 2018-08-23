@@ -1,4 +1,4 @@
-From c52264498971d43425ea4ce819b45fe3421aca73 Mon Sep 17 00:00:00 2001
+From f802405c9aba2fb198d55fc010e7336f155c2713 Mon Sep 17 00:00:00 2001
 From: Neil Armstrong <narmstrong@baylibre.com>
 Date: Wed, 2 Aug 2017 16:11:23 +0200
 Subject: [PATCH 01/39] ARM64: dts: meson-gxm: Add support for Khadas VIM2
@@ -22,7 +22,7 @@ Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
  create mode 100644 arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts
 
 diff --git a/Documentation/devicetree/bindings/arm/amlogic.txt b/Documentation/devicetree/bindings/arm/amlogic.txt
-index 4e4bc0bae597..a44599739746 100644
+index 4e4bc0b..a445997 100644
 --- a/Documentation/devicetree/bindings/arm/amlogic.txt
 +++ b/Documentation/devicetree/bindings/arm/amlogic.txt
 @@ -71,6 +71,7 @@ Board compatible values (alphabetically, grouped by SoC):
@@ -34,7 +34,7 @@ index 4e4bc0bae597..a44599739746 100644
    - "nexbox,a1" (Meson gxm s912)
  
 diff --git a/arch/arm64/boot/dts/amlogic/Makefile b/arch/arm64/boot/dts/amlogic/Makefile
-index 543416b8dff5..747bcc3834b3 100644
+index 543416b..747bcc3 100644
 --- a/arch/arm64/boot/dts/amlogic/Makefile
 +++ b/arch/arm64/boot/dts/amlogic/Makefile
 @@ -16,6 +16,7 @@ dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905x-nexbox-a95x.dtb
@@ -47,7 +47,7 @@ index 543416b8dff5..747bcc3834b3 100644
  dtb-$(CONFIG_ARCH_MESON) += meson-gxm-q201.dtb
 diff --git a/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts b/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts
 new file mode 100644
-index 000000000000..32c138ec0e58
+index 0000000..32c138e
 --- /dev/null
 +++ b/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts
 @@ -0,0 +1,399 @@
@@ -451,5 +451,5 @@ index 000000000000..32c138ec0e58
 +	vref-supply = <&vddio_ao18>;
 +};
 -- 
-2.16.1
+2.7.4
 

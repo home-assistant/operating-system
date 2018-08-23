@@ -1,4 +1,4 @@
-From c07db1483d8316018d64d64bdf34a8736251fb2e Mon Sep 17 00:00:00 2001
+From 253dbcb48f94e172873878262d19338bcc9aa108 Mon Sep 17 00:00:00 2001
 From: Neil Armstrong <narmstrong@baylibre.com>
 Date: Mon, 16 Oct 2017 15:34:21 +0200
 Subject: [PATCH 17/39] drm/meson: Add missing VPU init
@@ -12,7 +12,7 @@ Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
  2 files changed, 13 insertions(+)
 
 diff --git a/drivers/gpu/drm/meson/meson_drv.c b/drivers/gpu/drm/meson/meson_drv.c
-index 7742c7d81ed8..19a0d8df412c 100644
+index 7742c7d..19a0d8d 100644
 --- a/drivers/gpu/drm/meson/meson_drv.c
 +++ b/drivers/gpu/drm/meson/meson_drv.c
 @@ -150,6 +150,14 @@ static struct regmap_config meson_regmap_config = {
@@ -39,7 +39,7 @@ index 7742c7d81ed8..19a0d8df412c 100644
  	meson_vpp_init(priv);
  	meson_viu_init(priv);
 diff --git a/drivers/gpu/drm/meson/meson_registers.h b/drivers/gpu/drm/meson/meson_registers.h
-index 284738196af9..bca87143e548 100644
+index 2847381..bca8714 100644
 --- a/drivers/gpu/drm/meson/meson_registers.h
 +++ b/drivers/gpu/drm/meson/meson_registers.h
 @@ -1363,6 +1363,10 @@
@@ -54,5 +54,5 @@ index 284738196af9..bca87143e548 100644
  /* osd super scale */
  #define OSDSR_HV_SIZEIN 0x3130
 -- 
-2.16.1
+2.7.4
 

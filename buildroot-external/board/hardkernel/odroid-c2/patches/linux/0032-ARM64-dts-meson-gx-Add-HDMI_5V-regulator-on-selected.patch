@@ -1,4 +1,4 @@
-From df3fa23c03f0a231cac4a6857fb6a45279b32bf7 Mon Sep 17 00:00:00 2001
+From 07b467abf6efad25e12ad4c09a008e9f1594e39d Mon Sep 17 00:00:00 2001
 From: Neil Armstrong <narmstrong@baylibre.com>
 Date: Mon, 16 Oct 2017 15:33:30 +0200
 Subject: [PATCH 32/39] ARM64: dts: meson-gx: Add HDMI_5V regulator on selected
@@ -21,7 +21,7 @@ Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
  7 files changed, 50 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/amlogic/meson-gx-p23x-q20x.dtsi b/arch/arm64/boot/dts/amlogic/meson-gx-p23x-q20x.dtsi
-index 7f59f3017028..979abaf1421b 100644
+index 7f59f30..979abaf 100644
 --- a/arch/arm64/boot/dts/amlogic/meson-gx-p23x-q20x.dtsi
 +++ b/arch/arm64/boot/dts/amlogic/meson-gx-p23x-q20x.dtsi
 @@ -59,6 +59,17 @@
@@ -51,7 +51,7 @@ index 7f59f3017028..979abaf1421b 100644
  
  &hdmi_tx_tmds_port {
 diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905d-p230.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s905d-p230.dts
-index 6827f235d7cf..8bc540e1b246 100644
+index 6827f23..8bc540e 100644
 --- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905d-p230.dts
 +++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905d-p230.dts
 @@ -135,6 +135,7 @@
@@ -63,7 +63,7 @@ index 6827f235d7cf..8bc540e1b246 100644
  
  &hdmi_tx_tmds_port {
 diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts
-index 89a5fd998262..f7b37de01e7a 100644
+index 89a5fd9..f7b37de 100644
 --- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts
 +++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts
 @@ -78,6 +78,7 @@
@@ -75,7 +75,7 @@ index 89a5fd998262..f7b37de01e7a 100644
  
  &hdmi_tx_tmds_port {
 diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts
-index 942fd70c25e9..0c4ed4eec11a 100644
+index 942fd70..0c4ed4e 100644
 --- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts
 +++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts
 @@ -72,6 +72,17 @@
@@ -105,7 +105,7 @@ index 942fd70c25e9..0c4ed4eec11a 100644
  
  &hdmi_tx_tmds_port {
 diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dts
-index 6e2bf858291c..4f6b1c97df44 100644
+index 6e2bf85..4f6b1c9 100644
 --- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dts
 +++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dts
 @@ -88,6 +88,7 @@
@@ -117,7 +117,7 @@ index 6e2bf858291c..4f6b1c97df44 100644
  
  &hdmi_tx_tmds_port {
 diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dtsi
-index 0a2be82c3d97..1a5136ad25ee 100644
+index 0a2be82..1a5136a 100644
 --- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dtsi
 +++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dtsi
 @@ -28,6 +28,17 @@
@@ -139,7 +139,7 @@ index 0a2be82c3d97..1a5136ad25ee 100644
  		compatible = "regulator-fixed";
  		regulator-name = "VDDIO_BOOT";
 diff --git a/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts b/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts
-index 103575a74541..4537a81fb9de 100644
+index 103575a..4537a81 100644
 --- a/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts
 +++ b/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts
 @@ -153,6 +153,17 @@
@@ -169,5 +169,5 @@ index 103575a74541..4537a81fb9de 100644
  
  &hdmi_tx_tmds_port {
 -- 
-2.16.1
+2.7.4
 

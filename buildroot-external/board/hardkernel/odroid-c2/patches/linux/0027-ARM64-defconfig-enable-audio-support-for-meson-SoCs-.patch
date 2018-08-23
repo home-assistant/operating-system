@@ -1,4 +1,4 @@
-From f60640210aa041778116ff0b429c4a810d2d0644 Mon Sep 17 00:00:00 2001
+From d74574d0836155eadde90e9ba12b8c4d18202d8e Mon Sep 17 00:00:00 2001
 From: Jerome Brunet <jbrunet@baylibre.com>
 Date: Fri, 31 Mar 2017 15:55:03 +0200
 Subject: [PATCH 27/39] ARM64: defconfig: enable audio support for meson SoCs
@@ -14,7 +14,7 @@ Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
  1 file changed, 2 insertions(+)
 
 diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index dcf10903f634..beb577486985 100644
+index dcf1090..beb5774 100644
 --- a/arch/arm64/configs/defconfig
 +++ b/arch/arm64/configs/defconfig
 @@ -405,6 +405,8 @@ CONFIG_SOUND=y
@@ -27,5 +27,5 @@ index dcf10903f634..beb577486985 100644
  CONFIG_SND_SOC_RCAR=m
  CONFIG_SND_SOC_AK4613=m
 -- 
-2.16.1
+2.7.4
 

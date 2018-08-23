@@ -1,4 +1,4 @@
-From 44bdde1f7bfc970011fe7c063d70d5fd08f777be Mon Sep 17 00:00:00 2001
+From 9afb9faf483008a1d16202818d895099e5c932bb Mon Sep 17 00:00:00 2001
 From: Jerome Brunet <jbrunet@baylibre.com>
 Date: Fri, 8 Dec 2017 12:08:11 +0100
 Subject: [PATCH 36/39] net: phy: meson-gxl: detect LPA corruption
@@ -29,7 +29,7 @@ Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
  1 file changed, 73 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/net/phy/meson-gxl.c b/drivers/net/phy/meson-gxl.c
-index 1ea69b7585d9..700007dd4be5 100644
+index 7ddb709..b21f607 100644
 --- a/drivers/net/phy/meson-gxl.c
 +++ b/drivers/net/phy/meson-gxl.c
 @@ -22,6 +22,7 @@
@@ -40,7 +40,7 @@ index 1ea69b7585d9..700007dd4be5 100644
  
  static int meson_gxl_config_init(struct phy_device *phydev)
  {
-@@ -50,6 +51,77 @@ static int meson_gxl_config_init(struct phy_device *phydev)
+@@ -76,6 +77,77 @@ static int meson_gxl_config_init(struct phy_device *phydev)
  	return 0;
  }
  
@@ -118,7 +118,7 @@ index 1ea69b7585d9..700007dd4be5 100644
  static struct phy_driver meson_gxl_phy[] = {
  	{
  		.phy_id		= 0x01814400,
-@@ -60,7 +132,7 @@ static struct phy_driver meson_gxl_phy[] = {
+@@ -86,7 +158,7 @@ static struct phy_driver meson_gxl_phy[] = {
  		.config_init	= meson_gxl_config_init,
  		.config_aneg	= genphy_config_aneg,
  		.aneg_done      = genphy_aneg_done,
@@ -128,5 +128,5 @@ index 1ea69b7585d9..700007dd4be5 100644
  		.resume         = genphy_resume,
  	},
 -- 
-2.16.1
+2.7.4
 

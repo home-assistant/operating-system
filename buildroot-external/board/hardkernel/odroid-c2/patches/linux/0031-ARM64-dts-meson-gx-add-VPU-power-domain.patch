@@ -1,4 +1,4 @@
-From c38232651c13e03822f52c320c4180c89dfcb02b Mon Sep 17 00:00:00 2001
+From 107e323a199087cfb84c22b31d769f0b2e623e4a Mon Sep 17 00:00:00 2001
 From: Neil Armstrong <narmstrong@baylibre.com>
 Date: Fri, 13 Oct 2017 14:47:23 +0200
 Subject: [PATCH 31/39] ARM64: dts: meson-gx: add VPU power domain
@@ -14,7 +14,7 @@ Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
  3 files changed, 97 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/amlogic/meson-gx.dtsi b/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
-index ff27ce00624d..ace0e4b756b8 100644
+index ff27ce0..ace0e4b 100644
 --- a/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
 +++ b/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
 @@ -393,6 +393,12 @@
@@ -43,7 +43,7 @@ index ff27ce00624d..ace0e4b756b8 100644
  				compatible = "amlogic,meson-gx-mhu", "amlogic,meson-gxbb-mhu";
  				reg = <0 0x404 0 0x4c>;
 diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
-index ef12d674cd10..b5b6b331b91d 100644
+index ef12d67..b5b6b33 100644
 --- a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
 +++ b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
 @@ -692,6 +692,48 @@
@@ -102,7 +102,7 @@ index ef12d674cd10..b5b6b331b91d 100644
 +	power-domains = <&pwrc_vpu>;
  };
 diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
-index 02b52b618b03..d5c8952165ba 100644
+index 02b52b6..d5c8952 100644
 --- a/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
 +++ b/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
 @@ -721,6 +721,48 @@
@@ -161,5 +161,5 @@ index 02b52b618b03..d5c8952165ba 100644
 +	power-domains = <&pwrc_vpu>;
  };
 -- 
-2.16.1
+2.7.4
 

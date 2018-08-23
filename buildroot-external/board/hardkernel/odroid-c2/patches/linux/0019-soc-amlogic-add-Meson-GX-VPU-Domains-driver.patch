@@ -1,4 +1,4 @@
-From 445dd401634627029c36d44372dfec0a0977c2ff Mon Sep 17 00:00:00 2001
+From 58d5e73046ca5c28eb835c1a98f936193de5d4d0 Mon Sep 17 00:00:00 2001
 From: Neil Armstrong <narmstrong@baylibre.com>
 Date: Fri, 13 Oct 2017 17:05:00 +0200
 Subject: [PATCH 19/39] soc: amlogic: add Meson GX VPU Domains driver
@@ -15,7 +15,7 @@ Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
  create mode 100644 drivers/soc/amlogic/meson-gx-pwrc-vpu.c
 
 diff --git a/drivers/soc/amlogic/Kconfig b/drivers/soc/amlogic/Kconfig
-index 22acf064531f..c2c0513b18ff 100644
+index 22acf06..c2c0513 100644
 --- a/drivers/soc/amlogic/Kconfig
 +++ b/drivers/soc/amlogic/Kconfig
 @@ -8,5 +8,15 @@ config MESON_GX_SOCINFO
@@ -35,7 +35,7 @@ index 22acf064531f..c2c0513b18ff 100644
  
  endmenu
 diff --git a/drivers/soc/amlogic/Makefile b/drivers/soc/amlogic/Makefile
-index 3e85fc462c21..3174e93e72e9 100644
+index 3e85fc4..3174e93 100644
 --- a/drivers/soc/amlogic/Makefile
 +++ b/drivers/soc/amlogic/Makefile
 @@ -1 +1,2 @@
@@ -43,7 +43,7 @@ index 3e85fc462c21..3174e93e72e9 100644
 +obj-$(CONFIG_MESON_GX_PM_DOMAINS) += meson-gx-pwrc-vpu.o
 diff --git a/drivers/soc/amlogic/meson-gx-pwrc-vpu.c b/drivers/soc/amlogic/meson-gx-pwrc-vpu.c
 new file mode 100644
-index 000000000000..bf5190b65ad9
+index 0000000..bf5190b
 --- /dev/null
 +++ b/drivers/soc/amlogic/meson-gx-pwrc-vpu.c
 @@ -0,0 +1,234 @@
@@ -282,5 +282,5 @@ index 000000000000..bf5190b65ad9
 +};
 +builtin_platform_driver(meson_gx_pwrc_vpu_driver);
 -- 
-2.16.1
+2.7.4
 
