@@ -30,8 +30,8 @@ setenv bootargs_odroidc2 "${condev} no_console_suspend hdmimode=${m} ${cmode} m_
 setenv bootargs_hassos "zram.enabled=1 zram.num_devices=3 apparmor=1 security=apparmor cgroup_enable=memory"
 
 # HassOS system A/B
-setenv bootargs_a "root=PARTUUID=0d3e0000-06 rootfstype=squashfs ro rootwait"
-setenv bootargs_b "root=PARTUUID=0d3e0000-08 rootfstype=squashfs ro rootwait"
+setenv bootargs_a "root=PARTUUID=48617373-06 rootfstype=squashfs ro rootwait"
+setenv bootargs_b "root=PARTUUID=48617373-08 rootfstype=squashfs ro rootwait"
 
 usb start
 

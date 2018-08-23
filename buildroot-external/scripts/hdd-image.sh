@@ -223,13 +223,13 @@ function create_disk_mbr() {
         echo "unit: sectors"
         echo "hassos-boot      : start= ${boot_start},      size=  ${boot_size},      type=c, bootable"   #create the boot partition
         echo "hassos-extended  : start= ${extended_start},  size=  ${extended_size},  type=5"             #Make an extended partition
-        echo "hassos-kernela   : start= ${kernel0_start},   size=  ${kernel0_size},    type=83"            #Make a logical partition
-        echo "hassos-systema   : start= ${system0_start},   size=  ${system0_size},    type=83"            #Make a logical partition
-        echo "hassos-kernelb   : start= ${kernel1_start}    size=  ${kernel1_size},    type=83"            #Make a logical partition
-        echo "hassos-systemb   : start= ${system1_start},   size=  ${system1_size},    type=83"            #Make a logical partition
-        echo "hassos-bootstate : start= ${bootstate_start}, size=  ${bootstate_size}, type=83"            #Make a logical partition
-        echo "hassos-overlay   : start= ${overlay_start},   size=  ${overlay_size},   type=83"            #Make a logical partition
-        echo "hassos-data      : start= ${data_start},      size=  ${data_size},      type=83"            #Make a logical partition
+        echo "hassos-kernela   : start= ${kernel0_start},   size=  ${kernel0_size},   type=83"            #Make a logical Linux partition
+        echo "hassos-systema   : start= ${system0_start},   size=  ${system0_size},   type=83"            #Make a logical Linux partition
+        echo "hassos-kernelb   : start= ${kernel1_start}    size=  ${kernel1_size},   type=83"            #Make a logical Linux partition
+        echo "hassos-systemb   : start= ${system1_start},   size=  ${system1_size},   type=83"            #Make a logical Linux partition
+        echo "hassos-bootstate : start= ${bootstate_start}, size=  ${bootstate_size}, type=83"            #Make a logical Linux partition
+        echo "hassos-overlay   : start= ${overlay_start},   size=  ${overlay_size},   type=83"            #Make a Linux partition
+        echo "hassos-data      : start= ${data_start},      size=  ${data_size},      type=83"            #Make a Linux partition
     ) > ${disk_layout}
 
     # Update Labels

@@ -27,7 +27,7 @@ function make_bootable() {
     local UBOOT_GXBB="${BINARIES_DIR}/u-boot.gxbb"
     local hdd_img="$(hassos_image_name img)"
 
-    dd if=${BL1} of=${hdd_img} conv=notrunc bs=1 count=442
+    dd if=${BL1} of=${hdd_img} conv=notrunc bs=1 count=440
     dd if=${BL1} of=${hdd_img} conv=notrunc bs=512 skip=1 seek=1
     dd if=${UBOOT_GXBB} of=${hdd_img} conv=notrunc bs=512 seek=97
 }
