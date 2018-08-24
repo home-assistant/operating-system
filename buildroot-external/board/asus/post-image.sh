@@ -27,10 +27,13 @@ rm -f $BINARIES_DIR/u-boot-spl-dtb.img
 mkimage -n rk3288 -T rksd -d $BINARIES_DIR/u-boot-spl-dtb.bin $BINARIES_DIR/u-boot-spl-dtb.img
 cat $BINARIES_DIR/u-boot-dtb.bin >> $BINARIES_DIR/u-boot-spl-dtb.img
 
-# Create other layers
-prepare_disk_image
-create_spl_image u-boot-spl-dtb.img 64
+# SPL
+create_spl_image
 
-create_disk_image 2
+dd if=$BINARIES_DIR/u-boot-spl-dtb.img of=$BINARIES_DIR/spl.img conv=notrunc bs=512 seek=64
+
+# Disk
+create_disk_image
 convert_disk_image_gz
+
 create_ota_update

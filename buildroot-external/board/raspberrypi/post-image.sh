@@ -40,10 +40,8 @@ if [ "${BOARD_ID}" == "rpi3-64" ]; then
     echo "arm_64bit=1" >> ${BOOT_DATA}/config.txt
 fi
 
-# Create other layers
-prepare_disk_image
-
-create_disk_image 2
+# Disk
+create_disk_image
 convert_disk_image_gz
 
 # OTA

@@ -10,6 +10,11 @@ function create_ota_update() {
     local key="/build/key.pem"
     local cert="/build/cert.pem"
 
+    # Skeep if no dev key is arround
+    if [ ! -f "${key}" ]; then
+        return 0
+    fi
+
     rm -rf ${rauc_folder} ${ota_file}
     mkdir -p ${rauc_folder}
 
@@ -42,10 +47,6 @@ function create_ota_update() {
             echo "filename=spl.img"
             echo "hooks=install"
         ) >> ${rauc_folder}/manifest.raucm
-    fi
-
-    if [ ! -f "${key}" ]; then
-        openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout ${key} -out ${cert} -outform PEM -batch
     fi
 
     rauc bundle -d --cert=${cert} --key=${key} ${rauc_folder} ${ota_file}

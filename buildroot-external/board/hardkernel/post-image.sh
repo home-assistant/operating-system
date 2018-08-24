@@ -32,10 +32,12 @@ function make_bootable() {
     dd if=${UBOOT_GXBB} of=${hdd_img} conv=notrunc bs=512 seek=97
 }
 
-# Create other layers
-prepare_disk_image
+# SPL
+create_spl_image
 
-create_disk_mbr 2
-make_bootable
+# Disk
+create_disk_image
 convert_disk_image_gz
+
 create_ota_update
+
