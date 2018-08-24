@@ -7,7 +7,7 @@ function hassos_pre_image() {
     local spl_img="$(path_spl_img)"
 
     cp ${BINARIES_DIR}/boot.scr ${BOOT_DATA}/boot.scr
-    cp ${BOARD_DIR}/boot-env.txt ${BOOT_DATA}/uboot-settings.txt
+    cp ${BOARD_DIR}/boot-env.txt ${BOOT_DATA}/config.txt
     cp ${BINARIES_DIR}/meson-gxbb-odroidc2.dtb ${BOOT_DATA}/meson-gxbb-odroidc2.dtb
 
     echo "console=tty0 console=ttyAML0,115200n8" > ${BOOT_DATA}/cmdline.txt

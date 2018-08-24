@@ -18,7 +18,7 @@ test -n "${BOOT_ORDER}" || setenv BOOT_ORDER "A B"
 test -n "${BOOT_A_LEFT}" || setenv BOOT_A_LEFT 3
 test -n "${BOOT_B_LEFT}" || setenv BOOT_B_LEFT 3
 
-if load mmc ${devnum}:1 ${ramdisk_addr_r} uboot-settings.txt; then
+if load mmc ${devnum}:1 ${ramdisk_addr_r} config.txt; then
   env import -t ${ramdisk_addr_r} ${filesize};
 fi
 
@@ -30,8 +30,8 @@ setenv bootargs_odroidc2 "${condev} no_console_suspend hdmimode=${m} ${cmode} m_
 setenv bootargs_hassos "zram.enabled=1 zram.num_devices=3 apparmor=1 security=apparmor cgroup_enable=memory"
 
 # HassOS system A/B
-setenv bootargs_a "root=PARTUUID=0d3e0000-06 rootfstype=squashfs ro rootwait"
-setenv bootargs_b "root=PARTUUID=0d3e0000-08 rootfstype=squashfs ro rootwait"
+setenv bootargs_a "root=PARTUUID=48617373-06 rootfstype=squashfs ro rootwait"
+setenv bootargs_b "root=PARTUUID=48617373-08 rootfstype=squashfs ro rootwait"
 
 usb start
 
