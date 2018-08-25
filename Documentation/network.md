@@ -10,7 +10,7 @@ You can also read the [Official Manual][keyfile] or there are a lot of examples 
 
 We have a preinstalled connection profile:
 
-```
+```ini
 [connection]
 id=HassOS default
 uuid=f62bf7c2-e565-49ff-bbfc-a4cf791e6add
