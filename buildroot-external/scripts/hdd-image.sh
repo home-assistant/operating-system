@@ -277,12 +277,10 @@ function _fix_disk_spl_gpt() {
 function _fix_disk_spl_mbr() {
     local hdd_img="$(hassos_image_name img)"
     local spl_img="$(path_spl_img)"
-    local backup="/tmp/mbr-backup.bin"
 
     # backup MBR
-    dd if=${hdd_img} of=${backup} bs=1 count=72 skip=440
-    dd if=${spl_img} of=${hdd_img} conv=notrunc bs=512
-    dd if=${backup} of=${hdd_img} conv=notrunc bs=1 count=72 seek=440
+    dd if=${spl_img} of=${hdd_img} conv=notrunc bs=1 count=440
+    dd if=${spl_img} of=${hdd_img} conv=notrunc bs=512 seek=1 skip=1
 }
 
 

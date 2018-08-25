@@ -23,11 +23,8 @@ if [ "${RAUC_SLOT_CLASS}" = "spl" ]; then
     if sfdisk -dq ${DEVICE_ROOT} | grep -q 'label: gpt'; then
         dd if=${RAUC_IMAGE_NAME} of=${DEVICE_ROOT} conv=notrunc bs=512 seek=2 skip=2
     else
-        BACKUP_MBR="/tmp/mbr-backup.bin"
-
-        dd if=${DEVICE_ROOT} of=${BACKUP_MBR} bs=1 count=72 skip=440
-        dd if=${RAUC_IMAGE_NAME} of=${DEVICE_ROOT} conv=notrunc bs=512
-        dd if=${BACKUP_MBR} of=${DEVICE_ROOT} conv=notrunc bs=1 skip=440
+        dd if=${RAUC_IMAGE_NAME} of=${DEVICE_ROOT} conv=notrunc bs=1 count=440
+        dd if=${RAUC_IMAGE_NAME} of=${DEVICE_ROOT} conv=notrunc bs=512 seek=1 skip=1
     fi
 fi
 
