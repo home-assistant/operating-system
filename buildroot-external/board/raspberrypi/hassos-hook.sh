@@ -12,14 +12,9 @@ function hassos_pre_image() {
         ${BINARIES_DIR}/rpi-firmware/fixup.dat \
         ${BINARIES_DIR}/rpi-firmware/start.elf
     cp -r ${BINARIES_DIR}/rpi-firmware/overlays ${BOOT_DATA}/
+    cp -f ${BOARD_DIR}/boot-env.txt ${BOOT_DATA}/config.txt
 
-    # Update Boot options
-    (
-        echo "kernel=u-boot.bin"
-        echo "disable_splash=1"
-        echo "dtparam=audio=on"
-    ) > ${BOOT_DATA}/config.txt
-
+    # Set cmd options
     echo "dwc_otg.lpm_enable=0 console=tty1" > ${BOOT_DATA}/cmdline.txt
 
     # Enable 64bit support
