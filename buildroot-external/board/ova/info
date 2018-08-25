@@ -1,6 +1,0 @@
-BOARD_ID=ova
-BOARD_NAME="Open Virtual Appliance"
-CHASSIS=vm
-BOOTLOADER=barebox
-KERNEL_FILE=bzImage
-BOOT_SYS=gpt

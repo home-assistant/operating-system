@@ -20,13 +20,15 @@ function _create_rauc_header() {
 
 
 function _write_rauc_boot() {
+    local boot_device=${1}
     (
         echo "[slot.boot.0]"
         echo "device=/dev/disk/by-partlabel/hassos-boot"
         echo "type=vfat"
     ) >> ${TARGET_DIR}/etc/rauc/system.conf
 
-    if [ "${BOOT_SYS}" != "spl" ]; then
+    # SPL
+    if ! [[ "${BOOT_SYS}" =~ (spl|mbr) ]]; then
         return 0
     fi
 
@@ -77,9 +79,14 @@ function install_rauc_certs() {
 
 function install_bootloader_config() {
     if [ "${BOOTLOADER}" == "uboot" ]; then
-        echo -e "/dev/disk/by-partlabel/hassos-bootstate\t0x00\t${BOOT_ENV_SIZE}" > ${TARGET_DIR}/etc/fw_env.config
+        echo -e "/dev/disk/by-partlabel/hassos-bootstate\t0x0000\t${BOOT_ENV_SIZE}" > ${TARGET_DIR}/etc/fw_env.config
     else
-        cp ${BR2_EXTERNAL_HASSOS_PATH}/misc/barebox-state-efi.dtb ${TARGET_DIR}/etc/barebox-state.dtb
+        cp -f ${BR2_EXTERNAL_HASSOS_PATH}/misc/barebox-state-efi.dtb ${TARGET_DIR}/etc/barebox-state.dtb
+    fi
+
+    # Fix MBR
+    if [ "${BOOT_SYS}" == "mbr" ]; then
+        mkdir -p ${TARGET_DIR}/etc/udev/rules.d
+	cp -f ${BR2_EXTERNAL_HASSOS_PATH}/misc/mbr-part.rules ${TARGET_DIR}/etc/udev/rules.d/
     fi
 }
-

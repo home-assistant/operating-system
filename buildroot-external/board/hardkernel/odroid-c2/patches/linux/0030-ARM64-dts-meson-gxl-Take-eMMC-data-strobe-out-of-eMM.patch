@@ -1,0 +1,228 @@
+From 29e058408d62384dc3de4e0b63433d7dfdee068b Mon Sep 17 00:00:00 2001
+From: Neil Armstrong <narmstrong@baylibre.com>
+Date: Mon, 28 Aug 2017 12:01:09 +0200
+Subject: [PATCH 30/39] ARM64: dts: meson-gxl: Take eMMC data strobe out of
+ eMMC pins
+
+Since the Data Strobe pin is optional, take it out of the default
+eMMC pins and add a separate entry.
+
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-gx-p23x-q20x.dtsi            |  2 +-
+ arch/arm64/boot/dts/amlogic/meson-gxbb-nanopi-k2.dts           |  2 +-
+ arch/arm64/boot/dts/amlogic/meson-gxbb-nexbox-a95x.dts         |  2 +-
+ arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts            |  2 +-
+ arch/arm64/boot/dts/amlogic/meson-gxbb-p20x.dtsi               |  2 +-
+ arch/arm64/boot/dts/amlogic/meson-gxbb-vega-s95.dtsi           |  2 +-
+ arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi                    | 10 ++++++++--
+ arch/arm64/boot/dts/amlogic/meson-gxl-s905x-hwacom-amazetv.dts |  2 +-
+ arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts   |  2 +-
+ arch/arm64/boot/dts/amlogic/meson-gxl-s905x-nexbox-a95x.dts    |  2 +-
+ arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dtsi          |  2 +-
+ arch/arm64/boot/dts/amlogic/meson-gxl.dtsi                     | 10 ++++++++--
+ arch/arm64/boot/dts/amlogic/meson-gxm-nexbox-a1.dts            |  2 +-
+ arch/arm64/boot/dts/amlogic/meson-gxm-rbox-pro.dts             |  2 +-
+ 14 files changed, 28 insertions(+), 16 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gx-p23x-q20x.dtsi b/arch/arm64/boot/dts/amlogic/meson-gx-p23x-q20x.dtsi
+index 7ce9a62..7f59f30 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gx-p23x-q20x.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gx-p23x-q20x.dtsi
+@@ -213,7 +213,7 @@
+ /* eMMC */
+ &sd_emmc_c {
+ 	status = "okay";
+-	pinctrl-0 = <&emmc_pins>;
++	pinctrl-0 = <&emmc_pins>, <&emmc_ds_pins>;
+ 	pinctrl-1 = <&emmc_clk_gate_pins>;
+ 	pinctrl-names = "default", "clk-gate";
+ 
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-nanopi-k2.dts b/arch/arm64/boot/dts/amlogic/meson-gxbb-nanopi-k2.dts
+index 4b17a76..a42c8f4 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxbb-nanopi-k2.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-nanopi-k2.dts
+@@ -302,7 +302,7 @@
+ /* eMMC */
+ &sd_emmc_c {
+ 	status = "disabled";
+-	pinctrl-0 = <&emmc_pins>;
++	pinctrl-0 = <&emmc_pins>, <&emmc_ds_pins>;
+ 	pinctrl-1 = <&emmc_clk_gate_pins>;
+ 	pinctrl-names = "default", "clk-gate";
+ 
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-nexbox-a95x.dts b/arch/arm64/boot/dts/amlogic/meson-gxbb-nexbox-a95x.dts
+index 38dfdde..9a77323 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxbb-nexbox-a95x.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-nexbox-a95x.dts
+@@ -272,7 +272,7 @@
+ /* eMMC */
+ &sd_emmc_c {
+ 	status = "okay";
+-	pinctrl-0 = <&emmc_pins>;
++	pinctrl-0 = <&emmc_pins>, <&emmc_ds_pins>;
+ 	pinctrl-1 = <&emmc_clk_gate_pins>;
+ 	pinctrl-names = "default", "clk-gate";
+ 
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts b/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
+index c3a7b7f..4221e1f 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
+@@ -271,7 +271,7 @@
+ /* eMMC */
+ &sd_emmc_c {
+ 	status = "okay";
+-	pinctrl-0 = <&emmc_pins>;
++	pinctrl-0 = <&emmc_pins>, <&emmc_ds_pins>;
+ 	pinctrl-1 = <&emmc_clk_gate_pins>;
+ 	pinctrl-names = "default", "clk-gate";
+ 
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-p20x.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxbb-p20x.dtsi
+index 23c08c3..932158a 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxbb-p20x.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-p20x.dtsi
+@@ -242,7 +242,7 @@
+ /* eMMC */
+ &sd_emmc_c {
+ 	status = "okay";
+-	pinctrl-0 = <&emmc_pins>;
++	pinctrl-0 = <&emmc_pins>, <&emmc_ds_pins>;
+ 	pinctrl-1 = <&emmc_clk_gate_pins>;
+ 	pinctrl-names = "default", "clk-gate";
+ 
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-vega-s95.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxbb-vega-s95.dtsi
+index f2bc6de..1fe8e24 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxbb-vega-s95.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-vega-s95.dtsi
+@@ -199,7 +199,7 @@
+ /* eMMC */
+ &sd_emmc_c {
+ 	status = "okay";
+-	pinctrl-0 = <&emmc_pins>;
++	pinctrl-0 = <&emmc_pins>, <&emmc_ds_pins>;
+ 	pinctrl-1 = <&emmc_clk_gate_pins>;
+ 	pinctrl-names = "default", "clk-gate";
+ 
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
+index 7d38d55..ef12d67 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
+@@ -390,8 +390,14 @@
+ 			mux {
+ 				groups = "emmc_nand_d07",
+ 				       "emmc_cmd",
+-				       "emmc_clk",
+-				       "emmc_ds";
++				       "emmc_clk";
++				function = "emmc";
++			};
++		};
++
++		emmc_ds_pins: emmc-ds {
++			mux {
++				groups = "emmc_ds";
+ 				function = "emmc";
+ 			};
+ 		};
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-hwacom-amazetv.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-hwacom-amazetv.dts
+index 6f2cd8e..5eaafa1 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-hwacom-amazetv.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-hwacom-amazetv.dts
+@@ -141,7 +141,7 @@
+ /* eMMC */
+ &sd_emmc_c {
+ 	status = "okay";
+-	pinctrl-0 = <&emmc_pins>;
++	pinctrl-0 = <&emmc_pins>, <&emmc_ds_pins>;
+ 	pinctrl-1 = <&emmc_clk_gate_pins>;
+ 	pinctrl-names = "default", "clk-gate";
+ 
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts
+index 4035891..942fd70 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts
+@@ -221,7 +221,7 @@
+ /* eMMC */
+ &sd_emmc_c {
+ 	status = "okay";
+-	pinctrl-0 = <&emmc_pins>;
++	pinctrl-0 = <&emmc_pins>, <&emmc_ds_pins>;
+ 	pinctrl-1 = <&emmc_clk_gate_pins>;
+ 	pinctrl-names = "default", "clk-gate";
+ 
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-nexbox-a95x.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-nexbox-a95x.dts
+index 6338e6c..0fdebcc 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-nexbox-a95x.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-nexbox-a95x.dts
+@@ -229,7 +229,7 @@
+ /* eMMC */
+ &sd_emmc_c {
+ 	status = "okay";
+-	pinctrl-0 = <&emmc_pins>;
++	pinctrl-0 = <&emmc_pins>, <&emmc_ds_pins>;
+ 	pinctrl-1 = <&emmc_clk_gate_pins>;
+ 	pinctrl-names = "default", "clk-gate";
+ 
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dtsi
+index 7a1c20e..0a2be82 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dtsi
+@@ -135,7 +135,7 @@
+ /* eMMC */
+ &sd_emmc_c {
+ 	status = "okay";
+-	pinctrl-0 = <&emmc_pins>;
++	pinctrl-0 = <&emmc_pins>, <&emmc_ds_pins>;
+ 	pinctrl-1 = <&emmc_clk_gate_pins>;
+ 	pinctrl-names = "default", "clk-gate";
+ 
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
+index 4a1bd89..02b52b6 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
+@@ -343,8 +343,14 @@
+ 			mux {
+ 				groups = "emmc_nand_d07",
+ 				       "emmc_cmd",
+-				       "emmc_clk",
+-				       "emmc_ds";
++				       "emmc_clk";
++				function = "emmc";
++			};
++		};
++
++		emmc_ds_pins: emmc-ds {
++			mux {
++				groups = "emmc_ds";
+ 				function = "emmc";
+ 			};
+ 		};
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxm-nexbox-a1.dts b/arch/arm64/boot/dts/amlogic/meson-gxm-nexbox-a1.dts
+index cfde246..e70b5e2 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxm-nexbox-a1.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-gxm-nexbox-a1.dts
+@@ -193,7 +193,7 @@
+ /* eMMC */
+ &sd_emmc_c {
+ 	status = "okay";
+-	pinctrl-0 = <&emmc_pins>;
++	pinctrl-0 = <&emmc_pins>, <&emmc_ds_pins>;
+ 	pinctrl-1 = <&emmc_clk_gate_pins>;
+ 	pinctrl-names = "default", "clk-gate";
+ 
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxm-rbox-pro.dts b/arch/arm64/boot/dts/amlogic/meson-gxm-rbox-pro.dts
+index 9837a48..9593a28 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxm-rbox-pro.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-gxm-rbox-pro.dts
+@@ -216,7 +216,7 @@
+ /* eMMC */
+ &sd_emmc_c {
+ 	status = "okay";
+-	pinctrl-0 = <&emmc_pins>;
++	pinctrl-0 = <&emmc_pins>, <&emmc_ds_pins>;
+ 	pinctrl-names = "default";
+ 
+ 	bus-width = <8>;
+-- 
+2.7.4
+

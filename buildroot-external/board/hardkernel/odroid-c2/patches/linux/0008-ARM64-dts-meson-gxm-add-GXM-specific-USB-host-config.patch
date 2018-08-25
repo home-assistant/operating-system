@@ -1,0 +1,49 @@
+From 48d4988f2b3b93a6f17c0d1d5e6d932664bc0c74 Mon Sep 17 00:00:00 2001
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date: Sat, 26 Nov 2016 00:17:22 +0100
+Subject: [PATCH 08/39] ARM64: dts: meson-gxm: add GXM specific USB host
+ configuration
+
+The USB configuration on GXM is slightly different than on GXL. The dwc3
+controller's internal hub has three USB2 ports (instead of 2 on GXL)
+along with a dedicated USB2 PHY for this port. However, it seems that
+there are no pins on GXM which would allow connecting the third port to
+a physical USB port.
+
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-gxm.dtsi | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxm.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxm.dtsi
+index 19a798d..5e4cb90 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxm.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gxm.dtsi
+@@ -121,6 +121,23 @@
+ 	compatible = "amlogic,meson-gxm-aoclkc", "amlogic,meson-gx-aoclkc";
+ };
+ 
++&apb {
++	usb2_phy2: phy@78040 {
++		compatible = "amlogic,meson-gxl-usb2-phy";
++		#phy-cells = <0>;
++		reg = <0x0 0x78040 0x0 0x20>;
++		status = "disabled";
++	};
++};
++
++&dwc3_roothub {
++	port@3 {
++		reg = <3>;
++		phys = <&usb2_phy2>;
++		phy-names = "usb2-phy";
++	};
++};
++
+ &saradc {
+ 	compatible = "amlogic,meson-gxm-saradc", "amlogic,meson-saradc";
+ };
+-- 
+2.7.4
+

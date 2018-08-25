@@ -1,0 +1,146 @@
+From 55ba20ef5868e2a1fc3cefe264539affe55ef6b7 Mon Sep 17 00:00:00 2001
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date: Wed, 11 Jan 2017 11:34:59 +0100
+Subject: [PATCH 06/39] usb: host: xhci: plat: integrate the platform-roothub
+
+This enables the platform-roothub for the xhci-plat driver. This allows
+specifying a PHY for each port via devicetree. All PHYs will then be
+enabled/disabled by the platform-roothub driver.
+
+One example where this is required is the Amlogic GXL and GXM SoCs:
+They are using a dwc3 USB controller with up to three ports enabled on
+the internal roothub. Using only the top-level "phy" properties does not
+work here since one can only specify one "usb2-phy" and one "usb3-phy",
+while actually at least two "usb2-phy" have to be specified.
+
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ Documentation/devicetree/bindings/usb/usb-xhci.txt |  7 ++++++
+ drivers/usb/host/Kconfig                           |  1 +
+ drivers/usb/host/xhci-plat.c                       | 26 +++++++++++++++++++++-
+ drivers/usb/host/xhci.h                            |  3 +++
+ 4 files changed, 36 insertions(+), 1 deletion(-)
+
+diff --git a/Documentation/devicetree/bindings/usb/usb-xhci.txt b/Documentation/devicetree/bindings/usb/usb-xhci.txt
+index 7a69b8b..d0d8a67c 100644
+--- a/Documentation/devicetree/bindings/usb/usb-xhci.txt
++++ b/Documentation/devicetree/bindings/usb/usb-xhci.txt
+@@ -30,6 +30,13 @@ Optional properties:
+   - usb3-lpm-capable: determines if platform is USB3 LPM capable
+   - quirk-broken-port-ped: set if the controller has broken port disable mechanism
+ 
++sub-nodes:
++- optionally there can be a node for the root-hub, see usb-roothub.txt in the
++  current directory
++- one or more nodes with reg 1-31 for each port to which a device is connected.
++  See usb-device.txt in the current directory for more information.
++
++
+ Example:
+ 	usb@f0931000 {
+ 		compatible = "generic-xhci";
+diff --git a/drivers/usb/host/Kconfig b/drivers/usb/host/Kconfig
+index 598ca56..8c3b11f 100644
+--- a/drivers/usb/host/Kconfig
++++ b/drivers/usb/host/Kconfig
+@@ -36,6 +36,7 @@ config USB_XHCI_PCI
+ config USB_XHCI_PLATFORM
+ 	tristate "Generic xHCI driver for a platform device"
+ 	select USB_XHCI_RCAR if ARCH_RENESAS
++	select USB_PLATFORM_ROOTHUB
+ 	---help---
+ 	  Adds an xHCI host driver for a generic platform device, which
+ 	  provides a memory space and an irq.
+diff --git a/drivers/usb/host/xhci-plat.c b/drivers/usb/host/xhci-plat.c
+index 1cb6eae..a80d585 100644
+--- a/drivers/usb/host/xhci-plat.c
++++ b/drivers/usb/host/xhci-plat.c
+@@ -281,10 +281,20 @@ static int xhci_plat_probe(struct platform_device *pdev)
+ 			goto put_usb3_hcd;
+ 	}
+ 
+-	ret = usb_add_hcd(hcd, irq, IRQF_SHARED);
++	xhci->platform_roothub = platform_roothub_init(sysdev);
++	if (IS_ERR(xhci->platform_roothub)) {
++		ret = PTR_ERR(xhci->platform_roothub);
++		goto disable_clk;
++	}
++
++	ret = platform_roothub_power_on(xhci->platform_roothub);
+ 	if (ret)
+ 		goto disable_usb_phy;
+ 
++	ret = usb_add_hcd(hcd, irq, IRQF_SHARED);
++	if (ret)
++		goto disable_platform_roothub;
++
+ 	if (HCC_MAX_PSA(xhci->hcc_params) >= 4)
+ 		xhci->shared_hcd->can_do_streams = 1;
+ 
+@@ -307,6 +317,9 @@ static int xhci_plat_probe(struct platform_device *pdev)
+ dealloc_usb2_hcd:
+ 	usb_remove_hcd(hcd);
+ 
++disable_platform_roothub:
++	platform_roothub_power_off(xhci->platform_roothub);
++
+ disable_usb_phy:
+ 	usb_phy_shutdown(hcd->usb_phy);
+ 
+@@ -338,6 +351,8 @@ static int xhci_plat_remove(struct platform_device *dev)
+ 	usb_remove_hcd(xhci->shared_hcd);
+ 	usb_phy_shutdown(hcd->usb_phy);
+ 
++	platform_roothub_power_off(xhci->platform_roothub);
++
+ 	usb_remove_hcd(hcd);
+ 	usb_put_hcd(xhci->shared_hcd);
+ 
+@@ -370,6 +385,11 @@ static int __maybe_unused xhci_plat_suspend(struct device *dev)
+ 	if (!device_may_wakeup(dev) && !IS_ERR(xhci->clk))
+ 		clk_disable_unprepare(xhci->clk);
+ 
++	if (ret)
++		return ret;
++
++	platform_roothub_power_off(xhci->platform_roothub);
++
+ 	return ret;
+ }
+ 
+@@ -382,6 +402,10 @@ static int __maybe_unused xhci_plat_resume(struct device *dev)
+ 	if (!device_may_wakeup(dev) && !IS_ERR(xhci->clk))
+ 		clk_prepare_enable(xhci->clk);
+ 
++	ret = platform_roothub_power_on(xhci->platform_roothub);
++	if (ret)
++		return ret;
++
+ 	ret = xhci_priv_resume_quirk(hcd);
+ 	if (ret)
+ 		return ret;
+diff --git a/drivers/usb/host/xhci.h b/drivers/usb/host/xhci.h
+index 2eaf6e1..552834c 100644
+--- a/drivers/usb/host/xhci.h
++++ b/drivers/usb/host/xhci.h
+@@ -34,6 +34,8 @@
+ #include	"xhci-ext-caps.h"
+ #include "pci-quirks.h"
+ 
++#include "platform-roothub.h"
++
+ /* xHCI PCI Configuration Registers */
+ #define XHCI_SBRN_OFFSET	(0x60)
+ 
+@@ -1735,6 +1737,7 @@ struct xhci_hcd {
+ 	int		msix_count;
+ 	/* optional clock */
+ 	struct clk		*clk;
++	struct platform_roothub	*platform_roothub;
+ 	/* data structures */
+ 	struct xhci_device_context_array *dcbaa;
+ 	struct xhci_ring	*cmd_ring;
+-- 
+2.7.4
+

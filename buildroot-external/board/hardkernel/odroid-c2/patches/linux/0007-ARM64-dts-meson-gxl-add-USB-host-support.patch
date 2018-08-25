@@ -1,0 +1,99 @@
+From 547f8ce14bfc3d315dc8b64d0e2eff0c7be897d2 Mon Sep 17 00:00:00 2001
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date: Sun, 20 Nov 2016 00:23:52 +0100
+Subject: [PATCH 07/39] ARM64: dts: meson-gxl: add USB host support
+
+This adds USB host support to the Meson GXL SoC. A dwc3 controller is
+used for host-mode, while a dwc2 controller is used for device-mode only.
+The dwc3 controller's internal roothub has two USB2 ports enabled but no
+USB3 port. Each of the ports is supplied by a separate PHY. The USB pins
+are connected to the SoC's USBHOST_A and USBOTG_B pins.
+Due to the way the roothub works internally the USB PHYs are left
+enabled. When the dwc3 controller is disabled the PHY is never powered on
+so it does not draw any extra power. However, when the dwc3 host
+controller is enabled then all PHYs also have to be enabled, otherwise
+USB devices will not be detected (regardless of whether they are plugged
+into an enabled port or not). This means that only the dwc3 controller
+has to be enabled on boards with USB support (instead of requiring all
+boards to enable the PHYs additionally with the chance of forgetting to
+enable one and breaking all other ports with that as well).
+
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-gxl.dtsi | 59 ++++++++++++++++++++++++++++++
+ 1 file changed, 59 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
+index fb8d76a..68ea67a 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
+@@ -57,6 +57,65 @@
+ 			no-map;
+ 		};
+ 	};
++
++	soc {
++
++		usb0: usb@c9000000 {
++			compatible = "snps,dwc3";
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <0x0 0xc9000000 0x0 0x100000>;
++			interrupts = <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>;
++			dr_mode = "host";
++			maximum-speed = "high-speed";
++			snps,dis_u2_susphy_quirk;
++			phys = <&usb3_phy0>;
++			phy-names = "usb3-phy";
++			status = "disabled";
++
++			dwc3_roothub: roothub@0 {
++				compatible = "usb1d6b,3", "usb1d6b,2";
++				#address-cells = <1>;
++				#size-cells = <0>;
++				reg = <0>;
++
++				port@1 {
++					reg = <1>;
++					phys = <&usb2_phy0>;
++					phy-names = "usb2-phy";
++				};
++
++				port@2 {
++					reg = <2>;
++					phys = <&usb2_phy1>;
++					phy-names = "usb2-phy";
++				};
++			};
++		};
++	};
++};
++
++&apb {
++	usb2_phy0: phy@78000 {
++		compatible = "amlogic,meson-gxl-usb2-phy";
++		#phy-cells = <0>;
++		reg = <0x0 0x78000 0x0 0x20>;
++		status = "okay";
++	};
++
++	usb2_phy1: phy@78020 {
++		compatible = "amlogic,meson-gxl-usb2-phy";
++		#phy-cells = <0>;
++		reg = <0x0 0x78020 0x0 0x20>;
++		status = "okay";
++	};
++
++	usb3_phy0: phy@78080 {
++		compatible = "amlogic,meson-gxl-usb3-phy";
++		#phy-cells = <0>;
++		reg = <0x0 0x78080 0x0 0x20>;
++		status = "okay";
++	};
+ };
+ 
+ &ethmac {
+-- 
+2.7.4
+

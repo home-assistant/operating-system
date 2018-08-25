@@ -1,0 +1,7 @@
+VERSION_MAJOR=2
+VERSION_BUILD=2
+
+HASSOS_NAME="HassOS"
+HASSOS_ID="hassos"
+
+DEPLOYMENT="development"

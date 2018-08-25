@@ -1,0 +1,6 @@
+ENV{ID_PART_ENTRY_UUID}=="48617373-01", SYMLINK+="disk/by-partlabel/hassos-boot"
+ENV{ID_PART_ENTRY_UUID}=="48617373-05", SYMLINK+="disk/by-partlabel/hassos-kernel0"
+ENV{ID_PART_ENTRY_UUID}=="48617373-06", SYMLINK+="disk/by-partlabel/hassos-system0"
+ENV{ID_PART_ENTRY_UUID}=="48617373-07", SYMLINK+="disk/by-partlabel/hassos-kernel1"
+ENV{ID_PART_ENTRY_UUID}=="48617373-08", SYMLINK+="disk/by-partlabel/hassos-system1"
+ENV{ID_PART_ENTRY_UUID}=="48617373-09", SYMLINK+="disk/by-partlabel/hassos-bootstate"
