@@ -110,7 +110,7 @@ function create_disk_image() {
 
 function _create_disk_gpt() {
     local boot_img="$(path_boot_img)"
-    local rootfs_img="$(path_boot_img)"
+    local rootfs_img="$(path_rootfs_img)"
     local overlay_img="$(path_overlay_img)"
     local data_img="$(path_data_img)"
     local kernel_img="$(path_kernel_img)"
@@ -185,7 +185,7 @@ function _create_disk_gpt() {
 
 function _create_disk_mbr() {
     local boot_img="$(path_boot_img)"
-    local rootfs_img="$(path_boot_img)"
+    local rootfs_img="$(path_rootfs_img)"
     local overlay_img="$(path_overlay_img)"
     local data_img="$(path_data_img)"
     local kernel_img="$(path_kernel_img)"
@@ -229,15 +229,15 @@ function _create_disk_mbr() {
         echo "label: dos"
         echo "label-id: 0x48617373"
         echo "unit: sectors"
-        echo "hassos-boot      : start= ${boot_start},      size=  ${boot_size},      type=c, bootable"   #create the boot partition
-        echo "hassos-extended  : start= ${extended_start},  size=  ${extended_size},  type=5"             #Make an extended partition
-        echo "hassos-kernel0   : start= ${kernel0_start},   size=  ${kernel0_size},    type=83"            #Make a logical partition
-        echo "hassos-system0   : start= ${system0_start},   size=  ${system0_size},    type=83"            #Make a logical partition
-        echo "hassos-kernel1   : start= ${kernel1_start}    size=  ${kernel1_size},    type=83"            #Make a logical partition
-        echo "hassos-system1   : start= ${system1_start},   size=  ${system1_size},    type=83"            #Make a logical partition
-        echo "hassos-bootstate : start= ${bootstate_start}, size=  ${bootstate_size}, type=83"            #Make a logical partition
-        echo "hassos-overlay   : start= ${overlay_start},   size=  ${overlay_size},   type=83"            #Make a logical partition
-        echo "hassos-data      : start= ${data_start},      size=  ${data_size},      type=83"            #Make a logical partition
+        echo "hassos-boot      : start= ${boot_start},      size=  ${boot_size},       type=c, bootable"   #create the boot partition
+        echo "hassos-extended  : start= ${extended_start},  size=  ${extended_size},   type=5"             #Make an extended partition
+        echo "hassos-kernel    : start= ${kernel0_start},   size=  ${kernel0_size},    type=83"            #Make a logical Linux partition
+        echo "hassos-system    : start= ${system0_start},   size=  ${system0_size},    type=83"            #Make a logical Linux partition
+        echo "hassos-kernel    : start= ${kernel1_start}    size=  ${kernel1_size},    type=83"            #Make a logical Linux partition
+        echo "hassos-system    : start= ${system1_start},   size=  ${system1_size},    type=83"            #Make a logical Linux partition
+        echo "hassos-bootstate : start= ${bootstate_start}, size=  ${bootstate_size},  type=83"            #Make a logical Linux partition
+        echo "hassos-overlay   : start= ${overlay_start},   size=  ${overlay_size},    type=83"            #Make a Linux partition
+        echo "hassos-data      : start= ${data_start},      size=  ${data_size},       type=83"            #Make a Linux partition
     ) > ${disk_layout}
 
     # Update Labels
@@ -277,11 +277,12 @@ function _fix_disk_spl_gpt() {
 function _fix_disk_spl_mbr() {
     local hdd_img="$(hassos_image_name img)"
     local spl_img="$(path_spl_img)"
+    local backup="/tmp/mbr-backup.bin"
 
     # backup MBR
     dd if=${hdd_img} of=${backup} bs=1 count=72 skip=440
     dd if=${spl_img} of=${hdd_img} conv=notrunc bs=512
-    dd if=${backup} of=${hdd_img} conv=notrunc bs=1 skip=440
+    dd if=${backup} of=${hdd_img} conv=notrunc bs=1 count=72 seek=440
 }
 
 

@@ -8,9 +8,11 @@ HOOK_FILE=${3}
 . ${BR2_EXTERNAL_HASSOS_PATH}/meta
 . ${BOARD_DIR}/meta
 
+. ${SCRIPT_DIR}/hdd-image.sh
 . ${SCRIPT_DIR}/rootfs-layer.sh
 . ${SCRIPT_DIR}/name.sh
 . ${SCRIPT_DIR}/rauc.sh
+. ${SCRIPT_DIR}/ota.sh
 . ${HOOK_FILE}
 
 # Cleanup
@@ -26,4 +28,3 @@ create_ota_update
 
 # Hook post image build stuff
 hassos_post_image
-
