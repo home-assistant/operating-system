@@ -1,0 +1,132 @@
+From 0689a4eaecae2831fe2cb614e102bb4ef43484a4 Mon Sep 17 00:00:00 2001
+From: Neil Armstrong <narmstrong@baylibre.com>
+Date: Fri, 13 Oct 2017 14:05:01 +0200
+Subject: [PATCH 18/39] reset: meson: add level reset support for GX SoC family
+
+The Amlogic GX SoC family embeds alternate registers to drive the reset
+levels next to the pulse registers.
+
+This patch adds support for level reset handling on the GX family only.
+
+The Meson8 family has an alternate way to handle level reset.
+
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ drivers/reset/reset-meson.c | 62 ++++++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 58 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/reset/reset-meson.c b/drivers/reset/reset-meson.c
+index a8b915e..f3b9d69 100644
+--- a/drivers/reset/reset-meson.c
++++ b/drivers/reset/reset-meson.c
+@@ -62,13 +62,16 @@
+ #include <linux/reset-controller.h>
+ #include <linux/slab.h>
+ #include <linux/types.h>
++#include <linux/of_device.h>
+ 
+ #define REG_COUNT	8
+ #define BITS_PER_REG	32
++#define LEVEL_OFFSET	0x7c
+ 
+ struct meson_reset {
+ 	void __iomem *reg_base;
+ 	struct reset_controller_dev rcdev;
++	spinlock_t lock;
+ };
+ 
+ static int meson_reset_reset(struct reset_controller_dev *rcdev,
+@@ -88,18 +91,63 @@ static int meson_reset_reset(struct reset_controller_dev *rcdev,
+ 	return 0;
+ }
+ 
+-static const struct reset_control_ops meson_reset_ops = {
++static int meson_reset_level(struct reset_controller_dev *rcdev,
++			    unsigned long id, bool assert)
++{
++	struct meson_reset *data =
++		container_of(rcdev, struct meson_reset, rcdev);
++	unsigned int bank = id / BITS_PER_REG;
++	unsigned int offset = id % BITS_PER_REG;
++	void __iomem *reg_addr = data->reg_base + LEVEL_OFFSET + (bank << 2);
++	unsigned long flags;
++	u32 reg;
++
++	spin_lock_irqsave(&data->lock, flags);
++
++	reg = readl(reg_addr);
++	if (assert)
++		writel(reg & ~BIT(offset), reg_addr);
++	else
++		writel(reg | BIT(offset), reg_addr);
++
++	spin_unlock_irqrestore(&data->lock, flags);
++
++	return 0;
++}
++
++static int meson_reset_assert(struct reset_controller_dev *rcdev,
++			      unsigned long id)
++{
++	return meson_reset_level(rcdev, id, true);
++}
++
++static int meson_reset_deassert(struct reset_controller_dev *rcdev,
++				unsigned long id)
++{
++	return meson_reset_level(rcdev, id, false);
++}
++
++static const struct reset_control_ops meson_reset_meson8_ops = {
+ 	.reset		= meson_reset_reset,
+ };
+ 
++static const struct reset_control_ops meson_reset_gx_ops = {
++	.reset		= meson_reset_reset,
++	.assert		= meson_reset_assert,
++	.deassert	= meson_reset_deassert,
++};
++
+ static const struct of_device_id meson_reset_dt_ids[] = {
+-	 { .compatible = "amlogic,meson8b-reset", },
+-	 { .compatible = "amlogic,meson-gxbb-reset", },
++	 { .compatible = "amlogic,meson8b-reset",
++	   .data = &meson_reset_meson8_ops, },
++	 { .compatible = "amlogic,meson-gxbb-reset",
++	   .data = &meson_reset_gx_ops, },
+ 	 { /* sentinel */ },
+ };
+ 
+ static int meson_reset_probe(struct platform_device *pdev)
+ {
++	const struct reset_control_ops *ops;
+ 	struct meson_reset *data;
+ 	struct resource *res;
+ 
+@@ -107,6 +155,10 @@ static int meson_reset_probe(struct platform_device *pdev)
+ 	if (!data)
+ 		return -ENOMEM;
+ 
++	ops = of_device_get_match_data(&pdev->dev);
++	if (!ops)
++		return -EINVAL;
++
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	data->reg_base = devm_ioremap_resource(&pdev->dev, res);
+ 	if (IS_ERR(data->reg_base))
+@@ -114,9 +166,11 @@ static int meson_reset_probe(struct platform_device *pdev)
+ 
+ 	platform_set_drvdata(pdev, data);
+ 
++	spin_lock_init(&data->lock);
++
+ 	data->rcdev.owner = THIS_MODULE;
+ 	data->rcdev.nr_resets = REG_COUNT * BITS_PER_REG;
+-	data->rcdev.ops = &meson_reset_ops;
++	data->rcdev.ops = ops;
+ 	data->rcdev.of_node = pdev->dev.of_node;
+ 
+ 	return devm_reset_controller_register(&pdev->dev, &data->rcdev);
+-- 
+2.7.4
+

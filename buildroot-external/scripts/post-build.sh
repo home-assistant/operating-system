@@ -4,9 +4,10 @@ set -e
 SCRIPT_DIR=${BR2_EXTERNAL_HASSOS_PATH}/scripts
 BOARD_DIR=${2}
 
+. ${BR2_EXTERNAL_HASSOS_PATH}/meta
+. ${BOARD_DIR}/meta
+
 . ${SCRIPT_DIR}/rootfs-layer.sh
-. ${BR2_EXTERNAL_HASSOS_PATH}/info
-. ${BOARD_DIR}/info
 . ${SCRIPT_DIR}/name.sh
 . ${SCRIPT_DIR}/rauc.sh
 
@@ -35,8 +36,7 @@ install_hassos_cli
 ) > ${TARGET_DIR}/etc/machine-info
 
 
-# Setup rauc
+# Setup RAUC
 write_rauc_config
 install_rauc_certs
 install_bootloader_config
-

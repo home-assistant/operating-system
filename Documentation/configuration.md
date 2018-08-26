@@ -2,10 +2,10 @@
 
 ## Automatic
 
-You can use a USB drive with HassOS to configure network options, ssh access to the host, and to install updates.
+You can use an USB drive with HassOS to configure network options, SSH access to the host and to install updates.
 Format a USB stick with FAT32/EXT4/NTFS and name it `CONFIG`. Use the following directory structure within the USB drive:
 
-```
+```text
 network/
 modules/
 authorized_keys
@@ -24,15 +24,15 @@ API/UI or by calling `systemctl restart hassos-config` on the host.
 
 ### Bootargs
 
-You can edit or create a `cmdline.txt` into your boot partition. That will be read from our bootloader.
+You can edit or create a `cmdline.txt` in your boot partition. That will be read from the bootloader.
 
 ### Kernel-Module
 
-The kernel module folder `/etc/modules-load.d` is persistent and you can add your config files there. See [Systemd modules load][systemd-modules].
+The kernel module folder `/etc/modules-load.d` is persistent and you can add your configuration files there. See [Systemd modules load][systemd-modules].
 
 ### Network
 
-You can manual add, edit or remove connections configs from `/etc/NetworkManager/system-connections`.
+You can manual add, edit or remove connections configurations from `/etc/NetworkManager/system-connections`.
 
 [systemd-modules]: https://www.freedesktop.org/software/systemd/man/modules-load.d.html
 [network.md]: network.md

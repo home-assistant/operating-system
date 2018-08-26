@@ -10,6 +10,11 @@ function create_ota_update() {
     local key="/build/key.pem"
     local cert="/build/cert.pem"
 
+    # Skeep if no dev key is arround
+    if [ ! -f "${key}" ]; then
+        return 0
+    fi
+
     rm -rf ${rauc_folder} ${ota_file}
     mkdir -p ${rauc_folder}
 
