@@ -55,7 +55,7 @@ ssid=MY_SSID
 [802-11-wireless-security]
 auth-alg=open
 key-mgmt=wpa-psk
-psk=MY_WLAN_SECRED_KEY
+psk=MY_WLAN_SECRET_KEY
 
 [ipv4]
 method=auto
