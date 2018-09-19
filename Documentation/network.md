@@ -112,6 +112,8 @@ From here you will use the `nmcli` configuration tool.
 
 `# nmcli connection show` will list the “HassOS default” connection in use.
 
+`# nmcli con show "HassOS default"` will list all the properties of the connection.
+
 `# nmcli con edit “HassOS default”` will put you in a position to edit the connection.
 
 `nmcli> print ipv4` will show you the ipv4 properties of this connection.
@@ -120,6 +122,11 @@ To add your static IP address (select 'yes' for manual method);
 ```
 nmcli> set ipv4.addresses 192.168.100.10/24
 Do you also want to set 'ipv4.method' to 'manual'? [yes]:
+```
+In addition I have found it is wise to set the dns server and the local gateway.  For most home routers these will be the same address.  If you are using Pi-Hole you can set the dns to that.
+```
+nmcli> set ipv4.dns 192.168.100.1
+nmcli> set ipv4.gateway 192.168.100.1
 nmcli> save
 nmcli> exit
 ```
