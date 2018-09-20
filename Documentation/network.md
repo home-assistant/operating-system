@@ -99,7 +99,8 @@ powersave=0
 ```
 ## Using nmcli to set a static IPV4 address
 
-this method has been tested with a Hass.io image on an Esxi server. Log into the HASSOS base system via a console – note this is not the same as an SSH login via the add-on.
+Log into the HASSOS base system via a console:
+
 ```
 Welcome to HassOS
 Hassio login:
