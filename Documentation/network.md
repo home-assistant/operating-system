@@ -97,6 +97,44 @@ If you have trouble with powersave you can do following:
 # Values are 0 (use default), 1 (ignore/don't touch), 2 (disable) or 3 (enable).
 powersave=0
 ```
+## Using nmcli to set a static IPV4 address
+
+Log into the HASSOS base system via a console:
+
+```
+Welcome to HassOS
+Hassio login:
+```
+Login as `root` (no password needed)
+
+At the `hassio >` prompt, type `login` (as instructed).
+
+From here you will use the `nmcli` configuration tool.
+
+`# nmcli connection show` will list the “HassOS default” connection in use.
+
+`# nmcli con show "HassOS default"` will list all the properties of the connection.
+
+`# nmcli con edit “HassOS default”` will put you in a position to edit the connection.
+
+`nmcli> print ipv4` will show you the ipv4 properties of this connection.
+
+To add your static IP address (select 'yes' for manual method);
+```
+nmcli> set ipv4.addresses 192.168.100.10/24
+Do you also want to set 'ipv4.method' to 'manual'? [yes]:
+```
+In addition I have found it is wise to set the dns server and the local gateway.  For most home routers these will be the same address.  If you are using Pi-Hole you can set the dns to that.
+```
+nmcli> set ipv4.dns 192.168.100.1
+nmcli> set ipv4.gateway 192.168.100.1
+nmcli> save
+nmcli> exit
+```
+
+If you now view the default connection `cat /etc/NetworkManager/system_connections/default` you should see the method is manual and the address is set.
+
+Doing a `nmcli con reload` does not always work so restart the VM.
 
 [keyfile]: https://developer.gnome.org/NetworkManager/stable/nm-settings.html
 [configuration-usb]: configuration.md
