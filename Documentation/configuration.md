@@ -22,6 +22,11 @@ API/UI or by calling `systemctl restart hassos-config` on the host.
 
 ## Local
 
+### Home Assistant config files
+
+The Home Assistant config files (like `configuration.yaml` and `customize.yaml`) can be found in the `/config/` dir.
+You can add the SSH Add-On to access the filesystem directly.
+
 ### Bootargs
 
 You can edit or create a `cmdline.txt` in your boot partition. That will be read from the bootloader.
