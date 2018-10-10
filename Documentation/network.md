@@ -72,7 +72,7 @@ Replace follow configuration:
 ```ini
 [ipv4]
 method=manual
-address1=192.168.1.111/24,192.168.1.1
+address=192.168.1.111/24,192.168.1.1
 dns=8.8.8.8;8.8.4.4;
 ```
 
