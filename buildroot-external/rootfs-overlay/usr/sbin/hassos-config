@@ -34,6 +34,15 @@ if [ -d /mnt/config/modules ]; then
 fi
 
 ##
+# Udev
+if [ -d /mnt/config/udev ]; then
+    echo "[Info] Update Udev configuration!"
+
+    rm -rf /etc/udev/rules.d/*
+    cp -f /mnt/config/udev/* /etc/udev/rules.d/*
+fi
+
+##
 # SSH know hosts
 if [ -f /mnt/config/authorized_keys ]; then
     echo "[Info] Update SSH authorized_keys!"
