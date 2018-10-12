@@ -89,6 +89,8 @@ if ls ${USB_CONFIG}/*.raucb > /dev/null && [ ${UPTIME} -ge 180 ]; then
 fi
 
 # Cleanup config partition
-if [ ${USE_USB} = 0 ]; then
+if [ ${USE_USB} = 1 ]; then
     systemctl stop mnt-config.mount
+else
+    rm -rf ${BOOT_CONFIG}
 fi
