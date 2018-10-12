@@ -1,3 +1,17 @@
+
+part start mmc ${devnum} 6 mmc_env
+mmc dev ${devnum}
+setenv loadbootstate " \
+    echo 'loading env...'; \
+    mmc read ${ramdisk_addr_r} ${mmc_env} 0x40; \
+    env import -c ${ramdisk_addr_r} 0x8000;"
+
+setenv storebootstate " \
+    echo 'storing env...'; \
+    env export -c -s 0x8000 ${ramdisk_addr_r} BOOT_ORDER BOOT_A_LEFT BOOT_B_LEFT; \
+    mmc write ${ramdisk_addr_r} ${mmc_env} 0x40;"
+
+run loadbootstate
 test -n "${BOOT_ORDER}" || setenv BOOT_ORDER "A B"
 test -n "${BOOT_A_LEFT}" || setenv BOOT_A_LEFT 3
 test -n "${BOOT_B_LEFT}" || setenv BOOT_B_LEFT 3
@@ -37,12 +51,12 @@ for BOOT_SLOT in "${BOOT_ORDER}"; do
 done
 
 if test -n "${bootargs}"; then
-  saveenv
+  run storebootstate
 else
   echo "No valid slot found, resetting tries to 3"
   setenv BOOT_A_LEFT 3
   setenv BOOT_B_LEFT 3
-  saveenv
+  run storebootstate
   reset
 fi
 
