@@ -19,8 +19,8 @@ if ! grep ${APPARMOR} /sys/kernel/security/apparmor/profiles > /dev/null; then
 fi
 
 runSupervisor() {
-    docker rm --force hassos_supervisor || true
-    docker run --name hassos_supervisor \
+    docker container rm --force hassos_supervisor || true
+    docker container run --name hassos_supervisor \
         --security-opt apparmor="${APPARMOR}" \
         -v /var/run/docker.sock:/var/run/docker.sock \
         -v /var/run/dbus:/var/run/dbus \
@@ -34,4 +34,4 @@ runSupervisor() {
 
 # Run supervisor
 mkdir -p ${HASSOS_DATA}
-([ "${HASSOS_IMAGE_ID}" = "${HASSOS_CONTAINER_ID}" ] && docker start --attach hassos_supervisor) || runSupervisor
+([ "${HASSOS_IMAGE_ID}" = "${HASSOS_CONTAINER_ID}" ] && docker container start --attach hassos_supervisor) || runSupervisor
