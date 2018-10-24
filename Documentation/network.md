@@ -115,7 +115,7 @@ From here you will use the `nmcli` configuration tool.
 
 `# nmcli con show "HassOS default"` will list all the properties of the connection.
 
-`# nmcli con edit “HassOS default”` will put you in a position to edit the connection.
+`# nmcli con edit "HassOS default"` will put you in a position to edit the connection.
 
 `nmcli> print ipv4` will show you the ipv4 properties of this connection.
 
@@ -132,7 +132,7 @@ nmcli> save
 nmcli> exit
 ```
 
-If you now view the default connection `cat /etc/NetworkManager/system_connections/default` you should see the method is manual and the address is set.
+If you now view the default connection `cat /etc/NetworkManager/system-connections/default` you should see the method is manual and the address is set.
 
 Doing a `nmcli con reload` does not always work so restart the VM.
 
