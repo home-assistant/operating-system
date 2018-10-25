@@ -6,7 +6,7 @@ CONFIG_DIR=""
 USE_USB=0
 
 # Check and mount usb CONFIG to folder
-if findfs LABEL="CONFIG" > /dev/null; then
+if findfs LABEL="CONFIG" > /dev/null 2>&1; then
     echo "[Info] Use USB stick for import CONFIG"
 
     systemctl start mnt-config.mount
@@ -38,7 +38,7 @@ if [ -d "${CONFIG_DIR}/network" ]; then
     cp -f ${CONFIG_DIR}/network/* /etc/NetworkManager/system-connections/
     chmod 600 /etc/NetworkManager/system-connections/*
 
-    nmcli con reload
+    nmcli con reload > /dev/null 2>&1
 fi
 
 ##
@@ -67,16 +67,18 @@ if [ -f "${CONFIG_DIR}/authorized_keys" ]; then
     cp -f ${CONFIG_DIR}/authorized_keys /root/.ssh/authorized_keys
     chmod 600 /root/.ssh/authorized_keys
 
-    systemctl start dropbear
+    systemctl start dropbear > /dev/null 2>&1
 else
+    echo "[Info] Stop SSH debug access"
+
     rm -f /root/.ssh/authorized_keys
-    systemctl stop dropbear
+    systemctl stop dropbear > /dev/null 2>&1
 fi
 
 ##
 # Firmware update / Only USB
 UPTIME=$(awk '{printf "%0.f", $1}' /proc/uptime)
-if ls ${USB_CONFIG}/*.raucb > /dev/null && [ ${UPTIME} -ge 180 ]; then
+if ls ${USB_CONFIG}/*.raucb > /dev/null 2>&1 && [ ${UPTIME} -ge 180 ]; then
     echo "[Info] Performe a firmware update"
 
     rauc_filename=$(ls ${USB_CONFIG}/*.raucb | head -n 1)
