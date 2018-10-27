@@ -1,6 +1,6 @@
 # OVA
 
-The OVA stands for Open Virtual Appliance. Currently we had remove the ova files and publish a vmdk virtual disk,
+OVA stands for Open Virtual Appliance. Currently we had remove the ova files and publish a vmdk virtual disk,
 until we have better OVF template to generate our OVA. This VMDK work with (maybe you need convert the disk):
 - HyperV
 - VirtualBox
