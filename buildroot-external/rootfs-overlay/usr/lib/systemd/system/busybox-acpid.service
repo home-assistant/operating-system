@@ -1,7 +1,7 @@
 [Unit]
 Description=acpid (busybox)
 RefuseManualStop=true
-After=local-fs.target
+After=sysinit.target
 ConditionPathIsDirectory=/proc/acpi
 
 [Service]
