@@ -56,7 +56,7 @@ if [ -d "${CONFIG_DIR}/udev" ]; then
     echo "[Info] Update Udev configuration!"
 
     rm -rf /etc/udev/rules.d/*
-    cp -f ${CONFIG_DIR}/udev/* /etc/udev/rules.d/*
+    cp -f ${CONFIG_DIR}/udev/* /etc/udev/rules.d/
 fi
 
 ##
