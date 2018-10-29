@@ -1,6 +1,7 @@
 [Unit]
 Description=acpid (busybox)
 RefuseManualStop=true
+After=sysinit.target
 ConditionPathIsDirectory=/proc/acpi
 
 [Service]
@@ -8,5 +9,4 @@ Type=simple
 ExecStart=/sbin/acpid -d
 
 [Install]
-After=local-fs.target
 WantedBy=multi-user.target
