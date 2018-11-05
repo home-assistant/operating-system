@@ -51,6 +51,8 @@ type=802-11-wireless
 [802-11-wireless]
 mode=infrastructure
 ssid=MY_SSID
+# Uncomment below if your SSID is not broadcasted
+#hidden=true
 
 [802-11-wireless-security]
 auth-alg=open
