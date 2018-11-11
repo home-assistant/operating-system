@@ -1,0 +1,40 @@
+From 2c6aee7a14a22d1d042dc7ddafe72c44a4da501f Mon Sep 17 00:00:00 2001
+From: Maxime Jourdan <maxi.jourdan@wanadoo.fr>
+Date: Wed, 1 Aug 2018 20:51:27 +0200
+Subject: [PATCH] ARM64: dts: meson-gx: add dmcbus and canvas nodes.
+
+Wrap the canvas node in a syscon node.
+
+Signed-off-by: Maxime Jourdan <maxi.jourdan@wanadoo.fr>
+---
+ arch/arm64/boot/dts/amlogic/meson-gx.dtsi | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gx.dtsi b/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
+index 6b64b63..25e195f 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
+@@ -458,6 +458,23 @@
+ 			};
+ 		};
+ 
++		dmcbus: bus@c8838000 {
++			compatible = "simple-bus";
++			reg = <0x0 0xc8838000 0x0 0x1000>;
++			#address-cells = <2>;
++			#size-cells = <2>;
++			ranges = <0x0 0x0 0x0 0xc8838000 0x0 0x1000>;
++
++			sysctrl_DMC: system-controller@0 {
++				compatible = "amlogic,meson-gx-dmc-sysctrl", "syscon", "simple-mfd";
++				reg = <0x0 0x0 0x0 0x1000>;
++
++				canvas: canvas-provider@0 {
++					compatible = "amlogic,meson-canvas";
++				};
++			};
++		};
++
+ 		hiubus: bus@c883c000 {
+ 			compatible = "simple-bus";
+ 			reg = <0x0 0xc883c000 0x0 0x2000>;

@@ -1,0 +1,55 @@
+From c50c3a3d2cb0d563757a8b8b1a3e52acdf68910e Mon Sep 17 00:00:00 2001
+From: Maxime Jourdan <maxi.jourdan@wanadoo.fr>
+Date: Wed, 1 Aug 2018 20:51:26 +0200
+Subject: [PATCH] dt-bindings: soc: amlogic: add meson-canvas documentation
+
+DT bindings doc for amlogic,meson-canvas
+
+Signed-off-by: Maxime Jourdan <maxi.jourdan@wanadoo.fr>
+---
+ .../bindings/soc/amlogic/amlogic,meson-canvas.txt  | 36 ++++++++++++++++++++++
+ 1 file changed, 36 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/soc/amlogic/amlogic,meson-canvas.txt
+
+diff --git a/Documentation/devicetree/bindings/soc/amlogic/amlogic,meson-canvas.txt b/Documentation/devicetree/bindings/soc/amlogic/amlogic,meson-canvas.txt
+new file mode 100644
+index 0000000..96e1437
+--- /dev/null
++++ b/Documentation/devicetree/bindings/soc/amlogic/amlogic,meson-canvas.txt
+@@ -0,0 +1,36 @@
++Amlogic Meson Canvas
++================================
++
++A canvas is a collection of metadata that describes a pixel buffer.
++Those metadata include: width, height, phyaddr, wrapping, block mode
++and endianness.
++
++Many IPs within Amlogic SoCs rely on canvas indexes to read/write pixel data
++rather than use the phy addresses directly. For instance, this is the case for
++the video decoders and the display.
++
++Amlogic SoCs have 256 canvas.
++
++Device Tree Bindings:
++---------------------
++
++Canvas Provider
++--------------------------
++
++Required properties:
++- compatible: "amlogic,meson-canvas"
++
++Parent node should have the following properties :
++- compatible: "amlogic,meson-gx-dmc-sysctrl", "syscon", "simple-mfd"
++- reg: base address and size of the DMC system control register space.
++
++Example:
++
++sysctrl_DMC: system-controller@0 {
++	compatible = "amlogic,meson-gx-dmc-sysctrl", "syscon", "simple-mfd";
++	reg = <0x0 0x0 0x0 0x1000>;
++
++	canvas: canvas-provider@0 {
++		compatible = "amlogic,meson-canvas";
++	};
++};

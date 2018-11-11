@@ -1,7 +1,7 @@
-From f9b447452943415a12055c0fca279281cd28d923 Mon Sep 17 00:00:00 2001
+From 878d41be386f0bcbe1475f65acd8b9fb304529a0 Mon Sep 17 00:00:00 2001
 From: Jerome Brunet <jbrunet@baylibre.com>
 Date: Thu, 30 Mar 2017 11:49:55 +0200
-Subject: [PATCH 21/39] ASoC: meson: add meson audio core driver
+Subject: [PATCH] ASoC: meson: add meson audio core driver
 
 This patch adds support for the audio core driver for the Amlogic Meson SoC
 family. The purpose of this driver is to properly reset the audio block and
@@ -15,7 +15,6 @@ of the S905 (gxbb). This datasheet is available here: [0].
 [0]: http://dn.odroid.com/S905/DataSheet/S905_Public_Datasheet_V1.1.4.pdf
 
 Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 ---
  sound/soc/Kconfig            |   1 +
  sound/soc/Makefile           |   1 +
@@ -30,10 +29,10 @@ Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
  create mode 100644 sound/soc/meson/audio-core.h
 
 diff --git a/sound/soc/Kconfig b/sound/soc/Kconfig
-index c0abad2..7db316f 100644
+index 41af6b9..1cf11cf 100644
 --- a/sound/soc/Kconfig
 +++ b/sound/soc/Kconfig
-@@ -55,6 +55,7 @@ source "sound/soc/kirkwood/Kconfig"
+@@ -57,6 +57,7 @@ source "sound/soc/kirkwood/Kconfig"
  source "sound/soc/img/Kconfig"
  source "sound/soc/intel/Kconfig"
  source "sound/soc/mediatek/Kconfig"
@@ -42,10 +41,10 @@ index c0abad2..7db316f 100644
  source "sound/soc/pxa/Kconfig"
  source "sound/soc/qcom/Kconfig"
 diff --git a/sound/soc/Makefile b/sound/soc/Makefile
-index bf8c1e2..d4c0a51 100644
+index 06389a5..62a5f87 100644
 --- a/sound/soc/Makefile
 +++ b/sound/soc/Makefile
-@@ -33,6 +33,7 @@ obj-$(CONFIG_SND_SOC)	+= jz4740/
+@@ -38,6 +38,7 @@ obj-$(CONFIG_SND_SOC)	+= jz4740/
  obj-$(CONFIG_SND_SOC)	+= img/
  obj-$(CONFIG_SND_SOC)	+= intel/
  obj-$(CONFIG_SND_SOC)	+= mediatek/
@@ -55,13 +54,13 @@ index bf8c1e2..d4c0a51 100644
  obj-$(CONFIG_SND_SOC)	+= omap/
 diff --git a/sound/soc/meson/Kconfig b/sound/soc/meson/Kconfig
 new file mode 100644
-index 0000000..216c850
+index 0000000..ca0e3e9
 --- /dev/null
 +++ b/sound/soc/meson/Kconfig
 @@ -0,0 +1,9 @@
 +menuconfig SND_SOC_MESON
 +	tristate "ASoC support for Amlogic Meson SoCs"
-+	depends on ARCH_MESON || COMPILE_TEST
++	depends on ARCH_MESON
 +	select MFD_CORE
 +	select REGMAP_MMIO
 +	help
@@ -307,6 +306,3 @@ index 0000000..6e7a24c
 +};
 +
 +#endif /* _MESON_AUDIO_CORE_H_ */
--- 
-2.7.4
-

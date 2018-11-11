@@ -1,0 +1,48 @@
+From e87dd7b11611e4ac5279ba4ad4f1fea4d0900273 Mon Sep 17 00:00:00 2001
+From: Jerome Brunet <jbrunet@baylibre.com>
+Date: Tue, 19 Jun 2018 18:23:28 +0200
+Subject: [PATCH] clk: meson: remove unused clk-audio-divider driver
+
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ drivers/clk/meson/Makefile | 2 +-
+ drivers/clk/meson/clkc.h   | 7 -------
+ 2 files changed, 1 insertion(+), 8 deletions(-)
+
+diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
+index d0d13ae..e40fea9 100644
+--- a/drivers/clk/meson/Makefile
++++ b/drivers/clk/meson/Makefile
+@@ -2,7 +2,7 @@
+ # Makefile for Meson specific clk
+ #
+ 
+-obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-pll.o clk-mpll.o clk-audio-divider.o
++obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-pll.o clk-mpll.o
+ obj-$(CONFIG_COMMON_CLK_MESON_AO) += meson-aoclk.o
+ obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b.o
+ obj-$(CONFIG_COMMON_CLK_GXBB)	 += gxbb.o gxbb-aoclk.o gxbb-aoclk-32k.o
+diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
+index 2fb0843..48db024 100644
+--- a/drivers/clk/meson/clkc.h
++++ b/drivers/clk/meson/clkc.h
+@@ -91,11 +91,6 @@ struct meson_clk_mpll_data {
+ 
+ #define CLK_MESON_MPLL_ROUND_CLOSEST	BIT(0)
+ 
+-struct meson_clk_audio_div_data {
+-	struct parm div;
+-	u8 flags;
+-};
+-
+ #define MESON_GATE(_name, _reg, _bit)					\
+ struct clk_regmap _name = {						\
+ 	.data = &(struct clk_regmap_gate_data){				\
+@@ -117,7 +112,5 @@ extern const struct clk_ops meson_clk_pll_ops;
+ extern const struct clk_ops meson_clk_cpu_ops;
+ extern const struct clk_ops meson_clk_mpll_ro_ops;
+ extern const struct clk_ops meson_clk_mpll_ops;
+-extern const struct clk_ops meson_clk_audio_divider_ro_ops;
+-extern const struct clk_ops meson_clk_audio_divider_ops;
+ 
+ #endif /* __CLKC_H */

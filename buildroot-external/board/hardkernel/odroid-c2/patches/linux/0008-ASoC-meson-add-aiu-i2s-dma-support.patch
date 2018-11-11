@@ -1,21 +1,20 @@
-From 03285555d8cbb3eb1f4991b758e5804a3c19b4ce Mon Sep 17 00:00:00 2001
+From bb5102086db1579c1289440fa8aa184a70cb7c64 Mon Sep 17 00:00:00 2001
 From: Jerome Brunet <jbrunet@baylibre.com>
 Date: Thu, 30 Mar 2017 12:14:40 +0200
-Subject: [PATCH 23/39] ASoC: meson: add aiu i2s dma support
+Subject: [PATCH] ASoC: meson: add aiu i2s dma support
 
 Add support for the i2s output dma which is part of the AIU block
 
 Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 ---
  sound/soc/meson/Kconfig       |   7 +
  sound/soc/meson/Makefile      |   2 +
- sound/soc/meson/aiu-i2s-dma.c | 367 ++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 376 insertions(+)
+ sound/soc/meson/aiu-i2s-dma.c | 370 ++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 379 insertions(+)
  create mode 100644 sound/soc/meson/aiu-i2s-dma.c
 
 diff --git a/sound/soc/meson/Kconfig b/sound/soc/meson/Kconfig
-index 216c850..ad31a11 100644
+index ca0e3e9..88fbfc2 100644
 --- a/sound/soc/meson/Kconfig
 +++ b/sound/soc/meson/Kconfig
 @@ -7,3 +7,10 @@ menuconfig SND_SOC_MESON
@@ -41,10 +40,10 @@ index 22028ab..273f275 100644
 +obj-$(CONFIG_SND_SOC_MESON_I2S)		+= snd-soc-meson-aiu-i2s-dma.o
 diff --git a/sound/soc/meson/aiu-i2s-dma.c b/sound/soc/meson/aiu-i2s-dma.c
 new file mode 100644
-index 0000000..bab950d
+index 0000000..2684bd0
 --- /dev/null
 +++ b/sound/soc/meson/aiu-i2s-dma.c
-@@ -0,0 +1,367 @@
+@@ -0,0 +1,370 @@
 +/*
 + * Copyright (C) 2017 BayLibre, SAS
 + * Author: Jerome Brunet <jbrunet@baylibre.com>
@@ -154,8 +153,9 @@ index 0000000..bab950d
 +static struct aiu_i2s_dma *aiu_i2s_dma_priv(struct snd_pcm_substream *s)
 +{
 +	struct snd_soc_pcm_runtime *rtd = s->private_data;
++	struct snd_soc_component *component = snd_soc_rtdcom_lookup(rtd, DRV_NAME);
 +
-+	return snd_soc_platform_get_drvdata(rtd->platform);
++	return snd_soc_component_get_drvdata(component);
 +}
 +
 +static snd_pcm_uframes_t
@@ -359,9 +359,10 @@ index 0000000..bab950d
 +						     card->dev, size, size);
 +}
 +
-+struct snd_soc_platform_driver aiu_i2s_platform = {
-+	.ops		= &aiu_i2s_dma_ops,
-+	.pcm_new	= aiu_i2s_dma_new,
++static const struct snd_soc_component_driver aiu_i2s_platform = {
++	.ops = &aiu_i2s_dma_ops,
++	.pcm_new = aiu_i2s_dma_new,
++	.name = DRV_NAME,
 +};
 +
 +static int aiu_i2s_dma_probe(struct platform_device *pdev)
@@ -389,7 +390,8 @@ index 0000000..bab950d
 +		return priv->irq;
 +	}
 +
-+	return snd_soc_register_platform(dev, &aiu_i2s_platform);
++	return devm_snd_soc_register_component(dev, &aiu_i2s_platform,
++					       NULL, 0);
 +}
 +
 +static const struct of_device_id aiu_i2s_dma_of_match[] = {
@@ -412,6 +414,3 @@ index 0000000..bab950d
 +MODULE_DESCRIPTION("Meson AIU i2s DMA ASoC Driver");
 +MODULE_AUTHOR("Jerome Brunet <jbrunet@baylibre.com>");
 +MODULE_LICENSE("GPL v2");
--- 
-2.7.4
-
