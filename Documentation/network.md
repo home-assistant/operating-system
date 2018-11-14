@@ -132,7 +132,7 @@ In addition I have found it is wise to set the dns server and the local gateway.
 nmcli> set ipv4.dns 192.168.100.1
 nmcli> set ipv4.gateway 192.168.100.1
 nmcli> save
-nmcli> exit
+nmcli> quit
 ```
 
 If you now view the default connection `cat /etc/NetworkManager/system-connections/default` you should see the method is manual and the address is set.
