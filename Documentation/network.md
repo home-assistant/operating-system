@@ -1,10 +1,10 @@
 # Network
 
-HassOS uses NetworkManager to control the host network. In future releases, you will be able to set up the configuration using the API/UI. Currently only a manual configuration using NetworkManager connection files is supported. Without a configuration file, the device will use DHCP by default. These network connection files can be placed on a USB drive as described in [Configuration][configuration-usb].
+HassOS uses NetworkManager to control the host network. In future releases, you will be able to set up the configuration using the API/UI. Currently only a manual configuration using NetworkManager connection files is supported. Without a configuration file, the device will use DHCP by default. These network connection files can be placed on a USB drive and imported to the host as described in [Configuration][configuration-usb].
 
 ## Configuration Examples
 
-You can also read the [Official Manual][keyfile] or there are a lot of examples accross internet. The system is read-only, if you don't want the IP address to change every boot, you should set the UUID property with a generic [UUID4][uuid]. Inside the `network` folder create the file `my-network` and add the appropriate contents below:
+You can read the [Official Manual][keyfile] or find many configuration examples across the internet. The system is read-only, if you don't want the IP address to change on every boot, you should set the UUID property with a generic [UUID4][uuid]. Inside `\CONFIG\network\` on the USB or SD, create a file called `my-network` and add the appropriate contents below:
 
 ### Default
 
@@ -83,7 +83,7 @@ For address, the value before the comma is the IP address and subnet prefix bitl
 
 ### Reset network
 
-If you want reset the network configuration to default, use follow commands on the host:
+If you want to reset the network configuration back to the default DHCP settings, use the following commands on the host:
 
 ```bash
 $ rm /etc/NetworkManager/system-connections/*
