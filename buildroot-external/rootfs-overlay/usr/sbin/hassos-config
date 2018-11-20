@@ -76,6 +76,15 @@ else
 fi
 
 ##
+# timesyncd
+if [ -f "${CONFIG_DIR}/timesyncd.conf" ]; then
+    echo "[Info] Update timesyncd config"
+
+    cat "${CONFIG_DIR}/timesyncd.conf" > /etc/systemd/timesyncd.conf
+    systemctl restart systemd-timesyncd.service > /dev/null 2>&1
+fi
+
+##
 # Firmware update / Only USB
 UPTIME=$(awk '{printf "%0.f", $1}' /proc/uptime)
 if ls ${USB_CONFIG}/*.raucb > /dev/null 2>&1 && [ ${UPTIME} -ge 180 ]; then

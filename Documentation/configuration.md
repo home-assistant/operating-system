@@ -10,6 +10,7 @@ network/
 modules/
 udev/
 authorized_keys
+timesyncd.conf
 hassos-xy.raucb
 ```
 
@@ -17,6 +18,7 @@ hassos-xy.raucb
 - The `modules` folder is for modules-load configuration files.
 - The `udev` folder is for udev rules files.
 - The `authorized_keys` file activates debug SSH access on port `22222`. See [Debugging Hassio][debug-hassio].
+- The `timesyncd.conf` file allow you to set different NTP servers. HassOS won't boot without correct working time servers!
 - The `hassos-*.raucb` file is a firmware OTA update which will be installed. These can be found on on the [release][hassos-release] page. 
 
 You can put this USB stick into the device and it will be read on startup. You can also trigger this process later over the
