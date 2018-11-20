@@ -1,0 +1,14 @@
+[Unit]
+Description=Timesyncd persistent configuration
+Requires=mnt-overlay.mount
+After=mnt-overlay.mount systemd-tmpfiles-setup.service
+Before=systemd-timesyncd.service
+
+[Mount]
+What=/mnt/overlay/etc/systemd/timesyncd.conf
+Where=/etc/systemd/timesyncd.conf
+Type=none
+Options=bind
+
+[Install]
+WantedBy=hassos-bind.target
