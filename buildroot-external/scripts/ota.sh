@@ -10,8 +10,9 @@ function create_ota_update() {
     local key="/build/key.pem"
     local cert="/build/cert.pem"
 
-    # Skeep if no dev key is arround
+    # Skip if no dev key is arround
     if [ ! -f "${key}" ]; then
+        echo "Skip creating OTA update because of missing key ${key}"
         return 0
     fi
 
