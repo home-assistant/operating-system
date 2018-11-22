@@ -3,15 +3,15 @@
 
 part start mmc ${devnum} 9 mmc_env
 mmc dev ${devnum}
-setenv loadbootstate "\
-echo 'loading env...';\
-mmc read ${ramdisk_addr_r} ${mmc_env} 0x10;\
-env import -c ${ramdisk_addr_r} 0x2000;"
+setenv loadbootstate " \
+    echo 'loading env...'; \
+    mmc read ${ramdisk_addr_r} ${mmc_env} 0x10; \
+    env import -c ${ramdisk_addr_r} 0x2000;"
 
-setenv storebootstate "\
-echo 'storing env...';\
-env export -c -s 0x2000 ${ramdisk_addr_r} BOOT_ORDER BOOT_A_LEFT BOOT_B_LEFT;\
-mmc write ${ramdisk_addr_r} ${mmc_env} 0x10;"
+setenv storebootstate " \
+    echo 'storing env...'; \
+    env export -c -s 0x2000 ${ramdisk_addr_r} BOOT_ORDER BOOT_A_LEFT BOOT_B_LEFT; \
+    mmc write ${ramdisk_addr_r} ${mmc_env} 0x10;"
 
 run loadbootstate
 test -n "${BOOT_ORDER}" || setenv BOOT_ORDER "A B"

@@ -11,7 +11,7 @@ CLI_DATA=/mnt/data/cli
 mkdir -p ${CLI_DATA}
 
 # Run CLI
-docker run \
+docker container run \
     --rm -ti --init \
     --security-opt apparmor="${APPARMOR}" \
     -v ${CLI_DATA}:/data \

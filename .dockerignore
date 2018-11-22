@@ -1,3 +1,7 @@
-buildroot
-buildroot-external
-buildroot-patches
+# We don't need this folder because we map the hole folder
+buildroot/
+buildroot-external/
+buildroot-patches/
+
+# Ignore too
+release/

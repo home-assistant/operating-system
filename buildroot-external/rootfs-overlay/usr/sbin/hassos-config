@@ -1,60 +1,97 @@
 #!/bin/sh
 
-if ! findfs LABEL="CONFIG" > /dev/null; then
+BOOT_CONFIG="/mnt/boot/CONFIG"
+USB_CONFIG="/mnt/config"
+CONFIG_DIR=""
+USE_USB=0
+
+# Check and mount usb CONFIG to folder
+if findfs LABEL="CONFIG" > /dev/null 2>&1; then
+    echo "[Info] Use USB stick for import CONFIG"
+
+    systemctl start mnt-config.mount
+    if ! systemctl -q is-active mnt-config.mount; then
+        echo "[Error] Can't mount config partition"
+        exit 1
+    fi
+
+    USE_USB=1
+    CONFIG_DIR=${USB_CONFIG}
+fi
+
+# Use boot CONFIG folder
+if [ ${USE_USB} = 0 ] && [ -d ${BOOT_CONFIG} ]; then
+    echo "[Info] Use boot partition for import CONFIG"
+    CONFIG_DIR=${BOOT_CONFIG}
+elif [ ${USE_USB} = 0 ]; then
     echo "[Warning] No config partition found"
     exit 0
 fi
 
-# Mount config folder
-systemctl start mnt-config.mount
-if ! systemctl -q is-active mnt-config.mount; then
-    echo "[Error] Can't mount config partition"
-    exit 1
-fi
 
 ##
 # NetworkManager
-if [ -d /mnt/config/network ]; then
+if [ -d "${CONFIG_DIR}/network" ]; then
     echo "[Info] Update NetworkManager connections!"
 
     rm -rf /etc/NetworkManager/system-connections/*
-    cp -f /mnt/config/network/* /etc/NetworkManager/system-connections/
+    cp -f ${CONFIG_DIR}/network/* /etc/NetworkManager/system-connections/
     chmod 600 /etc/NetworkManager/system-connections/*
 
-    nmcli con reload
+    nmcli con reload > /dev/null 2>&1
 fi
 
 ##
 # Modules
-if [ -d /mnt/config/modules ]; then
+if [ -d "${CONFIG_DIR}/modules" ]; then
     echo "[Info] Update Modules configuration!"
 
     rm -rf /etc/modules-load.d/*
-    cp -f /mnt/config/modules/* /etc/modules-load.d/*
+    cp -f ${CONFIG_DIR}/modules/* /etc/modules-load.d/*
+fi
+
+##
+# Udev
+if [ -d "${CONFIG_DIR}/udev" ]; then
+    echo "[Info] Update Udev configuration!"
+
+    rm -rf /etc/udev/rules.d/*
+    cp -f ${CONFIG_DIR}/udev/* /etc/udev/rules.d/
 fi
 
 ##
 # SSH know hosts
-if [ -f /mnt/config/authorized_keys ]; then
+if [ -f "${CONFIG_DIR}/authorized_keys" ]; then
     echo "[Info] Update SSH authorized_keys!"
 
-    cp -f /mnt/config/authorized_keys /root/.ssh/authorized_keys
+    cp -f ${CONFIG_DIR}/authorized_keys /root/.ssh/authorized_keys
     chmod 600 /root/.ssh/authorized_keys
 
-    systemctl start dropbear
+    systemctl start dropbear > /dev/null 2>&1
 else
+    echo "[Info] Stop SSH debug access"
+
     rm -f /root/.ssh/authorized_keys
-    systemctl stop dropbear
+    systemctl stop dropbear > /dev/null 2>&1
 fi
 
 ##
-# Firmware update
+# timesyncd
+if [ -f "${CONFIG_DIR}/timesyncd.conf" ]; then
+    echo "[Info] Update timesyncd config"
+
+    cat "${CONFIG_DIR}/timesyncd.conf" > /etc/systemd/timesyncd.conf
+    systemctl restart systemd-timesyncd.service > /dev/null 2>&1
+fi
+
+##
+# Firmware update / Only USB
 UPTIME=$(awk '{printf "%0.f", $1}' /proc/uptime)
-if ls /mnt/config/*.raucb > /dev/null && [ ${UPTIME} -ge 180 ]; then
+if ls ${USB_CONFIG}/*.raucb > /dev/null 2>&1 && [ ${UPTIME} -ge 180 ]; then
     echo "[Info] Performe a firmware update"
 
-    rauc_filename=$(ls /mnt/config/*.raucb | head -n 1)
-    if rauc install ${rauc_filename}; then
+    rauc_filename=$(ls ${USB_CONFIG}/*.raucb | head -n 1)
+    if rauc install "${rauc_filename}"; then
         echo "[Info] Firmware update success"
         systemctl reboot
     else
@@ -63,4 +100,8 @@ if ls /mnt/config/*.raucb > /dev/null && [ ${UPTIME} -ge 180 ]; then
 fi
 
 # Cleanup config partition
-systemctl stop mnt-config.mount
+if [ ${USE_USB} = 1 ]; then
+    systemctl stop mnt-config.mount
+else
+    rm -rf ${BOOT_CONFIG}
+fi

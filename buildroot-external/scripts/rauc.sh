@@ -86,7 +86,7 @@ function install_bootloader_config() {
 
     # Fix MBR
     if [ "${BOOT_SYS}" == "mbr" ]; then
-        mkdir -p ${TARGET_DIR}/etc/udev/rules.d
-	cp -f ${BR2_EXTERNAL_HASSOS_PATH}/misc/mbr-part.rules ${TARGET_DIR}/etc/udev/rules.d/
+        mkdir -p ${TARGET_DIR}/usr/lib/udev/rules.d
+	cp -f ${BR2_EXTERNAL_HASSOS_PATH}/misc/mbr-part.rules ${TARGET_DIR}/usr/lib/udev/rules.d/
     fi
 }

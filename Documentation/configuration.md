@@ -3,18 +3,22 @@
 ## Automatic
 
 You can use an USB drive with HassOS to configure network options, SSH access to the host and to install updates.
-Format a USB stick with FAT32/EXT4/NTFS and name it `CONFIG`. Use the following directory structure within the USB drive:
+Format a USB stick with FAT32/EXT4/NTFS and name it `CONFIG`. Alternative you can create a `CONFIG` folder inside boot partition. Use the following directory structure within the USB drive:
 
 ```text
 network/
 modules/
+udev/
 authorized_keys
+timesyncd.conf
 hassos-xy.raucb
 ```
 
 - The `network` folder can contain any kind of NetworkManager connection files. For more information see [Network][network.md]. 
 - The `modules` folder is for modules-load configuration files.
+- The `udev` folder is for udev rules files.
 - The `authorized_keys` file activates debug SSH access on port `22222`. See [Debugging Hassio][debug-hassio].
+- The `timesyncd.conf` file allow you to set different NTP servers. HassOS won't boot without correct working time servers!
 - The `hassos-*.raucb` file is a firmware OTA update which will be installed. These can be found on on the [release][hassos-release] page. 
 
 You can put this USB stick into the device and it will be read on startup. You can also trigger this process later over the
@@ -29,6 +33,10 @@ You can edit or create a `cmdline.txt` in your boot partition. That will be read
 ### Kernel-Module
 
 The kernel module folder `/etc/modules-load.d` is persistent and you can add your configuration files there. See [Systemd modules load][systemd-modules].
+
+### Udev rules
+
+The udev rules folder `/etc/udev/rules.d` is persistent and you can add your configuration files there.
 
 ### Network
 
