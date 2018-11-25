@@ -75,7 +75,8 @@ endif
 
 ifeq ($(BR2_PACKAGE_DHCP_CLIENT),y)
 define DHCP_INSTALL_CLIENT
-	mkdir -p $(TARGET_DIR)/var/lib/dhcp
+	mkdir -p $(TARGET_DIR)/var/lib
+	(cd $(TARGET_DIR)/var/lib; ln -snf /tmp dhcp)
 	$(INSTALL) -m 0755 -D $(DHCP_DIR)/client/dhclient \
 		$(TARGET_DIR)/sbin/dhclient
 	$(INSTALL) -m 0644 -D package/dhcp/dhclient.conf \

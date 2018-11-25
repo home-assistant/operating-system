@@ -143,6 +143,447 @@ comment "----------------------------------------------------"
 endif
 
 ###############################################################################
+comment "Legacy options removed in 2018.11"
+
+config BR2_TARGET_XLOADER
+	bool "xloader has been removed"
+	select BR2_LEGACY
+	help
+	  The package has been removed as u-boot SPL provides
+	  similar functionality
+
+config BR2_PACKAGE_TIDSP_BINARIES
+	bool "tidsp-binaries package removed"
+	select BR2_LEGACY
+	help
+	  The tidsp-binaries package was removed.
+
+config BR2_PACKAGE_DSP_TOOLS
+	bool "dsp-tools package removed"
+	select BR2_LEGACY
+	help
+	  The dsp-tools package was removed.
+
+config BR2_PACKAGE_GST_DSP
+	bool "gst-dsp package removed"
+	select BR2_LEGACY
+	help
+	  The gst-dsp package was removed.
+
+config BR2_PACKAGE_BOOTUTILS
+	bool "bootutils package removed"
+	select BR2_LEGACY
+	help
+	  The bootutils package was removed.
+
+config BR2_PACKAGE_EXPEDITE
+	bool "expedite package has been removed"
+	select BR2_LEGACY
+	help
+	  expedite is not actively maintained anymore.
+	  https://sourceforge.net/p/enlightenment/mailman/message/36428571
+
+config BR2_PACKAGE_MESA3D_OPENGL_TEXTURE_FLOAT
+	bool "mesa3d opengl texture float option removed"
+	select BR2_LEGACY
+	help
+	  mesa3d now unconditionally enables floating-point textures,
+	  as the corresponding patent has expired.
+
+config BR2_KERNEL_HEADERS_4_10
+	bool "kernel headers version 4.10.x are no longer supported"
+	select BR2_LEGACY
+	help
+	  Version 4.10.x of the Linux kernel headers are no longer
+	  maintained upstream and are now removed.
+
+config BR2_KERNEL_HEADERS_4_11
+	bool "kernel headers version 4.11.x are no longer supported"
+	select BR2_LEGACY
+	help
+	  Version 4.11.x of the Linux kernel headers are no longer
+	  maintained upstream and are now removed.
+
+config BR2_KERNEL_HEADERS_4_12
+	bool "kernel headers version 4.12.x are no longer supported"
+	select BR2_LEGACY
+	help
+	  Version 4.12.x of the Linux kernel headers are no longer
+	  maintained upstream and are now removed.
+
+config BR2_KERNEL_HEADERS_4_13
+	bool "kernel headers version 4.13.x are no longer supported"
+	select BR2_LEGACY
+	help
+	  Version 4.13.x of the Linux kernel headers are no longer
+	  maintained upstream and are now removed.
+
+config BR2_KERNEL_HEADERS_4_15
+	bool "kernel headers version 4.15.x are no longer supported"
+	select BR2_LEGACY
+	help
+	  Version 4.15.x of the Linux kernel headers are no longer
+	  maintained upstream and are now removed.
+
+config BR2_KERNEL_HEADERS_4_17
+	bool "kernel headers version 4.17.x are no longer supported"
+	select BR2_LEGACY
+	help
+	  Version 4.17.x of the Linux kernel headers are no longer
+	  maintained upstream and are now removed.
+
+config BR2_PACKAGE_LIBNFTNL_XML
+	bool "libnftl no longer supports XML output"
+	select BR2_LEGACY
+	help
+	  libnftnl removed integration with libmxml.
+
+###############################################################################
+comment "Legacy options removed in 2018.08"
+
+config BR2_PACKAGE_XSERVER_XORG_SERVER_V_1_19
+	bool "Modular X.org server was updated to version 1.20.0"
+	select BR2_LEGACY
+	select BR2_PACKAGE_XSERVER_XORG_SERVER_V_1_20
+	help
+	  Modular X.org server was updated to version 1.20.0
+
+config BR2_PACKAGE_XPROTO_APPLEWMPROTO
+	bool "xproto-applewmproto package replaced by xorgproto"
+	select BR2_LEGACY
+	select BR2_PACKAGE_XORGPROTO
+	help
+	  The xproto-applewmproto package has been replaced by the
+	  xorgproto package, which combines all xproto_* packages.
+
+config BR2_PACKAGE_XPROTO_BIGREQSPROTO
+	bool "xproto-bigreqsproto package replaced by xorgproto"
+	select BR2_LEGACY
+	select BR2_PACKAGE_XORGPROTO
+	help
+	  The xproto-bigreqsproto package has been replaced by the
+	  xorgproto package, which combines all xproto_* packages.
+
+config BR2_PACKAGE_XPROTO_COMPOSITEPROTO
+	bool "xproto-compositeproto package replaced by xorgproto"
+	select BR2_LEGACY
+	select BR2_PACKAGE_XORGPROTO
+	help
+	  The xproto-compositeproto package has been replaced by the
+	  xorgproto package, which combines all xproto_* packages.
+
+config BR2_PACKAGE_XPROTO_DAMAGEPROTO
+	bool "xproto-dameproto package replaced by xorgproto"
+	select BR2_LEGACY
+	select BR2_PACKAGE_XORGPROTO
+	help
+	  The xproto-dameproto package has been replaced by the
+	  xorgproto package, which combines all xproto_* packages.
+
+config BR2_PACKAGE_XPROTO_DMXPROTO
+	bool "xproto-dmxproto package replaced by xorgproto"
+	select BR2_LEGACY
+	select BR2_PACKAGE_XORGPROTO
+	help
+	  The xproto-dmxproto package has been replaced by the
+	  xorgproto package, which combines all xproto_* packages.
+
+config BR2_PACKAGE_XPROTO_DRI2PROTO
+	bool "xproto-dri2proto package replaced by xorgproto"
+	select BR2_LEGACY
+	select BR2_PACKAGE_XORGPROTO
+	help
+	  The xproto-dri2proto package has been replaced by the
+	  xorgproto package, which combines all xproto_* packages.
+
+config BR2_PACKAGE_XPROTO_DRI3PROTO
+	bool "xproto-dri3proto package replaced by xorgproto"
+	select BR2_LEGACY
+	select BR2_PACKAGE_XORGPROTO
+	help
+	  The xproto-dri3proto package has been replaced by the
+	  xorgproto package, which combines all xproto_* packages.
+
+config BR2_PACKAGE_XPROTO_FIXESPROTO
+	bool "xproto-fixesproto package replaced by xorgproto"
+	select BR2_LEGACY
+	select BR2_PACKAGE_XORGPROTO
+	help
+	  The xproto-fixesproto package has been replaced by the
+	  xorgproto package, which combines all xproto_* packages.
+
+config BR2_PACKAGE_XPROTO_FONTCACHEPROTO
+	bool "xproto-fontcacheproto package replaced by xorgproto"
+	select BR2_LEGACY
+	select BR2_PACKAGE_XORGPROTO
+	help
+	  The xproto-fontcacheproto package has been replaced by the
+	  xorgproto package, which combines all xproto_* packages.
+
+config BR2_PACKAGE_XPROTO_FONTSPROTO
+	bool "xproto-fontsproto package replaced by xorgproto"
+	select BR2_LEGACY
+	select BR2_PACKAGE_XORGPROTO
+	help
+	  The xproto-fontsproto package has been replaced by the
+	  xorgproto package, which combines all xproto_* packages.
+
+config BR2_PACKAGE_XPROTO_GLPROTO
+	bool "xproto-glproto package replaced by xorgproto"
+	select BR2_LEGACY
+	select BR2_PACKAGE_XORGPROTO
+	help
+	  The xproto-glproto package has been replaced by the
+	  xorgproto package, which combines all xproto_* packages.
+
+config BR2_PACKAGE_XPROTO_INPUTPROTO
+	bool "xproto-inputproto package replaced by xorgproto"
+	select BR2_LEGACY
+	select BR2_PACKAGE_XORGPROTO
+	help
+	  The xproto-inputproto package has been replaced by the
+	  xorgproto package, which combines all xproto_* packages.
+
+config BR2_PACKAGE_XPROTO_KBPROTO
+	bool "xproto-kbproto package replaced by xorgproto"
+	select BR2_LEGACY
+	select BR2_PACKAGE_XORGPROTO
+	help
+	  The xproto-kbproto package has been replaced by the
+	  xorgproto package, which combines all xproto_* packages.
+
+config BR2_PACKAGE_XPROTO_PRESENTPROTO
+	bool "xproto-presentproto package replaced by xorgproto"
+	select BR2_LEGACY
+	select BR2_PACKAGE_XORGPROTO
+	help
+	  The xproto-presentproto package has been replaced by the
+	  xorgproto package, which combines all xproto_* packages.
+
+config BR2_PACKAGE_XPROTO_RANDRPROTO
+	bool "xproto-randrproto package replaced by xorgproto"
+	select BR2_LEGACY
+	select BR2_PACKAGE_XORGPROTO
+	help
+	  The xproto-randrproto package has been replaced by the
+	  xorgproto package, which combines all xproto_* packages.
+
+config BR2_PACKAGE_XPROTO_RECORDPROTO
+	bool "xproto-recordproto package replaced by xorgproto"
+	select BR2_LEGACY
+	select BR2_PACKAGE_XORGPROTO
+	help
+	  The xproto-recordproto package has been replaced by the
+	  xorgproto package, which combines all xproto_* packages.
+
+config BR2_PACKAGE_XPROTO_RENDERPROTO
+	bool "xproto-renderproto package replaced by xorgproto"
+	select BR2_LEGACY
+	select BR2_PACKAGE_XORGPROTO
+	help
+	  The xproto-renderproto package has been replaced by the
+	  xorgproto package, which combines all xproto_* packages.
+
+config BR2_PACKAGE_XPROTO_RESOURCEPROTO
+	bool "xproto-resourceproto package replaced by xorgproto"
+	select BR2_LEGACY
+	select BR2_PACKAGE_XORGPROTO
+	help
+	  The xproto-resourceproto package has been replaced by the
+	  xorgproto package, which combines all xproto_* packages.
+
+config BR2_PACKAGE_XPROTO_SCRNSAVERPROTO
+	bool "xproto-scrnsaverprot package replaced by xorgproto"
+	select BR2_LEGACY
+	select BR2_PACKAGE_XORGPROTO
+	help
+	  The xproto-scrnsaverprot package has been replaced by the
+	  xorgproto package, which combines all xproto_* packages.
+
+config BR2_PACKAGE_XPROTO_VIDEOPROTO
+	bool "xproto-videoproto package replaced by xorgproto"
+	select BR2_LEGACY
+	select BR2_PACKAGE_XORGPROTO
+	help
+	  The xproto-videoproto package has been replaced by the
+	  xorgproto package, which combines all xproto_* packages.
+
+config BR2_PACKAGE_XPROTO_WINDOWSWMPROTO
+	bool "xproto-windowswmproto package replaced by xorgproto"
+	select BR2_LEGACY
+	select BR2_PACKAGE_XORGPROTO
+	help
+	  The xproto-windowswmproto package has been replaced by the
+	  xorgproto package, which combines all xproto_* packages.
+
+config BR2_PACKAGE_XPROTO_XCMISCPROTO
+	bool "xproto-xcmiscproto package replaced by xorgproto"
+	select BR2_LEGACY
+	select BR2_PACKAGE_XORGPROTO
+	help
+	  The xproto-xcmiscproto package has been replaced by the
+	  xorgproto package, which combines all xproto_* packages.
+
+config BR2_PACKAGE_XPROTO_XEXTPROTO
+	bool "xproto-xextproto package replaced by xorgproto"
+	select BR2_LEGACY
+	select BR2_PACKAGE_XORGPROTO
+	help
+	  The xproto-xextproto package has been replaced by the
+	  xorgproto package, which combines all xproto_* packages.
+
+config BR2_PACKAGE_XPROTO_XF86BIGFONTPROTO
+	bool "xproto-xf86bigfontproto package replaced by xorgproto"
+	select BR2_LEGACY
+	select BR2_PACKAGE_XORGPROTO
+	help
+	  The xproto-xf86bigfontproto package has been replaced by the
+	  xorgproto package, which combines all xproto_* packages.
+
+config BR2_PACKAGE_XPROTO_XF86DGAPROTO
+	bool "xproto-xf86dgaproto package replaced by xorgproto"
+	select BR2_LEGACY
+	select BR2_PACKAGE_XORGPROTO
+	help
+	  The xproto-xf86dgaproto package has been replaced by the
+	  xorgproto package, which combines all xproto_* packages.
+
+config BR2_PACKAGE_XPROTO_XF86DRIPROTO
+	bool "xproto-xf86driproto package replaced by xorgproto"
+	select BR2_LEGACY
+	select BR2_PACKAGE_XORGPROTO
+	help
+	  The xproto-xf86driproto package has been replaced by the
+	  xorgproto package, which combines all xproto_* packages.
+
+config BR2_PACKAGE_XPROTO_XF86VIDMODEPROTO
+	bool "xproto-xf86vidmodeproto package replaced by xorgproto"
+	select BR2_LEGACY
+	select BR2_PACKAGE_XORGPROTO
+	help
+	  The xproto-xf86vidmodeproto package has been replaced by the
+	  xorgproto package, which combines all xproto_* packages.
+
+config BR2_PACKAGE_XPROTO_XINERAMAPROTO
+	bool "xproto-xineramaproto package replaced by xorgproto"
+	select BR2_LEGACY
+	select BR2_PACKAGE_XORGPROTO
+	help
+	  The xproto-xineramaproto package has been replaced by the
+	  xorgproto package, which combines all xproto_* packages.
+
+config BR2_PACKAGE_XPROTO_XPROTO
+	bool "xproto-xproto package replaced by xorgproto"
+	select BR2_LEGACY
+	select BR2_PACKAGE_XORGPROTO
+	help
+	  The xproto-xproto package has been replaced by the
+	  xorgproto package, which combines all xproto_* packages.
+
+config BR2_PACKAGE_XPROTO_XPROXYMANAGEMENTPROTOCOL
+	bool "xproto-xproxymanagementprotocol package replaced by xorgproto"
+	select BR2_LEGACY
+	select BR2_PACKAGE_XORGPROTO
+	help
+	  The xproto-xproxymanagementprotocol package has been
+	  replaced by the xorgproto package, which combines all
+	  xproto_* packages.
+
+config BR2_PACKAGE_GST1_PLUGINS_BAD_LIB_OPENGL_OPENGL
+	bool "gst1-plugins-bad opengl option moved to gst1-plugins-base"
+	select BR2_LEGACY
+	select BR2_PACKAGE_GST1_PLUGINS_BASE_LIB_OPENGL_OPENGL
+	help
+	  The opengl option has been moved from gst1-plugins-bad to
+	  gst1-plugins-base.
+
+config BR2_PACKAGE_GST1_PLUGINS_BAD_LIB_OPENGL_GLES2
+	bool "gst1-plugins-bad gles2 option moved to gst1-plugins-base"
+	select BR2_LEGACY
+	select BR2_PACKAGE_GST1_PLUGINS_BASE_LIB_OPENGL_GLES2
+	help
+	  The gles2 option has been moved from gst1-plugins-bad to
+	  gst1-plugins-base.
+
+config BR2_PACKAGE_GST1_PLUGINS_BAD_LIB_OPENGL_GLX
+	bool "gst1-plugins-bad glx option moved to gst1-plugins-base"
+	select BR2_LEGACY
+	select BR2_PACKAGE_GST1_PLUGINS_BASE_LIB_OPENGL_GLX
+	help
+	  The glx option has been moved from gst1-plugins-bad to
+	  gst1-plugins-base.
+
+config BR2_PACKAGE_GST1_PLUGINS_BAD_LIB_OPENGL_EGL
+	bool "gst1-plugins-bad egl option moved to gst1-plugins-base"
+	select BR2_LEGACY
+	select BR2_PACKAGE_GST1_PLUGINS_BASE_LIB_OPENGL_EGL
+	help
+	  The egl option has been moved from gst1-plugins-bad to
+	  gst1-plugins-base.
+
+config BR2_PACKAGE_GST1_PLUGINS_BAD_LIB_OPENGL_X11
+	bool "gst1-plugins-bad x11 option moved to gst1-plugins-base"
+	select BR2_LEGACY
+	select BR2_PACKAGE_GST1_PLUGINS_BASE_LIB_OPENGL_X11
+	help
+	  The x11 option has been moved from gst1-plugins-bad to
+	  gst1-plugins-base.
+
+config BR2_PACKAGE_GST1_PLUGINS_BAD_LIB_OPENGL_WAYLAND
+	bool "gst1-plugins-bad wayland option moved to gst1-plugins-base"
+	select BR2_LEGACY
+	select BR2_PACKAGE_GST1_PLUGINS_BASE_LIB_OPENGL_WAYLAND
+	help
+	  The wayland option has been moved from gst1-plugins-bad to
+	  gst1-plugins-base.
+
+config BR2_PACKAGE_GST1_PLUGINS_BAD_LIB_OPENGL_DISPMANX
+	bool "gst1-plugins-bad dispmanx option moved to gst1-plugins-base"
+	select BR2_LEGACY
+	select BR2_PACKAGE_GST1_PLUGINS_BASE_LIB_OPENGL_DISPMANX
+	help
+	  The dispmanx option has been moved from gst1-plugins-mad to
+	  gst1-plugins-base.
+
+config BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_AUDIOMIXER
+	bool "gst1-plugins-bad audiomixer option moved to gst1-plugins-base"
+	select BR2_LEGACY
+	select BR2_PACKAGE_GST1_PLUGINS_BASE_PLUGIN_AUDIOMIXER
+	help
+	  The audiomixer option has been moved from gst1-plugins-bad to
+	  gst1-plugins-base.
+
+config BR2_PACKAGE_GST1_PLUGINS_UGLY_PLUGIN_LAME
+	bool "gst1-plugins-ugly lame option moved to gst1-plugins-good"
+	select BR2_LEGACY
+	select BR2_PACKAGE_GST1_PLUGINS_GOOD_PLUGIN_LAME
+	help
+	  The lame option has been moved from gst1-plugins-ugly to
+	  gst1-plugins-good.
+
+config BR2_PACKAGE_GST1_PLUGINS_UGLY_PLUGIN_MPG123
+	bool "gst1-plugins-ugly mpg123 option moved to gst1-plugins-good"
+	select BR2_LEGACY
+	select BR2_PACKAGE_GST1_PLUGINS_GOOD_PLUGIN_MPG123
+	help
+	  The mpg123 option has been moved from gst1-plugins-ugly to
+	  gst1-plugins-good.
+
+config BR2_GDB_VERSION_7_11
+	bool "gdb 7.11 has been removed"
+	select BR2_LEGACY
+	help
+	  The 7.11 version of gdb has been removed. Use a newer version
+	  instead.
+
+config BR2_GDB_VERSION_7_10
+	bool "gdb 7.10 has been removed"
+	select BR2_LEGACY
+	help
+	  The 7.10 version of gdb has been removed. Use a newer version
+	  instead.
+
+###############################################################################
 comment "Legacy options removed in 2018.05"
 
 config BR2_PACKAGE_MEDIAART_BACKEND_NONE
@@ -169,6 +610,8 @@ config BR2_PACKAGE_MEDIAART_BACKEND_GDK_PIXBUF
 	  BR2_PACKAGE_MEDIAART_BACKEND_QT has been renamed to
 	  BR2_PACKAGE_LIBMEDIAART_BACKEND_QT
 
+# Note: BR2_PACKAGE_TI_SGX_AM335X is still referenced from
+# package/ti-sgx-km/Config.in
 config BR2_PACKAGE_TI_SGX_AM335X
 	bool "ti-sgx-km AM335X option renamed"
 	select BR2_LEGACY
@@ -177,6 +620,8 @@ config BR2_PACKAGE_TI_SGX_AM335X
 	  BR2_PACKAGE_TI_SGX_AM335X has been renamed to
 	  BR2_PACKAGE_TI_SGX_KM_AM335X.
 
+# Note: BR2_PACKAGE_TI_SGX_AM437X is still referenced from
+# package/ti-sgx-km/Config.in
 config BR2_PACKAGE_TI_SGX_AM437X
 	bool "ti-sgx-km AM437X option renamed"
 	select BR2_LEGACY
@@ -185,6 +630,8 @@ config BR2_PACKAGE_TI_SGX_AM437X
 	  BR2_PACKAGE_TI_SGX_AM437X has been renamed to
 	  BR2_PACKAGE_TI_SGX_KM_AM437X.
 
+# Note: BR2_PACKAGE_TI_SGX_AM4430 is still referenced from
+# package/ti-sgx-km/Config.in
 config BR2_PACKAGE_TI_SGX_AM4430
 	bool "ti-sgx-km AM4430 option renamed"
 	select BR2_LEGACY
@@ -193,6 +640,8 @@ config BR2_PACKAGE_TI_SGX_AM4430
 	  BR2_PACKAGE_TI_SGX_AM4430 has been renamed to
 	  BR2_PACKAGE_TI_SGX_KM_AM4430.
 
+# Note: BR2_PACKAGE_TI_SGX_AM5430 is still referenced from
+# package/ti-sgx-km/Config.in
 config BR2_PACKAGE_TI_SGX_AM5430
 	bool "ti-sgx-km AM5430 option renamed"
 	select BR2_LEGACY
@@ -707,33 +1156,24 @@ comment "Legacy options removed in 2018.02"
 
 config BR2_KERNEL_HEADERS_3_4
 	bool "kernel headers version 3.4.x are no longer supported"
-	select BR2_KERNEL_HEADERS_4_1
 	select BR2_LEGACY
 	help
 	  Version 3.4.x of the Linux kernel headers are no longer
-	  maintained upstream and are now removed. As an alternative,
-	  version 4.1.x of the headers have been automatically
-	  selected in your configuration.
+	  maintained upstream and are now removed.
 
 config BR2_KERNEL_HEADERS_3_10
 	bool "kernel headers version 3.10.x are no longer supported"
-	select BR2_KERNEL_HEADERS_4_1
 	select BR2_LEGACY
 	help
 	  Version 3.10.x of the Linux kernel headers are no longer
-	  maintained upstream and are now removed. As an alternative,
-	  version 4.1.x of the headers have been automatically
-	  selected in your configuration.
+	  maintained upstream and are now removed.
 
 config BR2_KERNEL_HEADERS_3_12
 	bool "kernel headers version 3.12.x are no longer supported"
-	select BR2_KERNEL_HEADERS_4_1
 	select BR2_LEGACY
 	help
 	  Version 3.12.x of the Linux kernel headers are no longer
-	  maintained upstream and are now removed. As an alternative,
-	  version 4.1.x of the headers have been automatically
-	  selected in your configuration.
+	  maintained upstream and are now removed.
 
 config BR2_BINUTILS_VERSION_2_27_X
 	bool "binutils version 2.27 support removed"
@@ -1284,23 +1724,17 @@ config BR2_PACKAGE_GMOCK
 
 config BR2_KERNEL_HEADERS_4_8
 	bool "kernel headers version 4.8.x are no longer supported"
-	select BR2_KERNEL_HEADERS_4_4
 	select BR2_LEGACY
 	help
 	  Version 4.8.x of the Linux kernel headers are no longer
-	  maintained upstream and are now removed. As an alternative,
-	  version 4.4.x of the headers have been automatically
-	  selected in your configuration.
+	  maintained upstream and are now removed.
 
 config BR2_KERNEL_HEADERS_3_18
 	bool "kernel headers version 3.18.x are no longer supported"
-	select BR2_KERNEL_HEADERS_3_12
 	select BR2_LEGACY
 	help
 	  Version 3.18.x of the Linux kernel headers are no longer
-	  maintained upstream and are now removed. As an alternative,
-	  version 3.12.x of the headers have been automatically
-	  selected in your configuration.
+	  maintained upstream and are now removed.
 
 config BR2_GLIBC_VERSION_2_22
 	bool "glibc 2.22 removed"
@@ -1323,43 +1757,31 @@ config BR2_PACKAGE_PERL_DB_FILE
 
 config BR2_KERNEL_HEADERS_4_7
 	bool "kernel headers version 4.7.x are no longer supported"
-	select BR2_KERNEL_HEADERS_4_4
 	select BR2_LEGACY
 	help
 	  Version 4.7.x of the Linux kernel headers are no longer
-	  maintained upstream and are now removed. As an alternative,
-	  version 4.4.x of the headers have been automatically
-	  selected in your configuration.
+	  maintained upstream and are now removed.
 
 config BR2_KERNEL_HEADERS_4_6
 	bool "kernel headers version 4.6.x are no longer supported"
-	select BR2_KERNEL_HEADERS_4_4
 	select BR2_LEGACY
 	help
 	  Version 4.6.x of the Linux kernel headers are no longer
-	  maintained upstream and are now removed. As an alternative,
-	  version 4.4.x of the headers have been automatically
-	  selected in your configuration.
+	  maintained upstream and are now removed.
 
 config BR2_KERNEL_HEADERS_4_5
 	bool "kernel headers version 4.5.x are no longer supported"
-	select BR2_KERNEL_HEADERS_4_4
 	select BR2_LEGACY
 	help
 	  Version 4.5.x of the Linux kernel headers are no longer
-	   maintained upstream and are now removed. As an alternative,
-	   version 4.4.x of the headers have been automatically
-	   selected in your configuration.
+	   maintained upstream and are now removed.
 
 config BR2_KERNEL_HEADERS_3_14
 	bool "kernel headers version 3.14.x are no longer supported"
-	select BR2_KERNEL_HEADERS_3_12
 	select BR2_LEGACY
 	  help
 	  Version 3.14.x of the Linux kernel headers are no longer
-	  maintained upstream and are now removed. As an alternative,
-	  version 3.12.x of the headers have been automatically
-	  selected in your configuration.
+	  maintained upstream and are now removed.
 
 config BR2_TOOLCHAIN_EXTERNAL_MUSL_CROSS
 	bool "musl-cross 1.1.12 toolchain removed"
@@ -1488,23 +1910,17 @@ config BR2_PACKAGE_SSTRIP
 
 config BR2_KERNEL_HEADERS_4_3
 	bool "kernel headers version 4.3.x are no longer supported"
-	select BR2_KERNEL_HEADERS_4_1
 	select BR2_LEGACY
 	help
 	  Version 4.3.x of the Linux kernel headers are no longer
-	  maintained upstream and are now removed. As an alternative,
-	  version 4.1.x of the headers have been automatically
-	  selected in your configuration.
+	  maintained upstream and are now removed.
 
 config BR2_KERNEL_HEADERS_4_2
 	bool "kernel headers version 4.2.x are no longer supported"
-	select BR2_KERNEL_HEADERS_4_1
 	select BR2_LEGACY
 	help
 	  Version 4.2.x of the Linux kernel headers are no longer
-	  maintained upstream and are now removed. As an alternative,
-	  version 4.1.x of the headers have been automatically
-	  selected in your configuration.
+	  maintained upstream and are now removed.
 
 config BR2_PACKAGE_KODI_ADDON_XVDR
 	bool "kodi-addon-xvdr removed"
@@ -1579,24 +1995,18 @@ config BR2_GCC_VERSION_4_8_ARC
 
 config BR2_KERNEL_HEADERS_4_0
 	bool "kernel headers version 4.0.x are no longer supported"
-	select BR2_KERNEL_HEADERS_3_12
 	select BR2_LEGACY
 	help
 	  Version 4.0.x of the Linux kernel headers have been deprecated
 	  for more than four buildroot releases and are now removed.
-	  As an alternative, version 3.12.x of the headers have been
-	  automatically selected in your configuration.
 
 config BR2_KERNEL_HEADERS_3_19
 	bool "kernel headers version 3.19.x are no longer supported"
-	select BR2_KERNEL_HEADERS_3_12
 	select BR2_LEGACY
 	help
 	  Version 3.19.x of the Linux kernel headers have been
 	  deprecated for more than four buildroot releases and are now
 	  removed.
-	  As an alternative, version 3.12.x of the headers have been
-	  automatically selected in your configuration.
 
 config BR2_PACKAGE_LIBEVAS_GENERIC_LOADERS
 	bool "libevas-generic-loaders package removed"
@@ -1809,14 +2219,11 @@ config BR2_PACKAGE_XDRIVER_XF86_INPUT_VOID
 
 config BR2_KERNEL_HEADERS_3_17
 	bool "kernel headers version 3.17.x are no longer supported"
-	select BR2_KERNEL_HEADERS_3_12
 	select BR2_LEGACY
 	help
 	  Version 3.17.x of the Linux kernel headers have been
 	  deprecated for more than four buildroot releases and are now
 	  removed.
-	  As an alternative, version 3.12.x of the headers have been
-	  automatically selected in your configuration.
 
 config BR2_GDB_VERSION_7_7
 	bool "gdb 7.7 has been removed"
@@ -1957,14 +2364,11 @@ config BR2_PACKAGE_CUPS_PDFTOPS
 
 config BR2_KERNEL_HEADERS_3_16
 	bool "kernel headers version 3.16.x are no longer supported"
-	select BR2_KERNEL_HEADERS_3_12
 	select BR2_LEGACY
 	help
 	  Version 3.16.x of the Linux kernel headers have been
 	  deprecated for more than four buildroot releases and are now
 	  removed.
-	  As an alternative, version 3.12.x of the headers have been
-	  automatically selected in your configuration.
 
 config BR2_PACKAGE_PYTHON_PYXML
 	bool "python-pyxml package has been removed"
@@ -2165,46 +2569,34 @@ config BR2_PACKAGE_BLACKBOX
 
 config BR2_KERNEL_HEADERS_3_0
 	bool "kernel headers version 3.0.x are no longer supported"
-	select BR2_KERNEL_HEADERS_3_2
 	select BR2_LEGACY
 	help
 	  Version 3.0.x of the Linux kernel headers have been deprecated
 	  for more than four buildroot releases and are now removed.
-	  As an alternative, version 3.2.x of the headers have been
-	  automatically selected in your configuration.
 
 config BR2_KERNEL_HEADERS_3_11
 	bool "kernel headers version 3.11.x are no longer supported"
-	select BR2_KERNEL_HEADERS_3_10
 	select BR2_LEGACY
 	help
 	  Version 3.11.x of the Linux kernel headers have been
 	  deprecated for more than four buildroot releases and are now
 	  removed.
-	  As an alternative, version 3.10.x of the headers have been
-	  automatically selected in your configuration.
 
 config BR2_KERNEL_HEADERS_3_13
 	bool "kernel headers version 3.13.x are no longer supported"
-	select BR2_KERNEL_HEADERS_3_12
 	select BR2_LEGACY
 	help
 	  Version 3.13.x of the Linux kernel headers have been
 	  deprecated for more than four buildroot releases and are now
 	  removed.
-	  As an alternative, version 3.12.x of the headers have been
-	  automatically selected in your configuration.
 
 config BR2_KERNEL_HEADERS_3_15
 	bool "kernel headers version 3.15.x are no longer supported"
-	select BR2_KERNEL_HEADERS_3_12
 	select BR2_LEGACY
 	help
 	  Version 3.15.x of the Linux kernel headers have been
 	  deprecated for more than four buildroot releases and are now
 	  removed.
-	  As an alternative, version 3.12.x of the headers have been
-	  automatically selected in your configuration.
 
 config BR2_PACKAGE_DIRECTFB_EXAMPLES_ANDI
 	bool "DirectFB example df_andi has been removed"
@@ -3031,13 +3423,10 @@ config BR2_PACKAGE_LIBELF
 
 config BR2_KERNEL_HEADERS_3_8
 	bool "kernel headers version 3.8.x are no longer supported"
-	select BR2_KERNEL_HEADERS_3_4
 	select BR2_LEGACY
 	help
 	  Version 3.8.x of the Linux kernel headers have been deprecated
 	  for more than four buildroot releases and are now removed.
-	  As an alternative, version 3.4.x of the headers have been
-	  automatically selected in your configuration.
 
 config BR2_PACKAGE_GETTEXT_TOOLS
 	bool "support for gettext-tools on target has been removed"
@@ -3190,23 +3579,17 @@ config BR2_PACKAGE_EVTEST_CAPTURE
 
 config BR2_KERNEL_HEADERS_3_6
 	bool "kernel headers version 3.6.x are no longer supported"
-	select BR2_KERNEL_HEADERS_3_4
 	select BR2_LEGACY
 	help
 	  Version 3.6.x of the Linux kernel headers have been deprecated
 	  for more than four buildroot releases and are now removed.
-	  As an alternative, version 3.4.x of the headers have been
-	  automatically selected in your configuration.
 
 config BR2_KERNEL_HEADERS_3_7
 	bool "kernel headers version 3.7.x are no longer supported"
-	select BR2_KERNEL_HEADERS_3_4
 	select BR2_LEGACY
 	help
 	  Version 3.7.x of the Linux kernel headers have been deprecated
 	  for more than four buildroot releases and are now removed.
-	  As an alternative, version 3.4.x of the headers have been
-	  automatically selected in your configuration.
 
 config BR2_PACKAGE_VALA
 	bool "vala target package has been removed"
@@ -3368,33 +3751,24 @@ config BR2_sh3eb
 
 config BR2_KERNEL_HEADERS_3_1
 	bool "kernel headers version 3.1.x are no longer supported"
-	select BR2_KERNEL_HEADERS_3_2
 	select BR2_LEGACY
 	help
 	  Version 3.1.x of the Linux kernel headers have been deprecated
 	  for more than four buildroot releases and are now removed.
-	  As an alternative, version 3.2.x of the headers have been
-	  automatically selected in your configuration.
 
 config BR2_KERNEL_HEADERS_3_3
 	bool "kernel headers version 3.3.x are no longer supported"
-	select BR2_KERNEL_HEADERS_3_2
 	select BR2_LEGACY
 	help
 	  Version 3.3.x of the Linux kernel headers have been deprecated
 	  for more than four buildroot releases and are now removed.
-	  As an alternative, version 3.2.x of the headers have been
-	  automatically selected in your configuration.
 
 config BR2_KERNEL_HEADERS_3_5
 	bool "kernel headers version 3.5.x are no longer supported"
-	select BR2_KERNEL_HEADERS_3_4
 	select BR2_LEGACY
 	help
 	  Version 3.5.x of the Linux kernel headers have been deprecated
 	  for more than four buildroot releases and are now removed.
-	  As an alternative, version 3.4.x of the headers have been
-	  automatically selected in your configuration.
 
 config BR2_GDB_VERSION_7_2
 	bool "gdb 7.2.x is no longer supported"

@@ -30,10 +30,10 @@ choice
 	prompt "Kernel version"
 
 config BR2_LINUX_KERNEL_LATEST_VERSION
-	bool "Latest version (4.16)"
+	bool "Latest version (4.18)"
 
 config BR2_LINUX_KERNEL_LATEST_CIP_VERSION
-	bool "Latest CIP SLTS version (v4.4.130-cip23)"
+	bool "Latest CIP SLTS version (v4.4.138-cip25)"
 	help
 	  CIP launched in the spring of 2016 to address the needs of
 	  organizations in industries such as power generation and
@@ -120,8 +120,8 @@ endif
 
 config BR2_LINUX_KERNEL_VERSION
 	string
-	default "4.16.13" if BR2_LINUX_KERNEL_LATEST_VERSION
-	default "v4.4.130-cip23" if BR2_LINUX_KERNEL_LATEST_CIP_VERSION
+	default "4.18.18" if BR2_LINUX_KERNEL_LATEST_VERSION
+	default "v4.4.138-cip25" if BR2_LINUX_KERNEL_LATEST_CIP_VERSION
 	default BR2_LINUX_KERNEL_CUSTOM_VERSION_VALUE \
 		if BR2_LINUX_KERNEL_CUSTOM_VERSION
 	default "custom" if BR2_LINUX_KERNEL_CUSTOM_TARBALL
@@ -187,6 +187,14 @@ config BR2_LINUX_KERNEL_CONFIG_FRAGMENT_FILES
 	help
 	  A space-separated list of kernel configuration fragment files,
 	  that will be merged to the main kernel configuration file.
+
+config BR2_LINUX_KERNEL_CUSTOM_LOGO_PATH
+	string "Custom boot logo file path"
+	help
+	  Use a custom Linux framebuffer boot logo.
+	  Custom logo should be in PNG or JPEG format, it will be
+	  converted to the linux kernel format (224 colors only)
+	  and copied over the original logo file.
 
 #
 # Binary format

@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-MTD_VERSION = 2.0.1
+MTD_VERSION = 2.0.2
 MTD_SOURCE = mtd-utils-$(MTD_VERSION).tar.bz2
 MTD_SITE = ftp://ftp.infradead.org/pub/mtd-utils
 MTD_LICENSE = GPL-2.0
@@ -29,10 +29,6 @@ ifeq ($(BR2_PACKAGE_MTD_TESTS),y)
 MTD_CONF_OPTS += --enable-tests --enable-install-tests
 else
 MTD_CONF_OPTS += --disable-tests --disable-install-tests
-endif
-
-ifeq ($(BR2_PACKAGE_BUSYBOX),y)
-MTD_DEPENDENCIES += busybox
 endif
 
 # If extended attributes are required, the acl package must

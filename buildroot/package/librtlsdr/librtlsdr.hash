@@ -1,2 +1,4 @@
 # Locally calculated
-sha256 98fb5c34ac94d6f2235a0bb41a08f8bed7949e1d1b91ea57a7c1110191ea58de  librtlsdr-v0.5.3.tar.gz
+sha256 80a5155f3505bca8f1b808f8414d7dcd7c459b662a1cde84d3a2629a6e72ae55  librtlsdr-0.6.0.tar.gz
+# License file, locally calculated
+sha256 ab15fd526bd8dd18a9e77ebc139656bf4d33e97fc7238cd11bf60e2b9b8666c6  COPYING

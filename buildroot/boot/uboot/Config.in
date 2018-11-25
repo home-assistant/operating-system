@@ -39,7 +39,7 @@ choice
 	  Select the specific U-Boot version you want to use
 
 config BR2_TARGET_UBOOT_LATEST_VERSION
-	bool "2018.03"
+	bool "2018.09"
 
 config BR2_TARGET_UBOOT_CUSTOM_VERSION
 	bool "Custom version"
@@ -87,7 +87,7 @@ endif
 
 config BR2_TARGET_UBOOT_VERSION
 	string
-	default "2018.03"	if BR2_TARGET_UBOOT_LATEST_VERSION
+	default "2018.09"	if BR2_TARGET_UBOOT_LATEST_VERSION
 	default BR2_TARGET_UBOOT_CUSTOM_VERSION_VALUE \
 		if BR2_TARGET_UBOOT_CUSTOM_VERSION
 	default "custom"	if BR2_TARGET_UBOOT_CUSTOM_TARBALL
@@ -159,6 +159,14 @@ config BR2_TARGET_UBOOT_NEEDS_OPENSSL
 	  typically the case when the board configuration has
 	  CONFIG_FIT_SIGNATURE enabled.
 
+config BR2_TARGET_UBOOT_NEEDS_LZOP
+	bool "U-Boot needs lzop"
+	help
+	  Select this option if your U-Boot board configuration
+	  requires lzop to be available on the host. This is typically
+	  the case when the board configuration has CONFIG_SPL_LZO
+	  enabled.
+
 config BR2_TARGET_UBOOT_NEEDS_ATF_BL31
 	bool "U-Boot needs ATF BL31"
 	depends on BR2_TARGET_ARM_TRUSTED_FIRMWARE
@@ -189,6 +197,9 @@ config BR2_TARGET_UBOOT_FORMAT_DTB_BIN
 
 config BR2_TARGET_UBOOT_FORMAT_DTB_IMG
 	bool "u-boot-dtb.img"
+
+config BR2_TARGET_UBOOT_FORMAT_DTB_IMX
+	bool "u-boot-dtb.imx"
 
 config BR2_TARGET_UBOOT_FORMAT_IMG
 	bool "u-boot.img"
@@ -364,6 +375,64 @@ config BR2_TARGET_UBOOT_ZYNQ_IMAGE
 	  A bitstream can be loaded by the U-Boot. The SPL searchs
 	  for u-boot-dtb.img file so this U-Boot format is required
 	  to be set.
+
+config BR2_TARGET_UBOOT_ZYNQMP
+	bool "Boot on the Xilinx ZynqMP SoCs"
+	depends on BR2_aarch64
+	help
+	  Enable options specific to the Xilinx ZynqMP family of SoCs.
+
+if BR2_TARGET_UBOOT_ZYNQMP
+
+config BR2_TARGET_UBOOT_ZYNQMP_PMUFW
+	string "PMU firmware location"
+	depends on BR2_TARGET_UBOOT_BUILD_SYSTEM_KCONFIG
+	help
+	  Location of a PMU firmware binary.
+
+	  If not empty, instructs the U-Boot build process to generate
+	  a boot.bin (to be loaded by the ZynqMP boot ROM) containing
+	  both the U-Boot SPL and the PMU firmware in the
+	  Xilinx-specific boot format.
+
+	  The value can be an absolute or relative path, and will be
+	  used directly from where it is located, or an URI
+	  (e.g. http://...), and it will be downloaded and used from
+	  the download directory.
+
+	  If empty, the generated boot.bin will not contain a PMU
+	  firmware.
+
+	  This feature requires U-Boot >= 2018.07.
+
+config BR2_TARGET_UBOOT_ZYNQMP_PSU_INIT_FILE
+	string "Custom psu_init_gpl file"
+	depends on BR2_TARGET_UBOOT_BUILD_SYSTEM_KCONFIG
+	help
+	  On ZynqMP the booloader is responsible for some basic
+	  initializations, such as enabling peripherals and
+	  configuring pinmuxes. The psu_init_gpl.c file (and,
+	  optionally, psu_init_gpl.h) contains the code for such
+	  initializations.
+
+	  Although U-Boot contains psu_init_gpl.c files for some
+	  boards, each of them describes only one specific
+	  configuration. Users of a different board, or needing a
+	  different configuration, can generate custom files using the
+	  Xilinx development tools.
+
+	  Set this variable to the path to your psu_init_gpl.c file
+	  (e.g. "board/myboard/psu_init_gpl.c"). psu_init_gpl.h, if
+	  needed, should be in the same directory. U-Boot will build
+	  and link the user-provided file instead of the built-in one.
+
+	  Leave empty to use the files provided by U-Boot.
+
+	  This feature requires commit
+	  6da4f67ad09cd8b311d77b2b04e557b7ef65b56c from upstream
+	  U-Boot, available from versions after 2018.07.
+
+endif
 
 config BR2_TARGET_UBOOT_ALTERA_SOCFPGA_IMAGE_CRC
 	bool "CRC image for Altera SoC FPGA (mkpimage)"
