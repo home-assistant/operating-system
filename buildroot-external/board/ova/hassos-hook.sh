@@ -14,7 +14,10 @@ function hassos_pre_image() {
 
 
 function hassos_post_image() {
-    convert_disk_image_vmdk
+    convert_disk_image_virtual
+
     convert_disk_image_gz vmdk
+    convert_disk_image_gz vhdx
+    convert_disk_image_gz vdi
 }
 
