@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-APACHE_VERSION = 2.4.33
+APACHE_VERSION = 2.4.37
 APACHE_SOURCE = httpd-$(APACHE_VERSION).tar.bz2
 APACHE_SITE = http://archive.apache.org/dist/httpd
 APACHE_LICENSE = Apache-2.0
@@ -91,5 +91,18 @@ define APACHE_CLEANUP_TARGET
 	$(RM) -rf $(TARGET_DIR)/usr/manual $(TARGET_DIR)/usr/build
 endef
 APACHE_POST_INSTALL_TARGET_HOOKS += APACHE_CLEANUP_TARGET
+
+define APACHE_INSTALL_INIT_SYSV
+	$(INSTALL) -D -m 0755 package/apache/S50apache \
+		$(TARGET_DIR)/etc/init.d/S50apache
+endef
+
+define APACHE_INSTALL_INIT_SYSTEMD
+	$(INSTALL) -D -m 644 package/apache/apache.service \
+		$(TARGET_DIR)/usr/lib/systemd/system/apache.service
+	mkdir -p $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants
+	ln -sf ../../../../usr/lib/systemd/system/apache.service \
+		$(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/apache.service
+endef
 
 $(eval $(autotools-package))

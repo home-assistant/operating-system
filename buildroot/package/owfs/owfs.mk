@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-OWFS_VERSION = 3.2p1
+OWFS_VERSION = 3.2p2
 OWFS_SITE = http://downloads.sourceforge.net/project/owfs/owfs/$(OWFS_VERSION)
 OWFS_DEPENDENCIES = host-pkgconf
 OWFS_CONF_OPTS = --disable-owperl --without-perl5 --disable-owtcl --without-tcl
@@ -20,6 +20,9 @@ OWFS_INSTALL_STAGING = YES
 # owfs PHP support is not PHP 7 compliant
 # https://sourceforge.net/p/owfs/support-requests/32/
 OWFS_CONF_OPTS += --disable-owphp --without-php
+
+# Skip man pages processing
+OWFS_CONF_ENV += ac_cv_path_SOELIM=true
 
 ifeq ($(BR2_PACKAGE_LIBFUSE),y)
 OWFS_DEPENDENCIES += libfuse

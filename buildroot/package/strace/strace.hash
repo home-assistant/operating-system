@@ -1,4 +1,4 @@
-# Locally calculated after checking signature
-# https://strace.io/files/4.21/strace-4.21.tar.xz.asc
-sha256	5c7688db44073e94c59a5627744e5699454419824cc8166e8bcfd7ec58375c37	strace-4.21.tar.xz
-sha256	ea7ff222f36c9df0aa2924a8f7c7d2aec3ea11e752feba4b15ec79b695b6236a	COPYING
+# Locally calculated after checking signature with RSA key 0xA8041FA839E16E36
+# https://strace.io/files/4.23/strace-4.23.tar.xz
+sha256	7860a6965f1dd832747bd8281a04738274398d32c56e9fbd0a68b1bb9ec09aad	strace-4.23.tar.xz
+sha256	df862ba273812c589fd69acc74197a25d38c5295baccab00a62d39d1894c0253	COPYING

@@ -20,25 +20,34 @@ COPY apt-sources.list /etc/apt/sources.list
 
 # The container has no package lists, so need to update first
 RUN dpkg --add-architecture i386 && \
-    apt-get update -y && \
-    apt-get install -y --no-install-recommends \
-        build-essential cmake libc6:i386 g++-multilib \
-        bc ca-certificates file locales rsync \
-        cvs bzr git mercurial subversion wget \
-        cpio unzip \
+    apt-get update -y
+RUN apt-get install -y --no-install-recommends \
+        bc \
+        build-essential \
+        bzr \
+        ca-certificates \
+        cmake \
+        cpio \
+        cvs \
+        file \
+        g++-multilib \
+        git \
+        libc6:i386 \
         libncurses5-dev \
-        python-nose2 python-pexpect qemu-system-arm qemu-system-x86 \
-        python-pip && \
+        locales \
+        mercurial \
+        python-flake8 \
+        python-nose2 \
+        python-pexpect \
+        qemu-system-arm \
+        qemu-system-x86 \
+        rsync \
+        subversion \
+        unzip \
+        wget \
+        && \
     apt-get -y autoremove && \
     apt-get -y clean
-
-# For check-flake8
-RUN python -m pip install --upgrade pip setuptools wheel && \
-    pip install -q \
-        flake8==3.5.0 \
-        mccabe==0.6.1 \
-        pycodestyle==2.3.1 \
-        pyflakes==1.6.0
 
 # To be able to generate a toolchain with locales, enable one UTF-8 locale
 RUN sed -i 's/# \(en_US.UTF-8\)/\1/' /etc/locale.gen && \

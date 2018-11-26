@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-LIBVA_VERSION = 2.1.0
+LIBVA_VERSION = 2.3.0
 LIBVA_SOURCE = libva-$(LIBVA_VERSION).tar.bz2
-LIBVA_SITE = https://github.com/01org/libva/releases/download/$(LIBVA_VERSION)
+LIBVA_SITE = https://github.com/intel/libva/releases/download/$(LIBVA_VERSION)
 LIBVA_LICENSE = MIT
 LIBVA_LICENSE_FILES = COPYING
 LIBVA_INSTALL_STAGING = YES

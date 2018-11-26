@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-FREESWITCH_VERSION = 1.6.20
+FREESWITCH_VERSION = 1.8.2
 FREESWITCH_SOURCE = freeswitch-$(FREESWITCH_VERSION).tar.xz
 FREESWITCH_SITE = http://files.freeswitch.org/freeswitch-releases
 # External modules need headers/libs from staging
@@ -14,8 +14,7 @@ FREESWITCH_LICENSE = MPL-1.1, \
 	Apache-2.0 (apr, apr-util), \
 	LGPL-2.0+ (sofia-sip), \
 	LGPL-2.1, GPL-2.0 (spandsp), \
-	BSD-3-Clause (libsrtp), \
-	tiff license
+	BSD-3-Clause (libsrtp)
 
 FREESWITCH_LICENSE_FILES = \
 	COPYING \
@@ -24,8 +23,7 @@ FREESWITCH_LICENSE_FILES = \
 	libs/sofia-sip/COPYING \
 	libs/sofia-sip/COPYRIGHTS \
 	libs/spandsp/COPYING \
-	libs/srtp/LICENSE \
-	libs/tiff-4.0.2/COPYRIGHT
+	libs/srtp/LICENSE
 
 # required dependencies
 FREESWITCH_DEPENDENCIES = \
@@ -36,6 +34,7 @@ FREESWITCH_DEPENDENCIES = \
 	pcre \
 	speex \
 	sqlite \
+	tiff \
 	util-linux \
 	zlib
 
@@ -150,6 +149,7 @@ FREESWITCH_ENABLED_MODULES += \
 	say/mod_say_sv \
 	say/mod_say_th \
 	say/mod_say_zh \
+	timers/mod_timerfd \
 	xml_int/mod_xml_cdr \
 	xml_int/mod_xml_rpc \
 	xml_int/mod_xml_scgi

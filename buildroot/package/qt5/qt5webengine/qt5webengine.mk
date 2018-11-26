@@ -12,10 +12,14 @@ QT5WEBENGINE_DEPENDENCIES = ffmpeg libglib2 libvpx opus webp qt5base \
 	host-pkgconf host-python
 QT5WEBENGINE_INSTALL_STAGING = YES
 
-include package/qt5/qt5webengine/chromium.inc
+ifeq ($(BR2_PACKAGE_QT5_VERSION_LATEST),y)
+include package/qt5/qt5webengine/chromium-latest.inc
+else
+include package/qt5/qt5webengine/chromium-lts.inc
+endif
 QT5WEBENGINE_LICENSE = GPL-2.0 or LGPL-3.0 or GPL-3.0 or GPL-3.0 with exception
 QT5WEBENGINE_LICENSE_FILES = LICENSE.GPL2 LICENSE.GPL3 LICENSE.GPL3-EXCEPT \
-	LICENSE.GPLv3 LICENSE.LGPL3 $(CHROMIUM_LICENSE_FILES)
+	LICENSE.GPLv3 LICENSE.LGPL3 $(QT5WEBENGINE_CHROMIUM_LICENSE_FILES)
 
 ifeq ($(BR2_PACKAGE_QT5BASE_XCB),y)
 QT5WEBENGINE_DEPENDENCIES += xlib_libXScrnSaver xlib_libXcomposite \
@@ -47,6 +51,8 @@ define QT5WEBENGINE_PYTHON2_SYMLINK
 	ln -sf $(HOST_DIR)/bin/python2 $(@D)/host-bin/python
 endef
 QT5WEBENGINE_PRE_CONFIGURE_HOOKS += QT5WEBENGINE_PYTHON2_SYMLINK
+
+QT5WEBENGINE_ENV += NINJAFLAGS="-j$(PARALLEL_JOBS)"
 
 ifeq ($(BR2_PACKAGE_QT5_VERSION_LATEST),y)
 define QT5WEBENGINE_CREATE_HOST_PKG_CONFIG

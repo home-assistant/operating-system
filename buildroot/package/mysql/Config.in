@@ -16,7 +16,8 @@ choice
 
 config BR2_PACKAGE_MARIADB
 	bool "mariadb"
-	depends on BR2_PACKAGE_LIBAIO_ARCH_SUPPORTS
+	depends on !BR2_STATIC_LIBS
+	depends on BR2_TOOLCHAIN_HAS_ATOMIC || BR2_TOOLCHAIN_HAS_SYNC_8
 	select BR2_PACKAGE_LIBAIO
 	select BR2_PACKAGE_LIBXML2
 	select BR2_PACKAGE_NCURSES
@@ -29,6 +30,10 @@ config BR2_PACKAGE_MARIADB
 	  guaranteed to stay open source.
 
 	  http://www.mariadb.org/
+
+comment "mariadb needs a toolchain w/ dynamic library"
+	depends on BR2_STATIC_LIBS
+	depends on BR2_TOOLCHAIN_HAS_ATOMIC || BR2_TOOLCHAIN_HAS_SYNC_8
 
 config BR2_PACKAGE_ORACLE_MYSQL
 	bool "oracle mysql"
@@ -48,6 +53,12 @@ config BR2_PACKAGE_MARIADB_SERVER
 	bool "mariadb server"
 	help
 	  Install the mariadb server on the target.
+
+config BR2_PACKAGE_MARIADB_SERVER_EMBEDDED
+	bool "mariadb embedded server"
+	depends on BR2_PACKAGE_MARIADB_SERVER
+	help
+	  Install the mariadb embedded server on the target.
 
 endif
 
