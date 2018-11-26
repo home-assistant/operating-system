@@ -299,9 +299,6 @@ function convert_disk_image_virtual() {
     qemu-img convert -O vdi ${hdd_img} ${hdd_vdi}
 
     rm -f ${hdd_img}
-    convert_disk_image_gz vmdk
-    convert_disk_image_gz vhdx
-    convert_disk_image_gz vdi
 }
 
 
