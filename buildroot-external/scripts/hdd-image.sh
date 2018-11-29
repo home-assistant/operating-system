@@ -1,4 +1,5 @@
 #!/bin/bash
+# shellcheck disable=SC2155
 
 BOOT_UUID="b3dd0952-733c-4c88-8cba-cab9b8b4377f"
 BOOTSTATE_UUID="33236519-7F32-4DFF-8002-3390B62C309D"
@@ -9,7 +10,6 @@ KERNEL1_UUID="fc02a4f0-5350-406f-93a2-56cbed636b5f"
 OVERLAY_UUID="f1326040-5236-40eb-b683-aaa100a9afcf"
 DATA_UUID="a52a4597-fa3a-4851-aefd-2fbe9f849079"
 
-SPL_SIZE=8M
 BOOT_SIZE=(32M 24M)
 BOOTSTATE_SIZE=8M
 SYSTEM_SIZE=256M
@@ -51,7 +51,7 @@ function get_boot_size() {
 function create_spl_image() {
     local boot_img="$(path_spl_img)"
 
-    dd if=/dev/zero of=${boot_img} bs=512 count=16382
+    dd if=/dev/zero of="${boot_img}" bs=512 count=16382
 }
 
 
@@ -61,16 +61,16 @@ function create_boot_image() {
 
     echo "mtools_skip_check=1" > ~/.mtoolsrc
     dd if=/dev/zero of=${boot_img} bs=$(get_boot_size) count=1
-    mkfs.vfat -n "hassos-boot" ${boot_img}
-    mcopy -i ${boot_img} -sv ${boot_data}/* ::
+    mkfs.vfat -n "hassos-boot" "${boot_img}"
+    mcopy -i "${boot_img}" -sv "${boot_data}"/* ::
 }
 
 
 function create_overlay_image() {
     local overlay_img="$(path_overlay_img)"
 
-    dd if=/dev/zero of=${overlay_img} bs=${OVERLAY_SIZE} count=1
-    mkfs.ext4 -L "hassos-overlay" -E lazy_itable_init=0,lazy_journal_init=0 ${overlay_img}
+    dd if=/dev/zero of="${overlay_img}" bs=${OVERLAY_SIZE} count=1
+    mkfs.ext4 -L "hassos-overlay" -E lazy_itable_init=0,lazy_journal_init=0 "${overlay_img}"
 }
 
 
