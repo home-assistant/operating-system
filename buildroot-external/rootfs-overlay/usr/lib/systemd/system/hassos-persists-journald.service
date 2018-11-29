@@ -7,7 +7,7 @@ RefuseManualStop=true
 
 [Service]
 Type=oneshot
-ExecStart=/usr/sbin/hassos-persists-journald
+ExecStart=/usr/libexec/hassos-persists-journald
 RemainAfterExit=true
 
 [Install]

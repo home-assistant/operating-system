@@ -7,7 +7,7 @@ RequiresMountsFor=/mnt/data
 [Service]
 Type=oneshot
 RemainAfterExit=true
-ExecStart=/usr/sbin/hassos-apparmor
+ExecStart=/usr/libexec/hassos-apparmor
 
 [Install]
 WantedBy=multi-user.target

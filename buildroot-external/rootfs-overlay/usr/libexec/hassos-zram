@@ -68,3 +68,4 @@ fi
 if [ "$TYPE" = "fs" ]; then
     mkfs.ext4 -L "hassos-$MOUNT" -O ^has_journal "$DEVICE"
 fi
+
