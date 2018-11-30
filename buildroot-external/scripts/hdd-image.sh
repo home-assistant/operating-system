@@ -196,17 +196,14 @@ function _create_disk_mbr() {
     local disk_layout="${BINARIES_DIR}/disk.layout"
     local boot_start=16384
 
-    # Write new image & MBR
-    dd if=/dev/zero of="${hdd_img}" bs=1G count="${hdd_count}"
-
-    let boot_size=$(size2sectors ${BOOT_SIZE})+2
-    let kernel0_size=$(size2sectors ${KERNEL_SIZE})+2
-    let system0_size=$(size2sectors ${SYSTEM_SIZE})+2
-    let kernel1_size=$(size2sectors ${KERNEL_SIZE})+2
-    let system1_size=$(size2sectors ${SYSTEM_SIZE})+2
-    let bootstate_size=$(size2sectors ${BOOTSTATE_SIZE})+2
-    let overlay_size=$(size2sectors ${OVERLAY_SIZE})+2
-    let data_size=$(size2sectors ${DATA_SIZE})+2
+    local boot_size=$(($(size2sectors BOOT_SIZE)+2))
+    local kernel0_size=$(($(size2sectors KERNEL_SIZE)+2))
+    local system0_size=$(($(size2sectors SYSTEM_SIZE)+2))
+    local kernel1_size=$(($(size2sectors KERNEL_SIZE)+2))
+    local system1_size=$(($(size2sectors SYSTEM_SIZE)+2))
+    local bootstate_size=$(($(size2sectors BOOTSTATE_SIZE)+2))
+    local overlay_size=$(($(size2sectors OVERLAY_SIZE)+2))
+    local data_size=$(($(size2sectors DATA_SIZE)+2))
     local extended_size=$((kernel0_size+system0_size+kernel1_size+system1_size+bootstate_size+2))
 
     # we add one here for the extended header.
@@ -224,6 +221,9 @@ function _create_disk_mbr() {
     local rootfs_offset=${system0_start}
     local overlay_offset=${overlay_start}
     local data_offset=${data_start}
+
+    # Write new image & MBR
+    dd if=/dev/zero of="${hdd_img}" bs=1G count="${hdd_count}"
 
     # Update disk layout
     (
