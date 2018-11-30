@@ -22,7 +22,7 @@ function size2sectors() {
     s=0
     for v in "${@}"
     do
-    let s+=$(echo $v | awk \
+    ((s+=$(echo $v | awk \
       'BEGIN{IGNORECASE = 1}
        function printsectors(n,b,p) {printf "%u\n", n*b^p/512}
        /B$/{     printsectors($1,  1, 0)};
@@ -34,6 +34,7 @@ function size2sectors() {
        /MB$/{    printsectors($1, 10,  6)};
        /GB$/{    printsectors($1, 10,  9)};
        /TB$/{    printsectors($1, 10, 12)}')
+    ))
     done
     echo $s
 }
@@ -192,11 +193,10 @@ function _create_disk_mbr() {
     local hdd_img="$(hassos_image_name img)"
     local hdd_count=${DISK_SIZE:-2}
     local disk_layout="${BINARIES_DIR}/disk.layout"
+    local boot_start=16384
 
     # Write new image & MBR
     dd if=/dev/zero of=${hdd_img} bs=1G count=${hdd_count}
-
-    let boot_start=16384
 
     let boot_size=$(size2sectors ${BOOT_SIZE})+2
     let kernel0_size=$(size2sectors ${KERNEL_SIZE})+2
