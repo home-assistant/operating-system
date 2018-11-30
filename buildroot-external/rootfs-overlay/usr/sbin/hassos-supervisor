@@ -10,16 +10,18 @@ APPARMOR="$(jq --raw-output '.supervisor_apparmor // "docker-default"' ${CONFIG_
 
 # Init supervisor
 HASSOS_DATA=/mnt/data/supervisor
-HASSOS_IMAGE_ID=$(docker inspect --format='{{.Id}}' ${SUPERVISOR})
+HASSOS_IMAGE_ID=$(docker inspect --format='{{.Id}}' "${SUPERVISOR}")
 HASSOS_CONTAINER_ID=$(docker inspect --format='{{.Image}}' hassos_supervisor || echo "")
 
 # Fix wrong AppArmor profiles
-if ! grep ${APPARMOR} /sys/kernel/security/apparmor/profiles > /dev/null; then
+if ! grep "${APPARMOR}" /sys/kernel/security/apparmor/profiles > /dev/null; then
     APPARMOR=docker-default
 fi
 
 runSupervisor() {
     docker container rm --force hassos_supervisor || true
+
+    # shellcheck disable=SC2086
     docker container run --name hassos_supervisor \
         --security-opt apparmor="${APPARMOR}" \
         -v /var/run/docker.sock:/var/run/docker.sock \
@@ -29,7 +31,7 @@ runSupervisor() {
         -e SUPERVISOR_SHARE=${HASSOS_DATA} \
         -e SUPERVISOR_NAME=hassos_supervisor \
         $DOCKER_ARGS \
-        ${SUPERVISOR}
+        "${SUPERVISOR}"
 }
 
 # Run supervisor
