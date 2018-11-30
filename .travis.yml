@@ -19,7 +19,7 @@ script:
  - docker run -v $(pwd):/mnt koalaman/shellcheck buildroot-external/board/**/*.sh
  - docker run -v $(pwd):/mnt koalaman/shellcheck buildroot-external/rootfs-overlay/usr/sbin/*
  - docker run -v $(pwd):/mnt koalaman/shellcheck buildroot-external/rootfs-overlay/usr/libexec/*
- - docker run -v $(pwd):/mnt koalaman/shellcheck buildroot-external/rootfs-overlay/lib/rauc/*
+ - docker run -v $(pwd):/mnt koalaman/shellcheck buildroot-external/rootfs-overlay/usr/lib/rauc/*
 
 matrix:
   fast_finish: true
