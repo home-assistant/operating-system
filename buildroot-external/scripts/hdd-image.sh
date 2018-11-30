@@ -207,24 +207,24 @@ function _create_disk_mbr() {
     let bootstate_size=$(size2sectors ${BOOTSTATE_SIZE})+2
     let overlay_size=$(size2sectors ${OVERLAY_SIZE})+2
     let data_size=$(size2sectors ${DATA_SIZE})+2
-    let extended_size=${kernel0_size}+${system0_size}+${kernel1_size}+${system1_size}+${bootstate_size}+2
+    local extended_size=$((kernel0_size+system0_size+kernel1_size+system1_size+bootstate_size+2))
 
+    # we add one here for the extended header.
+    local extended_start=$((boot_start+boot_size+1))
+    local kernel0_start=$((extended_start+1))
+    local system0_start=$((kernel0_start+kernel0_size+1))
+    local kernel1_start=$((system0_start+system0_size+1))
+    local system1_start=$((kernel1_start+kernel1_size+1))
+    local bootstate_start=$((system1_start+system1_size+1))
+    local overlay_start=$((extended_start+extended_size+1))
+    local data_start=$((overlay_start+overlay_size+1))
 
-    let extended_start=${boot_start}+${boot_size}+1
-    let kernel0_start=${extended_start}+1 # we add one here for the extended header.
-    let system0_start=${kernel0_start}+${kernel0_size}+1
-    let kernel1_start=${system0_start}+${system0_size}+1
-    let system1_start=${kernel1_start}+${kernel1_size}+1
-    let bootstate_start=${system1_start}+${system1_size}+1
-    let overlay_start=${extended_start}+${extended_size}+1
-    let data_start=${overlay_start}+${overlay_size}+1
+    local boot_offset=${boot_start}
+    local kernel_offset=${kernel0_start}
+    local rootfs_offset=${system0_start}
+    local overlay_offset=${overlay_start}
+    local data_offset=${data_start}
 
-
-    let boot_offset=${boot_start}
-    let kernel_offset=${kernel0_start}
-    let rootfs_offset=${system0_start}
-    let overlay_offset=${overlay_start}
-    let data_offset=${data_start}
     # Update disk layout
     (
         echo "label: dos"
