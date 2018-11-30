@@ -1,15 +1,16 @@
 #!/bin/bash
+# shellcheck disable=SC1090
 set -e
 
 SCRIPT_DIR=${BR2_EXTERNAL_HASSOS_PATH}/scripts
 BOARD_DIR=${2}
 
-. ${BR2_EXTERNAL_HASSOS_PATH}/meta
-. ${BOARD_DIR}/meta
+. "${BR2_EXTERNAL_HASSOS_PATH}/meta"
+. "${BOARD_DIR}/meta"
 
-. ${SCRIPT_DIR}/rootfs-layer.sh
-. ${SCRIPT_DIR}/name.sh
-. ${SCRIPT_DIR}/rauc.sh
+. "${SCRIPT_DIR}/rootfs-layer.sh"
+. "${SCRIPT_DIR}/name.sh"
+. "${SCRIPT_DIR}/rauc.sh"
 
 
 # HassOS tasks
@@ -17,6 +18,7 @@ fix_rootfs
 install_hassos_cli
 
 # Write os-release
+# shellcheck disable=SC2153
 (
     echo "NAME=${HASSOS_NAME}"
     echo "VERSION=\"${VERSION_MAJOR}.${VERSION_BUILD} (${BOARD_NAME})\""
@@ -27,13 +29,13 @@ install_hassos_cli
     echo "HOME_URL=https://hass.io/"
     echo "VARIANT=\"${HASSOS_NAME} ${BOARD_NAME}\""
     echo "VARIANT_ID=${BOARD_ID}"
-) > ${TARGET_DIR}/usr/lib/os-release
+) > "${TARGET_DIR}/usr/lib/os-release"
 
 # Write machine-info
 (
     echo "CHASSIS=${CHASSIS}"
     echo "DEPLOYMENT=${DEPLOYMENT}"
-) > ${TARGET_DIR}/etc/machine-info
+) > "${TARGET_DIR}/etc/machine-info"
 
 
 # Setup RAUC

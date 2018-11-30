@@ -11,13 +11,14 @@ CLI_DATA=/mnt/data/cli
 mkdir -p ${CLI_DATA}
 
 # Run CLI
+# shellcheck disable=SC2086
 docker container run \
     --rm -ti --init \
     --security-opt apparmor="${APPARMOR}" \
     -v ${CLI_DATA}:/data \
     -v /etc/machine-id:/etc/machine-id:ro \
     $DOCKER_ARGS \
-    ${CLI}
+    "${CLI}"
 
 # Jump to root shell
 if [ $? -eq 10 ]; then

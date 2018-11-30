@@ -1,41 +1,42 @@
 #!/bin/sh
+# shellcheck disable=SC2039
 set -e
 
 DEVICE_CHILD="$(findfs LABEL="hassos-data")"
-DEVICE_ROOT="/dev/$(lsblk -no pkname ${DEVICE_CHILD})"
+DEVICE_ROOT="/dev/$(lsblk -no pkname "${DEVICE_CHILD}")"
 PART_NUM="${DEVICE_CHILD: -1}"
 
-if sfdisk -dq ${DEVICE_ROOT} | grep -q 'label: gpt'; then
+if sfdisk -dq "${DEVICE_ROOT}" | grep -q 'label: gpt'; then
 
     # Need resize
-    if [ $(sgdisk -E ${DEVICE_ROOT}) -le 2048 ]; then
+    if [ "$(sgdisk -E "${DEVICE_ROOT}")" -le "2048" ]; then
         echo "[INFO] No resize of data partition needed"
         exit 0
     fi
 
     # Resize & Reload partition
     echo "[INFO] Update hassos-data partition ${PART_NUM}"
-    sgdisk -e ${DEVICE_ROOT}
-    sgdisk -d ${PART_NUM} -n ${PART_NUM}:0:0 -c ${PART_NUM}:"hassos-data" -t ${PART_NUM}:"0FC63DAF-8483-4772-8E79-3D69D8477DE4" -u ${PART_NUM}:"a52a4597-fa3a-4851-aefd-2fbe9f849079" ${DEVICE_ROOT}
-    sgdisk -v ${DEVICE_ROOT}
+    sgdisk -e "${DEVICE_ROOT}"
+    sgdisk -d "${PART_NUM}" -n "${PART_NUM}:0:0" -c "${PART_NUM}:hassos-data" -t "${PART_NUM}:0FC63DAF-8483-4772-8E79-3D69D8477DE4" -u "${PART_NUM}:a52a4597-fa3a-4851-aefd-2fbe9f849079" "${DEVICE_ROOT}"
+    sgdisk -v "${DEVICE_ROOT}"
 else
 
      # Need resize
-    UNUSED=$(sfdisk -Fq ${DEVICE_ROOT} | cut -d " " -f 3 | tail -1)
-    if [ -z "${UNUSED}" ] || [ ${UNUSED} -le 2048 ]; then
+    UNUSED=$(sfdisk -Fq "${DEVICE_ROOT}" | cut -d " " -f 3 | tail -1)
+    if [ -z "${UNUSED}" ] || [ "${UNUSED}" -le "2048" ]; then
         echo "[INFO] No resize of data partition needed"
         exit 0
     fi
 
-    echo ", +" | sfdisk -N ${PART_NUM} ${DEVICE_ROOT} --force
-    sfdisk -V ${DEVICE_ROOT}
+    echo ", +" | sfdisk -N "${PART_NUM}" "${DEVICE_ROOT}" --force
+    sfdisk -V "${DEVICE_ROOT}"
 fi
 
-partx -u ${DEVICE_ROOT}
+partx -u "${DEVICE_ROOT}"
 
 # Resize filesystem
 echo "[INFO] Resize hassos-data filesystem"
-e2fsck -y ${DEVICE_CHILD}
-resize2fs -f ${DEVICE_CHILD}
+e2fsck -y "${DEVICE_CHILD}"
+resize2fs -f "${DEVICE_CHILD}"
 
 echo "[INFO] Finish hassos-data resizing"
