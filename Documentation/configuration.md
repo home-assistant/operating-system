@@ -42,6 +42,16 @@ The udev rules folder `/etc/udev/rules.d` is persistent and you can add your con
 
 You can manual add, edit or remove connections configurations from `/etc/NetworkManager/system-connections`.
 
+### NTP
+
+You can manual edit the systemd timesync file on `/etc/systemd/timesyncd.conf`.
+Our default ntp configuration look like:
+```
+[Time]
+NTP=time1.google.com time2.google.com time3.google.com
+FallbackNTP=0.pool.ntp.org 1.pool.ntp.org 2.pool.ntp.org 3.pool.ntp.org
+```
+
 [systemd-modules]: https://www.freedesktop.org/software/systemd/man/modules-load.d.html
 [network.md]: network.md
 [hassos-release]: https://github.com/home-assistant/hassos/releases/
