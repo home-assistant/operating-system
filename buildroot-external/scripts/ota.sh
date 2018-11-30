@@ -1,4 +1,5 @@
 #!/bin/bash
+# shellcheck disable=SC2155
 
 function create_ota_update() {
     local ota_file="$(hassos_image_name raucb)"
@@ -16,13 +17,13 @@ function create_ota_update() {
         return 0
     fi
 
-    rm -rf ${rauc_folder} ${ota_file}
-    mkdir -p ${rauc_folder}
+    rm -rf "${rauc_folder}" "${ota_file}"
+    mkdir -p "${rauc_folder}"
 
-    cp -f ${kernel} ${rauc_folder}/kernel.ext4
-    cp -f ${boot} ${rauc_folder}/boot.vfat
-    cp -f ${rootfs} ${rauc_folder}/rootfs.img
-    cp -f ${BR2_EXTERNAL_HASSOS_PATH}/misc/rauc-hook ${rauc_folder}/hook
+    cp -f "${kernel}" "${rauc_folder}/kernel.ext4"
+    cp -f "${boot}" "${rauc_folder}/boot.vfat"
+    cp -f "${rootfs}" "${rauc_folder}/rootfs.img"
+    cp -f "${BR2_EXTERNAL_HASSOS_PATH}/misc/rauc-hook" "${rauc_folder}/hook"
 
     (
         echo "[update]"
@@ -37,18 +38,18 @@ function create_ota_update() {
         echo "filename=kernel.ext4"
         echo "[image.rootfs]"
         echo "filename=rootfs.img"
-    ) > ${rauc_folder}/manifest.raucm
+    ) > "${rauc_folder}/manifest.raucm"
 
     # SPL
     if [ "${BOOT_SYS}" == "spl" ]; then
-        cp -f ${spl} ${rauc_folder}/spl.img
+        cp -f "${spl}" "${rauc_folder}/spl.img"
 
         (
             echo "[image.spl]"
             echo "filename=spl.img"
             echo "hooks=install"
-        ) >> ${rauc_folder}/manifest.raucm
+        ) >> "${rauc_folder}/manifest.raucm"
     fi
 
-    rauc bundle -d --cert=${cert} --key=${key} ${rauc_folder} ${ota_file}
+    rauc bundle -d --cert="${cert}" --key="${key}" "${rauc_folder}" "${ota_file}"
 }
