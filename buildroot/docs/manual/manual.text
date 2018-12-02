@@ -161,13 +161,13 @@ List of Examples
 
 ---------------------------------------------------------------------
 
-Buildroot 2018.11-rc2 manual generated on 2018-11-21 07:47:48 UTC
-from git revision bc89c1a834
+Buildroot 2018.11 manual generated on 2018-12-01 22:09:01 UTC from
+git revision 9089a9ff30
 
 The Buildroot manual is written by the Buildroot developers. It is
 licensed under the GNU General Public License, version 2. Refer to
 the COPYING [http://git.buildroot.org/buildroot/tree/COPYING?id=
-bc89c1a834cd8a1a74e71522029ec827bf0aec92] file in the Buildroot
+9089a9ff307045bb5fd42ab76ad0a739b5221416] file in the Buildroot
 sources for the full text of this license.
 
 Copyright © 2004-2018 The Buildroot developers
