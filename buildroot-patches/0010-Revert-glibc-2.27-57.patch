@@ -1,6 +1,6 @@
-From 2ed396acbaba0d84dbef108f816832334e7ccb62 Mon Sep 17 00:00:00 2001
+From 3c8816cba476e4203a146e92e28a4f002012cbb1 Mon Sep 17 00:00:00 2001
 From: Pascal Vizeli <pvizeli@syshack.ch>
-Date: Sun, 25 Nov 2018 23:27:55 +0000
+Date: Sun, 2 Dec 2018 14:57:30 +0000
 Subject: [PATCH 1/1] Revert glibc 2.27-57
 
 Signed-off-by: Pascal Vizeli <pvizeli@syshack.ch>
@@ -13,8 +13,8 @@ Signed-off-by: Pascal Vizeli <pvizeli@syshack.ch>
  package/glibc/glibc.mk                        | 25 ++----
  6 files changed, 15 insertions(+), 127 deletions(-)
  delete mode 100644 package/glibc/arc-2018.03-release/glibc.hash
- delete mode 100644 package/glibc/glibc-2.28-18-g2339d6a55eb7a7e040ae888e906adc49eeb59eab/0001-sysdeps-ieee754-soft-fp-ignore-maybe-uninitialized-w.patch
- delete mode 100644 package/glibc/glibc-2.28-18-g2339d6a55eb7a7e040ae888e906adc49eeb59eab/glibc.hash
+ delete mode 100644 package/glibc/glibc-2.28-50-gb8dd0f42780a3133c02f064a2c0c5c4e7ab61aaa/0001-sysdeps-ieee754-soft-fp-ignore-maybe-uninitialized-w.patch
+ delete mode 100644 package/glibc/glibc-2.28-50-gb8dd0f42780a3133c02f064a2c0c5c4e7ab61aaa/glibc.hash
 
 diff --git a/package/glibc/Config.in b/package/glibc/Config.in
 index 7821251..57a2e83 100644
@@ -43,10 +43,10 @@ index f3b10d9..0000000
 -sha256  8177f97513213526df2cf6184d8ff986c675afb514d4e68a404010521b880643  COPYING
 -sha256  dc626520dcd53a22f727af3ee42c770e56c97a64fe3adb063799d8ab032fe551  COPYING.LIB
 -sha256  61abdd6930c9c599062d89e916b3e7968783879b6be0ee1c6229dd6169def431  LICENSES
-diff --git a/package/glibc/glibc-2.28-18-g2339d6a55eb7a7e040ae888e906adc49eeb59eab/0001-sysdeps-ieee754-soft-fp-ignore-maybe-uninitialized-w.patch b/package/glibc/glibc-2.28-18-g2339d6a55eb7a7e040ae888e906adc49eeb59eab/0001-sysdeps-ieee754-soft-fp-ignore-maybe-uninitialized-w.patch
+diff --git a/package/glibc/glibc-2.28-50-gb8dd0f42780a3133c02f064a2c0c5c4e7ab61aaa/0001-sysdeps-ieee754-soft-fp-ignore-maybe-uninitialized-w.patch b/package/glibc/glibc-2.28-50-gb8dd0f42780a3133c02f064a2c0c5c4e7ab61aaa/0001-sysdeps-ieee754-soft-fp-ignore-maybe-uninitialized-w.patch
 deleted file mode 100644
 index febcd36..0000000
---- a/package/glibc/glibc-2.28-18-g2339d6a55eb7a7e040ae888e906adc49eeb59eab/0001-sysdeps-ieee754-soft-fp-ignore-maybe-uninitialized-w.patch
+--- a/package/glibc/glibc-2.28-50-gb8dd0f42780a3133c02f064a2c0c5c4e7ab61aaa/0001-sysdeps-ieee754-soft-fp-ignore-maybe-uninitialized-w.patch
 +++ /dev/null
 @@ -1,88 +0,0 @@
 -From 4a06ceea33ecc220bbfe264d8f1e74de2f04e90d Mon Sep 17 00:00:00 2001
@@ -137,14 +137,14 @@ index febcd36..0000000
 --- 
 -2.17.0
 -
-diff --git a/package/glibc/glibc-2.28-18-g2339d6a55eb7a7e040ae888e906adc49eeb59eab/glibc.hash b/package/glibc/glibc-2.28-18-g2339d6a55eb7a7e040ae888e906adc49eeb59eab/glibc.hash
+diff --git a/package/glibc/glibc-2.28-50-gb8dd0f42780a3133c02f064a2c0c5c4e7ab61aaa/glibc.hash b/package/glibc/glibc-2.28-50-gb8dd0f42780a3133c02f064a2c0c5c4e7ab61aaa/glibc.hash
 deleted file mode 100644
-index a95c990..0000000
---- a/package/glibc/glibc-2.28-18-g2339d6a55eb7a7e040ae888e906adc49eeb59eab/glibc.hash
+index 7429ab3..0000000
+--- a/package/glibc/glibc-2.28-50-gb8dd0f42780a3133c02f064a2c0c5c4e7ab61aaa/glibc.hash
 +++ /dev/null
 @@ -1,7 +0,0 @@
 -# Locally calculated (fetched from Github)
--sha256  6e88cea4002efa7f78d86ea5e98eb92ed423d5a35068751517c4f00f56b8666c  glibc-glibc-2.28-18-g2339d6a55eb7a7e040ae888e906adc49eeb59eab.tar.gz
+-sha256  b070f746f932cfce107bb9be2d59ded5b44b25ddafb480c9110c52b88cc2dec1  glibc-glibc-2.28-50-gb8dd0f42780a3133c02f064a2c0c5c4e7ab61aaa.tar.gz
 -
 -# Hashes for license files
 -sha256  8177f97513213526df2cf6184d8ff986c675afb514d4e68a404010521b880643  COPYING
@@ -166,14 +166,14 @@ index 5316f03..81dd5ad 100644
 +sha256  dc626520dcd53a22f727af3ee42c770e56c97a64fe3adb063799d8ab032fe551  COPYING.LIB
 +sha256  61abdd6930c9c599062d89e916b3e7968783879b6be0ee1c6229dd6169def431  LICENSES
 diff --git a/package/glibc/glibc.mk b/package/glibc/glibc.mk
-index 762c040..d34b42b 100644
+index 88178d7..d34b42b 100644
 --- a/package/glibc/glibc.mk
 +++ b/package/glibc/glibc.mk
 @@ -10,7 +10,7 @@ GLIBC_SITE = $(call github,foss-for-synopsys-dwc-arc-processors,glibc,$(GLIBC_VE
  else
  # Generate version string using:
  #   git describe --match 'glibc-*' --abbrev=40 origin/release/MAJOR.MINOR/master
--GLIBC_VERSION = glibc-2.28-18-g2339d6a55eb7a7e040ae888e906adc49eeb59eab
+-GLIBC_VERSION = glibc-2.28-50-gb8dd0f42780a3133c02f064a2c0c5c4e7ab61aaa
 +GLIBC_VERSION = glibc-2.27-57-g6c99e37f6fb640a50a3113b2dbee5d5389843c1e
  # Upstream doesn't officially provide an https download link.
  # There is one (https://sourceware.org/git/glibc.git) but it's not reliable,

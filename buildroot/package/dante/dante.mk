@@ -9,10 +9,10 @@ DANTE_SITE = http://www.inet.no/dante/files
 DANTE_LICENSE = BSD-3-Clause
 DANTE_LICENSE_FILES = LICENSE
 
-# Dante uses a *VERY* old configure.ac
-DANTE_LIBTOOL_PATCH = NO
+# 0002-compiler.m4-do-not-remove-g-flag.patch touches a m4 file
+DANTE_AUTORECONF = YES
 
-DANTE_CONF_OPTS += --disable-client --disable-preload
+DANTE_CONF_OPTS += --disable-client --disable-preload --without-pam
 
 define DANTE_INSTALL_CONFIG_FILE
 	$(INSTALL) -D -m 644 $(@D)/example/sockd.conf \
