@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-OPENVMTOOLS_VERSION = 5a9033ddfa95786d867e4d02bbb9a29bac8fb64f
+OPENVMTOOLS_VERSION = f2ff192717375b95a6b7e278fb47dbb3d3bc56d1
 OPENVMTOOLS_SITE = $(call github,vmware,open-vm-tools,$(OPENVMTOOLS_VERSION))
 OPENVMTOOLS_SUBDIR = open-vm-tools
 OPENVMTOOLS_LICENSE = LGPL-2.1
