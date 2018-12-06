@@ -1,0 +1,308 @@
+From 878d41be386f0bcbe1475f65acd8b9fb304529a0 Mon Sep 17 00:00:00 2001
+From: Jerome Brunet <jbrunet@baylibre.com>
+Date: Thu, 30 Mar 2017 11:49:55 +0200
+Subject: [PATCH] ASoC: meson: add meson audio core driver
+
+This patch adds support for the audio core driver for the Amlogic Meson SoC
+family. The purpose of this driver is to properly reset the audio block and
+provide register access for the different devices scattered in this address
+space. This includes output and input DMAs, pcm, i2s and spdif dai, card
+level routing, internal codec for the gxl variant
+
+For more information, please refer to the section 5 of the public datasheet
+of the S905 (gxbb). This datasheet is available here: [0].
+
+[0]: http://dn.odroid.com/S905/DataSheet/S905_Public_Datasheet_V1.1.4.pdf
+
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ sound/soc/Kconfig            |   1 +
+ sound/soc/Makefile           |   1 +
+ sound/soc/meson/Kconfig      |   9 ++
+ sound/soc/meson/Makefile     |   3 +
+ sound/soc/meson/audio-core.c | 190 +++++++++++++++++++++++++++++++++++++++++++
+ sound/soc/meson/audio-core.h |  28 +++++++
+ 6 files changed, 232 insertions(+)
+ create mode 100644 sound/soc/meson/Kconfig
+ create mode 100644 sound/soc/meson/Makefile
+ create mode 100644 sound/soc/meson/audio-core.c
+ create mode 100644 sound/soc/meson/audio-core.h
+
+diff --git a/sound/soc/Kconfig b/sound/soc/Kconfig
+index 41af6b9..1cf11cf 100644
+--- a/sound/soc/Kconfig
++++ b/sound/soc/Kconfig
+@@ -57,6 +57,7 @@ source "sound/soc/kirkwood/Kconfig"
+ source "sound/soc/img/Kconfig"
+ source "sound/soc/intel/Kconfig"
+ source "sound/soc/mediatek/Kconfig"
++source "sound/soc/meson/Kconfig"
+ source "sound/soc/mxs/Kconfig"
+ source "sound/soc/pxa/Kconfig"
+ source "sound/soc/qcom/Kconfig"
+diff --git a/sound/soc/Makefile b/sound/soc/Makefile
+index 06389a5..62a5f87 100644
+--- a/sound/soc/Makefile
++++ b/sound/soc/Makefile
+@@ -38,6 +38,7 @@ obj-$(CONFIG_SND_SOC)	+= jz4740/
+ obj-$(CONFIG_SND_SOC)	+= img/
+ obj-$(CONFIG_SND_SOC)	+= intel/
+ obj-$(CONFIG_SND_SOC)	+= mediatek/
++obj-$(CONFIG_SND_SOC)	+= meson/
+ obj-$(CONFIG_SND_SOC)	+= mxs/
+ obj-$(CONFIG_SND_SOC)	+= nuc900/
+ obj-$(CONFIG_SND_SOC)	+= omap/
+diff --git a/sound/soc/meson/Kconfig b/sound/soc/meson/Kconfig
+new file mode 100644
+index 0000000..ca0e3e9
+--- /dev/null
++++ b/sound/soc/meson/Kconfig
+@@ -0,0 +1,9 @@
++menuconfig SND_SOC_MESON
++	tristate "ASoC support for Amlogic Meson SoCs"
++	depends on ARCH_MESON
++	select MFD_CORE
++	select REGMAP_MMIO
++	help
++	  Say Y or M if you want to add support for codecs attached to
++	  the Amlogic Meson SoCs Audio interfaces. You will also need to
++	  select the audio interfaces to support below.
+diff --git a/sound/soc/meson/Makefile b/sound/soc/meson/Makefile
+new file mode 100644
+index 0000000..22028ab
+--- /dev/null
++++ b/sound/soc/meson/Makefile
+@@ -0,0 +1,3 @@
++snd-soc-meson-audio-core-objs	 := audio-core.o
++
++obj-$(CONFIG_SND_SOC_MESON)		+= snd-soc-meson-audio-core.o
+diff --git a/sound/soc/meson/audio-core.c b/sound/soc/meson/audio-core.c
+new file mode 100644
+index 0000000..99993ec
+--- /dev/null
++++ b/sound/soc/meson/audio-core.c
+@@ -0,0 +1,190 @@
++/*
++ * Copyright (C) 2017 BayLibre, SAS
++ * Author: Jerome Brunet <jbrunet@baylibre.com>
++ * Copyright (C) 2017 Amlogic, Inc. All rights reserved.
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License as
++ * published by the Free Software Foundation; either version 2 of the
++ * License, or (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful, but
++ * WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program; if not, see <http://www.gnu.org/licenses/>.
++ */
++
++#include <linux/clk.h>
++#include <linux/mfd/core.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/platform_device.h>
++#include <linux/regmap.h>
++#include <linux/reset.h>
++
++#include "audio-core.h"
++
++#define DRV_NAME "meson-audio-core"
++
++static const char * const acore_clock_names[] = { "aiu_top",
++						  "aiu_glue",
++						  "audin" };
++
++static int meson_acore_init_clocks(struct device *dev)
++{
++	struct clk *clock;
++	int i, ret;
++
++	for (i = 0; i < ARRAY_SIZE(acore_clock_names); i++) {
++		clock = devm_clk_get(dev, acore_clock_names[i]);
++		if (IS_ERR(clock)) {
++			if (PTR_ERR(clock) != -EPROBE_DEFER)
++				dev_err(dev, "Failed to get %s clock\n",
++					acore_clock_names[i]);
++			return PTR_ERR(clock);
++		}
++
++		ret = clk_prepare_enable(clock);
++		if (ret) {
++			dev_err(dev, "Failed to enable %s clock\n",
++				acore_clock_names[i]);
++			return ret;
++		}
++
++		ret = devm_add_action_or_reset(dev,
++				(void(*)(void *))clk_disable_unprepare,
++				clock);
++		if (ret)
++			return ret;
++	}
++
++	return 0;
++}
++
++static const char * const acore_reset_names[] = { "aiu",
++						  "audin" };
++
++static int meson_acore_init_resets(struct device *dev)
++{
++	struct reset_control *reset;
++	int i, ret;
++
++	for (i = 0; i < ARRAY_SIZE(acore_reset_names); i++) {
++		reset = devm_reset_control_get_exclusive(dev,
++							 acore_reset_names[i]);
++		if (IS_ERR(reset)) {
++			if (PTR_ERR(reset) != -EPROBE_DEFER)
++				dev_err(dev, "Failed to get %s reset\n",
++					acore_reset_names[i]);
++			return PTR_ERR(reset);
++		}
++
++		ret = reset_control_reset(reset);
++		if (ret) {
++			dev_err(dev, "Failed to pulse %s reset\n",
++				acore_reset_names[i]);
++			return ret;
++		}
++	}
++
++	return 0;
++}
++
++static const struct regmap_config meson_acore_regmap_config = {
++	.reg_bits       = 32,
++	.val_bits       = 32,
++	.reg_stride     = 4,
++};
++
++static const struct mfd_cell meson_acore_devs[] = {
++	{
++		.name = "meson-i2s-dai",
++		.of_compatible = "amlogic,meson-i2s-dai",
++	},
++	{
++		.name = "meson-spdif-dai",
++		.of_compatible = "amlogic,meson-spdif-dai",
++	},
++	{
++		.name = "meson-aiu-i2s-dma",
++		.of_compatible = "amlogic,meson-aiu-i2s-dma",
++	},
++	{
++		.name = "meson-aiu-spdif-dma",
++		.of_compatible = "amlogic,meson-aiu-spdif-dma",
++	},
++};
++
++static int meson_acore_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct meson_audio_core_data *data;
++	struct resource *res;
++	void __iomem *regs;
++	int ret;
++
++	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
++	if (!data)
++		return -ENOMEM;
++	platform_set_drvdata(pdev, data);
++
++	ret = meson_acore_init_clocks(dev);
++	if (ret)
++		return ret;
++
++	ret = meson_acore_init_resets(dev);
++	if (ret)
++		return ret;
++
++	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "aiu");
++	regs = devm_ioremap_resource(dev, res);
++	if (IS_ERR(regs))
++		return PTR_ERR(regs);
++
++	data->aiu = devm_regmap_init_mmio(dev, regs,
++					  &meson_acore_regmap_config);
++	if (IS_ERR(data->aiu)) {
++		dev_err(dev, "Couldn't create the AIU regmap\n");
++		return PTR_ERR(data->aiu);
++	}
++
++	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "audin");
++	regs = devm_ioremap_resource(dev, res);
++	if (IS_ERR(regs))
++		return PTR_ERR(regs);
++
++	data->audin = devm_regmap_init_mmio(dev, regs,
++					    &meson_acore_regmap_config);
++	if (IS_ERR(data->audin)) {
++		dev_err(dev, "Couldn't create the AUDIN regmap\n");
++		return PTR_ERR(data->audin);
++	}
++
++	return devm_mfd_add_devices(dev, PLATFORM_DEVID_AUTO, meson_acore_devs,
++				    ARRAY_SIZE(meson_acore_devs), NULL, 0,
++				    NULL);
++}
++
++static const struct of_device_id meson_acore_of_match[] = {
++	{ .compatible = "amlogic,meson-audio-core", },
++	{ .compatible = "amlogic,meson-gxbb-audio-core", },
++	{ .compatible = "amlogic,meson-gxl-audio-core", },
++	{}
++};
++MODULE_DEVICE_TABLE(of, meson_acore_of_match);
++
++static struct platform_driver meson_acore_pdrv = {
++	.probe = meson_acore_probe,
++	.driver = {
++		.name = DRV_NAME,
++		.of_match_table = meson_acore_of_match,
++	},
++};
++module_platform_driver(meson_acore_pdrv);
++
++MODULE_DESCRIPTION("Meson Audio Core Driver");
++MODULE_AUTHOR("Jerome Brunet <jbrunet@baylibre.com>");
++MODULE_LICENSE("GPL v2");
+diff --git a/sound/soc/meson/audio-core.h b/sound/soc/meson/audio-core.h
+new file mode 100644
+index 0000000..6e7a24c
+--- /dev/null
++++ b/sound/soc/meson/audio-core.h
+@@ -0,0 +1,28 @@
++/*
++ * Copyright (C) 2017 BayLibre, SAS
++ * Author: Jerome Brunet <jbrunet@baylibre.com>
++ * Copyright (C) 2017 Amlogic, Inc. All rights reserved.
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License as
++ * published by the Free Software Foundation; either version 2 of the
++ * License, or (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful, but
++ * WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program; if not, see <http://www.gnu.org/licenses/>.
++ */
++
++#ifndef _MESON_AUDIO_CORE_H_
++#define _MESON_AUDIO_CORE_H_
++
++struct meson_audio_core_data {
++	struct regmap *aiu;
++	struct regmap *audin;
++};
++
++#endif /* _MESON_AUDIO_CORE_H_ */

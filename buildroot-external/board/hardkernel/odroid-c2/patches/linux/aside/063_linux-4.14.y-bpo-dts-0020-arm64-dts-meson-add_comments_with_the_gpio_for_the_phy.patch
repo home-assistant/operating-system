@@ -1,0 +1,75 @@
+From 50290cfe50bd94deb221731a25347d0ac12d9f40 Mon Sep 17 00:00:00 2001
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date: Sat, 2 Dec 2017 22:40:36 +0100
+Subject: [PATCH] ARM64: dts: meson: add comments with the GPIO for the PHY
+ interrupts
+
+Currently one has to look/calculate the GPIO for the PHY interrupts
+manually. Add a comment for the existing PHY interrupt lines to make it
+easier to find out which GPIO is used.
+This is done using the following calculation:
+- number of GPIO AO pins (14 on GXBB: GPIOAO_0..13)
+- add the offset of the pin which is used for the interrupt (for example
+  GPIOZ_15 = 15 on Odroid-C2)
+
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Reviewed-By: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-gxbb-nanopi-k2.dts | 1 +
+ arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts  | 2 ++
+ arch/arm64/boot/dts/amlogic/meson-gxbb-p200.dts      | 1 +
+ arch/arm64/boot/dts/amlogic/meson-gxm-q200.dts       | 1 +
+ 4 files changed, 5 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-nanopi-k2.dts b/arch/arm64/boot/dts/amlogic/meson-gxbb-nanopi-k2.dts
+index 4a4251001bfd5..011e8e08e429b 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxbb-nanopi-k2.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-nanopi-k2.dts
+@@ -169,6 +169,7 @@
+ 			/* Realtek RTL8211F (0x001cc916) */
+ 			reg = <0>;
+ 			interrupt-parent = <&gpio_intc>;
++			/* MAC_INTR on GPIOZ_15 */
+ 			interrupts = <29 IRQ_TYPE_LEVEL_LOW>;
+ 		};
+ 	};
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts b/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
+index d6d3af5eaf553..ee4ada61c59cf 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
+@@ -174,8 +174,10 @@
+ 		#size-cells = <0>;
+ 
+ 		eth_phy0: ethernet-phy@0 {
++			/* Realtek RTL8211F (0x001cc916) */
+ 			reg = <0>;
+ 			interrupt-parent = <&gpio_intc>;
++			/* MAC_INTR on GPIOZ_15 */
+ 			interrupts = <29 IRQ_TYPE_LEVEL_LOW>;
+ 			eee-broken-1000t;
+ 		};
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-p200.dts b/arch/arm64/boot/dts/amlogic/meson-gxbb-p200.dts
+index 9bf16bb7c491b..09f34f7ef0845 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxbb-p200.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-p200.dts
+@@ -118,6 +118,7 @@
+ 			/* Micrel KSZ9031 (0x00221620) */
+ 			reg = <3>;
+ 			interrupt-parent = <&gpio_intc>;
++			/* MAC_INTR on GPIOZ_15 */
+ 			interrupts = <29 IRQ_TYPE_LEVEL_LOW>;
+ 		};
+ 	};
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxm-q200.dts b/arch/arm64/boot/dts/amlogic/meson-gxm-q200.dts
+index 66c6da7e112cf..9847fce443a85 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxm-q200.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-gxm-q200.dts
+@@ -111,6 +111,7 @@
+ 		reg = <0>;
+ 		max-speed = <1000>;
+ 		interrupt-parent = <&gpio_intc>;
++		/* MAC_INTR on GPIOH_3 */
+ 		interrupts = <29 IRQ_TYPE_LEVEL_LOW>;
+ 	};
+ };

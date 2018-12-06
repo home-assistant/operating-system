@@ -1,0 +1,416 @@
+From bb5102086db1579c1289440fa8aa184a70cb7c64 Mon Sep 17 00:00:00 2001
+From: Jerome Brunet <jbrunet@baylibre.com>
+Date: Thu, 30 Mar 2017 12:14:40 +0200
+Subject: [PATCH] ASoC: meson: add aiu i2s dma support
+
+Add support for the i2s output dma which is part of the AIU block
+
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ sound/soc/meson/Kconfig       |   7 +
+ sound/soc/meson/Makefile      |   2 +
+ sound/soc/meson/aiu-i2s-dma.c | 370 ++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 379 insertions(+)
+ create mode 100644 sound/soc/meson/aiu-i2s-dma.c
+
+diff --git a/sound/soc/meson/Kconfig b/sound/soc/meson/Kconfig
+index ca0e3e9..88fbfc2 100644
+--- a/sound/soc/meson/Kconfig
++++ b/sound/soc/meson/Kconfig
+@@ -7,3 +7,10 @@ menuconfig SND_SOC_MESON
+ 	  Say Y or M if you want to add support for codecs attached to
+ 	  the Amlogic Meson SoCs Audio interfaces. You will also need to
+ 	  select the audio interfaces to support below.
++
++config SND_SOC_MESON_I2S
++	tristate "Meson i2s interface"
++	depends on SND_SOC_MESON
++	help
++	  Say Y or M if you want to add support for i2s dma driver for Amlogic
++	  Meson SoCs.
+diff --git a/sound/soc/meson/Makefile b/sound/soc/meson/Makefile
+index 22028ab..273f275 100644
+--- a/sound/soc/meson/Makefile
++++ b/sound/soc/meson/Makefile
+@@ -1,3 +1,5 @@
+ snd-soc-meson-audio-core-objs	 := audio-core.o
++snd-soc-meson-aiu-i2s-dma-objs	 := aiu-i2s-dma.o
+ 
+ obj-$(CONFIG_SND_SOC_MESON)		+= snd-soc-meson-audio-core.o
++obj-$(CONFIG_SND_SOC_MESON_I2S)		+= snd-soc-meson-aiu-i2s-dma.o
+diff --git a/sound/soc/meson/aiu-i2s-dma.c b/sound/soc/meson/aiu-i2s-dma.c
+new file mode 100644
+index 0000000..2684bd0
+--- /dev/null
++++ b/sound/soc/meson/aiu-i2s-dma.c
+@@ -0,0 +1,370 @@
++/*
++ * Copyright (C) 2017 BayLibre, SAS
++ * Author: Jerome Brunet <jbrunet@baylibre.com>
++ * Copyright (C) 2017 Amlogic, Inc. All rights reserved.
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License as
++ * published by the Free Software Foundation; either version 2 of the
++ * License, or (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful, but
++ * WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program; if not, see <http://www.gnu.org/licenses/>.
++ */
++
++#include <linux/clk.h>
++#include <linux/mfd/syscon.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/platform_device.h>
++#include <linux/regmap.h>
++
++#include <sound/pcm_params.h>
++#include <sound/soc.h>
++
++#include "aiu-regs.h"
++#include "audio-core.h"
++
++#define DRV_NAME "meson-aiu-i2s-dma"
++
++struct aiu_i2s_dma {
++	struct meson_audio_core_data *core;
++	struct clk *fast;
++	int irq;
++};
++
++#define AIU_MEM_I2S_BUF_CNTL_INIT		BIT(0)
++#define AIU_MEM_I2S_CONTROL_INIT		BIT(0)
++#define AIU_MEM_I2S_CONTROL_FILL_EN		BIT(1)
++#define AIU_MEM_I2S_CONTROL_EMPTY_EN		BIT(2)
++#define AIU_MEM_I2S_CONTROL_MODE_16BIT		BIT(6)
++#define AIU_MEM_I2S_CONTROL_BUSY		BIT(7)
++#define AIU_MEM_I2S_CONTROL_DATA_READY		BIT(8)
++#define AIU_MEM_I2S_CONTROL_LEVEL_CNTL		BIT(9)
++#define AIU_MEM_I2S_MASKS_IRQ_BLOCK_MASK	GENMASK(31, 16)
++#define AIU_MEM_I2S_MASKS_IRQ_BLOCK(n)		((n) << 16)
++#define AIU_MEM_I2S_MASKS_CH_MEM_MASK		GENMASK(15, 8)
++#define AIU_MEM_I2S_MASKS_CH_MEM(ch)		((ch) << 8)
++#define AIU_MEM_I2S_MASKS_CH_RD_MASK		GENMASK(7, 0)
++#define AIU_MEM_I2S_MASKS_CH_RD(ch)		((ch) << 0)
++#define AIU_RST_SOFT_I2S_FAST_DOMAIN		BIT(0)
++#define AIU_RST_SOFT_I2S_SLOW_DOMAIN		BIT(1)
++
++/*
++ * The DMA works by i2s "blocks" (or DMA burst). The burst size and the memory
++ * layout expected depends on the mode of operation.
++ *
++ * - Normal mode: The channels are expected to be packed in 32 bytes groups
++ *  interleaved the buffer. AIU_MEM_I2S_MASKS_CH_MEM is a bitfield representing
++ *  the channels present in memory. AIU_MEM_I2S_MASKS_CH_MEM represents the
++ *  channels read by the DMA. This is very flexible but the unsual memory layout
++ *  makes it less easy to deal with. The burst size is 32 bytes times the number
++ *  of channels read.
++ *
++ * - Split mode:
++ * Classical channel interleaved frame organisation. In this mode,
++ * AIU_MEM_I2S_MASKS_CH_MEM and AIU_MEM_I2S_MASKS_CH_MEM must be set to 0xff and
++ * the burst size is fixed to 256 bytes. The input can be either 2 or 8
++ * channels.
++ *
++ * The following driver implements the split mode.
++ */
++
++#define AIU_I2S_DMA_BURST 256
++
++static struct snd_pcm_hardware aiu_i2s_dma_hw = {
++	.info = (SNDRV_PCM_INFO_INTERLEAVED |
++		 SNDRV_PCM_INFO_MMAP |
++		 SNDRV_PCM_INFO_MMAP_VALID |
++		 SNDRV_PCM_INFO_PAUSE),
++
++	.formats = (SNDRV_PCM_FMTBIT_S16_LE |
++		    SNDRV_PCM_FMTBIT_S24_LE |
++		    SNDRV_PCM_FMTBIT_S32_LE),
++
++	/*
++	 * TODO: The DMA can change the endianness, the msb position
++	 * and deal with unsigned - support this later on
++	 */
++
++	.rate_min = 8000,
++	.rate_max = 192000,
++	.channels_min = 2,
++	.channels_max = 8,
++	.period_bytes_min = AIU_I2S_DMA_BURST,
++	.period_bytes_max = AIU_I2S_DMA_BURST * 65535,
++	.periods_min = 2,
++	.periods_max = UINT_MAX,
++	.buffer_bytes_max = 1 * 1024 * 1024,
++	.fifo_size = 0,
++};
++
++static struct aiu_i2s_dma *aiu_i2s_dma_priv(struct snd_pcm_substream *s)
++{
++	struct snd_soc_pcm_runtime *rtd = s->private_data;
++	struct snd_soc_component *component = snd_soc_rtdcom_lookup(rtd, DRV_NAME);
++
++	return snd_soc_component_get_drvdata(component);
++}
++
++static snd_pcm_uframes_t
++aiu_i2s_dma_pointer(struct snd_pcm_substream *substream)
++{
++	struct snd_pcm_runtime *runtime = substream->runtime;
++	struct aiu_i2s_dma *priv = aiu_i2s_dma_priv(substream);
++	unsigned int addr;
++	int ret;
++
++	ret = regmap_read(priv->core->aiu, AIU_MEM_I2S_RD_PTR,
++			  &addr);
++	if (ret)
++		return 0;
++
++	return bytes_to_frames(runtime, addr - (unsigned int)runtime->dma_addr);
++}
++
++static void __dma_enable(struct aiu_i2s_dma *priv, bool enable)
++{
++	unsigned int en_mask = (AIU_MEM_I2S_CONTROL_FILL_EN |
++				AIU_MEM_I2S_CONTROL_EMPTY_EN);
++
++	regmap_update_bits(priv->core->aiu, AIU_MEM_I2S_CONTROL, en_mask,
++			   enable ? en_mask : 0);
++
++}
++
++static int aiu_i2s_dma_trigger(struct snd_pcm_substream *substream, int cmd)
++{
++	struct aiu_i2s_dma *priv = aiu_i2s_dma_priv(substream);
++
++	switch (cmd) {
++	case SNDRV_PCM_TRIGGER_START:
++	case SNDRV_PCM_TRIGGER_RESUME:
++	case SNDRV_PCM_TRIGGER_PAUSE_RELEASE:
++		__dma_enable(priv, true);
++		break;
++	case SNDRV_PCM_TRIGGER_SUSPEND:
++	case SNDRV_PCM_TRIGGER_PAUSE_PUSH:
++	case SNDRV_PCM_TRIGGER_STOP:
++		__dma_enable(priv, false);
++		break;
++	default:
++		return -EINVAL;
++	}
++
++	return 0;
++}
++
++static void __dma_init_mem(struct aiu_i2s_dma *priv)
++{
++	regmap_update_bits(priv->core->aiu, AIU_MEM_I2S_CONTROL,
++			   AIU_MEM_I2S_CONTROL_INIT,
++			   AIU_MEM_I2S_CONTROL_INIT);
++	regmap_update_bits(priv->core->aiu, AIU_MEM_I2S_BUF_CNTL,
++			   AIU_MEM_I2S_BUF_CNTL_INIT,
++			   AIU_MEM_I2S_BUF_CNTL_INIT);
++
++	regmap_update_bits(priv->core->aiu, AIU_MEM_I2S_CONTROL,
++			   AIU_MEM_I2S_CONTROL_INIT,
++			   0);
++	regmap_update_bits(priv->core->aiu, AIU_MEM_I2S_BUF_CNTL,
++			   AIU_MEM_I2S_BUF_CNTL_INIT,
++			   0);
++}
++
++static int aiu_i2s_dma_prepare(struct snd_pcm_substream *substream)
++{
++	struct aiu_i2s_dma *priv = aiu_i2s_dma_priv(substream);
++
++	__dma_init_mem(priv);
++
++	return 0;
++}
++
++static int aiu_i2s_dma_hw_params(struct snd_pcm_substream *substream,
++				 struct snd_pcm_hw_params *params)
++{
++	struct snd_pcm_runtime *runtime = substream->runtime;
++	struct aiu_i2s_dma *priv = aiu_i2s_dma_priv(substream);
++	int ret;
++	u32 burst_num, mem_ctl;
++	dma_addr_t end_ptr;
++
++	ret = snd_pcm_lib_malloc_pages(substream, params_buffer_bytes(params));
++	if (ret < 0)
++		return ret;
++
++	/* Setup memory layout */
++	if (params_physical_width(params) == 16)
++		mem_ctl = AIU_MEM_I2S_CONTROL_MODE_16BIT;
++	else
++		mem_ctl = 0;
++
++	regmap_update_bits(priv->core->aiu, AIU_MEM_I2S_CONTROL,
++			   AIU_MEM_I2S_CONTROL_MODE_16BIT,
++			   mem_ctl);
++
++	/* Initialize memory pointers */
++	regmap_write(priv->core->aiu, AIU_MEM_I2S_START_PTR, runtime->dma_addr);
++	regmap_write(priv->core->aiu, AIU_MEM_I2S_RD_PTR, runtime->dma_addr);
++
++	/* The end pointer is the address of the last valid block */
++	end_ptr = runtime->dma_addr + runtime->dma_bytes - AIU_I2S_DMA_BURST;
++	regmap_write(priv->core->aiu, AIU_MEM_I2S_END_PTR, end_ptr);
++
++	/* Memory masks */
++	burst_num = params_period_bytes(params) / AIU_I2S_DMA_BURST;
++	regmap_write(priv->core->aiu, AIU_MEM_I2S_MASKS,
++		     AIU_MEM_I2S_MASKS_CH_RD(0xff) |
++		     AIU_MEM_I2S_MASKS_CH_MEM(0xff) |
++		     AIU_MEM_I2S_MASKS_IRQ_BLOCK(burst_num));
++
++	return 0;
++}
++
++static int aiu_i2s_dma_hw_free(struct snd_pcm_substream *substream)
++{
++	return snd_pcm_lib_free_pages(substream);
++}
++
++
++static irqreturn_t aiu_i2s_dma_irq_block(int irq, void *dev_id)
++{
++	struct snd_pcm_substream *playback = dev_id;
++
++	snd_pcm_period_elapsed(playback);
++
++	return IRQ_HANDLED;
++}
++
++static int aiu_i2s_dma_open(struct snd_pcm_substream *substream)
++{
++	struct aiu_i2s_dma *priv = aiu_i2s_dma_priv(substream);
++	int ret;
++
++	snd_soc_set_runtime_hwparams(substream, &aiu_i2s_dma_hw);
++
++	/*
++	 * Make sure the buffer and period size are multiple of the DMA burst
++	 * size
++	 */
++	ret = snd_pcm_hw_constraint_step(substream->runtime, 0,
++					 SNDRV_PCM_HW_PARAM_BUFFER_BYTES,
++					 AIU_I2S_DMA_BURST);
++	if (ret)
++		return ret;
++
++	ret = snd_pcm_hw_constraint_step(substream->runtime, 0,
++					 SNDRV_PCM_HW_PARAM_PERIOD_BYTES,
++					 AIU_I2S_DMA_BURST);
++	if (ret)
++		return ret;
++
++	/* Request the I2S DDR irq */
++	ret = request_irq(priv->irq, aiu_i2s_dma_irq_block, 0,
++			  DRV_NAME, substream);
++	if (ret)
++		return ret;
++
++	/* Power up the i2s fast domain - can't write the registers w/o it */
++	ret = clk_prepare_enable(priv->fast);
++	if (ret)
++		return ret;
++
++	/* Make sure the dma is initially disabled */
++	__dma_enable(priv, false);
++
++	return 0;
++}
++
++static int aiu_i2s_dma_close(struct snd_pcm_substream *substream)
++{
++	struct aiu_i2s_dma *priv = aiu_i2s_dma_priv(substream);
++
++	clk_disable_unprepare(priv->fast);
++	free_irq(priv->irq, substream);
++
++	return 0;
++}
++
++static const struct snd_pcm_ops aiu_i2s_dma_ops = {
++	.open =		aiu_i2s_dma_open,
++	.close =        aiu_i2s_dma_close,
++	.ioctl =	snd_pcm_lib_ioctl,
++	.hw_params =	aiu_i2s_dma_hw_params,
++	.hw_free =      aiu_i2s_dma_hw_free,
++	.prepare =      aiu_i2s_dma_prepare,
++	.pointer =	aiu_i2s_dma_pointer,
++	.trigger =	aiu_i2s_dma_trigger,
++};
++
++static int aiu_i2s_dma_new(struct snd_soc_pcm_runtime *rtd)
++{
++	struct snd_card *card = rtd->card->snd_card;
++	size_t size = aiu_i2s_dma_hw.buffer_bytes_max;
++
++	return snd_pcm_lib_preallocate_pages_for_all(rtd->pcm,
++						     SNDRV_DMA_TYPE_DEV,
++						     card->dev, size, size);
++}
++
++static const struct snd_soc_component_driver aiu_i2s_platform = {
++	.ops = &aiu_i2s_dma_ops,
++	.pcm_new = aiu_i2s_dma_new,
++	.name = DRV_NAME,
++};
++
++static int aiu_i2s_dma_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct aiu_i2s_dma *priv;
++
++	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
++	if (!priv)
++		return -ENOMEM;
++
++	platform_set_drvdata(pdev, priv);
++	priv->core = dev_get_drvdata(dev->parent);
++
++	priv->fast = devm_clk_get(dev, "fast");
++	if (IS_ERR(priv->fast)) {
++		if (PTR_ERR(priv->fast) != -EPROBE_DEFER)
++			dev_err(dev, "Can't get i2s fast domain clock\n");
++		return PTR_ERR(priv->fast);
++	}
++
++	priv->irq = platform_get_irq(pdev, 0);
++	if (priv->irq <= 0) {
++		dev_err(dev, "Can't get i2s ddr irq\n");
++		return priv->irq;
++	}
++
++	return devm_snd_soc_register_component(dev, &aiu_i2s_platform,
++					       NULL, 0);
++}
++
++static const struct of_device_id aiu_i2s_dma_of_match[] = {
++	{ .compatible = "amlogic,meson-aiu-i2s-dma", },
++	{ .compatible = "amlogic,meson-gxbb-aiu-i2s-dma", },
++	{ .compatible = "amlogic,meson-gxl-aiu-i2s-dma", },
++	{}
++};
++MODULE_DEVICE_TABLE(of, aiu_i2s_dma_of_match);
++
++static struct platform_driver aiu_i2s_dma_pdrv = {
++	.probe = aiu_i2s_dma_probe,
++	.driver = {
++		.name = DRV_NAME,
++		.of_match_table = aiu_i2s_dma_of_match,
++	},
++};
++module_platform_driver(aiu_i2s_dma_pdrv);
++
++MODULE_DESCRIPTION("Meson AIU i2s DMA ASoC Driver");
++MODULE_AUTHOR("Jerome Brunet <jbrunet@baylibre.com>");
++MODULE_LICENSE("GPL v2");

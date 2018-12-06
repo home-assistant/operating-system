@@ -1,0 +1,28 @@
+From 972cd12a027256061c19c164021f2a771e860438 Mon Sep 17 00:00:00 2001
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date: Mon, 26 Mar 2018 23:17:45 +0200
+Subject: [PATCH] ARM64: dts: meson-gx-p23x-q20x: enable the USB controller
+
+All S905D (GXL) and S912 (GXM) reference boards (namely these are
+P230, P231, Q200 and Q201) provide USB connectors.
+This enables the USB controller on these boards to make the USB ports
+actually usable.
+
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-gx-p23x-q20x.dtsi | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gx-p23x-q20x.dtsi b/arch/arm64/boot/dts/amlogic/meson-gx-p23x-q20x.dtsi
+index 4eef36b225386..88e712ea757a2 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gx-p23x-q20x.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gx-p23x-q20x.dtsi
+@@ -212,3 +212,7 @@
+ 	pinctrl-0 = <&uart_ao_a_pins>;
+ 	pinctrl-names = "default";
+ };
++
++&usb0 {
++	status = "okay";
++};

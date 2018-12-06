@@ -1,0 +1,30 @@
+From b9f07cb4f41fccbe7616482015d28e6e26aec3a3 Mon Sep 17 00:00:00 2001
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date: Mon, 26 Mar 2018 23:17:44 +0200
+Subject: [PATCH] ARM64: dts: meson-gxl-s905x-p212: enable the USB controller
+
+All boards based on the P212 reference design (the P212 reference board
+itself and the Khadas VIM) have USB connectors (in case of the Khadas
+VIM the first port is exposed through the USB Type-C connector, the
+second port is connected to a 4-port USB hub).
+This enables the USB controller on these boards to make the USB ports
+actually usable.
+
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dtsi | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dtsi
+index 0a0953fbc7d42..0cfd701809dec 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dtsi
+@@ -185,3 +185,7 @@
+ 	pinctrl-0 = <&uart_ao_a_pins>;
+ 	pinctrl-names = "default";
+ };
++
++&usb0 {
++	status = "okay";
++};

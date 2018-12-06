@@ -1,0 +1,24 @@
+From baa0a8ee8b8a0a14ddab6b14c37846dfed261007 Mon Sep 17 00:00:00 2001
+From: Koen Kooi <koen@dominion.thruhere.net>
+Date: Fri, 11 May 2018 13:51:20 +0200
+Subject: [PATCH] libretech-cc: disable CVBS connector
+
+Signed-off-by: Koen Kooi <koen@dominion.thruhere.net>
+---
+ arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts
+index f56969e..ac3a150 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts
+@@ -24,7 +24,8 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
+-	cvbs-connector {
++	cvbs_connector: cvbs-connector {
++		status = "disabled";
+ 		compatible = "composite-video-connector";
+ 
+ 		port {

@@ -1,0 +1,438 @@
+From 8dd5edaf984e4c8d6f7ca1e7709b3109cf7dd780 Mon Sep 17 00:00:00 2001
+From: Jerome Brunet <jbrunet@baylibre.com>
+Date: Thu, 30 Mar 2017 13:43:52 +0200
+Subject: [PATCH] ASoC: meson: add aiu spdif dma support
+
+Add support for the spdif output dma which is part of the AIU block
+
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ sound/soc/meson/Kconfig         |   7 +
+ sound/soc/meson/Makefile        |   2 +
+ sound/soc/meson/aiu-spdif-dma.c | 388 ++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 397 insertions(+)
+ create mode 100644 sound/soc/meson/aiu-spdif-dma.c
+
+diff --git a/sound/soc/meson/Kconfig b/sound/soc/meson/Kconfig
+index 478f29a..3fb93b9 100644
+--- a/sound/soc/meson/Kconfig
++++ b/sound/soc/meson/Kconfig
+@@ -14,3 +14,10 @@ config SND_SOC_MESON_I2S
+ 	help
+ 	  Say Y or M if you want to add support for i2s driver for Amlogic
+ 	  Meson SoCs.
++
++config SND_SOC_MESON_SPDIF
++	tristate "Meson spdif interface"
++	depends on SND_SOC_MESON
++	help
++	  Say Y or M if you want to add support for spdif dma driver for Amlogic
++	  Meson SoCs.
+diff --git a/sound/soc/meson/Makefile b/sound/soc/meson/Makefile
+index ea06dde..cef9a9d 100644
+--- a/sound/soc/meson/Makefile
++++ b/sound/soc/meson/Makefile
+@@ -1,7 +1,9 @@
+ snd-soc-meson-audio-core-objs	 := audio-core.o
+ snd-soc-meson-aiu-i2s-dma-objs	 := aiu-i2s-dma.o
++snd-soc-meson-aiu-spdif-dma-objs := aiu-spdif-dma.o
+ snd-soc-meson-i2s-dai-objs	 := i2s-dai.o
+ 
+ obj-$(CONFIG_SND_SOC_MESON)		+= snd-soc-meson-audio-core.o
+ obj-$(CONFIG_SND_SOC_MESON_I2S)		+= snd-soc-meson-aiu-i2s-dma.o
+ obj-$(CONFIG_SND_SOC_MESON_I2S)		+= snd-soc-meson-i2s-dai.o
++obj-$(CONFIG_SND_SOC_MESON_SPDIF)	+= snd-soc-meson-aiu-spdif-dma.o
+diff --git a/sound/soc/meson/aiu-spdif-dma.c b/sound/soc/meson/aiu-spdif-dma.c
+new file mode 100644
+index 0000000..81c3b85
+--- /dev/null
++++ b/sound/soc/meson/aiu-spdif-dma.c
+@@ -0,0 +1,388 @@
++/*
++ * Copyright (C) 2017 BayLibre, SAS
++ * Author: Jerome Brunet <jbrunet@baylibre.com>
++ * Copyright (C) 2017 Amlogic, Inc. All rights reserved.
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License as
++ * published by the Free Software Foundation; either version 2 of the
++ * License, or (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful, but
++ * WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program; if not, see <http://www.gnu.org/licenses/>.
++ */
++
++#include <linux/clk.h>
++#include <linux/mfd/syscon.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/platform_device.h>
++#include <linux/regmap.h>
++
++#include <sound/pcm_params.h>
++#include <sound/soc.h>
++
++#include "aiu-regs.h"
++#include "audio-core.h"
++
++#define DRV_NAME "meson-aiu-spdif-dma"
++
++struct aiu_spdif_dma {
++	struct meson_audio_core_data *core;
++	struct clk *fast;
++	int irq;
++};
++
++#define AIU_958_DCU_FF_CTRL_EN			BIT(0)
++#define AIU_958_DCU_FF_CTRL_AUTO_DISABLE	BIT(1)
++#define AIU_958_DCU_FF_CTRL_IRQ_MODE_MASK	GENMASK(3, 2)
++#define AIU_958_DCU_FF_CTRL_IRQ_OUT_THD		BIT(2)
++#define AIU_958_DCU_FF_CTRL_IRQ_FRAME_READ 	BIT(3)
++#define AIU_958_DCU_FF_CTRL_SYNC_HEAD_EN	BIT(4)
++#define AIU_958_DCU_FF_CTRL_BYTE_SEEK		BIT(5)
++#define AIU_958_DCU_FF_CTRL_CONTINUE		BIT(6)
++#define AIU_MEM_IEC958_BUF_CNTL_INIT		BIT(0)
++#define AIU_MEM_IEC958_CONTROL_INIT		BIT(0)
++#define AIU_MEM_IEC958_CONTROL_FILL_EN		BIT(1)
++#define AIU_MEM_IEC958_CONTROL_EMPTY_EN		BIT(2)
++#define AIU_MEM_IEC958_CONTROL_ENDIAN_MASK	GENMASK(5, 3)
++#define AIU_MEM_IEC958_CONTROL_RD_DDR		BIT(6)
++#define AIU_MEM_IEC958_CONTROL_MODE_16BIT	BIT(7)
++#define AIU_MEM_IEC958_MASKS_CH_MEM_MASK	GENMASK(15, 8)
++#define AIU_MEM_IEC958_MASKS_CH_MEM(ch)		((ch) << 8)
++#define AIU_MEM_IEC958_MASKS_CH_RD_MASK		GENMASK(7, 0)
++#define AIU_MEM_IEC958_MASKS_CH_RD(ch)		((ch) << 0)
++
++#define AIU_SPDIF_DMA_BURST 8
++#define AIU_SPDIF_BPF_MAX USHRT_MAX
++
++static struct snd_pcm_hardware aiu_spdif_dma_hw = {
++	.info = (SNDRV_PCM_INFO_INTERLEAVED |
++		 SNDRV_PCM_INFO_MMAP |
++		 SNDRV_PCM_INFO_MMAP_VALID |
++		 SNDRV_PCM_INFO_PAUSE),
++
++	.formats = (SNDRV_PCM_FMTBIT_S16_LE |
++		    SNDRV_PCM_FMTBIT_S24_LE |
++		    SNDRV_PCM_FMTBIT_S32_LE),
++
++	.rates = (SNDRV_PCM_RATE_32000 |
++		  SNDRV_PCM_RATE_44100 |
++		  SNDRV_PCM_RATE_48000 |
++		  SNDRV_PCM_RATE_96000 |
++		  SNDRV_PCM_RATE_192000),
++	/*
++	 * TODO: The DMA can change the endianness, the msb position
++	 * and deal with unsigned - support this later on
++	 */
++
++	.channels_min = 2,
++	.channels_max = 2,
++	.period_bytes_min = AIU_SPDIF_DMA_BURST,
++	.period_bytes_max = AIU_SPDIF_BPF_MAX,
++	.periods_min = 2,
++	.periods_max = UINT_MAX,
++	.buffer_bytes_max = 1 * 1024 * 1024,
++	.fifo_size = 0,
++};
++
++static struct aiu_spdif_dma *aiu_spdif_dma_priv(struct snd_pcm_substream *s)
++{
++	struct snd_soc_pcm_runtime *rtd = s->private_data;
++	struct snd_soc_component *component = snd_soc_rtdcom_lookup(rtd, DRV_NAME);
++
++	return snd_soc_component_get_drvdata(component);
++}
++
++static snd_pcm_uframes_t
++aiu_spdif_dma_pointer(struct snd_pcm_substream *substream)
++{
++	struct snd_pcm_runtime *runtime = substream->runtime;
++	struct aiu_spdif_dma *priv = aiu_spdif_dma_priv(substream);
++	unsigned int addr;
++	int ret;
++
++	ret = regmap_read(priv->core->aiu, AIU_MEM_IEC958_RD_PTR,
++			  &addr);
++	if (ret)
++		return 0;
++
++	return bytes_to_frames(runtime, addr - (unsigned int)runtime->dma_addr);
++}
++
++static void __dma_enable(struct aiu_spdif_dma *priv, bool enable)
++{
++	unsigned int en_mask = (AIU_MEM_IEC958_CONTROL_FILL_EN |
++				AIU_MEM_IEC958_CONTROL_EMPTY_EN);
++
++	regmap_update_bits(priv->core->aiu, AIU_MEM_IEC958_CONTROL, en_mask,
++			   enable ? en_mask : 0);
++}
++
++static void __dcu_fifo_enable(struct aiu_spdif_dma *priv, bool enable)
++{
++	regmap_update_bits(priv->core->aiu, AIU_958_DCU_FF_CTRL,
++			   AIU_958_DCU_FF_CTRL_EN,
++			   enable ? AIU_958_DCU_FF_CTRL_EN : 0);
++}
++
++static int aiu_spdif_dma_trigger(struct snd_pcm_substream *substream, int cmd)
++{
++	struct aiu_spdif_dma *priv = aiu_spdif_dma_priv(substream);
++
++	switch (cmd) {
++	case SNDRV_PCM_TRIGGER_START:
++	case SNDRV_PCM_TRIGGER_RESUME:
++	case SNDRV_PCM_TRIGGER_PAUSE_RELEASE:
++		__dcu_fifo_enable(priv, true);
++		__dma_enable(priv, true);
++		break;
++	case SNDRV_PCM_TRIGGER_SUSPEND:
++	case SNDRV_PCM_TRIGGER_PAUSE_PUSH:
++	case SNDRV_PCM_TRIGGER_STOP:
++		__dma_enable(priv, false);
++		__dcu_fifo_enable(priv, false);
++		break;
++	default:
++		return -EINVAL;
++	}
++
++	return 0;
++}
++
++static void __dma_init_mem(struct aiu_spdif_dma *priv)
++{
++	regmap_update_bits(priv->core->aiu, AIU_MEM_IEC958_CONTROL,
++			   AIU_MEM_IEC958_CONTROL_INIT,
++			   AIU_MEM_IEC958_CONTROL_INIT);
++	regmap_update_bits(priv->core->aiu, AIU_MEM_IEC958_BUF_CNTL,
++			   AIU_MEM_IEC958_BUF_CNTL_INIT,
++			   AIU_MEM_IEC958_BUF_CNTL_INIT);
++
++	regmap_update_bits(priv->core->aiu, AIU_MEM_IEC958_CONTROL,
++			   AIU_MEM_IEC958_CONTROL_INIT,
++			   0);
++	regmap_update_bits(priv->core->aiu, AIU_MEM_IEC958_BUF_CNTL,
++			   AIU_MEM_IEC958_BUF_CNTL_INIT,
++			   0);
++}
++
++static int aiu_spdif_dma_prepare(struct snd_pcm_substream *substream)
++{
++	struct aiu_spdif_dma *priv = aiu_spdif_dma_priv(substream);
++
++	__dma_init_mem(priv);
++
++	return 0;
++}
++
++static int __setup_memory_layout(struct aiu_spdif_dma *priv,
++				 unsigned int width)
++{
++	u32 mem_ctl = AIU_MEM_IEC958_CONTROL_RD_DDR;
++
++	if (width == 16)
++		mem_ctl |= AIU_MEM_IEC958_CONTROL_MODE_16BIT;
++
++	regmap_update_bits(priv->core->aiu, AIU_MEM_IEC958_CONTROL,
++			   AIU_MEM_IEC958_CONTROL_ENDIAN_MASK |
++			   AIU_MEM_IEC958_CONTROL_MODE_16BIT |
++			   AIU_MEM_IEC958_CONTROL_RD_DDR,
++			   mem_ctl);
++
++	return 0;
++}
++
++static int aiu_spdif_dma_hw_params(struct snd_pcm_substream *substream,
++				   struct snd_pcm_hw_params *params)
++{
++	struct snd_pcm_runtime *runtime = substream->runtime;
++	struct aiu_spdif_dma *priv = aiu_spdif_dma_priv(substream);
++	int ret;
++	dma_addr_t end_ptr;
++
++	ret = snd_pcm_lib_malloc_pages(substream, params_buffer_bytes(params));
++	if (ret < 0)
++		return ret;
++
++	ret = __setup_memory_layout(priv, params_physical_width(params));
++	if (ret)
++		return ret;
++
++	/* Initialize memory pointers */
++	regmap_write(priv->core->aiu,
++		     AIU_MEM_IEC958_START_PTR, runtime->dma_addr);
++	regmap_write(priv->core->aiu,
++		     AIU_MEM_IEC958_RD_PTR, runtime->dma_addr);
++
++	/* The end pointer is the address of the last valid block */
++	end_ptr = runtime->dma_addr + runtime->dma_bytes - AIU_SPDIF_DMA_BURST;
++	regmap_write(priv->core->aiu, AIU_MEM_IEC958_END_PTR, end_ptr);
++
++	/* Memory masks */
++	regmap_write(priv->core->aiu, AIU_MEM_IEC958_MASKS,
++		     AIU_MEM_IEC958_MASKS_CH_RD(0xff) |
++		     AIU_MEM_IEC958_MASKS_CH_MEM(0xff));
++
++	/* Setup the number bytes read by the FIFO between each IRQ */
++	regmap_write(priv->core->aiu, AIU_958_BPF, params_period_bytes(params));
++
++	/*
++	 * AUTO_DISABLE and SYNC_HEAD are enabled by default but
++	 * this should be disabled in PCM (uncompressed) mode
++	 */
++	regmap_update_bits(priv->core->aiu, AIU_958_DCU_FF_CTRL,
++			   AIU_958_DCU_FF_CTRL_AUTO_DISABLE |
++			   AIU_958_DCU_FF_CTRL_IRQ_MODE_MASK |
++			   AIU_958_DCU_FF_CTRL_SYNC_HEAD_EN,
++			   AIU_958_DCU_FF_CTRL_IRQ_FRAME_READ);
++
++	return 0;
++}
++
++static int aiu_spdif_dma_hw_free(struct snd_pcm_substream *substream)
++{
++	return snd_pcm_lib_free_pages(substream);
++}
++
++static irqreturn_t aiu_spdif_dma_irq(int irq, void *dev_id)
++{
++	struct snd_pcm_substream *playback = dev_id;
++
++	snd_pcm_period_elapsed(playback);
++
++	return IRQ_HANDLED;
++}
++
++static int aiu_spdif_dma_open(struct snd_pcm_substream *substream)
++{
++	struct aiu_spdif_dma *priv = aiu_spdif_dma_priv(substream);
++	int ret;
++
++	snd_soc_set_runtime_hwparams(substream, &aiu_spdif_dma_hw);
++
++	/*
++	 * Make sure the buffer and period size are multiple of the DMA burst
++	 * size
++	 */
++	ret = snd_pcm_hw_constraint_step(substream->runtime, 0,
++					 SNDRV_PCM_HW_PARAM_BUFFER_BYTES,
++					 AIU_SPDIF_DMA_BURST);
++	if (ret)
++		return ret;
++
++	ret = snd_pcm_hw_constraint_step(substream->runtime, 0,
++					 SNDRV_PCM_HW_PARAM_PERIOD_BYTES,
++					 AIU_SPDIF_DMA_BURST);
++	if (ret)
++		return ret;
++
++	/* Request the SPDIF DDR irq */
++	ret = request_irq(priv->irq, aiu_spdif_dma_irq, 0,
++			  DRV_NAME, substream);
++	if (ret)
++		return ret;
++
++	/* Power up the spdif fast domain - can't write the register w/o it */
++	ret = clk_prepare_enable(priv->fast);
++	if (ret)
++		return ret;
++
++	/* Make sure the dma is initially halted */
++	__dma_enable(priv, false);
++	__dcu_fifo_enable(priv, false);
++
++	return 0;
++}
++
++static int aiu_spdif_dma_close(struct snd_pcm_substream *substream)
++{
++	struct aiu_spdif_dma *priv = aiu_spdif_dma_priv(substream);
++
++	clk_disable_unprepare(priv->fast);
++	free_irq(priv->irq, substream);
++
++	return 0;
++}
++
++static const struct snd_pcm_ops aiu_spdif_dma_ops = {
++	.open =		aiu_spdif_dma_open,
++	.close =        aiu_spdif_dma_close,
++	.ioctl =	snd_pcm_lib_ioctl,
++	.hw_params =	aiu_spdif_dma_hw_params,
++	.hw_free =      aiu_spdif_dma_hw_free,
++	.prepare =      aiu_spdif_dma_prepare,
++	.pointer =	aiu_spdif_dma_pointer,
++	.trigger =	aiu_spdif_dma_trigger,
++};
++
++static int aiu_spdif_dma_new(struct snd_soc_pcm_runtime *rtd)
++{
++	struct snd_card *card = rtd->card->snd_card;
++	size_t size = aiu_spdif_dma_hw.buffer_bytes_max;
++
++	return snd_pcm_lib_preallocate_pages_for_all(rtd->pcm,
++						     SNDRV_DMA_TYPE_DEV,
++						     card->dev, size, size);
++}
++
++static const struct snd_soc_component_driver aiu_spdif_platform = {
++	.ops		= &aiu_spdif_dma_ops,
++	.pcm_new	= aiu_spdif_dma_new,
++	.name 		= DRV_NAME,
++};
++
++static int aiu_spdif_dma_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct aiu_spdif_dma *priv;
++
++	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
++	if (!priv)
++		return -ENOMEM;
++
++	platform_set_drvdata(pdev, priv);
++	priv->core = dev_get_drvdata(dev->parent);
++
++	priv->fast = devm_clk_get(dev, "fast");
++	if (IS_ERR(priv->fast)) {
++		if (PTR_ERR(priv->fast) != -EPROBE_DEFER)
++			dev_err(dev, "Can't get spdif fast domain clock\n");
++		return PTR_ERR(priv->fast);
++	}
++
++	priv->irq = platform_get_irq(pdev, 0);
++	if (priv->irq <= 0) {
++		dev_err(dev, "Can't get spdif ddr irq\n");
++		return priv->irq;
++	}
++
++	return devm_snd_soc_register_component(dev, &aiu_spdif_platform,
++					       NULL, 0);
++}
++
++static const struct of_device_id aiu_spdif_dma_of_match[] = {
++	{ .compatible = "amlogic,meson-aiu-spdif-dma", },
++	{ .compatible = "amlogic,meson-gxbb-aiu-spdif-dma", },
++	{ .compatible = "amlogic,meson-gxl-aiu-spdif-dma", },
++	{}
++};
++MODULE_DEVICE_TABLE(of, aiu_spdif_dma_of_match);
++
++static struct platform_driver aiu_spdif_dma_pdrv = {
++	.probe = aiu_spdif_dma_probe,
++	.driver = {
++		.name = DRV_NAME,
++		.of_match_table = aiu_spdif_dma_of_match,
++	},
++};
++module_platform_driver(aiu_spdif_dma_pdrv);
++
++MODULE_DESCRIPTION("Meson AIU spdif DMA ASoC Driver");
++MODULE_AUTHOR("Jerome Brunet <jbrunet@baylibre.com>");
++MODULE_LICENSE("GPL");

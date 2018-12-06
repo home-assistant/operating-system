@@ -19,10 +19,10 @@ DATA_SIZE=1G
 
 
 function size2sectors() {
-    s=0
+    local f=0
     for v in "${@}"
     do
-    ((s+=$(echo "$v" | awk \
+    local p=$(echo "$v" | awk \
       'BEGIN{IGNORECASE = 1}
        function printsectors(n,b,p) {printf "%u\n", n*b^p/512}
        /B$/{     printsectors($1,  1, 0)};
@@ -34,9 +34,13 @@ function size2sectors() {
        /MB$/{    printsectors($1, 10,  6)};
        /GB$/{    printsectors($1, 10,  9)};
        /TB$/{    printsectors($1, 10, 12)}')
-    ))
+    for s in $p
+    do
+        f=$((f+s))
     done
-    echo $s
+
+    done
+    echo $f
 }
 
 
@@ -196,14 +200,14 @@ function _create_disk_mbr() {
     local disk_layout="${BINARIES_DIR}/disk.layout"
     local boot_start=16384
 
-    local boot_size=$(($(size2sectors BOOT_SIZE)+2))
-    local kernel0_size=$(($(size2sectors KERNEL_SIZE)+2))
-    local system0_size=$(($(size2sectors SYSTEM_SIZE)+2))
-    local kernel1_size=$(($(size2sectors KERNEL_SIZE)+2))
-    local system1_size=$(($(size2sectors SYSTEM_SIZE)+2))
-    local bootstate_size=$(($(size2sectors BOOTSTATE_SIZE)+2))
-    local overlay_size=$(($(size2sectors OVERLAY_SIZE)+2))
-    local data_size=$(($(size2sectors DATA_SIZE)+2))
+    local boot_size=$(($(size2sectors "$(get_boot_size)")+2))
+    local kernel0_size=$(($(size2sectors "$KERNEL_SIZE")+2))
+    local system0_size=$(($(size2sectors "$SYSTEM_SIZE")+2))
+    local kernel1_size=$(($(size2sectors "$KERNEL_SIZE")+2))
+    local system1_size=$(($(size2sectors "$SYSTEM_SIZE")+2))
+    local bootstate_size=$(($(size2sectors "$BOOTSTATE_SIZE")+2))
+    local overlay_size=$(($(size2sectors "$OVERLAY_SIZE")+2))
+    local data_size=$(($(size2sectors "$DATA_SIZE")+2))
     local extended_size=$((kernel0_size+system0_size+kernel1_size+system1_size+bootstate_size+2))
 
     # we add one here for the extended header.

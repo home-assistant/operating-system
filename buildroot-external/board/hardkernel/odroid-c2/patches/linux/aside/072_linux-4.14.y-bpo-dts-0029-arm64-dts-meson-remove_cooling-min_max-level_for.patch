@@ -1,0 +1,33 @@
+From b6f67b039c64572adced5d5c0f01dc944e251bc2 Mon Sep 17 00:00:00 2001
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Date: Fri, 9 Feb 2018 14:28:08 +0530
+Subject: [PATCH] ARM64: dts: meson: Remove "cooling-{min|max}-level" for
+ gpio-fan node
+
+The "cooling-min-level" and "cooling-max-level" properties are not
+parsed by any part of the kernel currently and the max cooling state of
+gpio-fan cooling device is found by referring to the
+"gpio-fan,speed-map" instead.
+
+Remove the unused properties from the gpio-fan node.
+
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts b/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts
+index f9a50f861cd38..4fd46c1546a7e 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts
+@@ -58,8 +58,6 @@
+ 				      1 1
+ 				      2 2
+ 				      3 3>;
+-		cooling-min-level = <0>;
+-		cooling-max-level = <3>;
+ 		#cooling-cells = <2>;
+ 	};
+ 

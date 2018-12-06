@@ -1,0 +1,26 @@
+From 55ef32249bb647c6b64adcf943918d302a0020a7 Mon Sep 17 00:00:00 2001
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date: Mon, 26 Mar 2018 23:17:47 +0200
+Subject: [PATCH] ARM64: dts: meson-gxl-nexbox-a95x: enable the USB controller
+
+The Nexbox A95X provides two USB ports. Enable the SoC's USB controller
+on this board to make these USB ports usable.
+
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-gxl-s905x-nexbox-a95x.dts | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-nexbox-a95x.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-nexbox-a95x.dts
+index 69c721a70e44b..6739697be1def 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-nexbox-a95x.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-nexbox-a95x.dts
+@@ -215,3 +215,7 @@
+ 	pinctrl-0 = <&uart_ao_a_pins>;
+ 	pinctrl-names = "default";
+ };
++
++&usb0 {
++	status = "okay";
++};
