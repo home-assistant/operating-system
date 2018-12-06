@@ -1,0 +1,59 @@
+From d8f8b9542a4d8d560c0292a492f4edd922dd4ece Mon Sep 17 00:00:00 2001
+From: Niklas Cassel <niklas.cassel@axis.com>
+Date: Mon, 22 Jan 2018 16:59:50 +0100
+Subject: [PATCH] net: stmmac: do not use a bitwise AND operator with a bool
+ operand
+
+Doing a bitwise AND between a bool and an int is generally not a good idea.
+The bool will be promoted to an int with value 0 or 1,
+the int is generally regarded as true with a non-zero value,
+thus ANDing them has the potential to yield an undesired result.
+
+This commit fixes the following smatch warnings:
+
+drivers/net/ethernet/stmicro/stmmac/enh_desc.c:344 enh_desc_prepare_tx_desc() warn: maybe use && instead of &
+drivers/net/ethernet/stmicro/stmmac/dwmac4_descs.c:337 dwmac4_rd_prepare_tx_desc() warn: maybe use && instead of &
+drivers/net/ethernet/stmicro/stmmac/dwmac4_descs.c:380 dwmac4_rd_prepare_tso_tx_desc() warn: maybe use && instead of &
+
+Signed-off-by: Niklas Cassel <niklas.cassel@axis.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+---
+ drivers/net/ethernet/stmicro/stmmac/dwmac4_descs.c | 4 ++--
+ drivers/net/ethernet/stmicro/stmmac/enh_desc.c     | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac4_descs.c b/drivers/net/ethernet/stmicro/stmmac/dwmac4_descs.c
+index 2fd8456999f69..c728ffa095de0 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac4_descs.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac4_descs.c
+@@ -334,7 +334,7 @@ static void dwmac4_rd_prepare_tx_desc(struct dma_desc *p, int is_fs, int len,
+ 	if (tx_own)
+ 		tdes3 |= TDES3_OWN;
+ 
+-	if (is_fs & tx_own)
++	if (is_fs && tx_own)
+ 		/* When the own bit, for the first frame, has to be set, all
+ 		 * descriptors for the same frame has to be set before, to
+ 		 * avoid race condition.
+@@ -377,7 +377,7 @@ static void dwmac4_rd_prepare_tso_tx_desc(struct dma_desc *p, int is_fs,
+ 	if (tx_own)
+ 		tdes3 |= TDES3_OWN;
+ 
+-	if (is_fs & tx_own)
++	if (is_fs && tx_own)
+ 		/* When the own bit, for the first frame, has to be set, all
+ 		 * descriptors for the same frame has to be set before, to
+ 		 * avoid race condition.
+diff --git a/drivers/net/ethernet/stmicro/stmmac/enh_desc.c b/drivers/net/ethernet/stmicro/stmmac/enh_desc.c
+index b47cb5c4da513..6768a25b6aa09 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/enh_desc.c
++++ b/drivers/net/ethernet/stmicro/stmmac/enh_desc.c
+@@ -341,7 +341,7 @@ static void enh_desc_prepare_tx_desc(struct dma_desc *p, int is_fs, int len,
+ 	if (tx_own)
+ 		tdes0 |= ETDES0_OWN;
+ 
+-	if (is_fs & tx_own)
++	if (is_fs && tx_own)
+ 		/* When the own bit, for the first frame, has to be set, all
+ 		 * descriptors for the same frame has to be set before, to
+ 		 * avoid race condition.

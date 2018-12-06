@@ -1,0 +1,23 @@
+From 13253828e625fad26802c497672d1ebc2588a61e Mon Sep 17 00:00:00 2001
+From: Jerome Brunet <jbrunet@baylibre.com>
+Date: Tue, 14 Feb 2017 19:18:04 +0100
+Subject: [PATCH 02/14] drm/meson: select dw-hdmi i2s audio for meson hdmi
+
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ drivers/gpu/drm/meson/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/gpu/drm/meson/Kconfig b/drivers/gpu/drm/meson/Kconfig
+index 3ce51d8..02d400b 100644
+--- a/drivers/gpu/drm/meson/Kconfig
++++ b/drivers/gpu/drm/meson/Kconfig
+@@ -13,3 +13,4 @@ config DRM_MESON_DW_HDMI
+ 	depends on DRM_MESON
+ 	default y if DRM_MESON
+ 	select DRM_DW_HDMI
++	select DRM_DW_HDMI_I2S_AUDIO
+-- 
+2.7.4
+

@@ -1,0 +1,68 @@
+--- a/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts	2018-09-25 02:40:03.744549370 +0200
++++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts	2018-09-25 03:42:03.505596966 +0200
+@@ -147,10 +147,27 @@
+ 		};
+ 	};
+ 
++	i2s_codec: external-codec {
++		#sound-dai-cells = <0>;
++		compatible = "ti,pcm5102a";
++		status = "okay";
++	};
++
+ 	sound {
+ 		compatible = "simple-audio-card";
+ 		simple-audio-card,name = "meson-gx-audio";
+ 
++		simple-audio-card,widgets =
++			"Line", "Analog Left Output",
++			"Line", "Analog Right Output";
++		simple-audio-card,routing =
++			"Analog Left Output", "OUTL",
++			"Analog Right Output", "OUTR",
++			"INL", "AOUTL",
++			"INR", "AOUTR";
++
++		status = "okay";
++
+ 		assigned-clocks = <&clkc CLKID_MPLL2>,
+ 				  <&clkc CLKID_MPLL0>,
+ 				  <&clkc CLKID_MPLL1>;
+@@ -178,6 +195,27 @@
+ 				sound-dai = <&hdmi_tx>;
+ 			};
+ 		};
++
++		simple-audio-card,dai-link@1 {
++			/* I2C external codec Output */
++			format = "i2s";
++			bitclock-inversion;
++			mclk-fs = <256>;
++			bitclock-master = <&i2s_dai>;
++			frame-master = <&i2s_dai>;
++
++			plat {
++				sound-dai = <&aiu_i2s_dma>;
++			};
++
++			cpu {
++				sound-dai = <&i2s_dai>;
++			};
++
++			codec {
++				sound-dai = <&i2s_codec>;
++			};
++		};
+ 	};
+ };
+ 
+@@ -264,6 +302,9 @@
+ 
+ &i2s_dai {
+ 	status = "okay";
++	pinctrl-0 = <&i2s_am_clk_pins>, <&i2s_out_ao_clk_pins>,
++		    <&i2s_out_lr_clk_pins>, <&i2s_out_ch01_ao_pins>;
++	pinctrl-names = "default";
+ };
+ 
+ &ir {

@@ -1,0 +1,70 @@
+From 9dbb56ea0917a036dc966663a09baf3d5a471f54 Mon Sep 17 00:00:00 2001
+From: Jerome Brunet <jbrunet@baylibre.com>
+Date: Thu, 19 Oct 2017 14:01:42 +0200
+Subject: [PATCH] ARM64: dts: meson-gx: add gpio interrupt controller
+
+Add gpio interrupt controller to Amlogic GX family SoCs
+
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
+Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-gx.dtsi   | 9 +++++++++
+ arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi | 6 ++++++
+ arch/arm64/boot/dts/amlogic/meson-gxl.dtsi  | 6 ++++++
+ 3 files changed, 21 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gx.dtsi b/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
+index b7723436a04b2..ab7ce1644cdc5 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
+@@ -218,6 +218,15 @@
+ 			#size-cells = <2>;
+ 			ranges = <0x0 0x0 0x0 0xc1100000 0x0 0x100000>;
+ 
++			gpio_intc: interrupt-controller@9880 {
++				compatible = "amlogic,meson-gpio-intc";
++				reg = <0x0 0x9880 0x0 0x10>;
++				interrupt-controller;
++				#interrupt-cells = <2>;
++				amlogic,channel-interrupts = <64 65 66 67 68 69 70 71>;
++				status = "disabled";
++			};
++
+ 			reset: reset-controller@4404 {
+ 				compatible = "amlogic,meson-gx-reset", "amlogic,meson-gxbb-reset";
+ 				reg = <0x0 0x04404 0x0 0x20>;
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
+index 3d41db9c9d226..ead895a4e9a5c 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
+@@ -323,6 +323,12 @@
+ 	clock-names = "stmmaceth", "clkin0", "clkin1";
+ };
+ 
++&gpio_intc {
++	compatible = "amlogic,meson-gpio-intc",
++		     "amlogic,meson-gxbb-gpio-intc";
++	status = "okay";
++};
++
+ &hdmi_tx {
+ 	compatible = "amlogic,meson-gxbb-dw-hdmi", "amlogic,meson-gx-dw-hdmi";
+ 	resets = <&reset RESET_HDMITX_CAPB3>,
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
+index d3a51031a7111..0aa71a35ce64c 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
+@@ -225,6 +225,12 @@
+ 	compatible = "amlogic,meson-gxl-aoclkc", "amlogic,meson-gx-aoclkc";
+ };
+ 
++&gpio_intc {
++	compatible = "amlogic,meson-gpio-intc",
++		     "amlogic,meson-gxl-gpio-intc";
++	status = "okay";
++};
++
+ &hdmi_tx {
+ 	compatible = "amlogic,meson-gxl-dw-hdmi", "amlogic,meson-gx-dw-hdmi";
+ 	resets = <&reset RESET_HDMITX_CAPB3>,

@@ -1,0 +1,29 @@
+From dac161871fb592816826ef11b742554fb3dc2fe3 Mon Sep 17 00:00:00 2001
+From: Jerome Brunet <jbrunet@baylibre.com>
+Date: Wed, 6 Sep 2017 14:25:47 +0200
+Subject: [PATCH] ARM64: dts: meson-gxl-libretech-cc: enable internal phy leds
+
+Enable the internal phy ACT and LINK leds pinmux
+
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts
+index a8aa9ce5f55e3..6d023fa27067b 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts
+@@ -128,6 +128,11 @@
+ 	status = "okay";
+ };
+ 
++&internal_phy {
++	pinctrl-0 = <&eth_link_led_pins>, <&eth_act_led_pins>;
++	pinctrl-names = "default";
++};
++
+ &ir {
+ 	status = "okay";
+ 	pinctrl-0 = <&remote_input_ao_pins>;
