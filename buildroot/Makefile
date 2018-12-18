@@ -60,6 +60,11 @@ override O := $(patsubst %/,%,$(patsubst %.,%,$(O)))
 # avoid empty CANONICAL_O in case on non-existing entry.
 CANONICAL_O := $(shell mkdir -p $(O) >/dev/null 2>&1)$(realpath $(O))
 
+# gcc fails to build when the srcdir contains a '@'
+ifneq ($(findstring @,$(CANONICAL_O)),)
+$(error The build directory can not contain a '@')
+endif
+
 CANONICAL_CURDIR = $(realpath $(CURDIR))
 
 REQ_UMASK = 0022
@@ -87,9 +92,9 @@ all:
 .PHONY: all
 
 # Set and export the version string
-export BR2_VERSION := 2018.05.1
+export BR2_VERSION := 2018.11
 # Actual time the release is cut (for reproducible builds)
-BR2_VERSION_EPOCH = 1532040000
+BR2_VERSION_EPOCH = 1543701000
 
 # Save running make version since it's clobbered by the make package
 RUNNING_MAKE_VERSION := $(MAKE_VERSION)
@@ -128,9 +133,9 @@ export BR2_VERSION_FULL := $(BR2_VERSION)$(shell $(TOPDIR)/support/scripts/setlo
 
 # List of targets and target patterns for which .config doesn't need to be read in
 noconfig_targets := menuconfig nconfig gconfig xconfig config oldconfig randconfig \
-	defconfig %_defconfig allyesconfig allnoconfig alldefconfig silentoldconfig release \
+	defconfig %_defconfig allyesconfig allnoconfig alldefconfig syncconfig release \
 	randpackageconfig allyespackageconfig allnopackageconfig \
-	print-version olddefconfig distclean manual manual-%
+	print-version olddefconfig distclean manual manual-% check-package
 
 # Some global targets do not trigger a build, but are used to collect
 # metadata, or do various checks. When such targets are triggered,
@@ -346,8 +351,14 @@ export HOSTARCH := $(shell LC_ALL=C $(HOSTCC_NOCCACHE) -v 2>&1 | \
 	    -e 's/macppc/powerpc/' \
 	    -e 's/sh.*/sh/' )
 
-HOSTCC_VERSION := $(shell $(HOSTCC_NOCCACHE) --version | \
-	sed -n -r 's/^.* ([0-9]*)\.([0-9]*)\.([0-9]*)[ ]*.*/\1 \2/p')
+# When adding a new host gcc version in Config.in,
+# update the HOSTCC_MAX_VERSION variable:
+HOSTCC_MAX_VERSION := 8
+
+HOSTCC_VERSION := $(shell V=$$($(HOSTCC_NOCCACHE) --version | \
+	sed -n -r 's/^.* ([0-9]*)\.([0-9]*)\.([0-9]*)[ ]*.*/\1 \2/p'); \
+	[ "$${V%% *}" -le $(HOSTCC_MAX_VERSION) ] || V=$(HOSTCC_MAX_VERSION); \
+	printf "%s" "$${V}")
 
 # For gcc >= 5.x, we only need the major version.
 ifneq ($(firstword $(HOSTCC_VERSION)),4)
@@ -433,6 +444,7 @@ KERNEL_ARCH := $(shell echo "$(ARCH)" | sed -e "s/-.*//" \
 	-e s/parisc64/parisc/ \
 	-e s/powerpc64.*/powerpc/ \
 	-e s/ppc.*/powerpc/ -e s/mips.*/mips/ \
+	-e s/riscv.*/riscv/ \
 	-e s/sh.*/sh/ \
 	-e s/microblazeel/microblaze/)
 
@@ -493,9 +505,9 @@ include Makefile.legacy
 
 include system/system.mk
 include package/Makefile.in
-# arch/arch.mk.* must be after package/Makefile.in because it may need to
+# arch/arch.mk must be after package/Makefile.in because it may need to
 # complement variables defined therein, like BR_NO_CHECK_HASH_FOR.
--include $(sort $(wildcard arch/arch.mk.*))
+include arch/arch.mk
 include support/dependencies/dependencies.mk
 
 include $(sort $(wildcard toolchain/*.mk))
@@ -565,7 +577,7 @@ dirs: $(BUILD_DIR) $(STAGING_DIR) $(BASE_TARGET_DIR) \
 	$(HOST_DIR) $(HOST_DIR_SYMLINK) $(BINARIES_DIR)
 
 $(BUILD_DIR)/buildroot-config/auto.conf: $(BR2_CONFIG)
-	$(MAKE1) $(EXTRAMAKEARGS) HOSTCC="$(HOSTCC_NOCCACHE)" HOSTCXX="$(HOSTCXX_NOCCACHE)" silentoldconfig
+	$(MAKE1) $(EXTRAMAKEARGS) HOSTCC="$(HOSTCC_NOCCACHE)" HOSTCXX="$(HOSTCXX_NOCCACHE)" syncconfig
 
 .PHONY: prepare
 prepare: $(BUILD_DIR)/buildroot-config/auto.conf
@@ -573,14 +585,25 @@ prepare: $(BUILD_DIR)/buildroot-config/auto.conf
 .PHONY: world
 world: target-post-image
 
-.PHONY: sdk
-sdk: world
+.PHONY: prepare-sdk
+prepare-sdk: world
 	@$(call MESSAGE,"Rendering the SDK relocatable")
 	$(TOPDIR)/support/scripts/fix-rpath host
 	$(TOPDIR)/support/scripts/fix-rpath staging
 	$(INSTALL) -m 755 $(TOPDIR)/support/misc/relocate-sdk.sh $(HOST_DIR)/relocate-sdk.sh
 	mkdir -p $(HOST_DIR)/share/buildroot
 	echo $(HOST_DIR) > $(HOST_DIR)/share/buildroot/sdk-location
+
+BR2_SDK_PREFIX ?= $(GNU_TARGET_NAME)_sdk-buildroot
+.PHONY: sdk
+sdk: prepare-sdk $(BR2_TAR_HOST_DEPENDENCY)
+	@$(call MESSAGE,"Generating SDK tarball")
+	$(if $(BR2_SDK_PREFIX),,$(error BR2_SDK_PREFIX can not be empty))
+	$(Q)mkdir -p $(BINARIES_DIR)
+	$(TAR) czf "$(BINARIES_DIR)/$(BR2_SDK_PREFIX).tar.gz" \
+		--owner=0 --group=0 --numeric-owner \
+		--transform='s#^\.#$(BR2_SDK_PREFIX)#' \
+		-C $(HOST_DIR) "."
 
 # Populating the staging with the base directories is handled by the skeleton package
 $(STAGING_DIR):
@@ -780,10 +803,10 @@ legal-info-clean:
 .PHONY: legal-info-prepare
 legal-info-prepare: $(LEGAL_INFO_DIR)
 	@$(call MESSAGE,"Buildroot $(BR2_VERSION_FULL) Collecting legal info")
-	@$(call legal-license-file,buildroot,buildroot,support/legal-info,COPYING,COPYING,HOST)
-	@$(call legal-manifest,PACKAGE,VERSION,LICENSE,LICENSE FILES,SOURCE ARCHIVE,SOURCE SITE,TARGET)
-	@$(call legal-manifest,PACKAGE,VERSION,LICENSE,LICENSE FILES,SOURCE ARCHIVE,SOURCE SITE,HOST)
-	@$(call legal-manifest,buildroot,$(BR2_VERSION_FULL),GPL-2.0+,COPYING,not saved,not saved,HOST)
+	@$(call legal-license-file,buildroot,buildroot,support/legal-info/buildroot.hash,COPYING,COPYING,HOST)
+	@$(call legal-manifest,TARGET,PACKAGE,VERSION,LICENSE,LICENSE FILES,SOURCE ARCHIVE,SOURCE SITE,DEPENDENCIES WITH LICENSES)
+	@$(call legal-manifest,HOST,PACKAGE,VERSION,LICENSE,LICENSE FILES,SOURCE ARCHIVE,SOURCE SITE,DEPENDENCIES WITH LICENSES)
+	@$(call legal-manifest,HOST,buildroot,$(BR2_VERSION_FULL),GPL-2.0+,COPYING,not saved,not saved)
 	@$(call legal-warning,the Buildroot source code has not been saved)
 	@cp $(BR2_CONFIG) $(LEGAL_INFO_DIR)/buildroot.config
 
@@ -922,7 +945,7 @@ randpackageconfig allyespackageconfig allnopackageconfig: $(BUILD_DIR)/buildroot
 	@rm -f $(CONFIG_DIR)/.config.nopkg
 	@$(COMMON_CONFIG_ENV) $< --olddefconfig $(CONFIG_CONFIG_IN) >/dev/null
 
-oldconfig silentoldconfig olddefconfig: $(BUILD_DIR)/buildroot-config/conf prepare-kconfig
+oldconfig syncconfig olddefconfig: $(BUILD_DIR)/buildroot-config/conf prepare-kconfig
 	@$(COMMON_CONFIG_ENV) $< --$@ $(CONFIG_CONFIG_IN)
 
 defconfig: $(BUILD_DIR)/buildroot-config/conf prepare-kconfig
@@ -977,7 +1000,8 @@ $(BUILD_DIR)/.br2-external.in: $(BUILD_DIR)
 # displayed.
 .PHONY: printvars
 printvars:
-	@:$(foreach V, \
+	@:
+	$(foreach V, \
 		$(sort $(if $(VARS),$(filter $(VARS),$(.VARIABLES)),$(.VARIABLES))), \
 		$(if $(filter-out environment% default automatic, \
 				$(origin $V)), \
@@ -1017,11 +1041,11 @@ help:
 	@echo '  xconfig                - interactive Qt-based configurator'
 	@echo '  gconfig                - interactive GTK-based configurator'
 	@echo '  oldconfig              - resolve any unresolved symbols in .config'
-	@echo '  silentoldconfig        - Same as oldconfig, but quietly, additionally update deps'
-	@echo '  olddefconfig           - Same as silentoldconfig but sets new symbols to their default value'
+	@echo '  syncconfig             - Same as oldconfig, but quietly, additionally update deps'
+	@echo '  olddefconfig           - Same as syncconfig but sets new symbols to their default value'
 	@echo '  randconfig             - New config with random answer to all options'
-	@echo '  defconfig              - New config with default answer to all options'
-	@echo '                             BR2_DEFCONFIG, if set, is used as input'
+	@echo '  defconfig              - New config with default answer to all options;'
+	@echo '                             BR2_DEFCONFIG, if set on the command line, is used as input'
 	@echo '  savedefconfig          - Save current config to BR2_DEFCONFIG (minimal config)'
 	@echo '  allyesconfig           - New config where all options are accepted with yes'
 	@echo '  allnoconfig            - New config where all options are answered with no'
@@ -1125,11 +1149,15 @@ release:
 print-version:
 	@echo $(BR2_VERSION_FULL)
 
+check-package:
+	find $(TOPDIR) -type f \( -name '*.mk' -o -name '*.hash' -o -name 'Config.*' \) \
+		-exec ./utils/check-package {} +
+
 .PHONY: .gitlab-ci.yml
 .gitlab-ci.yml: .gitlab-ci.yml.in
 	cp $< $@
 	(cd configs; LC_ALL=C ls -1 *_defconfig) | sed 's/$$/: *defconfig/' >> $@
-	./support/testing/run-tests -l 2>&1 | sed -r -e '/^test_run \((.*)\).*/!d; s//\1: *runtime_test/' | LC_ALL=C sort >> $@
+	set -o pipefail; ./support/testing/run-tests -l 2>&1 | sed -r -e '/^test_run \((.*)\).*/!d; s//\1: *runtime_test/' | LC_ALL=C sort >> $@
 
 include docs/manual/manual.mk
 -include $(foreach dir,$(BR2_EXTERNAL_DIRS),$(sort $(wildcard $(dir)/docs/*/*.mk)))

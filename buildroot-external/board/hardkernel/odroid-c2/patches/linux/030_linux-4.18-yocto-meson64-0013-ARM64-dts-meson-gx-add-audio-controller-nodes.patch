@@ -1,0 +1,186 @@
+From f4d7ad156ad2253d5ec3e79ea36309e27b8fabc7 Mon Sep 17 00:00:00 2001
+From: Jerome Brunet <jbrunet@baylibre.com>
+Date: Thu, 30 Mar 2017 15:19:04 +0200
+Subject: [PATCH] ARM64: dts: meson-gx: add audio controller nodes
+
+Add audio controller nodes for Amlogic meson gxbb and gxl.
+This includes the audio-core node, the i2s and spdif DAIs, i2s and spdif
+aiu DMAs.
+
+Audio on this SoC family is still a work in progress. More nodes are likely
+to be added later on (pcm DAIs, input DMAs, etc ...)
+
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-gx.dtsi   | 35 ++++++++++++++++++++++++++
+ arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi | 39 +++++++++++++++++++++++++++++
+ arch/arm64/boot/dts/amlogic/meson-gxl.dtsi  | 38 ++++++++++++++++++++++++++++
+ 3 files changed, 112 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gx.dtsi b/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
+index b8dc4db..6b64b63 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
+@@ -203,6 +203,41 @@
+ 				#reset-cells = <1>;
+ 			};
+ 
++			audio: audio@5400 {
++				compatible = "amlogic,meson-audio-core";
++				reg = <0x0 0x5400 0x0 0x2ac>,
++				      <0x0 0xa000 0x0 0x304>;
++				reg-names = "aiu", "audin";
++				status = "disabled";
++
++				aiu_i2s_dma: aiu_i2s_dma {
++					#sound-dai-cells = <0>;
++					compatible = "amlogic,meson-aiu-i2s-dma";
++					interrupts = <GIC_SPI 48 IRQ_TYPE_EDGE_RISING>;
++					status = "disabled";
++				};
++
++				aiu_spdif_dma: aiu_spdif_dma {
++					#sound-dai-cells = <0>;
++					compatible = "amlogic,meson-aiu-spdif-dma";
++					interrupts = <GIC_SPI 50 IRQ_TYPE_EDGE_RISING>;
++					status = "disabled";
++				};
++
++				i2s_dai: i2s_dai {
++					#sound-dai-cells = <0>;
++					compatible = "amlogic,meson-i2s-dai";
++					status = "disabled";
++				};
++
++				spdif_dai: spdif_dai {
++					#sound-dai-cells = <0>;
++					compatible = "amlogic,meson-spdif-dai";
++					status = "disabled";
++				};
++
++			};
++
+ 			uart_A: serial@84c0 {
+ 				compatible = "amlogic,meson-gx-uart";
+ 				reg = <0x0 0x84c0 0x0 0x18>;
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
+index 98cbba6..7913249 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
+@@ -659,6 +659,35 @@
+ 	};
+ };
+ 
++&audio {
++	clocks = <&clkc CLKID_AIU>,
++		 <&clkc CLKID_AIU_GLUE>,
++		 <&clkc CLKID_I2S_SPDIF>;
++	clock-names = "aiu_top", "aiu_glue", "audin";
++	resets = <&reset RESET_AIU>,
++		 <&reset RESET_AUDIN>;
++	reset-names = "aiu", "audin";
++};
++
++&aiu_i2s_dma {
++	clocks = <&clkc CLKID_I2S_OUT>;
++	clock-names = "fast";
++};
++
++&aiu_spdif_dma {
++	clocks = <&clkc CLKID_IEC958>;
++	clock-names = "fast";
++
++};
++
++&i2s_dai {
++	clocks = <&clkc CLKID_I2S_OUT>,
++		 <&clkc CLKID_MIXER_IFACE>,
++		 <&clkc CLKID_AOCLK_GATE>,
++		 <&clkc CLKID_CTS_AMCLK>;
++	clock-names = "fast", "iface", "bclks", "mclk";
++};
++
+ &pwrc_vpu {
+ 	resets = <&reset RESET_VIU>,
+ 		 <&reset RESET_VENC>,
+@@ -741,6 +770,15 @@
+ 	num-cs = <1>;
+ };
+ 
++&spdif_dai {
++	clocks = <&clkc CLKID_IEC958>,
++		 <&clkc CLKID_IEC958_GATE>,
++		 <&clkc CLKID_CTS_MCLK_I958>,
++		 <&clkc CLKID_CTS_AMCLK>,
++		 <&clkc CLKID_CTS_I958>;
++	clock-names = "fast", "iface", "mclk_i958", "mclk_i2s", "mclk";
++};
++
+ &spifc {
+ 	clocks = <&clkc CLKID_SPI>;
+ };
+@@ -774,3 +812,4 @@
+ 	compatible = "amlogic,meson-gxbb-vpu", "amlogic,meson-gx-vpu";
+ 	power-domains = <&pwrc_vpu>;
+ };
++
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
+index c87a80e..20922cd 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
+@@ -660,6 +660,34 @@
+ 	};
+ };
+ 
++&audio {
++	clocks = <&clkc CLKID_AIU>,
++		 <&clkc CLKID_AIU_GLUE>,
++		 <&clkc CLKID_I2S_SPDIF>;
++	clock-names = "aiu_top", "aiu_glue", "audin";
++	resets = <&reset RESET_AIU>,
++		 <&reset RESET_AUDIN>;
++	reset-names = "aiu", "audin";
++};
++
++&aiu_i2s_dma {
++	clocks = <&clkc CLKID_I2S_OUT>;
++	clock-names = "fast";
++};
++
++&aiu_spdif_dma {
++	clocks = <&clkc CLKID_IEC958>;
++	clock-names = "fast";
++};
++
++&i2s_dai {
++	clocks = <&clkc CLKID_I2S_OUT>,
++		 <&clkc CLKID_MIXER_IFACE>,
++		 <&clkc CLKID_AOCLK_GATE>,
++		 <&clkc CLKID_CTS_AMCLK>;
++	clock-names = "fast", "iface", "bclks", "mclk";
++};
++
+ &pwrc_vpu {
+ 	resets = <&reset RESET_VIU>,
+ 		 <&reset RESET_VENC>,
+@@ -742,6 +770,15 @@
+ 	num-cs = <1>;
+ };
+ 
++&spdif_dai {
++	clocks = <&clkc CLKID_IEC958>,
++		 <&clkc CLKID_IEC958_GATE>,
++		 <&clkc CLKID_CTS_MCLK_I958>,
++		 <&clkc CLKID_CTS_AMCLK>,
++		 <&clkc CLKID_CTS_I958>;
++	clock-names = "fast", "iface", "mclk_i958", "mclk_i2s", "mclk";
++};
++
+ &spifc {
+ 	clocks = <&clkc CLKID_SPI>;
+ };
+@@ -775,3 +812,4 @@
+ 	compatible = "amlogic,meson-gxl-vpu", "amlogic,meson-gx-vpu";
+ 	power-domains = <&pwrc_vpu>;
+ };
++

@@ -1,0 +1,13 @@
+diff --git a/arch/arm64/Makefile b/arch/arm64/Makefile
+index f839ecd9..cd276162 100644
+--- a/arch/arm64/Makefile
++++ b/arch/arm64/Makefile
+@@ -103,7 +103,7 @@ core-$(CONFIG_EFI_STUB) += $(objtree)/drivers/firmware/efi/libstub/lib.a
+ 
+ # Default target when executing plain make
+ boot		:= arch/arm64/boot
+-KBUILD_IMAGE	:= $(boot)/Image.gz
++KBUILD_IMAGE	:= $(boot)/Image
+ KBUILD_DTBS	:= dtbs
+ 
+ all:	Image.gz $(KBUILD_DTBS)

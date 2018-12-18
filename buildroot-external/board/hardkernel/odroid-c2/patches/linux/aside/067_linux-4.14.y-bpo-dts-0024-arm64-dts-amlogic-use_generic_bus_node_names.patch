@@ -1,0 +1,47 @@
+From 0cb6c604232ccb6bbbd148c7451f99f9101b46d7 Mon Sep 17 00:00:00 2001
+From: Kevin Hilman <khilman@baylibre.com>
+Date: Wed, 6 Dec 2017 11:30:05 -0800
+Subject: [PATCH] ARM64: dts: amlogic: use generic bus node names
+
+The DT spec recommends that node-names have generic names like "bus".
+Fix that in the Amlogic DTs, while leaving the label names to have more
+SoC-specific names that match with the HW documentation.
+
+Suggested-by: Stephen Boyd <sboyd@codeaurora.org>
+Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
+Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-gx.dtsi  | 6 +++---
+ 1 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gx.dtsi b/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
+index 7cdbf58a062f4..6cb3c2a52bafe 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
+@@ -211,7 +211,7 @@
+ 		#size-cells = <2>;
+ 		ranges;
+ 
+-		cbus: cbus@c1100000 {
++		cbus: bus@c1100000 {
+ 			compatible = "simple-bus";
+ 			reg = <0x0 0xc1100000 0x0 0x100000>;
+ 			#address-cells = <2>;
+@@ -366,7 +366,7 @@
+ 			};
+ 		};
+ 
+-		aobus: aobus@c8100000 {
++		aobus: bus@c8100000 {
+ 			compatible = "simple-bus";
+ 			reg = <0x0 0xc8100000 0x0 0x100000>;
+ 			#address-cells = <2>;
+@@ -453,7 +453,7 @@
+ 			};
+ 		};
+ 
+-		hiubus: hiubus@c883c000 {
++		hiubus: bus@c883c000 {
+ 			compatible = "simple-bus";
+ 			reg = <0x0 0xc883c000 0x0 0x2000>;
+ 			#address-cells = <2>;

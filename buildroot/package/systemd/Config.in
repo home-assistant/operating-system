@@ -5,7 +5,7 @@ config BR2_PACKAGE_SYSTEMD_ARCH_SUPPORTS
 		BR2_mipsel || BR2_powerpc || BR2_powerpc64 || \
 		BR2_powerpc64le || BR2_sh4 || BR2_sh4eb || \
 		BR2_sh4a || BR2_sh4aeb || BR2_sparc || BR2_x86_64 || \
-		BR2_aarch64 || BR2_m68k
+		BR2_aarch64 || BR2_m68k || BR2_arc
 
 menuconfig BR2_PACKAGE_SYSTEMD
 	bool "systemd"
@@ -192,7 +192,6 @@ config BR2_PACKAGE_SYSTEMD_MACHINED
 config BR2_PACKAGE_SYSTEMD_MYHOSTNAME
 	bool "enable myhostname NSS plugin"
 	default y
-	depends on !BR2_TOOLCHAIN_USES_UCLIBC # needs nss.h
 	help
 	  nss-myhostname is a plug-in module for the GNU Name Service
 	  Switch (NSS) functionality of the GNU C Library (glibc),
@@ -216,6 +215,7 @@ config BR2_PACKAGE_SYSTEMD_NETWORKD
 
 config BR2_PACKAGE_SYSTEMD_POLKIT
 	bool "enable polkit support"
+	depends on BR2_TOOLCHAIN_USES_GLIBC # polkit
 	select BR2_PACKAGE_POLKIT
 	help
 	  If enabled, systemd is built with polkit support and policy
@@ -224,6 +224,9 @@ config BR2_PACKAGE_SYSTEMD_POLKIT
 	  systemd's many privileged processes.
 
 	  http://wiki.freedesktop.org/www/Software/polkit/
+
+comment "polkit support needs a glibc toolchain"
+	depends on !BR2_TOOLCHAIN_USES_GLIBC
 
 config BR2_PACKAGE_SYSTEMD_QUOTACHECK
 	bool "enable quotacheck tools"
@@ -248,7 +251,6 @@ config BR2_PACKAGE_SYSTEMD_RANDOMSEED
 config BR2_PACKAGE_SYSTEMD_RESOLVED
 	bool "enable resolve daemon"
 	default y
-	depends on !BR2_TOOLCHAIN_USES_UCLIBC # needs nss.h
 	help
 	  systemd-resolved is a system service that provides network
 	  name resolution to local applications. It implements a
@@ -281,7 +283,6 @@ config BR2_PACKAGE_SYSTEMD_SMACK_SUPPORT
 
 config BR2_PACKAGE_SYSTEMD_SYSUSERS
 	bool "enable sysusers support"
-	depends on !BR2_TOOLCHAIN_USES_UCLIBC # needs gshadow.h
 	help
 	  systemd-sysusers creates system users and groups, based on
 	  the file format and location specified in sysusers.d(5).

@@ -1,0 +1,32 @@
+From 1c08ac0c4bd8e9d66c4dde29bc496c3b430dd028 Mon Sep 17 00:00:00 2001
+From: Corentin Labbe <clabbe.montjoie@gmail.com>
+Date: Tue, 28 Nov 2017 17:48:22 +0100
+Subject: [PATCH] net: stmmac: dwmac-sun8i: fix allwinner,leds-active-low
+ handling
+
+The driver expect "allwinner,leds-active-low" to be in PHY node, but
+the binding doc expect it to be in MAC node.
+
+Since all board DT use it also in MAC node, the driver need to search
+allwinner,leds-active-low in MAC node.
+
+Signed-off-by: Corentin Labbe <clabbe.montjoie@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+---
+ drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
+index e5ff734d4f9b2..9eb7f65d8000d 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
+@@ -808,8 +808,7 @@ static int sun8i_dwmac_set_syscon(struct stmmac_priv *priv)
+ 			 val, reg);
+ 
+ 	if (gmac->variant->soc_has_internal_phy) {
+-		if (of_property_read_bool(priv->plat->phy_node,
+-					  "allwinner,leds-active-low"))
++		if (of_property_read_bool(node, "allwinner,leds-active-low"))
+ 			reg |= H3_EPHY_LED_POL;
+ 		else
+ 			reg &= ~H3_EPHY_LED_POL;

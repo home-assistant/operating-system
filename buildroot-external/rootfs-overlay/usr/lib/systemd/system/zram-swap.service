@@ -7,7 +7,7 @@ RefuseManualStop=true
 
 [Service]
 Type=oneshot
-ExecStart=/usr/sbin/hassos-zram -t swap
+ExecStart=/usr/libexec/hassos-zram -t swap
 RemainAfterExit=true
 StandardOutput=null
 

@@ -5,5 +5,5 @@ RefuseManualStop=true
 
 [Service]
 Type=oneshot
-ExecStart=/usr/sbin/hassos-rate
+ExecStart=/usr/libexec/hassos-rate
 RemainAfterExit=true

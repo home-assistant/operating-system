@@ -1,0 +1,36 @@
+From b73062fd0c0c9630ad00ec5c0e9880798a994875 Mon Sep 17 00:00:00 2001
+From: Maxime Jourdan <mjourdan@baylibre.com>
+Date: Wed, 29 Aug 2018 15:24:02 +0200
+Subject: [PATCH] ARM64: dts: meson-gx: add vdec entry
+
+Add the video decoder dts entry
+
+Signed-off-by: Maxime Jourdan <mjourdan@baylibre.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-gx.dtsi | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gx.dtsi b/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
+index 737b741df0355..d9e0fea71dbe3 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
+@@ -410,6 +410,19 @@
+ 			};
+ 		};
+ 
++		vdec: video-decoder@c8820000 {
++			compatible = "amlogic,gx-vdec";
++			reg = <0x0 0xc8820000 0x0 0x10000>,
++			      <0x0 0xc110a580 0x0 0xe4>;
++			reg-names = "dos", "esparser";
++
++			interrupts = <GIC_SPI 44 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 32 IRQ_TYPE_EDGE_RISING>;
++
++			amlogic,ao-sysctrl = <&sysctrl_AO>;
++			amlogic,canvas = <&canvas>;
++		};
++
+ 		periphs: periphs@c8834000 {
+ 			compatible = "simple-bus";
+ 			reg = <0x0 0xc8834000 0x0 0x2000>;

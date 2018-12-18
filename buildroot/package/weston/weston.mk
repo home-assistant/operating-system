@@ -10,6 +10,9 @@ WESTON_SOURCE = weston-$(WESTON_VERSION).tar.xz
 WESTON_LICENSE = MIT
 WESTON_LICENSE_FILES = COPYING
 
+# 0002-rdp-compositor-fix-compilation-against-FreeRDP-2.0.0.patch
+WESTON_AUTORECONF = YES
+
 WESTON_DEPENDENCIES = host-pkgconf wayland wayland-protocols \
 	libxkbcommon pixman libpng jpeg udev cairo libinput libdrm \
 	$(if $(BR2_PACKAGE_WEBP),webp)
@@ -50,10 +53,9 @@ else
 WESTON_CONF_OPTS += --disable-weston-launch
 endif
 
-# Needs wayland-egl, which normally only mesa provides
-ifeq ($(BR2_PACKAGE_MESA3D_OPENGL_EGL)$(BR2_PACKAGE_MESA3D_OPENGL_ES),yy)
+ifeq ($(BR2_PACKAGE_HAS_LIBEGL_WAYLAND)$(BR2_PACKAGE_HAS_LIBGLES),yy)
 WESTON_CONF_OPTS += --enable-egl
-WESTON_DEPENDENCIES += libegl
+WESTON_DEPENDENCIES += libegl libgles
 else
 WESTON_CONF_OPTS += \
 	--disable-egl \

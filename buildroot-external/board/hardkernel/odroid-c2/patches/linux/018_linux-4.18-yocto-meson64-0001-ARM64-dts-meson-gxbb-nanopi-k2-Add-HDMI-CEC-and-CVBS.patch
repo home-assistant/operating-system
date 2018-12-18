@@ -1,0 +1,81 @@
+From 6c5aaf27886c9b308e9c4e4d613990e540f23ec8 Mon Sep 17 00:00:00 2001
+From: Neil Armstrong <narmstrong@baylibre.com>
+Date: Tue, 26 Jun 2018 09:37:39 +0200
+Subject: [PATCH] ARM64: dts: meson-gxbb-nanopi-k2: Add HDMI, CEC and CVBS
+ nodes
+
+The Amlogic Meson GXBB based Nanopi-K2 board has an HDMI connector
+with CEC and CVBS available on the 40pin header.
+This patch adds the nodes to enable HDMI, CEC and CVBS functionnalities.
+
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ .../boot/dts/amlogic/meson-gxbb-nanopi-k2.dts      | 48 ++++++++++++++++++++++
+ 1 file changed, 48 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-nanopi-k2.dts b/arch/arm64/boot/dts/amlogic/meson-gxbb-nanopi-k2.dts
+index 7d5709c..cbe99bd 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxbb-nanopi-k2.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-nanopi-k2.dts
+@@ -106,6 +106,42 @@
+ 		compatible = "mmc-pwrseq-emmc";
+ 		reset-gpios = <&gpio BOOT_9 GPIO_ACTIVE_LOW>;
+ 	};
++
++	/* CVBS is available on CON1 pin 36, disabled by default */
++	cvbs-connector {
++		compatible = "composite-video-connector";
++		status = "disabled";
++
++		port {
++			cvbs_connector_in: endpoint {
++				remote-endpoint = <&cvbs_vdac_out>;
++			};
++		};
++	};
++
++	hdmi-connector {
++		compatible = "hdmi-connector";
++		type = "a";
++
++		port {
++			hdmi_connector_in: endpoint {
++				remote-endpoint = <&hdmi_tx_tmds_out>;
++			};
++		};
++	};
++};
++
++&cec_AO {
++	status = "okay";
++	pinctrl-0 = <&ao_cec_pins>;
++	pinctrl-names = "default";
++	hdmi-phandle = <&hdmi_tx>;
++};
++
++&cvbs_vdac_port {
++	cvbs_vdac_out: endpoint {
++		remote-endpoint = <&cvbs_connector_in>;
++	};
+ };
+ 
+ &ethmac {
+@@ -137,6 +173,18 @@
+ 	};
+ };
+ 
++&hdmi_tx {
++	status = "okay";
++	pinctrl-0 = <&hdmi_hpd_pins>, <&hdmi_i2c_pins>;
++	pinctrl-names = "default";
++};
++
++&hdmi_tx_tmds_port {
++	hdmi_tx_tmds_out: endpoint {
++		remote-endpoint = <&hdmi_connector_in>;
++	};
++};
++
+ &ir {
+ 	status = "okay";
+ 	pinctrl-0 = <&remote_input_ao_pins>;

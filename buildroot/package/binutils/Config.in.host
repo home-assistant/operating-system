@@ -1,5 +1,11 @@
 comment "Binutils Options"
 
+config BR2_PACKAGE_HOST_BINUTILS_SUPPORTS_CFI
+	bool
+	default y
+	depends on !BR2_microblaze
+	depends on !(BR2_nios2 && (BR2_BINUTILS_VERSION_2_28_X || BR2_BINUTILS_VERSION_2_29_X))
+
 choice
 	prompt "Binutils Version"
 	default BR2_BINUTILS_VERSION_2_28_X if BR2_ARM_INSTRUCTIONS_THUMB
@@ -12,12 +18,17 @@ choice
 config BR2_BINUTILS_VERSION_2_28_X
 	bool "binutils 2.28.1"
 	depends on !BR2_arc
+	depends on !BR2_riscv
 
 config BR2_BINUTILS_VERSION_2_29_X
 	bool "binutils 2.29.1"
+	depends on !BR2_riscv
 
 config BR2_BINUTILS_VERSION_2_30_X
 	bool "binutils 2.30"
+
+config BR2_BINUTILS_VERSION_2_31_X
+	bool "binutils 2.31.1"
 
 config BR2_BINUTILS_VERSION_ARC
 	bool "binutils arc (2.29)"
@@ -30,6 +41,7 @@ config BR2_BINUTILS_VERSION
 	default "2.28.1"	if BR2_BINUTILS_VERSION_2_28_X
 	default "2.29.1"	if BR2_BINUTILS_VERSION_2_29_X
 	default "2.30"		if BR2_BINUTILS_VERSION_2_30_X
+	default "2.31.1"	if BR2_BINUTILS_VERSION_2_31_X
 
 config BR2_BINUTILS_ENABLE_LTO
 	bool

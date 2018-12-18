@@ -7,7 +7,7 @@ RefuseManualStop=true
 
 [Service]
 Type=oneshot
-ExecStart=/usr/sbin/hassos-expand
+ExecStart=/usr/libexec/hassos-expand
 RemainAfterExit=true
 
 [Install]

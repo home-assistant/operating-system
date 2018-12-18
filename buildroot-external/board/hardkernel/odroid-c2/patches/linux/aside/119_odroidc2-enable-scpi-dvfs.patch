@@ -1,0 +1,14 @@
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts b/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
+index d147c853a..dbde670ba 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
+@@ -246,7 +246,8 @@
+ };
+ 
+ &scpi_clocks {
+-	status = "disabled";
++	/* Works only with new blobs that have limited DVFS table */
++	status = "okay";
+ };
+ 
+ /* SD */

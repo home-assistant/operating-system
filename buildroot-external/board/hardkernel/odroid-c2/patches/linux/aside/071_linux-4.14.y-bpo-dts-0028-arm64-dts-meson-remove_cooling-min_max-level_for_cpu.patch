@@ -1,0 +1,38 @@
+From f65f2df29d7b4e77318635ec33e95d801a9e40dd Mon Sep 17 00:00:00 2001
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Date: Fri, 9 Feb 2018 14:28:06 +0530
+Subject: [PATCH] ARM64: dts: meson: Remove "cooling-{min|max}-level" for CPU
+ nodes
+
+The "cooling-min-level" and "cooling-max-level" properties are not
+parsed by any part of the kernel currently and the max cooling state of
+a CPU cooling device is found by referring to the cpufreq table instead.
+
+Remove the unused properties from the CPU nodes.
+
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts b/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts
+index 447b9e22cf8e3..f9a50f861cd38 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts
+@@ -208,14 +208,10 @@
+ };
+ 
+ &cpu0 {
+-	cooling-min-level = <0>;
+-	cooling-max-level = <6>;
+ 	#cooling-cells = <2>;
+ };
+ 
+ &cpu4 {
+-	cooling-min-level = <0>;
+-	cooling-max-level = <4>;
+ 	#cooling-cells = <2>;
+ };
+ 

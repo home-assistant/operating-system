@@ -55,8 +55,10 @@ ifeq ($(BR2_STATIC_LIBS),y)
 $(2)_LDFLAGS += -extldflags '-static'
 endif
 
-$(2)_BUILD_OPTS += -ldflags "$$($(2)_LDFLAGS)"
-$(2)_BUILD_OPTS += -tags "$$($(2)_TAGS)"
+$(2)_BUILD_OPTS += \
+	-ldflags "$$($(2)_LDFLAGS)" \
+	-tags "$$($(2)_TAGS)" \
+	-p $(PARALLEL_JOBS)
 
 # Target packages need the Go compiler on the host.
 $(2)_DEPENDENCIES += host-go
@@ -77,9 +79,9 @@ $(2)_INSTALL_BINS ?= $(1)
 # of GOPATH. It usually resolves around domain/vendor/software. By default, we
 # derive domain/vendor/software from the upstream URL of the project, but we
 # allow $(2)_SRC_SUBDIR to be overridden if needed.
-$(2)_SRC_DOMAIN = $$(call domain,$($(2)_SITE))
-$(2)_SRC_VENDOR = $$(word 1,$$(subst /, ,$$(call notdomain,$($(2)_SITE))))
-$(2)_SRC_SOFTWARE = $$(word 2,$$(subst /, ,$$(call notdomain,$($(2)_SITE))))
+$(2)_SRC_DOMAIN = $$(call domain,$$($(2)_SITE))
+$(2)_SRC_VENDOR = $$(word 1,$$(subst /, ,$$(call notdomain,$$($(2)_SITE))))
+$(2)_SRC_SOFTWARE = $$(word 2,$$(subst /, ,$$(call notdomain,$$($(2)_SITE))))
 
 $(2)_SRC_SUBDIR ?= $$($(2)_SRC_DOMAIN)/$$($(2)_SRC_VENDOR)/$$($(2)_SRC_SOFTWARE)
 $(2)_SRC_PATH = $$(@D)/$$($(2)_WORKSPACE)/src/$$($(2)_SRC_SUBDIR)

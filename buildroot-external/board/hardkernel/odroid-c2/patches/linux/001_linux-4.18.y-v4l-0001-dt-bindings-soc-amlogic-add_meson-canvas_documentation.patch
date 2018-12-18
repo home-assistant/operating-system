@@ -1,0 +1,49 @@
+From 4796e434b5785e3d9f95e988363c407b1e09bb91 Mon Sep 17 00:00:00 2001
+From: Maxime Jourdan <maxi.jourdan@wanadoo.fr>
+Date: Sat, 28 Jul 2018 22:40:27 +0200
+Subject: [PATCH] dt-bindings: soc: amlogic: add meson-canvas documentation
+
+DT bindings doc for amlogic,meson-canvas
+
+Reviewed-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Maxime Jourdan <mjourdan@baylibre.com>
+---
+ .../bindings/soc/amlogic/amlogic,canvas.txt   | 29 +++++++++++++++++++
+ 1 file changed, 29 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/soc/amlogic/amlogic,canvas.txt
+
+diff --git a/Documentation/devicetree/bindings/soc/amlogic/amlogic,canvas.txt b/Documentation/devicetree/bindings/soc/amlogic/amlogic,canvas.txt
+new file mode 100644
+index 0000000000000..436d2106e80da
+--- /dev/null
++++ b/Documentation/devicetree/bindings/soc/amlogic/amlogic,canvas.txt
+@@ -0,0 +1,29 @@
++Amlogic Canvas
++================================
++
++A canvas is a collection of metadata that describes a pixel buffer.
++Those metadata include: width, height, phyaddr, wrapping, block mode
++and endianness.
++
++Many IPs within Amlogic SoCs rely on canvas indexes to read/write pixel data
++rather than use the phy addresses directly. For instance, this is the case for
++the video decoders and the display.
++
++Amlogic SoCs have 256 canvas.
++
++Device Tree Bindings:
++---------------------
++
++Video Lookup Table
++--------------------------
++
++Required properties:
++- compatible: "amlogic,canvas"
++- reg: Base physical address and size of the canvas registers.
++
++Example:
++
++canvas: video-lut@48 {
++	compatible = "amlogic,canvas";
++	reg = <0x0 0x48 0x0 0x14>;
++};

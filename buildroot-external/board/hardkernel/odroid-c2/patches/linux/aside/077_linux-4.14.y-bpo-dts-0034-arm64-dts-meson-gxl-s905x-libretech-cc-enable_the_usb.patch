@@ -1,0 +1,39 @@
+From b83687f359d9b4128073f06ab7a06489eb04aa7c Mon Sep 17 00:00:00 2001
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date: Mon, 26 Mar 2018 23:17:46 +0200
+Subject: [PATCH] ARM64: dts: meson-gxl-s905x-libretech-cc: enable the USB
+ controller
+
+The LibreTech CC ("Le Potato") board provides four USB connectors.
+These are provided by a hub which is connected to the SoC's USB
+controller.
+Enable the SoC's USB controller to make the USB ports usable. Also turn
+on the HDMI_5V regulator when powering on the PHY because (even though
+it's not shown in the schematics) HDMI_5V also supplies the USB VBUS.
+
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts
+index 22bf37404ff1b..3e3eb31748a35 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts
+@@ -271,3 +271,15 @@
+ 	pinctrl-0 = <&uart_ao_a_pins>;
+ 	pinctrl-names = "default";
+ };
++
++&usb0 {
++	status = "okay";
++};
++
++&usb2_phy0 {
++	/*
++	 * even though the schematics don't show it:
++	 * HDMI_5V is also used as supply for the USB VBUS.
++	 */
++	phy-supply = <&hdmi_5v>;
++};

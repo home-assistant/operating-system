@@ -1,0 +1,860 @@
+From 2df1a3a93bc1ce2d04fa0f0743c9c30195c7057a Mon Sep 17 00:00:00 2001
+From: Jerome Brunet <jbrunet@baylibre.com>
+Date: Wed, 20 Sep 2017 18:10:08 +0200
+Subject: [PATCH] ARM64: dts: meson: activate hdmi audio HDMI enabled boards
+
+This patch activate audio over HDMI on selected boards
+
+Please note that this audio support is based on WIP changes
+This should be considered as preview and it does not reflect
+the audio I expect to see merged
+
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ .../arm64/boot/dts/amlogic/meson-gx-p23x-q20x.dtsi | 45 ++++++++++++++++++++++
+ .../boot/dts/amlogic/meson-gxbb-nanopi-k2.dts      | 45 ++++++++++++++++++++++
+ .../boot/dts/amlogic/meson-gxbb-nexbox-a95x.dts    | 45 ++++++++++++++++++++++
+ .../arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts | 45 ++++++++++++++++++++++
+ arch/arm64/boot/dts/amlogic/meson-gxbb-p20x.dtsi   | 45 ++++++++++++++++++++++
+ arch/arm64/boot/dts/amlogic/meson-gxbb-wetek.dtsi  | 45 ++++++++++++++++++++++
+ .../dts/amlogic/meson-gxl-s905x-khadas-vim.dts     | 45 ++++++++++++++++++++++
+ .../dts/amlogic/meson-gxl-s905x-libretech-cc.dts   | 45 ++++++++++++++++++++++
+ .../dts/amlogic/meson-gxl-s905x-nexbox-a95x.dts    | 45 ++++++++++++++++++++++
+ .../boot/dts/amlogic/meson-gxl-s905x-p212.dts      | 45 ++++++++++++++++++++++
+ .../boot/dts/amlogic/meson-gxm-khadas-vim2.dts     | 45 ++++++++++++++++++++++
+ .../arm64/boot/dts/amlogic/meson-gxm-nexbox-a1.dts | 45 ++++++++++++++++++++++
+ 12 files changed, 540 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gx-p23x-q20x.dtsi b/arch/arm64/boot/dts/amlogic/meson-gx-p23x-q20x.dtsi
+index 88e712e..319512e 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gx-p23x-q20x.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gx-p23x-q20x.dtsi
+@@ -95,6 +95,39 @@
+ 			};
+ 		};
+ 	};
++
++	sound {
++		compatible = "simple-audio-card";
++		simple-audio-card,name = "meson-gx-audio";
++
++		assigned-clocks = <&clkc CLKID_MPLL2>,
++				  <&clkc CLKID_MPLL0>,
++				  <&clkc CLKID_MPLL1>;
++		assigned-clock-parents = <0>, <0>, <0>;
++		assigned-clock-rates = <294912000>,
++				       <270950400>,
++				       <393216000>;
++
++		simple-audio-card,dai-link@0 {
++			/* HDMI Output */
++			format = "i2s";
++			mclk-fs = <256>;
++			bitclock-master = <&i2s_dai>;
++			frame-master = <&i2s_dai>;
++
++			plat {
++				sound-dai = <&aiu_i2s_dma>;
++			};
++
++			cpu {
++				sound-dai = <&i2s_dai>;
++			};
++
++			codec {
++				sound-dai = <&hdmi_tx>;
++			};
++		};
++	};
+ };
+ 
+ &cec_AO {
+@@ -104,6 +137,14 @@
+ 	hdmi-phandle = <&hdmi_tx>;
+ };
+ 
++&audio {
++	status = "okay";
++};
++
++&aiu_i2s_dma {
++	status = "okay";
++};
++
+ &cvbs_vdac_port {
+ 	cvbs_vdac_out: endpoint {
+ 		remote-endpoint = <&cvbs_connector_in>;
+@@ -126,6 +167,10 @@
+ 	};
+ };
+ 
++&i2s_dai {
++	status = "okay";
++};
++
+ &ir {
+ 	status = "okay";
+ 	pinctrl-0 = <&remote_input_ao_pins>;
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-nanopi-k2.dts b/arch/arm64/boot/dts/amlogic/meson-gxbb-nanopi-k2.dts
+index cbe99bd..5b10de9 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxbb-nanopi-k2.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-nanopi-k2.dts
+@@ -88,6 +88,39 @@
+ 		clock-names = "ext_clock";
+ 	};
+ 
++	sound {
++		compatible = "simple-audio-card";
++		simple-audio-card,name = "meson-gx-audio";
++
++		assigned-clocks = <&clkc CLKID_MPLL2>,
++				  <&clkc CLKID_MPLL0>,
++				  <&clkc CLKID_MPLL1>;
++		assigned-clock-parents = <0>, <0>, <0>;
++		assigned-clock-rates = <294912000>,
++				       <270950400>,
++				       <393216000>;
++
++		simple-audio-card,dai-link@0 {
++			/* HDMI Output */
++			format = "i2s";
++			mclk-fs = <256>;
++			bitclock-master = <&i2s_dai>;
++			frame-master = <&i2s_dai>;
++
++			plat {
++				sound-dai = <&aiu_i2s_dma>;
++			};
++
++			cpu {
++				sound-dai = <&i2s_dai>;
++			};
++
++			codec {
++				sound-dai = <&hdmi_tx>;
++			};
++		};
++	};
++
+ 	vcc1v8: regulator-vcc1v8 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "VCC1.8V";
+@@ -131,6 +164,14 @@
+ 	};
+ };
+ 
++&audio {
++	status = "okay";
++};
++
++&aiu_i2s_dma {
++	status = "okay";
++};
++
+ &cec_AO {
+ 	status = "okay";
+ 	pinctrl-0 = <&ao_cec_pins>;
+@@ -185,6 +226,10 @@
+ 	};
+ };
+ 
++&i2s_dai {
++	status = "okay";
++};
++
+ &ir {
+ 	status = "okay";
+ 	pinctrl-0 = <&remote_input_ao_pins>;
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-nexbox-a95x.dts b/arch/arm64/boot/dts/amlogic/meson-gxbb-nexbox-a95x.dts
+index 4cf7f6e..ff87bdc 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxbb-nexbox-a95x.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-nexbox-a95x.dts
+@@ -119,6 +119,39 @@
+ 		clock-names = "ext_clock";
+ 	};
+ 
++	sound {
++		compatible = "simple-audio-card";
++		simple-audio-card,name = "meson-gx-audio";
++
++		assigned-clocks = <&clkc CLKID_MPLL2>,
++				  <&clkc CLKID_MPLL0>,
++				  <&clkc CLKID_MPLL1>;
++		assigned-clock-parents = <0>, <0>, <0>;
++		assigned-clock-rates = <294912000>,
++				       <270950400>,
++				       <393216000>;
++
++		simple-audio-card,dai-link@0 {
++			/* HDMI Output */
++			format = "i2s";
++			mclk-fs = <256>;
++			bitclock-master = <&i2s_dai>;
++			frame-master = <&i2s_dai>;
++
++			plat {
++				sound-dai = <&aiu_i2s_dma>;
++			};
++
++			cpu {
++				sound-dai = <&i2s_dai>;
++			};
++
++			codec {
++				sound-dai = <&hdmi_tx>;
++			};
++		};
++	};
++
+ 	cvbs-connector {
+ 		compatible = "composite-video-connector";
+ 
+@@ -154,6 +187,14 @@
+ 	hdmi-phandle = <&hdmi_tx>;
+ };
+ 
++&audio {
++	status = "okay";
++};
++
++&aiu_i2s_dma {
++	status = "okay";
++};
++
+ &ethmac {
+ 	status = "okay";
+ 	pinctrl-0 = <&eth_rmii_pins>;
+@@ -190,6 +231,10 @@
+ 	};
+ };
+ 
++&i2s_dai {
++	status = "okay";
++};
++
+ &ir {
+ 	status = "okay";
+ 	pinctrl-0 = <&remote_input_ao_pins>;
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts b/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
+index 54954b3..3da3309 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
+@@ -110,6 +110,39 @@
+ 			};
+ 		};
+ 	};
++
++	sound {
++		compatible = "simple-audio-card";
++		simple-audio-card,name = "meson-gx-audio";
++
++		assigned-clocks = <&clkc CLKID_MPLL2>,
++				  <&clkc CLKID_MPLL0>,
++				  <&clkc CLKID_MPLL1>;
++		assigned-clock-parents = <0>, <0>, <0>;
++		assigned-clock-rates = <294912000>,
++				       <270950400>,
++				       <393216000>;
++
++		simple-audio-card,dai-link@0 {
++			/* HDMI Output */
++			format = "i2s";
++			mclk-fs = <256>;
++			bitclock-master = <&i2s_dai>;
++			frame-master = <&i2s_dai>;
++
++			plat {
++				sound-dai = <&aiu_i2s_dma>;
++			};
++
++			cpu {
++				sound-dai = <&i2s_dai>;
++			};
++
++			codec {
++				sound-dai = <&hdmi_tx>;
++			};
++		};
++	};
+ };
+ 
+ &cec_AO {
+@@ -119,6 +152,14 @@
+ 	hdmi-phandle = <&hdmi_tx>;
+ };
+ 
++&audio {
++	status = "okay";
++};
++
++&aiu_i2s_dma {
++	status = "okay";
++};
++
+ &ethmac {
+ 	status = "okay";
+ 	pinctrl-0 = <&eth_rgmii_pins>;
+@@ -181,6 +222,10 @@
+ 	pinctrl-names = "default";
+ };
+ 
++&i2s_dai {
++	status = "okay";
++};
++
+ &ir {
+ 	status = "okay";
+ 	pinctrl-0 = <&remote_input_ao_pins>;
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-p20x.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxbb-p20x.dtsi
+index ce86226..84eb93b 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxbb-p20x.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-p20x.dtsi
+@@ -113,6 +113,39 @@
+ 			};
+ 		};
+ 	};
++
++	sound {
++		compatible = "simple-audio-card";
++		simple-audio-card,name = "meson-gx-audio";
++
++		assigned-clocks = <&clkc CLKID_MPLL2>,
++				  <&clkc CLKID_MPLL0>,
++				  <&clkc CLKID_MPLL1>;
++		assigned-clock-parents = <0>, <0>, <0>;
++		assigned-clock-rates = <294912000>,
++				       <270950400>,
++				       <393216000>;
++
++		simple-audio-card,dai-link@0 {
++			/* HDMI Output */
++			format = "i2s";
++			mclk-fs = <256>;
++			bitclock-master = <&i2s_dai>;
++			frame-master = <&i2s_dai>;
++
++			plat {
++				sound-dai = <&aiu_i2s_dma>;
++			};
++
++			cpu {
++				sound-dai = <&i2s_dai>;
++			};
++
++			codec {
++				sound-dai = <&hdmi_tx>;
++			};
++		};
++	};
+ };
+ 
+ &cec_AO {
+@@ -122,6 +155,14 @@
+ 	hdmi-phandle = <&hdmi_tx>;
+ };
+ 
++&audio {
++	status = "okay";
++};
++
++&aiu_i2s_dma {
++	status = "okay";
++};
++
+ &cvbs_vdac_port {
+ 	cvbs_vdac_out: endpoint {
+ 		remote-endpoint = <&cvbs_connector_in>;
+@@ -140,6 +181,10 @@
+ 	};
+ };
+ 
++&i2s_dai {
++	status = "okay";
++};
++
+ &ir {
+ 	status = "okay";
+ 	pinctrl-0 = <&remote_input_ao_pins>;
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-wetek.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxbb-wetek.dtsi
+index 70325b2..7d1f172 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxbb-wetek.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-wetek.dtsi
+@@ -105,6 +105,47 @@
+ 			};
+ 		};
+ 	};
++
++	sound {
++		compatible = "simple-audio-card";
++		simple-audio-card,name = "meson-gx-audio";
++
++		assigned-clocks = <&clkc CLKID_MPLL2>,
++				  <&clkc CLKID_MPLL0>,
++				  <&clkc CLKID_MPLL1>;
++		assigned-clock-parents = <0>, <0>, <0>;
++		assigned-clock-rates = <294912000>,
++				       <270950400>,
++				       <393216000>;
++
++		simple-audio-card,dai-link@0 {
++			/* HDMI Output */
++			format = "i2s";
++			mclk-fs = <256>;
++			bitclock-master = <&i2s_dai>;
++			frame-master = <&i2s_dai>;
++
++			plat {
++				sound-dai = <&aiu_i2s_dma>;
++			};
++
++			cpu {
++				sound-dai = <&i2s_dai>;
++			};
++
++			codec {
++				sound-dai = <&hdmi_tx>;
++			};
++		};
++	};
++};
++
++&audio {
++	status = "okay";
++};
++
++&aiu_i2s_dma {
++	status = "okay";
+ };
+ 
+ &cec_AO {
+@@ -159,6 +200,10 @@
+ 	};
+ };
+ 
++&i2s_dai {
++	status = "okay";
++};
++
+ &ir {
+ 	status = "okay";
+ 	pinctrl-0 = <&remote_input_ao_pins>;
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts
+index d32cf38..f053595 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts
+@@ -65,6 +65,39 @@
+ 			};
+ 		};
+ 	};
++
++	sound {
++		compatible = "simple-audio-card";
++		simple-audio-card,name = "meson-gx-audio";
++
++		assigned-clocks = <&clkc CLKID_MPLL2>,
++				  <&clkc CLKID_MPLL0>,
++				  <&clkc CLKID_MPLL1>;
++		assigned-clock-parents = <0>, <0>, <0>;
++		assigned-clock-rates = <294912000>,
++				       <270950400>,
++				       <393216000>;
++
++		simple-audio-card,dai-link@0 {
++			/* HDMI Output */
++			format = "i2s";
++			mclk-fs = <256>;
++			bitclock-master = <&i2s_dai>;
++			frame-master = <&i2s_dai>;
++
++			plat {
++				sound-dai = <&aiu_i2s_dma>;
++			};
++
++			cpu {
++				sound-dai = <&i2s_dai>;
++			};
++
++			codec {
++				sound-dai = <&hdmi_tx>;
++			};
++		};
++	};
+ };
+ 
+ &cec_AO {
+@@ -74,6 +107,14 @@
+ 	hdmi-phandle = <&hdmi_tx>;
+ };
+ 
++&audio {
++	status = "okay";
++};
++
++&aiu_i2s_dma {
++	status = "okay";
++};
++
+ &hdmi_tx {
+ 	status = "okay";
+ 	pinctrl-0 = <&hdmi_hpd_pins>, <&hdmi_i2c_pins>;
+@@ -86,6 +127,10 @@
+ 	};
+ };
+ 
++&i2s_dai {
++	status = "okay";
++};
++
+ &i2c_A {
+ 	status = "okay";
+ 	pinctrl-0 = <&i2c_a_pins>;
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts
+index f63bceb..f56969e 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts
+@@ -84,6 +84,39 @@
+ 		regulator-always-on;
+ 	};
+ 
++	sound {
++		compatible = "simple-audio-card";
++		simple-audio-card,name = "meson-gx-audio";
++
++		assigned-clocks = <&clkc CLKID_MPLL2>,
++				  <&clkc CLKID_MPLL0>,
++				  <&clkc CLKID_MPLL1>;
++		assigned-clock-parents = <0>, <0>, <0>;
++		assigned-clock-rates = <294912000>,
++				       <270950400>,
++				       <393216000>;
++
++		simple-audio-card,dai-link@0 {
++			/* HDMI Output */
++			format = "i2s";
++			mclk-fs = <256>;
++			bitclock-master = <&i2s_dai>;
++			frame-master = <&i2s_dai>;
++
++			plat {
++				sound-dai = <&aiu_i2s_dma>;
++			};
++
++			cpu {
++				sound-dai = <&i2s_dai>;
++			};
++
++			codec {
++				sound-dai = <&hdmi_tx>;
++			};
++		};
++	};
++
+ 	vcc_3v3: regulator-vcc_3v3 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "VCC_3V3";
+@@ -130,6 +163,14 @@
+ 	hdmi-phandle = <&hdmi_tx>;
+ };
+ 
++&audio {
++	status = "okay";
++};
++
++&aiu_i2s_dma {
++	status = "okay";
++};
++
+ &cvbs_vdac_port {
+ 	cvbs_vdac_out: endpoint {
+ 		remote-endpoint = <&cvbs_connector_in>;
+@@ -151,6 +192,10 @@
+ 	pinctrl-names = "default";
+ };
+ 
++&i2s_dai {
++	status = "okay";
++};
++
+ &hdmi_tx {
+ 	status = "okay";
+ 	pinctrl-0 = <&hdmi_hpd_pins>, <&hdmi_i2c_pins>;
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-nexbox-a95x.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-nexbox-a95x.dts
+index 6739697..e3e777f 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-nexbox-a95x.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-nexbox-a95x.dts
+@@ -102,6 +102,39 @@
+ 			};
+ 		};
+ 	};
++
++	sound {
++		compatible = "simple-audio-card";
++		simple-audio-card,name = "meson-gx-audio";
++
++		assigned-clocks = <&clkc CLKID_MPLL2>,
++				  <&clkc CLKID_MPLL0>,
++				  <&clkc CLKID_MPLL1>;
++		assigned-clock-parents = <0>, <0>, <0>;
++		assigned-clock-rates = <294912000>,
++				       <270950400>,
++				       <393216000>;
++
++		simple-audio-card,dai-link@0 {
++			/* HDMI Output */
++			format = "i2s";
++			mclk-fs = <256>;
++			bitclock-master = <&i2s_dai>;
++			frame-master = <&i2s_dai>;
++
++			plat {
++				sound-dai = <&aiu_i2s_dma>;
++			};
++
++			cpu {
++				sound-dai = <&i2s_dai>;
++			};
++
++			codec {
++				sound-dai = <&hdmi_tx>;
++			};
++		};
++	};
+ };
+ 
+ &cec_AO {
+@@ -111,6 +144,14 @@
+ 	hdmi-phandle = <&hdmi_tx>;
+ };
+ 
++&audio {
++	status = "okay";
++};
++
++&aiu_i2s_dma {
++	status = "okay";
++};
++
+ &cvbs_vdac_port {
+ 	cvbs_vdac_out: endpoint {
+ 		remote-endpoint = <&cvbs_connector_in>;
+@@ -135,6 +176,10 @@
+ 	};
+ };
+ 
++&i2s_dai {
++	status = "okay";
++};
++
+ &ir {
+ 	status = "okay";
+ 	pinctrl-0 = <&remote_input_ao_pins>;
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dts
+index 5896e8a..f8c66a7 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dts
+@@ -32,6 +32,39 @@
+ 			};
+ 		};
+ 	};
++
++	sound {
++		compatible = "simple-audio-card";
++		simple-audio-card,name = "meson-gx-audio";
++
++		assigned-clocks = <&clkc CLKID_MPLL2>,
++				  <&clkc CLKID_MPLL0>,
++				  <&clkc CLKID_MPLL1>;
++		assigned-clock-parents = <0>, <0>, <0>;
++		assigned-clock-rates = <294912000>,
++				       <270950400>,
++				       <393216000>;
++
++		simple-audio-card,dai-link@0 {
++			/* HDMI Output */
++			format = "i2s";
++			mclk-fs = <256>;
++			bitclock-master = <&i2s_dai>;
++			frame-master = <&i2s_dai>;
++
++			plat {
++				sound-dai = <&aiu_i2s_dma>;
++			};
++
++			cpu {
++				sound-dai = <&i2s_dai>;
++			};
++
++			codec {
++				sound-dai = <&hdmi_tx>;
++			};
++		};
++	};
+ };
+ 
+ &cec_AO {
+@@ -41,12 +74,24 @@
+ 	hdmi-phandle = <&hdmi_tx>;
+ };
+ 
++&audio {
++	status = "okay";
++};
++
++&aiu_i2s_dma {
++	status = "okay";
++};
++
+ &cvbs_vdac_port {
+ 	cvbs_vdac_out: endpoint {
+ 		remote-endpoint = <&cvbs_connector_in>;
+ 	};
+ };
+ 
++&i2s_dai {
++	status = "okay";
++};
++
+ &hdmi_tx {
+ 	status = "okay";
+ 	pinctrl-0 = <&hdmi_hpd_pins>, <&hdmi_i2c_pins>;
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts b/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts
+index 0868da4..ea71261 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts
+@@ -85,6 +85,39 @@
+ 		};
+ 	};
+ 
++	sound {
++		compatible = "simple-audio-card";
++		simple-audio-card,name = "meson-gx-audio";
++
++		assigned-clocks = <&clkc CLKID_MPLL2>,
++				  <&clkc CLKID_MPLL0>,
++				  <&clkc CLKID_MPLL1>;
++		assigned-clock-parents = <0>, <0>, <0>;
++		assigned-clock-rates = <294912000>,
++				       <270950400>,
++				       <393216000>;
++
++		simple-audio-card,dai-link@0 {
++			/* HDMI Output */
++			format = "i2s";
++			mclk-fs = <256>;
++			bitclock-master = <&i2s_dai>;
++			frame-master = <&i2s_dai>;
++
++			plat {
++				sound-dai = <&aiu_i2s_dma>;
++			};
++
++			cpu {
++				sound-dai = <&i2s_dai>;
++			};
++
++			codec {
++				sound-dai = <&hdmi_tx>;
++			};
++		};
++	};
++
+ 	pwmleds {
+ 		compatible = "pwm-leds";
+ 
+@@ -205,6 +238,14 @@
+ 	hdmi-phandle = <&hdmi_tx>;
+ };
+ 
++&audio {
++	status = "okay";
++};
++
++&aiu_i2s_dma {
++	status = "okay";
++};
++
+ &cpu0 {
+ 	#cooling-cells = <2>;
+ };
+@@ -255,6 +296,10 @@
+ 	};
+ };
+ 
++&i2s_dai {
++	status = "okay";
++};
++
+ &i2c_A {
+ 	status = "okay";
+ 	pinctrl-0 = <&i2c_a_pins>;
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxm-nexbox-a1.dts b/arch/arm64/boot/dts/amlogic/meson-gxm-nexbox-a1.dts
+index f7a1cff..b9c5e64 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxm-nexbox-a1.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-gxm-nexbox-a1.dts
+@@ -75,6 +75,39 @@
+ 			};
+ 		};
+ 	};
++
++	sound {
++		compatible = "simple-audio-card";
++		simple-audio-card,name = "meson-gx-audio";
++
++		assigned-clocks = <&clkc CLKID_MPLL2>,
++				  <&clkc CLKID_MPLL0>,
++				  <&clkc CLKID_MPLL1>;
++		assigned-clock-parents = <0>, <0>, <0>;
++		assigned-clock-rates = <294912000>,
++				       <270950400>,
++				       <393216000>;
++
++		simple-audio-card,dai-link@0 {
++			/* HDMI Output */
++			format = "i2s";
++			mclk-fs = <256>;
++			bitclock-master = <&i2s_dai>;
++			frame-master = <&i2s_dai>;
++
++			plat {
++				sound-dai = <&aiu_i2s_dma>;
++			};
++
++			cpu {
++				sound-dai = <&i2s_dai>;
++			};
++
++			codec {
++				sound-dai = <&hdmi_tx>;
++			};
++		};
++	};
+ };
+ 
+ &cec_AO {
+@@ -84,6 +117,14 @@
+ 	hdmi-phandle = <&hdmi_tx>;
+ };
+ 
++&audio {
++	status = "okay";
++};
++
++&aiu_i2s_dma {
++	status = "okay";
++};
++
+ &cvbs_vdac_port {
+ 	cvbs_vdac_out: endpoint {
+ 		remote-endpoint = <&cvbs_connector_in>;
+@@ -129,6 +170,10 @@
+ 	};
+ };
+ 
++&i2s_dai {
++	status = "okay";
++};
++
+ &ir {
+ 	status = "okay";
+ 	pinctrl-0 = <&remote_input_ao_pins>;

@@ -1,0 +1,44 @@
+From ab29891e953fd7c3410f3edeb50457812f7694d8 Mon Sep 17 00:00:00 2001
+From: Neil Armstrong <narmstrong@baylibre.com>
+Date: Wed, 11 Oct 2017 17:39:39 +0200
+Subject: [PATCH] ARM64: dts: meson-gx: remove unnecessary clocks properties
+
+Since the switch to documented uart bindings, the clocks are
+redefined in the SoC family dtsi file.
+
+This patch removes these unneeded properties.
+
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-gx.dtsi | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gx.dtsi b/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
+index f175db8462861..2be981a547dfc 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
+@@ -228,7 +228,6 @@
+ 				compatible = "amlogic,meson-gx-uart", "amlogic,meson-uart";
+ 				reg = <0x0 0x84c0 0x0 0x14>;
+ 				interrupts = <GIC_SPI 26 IRQ_TYPE_EDGE_RISING>;
+-				clocks = <&xtal>;
+ 				status = "disabled";
+ 			};
+ 
+@@ -236,7 +235,6 @@
+ 				compatible = "amlogic,meson-gx-uart", "amlogic,meson-uart";
+ 				reg = <0x0 0x84dc 0x0 0x14>;
+ 				interrupts = <GIC_SPI 75 IRQ_TYPE_EDGE_RISING>;
+-				clocks = <&xtal>;
+ 				status = "disabled";
+ 			};
+ 
+@@ -282,7 +280,6 @@
+ 				compatible = "amlogic,meson-gx-uart", "amlogic,meson-uart";
+ 				reg = <0x0 0x8700 0x0 0x14>;
+ 				interrupts = <GIC_SPI 93 IRQ_TYPE_EDGE_RISING>;
+-				clocks = <&xtal>;
+ 				status = "disabled";
+ 			};
+ 

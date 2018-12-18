@@ -1,0 +1,32 @@
+From 830bb1ab9ee8999566a4d98086590ac824cdeb4e Mon Sep 17 00:00:00 2001
+From: Neil Armstrong <narmstrong@baylibre.com>
+Date: Tue, 10 Jul 2018 15:00:45 +0200
+Subject: [PATCH] media: platform: meson-ao-cec: make busy TX warning silent
+
+Switch to dev_dbg for the busy TX message to avoid having a flood of:
+[  228.064570] meson-ao-cec c8100100.cec: meson_ao_cec_transmit: busy TX: aborting
+[  230.368489] meson-ao-cec c8100100.cec: meson_ao_cec_transmit: busy TX: aborting
+[  234.208655] meson-ao-cec c8100100.cec: meson_ao_cec_transmit: busy TX: aborting
+[  236.512558] meson-ao-cec c8100100.cec: meson_ao_cec_transmit: busy TX: aborting
+
+This message is only a debug hint and not an error.
+
+Fixes: 7ec2c0f72cb1 ("media: platform: Add Amlogic Meson AO CEC Controller driver")
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ drivers/media/platform/meson/ao-cec.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/media/platform/meson/ao-cec.c b/drivers/media/platform/meson/ao-cec.c
+index 8040a62..cd4be38 100644
+--- a/drivers/media/platform/meson/ao-cec.c
++++ b/drivers/media/platform/meson/ao-cec.c
+@@ -524,7 +524,7 @@ static int meson_ao_cec_transmit(struct cec_adapter *adap, u8 attempts,
+ 		return ret;
+ 
+ 	if (reg == TX_BUSY) {
+-		dev_err(&ao_cec->pdev->dev, "%s: busy TX: aborting\n",
++		dev_dbg(&ao_cec->pdev->dev, "%s: busy TX: aborting\n",
+ 			__func__);
+ 		meson_ao_cec_write(ao_cec, CEC_TX_MSG_CMD, TX_ABORT, &ret);
+ 	}

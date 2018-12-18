@@ -1,0 +1,115 @@
+diff -u a/drivers/gpu/drm/meson/meson_vclk.c b/drivers/gpu/drm/meson/meson_vclk.c
+--- a/drivers/gpu/drm/meson/meson_vclk.c	2018-06-10 06:10:59.071504595 +0200
++++ b/drivers/gpu/drm/meson/meson_vclk.c	2018-06-10 05:33:51.347202114 +0200
+@@ -842,7 +842,7 @@
+ 		if (frac >= range)
+ 			frac = range-1;
+ 
+-		pr_info("%s: base=%d, m=0x%.2x, frac=0x%.3x", __func__, base, m, frac);
++		dev_info(priv->dev, "%s: base=%d, m=0x%.2x, frac=0x%.3x\n", __func__, base, m, frac);
+ 
+ 		switch (base) {
+ 		case 2700000:
+@@ -1065,25 +1065,36 @@
+ {
+ 	unsigned int vclk_freq = freq;
+ 	unsigned int base_freq, od1_od2, od3_vpll_vclk;
+-	int p, jit;
++	int od1, od2, od3, p, jit;
+ 	bool found = false;
+ 
+-	if ((vclk_freq < 13500) || (vclk_freq > 594000))
++	if ((vclk_freq < 12000) || (vclk_freq > 594000))
+ 		return false;
+ 
+ 	if (vclk_freq % 25 > 12)
+ 		vclk_freq += 25;
+ 	vclk_freq -= vclk_freq % 25;
+ 
+-	for (p = 1; p < sizeof(params) / sizeof(struct meson_vclk_params); p++) {
+-		if (params[p].vid_pll_div != VID_PLL_DIV_5)
++	for (p = 0; p < 6; p++) {
++		od1 = (1 << p);
++		od2 = 1;
++		od3 = 1;
++
++		if ((vclk_freq > 18550) && (od1 > 16))
+ 			continue;
+ 
+-		od1_od2 = params[p].pll_od1 * params[p].pll_od2;
+-		od3_vpll_vclk = params[p].pll_od3 * 5 * params[p].vclk_div;
++		if (od1 > 16) {
++			od3 = od1 / 16;
++			od1 = 16;
++		}
+ 
+-		if ((od3_vpll_vclk != 10) && (vclk_freq > 54000 + 175))
+-			continue;
++		if (od1 > 4) {
++			od2 = od1 / 4;
++			od1 = 4;
++		}
++
++		od1_od2 = od1 * od2;
++		od3_vpll_vclk = od3 * 5 * 2;
+ 
+ 		base_freq = vclk_freq * od1_od2 * od3_vpll_vclk;
+ 
+@@ -1091,21 +1102,32 @@
+ 			continue;
+ 
+ 		vclk_params->pll_base_freq = base_freq;
+-		vclk_params->pll_od1 = params[p].pll_od1;
+-		vclk_params->pll_od2 = params[p].pll_od2;
+-		vclk_params->pll_od3 = params[p].pll_od3;
+-		vclk_params->vid_pll_div = params[p].vid_pll_div;
+-		vclk_params->vclk_div = params[p].vclk_div;
++		vclk_params->pll_od1 = od1;
++		vclk_params->pll_od2 = od2;
++		vclk_params->pll_od3 = od3;
++		vclk_params->vid_pll_div = VID_PLL_DIV_5;
++		vclk_params->vclk_div = 2;
+ 
+ 		found = true;
+ 
+-		if (params[p].pll_base_freq > vclk_params->pll_base_freq)
+-			jit = params[p].pll_base_freq - vclk_params->pll_base_freq;
++		jit = od1_od2 * od3_vpll_vclk * 125;
++		if (p < 3)
++			jit <<= (3-p);
++		
++		if ((base_freq % 24000) < (base_freq % jit))
++			jit = 24000;
++
++		if ((base_freq % jit) > (jit / 2))
++			base_freq = base_freq+jit;
++		base_freq -= base_freq % jit;
++
++		if (base_freq > vclk_params->pll_base_freq)
++			jit = base_freq - vclk_params->pll_base_freq;
+ 		else
+-			jit = vclk_params->pll_base_freq - params[p].pll_base_freq;
++			jit = vclk_params->pll_base_freq - base_freq;
+ 
+ 		if (jit <  175 * od1_od2 * od3_vpll_vclk) {
+-			vclk_params->pll_base_freq = params[p].pll_base_freq;
++			vclk_params->pll_base_freq = base_freq;
+ 			vclk_freq = vclk_params->pll_base_freq / od1_od2 / od3_vpll_vclk;
+ 		}
+ 
+diff -u a/drivers/gpu/drm/meson/meson_venc.c b/drivers/gpu/drm/meson/meson_venc.c
+--- a/drivers/gpu/drm/meson/meson_venc.c	2018-06-10 06:10:59.071504595 +0200
++++ b/drivers/gpu/drm/meson/meson_venc.c	2018-06-10 05:26:59.995203463 +0200
+@@ -816,10 +816,10 @@
+ 			    DRM_MODE_FLAG_PVSYNC | DRM_MODE_FLAG_NVSYNC))
+ 		return MODE_BAD;
+ 
+-	if (mode->hdisplay < 640 || mode->hdisplay > 1920)
++	if (mode->hdisplay < 416 || mode->hdisplay > 1920)
+ 		return MODE_BAD_HVALUE;
+ 
+-	if (mode->vdisplay < 480 || mode->vdisplay > 1200)
++	if (mode->vdisplay < 360 || mode->vdisplay > 1200)
+ 		return MODE_BAD_VVALUE;
+ 
+ 	return MODE_OK;

@@ -1,0 +1,151 @@
+diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helper.c
+index cab14f25..cafc60ea 100644
+--- a/drivers/gpu/drm/drm_fb_helper.c
++++ b/drivers/gpu/drm/drm_fb_helper.c
+@@ -1544,6 +1544,14 @@ int drm_fb_helper_ioctl(struct fb_info *info, unsigned int cmd,
+ 
+ 		ret = 0;
+ 		goto unlock;
++#if defined(CONFIG_UMP)
++	case GET_UMP_SECURE_ID_BUF1:
++		ret = drm_get_ump_secure_id(info, fb_helper, arg, 0);
++		goto unlock;
++	case GET_UMP_SECURE_ID_BUF2:
++		ret = drm_get_ump_secure_id(info, fb_helper, arg, 1);
++		goto unlock;
++#endif
+ 	default:
+ 		ret = -ENOTTY;
+ 	}
+diff --git a/drivers/gpu/drm/Makefile b/drivers/gpu/drm/Makefile
+index 8ce07039b..fdf946be3 100644
+--- a/drivers/gpu/drm/Makefile
++++ b/drivers/gpu/drm/Makefile
+@@ -44,6 +44,7 @@ drm_kms_helper-$(CONFIG_DRM_DP_AUX_CHARDEV) += drm_dp_aux_dev.o
+ 
+ obj-$(CONFIG_DRM_KMS_HELPER) += drm_kms_helper.o
+ obj-$(CONFIG_DRM_DEBUG_MM_SELFTEST) += selftests/
++obj-$(CONFIG_UMP) += drm_fb_ump.o
+ 
+ CFLAGS_drm_trace_points.o := -I$(src)
+ 
+diff --git a/include/drm/drm_fb_helper.h b/include/drm/drm_fb_helper.h
+index b069433e..95657b76 100644
+--- a/include/drm/drm_fb_helper.h
++++ b/include/drm/drm_fb_helper.h
+@@ -36,6 +36,10 @@ struct drm_fb_helper;
+ #include <drm/drm_device.h>
+ #include <linux/kgdb.h>
+ 
++#if defined(CONFIG_UMP)
++#include <ump/ump_kernel_interface.h>
++#endif
++
+ enum mode_set_atomic {
+ 	LEAVE_ATOMIC_MODE_SET,
+ 	ENTER_ATOMIC_MODE_SET,
+@@ -131,6 +135,8 @@ struct drm_fb_helper_connector {
+ 	struct drm_connector *connector;
+ };
+ 
++#define DRM_FB_UMP_COUNT 1 /* only enable one FB UMP layer */
++
+ /**
+  * struct drm_fb_helper - main structure to emulate fbdev on top of KMS
+  * @fb: Scanout framebuffer object
+@@ -232,6 +238,9 @@ struct drm_fb_helper {
+ 	 * See also: @deferred_setup
+ 	 */
+ 	int preferred_bpp;
++#if defined(CONFIG_UMP)
++	ump_dd_handle ump_wrapped_buffer[DRM_FB_UMP_COUNT][2];
++#endif
+ };
+ 
+ /**
+@@ -577,4 +586,11 @@ drm_fb_helper_remove_conflicting_framebuffers(struct apertures_struct *a,
+ #endif
+ }
+ 
++#if defined(CONFIG_UMP)
++extern int (*drm_get_ump_secure_id) (struct fb_info *info,
++        struct drm_fb_helper *g_fbi,     unsigned long arg, int buf);
++#define GET_UMP_SECURE_ID_BUF1 _IOWR('m', 311, unsigned int)
++#define GET_UMP_SECURE_ID_BUF2 _IOWR('m', 312, unsigned int)
++#endif
++
+ #endif
+--- /dev/null	2018-07-12 16:39:19.544000000 +0200
++++ b/drivers/gpu/drm/drm_fb_ump.c	2018-07-22 22:20:45.166145058 +0200
+@@ -0,0 +1,71 @@
++/*
++ * Copyright (C) 2016 Hardkernel Co. Ltd.
++ * 
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License as
++ * published by the Free Software Foundation; either version 2 of
++ * the License, or (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.         See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program; if not, write to the Free Software
++ * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
++ * MA 02111-1307 USA
++ */
++
++#include <linux/module.h>
++
++#include <ump/ump_kernel_interface_ref_drv.h>
++#include <ump/ump_kernel_interface.h>
++#include <asm/uaccess.h>
++#include <drm/drmP.h>
++#include <drm/drm_fb_helper.h>
++
++int (*drm_get_ump_secure_id) (struct fb_info *info, 
++	struct drm_fb_helper *g_fbi,	unsigned long arg, int buf);
++EXPORT_SYMBOL(drm_get_ump_secure_id);
++
++static int _drm_get_ump_secure_id(struct fb_info *info, 
++	struct drm_fb_helper *g_fbi, unsigned long arg, int buf)
++{
++	u32 __user *psecureid = (u32 __user *) arg;
++	ump_secure_id secure_id;
++
++	if (!g_fbi->ump_wrapped_buffer[info->node][buf]) {
++		ump_dd_physical_block ump_memory_description;
++		printk("ump: create disp: %d\n", buf);
++
++		ump_memory_description.addr = info->fix.smem_start;
++		ump_memory_description.size = info->fix.smem_len;
++		g_fbi->ump_wrapped_buffer[info->node][buf] =
++			ump_dd_handle_create_from_phys_blocks(
++				&ump_memory_description, 1);
++	}
++	secure_id = ump_dd_secure_id_get(
++			g_fbi->ump_wrapped_buffer[info->node][buf]);
++			
++	return put_user((unsigned int)secure_id, psecureid);
++}
++
++static int __init drm_ump_module_init(void)
++{
++	int ret = 0;
++	drm_get_ump_secure_id = _drm_get_ump_secure_id;
++	return ret;
++}
++
++static void __exit drm_ump_module_exit(void)
++{
++	drm_get_ump_secure_id = NULL;
++}
++
++module_init(drm_ump_module_init);
++module_exit(drm_ump_module_exit);
++
++MODULE_AUTHOR("Mauro Ribeiro <mauro.ribeiro@hardkernel.com>");
++MODULE_DESCRIPTION("UMP Glue for DRM Framebuffer");
++MODULE_LICENSE("GPL");

@@ -7,7 +7,7 @@ RefuseManualStop=true
 
 [Service]
 Type=oneshot
-ExecStart=/usr/sbin/hassos-zram -t fs -m var -s 32M
+ExecStart=/usr/libexec/hassos-zram -t fs -m var -s 32M
 RemainAfterExit=true
 StandardOutput=null
 

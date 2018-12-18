@@ -15,17 +15,16 @@ function _create_rauc_header() {
 
         echo "[keyring]"
         echo "path=/etc/rauc/keyring.pem"
-    ) > ${TARGET_DIR}/etc/rauc/system.conf
+    ) > "${TARGET_DIR}/etc/rauc/system.conf"
 }
 
 
 function _write_rauc_boot() {
-    local boot_device=${1}
     (
         echo "[slot.boot.0]"
         echo "device=/dev/disk/by-partlabel/hassos-boot"
         echo "type=vfat"
-    ) >> ${TARGET_DIR}/etc/rauc/system.conf
+    ) >> "${TARGET_DIR}/etc/rauc/system.conf"
 
     # SPL
     if ! [[ "${BOOT_SYS}" =~ (spl|mbr) ]]; then
@@ -36,7 +35,7 @@ function _write_rauc_boot() {
         echo "[slot.spl.0]"
         echo "device=/dev/disk/by-partlabel/hassos-boot"
         echo "type=raw"
-    ) >> ${TARGET_DIR}/etc/rauc/system.conf
+    ) >> "${TARGET_DIR}/etc/rauc/system.conf"
 }
 
 
@@ -54,12 +53,12 @@ function _write_rauc_system() {
         echo "device=/dev/disk/by-partlabel/hassos-system${slot_num}"
         echo "type=raw"
         echo "parent=kernel.${slot_num}"
-    ) >> ${TARGET_DIR}/etc/rauc/system.conf
+    ) >> "${TARGET_DIR}/etc/rauc/system.conf"
 }
 
 
 function write_rauc_config() {
-    mkdir -p ${TARGET_DIR}/etc/rauc
+    mkdir -p "${TARGET_DIR}/etc/rauc"
 
     _create_rauc_header
     _write_rauc_boot
@@ -70,23 +69,23 @@ function write_rauc_config() {
 
 function install_rauc_certs() {
     if [ "${DEPLOYMENT}" == "production" ]; then
-        cp ${BR2_EXTERNAL_HASSOS_PATH}/misc/rel-ca.pem ${TARGET_DIR}/etc/rauc/keyring.pem
+        cp "${BR2_EXTERNAL_HASSOS_PATH}/misc/rel-ca.pem" "${TARGET_DIR}/etc/rauc/keyring.pem"
     else
-        cp ${BR2_EXTERNAL_HASSOS_PATH}/misc/dev-ca.pem ${TARGET_DIR}/etc/rauc/keyring.pem
+        cp "${BR2_EXTERNAL_HASSOS_PATH}/misc/dev-ca.pem" "${TARGET_DIR}/etc/rauc/keyring.pem"
     fi
 }
 
 
 function install_bootloader_config() {
     if [ "${BOOTLOADER}" == "uboot" ]; then
-        echo -e "/dev/disk/by-partlabel/hassos-bootstate\t0x0000\t${BOOT_ENV_SIZE}" > ${TARGET_DIR}/etc/fw_env.config
+        echo -e "/dev/disk/by-partlabel/hassos-bootstate\t0x0000\t${BOOT_ENV_SIZE}" > "${TARGET_DIR}/etc/fw_env.config"
     else
-        cp -f ${BR2_EXTERNAL_HASSOS_PATH}/misc/barebox-state-efi.dtb ${TARGET_DIR}/etc/barebox-state.dtb
+        cp -f "${BR2_EXTERNAL_HASSOS_PATH}/misc/barebox-state-efi.dtb" "${TARGET_DIR}/etc/barebox-state.dtb"
     fi
 
     # Fix MBR
     if [ "${BOOT_SYS}" == "mbr" ]; then
-        mkdir -p ${TARGET_DIR}/usr/lib/udev/rules.d
-	cp -f ${BR2_EXTERNAL_HASSOS_PATH}/misc/mbr-part.rules ${TARGET_DIR}/usr/lib/udev/rules.d/
+        mkdir -p "${TARGET_DIR}/usr/lib/udev/rules.d"
+	cp -f "${BR2_EXTERNAL_HASSOS_PATH}/misc/mbr-part.rules" "${TARGET_DIR}/usr/lib/udev/rules.d/"
     fi
 }

@@ -1,0 +1,44 @@
+From 0cecf963b9d815699fe50b7a7ee4a93ece3ed834 Mon Sep 17 00:00:00 2001
+From: Jerome Brunet <jbrunet@baylibre.com>
+Date: Tue, 19 Jun 2018 18:14:49 +0200
+Subject: [PATCH] clk: meson: switch gxbb cts-amclk div to the generic divider
+
+clk-audio-divider was a (poor) attempt to use CCF rate propagation
+while making sure the PLL rate would be high enough to work with
+audio use cases. The result is far from optimal. We can do better
+by carefully choosing the PLL rates for the audio use cases.
+Doing so, we don't need to use clk-audio-divider anymore. The
+generic will do
+
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ drivers/clk/meson/gxbb.c | 12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+index 177fffb..69a58cb 100644
+--- a/drivers/clk/meson/gxbb.c
++++ b/drivers/clk/meson/gxbb.c
+@@ -982,17 +982,15 @@ static struct clk_regmap gxbb_cts_amclk_sel = {
+ };
+ 
+ static struct clk_regmap gxbb_cts_amclk_div = {
+-	.data = &(struct meson_clk_audio_div_data){
+-		.div = {
+-			.reg_off = HHI_AUD_CLK_CNTL,
+-			.shift   = 0,
+-			.width   = 8,
+-		},
++	.data = &(struct clk_regmap_div_data) {
++		.offset = HHI_AUD_CLK_CNTL,
++		.shift = 0,
++		.width = 8,
+ 		.flags = CLK_DIVIDER_ROUND_CLOSEST,
+ 	},
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "cts_amclk_div",
+-		.ops = &meson_clk_audio_divider_ops,
++		.ops = &clk_regmap_divider_ops,
+ 		.parent_names = (const char *[]){ "cts_amclk_sel" },
+ 		.num_parents = 1,
+ 		.flags = CLK_SET_RATE_PARENT,

@@ -1,0 +1,25 @@
+language: bash
+
+sudo: required
+service: docker
+
+addons:
+  apt:
+    packages:
+     - docker-ce
+
+before_install:
+  - shopt -s globstar
+  - docker pull koalaman/shellcheck
+
+script:
+ - docker run -v $(pwd):/mnt koalaman/shellcheck scripts/*.sh
+ - docker run -v $(pwd):/mnt koalaman/shellcheck buildroot-external/scripts/*.sh
+ - docker run -v $(pwd):/mnt koalaman/shellcheck buildroot-external/scripts/*.sh
+ - docker run -v $(pwd):/mnt koalaman/shellcheck buildroot-external/board/**/*.sh
+ - docker run -v $(pwd):/mnt koalaman/shellcheck buildroot-external/rootfs-overlay/usr/sbin/*
+ - docker run -v $(pwd):/mnt koalaman/shellcheck buildroot-external/rootfs-overlay/usr/libexec/*
+ - docker run -v $(pwd):/mnt koalaman/shellcheck buildroot-external/rootfs-overlay/usr/lib/rauc/*
+
+matrix:
+  fast_finish: true
