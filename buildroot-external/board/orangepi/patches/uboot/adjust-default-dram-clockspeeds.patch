@@ -1,0 +1,13 @@
+diff --git a/configs/orangepi_prime_defconfig b/configs/orangepi_prime_defconfig
+index 103936d772..990cf2a8c0 100644
+--- a/configs/orangepi_prime_defconfig
++++ b/configs/orangepi_prime_defconfig
+@@ -1,7 +1,7 @@
+ CONFIG_ARM=y
+ CONFIG_ARCH_SUNXI=y
+ CONFIG_MACH_SUN50I_H5=y
+-CONFIG_DRAM_CLK=672
++CONFIG_DRAM_CLK=624
+ CONFIG_DRAM_ZQ=3881977
+ CONFIG_DEFAULT_DEVICE_TREE="sun50i-h5-orangepi-prime"
+ # CONFIG_SYS_MALLOC_CLEAR_ON_INIT is not set
