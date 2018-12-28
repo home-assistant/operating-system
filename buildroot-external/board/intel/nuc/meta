@@ -1,0 +1,7 @@
+BOARD_ID=intel-nuc
+BOARD_NAME="Intel NUC"
+CHASSIS=embedded
+BOOTLOADER=barebox
+KERNEL_FILE=bzImage
+BOOT_SYS=efi
+DISK_SIZE=6

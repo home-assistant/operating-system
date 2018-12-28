@@ -3,7 +3,7 @@ set -e
 
 mkdir -p /build/release
 
-all_platforms=(ova rpi rpi0_w rpi2 rpi3 rpi3_64 tinker odroid_c2)
+all_platforms=(ova rpi rpi0_w rpi2 rpi3 rpi3_64 tinker odroid_c2 intel_nuc)
 for platform in "${all_platforms[@]}"; do
     make -C /build/buildroot BR2_EXTERNAL=/build/buildroot-external \
         "${platform}_defconfig"
