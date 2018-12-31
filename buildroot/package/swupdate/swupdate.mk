@@ -4,10 +4,15 @@
 #
 ################################################################################
 
-SWUPDATE_VERSION = 2018.03
+SWUPDATE_VERSION = 2018.11
 SWUPDATE_SITE = $(call github,sbabic,swupdate,$(SWUPDATE_VERSION))
 SWUPDATE_LICENSE = GPL-2.0+, LGPL-2.1+, MIT
 SWUPDATE_LICENSE_FILES = COPYING
+
+# swupdate uses $CROSS-cc instead of $CROSS-gcc, which is not
+# available in all external toolchains, and use CC for linking. Ensure
+# TARGET_CC is used for both.
+SWUPDATE_MAKE_ENV = CC="$(TARGET_CC)" LD="$(TARGET_CC)"
 
 # swupdate bundles its own version of mongoose (version 6.11)
 
