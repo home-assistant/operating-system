@@ -1,0 +1,62 @@
+diff --git a/cmd/Kconfig b/cmd/Kconfig
+index d6d130edfa..92795119ea 100644
+--- a/cmd/Kconfig
++++ b/cmd/Kconfig
+@@ -1029,6 +1029,7 @@ menu "Misc commands"
+ config CMD_BMP
+	bool "Enable 'bmp' command"
+	depends on LCD || DM_VIDEO || VIDEO
++	default y
+	help
+	  This provides a way to obtain information about a BMP-format iamge
+	  and to display it. BMP (which presumably stands for BitMaP) is a
+diff --git a/include/config_distro_bootcmd.h b/include/config_distro_bootcmd.h
+index 9ed6b9892c..75d5176edf 100644
+--- a/include/config_distro_bootcmd.h
++++ b/include/config_distro_bootcmd.h
+@@ -323,6 +323,15 @@
+	BOOTENV_SHARED_UBIFS \
+	BOOTENV_SHARED_EFI \
+	"boot_prefixes=/ /boot/\0" \
++	"splashpos=m,m\0" \
++	"splashimage=66000000\0" \
++	"loadsplash= " \
++		"for prefix in ${boot_prefixes}; do " \
++			"if test -e mmc 0 ${prefix}boot.bmp; then " \
++				"load mmc 0 ${splashimage} ${prefix}boot.bmp; " \
++				"bmp d ${splashimage}; " \
++			"fi; " \
++		"done\0" \
+	"boot_scripts=boot.scr.uimg boot.scr\0" \
+	"boot_script_dhcp=boot.scr.uimg\0" \
+	BOOTENV_BOOT_TARGETS \
+diff --git a/include/configs/sunxi-common.h b/include/configs/sunxi-common.h
+index 02d7be0849..cbdea20d08 100644
+--- a/include/configs/sunxi-common.h
++++ b/include/configs/sunxi-common.h
+@@ -284,6 +284,16 @@ extern int soft_i2c_gpio_scl;
+
+ #endif /* CONFIG_VIDEO */
+
++#if defined CONFIG_VIDEO || defined CONFIG_DM_VIDEO
++#define CONFIG_VIDEO_LOGO
++#define CONFIG_SPLASH_SCREEN
++#define CONFIG_SPLASH_SCREEN_ALIGN
++#define CONFIG_BMP_16BPP
++#define CONFIG_BMP_24BPP
++#define CONFIG_BMP_32BPP
++#define CONFIG_VIDEO_BMP_RLE8
++#endif
++
+ /* Ethernet support */
+ #ifdef CONFIG_SUNXI_EMAC
+ #define CONFIG_PHY_ADDR		1
+@@ -444,7 +454,7 @@ extern int soft_i2c_gpio_scl;
+
+ #ifdef CONFIG_USB_KEYBOARD
+ #define CONSOLE_STDIN_SETTINGS \
+-	"preboot=usb start\0" \
++	"preboot=run loadsplash; usb start\0" \
+	"stdin=serial,usbkbd\0"
+ #else
+ #define CONSOLE_STDIN_SETTINGS \

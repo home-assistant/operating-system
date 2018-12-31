@@ -1,0 +1,13 @@
+diff --git a/arch/arm/mach-sunxi/Kconfig b/arch/arm/mach-sunxi/Kconfig
+index 2309f59999..716e9c5e26 100644
+--- a/arch/arm/mach-sunxi/Kconfig
++++ b/arch/arm/mach-sunxi/Kconfig
+@@ -278,7 +278,7 @@ config DRAM_CLK
+	default 312 if MACH_SUN6I || MACH_SUN8I
+	default 360 if MACH_SUN4I || MACH_SUN5I || MACH_SUN7I || \
+		       MACH_SUN8I_V3S
+-	default 672 if MACH_SUN50I
++	default 648 if MACH_SUN50I || MACH_SUN50I_H5
+	---help---
+	Set the dram clock speed, valid range 240 - 480 (prior to sun9i),
+	must be a multiple of 24. For the sun9i (A80), the tested values
