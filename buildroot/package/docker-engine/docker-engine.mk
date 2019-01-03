@@ -77,4 +77,10 @@ define DOCKER_ENGINE_USERS
 	- - docker -1 * - - - Docker Application Container Framework
 endef
 
+define DOCKER_ENGINE_INSTALL_SYMLINKS
+	ln -fs tini $(TARGET_DIR)/usr/bin/docker-init
+endef
+
+DOCKER_ENGINE_POST_INSTALL_TARGET_HOOKS += DOCKER_ENGINE_INSTALL_SYMLINKS
+
 $(eval $(golang-package))
