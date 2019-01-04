@@ -1,5 +1,0 @@
-config BR2_PACKAGE_XDRIVER_XF86_VIDEO_TRIDENT
-	bool "xf86-video-trident"
-	select BR2_PACKAGE_XORGPROTO
-	help
-	  Trident video driver

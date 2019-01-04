@@ -1,7 +1,0 @@
-config BR2_PACKAGE_PYTHON_PYSMI
-	bool "python-pysmi"
-	select BR2_PACKAGE_PYTHON_PLY # runtime
-	help
-	  SNMP SMI/MIB Parser.
-
-	  https://github.com/etingof/pysmi

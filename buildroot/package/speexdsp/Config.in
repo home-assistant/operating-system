@@ -1,6 +1,0 @@
-config BR2_PACKAGE_SPEEXDSP
-	bool "speexdsp"
-	help
-	  DSP library derived from speex.
-
-	  https://www.speex.org

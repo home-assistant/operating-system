@@ -1,5 +1,0 @@
-# From https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs926/SHA512SUMS
-sha512 3ddb83029edf32282357bf606f4045a9ac73df6543cd423cfad09158ec12ada083a0dbb5aac3b73ae24cbc6c1e9d7574257a5c1fae63ba8776fbb00150ef2a3e  ghostscript-9.26.tar.xz
-
-# Hash for license file:
-sha256 6f852249f975287b3efd43a5883875e47fa9f3125e2f1b18b5c09517ac30ecf2  LICENSE

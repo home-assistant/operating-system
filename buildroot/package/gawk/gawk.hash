@@ -1,5 +1,0 @@
-# Locally calculated after checking pgp signature
-# https://ftp.gnu.org/gnu/gawk/gawk-4.2.1.tar.xz.sig
-sha256	d1119785e746d46a8209d28b2de404a57f983aa48670f4e225531d3bdc175551	gawk-4.2.1.tar.xz
-# Locally calculated
-sha256	8ceb4b9ee5adedde47b31e975c1d90c73ad27b6b165a1dcd80c7c545eb65b903	COPYING

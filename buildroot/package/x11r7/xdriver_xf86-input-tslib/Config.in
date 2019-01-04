@@ -1,8 +1,0 @@
-config BR2_PACKAGE_XDRIVER_XF86_INPUT_TSLIB
-	bool "xf86-input-tslib"
-	select BR2_PACKAGE_XORGPROTO
-	select BR2_PACKAGE_TSLIB
-	help
-	  Touch screen library input driver
-
-	  https://github.com/merge/xf86-input-tslib

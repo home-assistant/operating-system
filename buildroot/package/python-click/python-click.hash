@@ -1,5 +1,0 @@
-# md5, sha256 from https://pypi.org/pypi/click/json
-md5 7f53d50f7b7373ebc7963f9ff697450a Click-7.0.tar.gz
-sha256 5b94b49521f6456670fdb30cd82a4eca9412788a93fa6dd6df72c94d5a8ff2d7 Click-7.0.tar.gz
-# Locally computed sha256
-sha256 e212319faefa4f459c8ac937fdc8557040a3cab8af29366ca2a48d239025225c LICENSE.rst

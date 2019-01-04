@@ -1,5 +1,0 @@
-# md5, sha256 from https://pypi.org/pypi/pysnmp/json
-md5	9eaed18907d9b15828f138471b187e8f  pysnmp-4.4.6.tar.gz
-sha256	e34ffa0dce5f69adabd478ff76c3e1b08e32ebb0767df8b178d0704f4a1ac406  pysnmp-4.4.6.tar.gz
-# Locally computed sha256 checksums
-sha256	4781cdf5b05a40b8c36f2e71e248dac621762bc8e8482fa5fddab5053e2cdace  LICENSE.rst

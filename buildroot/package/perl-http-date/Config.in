@@ -1,6 +1,0 @@
-config BR2_PACKAGE_PERL_HTTP_DATE
-	bool "perl-http-date"
-	help
-	  date conversion routines.
-
-	  https://metacpan.org/release/HTTP-Date

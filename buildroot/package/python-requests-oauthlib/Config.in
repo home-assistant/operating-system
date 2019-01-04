@@ -1,8 +1,0 @@
-config BR2_PACKAGE_PYTHON_REQUESTS_OAUTHLIB
-	bool "python-requests-oauthlib"
-	select BR2_PACKAGE_PYTHON_OAUTHLIB # runtime
-	select BR2_PACKAGE_PYTHON_REQUESTS # runtime
-	help
-	  OAuthlib authentication support for Requests.
-
-	  https://github.com/requests/requests-oauthlib

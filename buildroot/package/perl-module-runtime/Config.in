@@ -1,6 +1,0 @@
-config BR2_PACKAGE_PERL_MODULE_RUNTIME
-	bool "perl-module-runtime"
-	help
-	  runtime module handling.
-
-	  https://metacpan.org/release/Module-Runtime

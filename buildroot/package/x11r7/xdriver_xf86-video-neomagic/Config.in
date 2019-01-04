@@ -1,5 +1,0 @@
-config BR2_PACKAGE_XDRIVER_XF86_VIDEO_NEOMAGIC
-	bool "xf86-video-neomagic"
-	select BR2_PACKAGE_XORGPROTO
-	help
-	  Neomagic video driver

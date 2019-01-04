@@ -1,7 +1,0 @@
-config BR2_PACKAGE_OPENOBEX
-	bool "openobex"
-	help
-	  Free open source implementation of the Object Exchange (OBEX)
-	  protocol.
-
-	  http://sourceforge.net/projects/openobex

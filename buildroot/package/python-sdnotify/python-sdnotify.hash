@@ -1,5 +1,0 @@
-# md5, sha256 from https://pypi.org/pypi/sdnotify/json
-md5	749ddca1c70be1697fecc443fb1fdb16  sdnotify-0.3.2.tar.gz
-sha256	73977fc746b36cc41184dd43c3fe81323e7b8b06c2bb0826c4f59a20c56bb9f1  sdnotify-0.3.2.tar.gz
-# Locally computed sha256 checksums
-sha256	038351c6f544a386576da41d5fe1320437ed211507565dd9c334c8290055b88e  LICENSE.txt

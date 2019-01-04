@@ -1,5 +1,0 @@
-config BR2_PACKAGE_XDRIVER_XF86_VIDEO_I128
-	bool "xf86-video-i128"
-	select BR2_PACKAGE_XORGPROTO
-	help
-	  Number 9 I128 video driver

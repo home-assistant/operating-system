@@ -1,5 +1,0 @@
-config BR2_PACKAGE_XDRIVER_XF86_VIDEO_DUMMY
-	bool "xf86-video-dummy"
-	select BR2_PACKAGE_XORGPROTO
-	help
-	  X.Org driver for dummy cards
