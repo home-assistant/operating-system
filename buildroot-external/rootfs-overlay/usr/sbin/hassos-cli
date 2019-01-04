@@ -20,9 +20,9 @@ docker container run \
     $DOCKER_ARGS \
     "${CLI}"
 
-# Jump to root shell
+# Jump to root login shell
 if [ $? -eq 10 ]; then
-    /bin/ash
+    /bin/ash -l
 fi
 
 exit
