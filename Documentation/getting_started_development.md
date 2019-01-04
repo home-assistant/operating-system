@@ -47,18 +47,18 @@ Note that the current iteration of `enter.sh` will try to load the **overlayfs**
 
 ```
 root@somehashinhex:/build#
-root@somehashinhex:/build# cat scripts/build-all.sh
+root@somehashinhex:/build# make help
 [...]
 ```
 
-The _hassos_ developers provides another convenience script that will build hassos images for a (rather long!) list of targets - if you're not interested in building artifacts for all supported platforms, make sure to take a peek inside and monkeypatch away... After you're done making changes, start it, and go make a cup of tea. Or fifteen.
+The _hassos_ developers provide a Makefile that will build hassos images for a (rather long!) list of targets. For example run the command below to start building the _ova_ variant, and go make a cup of tea. Or fifteen.
 
 ```
-root@0db6f7079872:/build# scripts/build-all.sh
+root@0db6f7079872:/build# make ova
 [...]
 ```
 
-Personally, I removed all advertised build targets from the `all_platforms` array variable, expect for the _ova_ variant. That will result in a single VMDK image file at the very end of the build process. This image file is a compressed block device dump with a proper GPT partition table, prepared to ship into any OVA-compatible hypervisor's innards. For me, the end of the **ova** build steps looks like this:
+That will result in a single VMDK image file at the very end of the build process. This image file is a compressed block device dump with a proper GPT partition table, prepared to ship into any OVA-compatible hypervisor's innards. For me, the end of the **ova** build steps looks like this:
 
 ```
 [...]
