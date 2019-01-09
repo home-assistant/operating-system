@@ -1,0 +1,14 @@
+[Unit]
+Description=Wireguard persistent config
+Requires=mnt-overlay.mount
+After=mnt-overlay.mount systemd-tmpfiles-setup.service
+Before=hassos-wireguard.service hassos-config.service
+
+[Mount]
+What=/mnt/overlay/etc/wireguard
+Where=/etc/wireguard
+Type=None
+Options=bind
+
+[Install]
+WantedBy=hassos-bind.target

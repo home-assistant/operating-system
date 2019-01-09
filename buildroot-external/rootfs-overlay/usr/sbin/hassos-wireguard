@@ -1,0 +1,28 @@
+#!/bin/sh
+set -e
+
+INTERFACE=wg_hassos
+INFILE=/etc/wireguard/${INTERFACE}.conf
+
+
+if [ -f "${INFILE}" ]; then
+    echo "[Info] Setting up wireguard config"
+
+    # extract ip address from config file
+    WG_ADDRESS=$(sed  -n 's/^Address\s?*=\s?*//p' ${INFILE})
+
+    ip link add dev ${INTERFACE} type wireguard
+
+    # Set config without address key
+    sed '/Address\s?*=/d' $INFILE | wg setconf ${INTERFACE} /dev/fd/0 
+    
+    # Set address on device
+    ip address add dev ${INTERFACE} "${WG_ADDRESS}"
+    ip link set up dev ${INTERFACE}
+
+    # set route to allowed-ips
+    WG_ALLOWED_IP=$(wg show ${INTERFACE} allowed-ips | cut -f2)
+    ip route add "${WG_ALLOWED_IP}" dev ${INTERFACE}
+else
+    echo "[Info] No wireguard config found"
+fi

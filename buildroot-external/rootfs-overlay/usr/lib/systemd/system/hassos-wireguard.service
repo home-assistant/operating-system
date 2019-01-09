@@ -1,0 +1,12 @@
+[Unit]
+Description=HassOS Wireguard Config
+After=hassos-bind.target network.target
+RequiresMountsFor=/etc/wireguard
+ConditionFileNotEmpty=/etc/wireguard/wg_hassos.conf
+
+[Service]
+Type=oneshot
+ExecStart=/usr/sbin/hassos-wireguard
+
+[Install]
+WantedBy=multi-user.target

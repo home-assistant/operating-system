@@ -42,6 +42,17 @@ if [ -d "${CONFIG_DIR}/network" ]; then
 fi
 
 ##
+# Wireguard
+if [ -f "${CONFIG_DIR}/wireguard.conf" ]; then
+    echo "[Info] Update Wireguard connection"
+
+    cp -f ${CONFIG_DIR}/wireguard.conf /etc/wireguard/wg_hassos.conf
+    chmod 600 /etc/wireguard/wg_hassos.conf
+
+    systemctl restart hassos-wireguard.service
+fi
+
+##
 # Modules
 if [ -d "${CONFIG_DIR}/modules" ]; then
     echo "[Info] Update Modules configuration!"

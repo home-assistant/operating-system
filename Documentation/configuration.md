@@ -12,6 +12,7 @@ udev/
 authorized_keys
 timesyncd.conf
 hassos-xy.raucb
+wireguard.conf
 ```
 
 - The `network` folder can contain any kind of NetworkManager connection files. For more information see [Network][network.md]. 
@@ -20,6 +21,7 @@ hassos-xy.raucb
 - The `authorized_keys` file activates debug SSH access on port `22222`. See [Debugging Hassio][debug-hassio].
 - The `timesyncd.conf` file allow you to set different NTP servers. HassOS won't boot without correct working time servers!
 - The `hassos-*.raucb` file is a firmware OTA update which will be installed. These can be found on on the [release][hassos-release] page. 
+- The `wireguard.conf` file is for setting up a wireguard VPN on the host. See [Wireguard Config Format](https://git.zx2c4.com/WireGuard/about/src/tools/man/wg.8) for details.
 
 You can put this USB stick into the device and it will be read on startup. You can also trigger this process later over the
 API/UI or by calling `systemctl restart hassos-config` on the host.
