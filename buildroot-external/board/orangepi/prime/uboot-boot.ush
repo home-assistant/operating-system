@@ -11,10 +11,6 @@ setenv storebootstate " \
     env export -c -s 0x8000 ${ramdisk_addr_r} BOOT_ORDER BOOT_A_LEFT BOOT_B_LEFT; \
     mmc write ${ramdisk_addr_r} ${mmc_env} 0x40;"
 
-if load mmc ${devnum}:1 ${ramdisk_addr_r} config.txt; then
-  env import -t ${ramdisk_addr_r} ${filesize};
-fi
-
 run loadbootstate
 test -n "${BOOT_ORDER}" || setenv BOOT_ORDER "A B"
 test -n "${BOOT_A_LEFT}" || setenv BOOT_A_LEFT 3
@@ -32,6 +28,23 @@ fileenv mmc ${devnum}:1 ${ramdisk_addr_r} cmdline.txt cmdline
 
 # Load device tree
 fatload mmc ${devnum}:1 ${fdt_addr_r} sun50i-h5-orangepi-prime.dtb
+fdt addr ${fdt_addr_r}
+
+if load mmc ${devnum}:1 ${ramdisk_addr_r} config.txt; then
+  env import -t ${ramdisk_addr_r} ${filesize};
+fi
+
+if test "${i2c0_enable}" != "false"; then
+  fdt set /soc/i2c@1c2ac00 status "okay"
+fi
+
+if test "${i2c1_enable}" != "false"; then
+  fdt set /soc/i2c@1c2b000 status "okay"
+fi
+
+if test "${i2c2_enable}" != "false"; then
+  fdt set /soc/i2c@1c2b400 status "okay"
+fi
 
 setenv bootargs
 for BOOT_SLOT in "${BOOT_ORDER}"; do

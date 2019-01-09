@@ -9,8 +9,8 @@ function hassos_pre_image() {
 
     cp "${BINARIES_DIR}/boot.scr" "${BOOT_DATA}/boot.scr"
     cp "${BINARIES_DIR}/sun50i-h5-orangepi-prime.dtb" "${BOOT_DATA}/sun50i-h5-orangepi-prime.dtb"
+    cp "${BOARD_DIR}/config.txt" "${BOOT_DATA}/config.txt"
     touch "${BOOT_DATA}/cmdline.txt"
-    touch "${BOOT_DATA}/config.txt"
 
     # SPL
     create_spl_image
