@@ -1,0 +1,27 @@
+From 377944f65a74670075c1878a0b6b61ad84856ed5 Mon Sep 17 00:00:00 2001
+From: Baruch Siach <baruch@tkos.co.il>
+Date: Tue, 20 Nov 2018 15:30:08 +0200
+Subject: [PATCH] linux: bump default to 4.19.2
+
+Signed-off-by: Baruch Siach <baruch@tkos.co.il>
+Signed-off-by: Peter Korsgaard <peter@korsgaard.com>
+---
+ linux/Config.in | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/linux/Config.in b/linux/Config.in
+index ecb12d0b16..c75e149a37 100644
+--- a/linux/Config.in
++++ b/linux/Config.in
+@@ -30,7 +30,7 @@ choice
+ 	prompt "Kernel version"
+ 
+ config BR2_LINUX_KERNEL_LATEST_VERSION
+-	bool "Latest version (4.18)"
++	bool "Latest version (4.19)"
+ 
+ config BR2_LINUX_KERNEL_LATEST_CIP_VERSION
+ 	bool "Latest CIP SLTS version (v4.4.138-cip25)"
+-- 
+2.17.1
+
