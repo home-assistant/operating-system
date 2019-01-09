@@ -1,0 +1,37 @@
+From 93c43e8572d374edbea8521f63c071a0a5cb1098 Mon Sep 17 00:00:00 2001
+From: Pascal Vizeli <pvizeli@syshack.ch>
+Date: Thu, 3 Jan 2019 19:54:57 +0000
+Subject: [PATCH 1/1] docker-engine: add AppArmor support
+
+Signed-off-by: Pascal Vizeli <pvizeli@syshack.ch>
+---
+ package/docker-engine/docker-engine.mk | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/package/docker-engine/docker-engine.mk b/package/docker-engine/docker-engine.mk
+index f19c1d9..9ecfd10 100644
+--- a/package/docker-engine/docker-engine.mk
++++ b/package/docker-engine/docker-engine.mk
+@@ -17,7 +17,7 @@ DOCKER_ENGINE_LDFLAGS = \
+ 	-X main.GitCommit=$(DOCKER_ENGINE_VERSION) \
+ 	-X main.Version=$(DOCKER_ENGINE_VERSION)
+ 
+-DOCKER_ENGINE_TAGS = cgo exclude_graphdriver_zfs autogen
++DOCKER_ENGINE_TAGS = cgo exclude_graphdriver_zfs autogen apparmor
+ DOCKER_ENGINE_BUILD_TARGETS = cmd/dockerd
+ 
+ ifeq ($(BR2_PACKAGE_LIBSECCOMP),y)
+@@ -77,4 +77,10 @@ define DOCKER_ENGINE_USERS
+ 	- - docker -1 * - - - Docker Application Container Framework
+ endef
+ 
++define DOCKER_ENGINE_INSTALL_SYMLINKS
++	ln -fs tini $(TARGET_DIR)/usr/bin/docker-init
++endef
++
++DOCKER_ENGINE_POST_INSTALL_TARGET_HOOKS += DOCKER_ENGINE_INSTALL_SYMLINKS
++
+ $(eval $(golang-package))
+-- 
+2.17.1
+
