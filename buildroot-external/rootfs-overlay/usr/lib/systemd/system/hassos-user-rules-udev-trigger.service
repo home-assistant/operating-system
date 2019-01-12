@@ -1,0 +1,17 @@
+[Unit]
+Description=Retrigger udev rules after user rules mounted
+DefaultDependencies=no
+Wants=systemd-udevd.service etc-udev-rules.d.mount
+After=systemd-udev-trigger.service etc-udev-rules.d.mount
+Before=hassos-bind.target
+ConditionPathIsReadWrite=/sys
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/bin/udevadm control --reload-rules
+ExecStart=/usr/bin/udevadm trigger --type=subsystems --action=add
+ExecStart=/usr/bin/udevadm trigger --type=devices --action=add
+
+[Install]
+WantedBy=hassos-bind.target

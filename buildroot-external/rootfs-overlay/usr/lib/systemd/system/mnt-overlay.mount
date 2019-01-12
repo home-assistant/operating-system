@@ -5,7 +5,7 @@ Before=umount.target systemd-tmpfiles-setup.service
 Conflicts=umount.target
 
 [Mount]
-What=LABEL=hassos-overlay
+What=/dev/disk/by-label/hassos-overlay
 Where=/mnt/overlay
 Type=ext4
 
