@@ -9,6 +9,7 @@ What=/mnt/overlay/var/lib/NetworkManager
 Where=/var/lib/NetworkManager
 Type=none
 Options=bind
+LazyUnmount=yes
 
 [Install]
 WantedBy=hassos-bind.target

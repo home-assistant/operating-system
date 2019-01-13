@@ -9,6 +9,7 @@ What=/mnt/overlay/var/log/journal
 Where=/var/log/journal
 Type=None
 Options=bind
+LazyUnmount=yes
 
 [Install]
 WantedBy=hassos-bind.target
