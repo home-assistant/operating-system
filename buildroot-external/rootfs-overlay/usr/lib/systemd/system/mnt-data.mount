@@ -7,7 +7,7 @@ Before=umount.target systemd-tmpfiles-setup.service
 Conflicts=umount.target
 
 [Mount]
-What=LABEL=hassos-data
+What=/dev/disk/by-label/hassos-data
 Where=/mnt/data
 Type=ext4
 
