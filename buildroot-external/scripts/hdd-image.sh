@@ -86,7 +86,7 @@ function create_kernel_image() {
 
     # Make image
     dd if=/dev/zero of="${kernel_img}" bs=${KERNEL_SIZE} count=1
-    mkfs.ext4 -L "hassos-kernel" -E lazy_itable_init=0,lazy_journal_init=0 "${kernel_img}"
+    mkfs.ext4 -L "hassos-kernel" -E lazy_itable_init=0,lazy_journal_init=0 -O ^extent,^64bit "${kernel_img}"
 
     # Mount / init file structs
     mkdir -p /mnt/data/
