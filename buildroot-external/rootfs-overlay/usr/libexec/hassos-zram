@@ -51,9 +51,9 @@ else
     exit 1
 fi
 
-# Calc 20% of memory for ZRAM swap partition
+# Calc 25% of memory for ZRAM swap partition
 if [ "$TYPE" = "swap" ] && [ "$SIZE" -eq "0" ]; then
-    SIZE="$(awk '/MemTotal/{ print $2 * 0.20 }' /proc/meminfo)K"
+    SIZE="$(awk '/MemTotal/{ print $2 * 0.25 }' /proc/meminfo)K"
 fi
 
 # Init device
