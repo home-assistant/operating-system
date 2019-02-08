@@ -1,0 +1,30 @@
+diff --git a/arch/arm/boot/dts/rk3288-tinker.dts b/arch/arm/boot/dts/rk3288-tinker.dts
+index 07b4af4..7755426 100644
+--- a/arch/arm/boot/dts/rk3288-tinker.dts
++++ b/arch/arm/boot/dts/rk3288-tinker.dts
+@@ -162,7 +162,7 @@
+ 		WIFI,host_wake_irq = <&gpio4 30 GPIO_ACTIVE_HIGH>;
+ 		status = "okay";
+ 	};
+-
++/*
+ 	wireless-bluetooth {
+ 		compatible = "bluetooth-platdata";
+ 		uart_rts_gpios = <&gpio4 19 GPIO_ACTIVE_LOW>;
+@@ -174,6 +174,7 @@
+ 		BT,wake_host_irq = <&gpio4 31 GPIO_ACTIVE_HIGH>;
+ 		status = "okay";
+ 	};
++*/
+ 
+ };
+ 
+@@ -620,7 +621,7 @@
+ &uart0 {
+ 	status = "okay";
+ 	pinctrl-names = "default";
+-	pinctrl-0 = <&uart0_xfer>, <&uart0_cts>;
++	pinctrl-0 = <&uart0_xfer>, <&uart0_cts>,  <&uart0_rts>;
+ };
+ 
+ &uart1 {

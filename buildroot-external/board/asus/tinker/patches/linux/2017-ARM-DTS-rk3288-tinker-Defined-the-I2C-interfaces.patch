@@ -1,0 +1,53 @@
+From b0a552add28bf4590b979abb3530b14b6811eec1 Mon Sep 17 00:00:00 2001
+From: Myy Miouyouyou <myy@miouyouyou.fr>
+Date: Thu, 19 Oct 2017 22:33:39 +0200
+Subject: [PATCH 21/28] ARM: DTS: rk3288-tinker.dts: Defined the I2C interfaces
+
+And all the hardware behind.
+
+Taken from, and tested by @TonyMac32 .
+
+Signed-off-by: Myy Miouyouyou <myy@miouyouyou.fr>
+---
+ arch/arm/boot/dts/rk3288-tinker.dts | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
+
+diff --git a/arch/arm/boot/dts/rk3288-tinker.dts b/arch/arm/boot/dts/rk3288-tinker.dts
+index 90c1a251..67a3ce6f 100644
+--- a/arch/arm/boot/dts/rk3288-tinker.dts
++++ b/arch/arm/boot/dts/rk3288-tinker.dts
+@@ -400,8 +400,31 @@
+ 	};
+ };
+ 
++&i2c1 {
++	status = "okay";
++};
++
+ &i2c2 {
+ 	status = "okay";
++
++	afc0:af-controller@0 {
++		status = "okay";
++		compatible = "silicon touch,vm149C-v4l2-i2c-subdev";
++		reg = <0x0c>;
++	};
++
++	eeprom:m24c08@50 {
++		compatible = "at,24c08";
++		reg = <0x50>;
++	};
++};
++
++&i2c3 {
++	status = "okay";
++};
++
++&i2c4 {
++	status = "okay";
+ };
+ 
+ &i2c5 {
+-- 
+2.11.0
+

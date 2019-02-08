@@ -1,0 +1,25 @@
+From cd0236ef771fd72e2975ca294ba2f1872d7dbc0b Mon Sep 17 00:00:00 2001
+From: Jonas Karlman <jonas@kwiboo.se>
+Date: Sun, 22 Oct 2017 12:48:24 +0200
+Subject: [PATCH 2/2] rockchip: tinker: enable rockchip video driver
+
+---
+ configs/tinker-rk3288_defconfig | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/configs/tinker-rk3288_defconfig b/configs/tinker-rk3288_defconfig
+index 1315be3ee8..3a81328b48 100644
+--- a/configs/tinker-rk3288_defconfig
++++ b/configs/tinker-rk3288_defconfig
+@@ -78,6 +78,11 @@ CONFIG_USB_GADGET_DWC2_OTG=y
+ CONFIG_USB_HOST_ETHER=y
+ CONFIG_USB_ETHER_ASIX=y
+ CONFIG_USB_ETHER_SMSC95XX=y
++CONFIG_DM_VIDEO=y
++CONFIG_DISPLAY=y
++CONFIG_VIDEO_ROCKCHIP=y
++CONFIG_DISPLAY_ROCKCHIP_HDMI=y
++CONFIG_CONSOLE_SCROLL_LINES=10
+ CONFIG_USE_TINY_PRINTF=y
+ CONFIG_CMD_DHRYSTONE=y
+ CONFIG_ERRNO_STR=y
