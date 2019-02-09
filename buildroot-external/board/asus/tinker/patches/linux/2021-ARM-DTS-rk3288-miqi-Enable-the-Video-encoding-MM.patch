@@ -1,0 +1,57 @@
+From 647d6012849191e9909a8acb0fc9ae5df1afc747 Mon Sep 17 00:00:00 2001
+From: Myy Miouyouyou <myy@miouyouyou.fr>
+Date: Tue, 21 Nov 2017 21:51:31 +0100
+Subject: [PATCH 2/5] ARM: DTS: rk3288-miqi.dts: Enable the Video encoding MMU
+ and services
+
+Enable the :
+* VPU MMU;
+* VPU service;
+* HEVC MMU;
+* HEVC service;
+on MiQi devices.
+
+Signed-off-by: Myy Miouyouyou <myy@miouyouyou.fr>
+---
+ arch/arm/boot/dts/rk3288-miqi.dts | 18 +++++++++++++++++-
+ 1 file changed, 17 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm/boot/dts/rk3288-miqi.dts b/arch/arm/boot/dts/rk3288-miqi.dts
+index d7fde483..dd785c70 100644
+--- a/arch/arm/boot/dts/rk3288-miqi.dts
++++ b/arch/arm/boot/dts/rk3288-miqi.dts
+@@ -124,7 +124,7 @@
+ 	};
+ 
+ 
+-	cpu0_opp_table: opp_table0 {
++	cpu0_opp_table: opp_table {
+ 		compatible = "operating-points-v2";
+ 		opp-shared;
+ 
+@@ -575,6 +575,22 @@
+ 	status = "okay";
+ };
+ 
++&vpu_mmu {
++	status = "okay";
++};
++
++&vpu_service {
++	status = "okay";
++};
++
++&hevc_mmu {
++	status = "okay";
++};
++
++&hevc_service {
++	status = "okay";
++};
++
+ &wdt {
+ 	status = "okay";
+ };
+-- 
+2.14.1
+

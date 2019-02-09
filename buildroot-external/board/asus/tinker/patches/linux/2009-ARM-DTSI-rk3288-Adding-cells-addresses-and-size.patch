@@ -1,0 +1,56 @@
+From 7af8d2bf732cb3baab7d926ed8a7e061e7a09ad9 Mon Sep 17 00:00:00 2001
+From: Myy Miouyouyou <myy@miouyouyou.fr>
+Date: Thu, 19 Oct 2017 21:39:00 +0200
+Subject: [PATCH 13/28] ARM: DTSI: rk3288.dtsi: Adding cells addresses and
+ sizes of MMC nodes
+
+Imported from the Rockchip 4.4 patches.
+
+Signed-off-by: Myy Miouyouyou <myy@miouyouyou.fr>
+---
+ arch/arm/boot/dts/rk3288.dtsi | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/arch/arm/boot/dts/rk3288.dtsi b/arch/arm/boot/dts/rk3288.dtsi
+index be985f02..14ef8202 100644
+--- a/arch/arm/boot/dts/rk3288.dtsi
++++ b/arch/arm/boot/dts/rk3288.dtsi
+@@ -236,6 +236,8 @@
+ 		clock-names = "biu", "ciu", "ciu-drive", "ciu-sample";
+ 		fifo-depth = <0x100>;
+ 		interrupts = <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>;
++		#address-cells = <1>;
++		#size-cells = <0>;
+ 		reg = <0x0 0xff0c0000 0x0 0x4000>;
+ 		resets = <&cru SRST_MMC0>;
+ 		reset-names = "reset";
+@@ -250,6 +252,8 @@
+ 		clock-names = "biu", "ciu", "ciu-drive", "ciu-sample";
+ 		fifo-depth = <0x100>;
+ 		interrupts = <GIC_SPI 33 IRQ_TYPE_LEVEL_HIGH>;
++		#address-cells = <1>;
++		#size-cells = <0>;
+ 		reg = <0x0 0xff0d0000 0x0 0x4000>;
+ 		resets = <&cru SRST_SDIO0>;
+ 		reset-names = "reset";
+@@ -264,6 +268,8 @@
+ 		clock-names = "biu", "ciu", "ciu-drive", "ciu-sample";
+ 		fifo-depth = <0x100>;
+ 		interrupts = <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
++		#address-cells = <1>;
++		#size-cells = <0>;
+ 		reg = <0x0 0xff0e0000 0x0 0x4000>;
+ 		resets = <&cru SRST_SDIO1>;
+ 		reset-names = "reset";
+@@ -278,6 +284,8 @@
+ 		clock-names = "biu", "ciu", "ciu-drive", "ciu-sample";
+ 		fifo-depth = <0x100>;
+ 		interrupts = <GIC_SPI 35 IRQ_TYPE_LEVEL_HIGH>;
++		#address-cells = <1>;
++		#size-cells = <0>;
+ 		reg = <0x0 0xff0f0000 0x0 0x4000>;
+ 		resets = <&cru SRST_EMMC>;
+ 		reset-names = "reset";
+-- 
+2.11.0
+

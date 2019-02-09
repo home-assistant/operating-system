@@ -1,0 +1,39 @@
+From 29ef524e8890bbfd24602a61e14234259df92349 Mon Sep 17 00:00:00 2001
+From: "Miouyouyou (Myy)" <myy@miouyouyou.fr>
+Date: Mon, 25 Jun 2018 17:05:37 +0200
+Subject: [PATCH 25/26] ARM: DTSI: rk3288: Renamed the VPU services clocks
+
+In order to conform to the naming scheme used in the whole DTSI.
+
+Signed-off-by: Miouyouyou (Myy) <myy@miouyouyou.fr>
+---
+ arch/arm/boot/dts/rk3288.dtsi | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/arch/arm/boot/dts/rk3288.dtsi b/arch/arm/boot/dts/rk3288.dtsi
+index 796609e3..45ec4e89 100644
+--- a/arch/arm/boot/dts/rk3288.dtsi
++++ b/arch/arm/boot/dts/rk3288.dtsi
+@@ -1242,7 +1242,7 @@
+ 			<GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
+ 		interrupt-names = "irq_enc", "irq_dec";
+ 		clocks = <&cru ACLK_VCODEC>, <&cru HCLK_VCODEC>;
+-		clock-names = "aclk_vcodec", "hclk_vcodec";
++		clock-names = "aclk", "iface";
+ 		power-domains = <&power RK3288_PD_VIDEO>;
+ 		rockchip,grf = <&grf>;
+ 		resets = <&cru SRST_VCODEC_AXI>, <&cru SRST_VCODEC_AHB>;
+@@ -1277,8 +1277,8 @@
+ 			<&cru SCLK_HEVC_CORE>,
+ 			<&cru SCLK_HEVC_CABAC>;
+ 		clock-names =
+-			"aclk_vcodec",
+-			"hclk_vcodec",
++			"aclk",
++			"iface",
+ 			"clk_core",
+ 			"clk_cabac";
+ 		/*
+-- 
+2.16.4
+
