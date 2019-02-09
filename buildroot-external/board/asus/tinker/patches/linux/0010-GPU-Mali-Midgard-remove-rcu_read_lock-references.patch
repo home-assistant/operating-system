@@ -1,0 +1,76 @@
+From 9bf91a052d8ceddfd5808547a51e167fb7463754 Mon Sep 17 00:00:00 2001
+From: "Miouyouyou (Myy)" <myy@miouyouyou.fr>
+Date: Wed, 18 Jul 2018 19:59:21 +0200
+Subject: [PATCH] GPU: Mali: Midgard: remove rcu_read_lock references
+
+This patch is actually based on @mihailescu2m patch.
+This removes references to rcu_read_lock when acquiring the OPP table,
+as it is useless since.
+See :
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/drivers/base/power/opp/core.c?id=5b650b388844f26c61c70564865598836d05dcb3
+
+The current rcu_read_lock actually generates some issues with recent
+kernels.
+See here :
+https://community.arm.com/graphics/f/discussions/9207/midgard-r20p0-kernel-drivers-errors
+
+The patch has been recreated since it does not apply directly on r19p0
+sources (I guess the affected line numbers slightly differ...).
+
+@mihailescu2m patch for the Mali Midgard r20p0 kernel driver can be
+acquired here :
+https://github.com/mihailescu2m/linux/commit/bbe73c3c1143e5991bdcaee3afaecf5c31af0647
+
+Signed-off-by: Miouyouyou (Myy) <myy@miouyouyou.fr>
+---
+ drivers/gpu/arm/midgard/backend/gpu/mali_kbase_devfreq.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
+
+diff --git a/drivers/gpu/arm/midgard/backend/gpu/mali_kbase_devfreq.c b/drivers/gpu/arm/midgard/backend/gpu/mali_kbase_devfreq.c
+index e280322e..bf69d897 100644
+--- a/drivers/gpu/arm/midgard/backend/gpu/mali_kbase_devfreq.c
++++ b/drivers/gpu/arm/midgard/backend/gpu/mali_kbase_devfreq.c
+@@ -87,10 +87,9 @@ kbase_devfreq_target(struct device *dev, unsigned long *target_freq, u32 flags)
+ 
+ 	freq = *target_freq;
+ 
+-	rcu_read_lock();
+ 	opp = devfreq_recommended_opp(dev, &freq, flags);
+ 	voltage = dev_pm_opp_get_voltage(opp);
+-	rcu_read_unlock();
++
+ 	if (IS_ERR_OR_NULL(opp)) {
+ 		dev_err(dev, "Failed to get opp (%ld)\n", PTR_ERR(opp));
+ 		return PTR_ERR(opp);
+@@ -186,20 +185,17 @@ static int kbase_devfreq_init_freq_table(struct kbase_device *kbdev,
+ 	unsigned long freq;
+ 	struct dev_pm_opp *opp;
+ 
+-	rcu_read_lock();
+ 	count = dev_pm_opp_get_opp_count(kbdev->dev);
+ 	if (count < 0) {
+ 		rcu_read_unlock();
+ 		return count;
+ 	}
+-	rcu_read_unlock();
+ 
+ 	dp->freq_table = kmalloc_array(count, sizeof(dp->freq_table[0]),
+ 				GFP_KERNEL);
+ 	if (!dp->freq_table)
+ 		return -ENOMEM;
+ 
+-	rcu_read_lock();
+ 	for (i = 0, freq = ULONG_MAX; i < count; i++, freq--) {
+ 		opp = dev_pm_opp_find_freq_floor(kbdev->dev, &freq);
+ 		if (IS_ERR(opp))
+@@ -207,7 +203,6 @@ static int kbase_devfreq_init_freq_table(struct kbase_device *kbdev,
+ 
+ 		dp->freq_table[i] = freq;
+ 	}
+-	rcu_read_unlock();
+ 
+ 	if (count != i)
+ 		dev_warn(kbdev->dev, "Unable to enumerate all OPPs (%d!=%d\n",
+-- 
+2.16.4
+

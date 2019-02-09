@@ -1,0 +1,31 @@
+diff --git a/arch/arm/boot/dts/rk3288.dtsi b/arch/arm/boot/dts/rk3288.dtsi
+index 0840ffb3..5393f2cd 100644
+--- a/arch/arm/boot/dts/rk3288.dtsi
++++ b/arch/arm/boot/dts/rk3288.dtsi
+@@ -894,6 +894,8 @@
+ 				reg = <0x320>;
+ 				clocks = <&cru SCLK_OTGPHY0>;
+ 				clock-names = "phyclk";
++				resets = <&cru SRST_USBOTG_PHY>;
++				reset-names = "phy-reset";
+ 				#clock-cells = <0>;
+ 			};
+ 
+@@ -902,6 +904,8 @@
+ 				reg = <0x334>;
+ 				clocks = <&cru SCLK_OTGPHY1>;
+ 				clock-names = "phyclk";
++				resets = <&cru SRST_USBHOST0_PHY>;
++				reset-names = "phy-reset";
+ 				#clock-cells = <0>;
+ 			};
+ 
+@@ -910,6 +914,8 @@
+ 				reg = <0x348>;
+ 				clocks = <&cru SCLK_OTGPHY2>;
+ 				clock-names = "phyclk";
++				resets = <&cru SRST_USBHOST1_PHY>;
++				reset-names = "phy-reset";
+ 				#clock-cells = <0>;
+ 			};
+ 		};

@@ -1,0 +1,115 @@
+From 550e15099408decc58fb439edcd2e320570b8bf4 Mon Sep 17 00:00:00 2001
+From: jamess_huang <Jamess_Huang@asus.com>
+Date: Fri, 11 Aug 2017 17:47:45 +0800
+Subject: [PATCH 17/50] Fix HDMI some issues
+
+This patch:
+  use 1080P display_timing when connect 4K HDMI screen.
+  correct  rockchip_mpll_config & rockchip_phy_config .mpixelclock.
+  add some hdmi-to-vga support
+
+Change-Id: Ic7faf4dd7ea490051493397058aa5bad1d8788c1
+---
+ common/Kconfig                  |  2 +-
+ drivers/video/dw_hdmi.c         |  8 ++++----
+ drivers/video/rockchip/rk_vop.c | 14 ++++++++++++++
+ include/dw_hdmi.h               |  4 ++--
+ 4 files changed, 21 insertions(+), 7 deletions(-)
+
+diff --git a/common/Kconfig b/common/Kconfig
+
+index 361346b092..355e816c9d 100644
+--- a/common/Kconfig
++++ b/common/Kconfig
+@@ -245,7 +245,7 @@ endmenu
+
+ config BOOTDELAY
+ 	int "delay in seconds before automatically booting"
+-	default 2
++	default 5
+ 	depends on AUTOBOOT
+ 	help
+ 	  Delay before automatically running bootcmd;
+diff --git a/drivers/video/dw_hdmi.c b/drivers/video/dw_hdmi.c
+index 6039d676c5..0d7a7c228d 100644
+--- a/drivers/video/dw_hdmi.c
++++ b/drivers/video/dw_hdmi.c
+@@ -340,7 +340,7 @@ static int hdmi_phy_configure(struct dw_hdmi *hdmi, u32 mpixelclock)
+
+ 	hdmi_phy_i2c_write(hdmi, hdmi->mpll_cfg[i].cpce, PHY_OPMODE_PLLCFG);
+ 	hdmi_phy_i2c_write(hdmi, hdmi->mpll_cfg[i].gmp, PHY_PLLGMPCTRL);
+-	hdmi_phy_i2c_write(hdmi, hdmi->mpll_cfg[i].curr, PHY_PLLCURRCTRL);
++	hdmi_phy_i2c_write(hdmi, 0x0000, PHY_PLLCURRCTRL);
+
+ 	hdmi_phy_i2c_write(hdmi, 0x0000, PHY_PLLPHBYCTRL);
+ 	hdmi_phy_i2c_write(hdmi, 0x0006, PHY_PLLCLKBISTPHASE);
+@@ -560,8 +560,8 @@ static int hdmi_read_edid(struct dw_hdmi *hdmi, int block, u8 *buff)
+ 	u32 n;
+
+ 	/* set ddc i2c clk which devided from ddc_clk to 100khz */
+-	hdmi_write(hdmi, hdmi->i2c_clk_high, HDMI_I2CM_SS_SCL_HCNT_0_ADDR);
+-	hdmi_write(hdmi, hdmi->i2c_clk_low, HDMI_I2CM_SS_SCL_LCNT_0_ADDR);
++	//hdmi_write(hdmi, hdmi->i2c_clk_high, HDMI_I2CM_SS_SCL_HCNT_0_ADDR);
++	//hdmi_write(hdmi, hdmi->i2c_clk_low, HDMI_I2CM_SS_SCL_LCNT_0_ADDR);
+ 	hdmi_mod(hdmi, HDMI_I2CM_DIV, HDMI_I2CM_DIV_FAST_STD_MODE,
+ 		 HDMI_I2CM_DIV_STD_MODE);
+
+@@ -663,7 +663,7 @@ int dw_hdmi_phy_wait_for_hpd(struct dw_hdmi *hdmi)
+ 		if (hdmi_get_plug_in_status(hdmi))
+ 			return 0;
+ 		udelay(100);
+-	} while (get_timer(start) < 300);
++	} while (get_timer(start) < 5000);
+
+ 	return -1;
+ }
+diff --git a/drivers/video/rockchip/rk_vop.c b/drivers/video/rockchip/rk_vop.c
+index c979049b5b..7bcc3df69b 100644
+--- a/drivers/video/rockchip/rk_vop.c
++++ b/drivers/video/rockchip/rk_vop.c
+@@ -277,6 +277,20 @@ static int rk_display_init(struct udevice *dev, ulong fbbase, int ep_node)
+ 		return ret;
+ 	}
+
++	/* Use 1080p display_timing when connect 4K HDMI screen */
++	if (timing.hactive.typ >= 3840) {
++		timing.pixelclock.typ	= 148500000;
++		timing.hactive.typ	= 1920;
++		timing.vactive.typ	= 1080;
++		timing.hsync_len.typ	= 44;
++		timing.hback_porch.typ	= 148;
++		timing.vsync_len.typ	= 5;
++		timing.vback_porch.typ  = 36;
++		timing.hfront_porch.typ	= 88;
++		timing.vfront_porch.typ	= 4;
++		debug("Use default 1080P settings \n");
++	}
++
+ 	ret = clk_get_by_index(dev, 1, &clk);
+ 	if (!ret)
+ 		ret = clk_set_rate(&clk, timing.pixelclock.typ);
+diff --git a/include/dw_hdmi.h b/include/dw_hdmi.h
+index 902abd4d44..c1f1fbff6a 100644
+--- a/include/dw_hdmi.h
++++ b/include/dw_hdmi.h
+@@ -448,7 +448,7 @@ enum {
+ };
+
+ struct hdmi_mpll_config {
+-	u64 mpixelclock;
++	u32 mpixelclock;
+ 	/* Mode of Operation and PLL Dividers Control Register */
+ 	u32 cpce;
+ 	/* PLL Gmp Control Register */
+@@ -458,7 +458,7 @@ struct hdmi_mpll_config {
+ };
+
+ struct hdmi_phy_config {
+-	u64 mpixelclock;
++	u32 mpixelclock;
+ 	u32 sym_ctr;    /* clock symbol and transmitter control */
+ 	u32 term;       /* transmission termination value */
+ 	u32 vlev_ctr;   /* voltage level control */
+--
+2.17.1
+
