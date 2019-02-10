@@ -7,11 +7,11 @@ Supported Hardware:
 | Tinker RK3288 | tinker |
 | Tinker S RK3288 | tinker |
 
-## EMMC
+## eMMC
 
-Actual we support only SD cards. The support for EMMC will follow.
+eMMC support is provided transparently. Just flash the image to the eMMC by connecting your Tinker Board S to your PC via Micro-USB.
 
 ## Serial console
 
-For access to terminal over serial console, add `console=ttyS2,115200` to `cmdline.txt`. GPIO pins are: 34 = GND / 32 = UART TXD / 33 = UART RXD.
+To access the terminal over serial console, add `console=ttyS2,115200` to `cmdline.txt`. GPIO pins are: 34 = GND / 32 = UART TXD / 33 = UART RXD.
 
