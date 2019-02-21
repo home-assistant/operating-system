@@ -1,0 +1,25 @@
+From ef9591dd61cfc79a0549954c71826ec1ac47757d Mon Sep 17 00:00:00 2001
+From: Pascal Vizeli <pvizeli@syshack.ch>
+Date: Mon, 28 Jan 2019 09:13:33 +0000
+Subject: [PATCH] openvmtools: start only inside a vmware env
+
+Signed-off-by: Pascal Vizeli <pvizeli@syshack.ch>
+---
+ package/openvmtools/vmtoolsd.service | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/package/openvmtools/vmtoolsd.service b/package/openvmtools/vmtoolsd.service
+index 17a4df4..cb97357 100644
+--- a/package/openvmtools/vmtoolsd.service
++++ b/package/openvmtools/vmtoolsd.service
+@@ -1,6 +1,7 @@
+ [Unit]
+ Description=vmtoolsd for openvmtools
+ After=syslog.target network.target
++ConditionVirtualization=vmware
+ 
+ [Service]
+ Type=forking
+-- 
+2.17.1
+

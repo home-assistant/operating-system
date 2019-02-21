@@ -1,0 +1,37 @@
+From 24d6638302b48328a58c13439276d4531af4ca7d Mon Sep 17 00:00:00 2001
+From: Katsuhiro Suzuki <katsuhiro@katsuster.net>
+Date: Tue, 11 Sep 2018 01:39:32 +0900
+Subject: ASoC: rockchip: add missing INTERLEAVED PCM attribute
+
+This patch adds SNDRV_PCM_INFO_INTERLEAVED into PCM hardware info.
+
+Signed-off-by: Katsuhiro Suzuki <katsuhiro@katsuster.net>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/rockchip/rockchip_pcm.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+(limited to 'sound/soc/rockchip')
+
+Armbian Note: this patch has been backported from 4.20 to 4.19 due to break in rockchip HDMI/I2S audio. This
+can be safely removed once there is a new kernel bump.
+Origin: <https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/sound/soc/rockchip?h=linux-4.20.y&id=24d6638302b48328a58c13439276d4531af4ca7d>
+
+diff --git a/sound/soc/rockchip/rockchip_pcm.c b/sound/soc/rockchip/rockchip_pcm.c
+index f77538319221..9e7b5fa4cf59 100644
+--- a/sound/soc/rockchip/rockchip_pcm.c
++++ b/sound/soc/rockchip/rockchip_pcm.c
+@@ -21,7 +21,8 @@ static const struct snd_pcm_hardware snd_rockchip_hardware = {
+ 	.info			= SNDRV_PCM_INFO_MMAP |
+ 				  SNDRV_PCM_INFO_MMAP_VALID |
+ 				  SNDRV_PCM_INFO_PAUSE |
+-				  SNDRV_PCM_INFO_RESUME,
++				  SNDRV_PCM_INFO_RESUME |
++				  SNDRV_PCM_INFO_INTERLEAVED,
+ 	.period_bytes_min	= 32,
+ 	.period_bytes_max	= 8192,
+ 	.periods_min		= 1,
+-- 
+cgit 1.2-0.3.lf.el7
+
+

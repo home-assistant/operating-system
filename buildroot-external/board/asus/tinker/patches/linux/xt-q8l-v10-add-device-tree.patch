@@ -1,0 +1,972 @@
+--- /dev/null
++++ b/arch/arm/boot/dts/rk3288-xt-q8l-v10.dts	2018-12-06 21:46:51.493688015 +0000
+@@ -0,0 +1,969 @@
++/*
++ * Copyright (c) 2014, 2015 FUKAUMI Naoki <naobsd@gmail.com>
++ * 					   2018 Paolo Sabatino <paolo.sabatino@gm**l.com>
++ *
++ * This file is dual-licensed: you can use it either under the terms
++ * of the GPL or the X11 license, at your option. Note that this dual
++ * licensing only applies to this file, and not this project as a
++ * whole.
++ *
++ *  a) This file is free software; you can redistribute it and/or
++ *     modify it under the terms of the GNU General Public License as
++ *     published by the Free Software Foundation; either version 2 of the
++ *     License, or (at your option) any later version.
++ *
++ *     This file is distributed in the hope that it will be useful,
++ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ *     GNU General Public License for more details.
++ *
++ * Or, alternatively,
++ *
++ *  b) Permission is hereby granted, free of charge, to any person
++ *     obtaining a copy of this software and associated documentation
++ *     files (the "Software"), to deal in the Software without
++ *     restriction, including without limitation the rights to use,
++ *     copy, modify, merge, publish, distribute, sublicense, and/or
++ *     sell copies of the Software, and to permit persons to whom the
++ *     Software is furnished to do so, subject to the following
++ *     conditions:
++ *
++ *     The above copyright notice and this permission notice shall be
++ *     included in all copies or substantial portions of the Software.
++ *
++ *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++ *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
++ *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++ *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
++ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
++ *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
++ *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
++ *     OTHER DEALINGS IN THE SOFTWARE.
++ */
++
++/dts-v1/;
++
++#include "rk3288.dtsi"
++#include <dt-bindings/input/input.h>
++
++/ {
++	model = "XT-Q8L-V10-RK3288";
++	compatible = "generic,xt-q8l-v10-rk3288", "rockchip,rk3288";
++
++	memory {
++		reg = <0x0 0x0 0x0 0x80000000>;
++		device_type = "memory";
++	};
++	
++	cpu0_opp_table: opp_table {
++		compatible = "operating-points-v2";
++		opp-shared;
++
++		opp@600000000 {
++			opp-hz = /bits/ 64 <600000000>;
++			opp-microvolt = <900000>;
++		};
++		opp@816000000 {
++			opp-hz = /bits/ 64 <816000000>;
++			opp-microvolt = <1000000>;
++		};
++		opp@1008000000 {
++			opp-hz = /bits/ 64 <1008000000>;
++			opp-microvolt = <1050000>;
++		};
++		opp@1200000000 {
++			opp-hz = /bits/ 64 <1200000000>;
++			opp-microvolt = <1100000>;
++		};
++		opp@1416000000 {
++			opp-hz = /bits/ 64 <1416000000>;
++			opp-microvolt = <1200000>;
++		};
++		opp@1512000000 {
++			opp-hz = /bits/ 64 <1512000000>;
++			opp-microvolt = <1250000>;
++		};
++		opp@1608000000 {
++			opp-hz = /bits/ 64 <1608000000>;
++			opp-microvolt = <1300000>;
++		};
++		/*
++		opp@1704000000 {
++			opp-hz = /bits/ 64 <1704000000>;
++			opp-microvolt = <1350000>;
++		};
++		opp@1800000000 {
++			opp-hz = /bits/ 64 <1800000000>;
++			opp-microvolt = <1400000>;
++		};
++		*/
++	};
++	
++	/*
++	 * Peripheral from original q8 device tree, currently no references
++	 * for drivers in linux kernel.
++	rockchip-hsadc@ff080000 {
++		compatible = "rockchip-hsadc";
++		reg = <0xff080000 0x4000>;
++		interrupts = <0x0 0x1f 0x4>;
++		#address-cells = <0x1>;
++		#size-cells = <0x0>;
++		pinctrl-names = "default";
++		pinctrl-0 = <0x9a>;
++		clocks = <0x79 0x7 0x8 0x39>;
++		clock-names = "hclk_hsadc", "clk_hsadc_out", "clk_hsadc_ext";
++		dmas = <0x9b 0x0>;
++		dma-names = "data";
++		status = "disabled";
++	};
++	*/
++
++	ext_gmac: external-gmac-clock {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <125000000>;
++		clock-output-names = "ext_gmac";
++	};
++	
++	/*
++	 * Handle the IR receiver using the gpio-ir-receiver kernel module.
++	 * This works flawlessy, the original xt-q8l-v10 remote uses a NEC
++	 * protocol and the keymap rc-xt-q8l-v10 has to be compiled in the
++	 * kernel for the remote to work as an input device
++	 */
++	ir: ir-receiver {
++		compatible = "gpio-ir-receiver";
++		gpios = <&gpio7 RK_PA0 GPIO_ACTIVE_LOW>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&ir_int>;
++		linux,rc-map-name = "rc-xt-q8l-v10";
++		wakeup-source;
++	};	
++
++	keys: gpio-keys {
++		compatible = "gpio-keys";
++		#address-cells = <1>;
++		#size-cells = <0>;
++		
++		pinctrl-names = "default";
++		pinctrl-0 = <&pwr_key>;
++
++		button@0 {
++			gpio-key,wakeup = <1>;
++			gpios = <&gpio0 5 GPIO_ACTIVE_HIGH>;
++			label = "GPIO Power";
++			linux,code = <KEY_POWER>;
++			wakeup-source;
++			debounce-interval = <100>;
++		};
++		
++	};
++
++	leds {
++		compatible = "gpio-leds";
++
++		power {
++			/*
++				Power led is active high, but we set it here active low
++				so while there is mass storage access it turns red and
++				when it is idle is blue
++			*/
++			gpios = <&gpio7 2 GPIO_ACTIVE_LOW>; 
++			label = "power";
++			linux,default-trigger = "mmc0";
++			pinctrl-names = "default";
++			pinctrl-0 = <&power_led>;
++		};
++
++	};
++
++	vcc_sys: vsys-regulator {
++		compatible = "regulator-fixed";
++		regulator-name = "vcc_sys";
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++		regulator-always-on;
++		regulator-boot-on;
++	};
++
++	vcc_sd: sdmmc-regulator {
++		compatible = "regulator-fixed";
++		gpio = <&gpio7 11 GPIO_ACTIVE_LOW>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&sdmmc_pwr>;
++		regulator-name = "vcc_sd";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		startup-delay-us = <100000>;
++		vin-supply = <&vcc_io>;
++	};
++
++	vcc_flash: flash-regulator {
++		compatible = "regulator-fixed";
++		regulator-name = "vcc_flash";
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <1800000>;
++		vin-supply = <&vcc_io>;
++	};
++
++	vcc_host_5v: usb-host-regulator {
++		compatible = "regulator-fixed";
++		gpio = <&gpio0 14 GPIO_ACTIVE_HIGH>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&host_vbus_drv>;
++		regulator-name = "vcc_host_5v";
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++        regulator-always-on;
++        enable-active-high;
++//        startup-delay-us = <1000>;
++		vin-supply = <&vcc_sys>;
++	};
++
++
++	vcc_otg_5v: usb-otg-regulator {
++		compatible = "regulator-fixed";
++		enable-active-high;
++		gpio = <&gpio0 12 GPIO_ACTIVE_HIGH>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&otg_vbus_drv>;
++		regulator-name = "vcc_otg_5v";
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++//        startup-delay-us = <1000>;
++		regulator-always-on;
++		vin-supply = <&vcc_sys>;
++	};
++
++	/*
++	 * Required power sequence to properly enable the wireless/bluetooth
++	 * module connected to sdio0
++	 */
++	sdio0_pwrseq: sdio0_pwrseq {
++		compatible = "mmc-pwrseq-simple";
++		pinctrl-names = "default";
++		pinctrl-0 = <&wifi_enable_h>, <&bt_enable_h>;
++		reset-gpios = <&gpio4 28 GPIO_ACTIVE_LOW>, <&gpio4 29 GPIO_ACTIVE_LOW>;
++		post-power-on-delay-ms = <100>;
++	};
++	
++	/*
++	 * Sound taken from tinkerboard device tree, adapted to q8.
++	 */
++	soundcard-hdmi {
++		compatible = "simple-audio-card";
++		simple-audio-card,format = "i2s";
++		simple-audio-card,name = "DW-I2S-HDMI";
++		simple-audio-card,mclk-fs = <512>;
++
++		simple-audio-card,codec {
++			sound-dai = <&hdmi>;
++		};
++
++		simple-audio-card,cpu {
++			sound-dai = <&i2s>;
++		};
++	};
++	
++	soundcard-spdif {
++        compatible = "simple-audio-card";
++        simple-audio-card,name = "SPDIF";
++        simple-audio-card,dai-link@1 {
++			
++            cpu { 
++				sound-dai = <&spdif>; 
++			};
++			
++            codec { 
++				sound-dai = <&spdif_out>; 
++			};
++			
++        };
++    };
++
++    spdif_out: spdif-out {
++        compatible = "linux,spdif-dit";
++        #sound-dai-cells = <0>;
++    };
++
++};
++
++
++&io_domains {
++	status = "okay";
++
++	audio-supply = <&vcca_33>;
++	bb-supply = <&vcc_io>;
++	dvp-supply = <&vcc_18>;
++	flash0-supply = <&vcc_flash>;
++	flash1-supply = <&vcc_lan>;
++	gpio30-supply = <&vcc_io>;
++	gpio1830-supply = <&vcc_io>;
++	lcdc-supply = <&vcc_io>;
++	sdcard-supply = <&vccio_sd>;
++	wifi-supply = <&vcc_18>;
++};
++
++&cpu0 {
++	cpu0-supply = <&vdd_cpu>;
++	operating-points-v2 = <&cpu0_opp_table>;
++	/delete-node/operating-points;
++};
++
++&cpu1 {
++	operating-points-v2 = <&cpu0_opp_table>;
++	/delete-node/operating-points;
++};
++
++&cpu2 {
++	operating-points-v2 = <&cpu0_opp_table>;
++	/delete-node/operating-points;
++};
++
++&cpu3 {
++	operating-points-v2 = <&cpu0_opp_table>;
++	/delete-node/operating-points;
++};
++
++&gmac {
++	assigned-clocks = <&cru SCLK_MAC>;
++	assigned-clock-parents = <&ext_gmac>;
++	clock_in_out = "input";
++	pinctrl-names = "default";
++	pinctrl-0 = <&rgmii_pins>, <&phy_rst>, <&phy_pmeb>, <&phy_int>;
++	phy-supply = <&vcc_lan>;
++	phy-mode = "rgmii";
++	snps,reset-active-low;
++	snps,reset-delays-us = <0 10000 1000000>;
++	snps,reset-gpio = <&gpio4 8 GPIO_ACTIVE_LOW>;
++	tx_delay = <0x30>;
++	rx_delay = <0x10>;
++	status = "ok";
++};
++
++&hdmi {
++	ddc-i2c-bus = <&i2c5>;
++	status = "okay";
++};
++
++&gpu {
++	mali-supply = <&vdd_gpu>;
++	status = "okay";
++};
++
++&i2c0 {
++	clock-frequency = <400000>;
++	status = "okay";
++
++	vdd_cpu: syr827@40 {
++		compatible = "silergy,syr827";
++		fcs,suspend-voltage-selector = <1>;
++		reg = <0x40>;
++		regulator-name = "vdd_cpu";
++		regulator-min-microvolt = <850000>;
++		regulator-max-microvolt = <1350000>;
++		regulator-ramp-delay = <8000>;
++		regulator-always-on;
++		regulator-boot-on;
++		vin-supply = <&vcc_sys>;
++	};
++
++	vdd_gpu: syr828@41 {
++		compatible = "silergy,syr828";
++		fcs,suspend-voltage-selector = <1>;
++		reg = <0x41>;
++		regulator-name = "vdd_gpu";
++		regulator-min-microvolt = <850000>;
++		regulator-max-microvolt = <1350000>;
++		regulator-ramp-delay = <8000>;
++		regulator-always-on;
++		vin-supply = <&vcc_sys>;
++	};
++
++	hym8563: hym8563@51 {
++		compatible = "haoyu,hym8563";
++		reg = <0x51>;
++		#clock-cells = <0>;
++		clock-frequency = <32768>;
++		clock-output-names = "xin32k";
++		interrupt-parent = <&gpio0>;
++		interrupts = <4 IRQ_TYPE_EDGE_FALLING>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&rtc_int>;
++	};
++
++	act8846: act8846@5a {
++		compatible = "active-semi,act8846";
++		reg = <0x5a>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&pmic_vsel>;
++		system-power-controller;
++
++		vp1-supply = <&vcc_sys>;
++		vp2-supply = <&vcc_sys>;
++		vp3-supply = <&vcc_sys>;
++		vp4-supply = <&vcc_sys>;
++		inl1-supply = <&vcc_sys>;
++		inl2-supply = <&vcc_sys>;
++		inl3-supply = <&vcc_20>;
++		wakeup-source;
++
++		regulators {
++			
++			/*
++			 * Regulator controlling DDR memory - always on
++			 */
++			vcc_ddr: REG1 {
++				regulator-name = "vcc_ddr";
++				regulator-min-microvolt = <1200000>;
++				regulator-max-microvolt = <1200000>;
++				regulator-always-on;
++			};
++
++			/*
++			 * Regulator controlling various IO functions of the rk3288.
++			 * Always on
++			 */
++			vcc_io: REG2 {
++				regulator-name = "vcc_io";
++				regulator-min-microvolt = <3300000>;
++				regulator-max-microvolt = <3300000>;
++				regulator-always-on;
++			};
++
++			/*
++			 * Regulator controlling various board logic.
++			 * Always on.
++			 * rk3288 electrical datasheet says it should have variable
++			 * voltage depending upon dvfs
++			 */
++			vdd_log: REG3 {
++				regulator-name = "vdd_log";
++				regulator-min-microvolt = <1100000>;
++				regulator-max-microvolt = <1100000>;
++				regulator-always-on;
++			};
++
++			/*
++			 * No reference for this on electrical datasheet. Maybe this
++			 * is vcc_18? Maybe this is vcc18_flash on electrical datasheet.
++			 * So far we disable it.
++			 */
++			vcc_20: REG4 {
++				regulator-name = "vcc_20";
++				regulator-min-microvolt = <2000000>;
++				regulator-max-microvolt = <2000000>;
++				regulator-always-on;
++			};
++
++			/*
++			 * This regulator controls SDIO. Electrical datasheet says
++			 * this regulator can be operated between 1.8 and 3.3 volts
++			 */
++			vccio_sd: REG5 {
++				regulator-name = "vccio_sd";
++				regulator-min-microvolt = <1800000>; 
++				regulator-max-microvolt = <3300000>;
++				regulator-always-on;
++			};
++
++			/*
++			 * Controlling HDMI and LCD controller on rk3288. 1.0 volts
++			 * by reference
++			 */
++			vdd10_lcd: REG6 {
++				regulator-name = "vdd10_lcd";
++				regulator-min-microvolt = <1000000>;
++				regulator-max-microvolt = <1000000>;
++				regulator-always-on;
++			};
++
++			/*
++			 * From the rk3288 electrical datasheet, this regulator powers
++			 * the rk1000 chip, which is absent in our device, but it
++			 * is also supplying bluetooth, so we enable it.
++			 */
++			vcca_18: REG7 {
++				regulator-name = "vcca_18";
++				regulator-min-microvolt = <1800000>;
++				regulator-max-microvolt = <1800000>;
++				regulator-always-on;
++			};
++
++			/*
++			 * This regulator controls, among other things, the SPDIF
++			 * interface, so we enable it
++			 */
++			vcca_33: REG8 {
++				regulator-name = "vcca_33";
++				regulator-min-microvolt = <3300000>;
++				regulator-max-microvolt = <3300000>;
++				regulator-always-on; // Turn this on to get SPDIF!
++			};
++
++			/*
++			 * LAN regulator
++			 */
++			vcc_lan: REG9 {
++				regulator-name = "vcc_lan";
++				regulator-min-microvolt = <3300000>;
++				regulator-max-microvolt = <3300000>;
++			};
++
++			/*
++			 * Regulator controlling PMU, USB PHY and rk3288 PLLs.
++			 * 1.0 volts by reference
++			 */
++			vdd_10: REG10 {
++				regulator-name = "vdd_10";
++				regulator-min-microvolt = <1000000>;
++				regulator-max-microvolt = <1000000>;
++				regulator-always-on;
++			};
++
++			/*
++			 * Regulator controlling Wifi over SDIO, SARADC and USB PHY.
++			 * Better turn this on
++			 */
++			vccio_wl: vcc_18: REG11 {
++				regulator-name = "vcc_18";
++				regulator-min-microvolt = <1800000>;
++				regulator-max-microvolt = <1800000>;
++				regulator-always-on;
++			};
++
++			/*
++			 * Not clear: apparently this controls HDMI and LCD controller
++			 * on rk3368 devices.
++			 * 1.8 volts by reference
++			 */
++			vcc18_lcd: REG12 {
++				regulator-name = "vcc18_lcd";
++				regulator-min-microvolt = <1800000>;
++				regulator-max-microvolt = <1800000>;
++				regulator-always-on;
++			};
++		};
++	};
++};
++
++&i2c1 {
++	status = "okay";
++};
++
++&i2c2 {
++	status = "okay";
++};
++
++&i2c4 {
++	
++	/*
++	 * Here should go the RK1000 audio codec parts, but seems that
++	 * there is no driver in linux kernel at the moment, so we can't
++	 * describe it.
++	 * Also, most important, there is no RK1000 on our board :)
++	 * Datasheet is available here:
++	 * http://dl.radxa.com/rock/docs/hw/ds/RK1000-S%20DATASHEET%20V14.pdf
++	 */
++	status = "okay";
++	
++};
++
++&i2c5 {
++	status = "okay";
++};
++
++&pinctrl {
++
++	/*
++		These two lines here, these must be commented out! Otherwise for some reason the kernel
++		does not see the boot device anymore and will stay stuck in initramfs!
++		On the contrary, these are required by u-boot to keep the power holding so the device does not
++		automatically turns off after a small timeout
++	*/
++	/*pinctrl-names = "default";*/
++	/*pinctrl-0 = <&pwr_hold>;*/
++
++	pcfg_output_high: pcfg-output-high {
++		output-high;
++	};
++
++	pcfg_output_low: pcfg-output-low {
++		output-low;
++	};
++
++	pcfg_wl: pcfg-wl {
++		bias-pull-up;
++		drive-strength = <8>;
++	};
++	
++	pcfg_pull_up_drv_8ma: pcfg-pull-up-drv-8ma {
++		bias-pull-up;
++		drive-strength = <8>;
++	};
++	
++	pcfg_pull_none_8ma: pcfg-pull-none-8ma {
++		bias-disable;
++		drive-strength = <8>;
++	};
++
++	pcfg_wl_clk: pcfg-wl-clk {
++		bias-disable;
++		drive-strength = <12>;
++	};
++
++	pcfg_wl_int: pcfg-wl-int {
++		bias-pull-up;
++	};
++	
++	act8846 {
++		
++		/*
++		 * Original q8 device tree says:
++		 *  - gpio0 11 HIGH -> power hold
++		 *  - gpio7 1 LOW -> possibly pmic-vsel, we don't care 
++		 */ 
++		pmic_vsel: pmic-vsel {
++			rockchip,pins = <7 1 RK_FUNC_GPIO &pcfg_output_low>;
++		};
++		
++		pwr_hold: pwr-hold {
++			rockchip,pins = <0 11 RK_FUNC_GPIO &pcfg_pull_up>;
++		};
++	};
++
++	gmac {
++		phy_int: phy-int {
++			rockchip,pins = <0 9 RK_FUNC_GPIO &pcfg_pull_up>;
++		};
++
++		phy_pmeb: phy-pmeb {
++			rockchip,pins = <0 8 RK_FUNC_GPIO &pcfg_pull_up>;
++		};
++
++		phy_rst: phy-rst {
++			rockchip,pins = <4 8 RK_FUNC_GPIO &pcfg_output_high>;
++		};
++	};
++
++	hym8563 {
++		rtc_int: rtc-int {
++			rockchip,pins = <0 4 RK_FUNC_GPIO &pcfg_pull_up>;
++		};
++	};
++
++	keys {
++		pwr_key: pwr-key {
++			rockchip,pins = <0 5 RK_FUNC_GPIO &pcfg_pull_none>;
++		};
++	};
++
++	leds {
++		power_led: power-led {
++			rockchip,pins = <7 2 RK_FUNC_GPIO &pcfg_pull_none>;
++		};
++	};
++
++	ir {
++		ir_int: ir-int {
++			rockchip,pins = <7 0 RK_FUNC_GPIO &pcfg_pull_up>;
++		};
++	};
++
++	sdmmc {
++		
++		/*
++		 * Copied from firefly board definition to give more drive to
++		 * the sdmmc pins. The Q8 seems to be quite able to drive
++		 * ultra high speed uSD cards, so we give a bit more energy
++		 * to the gpio pins
++		 */
++		sdmmc_bus4: sdmmc-bus4 {
++			rockchip,pins = <6 16 RK_FUNC_1 &pcfg_pull_up_drv_8ma>,
++					<6 17 RK_FUNC_1 &pcfg_pull_up_drv_8ma>,
++					<6 18 RK_FUNC_1 &pcfg_pull_up_drv_8ma>,
++					<6 19 RK_FUNC_1 &pcfg_pull_up_drv_8ma>;
++		};
++
++		sdmmc_clk: sdmmc-clk {
++			rockchip,pins = <6 20 RK_FUNC_1 &pcfg_pull_none_8ma>;
++		};
++
++		sdmmc_cmd: sdmmc-cmd {
++			rockchip,pins = <6 21 RK_FUNC_1 &pcfg_pull_up_drv_8ma>;
++		};
++
++		sdmmc_pwr: sdmmc-pwr {
++			rockchip,pins = <7 11 RK_FUNC_GPIO &pcfg_pull_none>;
++		};
++
++	};
++
++	usb_host1 {
++		host_vbus_drv: host-vbus-drv {
++			rockchip,pins = <0 14 RK_FUNC_GPIO &pcfg_pull_none>;
++		};
++
++	};
++
++	usb_otg {
++		otg_vbus_drv: otg-vbus-drv {
++			rockchip,pins = <0 12 RK_FUNC_GPIO &pcfg_pull_none>;
++		};
++	};
++
++	sdio0 {
++		wifi_enable_h: wifienable-h {
++			rockchip,pins = <4 28 RK_FUNC_GPIO &pcfg_output_high>;
++		};
++
++		bt_enable_h: bt-enable-h {
++			rockchip,pins = <4 27 RK_FUNC_GPIO &pcfg_output_high>;
++		};
++
++	};
++	
++	
++	wireless-bluetooth {
++		uart0_gpios: uart0-gpios {
++			rockchip,pins = <4 19 RK_FUNC_GPIO &pcfg_pull_none>;
++		};
++	};
++
++};
++
++&saradc {
++	vref-supply = <&vcc_18>;
++	status = "okay";
++};
++
++&emmc {
++	
++	/*
++	 * eMMC seems to be 52Mhz device on q8 devices, so set it here
++	 * vmmc-supply and vqmmc-supply are removed because they hang
++	 * u-boot >= v2018.03
++	 * From the original q8l firmware and eMMC datasheet it also should
++	 * support DDR highspeed mode, but using mmc-ddr-3_3v or mmc-ddr-1_8v
++	 * properties are not working
++	 */
++	clock-frequency = <50000000>;
++	 
++	broken-cd;
++	bus-width = <8>;
++	cap-mmc-highspeed;
++	disable-wp;
++	non-removable;
++	pinctrl-names = "default";
++	pinctrl-0 = <&emmc_clk>, <&emmc_cmd>, <&emmc_pwr>, <&emmc_bus8>;
++
++	status = "okay";
++};
++
++&sdmmc {
++	supports-sd;
++
++	bus-width = <4>;
++	cap-mmc-highspeed;
++	cap-sd-highspeed;
++	card-detect-delay = <200>;
++	disable-wp;
++	pinctrl-names = "default";
++	pinctrl-0 = <&sdmmc_clk>, <&sdmmc_cmd>, <&sdmmc_cd>, <&sdmmc_bus4>;
++	vmmc-supply = <&vcc_sd>;
++	vqmmc-supply = <&vccio_sd>;
++	sd-uhs-sdr12;
++	sd-uhs-sdr25;
++	sd-uhs-sdr50;
++	sd-uhs-sdr104;
++	sd-uhs-ddr50;
++	status = "okay";
++};
++
++&sdio0 {
++	#address-cells = <1>;
++	#size-cells = <0>;
++	
++	bus-width = <4>;
++	mmc-pwrseq = <&sdio0_pwrseq>;
++	
++	vmmc-supply = <&vcc_io>;
++    vqmmc-supply = <&vcc_18>; // This must be the same as in io_domains, 
++		// otherwise the mmc1 device won't be detected properly
++		
++//	clock-frequency = <50000000>;
++//	max-frequency = <50000000>;
++
++	pinctrl-names = "default";
++    pinctrl-0 = <&sdio0_bus4>, <&sdio0_cmd>, <&sdio0_clk>, <&sdio0_int>;
++	
++	cap-sdio-irq;
++	no-mmc;
++	no-sd;
++	cap-sd-highspeed; // required, otherwise does not work!
++	supports-sdio; 
++	non-removable;
++	
++	keep-power-in-suspend;
++	disable-wp;
++ 
++	
++	status = "okay";
++	
++	brcmf: bcrmf@1 {
++		reg = <1>;
++		compatible = "brcm,bcm4329-fmac";
++		interrupt-parent = <&gpio4>;
++		interrupts = <30 IRQ_TYPE_LEVEL_LOW>;
++		interrupt-names = "host-wake";
++		status = "okay";
++	}; 
++	
++	//sd-uhs-sdr104; // required to be disabled, otherwise the device get
++		// detected, but there is no communication
++
++};
++
++&spi0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&spi0_clk>, <&spi0_cs0>, <&spi0_tx>, <&spi0_rx>, <&spi0_cs1>;
++	status = "okay";
++};
++
++&tsadc {
++	rockchip,hw-tshut-mode = <0>;
++	rockchip,hw-tshut-polarity = <0>;
++	status = "okay";
++};
++
++/*
++ * These dmas described here for uarts are present in original q8 board
++ * dts, so I replicate them here because documentation says that serial
++ * ports can have dmas.
++ * note: 
++ *  - uart0 is the serial port connected to the bluetooth module
++ *  - uart2 is the onboard serial port 
++ * 
++ * As ok kernel 4.19 DMA for serial ports is disabled because it makes
++ * the ports unusable
++ * 
++ */
++&uart0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&uart0_xfer>, <&uart0_cts>, <&uart0_rts>;
++	//dmas = <&dmac_peri 1 &dmac_peri 2>;
++	//dma-names = "tx", "rx";
++	status = "okay";
++};
++
++&uart1 {
++	//dmas = <&dmac_peri 3 &dmac_peri 4>;
++	//dma-names = "tx", "rx";
++	status = "okay";
++};
++
++&uart2 {
++	//dmas = <&dmac_bus_s 4 &dmac_bus_s 5>;
++	//dma-names = "tx", "rx";
++	status = "okay";
++};
++
++&uart3 {
++	//dmas = <&dmac_peri 7 &dmac_peri 8>;
++	//dma-names = "tx", "rx";
++	status = "okay";
++};
++
++&uart4 {
++	//dmas = <&dmac_peri 9 &dmac_peri 10>;
++	//dma-names = "tx", "rx";
++	status = "disabled";
++};
++
++/*
++ * Here usbphy* should have their proper reset lines described in rk3288.dtsi
++ * Describing resets for usb phy is important because otherwise the USB
++ * port gets stuck in case it goes into autosuspend: plugging any device
++ * when the port is autosuspended will actually kill the port itself and
++ * require a power cycle.
++ * This is required for the usbphy1 phy, nonetheless it is a good idea to
++ * specify the proper resources for all the phys though.
++ * The reference patch which works in conjuction with the reset lines:
++ * https://patchwork.kernel.org/patch/9469811/
++ * 
++ */
++&usbphy {
++	status = "okay";
++};
++ 
++&usbphy0 {
++    vbus-supply = <&vcc_otg_5v>;
++};
++
++&usbphy2 {
++    vbus-supply = <&vcc_host_5v>;
++};
++
++&usb_host0_ehci {
++    dr_mode = "host";
++    reg = <0x0 0xff500000 0x0 0x20000>;
++    status = "disable";
++};
++
++&usb_host1 {
++	status = "okay";
++};
++
++&usb_otg {
++	status = "okay";
++};
++
++/*
++ * Enable VPU services and complete the relative IOMMU configurations
++ */
++&vopb {
++	status = "okay";
++};
++
++&vopb_mmu {
++	status = "okay";
++};
++
++&vopl {
++	status = "okay";
++};
++
++&vopl_mmu {
++	status = "okay";
++};
++
++&vpu_mmu {
++	status = "okay";
++};
++
++&vpu_service {
++	status = "okay";
++};
++
++&hevc_mmu {
++	status = "okay";
++};
++
++&hevc_service {
++	status = "okay";
++};
++
++&wdt {
++	status = "okay";
++};
++
++// i2s bus is present on q8 device, enable it
++&i2s {
++	#sound-dai-cells = <0>;
++	status = "okay";
++};
++
++// spdif is present on q8 device, enable it
++&spdif {
++	status = "okay";
++};

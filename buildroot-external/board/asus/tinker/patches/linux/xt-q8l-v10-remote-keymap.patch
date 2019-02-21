@@ -1,0 +1,103 @@
+diff --git a/include/media/rc-map.h b/include/media/rc-map.h
+index bfa3017..c2a21bb 100644
+--- a/include/media/rc-map.h
++++ b/include/media/rc-map.h
+@@ -277,6 +277,7 @@ struct rc_map *rc_map_get(const char *name);
+ #define RC_MAP_WINFAST                   "rc-winfast"
+ #define RC_MAP_WINFAST_USBII_DELUXE      "rc-winfast-usbii-deluxe"
+ #define RC_MAP_SU3000                    "rc-su3000"
++#define RC_MAP_XT_Q8L_V10                "rc-xt-q8l-v10"
+ #define RC_MAP_ZX_IRDEC                  "rc-zx-irdec"
+ 
+ /*
+diff --git a/drivers/media/rc/keymaps/Makefile b/drivers/media/rc/keymaps/Makefile
+index d6b913a..ee00ce5 100644
+--- a/drivers/media/rc/keymaps/Makefile
++++ b/drivers/media/rc/keymaps/Makefile
+@@ -116,4 +116,5 @@ obj-$(CONFIG_RC_MAP) += rc-adstech-dvb-t-pci.o \
+ 			rc-winfast.o \
+ 			rc-winfast-usbii-deluxe.o \
+ 			rc-su3000.o \
++           rc-xt-q8l-v10.o \
+ 			rc-zx-irdec.o
+diff --git a/drivers/media/rc/keymaps/rc-xt-q8l-v10.c b/drivers/media/rc/keymaps/rc-xt-q8l-v10.c
+index e69de29..19c7d9e 100644
+--- /dev/null
++++ b/drivers/media/rc/keymaps/rc-xt-q8l-v10.c
+@@ -0,0 +1,76 @@
++// SPDX-License-Identifier: GPL-2.0+
++// rc-xt-q8l-v10.c - Keytable for xt-q8l-v10 tv box remote controller
++//
++// keymap imported from ir-keymaps.c
++//
++// Copyright (c) 2018 Paolo Sabatino
++
++#include <media/rc-map.h>
++#include <linux/module.h>
++
++/*
++
++*/
++
++static struct rc_map_table xt_q8l_v10[] = {
++	
++	{ 0xcc1d11, KEY_ENTER },
++	{ 0xcc1d00, KEY_POWER },
++	{ 0xcc1d15, KEY_PLAYPAUSE },
++	{ 0xcc1d16, KEY_STOP },
++	{ 0xcc1d06, KEY_PREVIOUSSONG },
++	{ 0xcc1d0a, KEY_NEXTSONG },
++	{ 0xcc1d41, KEY_1 },
++	{ 0xcc1d45, KEY_2 },
++	{ 0xcc1d4d, KEY_3 },
++	{ 0xcc1d42, KEY_4 },
++	{ 0xcc1d46, KEY_5 },
++	{ 0xcc1d4e, KEY_6 },
++	{ 0xcc1d43, KEY_7 },
++	{ 0xcc1d47, KEY_8 },
++	{ 0xcc1d4f, KEY_9 },
++	{ 0xcc1d49, KEY_0 },
++	{ 0xcc1d4a, KEY_BACKSPACE },
++	{ 0xcc1d48, KEY_F6 },
++	{ 0xcc1d03, KEY_HOME },
++	{ 0xcc1d0f, KEY_BACK },
++	{ 0xcc1d40, KEY_MENU },
++	{ 0xcc1d4c, KEY_TEXT },
++	{ 0xcc1d10, KEY_LEFT },
++	{ 0xcc1d12, KEY_RIGHT },
++	{ 0xcc1d44, KEY_DOWN },
++	{ 0xcc1d07, KEY_UP },
++	{ 0xcc1d02, KEY_VOLUMEDOWN },
++	{ 0xcc1d0c, KEY_MUTE },
++	{ 0xcc1d0e, KEY_VOLUMEUP },
++	{ 0xcc1d01, KEY_F1 },
++	{ 0xcc1d05, KEY_F2 },
++	{ 0xcc1d09, KEY_F3 },
++	{ 0xcc1d0d, KEY_F4 },
++	
++};
++
++static struct rc_map_list xt_q8l_v10_map = {
++	.map = {
++		.scan     = xt_q8l_v10,
++		.size     = ARRAY_SIZE(xt_q8l_v10),
++		.rc_proto = RC_PROTO_NEC,	/* Legacy IR type */
++		.name     = RC_MAP_XT_Q8L_V10,
++	}
++};
++
++static int __init init_rc_map_xt_q8l_v10(void)
++{
++	return rc_map_register(&xt_q8l_v10_map);
++}
++
++static void __exit exit_rc_map_xt_q8l_v10(void)
++{
++	rc_map_unregister(&xt_q8l_v10_map);
++}
++
++module_init(init_rc_map_xt_q8l_v10)
++module_exit(exit_rc_map_xt_q8l_v10)
++
++MODULE_LICENSE("GPL");
++MODULE_AUTHOR("Paolo Sabatino");

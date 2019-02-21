@@ -47,7 +47,7 @@ if [ -d "${CONFIG_DIR}/modules" ]; then
     echo "[Info] Update Modules configuration!"
 
     rm -rf /etc/modules-load.d/*
-    cp -f ${CONFIG_DIR}/modules/* /etc/modules-load.d/*
+    cp -f ${CONFIG_DIR}/modules/* /etc/modules-load.d/
 fi
 
 ##
