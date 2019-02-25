@@ -1,7 +1,5 @@
 [Unit]
 Description=Docker persistent data
-Requires=mnt-data.mount
-After=mnt-data.mount
 Before=docker.service
 
 [Mount]
