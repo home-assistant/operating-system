@@ -23,7 +23,7 @@ runSupervisor() {
 
     # shellcheck disable=SC2086
     docker container run --name hassos_supervisor \
-        --security-opt apparmor="${APPARMOR}" \
+        --privileged --security-opt apparmor="${APPARMOR}" \
         -v /var/run/docker.sock:/var/run/docker.sock \
         -v /var/run/dbus:/var/run/dbus \
         -v /etc/machine-id:/etc/machine-id:ro \
