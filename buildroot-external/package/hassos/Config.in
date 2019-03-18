@@ -23,16 +23,6 @@ config BR2_PACKAGE_HASSOS_SUPERVISOR_ARGS
 	help
 	  Extended docker arguments to run the supervisor.
 
-config BR2_PACKAGE_HASSOS_SUPERVISOR_PROFILE
-	string "AppArmor supervisor profile"
-	help
-	  AppArmor profile for supervisor.
-
-config BR2_PACKAGE_HASSOS_SUPERVISOR_PROFILE_URL
-	string "AppArmor supervisor profile URL"
-	help
-	  AppArmor profile for supervisor url.
-
 config BR2_PACKAGE_HASSOS_CLI
 	string "cli docker image"
 	help
