@@ -21,8 +21,6 @@ define HASSOS_INSTALL_TARGET_CMDS
 		--supervisor $(BR2_PACKAGE_HASSOS_SUPERVISOR) \
 		--supervisor-version $(BR2_PACKAGE_HASSOS_SUPERVISOR_VERSION) \
 		--supervisor-args $(BR2_PACKAGE_HASSOS_SUPERVISOR_ARGS) \
-		--supervisor-profile $(BR2_PACKAGE_HASSOS_SUPERVISOR_PROFILE) \
-		--supervisor-profile-url $(BR2_PACKAGE_HASSOS_SUPERVISOR_PROFILE_URL) \
 		--cli $(BR2_PACKAGE_HASSOS_CLI) \
 		--cli-version $(BR2_PACKAGE_HASSOS_CLI_VERSION) \
 		--cli-args $(BR2_PACKAGE_HASSOS_CLI_ARGS) \
