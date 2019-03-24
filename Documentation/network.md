@@ -4,7 +4,7 @@ HassOS uses NetworkManager to control the host network. In future releases, you 
 
 ## Configuration Examples
 
-You can read the [Official Manual][keyfile] or find many configuration examples across the internet. The system is read-only, if you don't want the IP address to change on every boot, you should set the UUID property with a generic [UUID4][uuid]. Inside `\CONFIG\network\` on the USB or SD, create a file called `my-network` and add the appropriate contents below:
+You can read the [Official Manual][keyfile] or find many configuration examples across the internet. The system is read-only, if you don't want the IP address to change on every boot, you should set the UUID property with a generic [UUID4][uuid]. Inside `\CONFIG\network\` on the USB or on the SD (Linuxers: on the `vfat` partition of the SD, typically `/dev/sdx1`), create a file called `my-network` and add the appropriate contents below:
 
 ### Default
 
