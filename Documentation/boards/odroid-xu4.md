@@ -12,7 +12,10 @@ The Odroid XU4 has a hidden boot sector that is only visible on the Odroid itsel
 2) Clean/wiped/corruped boot sector:
 * You'll need to follow [Hardkernel's instructions](https://forum.odroid.com/viewtopic.php?f=53&t=6173) to get a working boot sector. Then flash HassOS and follow instructions above.
 * Alternatively, you can try flash HassOS to both an SD and eMMC, then boot off the SD with the eMMC also plugged in, then run `dd if=/dev/mmcblk1 of=/dev/mmcblk0boot0 bs=512 skip=1 seek=0 count=16381` at the Linux prompt. Note that this is untested, but in theory should work..
-
+If you are getting permissions issues when using the dd command, try disabling RO:
+`echo 0 > /sys/block/mmcblk0boot0/force_ro`
+to re-enable after running dd:
+`echo 1 > /sys/block/mmcblk0boot0/force_ro`
 ## Console
 
 By default, console access is granted over the serial header and over HDMI. Certain startup messages will only appear on the serial console by default. To show the messages on the HDMI console instead, swap the order of the two consoles in the `cmdline.txt` file on the boot partition. You can also delete the SAC2 console if you don't plan on using the serial adapter.
