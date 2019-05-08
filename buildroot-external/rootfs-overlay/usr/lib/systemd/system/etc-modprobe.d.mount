@@ -1,0 +1,14 @@
+[Unit]
+Description=Kernel persistent modprobe.d
+Requires=mnt-overlay.mount
+After=mnt-overlay.mount
+Before=systemd-modules-load.service hassos-config.service
+
+[Mount]
+What=/mnt/overlay/etc/modprobe.d
+Where=/etc/modprobe.d
+Type=None
+Options=bind
+
+[Install]
+WantedBy=hassos-bind.target
