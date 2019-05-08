@@ -8,18 +8,20 @@ Format a USB stick with FAT32/EXT4/NTFS and name it `CONFIG`. Alternative you ca
 ```text
 network/
 modules/
+modprobe/
 udev/
 authorized_keys
 timesyncd.conf
 hassos-xy.raucb
 ```
 
-- The `network` folder can contain any kind of NetworkManager connection files. For more information see [Network][network.md]. 
+- The `network` folder can contain any kind of NetworkManager connection files. For more information see [Network][network.md].
 - The `modules` folder is for modules-load configuration files.
+- The `modprobe` folder is for modules configuration files (/etc/modprobe.d)
 - The `udev` folder is for udev rules files.
 - The `authorized_keys` file activates debug SSH access on port `22222`. See [Debugging Hassio][debug-hassio].
 - The `timesyncd.conf` file allow you to set different NTP servers. HassOS won't boot without correct working time servers!
-- The `hassos-*.raucb` file is a firmware OTA update which will be installed. These can be found on on the [release][hassos-release] page. 
+- The `hassos-*.raucb` file is a firmware OTA update which will be installed. These can be found on on the [release][hassos-release] page.
 
 You can put this USB stick into the device and it will be read on startup. You can also trigger this process later over the
 API/UI or by calling `systemctl restart hassos-config` on the host.
@@ -32,7 +34,7 @@ You can edit or create a `cmdline.txt` in your boot partition. That will be read
 
 ### Kernel-Module
 
-The kernel module folder `/etc/modules-load.d` is persistent and you can add your configuration files there. See [Systemd modules load][systemd-modules].
+The kernel module folder `/etc/modules-load.d` is persistent and you can add your configuration files there. See [Systemd modules load][systemd-modules]. You can add the modules configuration files in `/etc/modprobe.d` that is also persistent.
 
 ### Udev rules
 

@@ -44,10 +44,19 @@ fi
 ##
 # Modules
 if [ -d "${CONFIG_DIR}/modules" ]; then
-    echo "[Info] Update Modules configuration!"
+    echo "[Info] Update Modules autoload!"
 
     rm -rf /etc/modules-load.d/*
     cp -f ${CONFIG_DIR}/modules/* /etc/modules-load.d/
+fi
+
+##
+# Modules configuration
+if [ -d "${CONFIG_DIR}/modprobe" ]; then
+    echo "[Info] Update Modules configuration!"
+
+    rm -rf /etc/modprobe.d/*
+    cp -f ${CONFIG_DIR}/modprobe/* /etc/modprobe.d/
 fi
 
 ##
