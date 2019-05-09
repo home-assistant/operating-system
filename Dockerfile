@@ -4,7 +4,7 @@ FROM ubuntu:18.04
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 # Docker
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y --no-install-recommends \
         apt-transport-https \
         ca-certificates \
         curl \
@@ -16,7 +16,7 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Build Tools
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y --no-install-recommends \
         wget patch vim cpio python unzip rsync bc bzip2 ncurses-dev \
         git make g++ file perl bash binutils locales qemu-utils bison flex \
     && rm -rf /var/lib/apt/lists/*
