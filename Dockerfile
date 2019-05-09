@@ -12,7 +12,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/* \
     && curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - \
     && add-apt-repository "deb https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" \
-    && apt-get update && apt-get install -y docker-ce \
+    && apt-get update && apt-get install -y --no-install-recommends \
+        docker-ce \
     && rm -rf /var/lib/apt/lists/*
 
 # Build Tools
