@@ -1,5 +1,8 @@
 FROM ubuntu:18.04
 
+# Set shell
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+
 # Docker
 RUN apt-get update && apt-get install -y \
         apt-transport-https \
