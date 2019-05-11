@@ -1,0 +1,15 @@
+categories:
+  - title: 'OS'
+    label: 'os'
+  - title: 'Build'
+    label: 'build'
+  - title: 'Raspberry Pi'
+    label: 'raspberry'
+  - title: 'Open Virtual Appliance'
+    label: 'ova'
+  - title: 'Intel-Nuc'
+    label: 'intel-nuc'
+template: |
+  ## Changes
+
+  $CHANGES
