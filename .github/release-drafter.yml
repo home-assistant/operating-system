@@ -4,11 +4,11 @@ categories:
   - title: 'Build'
     label: 'build'
   - title: 'Raspberry Pi'
-    label: 'raspberry'
+    label: 'board/raspberry'
   - title: 'Open Virtual Appliance'
-    label: 'ova'
+    label: 'board/ova'
   - title: 'Intel-Nuc'
-    label: 'intel-nuc'
+    label: 'board/intel-nuc'
 template: |
   ## Changes
 
