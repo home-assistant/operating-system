@@ -10,7 +10,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         curl \
         gpg-agent \
         software-properties-common \
-    && rm -rf /var/lib/apt/lists/* \
     && curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - \
     && add-apt-repository "deb https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" \
     && apt-get update && apt-get install -y --no-install-recommends \
