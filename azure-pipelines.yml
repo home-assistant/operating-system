@@ -89,7 +89,12 @@ jobs:
         board: 'ova'
   steps:
   - script: |
+      set -e
+      
       sudo dockerd -s vfs &> /dev/null &
-      sudo ln -s "$(pwd)" /build
+      
+      sudo cp -rf "$(pwd)" /build
+      cd /build
+
       sudo make $(board)
     displayName: 'Build $(board)'
