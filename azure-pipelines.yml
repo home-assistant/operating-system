@@ -90,5 +90,8 @@ jobs:
   steps:
   - script: sudo dockerd -s vfs &> /dev/null &
     displayName: 'Start docker'
-  - script: make $(board)
+  - script: |
+      ps -ax
+      ls -ls
+      make $(board)
     displayName: 'Build $(board)'
