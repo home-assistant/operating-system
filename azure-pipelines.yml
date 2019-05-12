@@ -18,6 +18,7 @@ variables:
     value: 'v1.16.3'
   - name: versionShellCheck
     value: 'v0.6.0'
+  - group: docker
 
 jobs:
 
@@ -51,40 +52,41 @@ jobs:
           buildroot-external/rootfs-overlay/usr/lib/rauc/*
     displayName: 'Run ShellCheck'
 
-# condition: and(startsWith(variables['Build.SourceBranch'], 'refs/tags'), succeeded('ShellCheck'))
-- job: 'Release'
-  condition: and(eq(variables['Build.SourceBranchName'], 'dev'), succeeded('ShellCheck'))
-  dependsOn: 'ShellCheck'
+
+- job: 'AzureContainer'
+  condition: and(eq(variables['Build.SourceBranchName'], 'dev'), succeeded('ShellCheck'), succeeded('Hadolint'))
+  dependsOn:
+    - 'ShellCheck'
+    - 'Hadolint'
   pool:
     vmImage: 'ubuntu-16.04'
-  container: 'ubuntu:18.04'
+  steps:
+  - script: sudo docker login -u $(dockerUser) -p $(dockerPassword)
+    displayName: 'Docker hub login'
+  - script: |
+      set -e
+
+      sudo docker build -t homeassistant/hassos-azure:latest .azure
+      sudo docker push homeassistant/hassos-azure:latest
+    displayName: 'Update Azure build container'
+
+
+# condition: and(startsWith(variables['Build.SourceBranch'], 'refs/tags'), succeeded('ShellCheck'), succeeded('AzureContainer'))
+- job: 'Release'
+  condition: and(eq(variables['Build.SourceBranchName'], 'dev'), succeeded('ShellCheck'), succeeded('AzureContainer'))
+  dependsOn:
+    - 'ShellCheck'
+    - 'AzureContainer'
+  pool:
+    vmImage: 'ubuntu-16.04'
+  container: 'homeassistant/hassos-azure'
   strategy:
     maxParallel: 1
     matrix:
       OpenVirtualAppliance:
         board: 'ova'
   steps:
-  - script: |
-      set -e
-
-      apt-get update
-      apt-get install -y --no-install-recommends \
-        apt-transport-https ca-certificates curl \
-        gpg-agent software-properties-common
-
-      curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
-      add-apt-repository "deb https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-
-      apt-get update
-      apt-get install -y --no-install-recommends \
-        docker-ce
-    displayName: 'Setup docker'
-  - script: |
-      apt-get install -y --no-install-recommends \
-        wget patch vim cpio python unzip rsync bc bzip2 ncurses-dev \
-        git make g++ file perl bash binutils locales qemu-utils bison flex
-    displayName: 'Setup buildroot'
-  - script: dockerd -s vfs &> /dev/null &
+  - script: sudo dockerd -s vfs &> /dev/null &
     displayName: 'Start docker'
   - script: make $(board)
     displayName: 'Build $(board)'
