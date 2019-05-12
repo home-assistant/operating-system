@@ -90,11 +90,8 @@ jobs:
   steps:
   - script: |
       set -e
-      
       sudo dockerd -s vfs &> /dev/null &
       
       sudo cp -rf "$(pwd)" /build
-      cd /build
-
-      sudo make $(board)
+      cd /build && sudo make $(board)
     displayName: 'Build $(board)'
