@@ -66,7 +66,9 @@ jobs:
   - script: |
       set -e
 
-      sudo docker build -t homeassistant/hassos-azure:latest .azure
+      sudo docker pull homeassistant/hassos-azure:pull
+      sudo docker build -t homeassistant/hassos-azure:latest \
+        --cache-from homeassistant/hassos-azure:latest .azure
       sudo docker push homeassistant/hassos-azure:latest
     displayName: 'Update Azure build container'
 
@@ -79,7 +81,7 @@ jobs:
     - 'AzureContainer'
   pool:
     vmImage: 'ubuntu-16.04'
-  container: 'homeassistant/hassos-azure'
+  container: 'homeassistant/hassos-azure:latest'
   strategy:
     maxParallel: 1
     matrix:
