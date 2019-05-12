@@ -51,9 +51,8 @@ jobs:
           buildroot-external/rootfs-overlay/usr/lib/rauc/*
     displayName: 'Run ShellCheck'
 
-
+# condition: and(startsWith(variables['Build.SourceBranch'], 'refs/tags'), succeeded('ShellCheck'))
 - job: 'Release'
-  #condition: and(startsWith(variables['Build.SourceBranch'], 'refs/tags'), succeeded('ShellCheck'))
   condition: and(eq(variables['Build.SourceBranchName'], 'dev'), 'refs/tags'), succeeded('ShellCheck'))
   dependsOn: 'ShellCheck'
   pool:
