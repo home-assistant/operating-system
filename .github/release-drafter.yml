@@ -1,0 +1,15 @@
+categories:
+  - title: 'HassOS Core'
+    label: 'os'
+  - title: 'Build'
+    label: 'build'
+  - title: 'Raspberry Pi'
+    label: 'board/raspberry'
+  - title: 'Open Virtual Appliance'
+    label: 'board/ova'
+  - title: 'Intel-Nuc'
+    label: 'board/intel-nuc'
+template: |
+  ## Changes
+
+  $CHANGES
