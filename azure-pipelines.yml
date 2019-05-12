@@ -88,10 +88,12 @@ jobs:
       OpenVirtualAppliance:
         board: 'ova'
   steps:
-  - script: sudo dockerd -s vfs &> /dev/null &
-    displayName: 'Start docker'
   - script: |
-      ps -ax
-      ls -ls
-      make $(board)
+      sudo dockerd -s vfs &> /dev/null &
+
+      sudo mkdir -p /build
+      sudo mount -o bind $(pwd) /build
+
+      cd /build
+      sudo make $(board)
     displayName: 'Build $(board)'
