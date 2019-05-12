@@ -90,5 +90,6 @@ jobs:
   steps:
   - script: |
       sudo dockerd -s vfs &> /dev/null &
+      sudo ln "$(pwd)" /build
       sudo make $(board)
     displayName: 'Build $(board)'
