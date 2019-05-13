@@ -82,9 +82,7 @@ jobs:
     displayName: 'Install GHR'
   - script: |
       sudo docker run --rm --privileged -v "$(pwd):/build" \
+        -e BUILDER_UID="$(id -u)" -e BUILDER_GID="$(id -g)" \
         -v "/mnt/build-cache:/cache" \
         hassos:azure make $(board)
-      sudo docker run --rm --privileged -v "$(pwd):/build" \
-        -v "/mnt/build-cache:/cache" \
-        hassos:azure make clean
     displayName: 'Build $(board)'
