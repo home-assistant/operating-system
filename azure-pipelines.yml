@@ -69,9 +69,7 @@ jobs:
   - script: sudo docker build -t hassos:azure .
     displayName: 'Build container for HassOS'
   - script: |
-      sudo modprobe overlayfs
-
       sudo docker run --rm --privileged -v "$(pwd):/build" \
         -v "/mnt/build-cache/cache:/cache" \
-        hassos:builder make $(board)
+        hassos:azure make $(board)
     displayName: 'Build $(board)'
