@@ -57,7 +57,8 @@ jobs:
 
 
 - job: 'Release'
-  condition: and(startsWith(variables['Build.SourceBranch'], 'refs/tags'), succeeded('ShellCheck'))
+  #condition: and(startsWith(variables['Build.SourceBranch'], 'refs/tags'), succeeded('ShellCheck'))
+  condition: succeeded('ShellCheck')
   timeoutInMinutes: 240
   dependsOn:
     - 'ShellCheck'
@@ -83,4 +84,7 @@ jobs:
       sudo docker run --rm --privileged -v "$(pwd):/build" \
         -v "/mnt/build-cache:/cache" \
         hassos:azure make $(board)
+      sudo docker run --rm --privileged -v "$(pwd):/build" \
+        -v "/mnt/build-cache:/cache" \
+        hassos:azure make clean
     displayName: 'Build $(board)'
