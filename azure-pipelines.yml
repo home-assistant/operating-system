@@ -27,7 +27,8 @@ jobs:
   pool:
     vmImage: 'ubuntu-16.04'
   steps:
-  - script: sudo docker pull hadolint/hadolint:$(versionHadolint)
+  - script: |
+      sudo docker pull hadolint/hadolint:$(versionHadolint)
     displayName: 'Install Hadolint'
   - script: |
       sudo docker run --rm -i \
@@ -40,7 +41,8 @@ jobs:
   pool:
     vmImage: 'ubuntu-16.04'
   steps:
-  - script: sudo docker pull koalaman/shellcheck:$(versionShellCheck)
+  - script: |
+      sudo docker pull koalaman/shellcheck:$(versionShellCheck)
     displayName: 'Install ShellCheck'
   - script: |
       sudo docker run --rm -i \
@@ -54,9 +56,8 @@ jobs:
     displayName: 'Run ShellCheck'
 
 
-# condition: and(startsWith(variables['Build.SourceBranch'], 'refs/tags'), succeeded('ShellCheck'))
 - job: 'Release'
-  condition: and(eq(variables['Build.SourceBranchName'], 'dev'), succeeded('ShellCheck'))
+  condition: and(startsWith(variables['Build.SourceBranch'], 'refs/tags'), succeeded('ShellCheck'))
   timeoutInMinutes: 240
   dependsOn:
     - 'ShellCheck'
@@ -67,8 +68,11 @@ jobs:
     matrix:
       OpenVirtualAppliance:
         board: 'ova'
+  workspace:
+    clean: 'all'
   steps:
-  - script: sudo docker build -t hassos:azure .
+  - script: |
+      sudo docker build -t hassos:azure .
     displayName: 'Build container for HassOS'
   - script: |
       curl -SsL https://github.com/tcnksm/ghr/releases/download/$(versionGHR)/ghr_$(versionGHR)_linux_amd64.tar.gz | tar xzf -
