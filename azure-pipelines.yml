@@ -55,11 +55,11 @@ jobs:
 # condition: and(startsWith(variables['Build.SourceBranch'], 'refs/tags'), succeeded('ShellCheck'))
 - job: 'Release'
   condition: and(eq(variables['Build.SourceBranchName'], 'dev'), succeeded('ShellCheck'))
-  timeoutInMinutes: 360
+  timeoutInMinutes: 240
   dependsOn:
     - 'ShellCheck'
   pool:
-    vmImage: 'ubuntu-16.04'
+    name: 'Buildroot'
   strategy:
     maxParallel: 1
     matrix:
@@ -69,10 +69,9 @@ jobs:
   - script: sudo docker build -t hassos:builder .
     displayName: 'Build container for HassOS'
   - script: |
-      #sudo modprobe overlayfs
-      mkdir -p cache
+      sudo modprobe overlayfs
 
       sudo docker run --rm --privileged -v "$(pwd):/build" \
-        -v "$(pwd)/cache:/cache" \
+        -v "/mnt/build-cache/cache:/cache" \
         hassos:builder make $(board)
     displayName: 'Build $(board)'
