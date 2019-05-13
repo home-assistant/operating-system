@@ -55,6 +55,7 @@ jobs:
 # condition: and(startsWith(variables['Build.SourceBranch'], 'refs/tags'), succeeded('ShellCheck'))
 - job: 'Release'
   condition: and(eq(variables['Build.SourceBranchName'], 'dev'), succeeded('ShellCheck'))
+  timeoutInMinutes: 360
   dependsOn:
     - 'ShellCheck'
   pool:
