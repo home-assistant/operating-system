@@ -91,10 +91,11 @@ jobs:
   - script: |
       set -e
       sudo dockerd -s vfs &
+      sleep 30
       
       pwd
       ls -ls
       ps -ax
       sudo cp -rfp "$(pwd)" /build
-      cd /build && sudo make $(board)
+      make $(board)
     displayName: 'Build $(board)'
