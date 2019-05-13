@@ -81,8 +81,11 @@ jobs:
       rm -rf ghr_$(versionGHR)_linux_amd64
     displayName: 'Install GHR'
   - script: |
+      BUILDER_UID="$(id -u)"
+      BUILDER_GID="$(id -g)"
+
       sudo docker run --rm --privileged -v "$(pwd):/build" \
-        -e BUILDER_UID="$(id -u)" -e BUILDER_GID="$(id -g)" \
+        -e BUILDER_UID="${BUILDER_UID}" -e BUILDER_GID="${BUILDER_GID}" \
         -v "/mnt/build-cache:/cache" \
         hassos:azure make $(board)
     displayName: 'Build $(board)'
