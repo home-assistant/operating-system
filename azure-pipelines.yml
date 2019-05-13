@@ -18,7 +18,6 @@ variables:
     value: 'v1.16.3'
   - name: versionShellCheck
     value: 'v0.6.0'
-  - group: docker
 
 jobs:
 
@@ -53,49 +52,24 @@ jobs:
     displayName: 'Run ShellCheck'
 
 
-- job: 'AzureContainer'
-  condition: and(eq(variables['Build.SourceBranchName'], 'dev'), succeeded('ShellCheck'), succeeded('Hadolint'))
-  dependsOn:
-    - 'ShellCheck'
-    - 'Hadolint'
-  pool:
-    vmImage: 'ubuntu-16.04'
-  steps:
-  - script: sudo docker login -u $(dockerUser) -p $(dockerPassword)
-    displayName: 'Docker hub login'
-  - script: |
-      set -e
-
-      sudo docker pull homeassistant/hassos-azure:latest
-      sudo docker build -t homeassistant/hassos-azure:latest \
-        --cache-from homeassistant/hassos-azure:latest .azure
-      sudo docker push homeassistant/hassos-azure:latest
-    displayName: 'Update Azure build container'
-
-
-# condition: and(startsWith(variables['Build.SourceBranch'], 'refs/tags'), succeeded('ShellCheck'), succeeded('AzureContainer'))
+# condition: and(startsWith(variables['Build.SourceBranch'], 'refs/tags'), succeeded('ShellCheck'))
 - job: 'Release'
-  condition: and(eq(variables['Build.SourceBranchName'], 'dev'), succeeded('ShellCheck'), succeeded('AzureContainer'))
+  condition: and(eq(variables['Build.SourceBranchName'], 'dev'), succeeded('ShellCheck'))
   dependsOn:
     - 'ShellCheck'
-    - 'AzureContainer'
   pool:
     vmImage: 'ubuntu-16.04'
-  container: 'homeassistant/hassos-azure:latest'
   strategy:
     maxParallel: 1
     matrix:
       OpenVirtualAppliance:
         board: 'ova'
   steps:
+  - script: sudo docker build -t hassos:builder .
+    displayName: 'Build container for HassOS'
   - script: |
-      set -e
-      sudo dockerd -s vfs &
-      sleep 30
-      
-      pwd
-      ls -ls
-      ps -ax
-      sudo cp -rfp "$(pwd)" /build
-      make $(board)
+      sudo modprobe overlayfs
+
+      sudo docker run --rm --privileged -v "$(pwd):/build" \
+        hassos:builder make $(board)
     displayName: 'Build $(board)'
