@@ -66,7 +66,7 @@ jobs:
       OpenVirtualAppliance:
         board: 'ova'
   steps:
-  - script: sudo docker build -t hassos:builder .
+  - script: sudo docker build -t hassos:azure .
     displayName: 'Build container for HassOS'
   - script: |
       sudo modprobe overlayfs
