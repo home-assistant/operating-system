@@ -114,19 +114,29 @@ cat > /mnt/data/hassos.json <<- EOF
 EOF
 
 # Setup AppArmor
-if [ ! -z "${APPARMOR}" ]; then
-    mkdir -p /mnt/data/${APPARMOR}
+if [ -n "${APPARMOR}" ]; then
+    mkdir -p "/mnt/data/${APPARMOR}"
 
     # Supervisor
-    if [ ! -z "${SUPERVISOR_PROFILE_URL}" ]; then
-        curl -L -o /mnt/data/${APPARMOR}/${SUPERVISOR_PROFILE} ${SUPERVISOR_PROFILE_URL}
+    if [ -n "${SUPERVISOR_PROFILE_URL}" ]; then
+        curl -sL -o "/mnt/data/${APPARMOR}/${SUPERVISOR_PROFILE}" "${SUPERVISOR_PROFILE_URL}"
     fi
 
     # CLI
-    if [ ! -z "${CLI_PROFILE_URL}" ]; then
-        curl -L -o /mnt/data/${APPARMOR}/${CLI_PROFILE} ${CLI_PROFILE_URL}
+    if [ -n "${CLI_PROFILE_URL}" ]; then
+        curl -sL -o "/mnt/data/${APPARMOR}/${CLI_PROFILE}" "${CLI_PROFILE_URL}"
     fi
 fi
 
 # Finish
-kill -TERM $DOCKER_PID && wait $DOCKER_PID && umount /mnt/data
+kill -TERM $DOCKER_PID && wait $DOCKER_PID
+
+# Unmount data
+for _ in {1..10}; do
+    if umount /mnt/data; then
+        exit 0
+    fi
+    sleep 15
+done
+
+exit 1
