@@ -73,6 +73,13 @@ done
 dd if=/dev/zero of=${DATA_IMG} bs=1G count=1
 mkfs.ext4 -L "hassos-data" -E lazy_itable_init=0,lazy_journal_init=0 ${DATA_IMG}
 
+# Setup local user
+if [ "${BUILDER_UID:0}" -ne 0 ] && [ "${BUILDER_GID:0}" -ne 0 ]; then
+  groupadd -g "${BUILDER_GID}" builder
+  useradd -m -u "${BUILDER_UID}" -g "${BUILDER_GID}" -G docker builder
+  chmown builder:builder ${DATA_IMG}
+fi
+
 # Mount / init file structs
 mkdir -p /mnt/data/
 mount -o loop ${DATA_IMG} /mnt/data
