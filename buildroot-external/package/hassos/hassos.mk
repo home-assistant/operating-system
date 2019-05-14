@@ -16,9 +16,9 @@ endef
 
 define HASSOS_INSTALL_TARGET_CMDS
 	docker run --rm --privileged \
+		-e BUILDER_UID="$(shell id -u)" -e BUILDER_GID="$(shell id -g)" \
 		-v $(BINARIES_DIR):/export \
 		hassos-hostapps \
-		-e BUILDER_UID="$(id -u)" -e BUILDER_GID="$(id -g)" \
 		--supervisor $(BR2_PACKAGE_HASSOS_SUPERVISOR) \
 		--supervisor-version $(BR2_PACKAGE_HASSOS_SUPERVISOR_VERSION) \
 		--supervisor-args $(BR2_PACKAGE_HASSOS_SUPERVISOR_ARGS) \
