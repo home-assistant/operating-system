@@ -129,14 +129,11 @@ if [ -n "${APPARMOR}" ]; then
 fi
 
 # Finish
-kill -TERM $DOCKER_PID && wait $DOCKER_PID
+kill $DOCKER_PID && wait $DOCKER_PID
 
-# Unmount data
-for _ in {1..10}; do
-    if umount /mnt/data; then
-        exit 0
-    fi
-    sleep 15
-done
+# Unmount resource
+if ! umount /mnt/data; then
+    umount -f /mnt/data || echo "umount force fails!"
+fi
 
-exit 1
+exit 0
