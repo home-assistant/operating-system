@@ -77,7 +77,7 @@ mkfs.ext4 -L "hassos-data" -E lazy_itable_init=0,lazy_journal_init=0 ${DATA_IMG}
 if [ "${BUILDER_UID:0}" -ne 0 ] && [ "${BUILDER_GID:0}" -ne 0 ]; then
   groupadd -g "${BUILDER_GID}" builder
   useradd -m -u "${BUILDER_UID}" -g "${BUILDER_GID}" -G docker builder
-  chmown builder:builder ${DATA_IMG}
+  chown builder:builder ${DATA_IMG}
 fi
 
 # Mount / init file structs
