@@ -89,10 +89,10 @@ function create_kernel_image() {
     mkfs.ext4 -L "hassos-kernel" -E lazy_itable_init=0,lazy_journal_init=0 -O ^extent,^64bit "${kernel_img}"
 
     # Mount / init file structs
-    mkdir -p /mnt/data/
-    mount -o loop "${kernel_img}" /mnt/data
-    cp -f "${kernel}" /mnt/data/
-    umount /mnt/data
+    sudo mkdir -p /mnt/data/
+    sudo mount -o loop "${kernel_img}" /mnt/data
+    sudo cp -f "${kernel}" /mnt/data/
+    sudo umount /mnt/data
 }
 
 
