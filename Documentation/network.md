@@ -12,7 +12,7 @@ We have a preinstalled connection profile:
 
 ```ini
 [connection]
-id=HassOS default
+id=my-network
 uuid=f62bf7c2-e565-49ff-bbfc-a4cf791e6add
 type=802-3-ethernet
 
@@ -28,7 +28,7 @@ method=auto
 
 ```ini
 [connection]
-id=hassos-network
+id=my-network
 uuid=d55162b4-6152-4310-9312-8f4c54d86afa
 type=802-3-ethernet
 
@@ -44,7 +44,7 @@ method=auto
 
 ```ini
 [connection]
-id=hassos-network
+id=my-network
 uuid=72111c67-4a5d-4d5c-925e-f8ee26efb3c3
 type=802-11-wireless
 
