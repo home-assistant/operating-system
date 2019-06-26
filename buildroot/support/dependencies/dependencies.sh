@@ -181,6 +181,14 @@ if test "${missing_progs}" = "yes" ; then
 	exit 1
 fi
 
+# Check that the python version is at least 2.7
+PYTHON_VERSION=$(python -V 2>&1 |awk '{ split($2, v, "."); print v[1] v[2] }')
+if [ $PYTHON_VERSION -lt 27 ]; then
+	echo
+	echo "You have '$(python -V 2>&1)' installed.  Python >= 2.7 is required"
+	exit 1;
+fi
+
 if grep ^BR2_NEEDS_HOST_UTF8_LOCALE=y $BR2_CONFIG > /dev/null; then
 	if ! which locale > /dev/null ; then
 		echo
@@ -224,6 +232,7 @@ if grep -q ^BR2_HOSTARCH_NEEDS_IA32_LIBS=y $BR2_CONFIG ; then
 		echo "libstdc++6:i386, and zlib1g:i386)."
 		echo "If you're running a RedHat/Fedora distribution, install the glibc.i686 and"
 		echo "zlib.i686 packages."
+		echo "If you're running an ArchLinux distribution, install lib32-glibc."
 		echo "For other distributions, refer to the documentation on how to install the 32 bits"
 		echo "compatibility libraries."
 		exit 1
