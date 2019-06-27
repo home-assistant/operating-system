@@ -4,8 +4,7 @@
 #
 ################################################################################
 
-# docker-engine/hack/dockerfile/install/runc.installer:4 RUNC_COMMIT=...
-RUNC_VERSION = v1.0.0-rc6
+RUNC_VERSION = v1.0.0-rc8
 RUNC_SITE = $(call github,opencontainers,runc,$(RUNC_VERSION))
 RUNC_LICENSE = Apache-2.0
 RUNC_LICENSE_FILES = LICENSE

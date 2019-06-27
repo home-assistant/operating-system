@@ -161,16 +161,16 @@ List of Examples
 
 ---------------------------------------------------------------------
 
-Buildroot 2018.11.1 manual generated on 2018-12-19 22:05:51 UTC from
-git revision 29675f8e54
+Buildroot 2019.02.3 manual generated on 2019-06-07 07:39:18 UTC from
+git revision 3e8b918b87
 
 The Buildroot manual is written by the Buildroot developers. It is
 licensed under the GNU General Public License, version 2. Refer to
 the COPYING [http://git.buildroot.org/buildroot/tree/COPYING?id=
-29675f8e54d36660a7c0a0c3b54b9cc612395e9a] file in the Buildroot
+3e8b918b871f484b3ef57832aa41982e368d74c2] file in the Buildroot
 sources for the full text of this license.
 
-Copyright © 2004-2018 The Buildroot developers
+Copyright © 2004-2019 The Buildroot developers
 
 Part I. Getting started
 
@@ -244,7 +244,7 @@ vary between distributions).
       + perl (version 5.8.7 or any later)
       + tar
       + cpio
-      + python (version 2.6 or any later)
+      + python (version 2.7 or any later)
       + unzip
       + rsync
       + file (must be in /usr/bin/file)
@@ -1716,31 +1716,54 @@ The package build targets are (in the order they are executed):
 Additionally, there are some other useful make targets:
 
 +------------------------------------------------------------+
-|  command/   |Description                                   |
-|   target    |                                              |
-|-------------+----------------------------------------------|
-|show-depends |Displays the dependencies required to build   |
-|             |the package                                   |
-|-------------+----------------------------------------------|
-|graph-depends|Generate a dependency graph of the package, in|
-|             |the context of the current Buildroot          |
-|             |configuration. See this section Section 8.8,  |
-|             |“Graphing the dependencies between packages”  |
-|             |for more details about dependency graphs.     |
-|-------------+----------------------------------------------|
-|  dirclean   |Remove the whole package build directory      |
-|-------------+----------------------------------------------|
-|  reinstall  |Re-run the install commands                   |
-|-------------+----------------------------------------------|
-|   rebuild   |Re-run the compilation commands - this only   |
-|             |makes sense when using the OVERRIDE_SRCDIR    |
-|             |feature or when you modified a file directly  |
-|             |in the build directory                        |
-|-------------+----------------------------------------------|
-| reconfigure |Re-run the configure commands, then rebuild - |
-|             |this only makes sense when using the          |
-|             |OVERRIDE_SRCDIR feature or when you modified a|
-|             |file directly in the build directory          |
+|    command/target     |Description                         |
+|-----------------------+------------------------------------|
+|     show-depends      |Displays the first-order            |
+|                       |dependencies required to build the  |
+|                       |package                             |
+|-----------------------+------------------------------------|
+|show-recursive-depends |Recursively displays the            |
+|                       |dependencies required to build the  |
+|                       |package                             |
+|-----------------------+------------------------------------|
+|     show-rdepends     |Displays the first-order reverse    |
+|                       |dependencies of the package (i.e    |
+|                       |packages that directly depend on it)|
+|-----------------------+------------------------------------|
+|show-recursive-rdepends|Recursively displays the reverse    |
+|                       |dependencies of the package (i.e the|
+|                       |packages that depend on it, directly|
+|                       |or indirectly)                      |
+|-----------------------+------------------------------------|
+|     graph-depends     |Generate a dependency graph of the  |
+|                       |package, in the context of the      |
+|                       |current Buildroot configuration. See|
+|                       |this section Section 8.8, “Graphing |
+|                       |the dependencies between packages”  |
+|                       |for more details about dependency   |
+|                       |graphs.                             |
+|-----------------------+------------------------------------|
+|    graph-rdepends     |Generate a graph of this package    |
+|                       |reverse dependencies (i.e the       |
+|                       |packages that depend on it, directly|
+|                       |or indirectly)                      |
+|-----------------------+------------------------------------|
+|       dirclean        |Remove the whole package build      |
+|                       |directory                           |
+|-----------------------+------------------------------------|
+|       reinstall       |Re-run the install commands         |
+|-----------------------+------------------------------------|
+|        rebuild        |Re-run the compilation commands -   |
+|                       |this only makes sense when using the|
+|                       |OVERRIDE_SRCDIR feature or when you |
+|                       |modified a file directly in the     |
+|                       |build directory                     |
+|-----------------------+------------------------------------|
+|      reconfigure      |Re-run the configure commands, then |
+|                       |rebuild - this only makes sense when|
+|                       |using the OVERRIDE_SRCDIR feature or|
+|                       |when you modified a file directly in|
+|                       |the build directory                 |
 +------------------------------------------------------------+
 
 8.12.6. Using Buildroot during development
@@ -1770,10 +1793,21 @@ clean.
 Therefore, Buildroot provides a specific mechanism for this use case:
 the <pkg>_OVERRIDE_SRCDIR mechanism. Buildroot reads an override
 file, which allows the user to tell Buildroot the location of the
-source for certain packages. By default this override file is named
-local.mk and located in the top directory of the Buildroot source
-tree, but a different location can be specified through the
-BR2_PACKAGE_OVERRIDE_FILE configuration option.
+source for certain packages.
+
+The default location of the override file is $(CONFIG_DIR)/local.mk,
+as defined by the BR2_PACKAGE_OVERRIDE_FILE configuration option. $
+(CONFIG_DIR) is the location of the Buildroot .config file, so
+local.mk by default lives side-by-side with the .config file, which
+means:
+
+  * In the top-level Buildroot source directory for in-tree builds
+    (i.e., when O= is not used)
+  * In the out-of-tree directory for out-of-tree builds (i.e., when O
+    = is used)
+
+If a different location than these defaults is required, it can be
+specified through the BR2_PACKAGE_OVERRIDE_FILE configuration option.
 
 In this override file, Buildroot expects to find lines of the form:
 
@@ -2346,6 +2380,13 @@ Root filesystem overlays (BR2_ROOTFS_OVERLAY)
     .svn, .hg, etc., files called .empty and files ending in ~ are
     excluded from the copy.
 
+    When BR2_ROOTFS_MERGED_USR is enabled, then the overlay must not
+    contain the /bin, /lib or /sbin directories, as Buildroot will
+    create them as symbolic links to the relevant folders in /usr. In
+    such a situation, should the overlay have any programs or
+    libraries, they should be placed in /usr/bin, /usr/sbin and /usr/
+    lib.
+
     As shown in Section 9.1, “Recommended directory structure”, the
     recommended path for this overlay is board/<company>/<boardname>/
     rootfs-overlay.
@@ -2430,6 +2471,15 @@ Custom target skeleton (BR2_ROOTFS_SKELETON_CUSTOM)
     skeleton. Both options are available in the System configuration
     menu. If you specify a relative path, it will be relative to the
     root of the Buildroot tree.
+
+    Custom skeletons don’t need to contain the /bin, /lib or /sbin
+    directories, since they are created automatically during the
+    build. When BR2_ROOTFS_MERGED_USR is enabled, then the custom
+    skeleton must not contain the /bin, /lib or /sbin directories, as
+    Buildroot will create them as symbolic links to the relevant
+    folders in /usr. In such a situation, should the skeleton have
+    any programs or libraries, they should be placed in /usr/bin, /
+    usr/sbin and /usr/lib.
 
     This method is not recommended because it duplicates the entire
     skeleton, which prevents taking advantage of the fixes or
@@ -4877,6 +4927,11 @@ can optionally be defined, depending on the package’s needs. Many of
 them are only useful in very specific cases, typical packages will
 therefore only use a few of them, or none.
 
+  * PYTHON_FOO_SUBDIR may contain the name of a subdirectory inside
+    the package that contains the main setup.py file. This is useful,
+    if for example, the main setup.py file is not at the root of the
+    tree extracted by the tarball. If HOST_PYTHON_FOO_SUBDIR is not
+    specified, it defaults to PYTHON_FOO_SUBDIR.
   * PYTHON_FOO_ENV, to specify additional environment variables to
     pass to the Python setup.py script (for both the build and
     install steps). Note that the infrastructure is automatically
@@ -5045,6 +5100,16 @@ On lines 13-14, we specify the licensing terms for the package.
 Finally, on line 16, we invoke the luarocks-package macro that
 generates all the Makefile rules that actually allows the package to
 be built.
+
+Most of these details can be retrieved from the rock and rockspec.
+So, this file and the Config.in file can be generated by running the
+command luarocks buildroot foo lua-foo in the Buildroot directory.
+This command runs a specific Buildroot addon of luarocks that will
+automatically generate a Buildroot package. The result must still be
+manually inspected and possibly modified.
+
+  * The package/Config.in file has to be updated manually to include
+    the generated Config.in files.
 
 17.9.2. luarocks-package reference
 
@@ -5491,6 +5556,11 @@ typical packages will therefore only use a few of them.
 
   * ERLANG_FOOBAR_REBAR_ENV, to specify additional environment
     variables to pass to the rebar utility.
+  * ERLANG_FOOBAR_KEEP_DEPENDENCIES, to keep the dependencies
+    described in the rebar.config file. Valid values are YES or NO
+    (the default). Unless this variable is set to YES, the rebar
+    infrastructure removes such dependencies in a post-patch hook to
+    ensure rebar does not download nor compile them.
 
 With the rebar infrastructure, all the steps required to build and
 install the packages are already defined, and they generally work
@@ -5559,10 +5629,15 @@ LIBFOO_INSTALL_TARGET.
 An additional variable, specific to the Waf infrastructure, can also
 be defined.
 
+  * LIBFOO_SUBDIR may contain the name of a subdirectory inside the
+    package that contains the main wscript file. This is useful, if
+    for example, the main wscript file is not at the root of the tree
+    extracted by the tarball. If HOST_LIBFOO_SUBDIR is not specified,
+    it defaults to LIBFOO_SUBDIR.
   * LIBFOO_NEEDS_EXTERNAL_WAF can be set to YES or NO to tell
     Buildroot to use the bundled waf executable. If set to NO, the
     default, then Buildroot will use the waf executable provided in
-    the package source tree; if set to YES, then Buidlroot will
+    the package source tree; if set to YES, then Buildroot will
     download, install waf as a host tool and use it to build the
     package.
   * LIBFOO_WAF_OPTS, to specify additional options to pass to the waf
@@ -5662,6 +5737,11 @@ A few additional variables, specific to the Meson infrastructure, can
 also be defined. Many of them are only useful in very specific cases,
 typical packages will therefore only use a few of them.
 
+  * FOO_SUBDIR may contain the name of a subdirectory inside the
+    package that contains the main meson.build file. This is useful,
+    if for example, the main meson.build file is not at the root of
+    the tree extracted by the tarball. If HOST_FOO_SUBDIR is not
+    specified, it defaults to FOO_SUBDIR.
   * FOO_CONF_ENV, to specify additional environment variables to pass
     to meson for the configuration step. By default, empty.
   * FOO_CONF_OPTS, to specify additional options to pass to meson for
@@ -5669,6 +5749,8 @@ typical packages will therefore only use a few of them.
   * FOO_NINJA_ENV, to specify additional environment variables to
     pass to ninja, meson companion tool in charge of the build
     operations. By default, empty.
+  * FOO_NINJA_OPTS, to specify a space-separated list of targets to
+    build. By default, empty, to build the default target(s).
 
 17.16. Integration of Cargo-based packages
 
@@ -6974,14 +7056,26 @@ use git bisect to locate the origin of a problem.
 
 First of all, it is essential that the patch has a good commit
 message. The commit message should start with a separate line with a
-brief summary of the change, starting with the name of the affected
-package. The body of the commit message should describe why this
+brief summary of the change, prefixed by the area touched by the
+patch. A few examples of good commit titles:
+
+  * package/linuxptp: bump version to 2.0
+  * configs/imx23evk: bump Linux version to 4.19
+  * package/pkg-generic: postpone evaluation of dependency conditions
+  * boot/uboot: needs host-{flex,bison}
+  * support/testing: add python-ubjson tests
+
+The description that follows the prefix should start with a lower
+case letter (i.e "bump", "needs", "postpone", "add" in the above
+examples).
+
+Second, the body of the commit message should describe why this
 change is needed, and if necessary also give details about how it was
 done. When writing the commit message, think of how the reviewers
 will read it, but also think about how you will read it when you look
 at this change again a few years down the line.
 
-Second, the patch itself should do only one change, but do it
+Third, the patch itself should do only one change, but do it
 completely. Two unrelated or weakly related changes should usually be
 done in two separate patches. This usually means that a patch affects
 only a single package. If several changes are related, it is often
@@ -7239,7 +7333,7 @@ Chapter 22. DEVELOPERS file and get-developers
 
 The main Buildroot directory contains a file named DEVELOPERS that
 lists the developers involved with various areas of Buildroot. Thanks
-to this file, the get-developer tool allows to:
+to this file, the get-developers tool allows to:
 
   * Calculate the list of developers to whom patches should be sent,
     by parsing the patches and matching the modified files with the
@@ -7259,23 +7353,23 @@ DEVELOPERS file.
 The DEVELOPERS file format is documented in detail inside the file
 itself.
 
-The get-developer tool, located in utils/ allows to use the
+The get-developers tool, located in utils/ allows to use the
 DEVELOPERS file for various tasks:
 
   * When passing one or several patches as command line argument,
-    get-developer will return the appropriate git send-email command.
-    If the -e option is passed, only the email addresses are printed
-    in a format suitable for git send-email --cc-cmd.
-  * When using the -a <arch> command line option, get-developer will
+    get-developers will return the appropriate git send-email
+    command. If the -e option is passed, only the email addresses are
+    printed in a format suitable for git send-email --cc-cmd.
+  * When using the -a <arch> command line option, get-developers will
     return the list of developers in charge of the given
     architecture.
-  * When using the -p <package> command line option, get-developer
+  * When using the -p <package> command line option, get-developers
     will return the list of developers in charge of the given
     package.
-  * When using the -c command line option, get-developer will look at
-    all files under version control in the Buildroot repository, and
-    list the ones that are not handled by any developer. The purpose
-    of this option is to help completing the DEVELOPERS file.
+  * When using the -c command line option, get-developers will look
+    at all files under version control in the Buildroot repository,
+    and list the ones that are not handled by any developer. The
+    purpose of this option is to help completing the DEVELOPERS file.
   * When using without any arguments, it validates the integrity of
     the DEVELOPERS file and will note WARNINGS for items that don’t
     match.

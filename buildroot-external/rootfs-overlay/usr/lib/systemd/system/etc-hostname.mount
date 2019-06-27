@@ -1,7 +1,7 @@
 [Unit]
 Description=Hostname persistent configuration
 Requires=mnt-overlay.mount
-After=mnt-overlay.mount systemd-tmpfiles-setup.service
+After=mnt-overlay.mount hassos-overlay.service
 Before=network.target
 
 [Mount]

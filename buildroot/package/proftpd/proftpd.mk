@@ -20,8 +20,10 @@ PROFTPD_CONF_OPTS = \
 	--disable-ncurses \
 	--disable-facl \
 	--disable-dso \
+	--enable-sendfile \
 	--enable-shadow \
-	--with-gnu-ld
+	--with-gnu-ld \
+	--without-openssl-cmdline
 
 ifeq ($(BR2_PACKAGE_PROFTPD_MOD_REWRITE),y)
 PROFTPD_MODULES += mod_rewrite
@@ -44,6 +46,11 @@ endif
 
 ifeq ($(BR2_PACKAGE_PROFTPD_MOD_SQL),y)
 PROFTPD_MODULES += mod_sql
+endif
+
+ifeq ($(BR2_PACKAGE_PROFTPD_MOD_SQL_SQLITE),y)
+PROFTPD_MODULES += mod_sql_sqlite
+PROFTPD_DEPENDENCIES += sqlite
 endif
 
 ifeq ($(BR2_PACKAGE_PROFTPD_MOD_QUOTATAB),y)
@@ -120,5 +127,9 @@ define PROFTPD_INSTALL_INIT_SYSTEMD
 	ln -sf ../../../../usr/lib/systemd/system/proftpd.service \
 		$(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/proftpd.service
 endef
+
+ifneq ($(BR2_PACKAGE_PROFTPD_BUFFER_SIZE),0)
+PROFTPD_CONF_OPTS += --enable-buffer-size=$(BR2_PACKAGE_PROFTPD_BUFFER_SIZE)
+endif
 
 $(eval $(autotools-package))

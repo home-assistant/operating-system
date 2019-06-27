@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LTP_TESTSUITE_VERSION = 20180926
+LTP_TESTSUITE_VERSION = 20190115
 LTP_TESTSUITE_SOURCE = ltp-full-$(LTP_TESTSUITE_VERSION).tar.xz
 LTP_TESTSUITE_SITE = https://github.com/linux-test-project/ltp/releases/download/$(LTP_TESTSUITE_VERSION)
 LTP_TESTSUITE_LICENSE = GPL-2.0, GPL-2.0+
@@ -74,8 +74,5 @@ define LTP_TESTSUITE_REMOVE_LDD
 endef
 LTP_TESTSUITE_POST_PATCH_HOOKS += LTP_TESTSUITE_REMOVE_LDD
 endif
-
-# 0002-statx-fix-compile-errors.patch
-LTP_TESTSUITE_AUTORECONF = YES
 
 $(eval $(autotools-package))

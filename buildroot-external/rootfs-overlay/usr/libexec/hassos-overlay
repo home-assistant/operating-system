@@ -1,0 +1,24 @@
+#!/bin/sh
+
+mkdir -p /mnt/overlay/etc/
+
+# Network
+if [ ! -d /mnt/overlay/etc/NetworkManager/system-connections ]; then
+    mkdir -p /mnt/overlay/etc/NetworkManager/system-connections
+    cp -fp /etc/NetworkManager/system-connections/* /mnt/overlay/etc/NetworkManager/system-connections/
+    chmod 600 /mnt/overlay/etc/NetworkManager/system-connections/*
+fi
+
+if [ ! -f /mnt/overlay/etc/hostname ]; then
+    cp -fp /etc/hostname /mnt/overlay/etc/hostname
+fi
+
+if [ ! -f /mnt/overlay/etc/hosts ]; then
+    cp -fp /etc/hosts /mnt/overlay/etc/hosts
+fi
+
+# TimeSync
+if [ ! -f /mnt/overlay/etc/systemd/timesyncd.conf ]; then
+    mkdir -p /mnt/overlay/etc/systemd
+    cp -fp /etc/systemd/timesyncd.conf /mnt/overlay/etc/systemd/timesyncd.conf
+fi

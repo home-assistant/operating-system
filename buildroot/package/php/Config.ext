@@ -45,9 +45,14 @@ config BR2_PACKAGE_PHP_EXT_PHAR
 	help
 	  PHP Archive support
 
+comment "zip needs a toolchain w/ dynamic library"
+	depends on BR2_STATIC_LIBS
+
 config BR2_PACKAGE_PHP_EXT_ZIP
 	bool "zip"
+	depends on !BR2_STATIC_LIBS # libzip
 	select BR2_PACKAGE_ZLIB
+	select BR2_PACKAGE_LIBZIP
 	help
 	  Zip read/write support
 
@@ -170,9 +175,13 @@ config BR2_PACKAGE_PHP_EXT_PDO_SQLITE
 
 config BR2_PACKAGE_PHP_EXT_PDO_UNIXODBC
 	bool "unixODBC"
+	depends on !BR2_STATIC_LIBS # unixodbc
 	select BR2_PACKAGE_UNIXODBC
 	help
 	  unixODBC driver for PDO
+
+comment "unixodbc driver needs a toolchain w/ dynamic library"
+	depends on BR2_STATIC_LIBS
 
 endif
 

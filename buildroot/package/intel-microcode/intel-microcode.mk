@@ -4,23 +4,27 @@
 #
 ################################################################################
 
-INTEL_MICROCODE_VERSION = 20180312
-INTEL_MICROCODE_SOURCE = microcode-$(INTEL_MICROCODE_VERSION).tgz
-INTEL_MICROCODE_SITE = http://downloadmirror.intel.com/27591/eng
-INTEL_MICROCODE_STRIP_COMPONENTS = 0
+INTEL_MICROCODE_VERSION = microcode-20190514a
+INTEL_MICROCODE_SITE = $(call github,intel,Intel-Linux-Processor-Microcode-Data-Files,$(INTEL_MICROCODE_VERSION))
 INTEL_MICROCODE_LICENSE = PROPRIETARY
-INTEL_MICROCODE_LICENSE_FILES = license.txt
+INTEL_MICROCODE_LICENSE_FILES = license
 INTEL_MICROCODE_REDISTRIBUTE = NO
+INTEL_MICROCODE_INSTALL_IMAGES = YES
 
-define INTEL_MICROCODE_EXTRACT_LICENSE
-	head -n 33 $(@D)/microcode.dat > $(@D)/license.txt
+define INTEL_MICROCODE_INSTALL_IMAGES_CMDS
+	mkdir -p $(BINARIES_DIR)/intel-ucode
+	$(INSTALL) -m 0644 -t $(BINARIES_DIR)/intel-ucode \
+		$(@D)/intel-ucode/*
 endef
 
-INTEL_MICROCODE_POST_EXTRACT_HOOKS += INTEL_MICROCODE_EXTRACT_LICENSE
-
+ifeq ($(BR2_PACKAGE_INTEL_MICROCODE_INSTALL_TARGET),y)
 define INTEL_MICROCODE_INSTALL_TARGET_CMDS
-	$(INSTALL) -D -m 0644 $(@D)/microcode.dat \
-		$(TARGET_DIR)/usr/share/misc/intel-microcode.dat
+	mkdir -p $(TARGET_DIR)/lib/firmware/intel-ucode
+	$(INSTALL) -m 0644 -t $(TARGET_DIR)/lib/firmware/intel-ucode \
+		$(@D)/intel-ucode/*
 endef
+else
+INTEL_MICROCODE_INSTALL_TARGET = NO
+endif
 
 $(eval $(generic-package))

@@ -14,7 +14,7 @@ SG3_UTILS_LICENSE := $(SG3_UTILS_LICENSE), GPL-2.0+ (programs), BSD-3-Clause (pr
 endif
 SG3_UTILS_LICENSE_FILES = COPYING BSD_LICENSE
 
-# Patching configure.ac
+# Patching configure.ac/Makefile.am
 SG3_UTILS_AUTORECONF = YES
 
 # install the libsgutils2 library
@@ -51,3 +51,4 @@ SG3_UTILS_POST_INSTALL_TARGET_HOOKS += SG3_UTILS_REMOVE_PROGS
 endif
 
 $(eval $(autotools-package))
+$(eval $(host-autotools-package))

@@ -3,7 +3,7 @@ Description=HassOS data partition
 Wants=hassos-expand.service
 DefaultDependencies=no
 After=hassos-expand.service
-Before=umount.target systemd-tmpfiles-setup.service
+Before=umount.target local-fs.target
 Conflicts=umount.target
 
 [Mount]
