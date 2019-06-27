@@ -1,0 +1,79 @@
+# https://dev.azure.com/home-assistant
+
+trigger:
+  batch: true
+  tags:
+    include:
+    - '*'
+    exclude:
+    - untagged*
+pr: none
+
+variables:
+  - name: versionGHR
+    value: 'v0.12.1'
+  - group: github
+  - group: hassos
+
+jobs:
+
+
+- job: 'Release'
+  condition: startsWith(variables['Build.SourceBranch'], 'refs/tags')
+  timeoutInMinutes: 240
+  dependsOn:
+    - 'ShellCheck'
+  pool:
+    name: 'Buildroot'
+  strategy:
+    maxParallel: 1
+    matrix:
+      OpenVirtualAppliance:
+        board: 'ova'
+      IntelNuc:
+        board: 'intel_nuc'
+      OdroidC2:
+        board: 'odroid_c2'
+      OdroidXU4:
+        board: 'odroid_xu4'
+      OrangePiPrime:
+        board: 'opi_prime'
+      RaspberryPi0-W:
+        board: 'rpi0_w'
+      RaspberryPi3:
+        board: 'rpi3'
+      RaspberryPi3-64:
+        board: 'rpi3_64'
+      RaspberryPi2:
+        board: 'rpi2'
+      RaspberryPi:
+        board: 'rpi'
+      AsusTinker:
+        board: 'tinker'
+  workspace:
+    clean: 'all'
+  steps:
+  - script: |
+      echo -e "-----BEGIN CERTIFICATE-----\n$(releaseCertificate)\n-----END CERTIFICATE-----" > cert.pem
+      echo -e "-----BEGIN PRIVATE KEY-----\n$(releaseKey)\n-----END PRIVATE KEY-----" > key.pem
+    displayName: 'Add release PKI certs'
+  - script: |
+      sudo docker build -t hassos:azure .
+    displayName: 'Build container for HassOS'
+  - script: |
+      curl -SsL https://github.com/tcnksm/ghr/releases/download/$(versionGHR)/ghr_$(versionGHR)_linux_amd64.tar.gz | tar xzf -
+      cp ghr_$(versionGHR)_linux_amd64/ghr .
+      rm -rf ghr_$(versionGHR)_linux_amd64
+    displayName: 'Install GHR'
+  - script: |
+      BUILDER_UID="$(id -u)"
+      BUILDER_GID="$(id -g)"
+
+      sudo docker run --rm --privileged -v "$(pwd):/build" \
+        -e BUILDER_UID="${BUILDER_UID}" -e BUILDER_GID="${BUILDER_GID}" \
+        -v "/mnt/build-cache:/cache" \
+        hassos:azure make $(board)
+    displayName: 'Build $(board)'
+  - script: |
+      ./ghr -t $(githubToken) $(Build.SourceBranchName) release/
+    displayName: 'Upload $(board)'
