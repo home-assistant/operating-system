@@ -21,6 +21,7 @@ variables:
   - name: versionGHR
     value: 'v0.12.1'
   - group: github
+  - group: hassos
 
 jobs:
 
@@ -92,6 +93,10 @@ jobs:
   workspace:
     clean: 'all'
   steps:
+  - script: |
+      echo -e "-----BEGIN CERTIFICATE-----\n$(releaseCertificate)\n-----END CERTIFICATE-----" > cert.pem
+      echo -e "-----BEGIN PRIVATE KEY-----\n$(releaseKey)\n-----END PRIVATE KEY-----" > key.pem
+    displayName: 'Add release PKI certs'
   - script: |
       sudo docker build -t hassos:azure .
     displayName: 'Build container for HassOS'
