@@ -3,7 +3,7 @@ Description=HassOS overlay setup
 DefaultDependencies=no
 RefuseManualStart=true
 RefuseManualStop=true
-Before=hassos-bind.target local-fs.target
+Before=hassos-bind.target
 After=mnt-overlay.mount
 
 [Service]
