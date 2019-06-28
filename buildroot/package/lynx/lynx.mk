@@ -22,7 +22,8 @@ endif
 
 ifeq ($(BR2_PACKAGE_OPENSSL),y)
 LYNX_DEPENDENCIES += openssl
-LYNX_CONF_OPTS += --with-ssl
+LYNX_CONF_OPTS += --with-ssl=$(STAGING_DIR)/usr
+LYNX_LIBS += `$(PKG_CONFIG_HOST_BINARY) --libs openssl`
 else ifeq ($(BR2_PACKAGE_GNUTLS),y)
 LYNX_DEPENDENCIES += gnutls
 LYNX_CONF_OPTS += --with-gnutls
@@ -34,5 +35,12 @@ LYNX_CONF_OPTS += --with-zlib
 else
 LYNX_CONF_OPTS += --without-zlib
 endif
+
+ifeq ($(BR2_PACKAGE_LIBIDN),y)
+LYNX_DEPENDENCIES += libidn
+LYNX_LIBS += `$(PKG_CONFIG_HOST_BINARY) --libs libidn`
+endif
+
+LYNX_CONF_ENV = LIBS="$(LYNX_LIBS)"
 
 $(eval $(autotools-package))

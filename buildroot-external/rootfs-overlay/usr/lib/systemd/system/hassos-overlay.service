@@ -1,0 +1,15 @@
+[Unit]
+Description=HassOS overlay setup 
+DefaultDependencies=no
+RefuseManualStart=true
+RefuseManualStop=true
+Before=hassos-bind.target
+After=mnt-overlay.mount
+
+[Service]
+Type=oneshot
+ExecStart=/usr/libexec/hassos-overlay
+RemainAfterExit=true
+
+[Install]
+WantedBy=local-fs.target

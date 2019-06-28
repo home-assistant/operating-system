@@ -1,10 +1,20 @@
-FROM alpine:3.7
+FROM ubuntu:18.04
 
-# Install packages
-RUN apk add --no-cache \
-    bash coreutils e2fsprogs curl
-RUN apk add --no-cache --repository http://nl.alpinelinux.org/alpine/v3.7/community \
-    docker
+# Set shell
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+
+# Docker
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        apt-transport-https \
+        ca-certificates \
+        curl \
+        gpg-agent \
+        software-properties-common \
+    && curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - \
+    && add-apt-repository "deb https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" \
+    && apt-get update && apt-get install -y --no-install-recommends \
+        docker-ce=5:18.09.6~3-0~ubuntu-bionic \
+    && rm -rf /var/lib/apt/lists/*
 
 COPY hostapp.sh /usr/bin/
 ENTRYPOINT ["/usr/bin/hostapp.sh"]

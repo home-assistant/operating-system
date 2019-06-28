@@ -4,8 +4,9 @@
 #
 ################################################################################
 
-MENDER_VERSION = 1.4.0
-MENDER_SITE = $(call github,mendersoftware,mender,$(MENDER_VERSION))
+MENDER_VERSION = 1.7.0
+MENDER_SITE = https://github.com/mendersoftware/mender/archive
+MENDER_SOURCE = $(MENDER_VERSION).tar.gz
 MENDER_LICENSE = Apache-2.0, BSD-2-Clause, BSD-3-Clause, ISC, MIT, OLDAP-2.8
 
 # Vendor license paths generated with:
@@ -45,10 +46,19 @@ define MENDER_INSTALL_CONFIG_FILES
 
 	$(INSTALL) -D -m 0755 $(@D)/support/mender-device-identity \
 		$(TARGET_DIR)/usr/share/mender/identity/mender-device-identity
-	$(foreach f,hostinfo network, \
+	$(foreach f,hostinfo network os rootfs-type, \
 		$(INSTALL) -D -m 0755 $(@D)/support/mender-inventory-$(f) \
 			$(TARGET_DIR)/usr/share/mender/inventory/mender-inventory-$(f)
 	)
+
+	$(INSTALL) -D -m 0755 package/mender/artifact_info \
+			$(TARGET_DIR)/etc/mender/artifact_info
+
+	$(INSTALL) -D -m 0755 package/mender/device_type \
+			$(TARGET_DIR)/etc/mender/device_type
+
+	mkdir -p $(TARGET_DIR)/var/lib
+	ln -snf /var/run/mender $(TARGET_DIR)/var/lib/mender
 endef
 
 MENDER_POST_INSTALL_TARGET_HOOKS += MENDER_INSTALL_CONFIG_FILES
@@ -59,6 +69,11 @@ define MENDER_INSTALL_INIT_SYSTEMD
 	mkdir -p $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants
 	ln -fs ../../../../usr/lib/systemd/system/mender.service \
 		$(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/mender.service
+endef
+
+define MENDER_INSTALL_INIT_SYSV
+	$(INSTALL) -D -m 755 package/mender/S42mender \
+		$(TARGET_DIR)/etc/init.d/S42mender
 endef
 
 $(eval $(golang-package))

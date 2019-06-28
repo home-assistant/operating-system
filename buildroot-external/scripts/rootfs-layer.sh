@@ -17,7 +17,7 @@ function fix_rootfs() {
     rm -rf "${TARGET_DIR}/usr/lib/modules-load.d"
 
     # Fix: permission for system connection files
-    chmod 600 "${TARGET_DIR}/usr/share/system-connections"/*
+    chmod 600 "${TARGET_DIR}/etc/NetworkManager/system-connections"/*
 
     # Fix: tempfs with /srv
     sed -i "/srv/d" "${TARGET_DIR}/usr/lib/tmpfiles.d/home.conf"

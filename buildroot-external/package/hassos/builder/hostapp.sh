@@ -73,6 +73,13 @@ done
 dd if=/dev/zero of=${DATA_IMG} bs=1G count=1
 mkfs.ext4 -L "hassos-data" -E lazy_itable_init=0,lazy_journal_init=0 ${DATA_IMG}
 
+# Setup local user
+if [ "${BUILDER_UID:0}" -ne 0 ] && [ "${BUILDER_GID:0}" -ne 0 ]; then
+  groupadd -g "${BUILDER_GID}" builder
+  useradd -m -u "${BUILDER_UID}" -g "${BUILDER_GID}" -G docker builder
+  chown builder:builder ${DATA_IMG}
+fi
+
 # Mount / init file structs
 mkdir -p /mnt/data/
 mount -o loop ${DATA_IMG} /mnt/data
@@ -114,19 +121,26 @@ cat > /mnt/data/hassos.json <<- EOF
 EOF
 
 # Setup AppArmor
-if [ ! -z "${APPARMOR}" ]; then
-    mkdir -p /mnt/data/${APPARMOR}
+if [ -n "${APPARMOR}" ]; then
+    mkdir -p "/mnt/data/${APPARMOR}"
 
     # Supervisor
-    if [ ! -z "${SUPERVISOR_PROFILE_URL}" ]; then
-        curl -L -o /mnt/data/${APPARMOR}/${SUPERVISOR_PROFILE} ${SUPERVISOR_PROFILE_URL}
+    if [ -n "${SUPERVISOR_PROFILE_URL}" ]; then
+        curl -sL -o "/mnt/data/${APPARMOR}/${SUPERVISOR_PROFILE}" "${SUPERVISOR_PROFILE_URL}"
     fi
 
     # CLI
-    if [ ! -z "${CLI_PROFILE_URL}" ]; then
-        curl -L -o /mnt/data/${APPARMOR}/${CLI_PROFILE} ${CLI_PROFILE_URL}
+    if [ -n "${CLI_PROFILE_URL}" ]; then
+        curl -sL -o "/mnt/data/${APPARMOR}/${CLI_PROFILE}" "${CLI_PROFILE_URL}"
     fi
 fi
 
 # Finish
-kill -TERM $DOCKER_PID && wait $DOCKER_PID && umount /mnt/data
+kill $DOCKER_PID && wait $DOCKER_PID
+
+# Unmount resource
+if ! umount /mnt/data; then
+    umount -f /mnt/data || echo "umount force fails!"
+fi
+
+exit 0

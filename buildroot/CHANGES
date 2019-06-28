@@ -1,3 +1,384 @@
+2019.02.3, Released June 7th, 2019
+
+	Important / security related fixes.
+
+	Infra: pkg-config: Use a dedicated timestamp file rather than
+	.config as that gets touched by linux-4.19+, causing repeated
+	builds.
+
+	check-bin-arch: Also ignore /usr/lib/grub to support merged
+	/usr setups, similar to how /lib/grub is ignored.
+
+	gnuconfig/config.sub: Add C-SKY architecture support.
+
+	Updated/fixed packages: assimp, atftp, atop, botan, busybox,
+	ca-certificates, chocolate-doom, cjson, coreutils, cracklib,
+	ddrescue, dhcp, docker-cli, docker-containerd, docker-engine,
+	dosfstools, dovecot, dovecot-pigeonhole, dropbear, exim,
+	ffmpeg, flare-engine, gcc, gdb, gerbera, glibmm, go, gpsd,
+	gst-ffmpeg, gst1-plugins-bad, gst1-plugins-base, imagemagick,
+	intel-microcode, jasper, kf5-kcoreaddons, kismet, libcurl,
+	libglib2, libnss, libopenssl, libsigrok, libssh2, libupnp18,
+	linuxptp, luajit, lynx, matchbox-panel, mender,
+	netcat-openbsd, netsurf, nfs-utils, opus, orc, owfs,
+	pcsc-lite, php, popt, postgresql, python, python-cython,
+	python-django, python-ply, qt5enginio, rpm, runc, samba4,
+	sqlite, subversion, supertux, systemd, tslib, uclibc,
+	v4l2loopback, webkitgtk, woff2
+
+	#11816: Only selected coreutils binaries are installed
+	#11841: grub-efi.cfg not used when building EFI disk image
+	#11911: systemd v240 memory leak in systemd-journald
+
+2019.02.2, Released April 29th, 2019
+
+	Important / security related fixes.
+
+	Only build host-lzip / host-xz when really needed by packages,
+	not just when not available on the build host.
+
+	fs: Set FAKEROOTDONTTRYCHOWN environment variable to not
+	forward {f,l,}chown calls to libc when running under fakeroot
+	to fix issues when building in restricted environments
+	(E.G. user namespace with bubblewrap).
+
+	Linux: Also build default make target to ensure extra files
+	like the gdb scripts enabled by CONFIG_GDB_SCRIPTS are also
+	built. Notice: This may mean that extra host utilities like
+	uboot-mkimage are needed.
+
+	Defconfigs: ASUS tinker and Amarula vyasa rk3822: Support
+	larger kernel images, Atmel SAM5D27, SAM5D2,3,4 xplained:
+	Increase rootfs size to fit utilities, Raspberry Pi 64bit:
+	Include overlays in sdcard image
+
+	Updated/fixed packages: android-tools, apache, bind, binutils,
+	busybox, civetweb, cjson, copas, davfs2, docker-cli,
+	docker-containerd, docker-engine, dovecot, dovecot-pigeonhole,
+	freerdp, gerbera, ghostscript, git, gnutls, go, gst-omx,
+	gst1-plugins-base, gst1-plugins-ugly, haproxy, hostapd,
+	ipsec-tools, libfreefare, libfuse, libkrb5, libpng, libxml2,
+	libxslt, linknx, linux, linux-firmware, linux-tools, live555,
+	lldp, lrzsz, lynx, madplay, make, minicom, mongodb, msmtp,
+	musl, mutt, neon, netsnmp, numactl, opus, perl, php,
+	postgresql, pure-ftpd, python-urllib3, python3, qt5base,
+	rapidxml, rpm, rsyslog, ruby, runc, samba4, sane-backends,
+	softether, stunnel, sysklogd, syslinux, syslog-ng,
+	systemd-bootchart, thttpd, thrift, tiff, tor, tpm2-tools,
+	tpm2-tss, webkitgtk, yaffs2utils, wget, wpa_supplicant, wsapi,
+	xapp_xfd, xapp_xload, xlib_libXpm, xserver_xorg-server, xz,
+	znc
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#11756: package/syslinux: MBR's don't fit because of binutils..
+	#11761: Building custom kernel 5.1-rc3 or later breaks on objtool
+
+2019.02.1, Released March 29th, 2019
+
+	Important / security related fixes.
+
+	pkg-generic: Only tweak .la files needing it to ensure they
+	are not included in subsequent package file lists.
+
+	test-pkg: Generate a basic package config if none is
+	specified.
+
+	Updated/fixed packages: asterisk, avahi, bash, beecrypt,
+	binutils, busybox, clamav, cups, efl, eigen, fetchmail, file,
+	flashrom, fltk, gerbera, git, glibc, gnuradio, go,
+	gst-plugins-bad, intel-gmmlib, jq, kexec, kf5-modemmanager-qt,
+	leveldb, libcurl, libdrm, libftdi1, libglib2, libiio, libpcap,
+	libseccomp, libssh2, log4cplus, lvm2, mariadb, mender,
+	mongodb, mosquitto, musl, nodejs, ntp, openjpeg, owfs, php,
+	pure-ftpd, putty, python-aiojobs, qt5webkit, rdesktop, samba4,
+	sunxi-tools, supertux, swupdate, tpm2-abrmd, tpm2-tss,
+	wavemon, wireshark, vsftpd, xapp_xdm, xen,
+	xdriver_xf86-video-fbdev, xlib_libXdmcp
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#11716: Typo on website, saying latest release is 2018.2.11
+
+2019.02, released March 4th, 2019
+
+	Minor fixes.
+
+	Libressl support added for Qt 5.6 as a replacement for
+	openssl, as 5.6 is not compatible with openssl 1.1.x.
+
+	Updated/fixed packages: cutelyst, devmem2, gqrx,
+	gst-plugins-bad, libraw, libsoxr, qt5base, runc, systemd, tor
+
+2019.02-rc3, released March 1st, 2019
+
+	Fixes all over the tree.
+
+	Openssl support dropped from Qt 5.6, as it isn't compatible
+	with openssl 1.1.x.
+
+	Toolchain: GCC 8.x updated to 8.3.0, fixing a number of
+	issues.
+
+	Dependencies: Require CMake 3.8 or newer to fix compilation
+	issue with certain packages. If not available, host-cmake will
+	instead be built.
+
+	Printvars: Fix performance regression since 2018.02
+
+	Scanypi: Correctly handle underscores in python package names.
+
+	Updated/fixed packages: botan, clamav, cryptopp, i2pd,
+	ibrcommon, iproute2, libcpprestsdk, libssh, lua-curl,
+	luaexpat, qt5base, runc, stress-ng, syslinux, systemd,
+	upmpdcli, zbar
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#9966: util-linux-2.30/.stamp_built' failed
+	#11696: possible typo in board/pc/post-build.sh
+
+2019.02-rc2, released February 23th, 2019
+
+	Fixes all over the tree.
+
+	Removed zynq_zybo defconfig, as it hasn't seen any update
+	since it was added in 2016, and uses a U-Boot version not
+	compatible with openssl-1.1.x.
+
+	Linux: Ignore user supplied downloadable hashes, as no hash
+	checksums are available for those.
+
+	Updated/fixed packages: bind, cryptopp, docker-containerd,
+	dtc, efivar, gdb, imagemagick, ipmiutil, libcpprestsdk,
+	libcurl, libgpiod, libid3tag, libv4l, log4cplus, luvi,
+	madplay, mender, mosquitto, poco, postgresql, proftpd,
+	pulseaudio, python-django, qemu, qt5base, qwt, rabbitmq-c,
+	reaver, safeclip, stress-ng, swupdate, syslog-ng, systemd,
+	tor, unzip, xenomai
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#11501: compile sdl2 with enable wayland
+	#11681: .. unable to initialize decompress status for section..
+
+2019.02-rc1, released February 13th, 2019
+
+	Fixes all over the tree and new features.
+
+
+	Dependencies:
+
+	Require Python >= 2.7 as it is needed for E.G. building
+	libglib2.
+
+	Ensure GNU gzip is used for reproducible tarballs (instead of
+	pigz)
+
+
+	Infrastucture:
+
+	Ensure the PLATFORM and OS environment variables are not set,
+	as they cause build issues for some packages.
+
+	The package list infrastructure now correctly handles packages
+	installing files with old mtime.
+
+	Add a config option to force all optional host utilities to be
+	built, even if suitable versions are available on the build
+	machine.
+
+	graph-build-time: Also show time spent downloading
+
+	Download: fixes for SSH/SCP support
+
+	Ensure user provided permissions override permissions from
+	packages.
+
+	SDK: Fix handling of relative symlinks (targets starting with
+	'.' or '..')
+
+	BR2_SYSTEM_DEFAULT_PATH setting to customize the default path
+	for processes.
+
+	The custom skeleton logic will now populate the needed /bin,
+	/lib, /sbin directories/symlinks if not present. Merged /usr
+	can now be used with a custom skeleton.
+
+	Rootfs overlays can now override symbolic links from
+	packages. This was disabled to ensure the correct symbolic
+	links are present when merged /usr is used. Instead validate
+	that the rootfs overlays do not include invalid /bin, /sbin
+	and /lib entries.
+
+	The waf infrastructure now support the <pkg>_SUBDIR variable,
+	similar to the other package types.
+
+	cmake: Also set CMAKE_SYSTEM_VERSION in toolchainfile.cmake
+
+	Various improvements to the meson infrastructure.
+
+	Luarocks: A Buildroot addon has been added to automate
+	creating a Buildroot package from luarocks, similar to
+	scancpan and scanpypi.
+
+	scanpypi: protect against zip-slip vulnerability in zip/tar
+	handling
+
+	check-package: fix Python 3 support
+
+	get-developers: Fix behaviour when called from elsewhere than
+	the toplevel directory.
+
+	pkg-stats: Show latest upstream version of each package, based
+	on data from release-monitoring.org
+
+	kconfig: Fix for make linux-menuconfig / uboot-menuconfig from
+	a clean tree when ccache is enabled.
+
+	Default to sha256 password encoding, drop md5 support.
+
+
+	Architecture:
+
+	Support for RISC-V 32bit architecture, ARM A55, 75 and Saphira
+	variants, MIPS support for mips32r3, mips64r3 and Marvell
+	Octeon II/III variants.
+
+
+	Toolchain:
+
+	ARC toolchain 2018.09, ARM 8.2-2018.11, Codescape IMG/MTI MIPS
+	2018.09-02, MUSL 1.1.21, GCC 6.5.0 / 7.4.0, GDB 8.2.1
+
+
+	Packages:
+
+	openssl: Bump to 1.1.1x series, bringing TLSv1.3 support and
+	long term support.
+
+	fftw: Split into fftw-{single,double,long-double,quad}
+	packages for the different data precision options.
+
+	libcurl: Now has explicit TLS backend selection options.
+
+	linux: Support building device tree blobs with the -@ option
+	for device tree overlays.
+
+	weston: The weston-imx i.MX variant is now used when
+	imx-gpu-viv is enabled
+
+	pkgconf: Update to 1.5.3, which brings support for
+	--define-prefix (used by GStreamer)
+
+	Add host-python3-setuptools package to handle host python
+	packages needing python3 with setuptools support.
+
+
+	New defconfigs: Aarch64 EFI, Orangepi one plus, Orangepi lite
+	2, QEMU RISC-V 32bit virt, Rock64
+
+
+	New packages: brcm-patchram-plus, clinfo, cunit, docker-cli,
+	erlang-p1-eimp, exempi, fail2ban, fftw-double,
+	fftw-double-long, fftw-quad, fftw-single, gerbera, grpc,
+	gst1-shark, intel-gmmlib, iwd, kf5-kcoreaddons, libeastl,
+	libpackagekite, libtorrent-rasterbar, lua-std-debug,
+	lua-std-normalize, mini-snmpd, netsurf, pamtester, pcm-tools,
+	python-aiodns, python-aiohttp, python-aiohttp-jinja2,
+	python-aiohttp-remotes, python-aiohttp-security,
+	python-aiohttp-session, python-aiohttpd-sse, python-aiojobs,
+	python-cchardet, python-pycares, python-sentry-sdk,
+	python-wtforms, python3-setuptools, rcw, rtc-tools, shim,
+	utp_com, vmtouch, websocketpp
+
+	Removed packages: fftw, lua 5.2.x, luacrypto, perl-time-hires,
+	python-pyqt, qt, qtuio, tn5250
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#10851: Patch to handle numpad Enter key properly
+	#11066: x11r7 X11 S40xorg leads to a black screen on QEMU x86..
+	#11126: Bash Shell Programming using Buildroot
+	#11426: pps-tools bash dependency
+	#11476: stdio2.h error invalid use of __builtin_va_arg_pack
+	#11536: dt-utils building fails with glibc 2.28
+	#11546: open-vm-tools with glibc 2.28
+	#11566: Fix init script
+	#11576: Unable to start apache with event MPM on raspberry pi 3
+	#11591: [pkgconf 1.5.3] xserver OpenGL support is missing
+	#11606: libjpeg has no Config.in
+	#11616: 2018.02.09 fails to build libzlib with full RELRO..
+	#11656: Custom device tree and u-boot boot.scr not integrated..
+	#11666: Touchscreen with (Py)Qt5 should use tslib instead of evdev
+
+2018.11.3, Released February 23th, 2019
+
+	Important / security related fixes.
+
+	Ensure the PLATFORM and OS environment variables are not set,
+	as they cause build issues for some packages.
+
+	The package list infrastructure now correctly handles packages
+	installing files with old mtime.
+
+	Linux: Skip hash checks for user supplied downloadable
+	patches, as no hash checksums are available for those.
+
+	scanpypi: protect against zip-slip vulnerability in zip/tar
+	handling
+
+	Download: fixes for SSH/SCP support
+
+	SDK: Fix handling of relative symlinks (targets starting with
+	'.' or '..')
+
+	Updated/fixed packages: bind, dhcpcd, docker-compose,
+	docker-containerd, docker-engine, dovecot, dovecot-pigeonhole,
+	dtc, efivar, ghostscript, gnuradio, imagemagick, jpeg-turbo,
+	libarchive, libb64, libcurl, libgeotiff, libgpiod, libid3tag,
+	libupnp18, log4cplus, madplay, meson, mosquitto, openssh, php,
+	poco, postgresql, proftpd, pulseaudio, python, python-django,
+	python3, qt5base, reaver, runc, sg3_utils, sqlcipher,
+	swupdate, systemd, unzip, webkitgtk, xenomai
+
+2018.11.2, Released January 30th, 2019
+
+	Important / security related fixes.
+
+	Defconfigs: Fixes for imx6slevk, imx7dsabresd, imx8mqevk, Lego
+	EV3, QEMU AArch64-virt
+
+	Download: Fix scp download handling
+
+	check-package: fix Python 3 support
+
+	get-developers: Fix behaviour when called from elsewhere than
+	the toplevel directory.
+
+	kconfig: Fix for make linux-menuconfig / uboot-menuconfig from
+	a clean tree when ccache is enabled.
+
+	cmake: Also set CMAKE_SYSTEM_VERSION in toolchainfile.cmake
+
+	Updated/fixed packages: acpica, apache, apr, avrdude, cargo,
+	cc-tool, dash, dhcpdump, dmalloc, docker-containerd, efivar,
+	fwts, glibc, gnuchess, gnupg2, go, leveldb, libarchive,
+	libassuan, libftdi1, libgpg-error, libhttpparser, libkcapi,
+	libmad, libsndfile, libsquish, liburiparser, libwebsock,
+	libxml2, lighttpd, llvm, lm-sensors, lua-msgpack-native, lxc,
+	mariadb, mbedtls, meson, mosquitto, netatalk, nodejs, odhcp6c,
+	openresolv, openssh, pango, patchelf, php, python-django,
+	python-numpy, python-pyyaml, rauc, rp-pppoe, s6-networking,
+	samba4, sdl_sound, shairport-sync, sqlite, subversion,
+	sunxi-cedarx, swupdate, systemd, tcpreplay, tekui, tmp2-abrmd,
+	tpm2-tools, tpm2-tss, udisks, unixodbc, usb_modeswitch,
+	webkitgtk, wireshark, wolfssl, xapp_rgb, xenomai, xerces
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#11576: Unable to start apache with event MPM on raspberry pi 3
+
 2018.11.1, Released December 20th, 2018
 
 	Important / security related fixes.
@@ -183,6 +564,26 @@
 	#11421: GCC error message for ARM Cortex-A9/ARM.V7
 	#11451: Can't find libmpfr.so.4 when using external toolchain on ubuntu..
 	#11481: Docs: Is external.desc required?
+
+2018.08.4, Released December 20th, 2018
+
+	Important / security related fixes.
+
+	Defconfigs: Fixes for ci20, orangepi zero plus 2
+
+	Download wrapper: Fix for urlencode handling
+
+	Updated/fixed packages: c-ares, dante, docker-compose,
+	domoticz, freetype, ghostscript, gnutls, libcurl, libgpgme,
+	libid3tag, libiscsi, libmpd, libopenssl, liboping, libpjsip,
+	linux-firmware, liquid-dsp, luvi, lynx, msgpack, nginx,
+	nodejs, php, popt, pps-tools, prosody, python-numpy,
+	python-requests, samba4, sdl2_net, squashfs, swupdate,
+	systemd, uclibc, vte, webkitgtk, wine, xfsprogs
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#11426: pps-tools bash dependency
 
 2018.08.3, Released November 26th, 2018
 
@@ -721,6 +1122,74 @@
 	#10896: /bin/sh not in /etc/shells
 	#10961: Grub2 fails to build for x86_64 when BR2_SSP_ALL is
 		enabled
+
+2018.02.11, Released February 23th, 2019
+
+	Important / security related fixes.
+
+	Ensure the PLATFORM and OS environment variables are not set,
+	as they cause build issues for some packages.
+
+	The package list infrastructure now correctly handles packages
+	installing files with old mtime.
+
+	Linux: Skip hash checks for user supplied downloadable
+	patches, as no hash checksums are available for those.
+
+	scanpypi: protect against zip-slip vulnerability in zip/tar
+	handling
+
+	Updated/fixed packages: bind, dhcpcd, dovecot, ghostscript,
+	gnuradio, imagemagick, jpeg-turbo, libarchive, libb64,
+	libcurl, libid3tag, madplay, mosquitto, openssh, php,
+	postgresql, proftpd, python, python-django, python3, qt5base,
+	sqlcipher, swupdate, systemd, unzip, webkitgtk
+
+2018.02.10, Released January 31th, 2019
+
+	Important / security related fixes.
+
+	Defconfigs: Fixes for Lego EV3, QEMU AArch64-virt
+
+	check-package: fix Python 3 support
+
+	get-developers: Fix behaviour when called from elsewhere than
+	the toplevel directory.
+
+	cmake: Also set CMAKE_SYSTEM_VERSION in toolchainfile.cmake
+
+	Updated/fixed packages: acpica, apache, apr, asterisk,
+	avrdude, cargo, cc-tool, dash, dhcpdump, dmalloc, gnuchess,
+	gnupg2, leveldb, libarchive, libassuan, libftdi1,
+	libgpg-error, libhttpparser, libmad, libsndfile, libsquish,
+	liburiparser, libwebsock, libxml2, lighttpd, lm-sensors,
+	lua-msgpack-native, mbedtls, mosquitto, netatalk, nodejs,
+	openssh, pango, patchelf, php, python-django, python-pyyaml,
+	rauc, rp-pppoe, s6-networking, samba4, sdl_sound,
+	shairport-sync, sqlite, subversion, sunxi-cedarx, tcpreplay,
+	tekui, usb_modeswitch, webkitgtk, wireshark, wolfssl,
+	xapp_rgb, xenomai, xerces
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#11576: Unable to start apache with event MPM on raspberry pi 3
+
+2018.02.9, Released December 20th, 2018
+
+	Important / security related fixes.
+
+	defconfigs: Fixes for ci20
+
+	Updated/fixed packages: c-ares, dante, freetype, ghostscript,
+	glibc, gnutls, go, libcurl, libgpgme, libid3tag, libiscsi,
+	libmpd, libopenssl, libpjsip, linux, liquid-dsp, luvi, lynx,
+	msgpack, nginx, nodejs, php, popt, pps-tools, python-numpy,
+	python-requests, samba4, sdl2_net, squashfs, swupdate, uclibc,
+	wine, webkitgtk, xfsprogs
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#11426: pps-tools bash dependency
 
 2018.02.8, Released November 26th, 2018
 

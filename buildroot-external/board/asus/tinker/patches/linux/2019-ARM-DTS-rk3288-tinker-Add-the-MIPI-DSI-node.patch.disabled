@@ -1,0 +1,35 @@
+From 8ca607f3fe77c80a3367d8363703d5dc1d6781d4 Mon Sep 17 00:00:00 2001
+From: Myy Miouyouyou <myy@miouyouyou.fr>
+Date: Thu, 19 Oct 2017 22:36:02 +0200
+Subject: [PATCH 22/28] ARM: DTS: rk3288-tinker.dts: Add the MIPI DSI node
+
+Taken from, and tested by @TonyMac32 .
+
+Signed-off-by: Myy Miouyouyou <myy@miouyouyou.fr>
+---
+ arch/arm/boot/dts/rk3288-tinker.dts | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/arch/arm/boot/dts/rk3288-tinker.dts b/arch/arm/boot/dts/rk3288-tinker.dts
+index 67a3ce6f..6f4c0843 100644
+--- a/arch/arm/boot/dts/rk3288-tinker.dts
++++ b/arch/arm/boot/dts/rk3288-tinker.dts
+@@ -443,6 +443,15 @@
+ 	sdcard-supply = <&vccio_sd>;
+ };
+ 
++&mipi_dsi {
++	status = "okay";
++	mipi_panel: mipi-panel {
++		compatible ="asus,tc358762";
++		reg = <0x0 0>;
++		status = "okay";
++	};
++};
++
+ &sdio0 {
+ 	status = "okay";
+ 	clock-frequency = <50000000>;
+-- 
+2.11.0
+
