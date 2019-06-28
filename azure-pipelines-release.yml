@@ -17,9 +17,34 @@ variables:
 
 jobs:
 
+- job: 'VersionValidate'
+  pool:
+    vmImage: 'ubuntu-latest'
+  steps:
+  - script: |
+      . buildroot-external/meta
+
+      if [ "${VERSION_MAJOR}.${VERSION_BUILD}" != "$(Build.SourceBranchName)" ]; then
+        exit 1
+      fi
+    displayName: 'Check version of branch/tag'
+  - script: |
+      sudo apt-get install -y --no-install-recommends \
+        jq curl
+      release="$(Build.SourceBranchName)"
+      created_by="$(curl -s https://api.github.com/repos/home-assistant/hassos/releases/tags/${release} | jq --raw-output '.author.login')"
+      if [[ "${created_by}" =~ ^(balloob|pvizeli|fabaff|robbiet480)$ ]]; then
+        exit 0
+      fi
+      echo "${created_by} is not allowed to create an release!"
+      exit 1
+    displayName: 'Check rights'
+
 
 - job: 'Release'
-  condition: startsWith(variables['Build.SourceBranch'], 'refs/tags')
+  condition: and(startsWith(variables['Build.SourceBranch'], 'refs/tags'), succeeded('VersionValidate'))
+  dependsOn:
+  - 'VersionValidate'
   timeoutInMinutes: 240
   dependsOn:
     - 'ShellCheck'
