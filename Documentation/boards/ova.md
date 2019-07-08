@@ -1,7 +1,7 @@
 # OVA
 
-OVA stands for Open Virtual Appliance. Currently we had remove the ova files and publish a vmdk virtual disk,
-until we have better OVF template to generate our OVA. This VMDK work with (maybe you need convert the disk):
+OVA stands for Open Virtual Appliance. We had to remove the ova files and publish as a vmdk virtual disk,
+until we have a better OVF template to generate an OVA. This VMDK work with (you may need to convert the disk):
 - HyperV
 - VirtualBox
 - VMware
@@ -9,7 +9,7 @@ until we have better OVF template to generate our OVA. This VMDK work with (mayb
 ## Virtual Machine
 
 You can use this vmdk in a virtual machine with follow requirements:
-- OS: Linux 64bit
+- OS: Other 4.x or later Linux (64-bit)
 - UEFI boot
 - min. 1GB RAM
 - 2x vcpu
