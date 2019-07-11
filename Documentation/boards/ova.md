@@ -14,3 +14,4 @@ You can use this vmdk in a virtual machine with follow requirements:
 - min. 1GB RAM
 - 2x vcpu
 - 1x Network
+- SATA disk controller
