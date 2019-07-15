@@ -1,0 +1,15 @@
+[Unit]
+Description=hassio backup partition
+Wants=hassos-expand.service
+DefaultDependencies=no
+After=hassos-expand.service
+Before=umount.target local-fs.target
+Conflicts=umount.target
+
+[Mount]
+What=/dev/disk/by-label/BACKUP
+Where=/mnt/data/supervisor/backup
+Type=ext4
+
+[Install]
+WantedBy=local-fs.target
