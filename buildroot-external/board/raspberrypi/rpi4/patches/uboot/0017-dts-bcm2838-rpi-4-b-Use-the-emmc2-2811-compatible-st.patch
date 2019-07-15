@@ -1,0 +1,27 @@
+From 62b6e39a53c56a9085aeab1b47b5cc6020fcdb6f Mon Sep 17 00:00:00 2001
+From: Andrei Gherzan <andrei@balena.io>
+Date: Mon, 15 Jul 2019 14:11:10 +0100
+Subject: [PATCH 17/17] dts: bcm2838-rpi-4-b: Use the emmc2/2811 compatible
+ string for SDHCI
+
+Signed-off-by: Andrei Gherzan <andrei@balena.io>
+---
+ arch/arm/dts/bcm2838-rpi-4-b.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm/dts/bcm2838-rpi-4-b.dts b/arch/arm/dts/bcm2838-rpi-4-b.dts
+index 168179c17c..b7241be3fd 100644
+--- a/arch/arm/dts/bcm2838-rpi-4-b.dts
++++ b/arch/arm/dts/bcm2838-rpi-4-b.dts
+@@ -39,7 +39,7 @@
+ };
+ 
+ &emmc2 {
+-	compatible = "brcm,bcm2835-sdhci";
++	compatible = "brcm,bcm2711-emmc2";
+ 	status = "okay";
+ };
+ 
+-- 
+2.17.1
+

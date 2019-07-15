@@ -1,0 +1,36 @@
+From d0357e50e58894eeb9dcbb1497689b410b667f08 Mon Sep 17 00:00:00 2001
+From: Fabian Vogt <fvogt@suse.com>
+Date: Fri, 28 Jun 2019 14:14:01 +0200
+Subject: [PATCH 11/17] bcm2835 video: Bail out early if querying video
+ information fails
+
+Otherwise there is a crash with newer RPi firmware, see
+https://github.com/raspberrypi/firmware/issues/1157
+---
+ drivers/video/bcm2835.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/video/bcm2835.c b/drivers/video/bcm2835.c
+index bc41090aed..4c7962cad8 100644
+--- a/drivers/video/bcm2835.c
++++ b/drivers/video/bcm2835.c
+@@ -19,13 +19,15 @@ static int bcm2835_video_probe(struct udevice *dev)
+ 
+ 	debug("bcm2835: Query resolution...\n");
+ 	ret = bcm2835_get_video_size(&w, &h);
+-	if (ret)
++	if (ret || w == 0 || h == 0)
+ 		return -EIO;
+ 
+ 	debug("bcm2835: Setting up display for %d x %d\n", w, h);
+ 	ret = bcm2835_set_video_params(&w, &h, 32, BCM2835_MBOX_PIXEL_ORDER_RGB,
+ 				       BCM2835_MBOX_ALPHA_MODE_IGNORED,
+ 				       &fb_base, &fb_size, &pitch);
++	if(ret)
++		return -EIO;
+ 
+ 	debug("bcm2835: Final resolution is %d x %d\n", w, h);
+ 
+-- 
+2.17.1
+

@@ -1,0 +1,29 @@
+From eef9e7760c367dd848ac90780ecce8dcd82d9bb4 Mon Sep 17 00:00:00 2001
+From: Andrei Gherzan <andrei@gherzan.ro>
+Date: Sun, 7 Jul 2019 00:25:58 +0100
+Subject: [PATCH 06/17] rpi: Add rpi_model entry for RaspberryPi 4
+
+Signed-off-by: Andrei Gherzan <andrei@gherzan.ro>
+---
+ board/raspberrypi/rpi/rpi.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/board/raspberrypi/rpi/rpi.c b/board/raspberrypi/rpi/rpi.c
+index 617c892dde..6d6f1ef39a 100644
+--- a/board/raspberrypi/rpi/rpi.c
++++ b/board/raspberrypi/rpi/rpi.c
+@@ -148,6 +148,11 @@ static const struct rpi_model rpi_models_new_scheme[] = {
+ 		DTB_DIR "bcm2837-rpi-cm3.dtb",
+ 		false,
+ 	},
++	[0x11] = {
++		"4 Model B",
++		DTB_DIR "bcm2711-rpi-4-b.dtb",
++		true,
++	},
+ };
+ 
+ static const struct rpi_model rpi_models_old_scheme[] = {
+-- 
+2.17.1
+
