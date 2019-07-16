@@ -50,16 +50,20 @@ jobs:
         board: 'odroid_xu4'
       OrangePiPrime:
         board: 'opi_prime'
+      RaspberryPi:
+        board: 'rpi'
       RaspberryPi0-W:
         board: 'rpi0_w'
+      RaspberryPi2:
+        board: 'rpi2'
       RaspberryPi3:
         board: 'rpi3'
       RaspberryPi3-64:
         board: 'rpi3_64'
-      RaspberryPi2:
-        board: 'rpi2'
-      RaspberryPi:
-        board: 'rpi'
+      RaspberryPi4:
+        board: 'rpi4'
+      RaspberryPi4-64:
+        board: 'rpi4_64'
       AsusTinker:
         board: 'tinker'
   workspace:

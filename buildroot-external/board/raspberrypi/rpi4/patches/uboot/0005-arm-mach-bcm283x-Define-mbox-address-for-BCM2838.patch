@@ -1,0 +1,34 @@
+From 98ae56bf35b2102310d2e88f56639e9055aa10be Mon Sep 17 00:00:00 2001
+From: Andrei Gherzan <andrei@gherzan.ro>
+Date: Sun, 7 Jul 2019 00:23:15 +0100
+Subject: [PATCH 05/17] arm: mach-bcm283x: Define mbox address for BCM2838
+
+Signed-off-by: Andrei Gherzan <andrei@gherzan.ro>
+---
+ arch/arm/mach-bcm283x/include/mach/mbox.h | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/arch/arm/mach-bcm283x/include/mach/mbox.h b/arch/arm/mach-bcm283x/include/mach/mbox.h
+index e3a893e49c..2d711daaa8 100644
+--- a/arch/arm/mach-bcm283x/include/mach/mbox.h
++++ b/arch/arm/mach-bcm283x/include/mach/mbox.h
+@@ -38,11 +38,16 @@
+ /* Raw mailbox HW */
+ 
+ #ifndef CONFIG_BCM2835
++#ifdef CONFIG_BCM2838
++#define BCM2835_MBOX_PHYSADDR	0xfe00b880
++#else
+ #define BCM2835_MBOX_PHYSADDR	0x3f00b880
++#endif
+ #else
+ #define BCM2835_MBOX_PHYSADDR	0x2000b880
+ #endif
+ 
++
+ struct bcm2835_mbox_regs {
+ 	u32 read;
+ 	u32 rsvd0[5];
+-- 
+2.17.1
+
