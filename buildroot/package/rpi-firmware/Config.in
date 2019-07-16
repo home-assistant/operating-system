@@ -40,11 +40,17 @@ config BR2_PACKAGE_RPI_FIRMWARE_CD
 	  The cut-down firmware, for emergency situations, with only
 	  features required to boot a Linux kernel.
 
+config BR2_PACKAGE_RPI_FIRMWARE_PI4
+	bool "Pi 4"
+	help
+	  The Raspberry Pi 4 boot files
+
 endchoice
 
 config BR2_PACKAGE_RPI_FIRMWARE_BOOT
 	string
 	default ""      if BR2_PACKAGE_RPI_FIRMWARE_DEFAULT
+	default "4"     if BR2_PACKAGE_RPI_FIRMWARE_PI4
 	default "_x"    if BR2_PACKAGE_RPI_FIRMWARE_X
 	default "_cd"   if BR2_PACKAGE_RPI_FIRMWARE_CD
 
