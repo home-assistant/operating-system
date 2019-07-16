@@ -1,0 +1,13 @@
+diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+index d0ae8c5315048..3ccf2c5be034c 100755
+--- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
++++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+@@ -402,7 +402,7 @@
+ 	samsung,dw-mshc-sdr-timing = <0 4>;
+ 	samsung,dw-mshc-ddr-timing = <0 2>;
+ 	samsung,dw-mshc-hs400-timing = <0 2>;
+-	samsung,read-strobe-delay = <90>;
++	samsung,read-strobe-delay = <150>;
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus1 &sd0_bus4 &sd0_bus8 &sd0_cd &sd0_rclk>;
+ 	bus-width = <8>;

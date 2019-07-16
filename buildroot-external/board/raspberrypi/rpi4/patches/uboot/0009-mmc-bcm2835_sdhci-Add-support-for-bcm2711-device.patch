@@ -1,0 +1,51 @@
+From 6e0d51199f2d089c84f45202587a9f17abd1ab0a Mon Sep 17 00:00:00 2001
+From: Matthias Brugger <mbrugger@suse.com>
+Date: Wed, 10 Jul 2019 13:24:36 +0200
+Subject: [PATCH 09/17] mmc: bcm2835_sdhci: Add support for bcm2711 device
+
+The bcm2711 has two emmc controller. The difference is the clocks
+they use. Add support for the second emmc contoller.
+
+Signed-off-by: Matthias Brugger <mbrugger@suse.com>
+---
+ drivers/mmc/bcm2835_sdhci.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/mmc/bcm2835_sdhci.c b/drivers/mmc/bcm2835_sdhci.c
+index 08bddd410e..e68dec3be7 100644
+--- a/drivers/mmc/bcm2835_sdhci.c
++++ b/drivers/mmc/bcm2835_sdhci.c
+@@ -178,12 +178,13 @@ static int bcm2835_sdhci_probe(struct udevice *dev)
+ 	fdt_addr_t base;
+ 	int emmc_freq;
+ 	int ret;
++	int clock_id = (int)dev_get_driver_data(dev);
+ 
+ 	base = devfdt_get_addr(dev);
+ 	if (base == FDT_ADDR_T_NONE)
+ 		return -EINVAL;
+ 
+-	ret = bcm2835_get_mmc_clock(BCM2835_MBOX_CLOCK_ID_EMMC);
++	ret = bcm2835_get_mmc_clock(clock_id);
+ 	if (ret < 0) {
+ 		debug("%s: Failed to set MMC clock (err=%d)\n", __func__, ret);
+ 		return ret;
+@@ -228,7 +229,14 @@ static int bcm2835_sdhci_probe(struct udevice *dev)
+ }
+ 
+ static const struct udevice_id bcm2835_sdhci_match[] = {
+-	{ .compatible = "brcm,bcm2835-sdhci" },
++	{
++		.compatible = "brcm,bcm2835-sdhci",
++		.data = BCM2835_MBOX_CLOCK_ID_EMMC
++	},
++	{
++		.compatible = "brcm,bcm2711-emmc2",
++		.data = BCM2835_MBOX_CLOCK_ID_EMMC2
++	},
+ 	{ /* sentinel */ }
+ };
+ 
+-- 
+2.17.1
+

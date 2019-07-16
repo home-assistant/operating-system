@@ -9,6 +9,7 @@ Supported Hardware:
 | Raspberry Pi Zero W | rpi0-w |
 | Raspberry Pi 2 B | rpi2 |
 | Raspberry Pi 3 B/B+ | rpi3 / rpi3-64 |
+| Raspberry Pi 4 B | rpi4 / rpi4-64 |
 
 ## Limitation 64bit
 

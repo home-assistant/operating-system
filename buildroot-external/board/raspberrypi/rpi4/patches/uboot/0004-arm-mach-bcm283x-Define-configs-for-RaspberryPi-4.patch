@@ -1,0 +1,66 @@
+From 865218f2dc973492c872dac51a66cff1833c916a Mon Sep 17 00:00:00 2001
+From: Andrei Gherzan <andrei@gherzan.ro>
+Date: Sun, 7 Jul 2019 00:21:33 +0100
+Subject: [PATCH 04/17] arm: mach-bcm283x: Define configs for RaspberryPi 4
+
+Signed-off-by: Andrei Gherzan <andrei@gherzan.ro>
+---
+ arch/arm/mach-bcm283x/Kconfig | 35 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 35 insertions(+)
+
+diff --git a/arch/arm/mach-bcm283x/Kconfig b/arch/arm/mach-bcm283x/Kconfig
+index 3eb5a9a897..d5069fe688 100644
+--- a/arch/arm/mach-bcm283x/Kconfig
++++ b/arch/arm/mach-bcm283x/Kconfig
+@@ -26,6 +26,23 @@ config BCM2837_64B
+ 	select BCM2837
+ 	select ARM64
+ 
++config BCM2838
++	bool "Broadcom BCM2838 SoC support"
++	depends on ARCH_BCM283X
++
++config BCM2838_32B
++	bool "Broadcom BCM2838 SoC 32-bit support"
++	depends on ARCH_BCM283X
++	select BCM2838
++	select ARMV7_LPAE
++	select CPU_V7A
++
++config BCM2838_64B
++	bool "Broadcom BCM2838 SoC 64-bit support"
++	depends on ARCH_BCM283X
++	select BCM2838
++	select ARM64
++
+ menu "Broadcom BCM283X family"
+ 	depends on ARCH_BCM283X
+ 
+@@ -127,6 +144,24 @@ config TARGET_RPI_3
+ 	  This option creates a build targeting the ARMv8/AArch64 ISA.
+ 	select BCM2837_64B
+ 
++config TARGET_RPI_4
++	bool "Raspberry Pi 4 64-bit build"
++	help
++	  Support for all BCM2838-based Raspberry Pi variants, such as
++	  the RPi 4 model B, in AArch64 (64-bit) mode.
++
++	  This option creates a build targeting the ARMv8/AArch64 ISA.
++	select BCM2838_64B
++
++config TARGET_RPI_4_32B
++	bool "Raspberry Pi 4 32-bit build"
++	help
++	  Support for all BCM2838-based Raspberry Pi variants, such as
++	  the RPi 4 model B, in AArch32 (32-bit) mode.
++
++	  This option creates a build targeting the ARMv7/AArch32 ISA.
++	select BCM2838_32B
++
+ endchoice
+ 
+ config SYS_BOARD
+-- 
+2.17.1
+

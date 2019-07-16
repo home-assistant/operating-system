@@ -1,7 +1,7 @@
-BOARD_ID=odroid-xu4
-BOARD_NAME="Hardkernel Odroid-XU4"
+BOARD_ID=rpi4
+BOARD_NAME="RaspberryPi 4"
 CHASSIS=embedded
 BOOTLOADER=uboot
 KERNEL_FILE=zImage
-BOOT_SYS=mbr
+BOOT_SYS=hyprid
 BOOT_ENV_SIZE=0x4000
