@@ -1,15 +1,16 @@
 
-part start mmc ${devnum} 6 mmc_env
-mmc dev ${devnum}
+part start ${devtype} ${devnum} 6 dev_env
+${devtype} dev ${devnum}
+
 setenv loadbootstate " \
     echo 'loading env...'; \
-    mmc read ${ramdisk_addr_r} ${mmc_env} 0x20; \
+    ${devtype} read ${ramdisk_addr_r} ${dev_env} 0x20; \
     env import -c ${ramdisk_addr_r} 0x4000;"
 
 setenv storebootstate " \
     echo 'storing env...'; \
     env export -c -s 0x4000 ${ramdisk_addr_r} BOOT_ORDER BOOT_A_LEFT BOOT_B_LEFT; \
-    mmc write ${ramdisk_addr_r} ${mmc_env} 0x20;"
+    ${devtype} write ${ramdisk_addr_r} ${dev_env} 0x20;"
 
 run loadbootstate
 test -n "${BOOT_ORDER}" || setenv BOOT_ORDER "A B"
@@ -37,14 +38,14 @@ for BOOT_SLOT in "${BOOT_ORDER}"; do
     if test ${BOOT_A_LEFT} -gt 0; then
       setexpr BOOT_A_LEFT ${BOOT_A_LEFT} - 1
       echo "Found valid slot A, ${BOOT_A_LEFT} attempts remaining"
-      setenv load_kernel "ext4load mmc 0:2 ${kernel_addr_r} zImage"
+      setenv load_kernel "ext4load ${devtype} ${devnum}:2 ${kernel_addr_r} zImage"
       setenv bootargs "${bootargs_hassos} ${bootargs_rpi} ${bootargs_a} rauc.slot=A"
     fi
   elif test "x${BOOT_SLOT}" = "xB"; then
     if test ${BOOT_B_LEFT} -gt 0; then
       setexpr BOOT_B_LEFT ${BOOT_B_LEFT} - 1
       echo "Found valid slot B, ${BOOT_B_LEFT} attempts remaining"
-      setenv load_kernel "ext4load mmc 0:4 ${kernel_addr_r} zImage"
+      setenv load_kernel "ext4load ${devtype} ${devnum}:4 ${kernel_addr_r} zImage"
       setenv bootargs "${bootargs_hassos} ${bootargs_rpi} ${bootargs_b} rauc.slot=B"
     fi
   fi
