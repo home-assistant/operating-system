@@ -7,3 +7,5 @@ if [ -z "$1" ]; then
 fi
 
 sed -i "s/SUPERVISOR_VERSION=\".*\"/SUPERVISOR_VERSION=\"$1\"/g" buildroot-external/configs/*
+git commit -m "OS: Update supervisor $1" buildroot-external/configs/*
+
