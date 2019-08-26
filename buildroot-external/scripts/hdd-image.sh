@@ -91,7 +91,7 @@ function create_kernel_image() {
     # Mount / init file structs
     sudo mkdir -p /mnt/data/
     sudo mount -o loop "${kernel_img}" /mnt/data
-    sudo cp -f "${kernel}" /mnt/data/
+    sudo cp "${kernel}" /mnt/data/
     sudo umount /mnt/data
 }
 
