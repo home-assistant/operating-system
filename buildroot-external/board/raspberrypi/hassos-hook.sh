@@ -7,11 +7,9 @@ function hassos_pre_image() {
     cp -t "${BOOT_DATA}" \
         "${BINARIES_DIR}/u-boot.bin" \
         "${BINARIES_DIR}/boot.scr"
-    cp -t "${BOOT_DATA}" \
-        "${BINARIES_DIR}"/*.dtb \
-        "${BINARIES_DIR}/rpi-firmware/bootcode.bin"
+    cp "${BINARIES_DIR}"/*.dtb "${BOOT_DATA}/"
     cp -r "${BINARIES_DIR}/rpi-firmware/overlays" "${BOOT_DATA}/"
-    cp -f "${BOARD_DIR}/../boot-env.txt" "${BOOT_DATA}/config.txt"
+    cp "${BOARD_DIR}/../boot-env.txt" "${BOOT_DATA}/config.txt"
 
     # Firmware
     if [[ "${BOARD_ID}" =~ "rpi4" ]]; then
@@ -21,7 +19,8 @@ function hassos_pre_image() {
     else
         cp -t "${BOOT_DATA}" \
         "${BINARIES_DIR}/rpi-firmware/fixup.dat" \
-        "${BINARIES_DIR}/rpi-firmware/start.elf"
+        "${BINARIES_DIR}/rpi-firmware/start.elf" \
+        "${BINARIES_DIR}/rpi-firmware/bootcode.bin"
     fi
 
     # Set cmd options
