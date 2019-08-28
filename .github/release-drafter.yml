@@ -4,11 +4,13 @@ categories:
   - title: 'Build'
     label: 'build'
   - title: 'Raspberry Pi'
-    label: 'board/raspberry'
+    label: 'board/raspberrypi'
   - title: 'Open Virtual Appliance'
     label: 'board/ova'
   - title: 'Intel-Nuc'
     label: 'board/intel-nuc'
+  - title: 'Hardkernel'
+    label: 'board/hardkernel'
 template: |
   ## Changes
 

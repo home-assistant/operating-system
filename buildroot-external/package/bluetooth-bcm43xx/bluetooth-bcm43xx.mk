@@ -11,8 +11,8 @@ BLUETOOTH_BCM43XX_SITE = $(BR2_EXTERNAL_HASSOS_PATH)/package/bluetooth-bcm43xx
 BLUETOOTH_BCM43XX_SITE_METHOD = local
 
 define BLUETOOTH_BCM43XX_BUILD_CMDS
-	curl -L -o $(@D)/BCM43430A1.hcd https://raw.githubusercontent.com/RPi-Distro/bluez-firmware/ade2bae1aaaebede09abb8fb546f767a0e4c7804/broadcom/BCM43430A1.hcd
-	curl -L -o $(@D)/BCM4345C0.hcd https://raw.githubusercontent.com/RPi-Distro/bluez-firmware/ade2bae1aaaebede09abb8fb546f767a0e4c7804/broadcom/BCM4345C0.hcd
+	curl -L -o $(@D)/BCM43430A1.hcd https://raw.githubusercontent.com/RPi-Distro/bluez-firmware/96eefffcccc725425fd83be5e0704a5c32b79e54/broadcom/BCM43430A1.hcd
+	curl -L -o $(@D)/BCM4345C0.hcd https://raw.githubusercontent.com/RPi-Distro/bluez-firmware/96eefffcccc725425fd83be5e0704a5c32b79e54/broadcom/BCM4345C0.hcd
 endef
 
 define BLUETOOTH_BCM43XX_INSTALL_TARGET_CMDS

@@ -4,6 +4,7 @@ Using this VMDK in a virtual machine requires the following:
 
 - Operating system: Other 4.x or later Linux (64-bit)
 - Enabled support for UEFI boot
+- SATA disk controller
 - Minimal of 1GB RAM
 - At least 2x vCPU
 - An assigned network
@@ -15,5 +16,3 @@ Currently, we only publish a VMDK virtual disk, due to issues with our previous 
 - HyperV
 - VirtualBox
 - VMware
-
-You might need to convert the VMDK into a different format that is accepted by your virtualization platform of choice.
