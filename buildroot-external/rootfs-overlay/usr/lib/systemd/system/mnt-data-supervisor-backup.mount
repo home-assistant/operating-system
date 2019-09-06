@@ -1,0 +1,10 @@
+[Unit]
+Description=HassOS data backup partition
+
+[Mount]
+What=/dev/disk/by-label/BACKUP
+Where=/mnt/data/supervisor/backup
+Type=auto
+Options=nosuid,relatime,noexec
+SloppyOptions=yes
+

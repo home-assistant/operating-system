@@ -5,6 +5,26 @@ USB_CONFIG="/mnt/config"
 CONFIG_DIR=""
 USE_USB=0
 
+
+# Check and mount usb BACKUP to folder
+if findfs LABEL="BACKUP" > /dev/null 2>&1; then
+    echo "[Info] Found USB stick for BACKUPS"
+
+    if ! systemctl -q is-active multi-user.target; then
+        echo "[Info] Use USB stick for BACKUPS"
+        systemctl start mnt-data-supervisor-backup.mount
+        if ! systemctl -q is-active mnt-data-supervisor-backup.mount; then
+            echo "[Error] Can't mount backup partition"
+        else
+		# We can end up occasionally(first boot) mounting after the supervisor so restart
+            if systemctl -q is-active hassos-supervisor.service; then
+                 echo "[Warning] Restarting supervisor for backup filesystem"
+	         systemctl -q restart hassos-supervisor.service
+	    fi
+        fi
+    fi
+fi
+
 # Check and mount usb CONFIG to folder
 if findfs LABEL="CONFIG" > /dev/null 2>&1; then
     echo "[Info] Use USB stick for import CONFIG"

@@ -1,5 +1,8 @@
 # Configuration
 
+## Alternate Backup/Snapshot File system
+Format a USB stick/Drive with a FAT32/EXT4(Best without a journal on flash)/Ext-FAT(not yet supported) file system and label it `BACKUP` case sensitive. This is mounted at configuration only if the supervisor container is not running which is usually only at boot. **It is not safe to remove this unless HassOS is powered down.**
+
 ## Automatic
 
 You can use an USB drive with HassOS to configure network options, SSH access to the host and to install updates.
