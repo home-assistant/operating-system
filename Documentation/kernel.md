@@ -4,7 +4,7 @@
 | Board | Version |
 |-------|---------|
 | Open Virtual Applicance | 4.19.68 |
-| Raspberry Pi | 4.19.67 |
+| Raspberry Pi | 4.19.71 |
 | Tinker Board | 4.19.68 |
 | Odroid-C2 | 4.19.68 |
 | Odroid-XU4 | 4.19.68 |
