@@ -3,10 +3,10 @@
 
 | Board | Version |
 |-------|---------|
-| Open Virtual Applicance | 4.19.68 |
+| Open Virtual Applicance | 4.19.72 |
 | Raspberry Pi | 4.19.71 |
-| Tinker Board | 4.19.68 |
-| Odroid-C2 | 4.19.68 |
-| Odroid-XU4 | 4.19.68 |
-| Orangepi-Prime | 4.19.68 |
-| Intel NUC | 4.19.68 |
+| Tinker Board | 4.19.72 |
+| Odroid-C2 | 4.19.72 |
+| Odroid-XU4 | 4.19.72 |
+| Orangepi-Prime | 4.19.72 |
+| Intel NUC | 4.19.72 |
