@@ -75,10 +75,10 @@ Replace the following configuration:
 ```ini
 [ipv4]
 method=manual
-address=192.168.1.111/24,192.168.1.1
+address=192.168.1.111/24;192.168.1.1
 dns=8.8.8.8;8.8.4.4;
 ```
-For address, the value before the comma is the IP address and subnet prefix bitlength; the second value is the IP address of the gateway.
+For address, the value before the semicolon is the IP address and subnet prefix bitlength; the second value is the IP address of the gateway.
 
 ## Tips
 
