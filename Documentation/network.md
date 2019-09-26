@@ -1,5 +1,6 @@
 # Network
 
+## Configure Network
 HassOS uses NetworkManager to control the host network. In future releases, you will be able to set up the configuration using the API/UI. Currently only a manual configuration using NetworkManager connection files is supported. Without a configuration file, the device will use DHCP by default. These network connection files can be placed on a USB drive and imported to the host as described in [Configuration][configuration-usb].
 
 ## Configuration Examples
