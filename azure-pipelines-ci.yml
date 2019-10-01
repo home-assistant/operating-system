@@ -10,9 +10,9 @@ pr:
 
 variables:
   - name: versionHadolint
-    value: 'v1.16.3'
+    value: 'v1.17.2'
   - name: versionShellCheck
-    value: 'v0.6.0'
+    value: 'v0.7.0'
 
 jobs:
 
