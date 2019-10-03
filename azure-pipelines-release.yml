@@ -11,7 +11,7 @@ pr: none
 
 variables:
   - name: versionGHR
-    value: 'v0.12.1'
+    value: 'v0.13.0'
   - group: github
   - group: hassos
 
