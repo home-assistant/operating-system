@@ -1,0 +1,62 @@
+From 68e65b1e3859d4baf41d1e5f6525ff7ace778ba1 Mon Sep 17 00:00:00 2001
+From: Florin Sarbu <florin@balena.io>
+Date: Thu, 12 Sep 2019 12:31:31 +0200
+Subject: [PATCH] raspberrypi: Disable simple framebuffer support
+
+On 4.19 kernels this u-boot driver clashes with bcm2708_fb.
+So let's disable it from here so that we have bcm2708_fb
+enabled in the kernel, just as Raspbian users might expect.
+See https://github.com/raspberrypi/linux/issues/3139
+
+Upstream-Status: Inappropriate [configuration]
+Signed-off-by: Florin Sarbu <florin@balena.io>
+---
+ board/raspberrypi/rpi/rpi.c | 2 +-
+ common/Makefile             | 2 +-
+ include/configs/rpi.h       | 4 ++--
+ 3 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/board/raspberrypi/rpi/rpi.c b/board/raspberrypi/rpi/rpi.c
+index 153a1fd..c7bd399 100644
+--- a/board/raspberrypi/rpi/rpi.c
++++ b/board/raspberrypi/rpi/rpi.c
+@@ -482,7 +482,7 @@ int ft_board_setup(void *blob, bd_t *bd)
+ 	 * should be more intelligent, and e.g. only do this if no enabled DT
+ 	 * node exists for the "real" graphics driver.
+ 	 */
+-	lcd_dt_simplefb_add_node(blob);
++	//lcd_dt_simplefb_add_node(blob);
+ 
+ #ifdef CONFIG_EFI_LOADER
+ 	/* Reserve the spin table */
+diff --git a/common/Makefile b/common/Makefile
+index 0de60b3..2848d98 100644
+--- a/common/Makefile
++++ b/common/Makefile
+@@ -50,7 +50,7 @@ ifndef CONFIG_DM_VIDEO
+ obj-$(CONFIG_LCD) += lcd.o lcd_console.o
+ endif
+ obj-$(CONFIG_LCD_ROTATION) += lcd_console_rotation.o
+-obj-$(CONFIG_LCD_DT_SIMPLEFB) += lcd_simplefb.o
++//obj-$(CONFIG_LCD_DT_SIMPLEFB) += lcd_simplefb.o
+ obj-$(CONFIG_LYNXKDI) += lynxkdi.o
+ obj-$(CONFIG_MENU) += menu.o
+ obj-$(CONFIG_UPDATE_TFTP) += update.o
+diff --git a/include/configs/rpi.h b/include/configs/rpi.h
+index a38bf20..e2760b0 100644
+--- a/include/configs/rpi.h
++++ b/include/configs/rpi.h
+@@ -60,8 +60,8 @@
+ /* GPIO */
+ #define CONFIG_BCM2835_GPIO
+ /* LCD */
+-#define CONFIG_LCD_DT_SIMPLEFB
+-#define CONFIG_VIDEO_BCM2835
++//#define CONFIG_LCD_DT_SIMPLEFB
++//#define CONFIG_VIDEO_BCM2835
+ 
+ #ifdef CONFIG_CMD_USB
+ #define CONFIG_TFTP_TSIZE
+-- 
+2.7.4
+
