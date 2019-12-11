@@ -27,7 +27,7 @@ QEMU_GUEST_AGENT_CONF_OPTS = --enable-guest-agent
 
 # Override CPP, as it expects to be able to call it like it'd
 # call the compiler.
-define QEMU_CONFIGURE_CMDS
+define QEMU_GUEST_AGENT_CONFIGURE_CMDS
 	( cd $(@D); \
 		LIBS='$(QEMU_LIBS)' \
 		$(TARGET_CONFIGURE_OPTS) \
@@ -88,15 +88,15 @@ define QEMU_CONFIGURE_CMDS
 			--disable-capstone \
 			--disable-tools \
 			--disable-tcg-interpreter \
-			$(QEMU_OPTS) \
+			$(QEMU_GUEST_AGENT_OPTS) \
 	)
 endef
 
-define QEMU_BUILD_CMDS
+define QEMU_GUEST_AGENT_BUILD_CMDS
 	$(TARGET_MAKE_ENV) $(MAKE) -C $(@D)
 endef
 
-define QEMU_INSTALL_TARGET_CMDS
+define QEMU_GUEST_AGENT_INSTALL_TARGET_CMDS
 	$(TARGET_MAKE_ENV) $(MAKE) -C $(@D) $(QEMU_MAKE_ENV) DESTDIR=$(TARGET_DIR) install
 endef
 
