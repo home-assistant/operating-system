@@ -19,21 +19,19 @@ QEMU_GUEST_AGENT_DEPENDENCIES = host-pkgconf libglib2 zlib
 # not automatically pulled. :-(
 QEMU_GUEST_AGENT_LIBS = -lrt -lm
 
-QEMU_GUEST_AGENT_OPTS =
-
 QEMU_GUEST_AGENT_VARS = LIBTOOL=$(HOST_DIR)/bin/libtool
 
-QEMU_GUEST_AGENT_CONF_OPTS = --enable-guest-agent
+QEMU_GUEST_AGENT_OPTS = --enable-guest-agent
 
 # Override CPP, as it expects to be able to call it like it'd
 # call the compiler.
 define QEMU_GUEST_AGENT_CONFIGURE_CMDS
 	( cd $(@D); \
-		LIBS='$(QEMU_LIBS)' \
+		LIBS='$(QEMU_GUEST_AGENT_LIBS)' \
 		$(TARGET_CONFIGURE_OPTS) \
 		$(TARGET_CONFIGURE_ARGS) \
 		CPP="$(TARGET_CC) -E" \
-		$(QEMU_VARS) \
+		$(QEMU_GUEST_AGENT_VARS) \
 		./configure \
 			--prefix=/usr \
 			--cross-prefix=$(TARGET_CROSS) \
@@ -97,7 +95,7 @@ define QEMU_GUEST_AGENT_BUILD_CMDS
 endef
 
 define QEMU_GUEST_AGENT_INSTALL_TARGET_CMDS
-	$(TARGET_MAKE_ENV) $(MAKE) -C $(@D) $(QEMU_MAKE_ENV) DESTDIR=$(TARGET_DIR) install
+	$(TARGET_MAKE_ENV) $(MAKE) -C $(@D) $(QEMU_GUEST_AGENT_MAKE_ENV) DESTDIR=$(TARGET_DIR) install
 endef
 
 define QEMU_GUEST_AGENT_INSTALL_INIT_SYSTEMD
