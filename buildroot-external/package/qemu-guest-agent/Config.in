@@ -1,0 +1,2 @@
+config BR2_PACKAGE_QEMU_GUEST_AGENT
+	bool "QEMU Guest Agent"

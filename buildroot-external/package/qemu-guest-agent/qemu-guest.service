@@ -1,0 +1,11 @@
+[Unit]
+Description=QEMU Guest Agent
+After=syslog.target network.target
+ConditionPathExists=/dev/virtio-ports/org.qemu.guest_agent.0
+
+[Service]
+ExecStart=/usr/bin/qemu-ga
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
