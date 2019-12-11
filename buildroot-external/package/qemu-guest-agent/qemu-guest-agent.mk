@@ -10,7 +10,7 @@ QEMU_GUEST_AGENT_SITE = http://download.qemu.org
 QEMU_GUEST_AGENT_LICENSE = GPL-2.0, LGPL-2.1, MIT, BSD-3-Clause, BSD-2-Clause, Others/BSD-1c
 QEMU_GUEST_AGENT_LICENSE_FILES = COPYING COPYING.LIB
 
-QEMU_DEPENDENCIES = host-pkgconf libglib2 zlib pixman
+QEMU_GUEST_AGENT_DEPENDENCIES = host-pkgconf libglib2 zlib pixman
 QEMU_GUEST_AGENT_CONF_OPTS = --audio-drv-list= \
 	--disable-kvm \
 	--disable-linux-user \
@@ -64,7 +64,7 @@ QEMU_GUEST_AGENT_CONF_OPTS = --audio-drv-list= \
 	--disable-tcg-interpreter \
 	--enable-guest-agent
 
-define OPENVMTOOLS_INSTALL_INIT_SYSTEMD
+define QEMU_GUEST_AGENT_INSTALL_INIT_SYSTEMD
 	$(INSTALL) -D -m 644 $(D)/qemu-guest.service \
 		$(TARGET_DIR)/usr/lib/systemd/system/qemu-guest.service
 	$(INSTALL) -p $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants
