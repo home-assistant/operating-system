@@ -34,6 +34,7 @@ define QEMU_GUEST_AGENT_CONFIGURE_CMDS
 		$(QEMU_GUEST_AGENT_VARS) \
 		./configure \
 			--prefix=/usr \
+			--localstatedir=/var \
 			--cross-prefix=$(TARGET_CROSS) \
 			--audio-drv-list= \
 			--disable-kvm \
