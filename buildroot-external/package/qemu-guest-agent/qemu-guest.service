@@ -1,0 +1,11 @@
+[Unit]
+Description=QEMU Guest Agent
+After=syslog.target network.target
+ConditionVirtualization=kvm
+
+[Service]
+ExecStart=/usr/bin/qemu-ga -m virtio-serial -p /dev/virtio-ports/org.qemu.guest_agent.0
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

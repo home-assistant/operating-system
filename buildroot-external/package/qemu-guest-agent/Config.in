@@ -1,0 +1,9 @@
+config BR2_PACKAGE_QEMU_GUEST_AGENT
+	depends on BR2_USE_MMU # libglib2
+    depends on BR2_USE_WCHAR # libglib2
+    depends on BR2_TOOLCHAIN_HAS_THREADS # libglib2
+	select BR2_PACKAGE_LIBGLIB2
+	select BR2_PACKAGE_ZLIB
+	bool "QEMU Guest Agent"
+	help
+	  QEMU guest agent for qemu based virtualisations
