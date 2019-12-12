@@ -1,0 +1,48 @@
+From 725830ef41b23e35b282ecf78f682c0c131a0042 Mon Sep 17 00:00:00 2001
+From: Neil Armstrong <narmstrong@baylibre.com>
+Date: Wed, 14 Nov 2018 17:39:46 +0100
+Subject: [PATCH 48/53] drm/bridge: dw-hdmi: allow ycbcr420 modes for >= 0x200a
+
+Now the DW-HDMI Controller supports the HDMI2.0 modes, enable support
+for these modes in the connector if the platform supports them.
+We limit these modes to DW-HDMI IP version >= 0x200a which
+are designed to support HDMI2.0 display modes.
+
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 6 ++++++
+ include/drm/bridge/dw_hdmi.h              | 1 +
+ 2 files changed, 7 insertions(+)
+
+diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+index 6473df3068ce..d10277f9ef0b 100644
+--- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
++++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+@@ -2575,6 +2575,12 @@ __dw_hdmi_probe(struct platform_device *pdev,
+ 	if (hdmi->phy.ops->setup_hpd)
+ 		hdmi->phy.ops->setup_hpd(hdmi, hdmi->phy.data);
+ 
++	if (hdmi->version >= 0x200a)
++		hdmi->connector.ycbcr_420_allowed =
++			hdmi->plat_data->ycbcr_420_allowed;
++	else
++		hdmi->connector.ycbcr_420_allowed = false;
++
+ 	memset(&pdevinfo, 0, sizeof(pdevinfo));
+ 	pdevinfo.parent = dev;
+ 	pdevinfo.id = PLATFORM_DEVID_AUTO;
+diff --git a/include/drm/bridge/dw_hdmi.h b/include/drm/bridge/dw_hdmi.h
+index 27f9cce66b6a..c04f497a919b 100644
+--- a/include/drm/bridge/dw_hdmi.h
++++ b/include/drm/bridge/dw_hdmi.h
+@@ -128,6 +128,7 @@ struct dw_hdmi_plat_data {
+ 					   const struct drm_display_mode *mode);
+ 	unsigned long input_bus_format;
+ 	unsigned long input_bus_encoding;
++	bool ycbcr_420_allowed;
+ 
+ 	/* Vendor PHY support */
+ 	const struct dw_hdmi_phy_ops *phy_ops;
+-- 
+2.17.1
+

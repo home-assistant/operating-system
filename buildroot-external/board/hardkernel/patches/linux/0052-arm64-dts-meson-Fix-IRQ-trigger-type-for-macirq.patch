@@ -1,0 +1,51 @@
+From 5e2e26abc73f9bfae1e5edbcdea7e53e9822f2fb Mon Sep 17 00:00:00 2001
+From: Carlo Caione <ccaione@baylibre.com>
+Date: Tue, 4 Dec 2018 16:04:46 +0000
+Subject: [PATCH 52/53] arm64: dts: meson: Fix IRQ trigger type for macirq
+
+A long running stress test on a custom board shipping an AXG SoCs and a
+Realtek RTL8211F PHY revealed that after a few hours the connection
+speed would drop drastically, from ~1000Mbps to ~3Mbps. At the same time
+the 'macirq' (eth0) IRQ would stop being triggered at all and as
+consequence the GMAC IRQs never ACKed.
+
+After a painful investigation the problem seemed to be due to a wrong
+defined IRQ type for the GMAC IRQ that should be LEVEL_HIGH instead of
+EDGE_RISING.
+
+Signed-off-by: Carlo Caione <ccaione@baylibre.com>
+Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-axg.dtsi | 2 +-
+ arch/arm64/boot/dts/amlogic/meson-gx.dtsi  | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
+index c518130e5ce7..81dcbde9e674 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
+@@ -461,7 +461,7 @@
+ 			compatible = "amlogic,meson-gxbb-dwmac", "snps,dwmac";
+ 			reg = <0x0 0xff3f0000 0x0 0x10000
+ 				0x0 0xff634540 0x0 0x8>;
+-			interrupts = <GIC_SPI 8 IRQ_TYPE_EDGE_RISING>;
++			interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
+ 			interrupt-names = "macirq";
+ 			clocks = <&clkc CLKID_ETH>,
+ 				 <&clkc CLKID_FCLK_DIV2>,
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gx.dtsi b/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
+index 5d2820ef9a88..d03737acbae1 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
+@@ -511,7 +511,7 @@
+ 			compatible = "amlogic,meson-gx-dwmac", "amlogic,meson-gxbb-dwmac", "snps,dwmac";
+ 			reg = <0x0 0xc9410000 0x0 0x10000
+ 			       0x0 0xc8834540 0x0 0x4>;
+-			interrupts = <GIC_SPI 8 IRQ_TYPE_EDGE_RISING>;
++			interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
+ 			interrupt-names = "macirq";
+ 			status = "disabled";
+ 		};
+-- 
+2.17.1
+

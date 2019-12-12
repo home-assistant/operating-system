@@ -1,0 +1,273 @@
+From b1d313fb821e3a4196bb32c86c585b8be23d491a Mon Sep 17 00:00:00 2001
+From: Maxime Jourdan <mjourdan@baylibre.com>
+Date: Wed, 10 Oct 2018 15:44:56 +0200
+Subject: [PATCH 36/53] meson: vdec: allow subscribing to
+ V4L2_EVENT_SOURCE_CHANGE
+
+Flag MPEG1/MPEG2 as NO_SOURCE_CHANGE.
+---
+ drivers/media/platform/meson/vdec/vdec.c      | 20 +++++++++++--
+ drivers/media/platform/meson/vdec/vdec.h      | 13 +++++++++
+ .../media/platform/meson/vdec/vdec_helpers.c  | 28 +++++++++++++++++++
+ .../media/platform/meson/vdec/vdec_helpers.h  |  1 +
+ .../media/platform/meson/vdec/vdec_platform.c |  6 ++++
+ 5 files changed, 66 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/media/platform/meson/vdec/vdec.c b/drivers/media/platform/meson/vdec/vdec.c
+index 1c5d3e912bee..ca6404546eb8 100644
+--- a/drivers/media/platform/meson/vdec/vdec.c
++++ b/drivers/media/platform/meson/vdec/vdec.c
+@@ -230,7 +230,8 @@ static int vdec_queue_setup(struct vb2_queue *q,
+ 		 * are free to choose any of them to write frames to. As such,
+ 		 * we need all of them to be queued into the driver
+ 		 */
+-		q->min_buffers_needed = q->num_buffers + *num_buffers;
++		sess->num_dst_bufs = q->num_buffers + *num_buffers;
++		q->min_buffers_needed = sess->num_dst_bufs;
+ 		break;
+ 	default:
+ 		return -EINVAL;
+@@ -260,6 +261,7 @@ static void vdec_vb2_buf_queue(struct vb2_buffer *vb)
+ static int vdec_start_streaming(struct vb2_queue *q, unsigned int count)
+ {
+ 	struct amvdec_session *sess = vb2_get_drv_priv(q);
++	struct amvdec_codec_ops *codec_ops = sess->fmt_out->codec_ops;
+ 	struct amvdec_core *core = sess->core;
+ 	struct vb2_v4l2_buffer *buf;
+ 	int ret;
+@@ -277,6 +279,13 @@ static int vdec_start_streaming(struct vb2_queue *q, unsigned int count)
+ 	if (!sess->streamon_out || !sess->streamon_cap)
+ 		return 0;
+ 
++	if (sess->status == STATUS_NEEDS_RESUME &&
++	    q->type == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE) {
++		codec_ops->resume(sess);
++		sess->status = STATUS_RUNNING;
++		return 0;
++	}
++
+ 	sess->vififo_size = SIZE_VIFIFO;
+ 	sess->vififo_vaddr =
+ 		dma_alloc_coherent(sess->core->dev, sess->vififo_size,
+@@ -305,6 +314,7 @@ static int vdec_start_streaming(struct vb2_queue *q, unsigned int count)
+ 		sess->recycle_thread = kthread_run(vdec_recycle_thread, sess,
+ 						   "vdec_recycle");
+ 
++	sess->status = STATUS_RUNNING;
+ 	core->cur_sess = sess;
+ 
+ 	return 0;
+@@ -362,7 +372,9 @@ static void vdec_stop_streaming(struct vb2_queue *q)
+ 	struct amvdec_core *core = sess->core;
+ 	struct vb2_v4l2_buffer *buf;
+ 
+-	if (sess->streamon_out && sess->streamon_cap) {
++	if (sess->status == STATUS_RUNNING ||
++	    (sess->status == STATUS_NEEDS_RESUME &&
++	     (!sess->streamon_out || !sess->streamon_cap))) {
+ 		if (vdec_codec_needs_recycle(sess))
+ 			kthread_stop(sess->recycle_thread);
+ 
+@@ -375,6 +387,7 @@ static void vdec_stop_streaming(struct vb2_queue *q)
+ 		kfree(sess->priv);
+ 		sess->priv = NULL;
+ 		core->cur_sess = NULL;
++		sess->status = STATUS_STOPPED;
+ 	}
+ 
+ 	if (q->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE) {
+@@ -611,6 +624,7 @@ static int vdec_enum_fmt(struct file *file, void *fh, struct v4l2_fmtdesc *f)
+ 
+ 		fmt_out = &platform->formats[f->index];
+ 		f->pixelformat = fmt_out->pixfmt;
++		f->flags = fmt_out->flags;
+ 	} else if (f->type == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE) {
+ 		fmt_out = sess->fmt_out;
+ 		if (f->index >= 4 || !fmt_out->pixfmts_cap[f->index])
+@@ -703,6 +717,8 @@ static int vdec_subscribe_event(struct v4l2_fh *fh,
+ 	switch (sub->type) {
+ 	case V4L2_EVENT_EOS:
+ 		return v4l2_event_subscribe(fh, sub, 2, NULL);
++	case V4L2_EVENT_SOURCE_CHANGE:
++		return v4l2_src_change_event_subscribe(fh, sub);
+ 	default:
+ 		return -EINVAL;
+ 	}
+diff --git a/drivers/media/platform/meson/vdec/vdec.h b/drivers/media/platform/meson/vdec/vdec.h
+index 6be7de2849b6..8f8ce629c698 100644
+--- a/drivers/media/platform/meson/vdec/vdec.h
++++ b/drivers/media/platform/meson/vdec/vdec.h
+@@ -101,6 +101,7 @@ struct amvdec_ops {
+ 	u32 (*vififo_level)(struct amvdec_session *sess);
+ };
+ 
++
+ /**
+  * struct amvdec_codec_ops - codec operations
+  *
+@@ -127,6 +128,7 @@ struct amvdec_codec_ops {
+ 	int (*can_recycle)(struct amvdec_core *core);
+ 	void (*recycle)(struct amvdec_core *core, u32 buf_idx);
+ 	void (*drain)(struct amvdec_session *sess);
++	void (*resume)(struct amvdec_session *sess);
+ 	const u8 * (*eos_sequence)(u32 *len);
+ 	irqreturn_t (*isr)(struct amvdec_session *sess);
+ 	irqreturn_t (*threaded_isr)(struct amvdec_session *sess);
+@@ -140,6 +142,7 @@ struct amvdec_codec_ops {
+  * @max_buffers: maximum amount of CAPTURE (dst) buffers
+  * @max_width: maximum picture width supported
+  * @max_height: maximum picture height supported
++ * @flags: enum flags associated with this pixfmt
+  * @vdec_ops: the VDEC operations that support this format
+  * @codec_ops: the codec operations that support this format
+  * @firmware_path: Path to the firmware that supports this format
+@@ -151,6 +154,7 @@ struct amvdec_format {
+ 	u32 max_buffers;
+ 	u32 max_width;
+ 	u32 max_height;
++	u32 flags;
+ 
+ 	struct amvdec_ops *vdec_ops;
+ 	struct amvdec_codec_ops *codec_ops;
+@@ -159,6 +163,12 @@ struct amvdec_format {
+ 	u32 pixfmts_cap[4];
+ };
+ 
++enum amvdec_status {
++	STATUS_STOPPED,
++	STATUS_RUNNING,
++	STATUS_NEEDS_RESUME,
++};
++
+ /**
+  * struct amvdec_session - decoding session parameters
+  *
+@@ -195,6 +205,7 @@ struct amvdec_format {
+  * @timestamps: chronological list of src timestamps
+  * @ts_spinlock: spinlock for the timestamps list
+  * @last_irq_jiffies: tracks last time the vdec triggered an IRQ
++ * @status: current decoding status
+  * @priv: codec private data
+  */
+ struct amvdec_session {
+@@ -225,6 +236,7 @@ struct amvdec_session {
+ 	unsigned int sequence_cap;
+ 	unsigned int should_stop;
+ 	unsigned int keyframe_found;
++	unsigned int num_dst_bufs;
+ 
+ 	u8 canvas_alloc[MAX_CANVAS];
+ 	u32 canvas_num;
+@@ -245,6 +257,7 @@ struct amvdec_session {
+ 	u32 wrap_count;
+ 	u32 dpb_size;
+ 
++	enum amvdec_status status;
+ 	void *priv;
+ };
+ 
+diff --git a/drivers/media/platform/meson/vdec/vdec_helpers.c b/drivers/media/platform/meson/vdec/vdec_helpers.c
+index 02090c5b089e..b982b2869fd2 100644
+--- a/drivers/media/platform/meson/vdec/vdec_helpers.c
++++ b/drivers/media/platform/meson/vdec/vdec_helpers.c
+@@ -403,6 +403,34 @@ void amvdec_set_par_from_dar(struct amvdec_session *sess,
+ }
+ EXPORT_SYMBOL_GPL(amvdec_set_par_from_dar);
+ 
++void amvdec_src_change(struct amvdec_session *sess, u32 width, u32 height, u32 dpb_size)
++{
++	static const struct v4l2_event ev = {
++		.type = V4L2_EVENT_SOURCE_CHANGE,
++		.u.src_change.changes = V4L2_EVENT_SRC_CH_RESOLUTION };
++
++	sess->dpb_size = dpb_size;
++
++	/* Check if the capture queue is already configured well for our
++	 * usecase. If so, keep decoding with it and do not send the event
++	 */
++	if (sess->width == width &&
++	    sess->height == height &&
++	    dpb_size <= sess->num_dst_bufs) {
++		sess->fmt_out->codec_ops->resume(sess);
++		return;
++	}
++
++	sess->width = width;
++	sess->height = height;
++	sess->status = STATUS_NEEDS_RESUME;
++
++	dev_dbg(sess->core->dev, "Res. changed (%ux%u), DPB size %u\n",
++		width, height, dpb_size);
++	v4l2_event_queue_fh(&sess->fh, &ev);
++}
++EXPORT_SYMBOL_GPL(amvdec_src_change);
++
+ void amvdec_abort(struct amvdec_session *sess)
+ {
+ 	dev_info(sess->core->dev, "Aborting decoding session!\n");
+diff --git a/drivers/media/platform/meson/vdec/vdec_helpers.h b/drivers/media/platform/meson/vdec/vdec_helpers.h
+index b9250a8157c4..060799b5e4d4 100644
+--- a/drivers/media/platform/meson/vdec/vdec_helpers.h
++++ b/drivers/media/platform/meson/vdec/vdec_helpers.h
+@@ -44,5 +44,6 @@ void amvdec_remove_ts(struct amvdec_session *sess, u64 ts);
+ void amvdec_set_par_from_dar(struct amvdec_session *sess,
+ 			     u32 dar_num, u32 dar_den);
+ 
++void amvdec_src_change(struct amvdec_session *sess, u32 width, u32 height, u32 dpb_size);
+ void amvdec_abort(struct amvdec_session *sess);
+ #endif
+diff --git a/drivers/media/platform/meson/vdec/vdec_platform.c b/drivers/media/platform/meson/vdec/vdec_platform.c
+index 46eeb7426f54..291f1eeb27d9 100644
+--- a/drivers/media/platform/meson/vdec/vdec_platform.c
++++ b/drivers/media/platform/meson/vdec/vdec_platform.c
+@@ -17,6 +17,7 @@ static const struct amvdec_format vdec_formats_gxbb[] = {
+ 		.max_buffers = 8,
+ 		.max_width = 1920,
+ 		.max_height = 1080,
++		.flags = V4L2_FMT_FLAG_NO_SOURCE_CHANGE,
+ 		.vdec_ops = &vdec_1_ops,
+ 		.codec_ops = &codec_mpeg12_ops,
+ 		.firmware_path = "meson/gx/vmpeg12_mc",
+@@ -27,6 +28,7 @@ static const struct amvdec_format vdec_formats_gxbb[] = {
+ 		.max_buffers = 8,
+ 		.max_width = 1920,
+ 		.max_height = 1080,
++		.flags = V4L2_FMT_FLAG_NO_SOURCE_CHANGE,
+ 		.vdec_ops = &vdec_1_ops,
+ 		.codec_ops = &codec_mpeg12_ops,
+ 		.firmware_path = "meson/gx/vmpeg12_mc",
+@@ -41,6 +43,7 @@ static const struct amvdec_format vdec_formats_gxl[] = {
+ 		.max_buffers = 8,
+ 		.max_width = 1920,
+ 		.max_height = 1080,
++		.flags = V4L2_FMT_FLAG_NO_SOURCE_CHANGE,
+ 		.vdec_ops = &vdec_1_ops,
+ 		.codec_ops = &codec_mpeg12_ops,
+ 		.firmware_path = "meson/gx/vmpeg12_mc",
+@@ -51,6 +54,7 @@ static const struct amvdec_format vdec_formats_gxl[] = {
+ 		.max_buffers = 8,
+ 		.max_width = 1920,
+ 		.max_height = 1080,
++		.flags = V4L2_FMT_FLAG_NO_SOURCE_CHANGE,
+ 		.vdec_ops = &vdec_1_ops,
+ 		.codec_ops = &codec_mpeg12_ops,
+ 		.firmware_path = "meson/gx/vmpeg12_mc",
+@@ -65,6 +69,7 @@ static const struct amvdec_format vdec_formats_gxm[] = {
+ 		.max_buffers = 8,
+ 		.max_width = 1920,
+ 		.max_height = 1080,
++		.flags = V4L2_FMT_FLAG_NO_SOURCE_CHANGE,
+ 		.vdec_ops = &vdec_1_ops,
+ 		.codec_ops = &codec_mpeg12_ops,
+ 		.firmware_path = "meson/gx/vmpeg12_mc",
+@@ -75,6 +80,7 @@ static const struct amvdec_format vdec_formats_gxm[] = {
+ 		.max_buffers = 8,
+ 		.max_width = 1920,
+ 		.max_height = 1080,
++		.flags = V4L2_FMT_FLAG_NO_SOURCE_CHANGE,
+ 		.vdec_ops = &vdec_1_ops,
+ 		.codec_ops = &codec_mpeg12_ops,
+ 		.firmware_path = "meson/gx/vmpeg12_mc",
+-- 
+2.17.1
+
