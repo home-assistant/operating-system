@@ -1,0 +1,65 @@
+From f9f1d0b0b197f94502ea2a13a27d6d4534f8150f Mon Sep 17 00:00:00 2001
+From: Maxime Jourdan <mjourdan@baylibre.com>
+Date: Wed, 29 Aug 2018 15:24:22 +0200
+Subject: [PATCH 33/53] arm64: dts: meson: add vdec entries
+
+This enables the video decoder for gxbb, gxl and gxm chips
+
+Signed-off-by: Maxime Jourdan <mjourdan@baylibre.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi | 10 ++++++++++
+ arch/arm64/boot/dts/amlogic/meson-gxl.dtsi  | 10 ++++++++++
+ arch/arm64/boot/dts/amlogic/meson-gxm.dtsi  |  4 ++++
+ 3 files changed, 24 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
+index 2a4d506bad4e..96145e49ea44 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
+@@ -814,3 +814,13 @@
+ 	power-domains = <&pwrc_vpu>;
+ };
+ 
++&vdec {
++	compatible = "amlogic,gxbb-vdec";
++	clocks = <&clkc CLKID_DOS_PARSER>,
++		 <&clkc CLKID_DOS>,
++		 <&clkc CLKID_VDEC_1>,
++		 <&clkc CLKID_VDEC_HEVC>;
++	clock-names = "dos_parser", "dos", "vdec_1", "vdec_hevc";
++	resets = <&reset RESET_PARSER>;
++	reset-names = "esparser";
++};
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
+index 9f4b6185a61d..6ca93ae1e496 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
+@@ -814,3 +814,13 @@
+ 	power-domains = <&pwrc_vpu>;
+ };
+ 
++&vdec {
++	compatible = "amlogic,gxl-vdec";
++	clocks = <&clkc CLKID_DOS_PARSER>,
++		 <&clkc CLKID_DOS>,
++		 <&clkc CLKID_VDEC_1>,
++		 <&clkc CLKID_VDEC_HEVC>;
++	clock-names = "dos_parser", "dos", "vdec_1", "vdec_hevc";
++	resets = <&reset RESET_PARSER>;
++	reset-names = "esparser";
++};
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxm.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxm.dtsi
+index 247888d68a3a..2f356495be5e 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxm.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gxm.dtsi
+@@ -117,3 +117,7 @@
+ &dwc3 {
+ 	phys = <&usb3_phy>, <&usb2_phy0>, <&usb2_phy1>, <&usb2_phy2>;
+ };
++
++&vdec {
++	compatible = "amlogic,gxm-vdec";
++};
+-- 
+2.17.1
+

@@ -1,0 +1,34 @@
+From c8482bffc8ced44e3e22f403413b23c7b20af1be Mon Sep 17 00:00:00 2001
+From: Maxime Jourdan <mjourdan@baylibre.com>
+Date: Tue, 4 Sep 2018 10:07:08 +0200
+Subject: [PATCH 31/53] MAINTAINERS: Add meson video decoder
+
+Add an entry for the meson video decoder for amlogic SoCs.
+
+Signed-off-by: Maxime Jourdan <mjourdan@baylibre.com>
+---
+ MAINTAINERS | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 11a59e82d92e..d2c0c0f8b406 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -9526,6 +9526,14 @@ F:	drivers/media/platform/meson/ao-cec.c
+ F:	Documentation/devicetree/bindings/media/meson-ao-cec.txt
+ T:	git git://linuxtv.org/media_tree.git
+ 
++MESON VIDEO DECODER DRIVER FOR AMLOGIC SOCS
++M:	Maxime Jourdan <mjourdan@baylibre.com>
++L:	linux-media@lists.freedesktop.org
++L:	linux-amlogic@lists.infradead.org
++S:	Supported
++F:	drivers/media/platform/meson/vdec/
++T:	git git://linuxtv.org/media_tree.git
++
+ MICROBLAZE ARCHITECTURE
+ M:	Michal Simek <monstr@monstr.eu>
+ W:	http://www.monstr.eu/fdt/
+-- 
+2.17.1
+

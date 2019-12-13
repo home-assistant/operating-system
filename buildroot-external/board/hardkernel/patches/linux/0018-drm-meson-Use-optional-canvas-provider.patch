@@ -1,0 +1,174 @@
+From b1ef71bf75024008c4221e0415f84af57cd128ac Mon Sep 17 00:00:00 2001
+From: Maxime Jourdan <mjourdan@baylibre.com>
+Date: Mon, 15 Oct 2018 14:37:18 +0200
+Subject: [PATCH 18/53] drm/meson: Use optional canvas provider
+
+This is the first step into converting the meson/drm driver to use
+the canvas module.
+
+If a canvas provider node is detected in DT, use it. Otherwise,
+fall back to what is currently being done.
+
+Signed-off-by: Maxime Jourdan <mjourdan@baylibre.com>
+---
+ drivers/gpu/drm/meson/Kconfig       |  1 +
+ drivers/gpu/drm/meson/meson_crtc.c  | 14 ++++++---
+ drivers/gpu/drm/meson/meson_drv.c   | 46 ++++++++++++++++++-----------
+ drivers/gpu/drm/meson/meson_drv.h   |  4 +++
+ drivers/gpu/drm/meson/meson_plane.c |  8 ++++-
+ 5 files changed, 51 insertions(+), 22 deletions(-)
+
+diff --git a/drivers/gpu/drm/meson/Kconfig b/drivers/gpu/drm/meson/Kconfig
+index 02d400b8795c..892905825fea 100644
+--- a/drivers/gpu/drm/meson/Kconfig
++++ b/drivers/gpu/drm/meson/Kconfig
+@@ -7,6 +7,7 @@ config DRM_MESON
+ 	select DRM_GEM_CMA_HELPER
+ 	select VIDEOMODE_HELPERS
+ 	select REGMAP_MMIO
++	select MESON_CANVAS
+ 
+ config DRM_MESON_DW_HDMI
+ 	tristate "HDMI Synopsys Controller support for Amlogic Meson Display"
+diff --git a/drivers/gpu/drm/meson/meson_crtc.c b/drivers/gpu/drm/meson/meson_crtc.c
+index 2680be54a1d1..910b92def5d2 100644
+--- a/drivers/gpu/drm/meson/meson_crtc.c
++++ b/drivers/gpu/drm/meson/meson_crtc.c
+@@ -199,10 +199,16 @@ void meson_crtc_irq(struct meson_drm *priv)
+ 		} else
+ 			meson_vpp_disable_interlace_vscaler_osd1(priv);
+ 
+-		meson_canvas_setup(priv, MESON_CANVAS_ID_OSD1,
+-			   priv->viu.osd1_addr, priv->viu.osd1_stride,
+-			   priv->viu.osd1_height, MESON_CANVAS_WRAP_NONE,
+-			   MESON_CANVAS_BLKMODE_LINEAR);
++		if (priv->canvas)
++			meson_canvas_config(priv->canvas, priv->canvas_id_osd1,
++				priv->viu.osd1_addr, priv->viu.osd1_stride,
++				priv->viu.osd1_height, MESON_CANVAS_WRAP_NONE,
++				MESON_CANVAS_BLKMODE_LINEAR, 0);
++		else
++			meson_canvas_setup(priv, MESON_CANVAS_ID_OSD1,
++				priv->viu.osd1_addr, priv->viu.osd1_stride,
++				priv->viu.osd1_height, MESON_CANVAS_WRAP_NONE,
++				MESON_CANVAS_BLKMODE_LINEAR);
+ 
+ 		/* Enable OSD1 */
+ 		writel_bits_relaxed(VPP_OSD1_POSTBLEND, VPP_OSD1_POSTBLEND,
+diff --git a/drivers/gpu/drm/meson/meson_drv.c b/drivers/gpu/drm/meson/meson_drv.c
+index 588b3b0c8315..874c7a74a7c1 100644
+--- a/drivers/gpu/drm/meson/meson_drv.c
++++ b/drivers/gpu/drm/meson/meson_drv.c
+@@ -220,24 +220,33 @@ static int meson_drv_bind_master(struct device *dev, bool has_components)
+ 		goto free_drm;
+ 	}
+ 
+-	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "dmc");
+-	if (!res) {
+-		ret = -EINVAL;
+-		goto free_drm;
+-	}
+-	/* Simply ioremap since it may be a shared register zone */
+-	regs = devm_ioremap(dev, res->start, resource_size(res));
+-	if (!regs) {
+-		ret = -EADDRNOTAVAIL;
+-		goto free_drm;
+-	}
++	priv->canvas = meson_canvas_get(dev);
++	if (!IS_ERR(priv->canvas)) {
++		ret = meson_canvas_alloc(priv->canvas, &priv->canvas_id_osd1);
++		if (ret)
++			goto free_drm;
++	} else {
++		priv->canvas = NULL;
+ 
+-	priv->dmc = devm_regmap_init_mmio(dev, regs,
+-					  &meson_regmap_config);
+-	if (IS_ERR(priv->dmc)) {
+-		dev_err(&pdev->dev, "Couldn't create the DMC regmap\n");
+-		ret = PTR_ERR(priv->dmc);
+-		goto free_drm;
++		res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "dmc");
++		if (!res) {
++			ret = -EINVAL;
++			goto free_drm;
++		}
++		/* Simply ioremap since it may be a shared register zone */
++		regs = devm_ioremap(dev, res->start, resource_size(res));
++		if (!regs) {
++			ret = -EADDRNOTAVAIL;
++			goto free_drm;
++		}
++
++		priv->dmc = devm_regmap_init_mmio(dev, regs,
++						  &meson_regmap_config);
++		if (IS_ERR(priv->dmc)) {
++			dev_err(&pdev->dev, "Couldn't create the DMC regmap\n");
++			ret = PTR_ERR(priv->dmc);
++			goto free_drm;
++		}
+ 	}
+ 
+ 	priv->vsync_irq = platform_get_irq(pdev, 0);
+@@ -322,6 +331,9 @@ static void meson_drv_unbind(struct device *dev)
+ 	struct meson_drm *priv = dev_get_drvdata(dev);
+ 	struct drm_device *drm = priv->drm;
+ 
++	if (priv->canvas)
++		meson_canvas_free(priv->canvas, priv->canvas_id_osd1);
++
+ 	drm_dev_unregister(drm);
+ 	drm_irq_uninstall(drm);
+ 	drm_kms_helper_poll_fini(drm);
+diff --git a/drivers/gpu/drm/meson/meson_drv.h b/drivers/gpu/drm/meson/meson_drv.h
+index 8450d6ac8c9b..728d0ca33732 100644
+--- a/drivers/gpu/drm/meson/meson_drv.h
++++ b/drivers/gpu/drm/meson/meson_drv.h
+@@ -22,6 +22,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/regmap.h>
+ #include <linux/of.h>
++#include <linux/soc/amlogic/meson-canvas.h>
+ #include <drm/drmP.h>
+ 
+ struct meson_drm {
+@@ -31,6 +32,9 @@ struct meson_drm {
+ 	struct regmap *dmc;
+ 	int vsync_irq;
+ 
++	struct meson_canvas *canvas;
++	u8 canvas_id_osd1;
++
+ 	struct drm_device *drm;
+ 	struct drm_crtc *crtc;
+ 	struct drm_fbdev_cma *fbdev;
+diff --git a/drivers/gpu/drm/meson/meson_plane.c b/drivers/gpu/drm/meson/meson_plane.c
+index 12c80dfcff59..51bec8e98a39 100644
+--- a/drivers/gpu/drm/meson/meson_plane.c
++++ b/drivers/gpu/drm/meson/meson_plane.c
+@@ -90,6 +90,7 @@ static void meson_plane_atomic_update(struct drm_plane *plane,
+ 		.y2 = state->crtc_y + state->crtc_h,
+ 	};
+ 	unsigned long flags;
++	u8 canvas_id_osd1;
+ 
+ 	/*
+ 	 * Update Coordinates
+@@ -104,8 +105,13 @@ static void meson_plane_atomic_update(struct drm_plane *plane,
+ 				   (0xFF << OSD_GLOBAL_ALPHA_SHIFT) |
+ 				   OSD_BLK0_ENABLE;
+ 
++	if (priv->canvas)
++		canvas_id_osd1 = priv->canvas_id_osd1;
++	else
++		canvas_id_osd1 = MESON_CANVAS_ID_OSD1;
++
+ 	/* Set up BLK0 to point to the right canvas */
+-	priv->viu.osd1_blk0_cfg[0] = ((MESON_CANVAS_ID_OSD1 << OSD_CANVAS_SEL) |
++	priv->viu.osd1_blk0_cfg[0] = ((canvas_id_osd1 << OSD_CANVAS_SEL) |
+ 				      OSD_ENDIANNESS_LE);
+ 
+ 	/* On GXBB, Use the old non-HDR RGB2YUV converter */
+-- 
+2.17.1
+

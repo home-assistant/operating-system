@@ -1,0 +1,41 @@
+From 83a293f5c56ec7cb763edba40c9cbf4f79ed6393 Mon Sep 17 00:00:00 2001
+From: Maxime Jourdan <maxi.jourdan@wanadoo.fr>
+Date: Fri, 20 Apr 2018 16:09:09 +0200
+Subject: [PATCH 17/53] ARM64: dts: meson-gx: add dmcbus and canvas nodes.
+
+DMC is a small memory region with various registers,
+including the ones needed for the canvas module.
+
+Reviewed-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Maxime Jourdan <mjourdan@baylibre.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-gx.dtsi | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gx.dtsi b/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
+index 6b64b63f2a68..fb6435431a94 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
+@@ -458,6 +458,19 @@
+ 			};
+ 		};
+ 
++		dmcbus: bus@c8838000 {
++			compatible = "simple-bus";
++			reg = <0x0 0xc8838000 0x0 0x400>;
++			#address-cells = <2>;
++			#size-cells = <2>;
++			ranges = <0x0 0x0 0x0 0xc8838000 0x0 0x400>;
++
++			canvas: video-lut@48 {
++				compatible = "amlogic,canvas";
++				reg = <0x0 0x48 0x0 0x14>;
++			};
++		};
++
+ 		hiubus: bus@c883c000 {
+ 			compatible = "simple-bus";
+ 			reg = <0x0 0xc883c000 0x0 0x2000>;
+-- 
+2.17.1
+

@@ -1,0 +1,40 @@
+From 706947bf855b187bbd8d8b5786b38e84e571ca9b Mon Sep 17 00:00:00 2001
+From: Neil Armstrong <narmstrong@baylibre.com>
+Date: Wed, 7 Nov 2018 11:45:48 +0100
+Subject: [PATCH 26/53] arm64: dts: meson-gxbb-nanopi-k2: fix GPIO lines names
+
+The gpio line names were set in the pinctrl node instead of the gpio node,
+at the time it was merged, it worked, but was obviously wrong.
+This patch moves the properties to the gpio nodes.
+
+Fixes: 12ada0513d7a ("ARM64: dts: meson-gxbb-nanopi-k2: Add GPIO lines names")
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-gxbb-nanopi-k2.dts | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-nanopi-k2.dts b/arch/arm64/boot/dts/amlogic/meson-gxbb-nanopi-k2.dts
+index 5b10de9a0bad..8ea5ed5a1c62 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxbb-nanopi-k2.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-nanopi-k2.dts
+@@ -236,7 +236,7 @@
+ 	pinctrl-names = "default";
+ };
+ 
+-&pinctrl_aobus {
++&gpio_ao {
+ 	gpio-line-names = "UART TX", "UART RX", "Power Control", "Power Key In",
+ 			  "VCCK En", "CON1 Header Pin31",
+ 			  "I2S Header Pin6", "IR In", "I2S Header Pin7",
+@@ -246,7 +246,7 @@
+ 			  "";
+ };
+ 
+-&pinctrl_periphs {
++&gpio {
+ 	gpio-line-names = /* Bank GPIOZ */
+ 			  "Eth MDIO", "Eth MDC", "Eth RGMII RX Clk",
+ 			  "Eth RX DV", "Eth RX D0", "Eth RX D1", "Eth RX D2",
+-- 
+2.17.1
+

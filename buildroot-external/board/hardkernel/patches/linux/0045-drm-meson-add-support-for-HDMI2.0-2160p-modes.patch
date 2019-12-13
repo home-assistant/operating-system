@@ -1,0 +1,30 @@
+From 954b1e933ad1dd534c3f5b01fde7b52a62b78973 Mon Sep 17 00:00:00 2001
+From: Neil Armstrong <narmstrong@baylibre.com>
+Date: Mon, 12 Nov 2018 16:10:07 +0100
+Subject: [PATCH 45/53] drm/meson: add support for HDMI2.0 2160p modes
+
+Now we support the TMDS Clock > 3.4GHz and support the SCDC Control
+operation in the DW-HDMI Controller, we can enable support for the
+HDMI2.0 3840x2160@60/50 RGB444 display modes.
+
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ drivers/gpu/drm/meson/meson_venc.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/gpu/drm/meson/meson_venc.c b/drivers/gpu/drm/meson/meson_venc.c
+index 0fbe525b94c8..1bcd642b6e42 100644
+--- a/drivers/gpu/drm/meson/meson_venc.c
++++ b/drivers/gpu/drm/meson/meson_venc.c
+@@ -848,6 +848,8 @@ struct meson_hdmi_venc_vic_mode {
+ 	{ 93, &meson_hdmi_encp_mode_2160p24 },
+ 	{ 94, &meson_hdmi_encp_mode_2160p25 },
+ 	{ 95, &meson_hdmi_encp_mode_2160p30 },
++	{ 96, &meson_hdmi_encp_mode_2160p25 },
++	{ 97, &meson_hdmi_encp_mode_2160p30 },
+ 	{ 0, NULL}, /* sentinel */
+ };
+ 
+-- 
+2.17.1
+

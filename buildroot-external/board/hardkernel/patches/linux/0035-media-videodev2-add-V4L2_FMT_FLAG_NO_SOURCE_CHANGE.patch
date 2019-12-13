@@ -1,0 +1,51 @@
+From 2688d1304cbb41d4e2c8514ec2bdcd2b48f2f88a Mon Sep 17 00:00:00 2001
+From: Maxime Jourdan <mjourdan@baylibre.com>
+Date: Thu, 4 Oct 2018 15:37:39 +0200
+Subject: [PATCH 35/53] media: videodev2: add V4L2_FMT_FLAG_NO_SOURCE_CHANGE
+
+When a v4l2 driver exposes V4L2_EVENT_SOURCE_CHANGE, some (usually
+OUTPUT) formats may not be able to trigger this event.
+
+Add a enum_fmt format flag to tag those specific formats.
+
+Signed-off-by: Maxime Jourdan <mjourdan@baylibre.com>
+---
+ Documentation/media/uapi/v4l/vidioc-enum-fmt.rst | 5 +++++
+ include/uapi/linux/videodev2.h                   | 5 +++--
+ 2 files changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/Documentation/media/uapi/v4l/vidioc-enum-fmt.rst b/Documentation/media/uapi/v4l/vidioc-enum-fmt.rst
+index 019c513df217..e0040b36ac43 100644
+--- a/Documentation/media/uapi/v4l/vidioc-enum-fmt.rst
++++ b/Documentation/media/uapi/v4l/vidioc-enum-fmt.rst
+@@ -116,6 +116,11 @@ one until ``EINVAL`` is returned.
+       - This format is not native to the device but emulated through
+ 	software (usually libv4l2), where possible try to use a native
+ 	format instead for better performance.
++    * - ``V4L2_FMT_FLAG_NO_SOURCE_CHANGE``
++      - 0x0004
++      - The event ``V4L2_EVENT_SOURCE_CHANGE`` is not supported
++	for this format.
++
+ 
+ 
+ Return Value
+diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
+index 1aae2e4b8f10..f44bdef62d0b 100644
+--- a/include/uapi/linux/videodev2.h
++++ b/include/uapi/linux/videodev2.h
+@@ -733,8 +733,9 @@ struct v4l2_fmtdesc {
+ 	__u32		    reserved[4];
+ };
+ 
+-#define V4L2_FMT_FLAG_COMPRESSED 0x0001
+-#define V4L2_FMT_FLAG_EMULATED   0x0002
++#define V4L2_FMT_FLAG_COMPRESSED	0x0001
++#define V4L2_FMT_FLAG_EMULATED		0x0002
++#define V4L2_FMT_FLAG_NO_SOURCE_CHANGE	0x0004
+ 
+ 	/* Frame Size and frame rate enumeration */
+ /*
+-- 
+2.17.1
+
