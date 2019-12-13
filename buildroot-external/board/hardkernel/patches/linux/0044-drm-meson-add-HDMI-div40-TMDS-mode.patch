@@ -1,0 +1,71 @@
+From 9f4886b1df0a93a313bc8a238ca6f020fbe8ae90 Mon Sep 17 00:00:00 2001
+From: Neil Armstrong <narmstrong@baylibre.com>
+Date: Mon, 12 Nov 2018 16:08:13 +0100
+Subject: [PATCH 44/53] drm/meson: add HDMI div40 TMDS mode
+
+Add support for TMDS Clock > 3.4GHz for HDMI2.0 display modes.
+
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ drivers/gpu/drm/meson/meson_dw_hdmi.c | 24 ++++++++++++++++++++----
+ 1 file changed, 20 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/gpu/drm/meson/meson_dw_hdmi.c b/drivers/gpu/drm/meson/meson_dw_hdmi.c
+index 807111ebfdd9..b8775102b100 100644
+--- a/drivers/gpu/drm/meson/meson_dw_hdmi.c
++++ b/drivers/gpu/drm/meson/meson_dw_hdmi.c
+@@ -365,7 +365,8 @@ static int dw_hdmi_phy_init(struct dw_hdmi *hdmi, void *data,
+ 	unsigned int wr_clk =
+ 		readl_relaxed(priv->io_base + _REG(VPU_HDMI_SETTING));
+ 
+-	DRM_DEBUG_DRIVER("%d:\"%s\"\n", mode->base.id, mode->name);
++	DRM_DEBUG_DRIVER("%d:\"%s\" div%d\n", mode->base.id, mode->name,
++			 mode->clock > 340000 ? 40 : 10);
+ 
+ 	/* Enable clocks */
+ 	regmap_update_bits(priv->hhi, HHI_HDMI_CLK_CNTL, 0xffff, 0x100);
+@@ -385,9 +386,17 @@ static int dw_hdmi_phy_init(struct dw_hdmi *hdmi, void *data,
+ 	/* Enable normal output to PHY */
+ 	dw_hdmi_top_write(dw_hdmi, HDMITX_TOP_BIST_CNTL, BIT(12));
+ 
+-	/* TMDS pattern setup (TOFIX pattern for 4k2k scrambling) */
+-	dw_hdmi_top_write(dw_hdmi, HDMITX_TOP_TMDS_CLK_PTTN_01, 0x001f001f);
+-	dw_hdmi_top_write(dw_hdmi, HDMITX_TOP_TMDS_CLK_PTTN_23, 0x001f001f);
++	/* TMDS pattern setup (TOFIX Handle the YUV420 case) */
++	if (mode->clock > 340000) {
++		dw_hdmi_top_write(dw_hdmi, HDMITX_TOP_TMDS_CLK_PTTN_01, 0);
++		dw_hdmi_top_write(dw_hdmi, HDMITX_TOP_TMDS_CLK_PTTN_23,
++				  0x03ff03ff);
++	} else {
++		dw_hdmi_top_write(dw_hdmi, HDMITX_TOP_TMDS_CLK_PTTN_01,
++				  0x001f001f);
++		dw_hdmi_top_write(dw_hdmi, HDMITX_TOP_TMDS_CLK_PTTN_23,
++				  0x001f001f);
++	}
+ 
+ 	/* Load TMDS pattern */
+ 	dw_hdmi_top_write(dw_hdmi, HDMITX_TOP_TMDS_CLK_PTTN_CNTL, 0x1);
+@@ -413,6 +422,8 @@ static int dw_hdmi_phy_init(struct dw_hdmi *hdmi, void *data,
+ 	/* Disable clock, fifo, fifo_wr */
+ 	regmap_update_bits(priv->hhi, HHI_HDMI_PHY_CNTL1, 0xf, 0);
+ 
++	dw_hdmi_set_high_tmds_clock_ratio(hdmi);
++
+ 	msleep(100);
+ 
+ 	/* Reset PHY 3 times in a row */
+@@ -562,6 +573,11 @@ dw_hdmi_mode_valid(struct drm_connector *connector,
+ 		mode->vdisplay, mode->vsync_start,
+ 		mode->vsync_end, mode->vtotal, mode->type, mode->flags);
+ 
++	/* If sink max TMDS clock < 340MHz, we reject the HDMI2.0 modes */
++	if (mode->clock > 340000 &&
++	    connector->display_info.max_tmds_clock < 340000)
++		return MODE_BAD;
++
+ 	/* Check against non-VIC supported modes */
+ 	if (!vic) {
+ 		status = meson_venc_hdmi_supported_mode(mode);
+-- 
+2.17.1
+

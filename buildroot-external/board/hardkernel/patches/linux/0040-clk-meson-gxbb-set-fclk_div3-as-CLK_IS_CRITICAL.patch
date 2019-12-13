@@ -1,0 +1,44 @@
+From 8bb24f445a3b532a06a1d5bde70daad0c4f3da4f Mon Sep 17 00:00:00 2001
+From: Christian Hewitt <christianshewitt@gmail.com>
+Date: Sat, 13 Oct 2018 14:04:46 +0400
+Subject: [PATCH 40/53] clk: meson-gxbb: set fclk_div3 as CLK_IS_CRITICAL
+
+On the Khadas VIM2 (GXM) and LePotato (GXL) board there are problems
+with reboot; e.g. a ~60 second delay between issuing reboot and the
+board power cycling (and in some OS configurations reboot will fail
+and require manual power cycling).
+
+Similar to 'commit c987ac6f1f088663b6dad39281071aeb31d450a8 ("clk:
+meson-gxbb: set fclk_div2 as CLK_IS_CRITICAL")' the SCPI Cortex-M4
+Co-Processor seems to depend on FCLK_DIV3 being operational.
+
+Bisect gives 'commit 05f814402d6174369b3b29832cbb5eb5ed287059 ("clk:
+meson: add fdiv clock gates") between 4.16 and 4.16-rc1 as the first
+bad commit. This added support for the missing clock gates before the
+fixed PLL fixed dividers (FCLK_DIVx) and the clock framework which
+disabled all the unused fixed dividers, thus it disabled a critical
+clock path for the SCPI Co-Processor.
+
+This change simply sets the FCLK_DIV3 gate as critical to ensure
+nothing can disable it.
+
+Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
+---
+ drivers/clk/meson/gxbb.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+index 4d4f6d842c31..a6fae1c00df3 100644
+--- a/drivers/clk/meson/gxbb.c
++++ b/drivers/clk/meson/gxbb.c
+@@ -513,6 +513,7 @@ static struct clk_fixed_factor gxbb_fclk_div3_div = {
+ 		.ops = &clk_fixed_factor_ops,
+ 		.parent_names = (const char *[]){ "fixed_pll" },
+ 		.num_parents = 1,
++		.flags = CLK_IS_CRITICAL,
+ 	},
+ };
+ 
+-- 
+2.17.1
+

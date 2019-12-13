@@ -1,0 +1,92 @@
+ARM: dts: exynos5420: add mali dt bindings and enable mali on Odroid XU3/4
+
+Signed-off-by: memeka <mihailescu2m@gmail.com>
+
+https://github.com/hardkernel/linux/commit/27f16b364e195daefdb8839344c02870ceaf48f2#diff-80dd4bb1cf404a3774bbe37bcfe945c2
+
+Upstream-Status: Backport
+
+Signed-off-by: Armin Kuster <akuster808@gmail.com>
+
+Index: kernel-source/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
+===================================================================
+--- kernel-source.orig/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
++++ kernel-source/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
+@@ -417,6 +417,11 @@
+ 	vtmu-supply = <&ldo7_reg>;
+ };
+ 
++&mali {
++	mali-supply = <&buck4_reg>;
++	status = "okay";
++};
++
+ &rtc {
+ 	status = "okay";
+ 	clocks = <&clock CLK_RTC>, <&s2mps11_osc S2MPS11_CLK_AP>;
+Index: kernel-source/arch/arm/boot/dts/exynos5420.dtsi
+===================================================================
+--- kernel-source.orig/arch/arm/boot/dts/exynos5420.dtsi
++++ kernel-source/arch/arm/boot/dts/exynos5420.dtsi
+@@ -1317,6 +1317,61 @@
+ 		};
+ 	};
+ 
++	mali: mali@11800000 {
++		compatible = "samsung,exynos5422-mali", "arm,malit6xx", "arm,mali-midgard";
++		reg = <0x11800000 0x5000>;
++		interrupts = <GIC_SPI 219 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 117 IRQ_TYPE_LEVEL_HIGH>;
++		interrupt-names = "JOB", "MMU", "GPU";
++
++		clocks = <&clock CLK_FOUT_VPLL>, <&clock CLK_DOUT_ACLK_G3D>, <&clock CLK_G3D>;
++		clock-names = "fout_vpll", "dout_aclk_g3d", "clk_mali";
++
++		operating-points-v2 = <&gpu_opp_table>;
++
++		status = "disabled";
++
++		power_model@0 {
++			compatible = "arm,mali-simple-power-model";
++			static-coefficient = <2427750>;
++			dynamic-coefficient = <4687>;
++			ts = <20000 2000 (-20) 2>;
++			thermal-zone = "gpu-thermal";
++		};
++	};
++
++	gpu_opp_table: opp_table0 {
++		compatible = "operating-points-v2";
++
++		opp@600000000 {
++			opp-hz = /bits/ 64 <600000000>;
++			opp-microvolt = <1150000>;
++		};
++		opp@543000000 {
++			opp-hz = /bits/ 64 <543000000>;
++			opp-microvolt = <1037500>;
++		};
++		opp@480000000 {
++			opp-hz = /bits/ 64 <480000000>;
++			opp-microvolt = <1000000>;
++		};
++		opp@420000000 {
++			opp-hz = /bits/ 64 <420000000>;
++			opp-microvolt = <962500>;
++		};
++		opp@350000000 {
++			opp-hz = /bits/ 64 <350000000>;
++			opp-microvolt = <912500>;
++		};
++		opp@266000000 {
++			opp-hz = /bits/ 64 <266000000>;
++			opp-microvolt = <862500>;
++		};
++		opp@177000000 {
++			opp-hz = /bits/ 64 <177000000>;
++			opp-microvolt = <812500>;
++		};
++	};
++
+ 	thermal-zones {
+ 		cpu0_thermal: cpu0-thermal {
+ 			thermal-sensors = <&tmu_cpu0>;

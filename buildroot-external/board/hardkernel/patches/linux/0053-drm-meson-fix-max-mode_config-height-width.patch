@@ -1,0 +1,36 @@
+From 47a653adc82602d0d8b21065807164f87c89c82b Mon Sep 17 00:00:00 2001
+From: Neil Armstrong <narmstrong@baylibre.com>
+Date: Thu, 4 Oct 2018 10:42:43 +0200
+Subject: [PATCH 53/53] drm/meson: fix max mode_config height/width
+
+The mode_config max_width/max_height determines the maximum framebuffer
+size the pixel reader can handle. But the values were set thinking they
+were determining the maximum screen dimensions.
+
+This patch changes the values to the maximum height/width the CANVAS block
+can handle rounded to some coherent values.
+
+Fixes: a41e82e6c457 ("drm/meson: Add support for components")
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ drivers/gpu/drm/meson/meson_drv.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/meson/meson_drv.c b/drivers/gpu/drm/meson/meson_drv.c
+index a13704ab5d11..960b8b08756e 100644
+--- a/drivers/gpu/drm/meson/meson_drv.c
++++ b/drivers/gpu/drm/meson/meson_drv.c
+@@ -267,8 +267,8 @@ static int meson_drv_bind_master(struct device *dev, bool has_components)
+ 		goto free_drm;
+ 
+ 	drm_mode_config_init(drm);
+-	drm->mode_config.max_width = 3840;
+-	drm->mode_config.max_height = 2160;
++	drm->mode_config.max_width = 16384;
++	drm->mode_config.max_height = 8192;
+ 	drm->mode_config.funcs = &meson_mode_config_funcs;
+ 	drm->mode_config.helper_private	= &meson_mode_config_helpers;
+ 
+-- 
+2.17.1
+

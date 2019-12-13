@@ -1,0 +1,126 @@
+From fa6cb8f89a7f9387a0299f6b55bc0cd54233aefd Mon Sep 17 00:00:00 2001
+From: Neil Armstrong <narmstrong@baylibre.com>
+Date: Thu, 22 Nov 2018 17:27:20 +0100
+Subject: [PATCH 51/53] drm/meson: Fix an Alpha Primary Plane bug on Meson
+ GXL/GXM SoCs
+
+On the Amlogic GXL & GXM SoCs, a bug occurs in the OSD1 plane when
+alpha is used where the alpha is not aligned with the pixel content.
+
+The woraround Amlogic implemented is the reset the OSD1 plane hardware
+block each time the plane is updated, solving the issue.
+
+In the reset, we still need to save the content of 2 registers which
+depends on the status of the plane, in addition to reload the scaler
+conversion matrix in the same time.
+
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ drivers/gpu/drm/meson/meson_crtc.c  |  1 +
+ drivers/gpu/drm/meson/meson_plane.c | 12 ++++++++++++
+ drivers/gpu/drm/meson/meson_viu.c   | 27 +++++++++++++++++++++++++++
+ drivers/gpu/drm/meson/meson_viu.h   |  1 +
+ 4 files changed, 41 insertions(+)
+
+diff --git a/drivers/gpu/drm/meson/meson_crtc.c b/drivers/gpu/drm/meson/meson_crtc.c
+index 23df4abd95c9..f13e5b6b7a50 100644
+--- a/drivers/gpu/drm/meson/meson_crtc.c
++++ b/drivers/gpu/drm/meson/meson_crtc.c
+@@ -183,6 +183,7 @@ void meson_crtc_irq(struct meson_drm *priv)
+ 
+ 	/* Update the OSD registers */
+ 	if (priv->viu.osd1_enabled && priv->viu.osd1_commit) {
++
+ 		writel_relaxed(priv->viu.osd1_ctrl_stat,
+ 				priv->io_base + _REG(VIU_OSD1_CTRL_STAT));
+ 		writel_relaxed(priv->viu.osd1_blk0_cfg[0],
+diff --git a/drivers/gpu/drm/meson/meson_plane.c b/drivers/gpu/drm/meson/meson_plane.c
+index 12a47b4f65a5..837228847675 100644
+--- a/drivers/gpu/drm/meson/meson_plane.c
++++ b/drivers/gpu/drm/meson/meson_plane.c
+@@ -79,6 +79,7 @@
+ struct meson_plane {
+ 	struct drm_plane base;
+ 	struct meson_drm *priv;
++	bool enabled;
+ };
+ #define to_meson_plane(x) container_of(x, struct meson_plane, base)
+ 
+@@ -303,6 +304,15 @@ static void meson_plane_atomic_update(struct drm_plane *plane,
+ 	priv->viu.osd1_stride = fb->pitches[0];
+ 	priv->viu.osd1_height = fb->height;
+ 
++	if (!meson_plane->enabled) {
++		/* Reset OSD1 at updates on GXL+ SoCs */
++		if (meson_vpu_is_compatible(priv, "amlogic,meson-gxm-vpu") ||
++		    meson_vpu_is_compatible(priv, "amlogic,meson-gxl-vpu"))
++			meson_viu_reset(priv);
++
++		meson_plane->enabled = true;
++	}
++
+ 	spin_unlock_irqrestore(&priv->drm->event_lock, flags);
+ }
+ 
+@@ -316,6 +326,8 @@ static void meson_plane_atomic_disable(struct drm_plane *plane,
+ 	writel_bits_relaxed(VPP_OSD1_POSTBLEND, 0,
+ 			    priv->io_base + _REG(VPP_MISC));
+ 
++	meson_plane->enabled = false;
++
+ }
+ 
+ static const struct drm_plane_helper_funcs meson_plane_helper_funcs = {
+diff --git a/drivers/gpu/drm/meson/meson_viu.c b/drivers/gpu/drm/meson/meson_viu.c
+index 90d9ae3c2b81..366f7e523d15 100644
+--- a/drivers/gpu/drm/meson/meson_viu.c
++++ b/drivers/gpu/drm/meson/meson_viu.c
+@@ -296,6 +296,33 @@ static void meson_viu_load_matrix(struct meson_drm *priv)
+ 				 true);
+ }
+ 
++/* VIU OSD1 Reset as workaround for GXL+ Alpha OSD Bug */
++void meson_viu_reset(struct meson_drm *priv)
++{
++	uint32_t osd1_fifo_ctrl_stat, osd1_ctrl_stat2;
++
++	/* Save these 2 registers state */
++	osd1_fifo_ctrl_stat = readl_relaxed(
++				priv->io_base + _REG(VIU_OSD1_FIFO_CTRL_STAT));
++	osd1_ctrl_stat2 = readl_relaxed(
++				priv->io_base + _REG(VIU_OSD1_CTRL_STAT2));
++
++	/* Reset OSD1 */
++	writel_bits_relaxed(BIT(0), BIT(0),
++			    priv->io_base + _REG(VIU_SW_RESET));
++	writel_bits_relaxed(BIT(0), 0,
++			    priv->io_base + _REG(VIU_SW_RESET));
++
++	/* Rewrite these registers state lost in the reset */
++	writel_relaxed(osd1_fifo_ctrl_stat,
++		       priv->io_base + _REG(VIU_OSD1_FIFO_CTRL_STAT));
++	writel_relaxed(osd1_ctrl_stat2,
++		       priv->io_base + _REG(VIU_OSD1_CTRL_STAT2));
++
++	/* Reload the conversion matrix */
++	meson_viu_load_matrix(priv);
++}
++
+ void meson_viu_init(struct meson_drm *priv)
+ {
+ 	uint32_t reg;
+diff --git a/drivers/gpu/drm/meson/meson_viu.h b/drivers/gpu/drm/meson/meson_viu.h
+index 073b1910bd1b..e4a6e2fba8fb 100644
+--- a/drivers/gpu/drm/meson/meson_viu.h
++++ b/drivers/gpu/drm/meson/meson_viu.h
+@@ -59,6 +59,7 @@
+ #define OSD_REPLACE_EN		BIT(14)
+ #define OSD_REPLACE_SHIFT	6
+ 
++void meson_viu_reset(struct meson_drm *priv);
+ void meson_viu_init(struct meson_drm *priv);
+ 
+ #endif /* __MESON_VIU_H */
+-- 
+2.17.1
+
