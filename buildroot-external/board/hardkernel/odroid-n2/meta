@@ -1,0 +1,7 @@
+BOARD_ID=odroid-n2
+BOARD_NAME="Hardkernel Odroid-N2"
+CHASSIS=embedded
+BOOTLOADER=uboot
+KERNEL_FILE=Image
+BOOT_SYS=mbr
+BOOT_ENV_SIZE=0x2000

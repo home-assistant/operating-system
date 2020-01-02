@@ -11,10 +11,10 @@ BLUETOOTH_RTL8723_SITE = $(BR2_EXTERNAL_HASSOS_PATH)/package/bluetooth-rtl8723
 BLUETOOTH_RTL8723_SITE_METHOD = local
 
 define BLUETOOTH_RTL8723_BUILD_CMDS
-	curl -L -o $(@D)/rtk_hciattach https://raw.githubusercontent.com/armbian/build/dee62df8bb2fe8611fd41ddf02063fa15533298c/packages/bsp/rockchip/rtk_hciattach
+	curl -L -o $(@D)/rtk_hciattach https://raw.githubusercontent.com/home-assistant/hassos-blobs/e0c8b7aebb626694cf5c017a9e03068aee2bc604/rtl_bt/rtk_hciattach
 
-	curl -L -o $(@D)/rtl8723b_config https://raw.githubusercontent.com/armbian/firmware/4723bbb3d1ef70b5fbe7d2599c47d078ab125c47/rtl_bt/rtl8723b_config.bin
-	curl -L -o $(@D)/rtl8723b_fw https://raw.githubusercontent.com/armbian/firmware/4723bbb3d1ef70b5fbe7d2599c47d078ab125c47/rtl_bt/rtl8723b_fw.bin
+	curl -L -o $(@D)/rtl8723b_config https://raw.githubusercontent.com/home-assistant/hassos-blobs/e0c8b7aebb626694cf5c017a9e03068aee2bc604/rtl_bt/rtl8723b_config.bin
+	curl -L -o $(@D)/rtl8723b_fw https://raw.githubusercontent.com/home-assistant/hassos-blobs/e0c8b7aebb626694cf5c017a9e03068aee2bc604/rtl_bt/rtl8723b_fw.bin
 endef
 
 define BLUETOOTH_RTL8723_INSTALL_TARGET_CMDS

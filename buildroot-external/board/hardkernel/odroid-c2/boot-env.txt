@@ -77,8 +77,8 @@ m_bpp=32
 # Allows you to force HDMI thinking that the cable is connected.
 # true = HDMI will believe that cable is always connected
 # false = will let board/monitor negotiate the connection status
-hpd=true
 #hpd=false
+hpd=true
 
 # Monitor output
 # Controls if HDMI PHY should output anything to the monitor

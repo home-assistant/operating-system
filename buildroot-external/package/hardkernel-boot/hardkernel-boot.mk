@@ -4,7 +4,6 @@
 #
 ################################################################################
 
-
 HARDKERNEL_BOOT_SOURCE = $(HARDKERNEL_BOOT_VERSION).tar.gz
 HARDKERNEL_BOOT_SITE = https://github.com/hardkernel/u-boot/archive
 HARDKERNEL_BOOT_LICENSE = GPL-2.0+
@@ -20,14 +19,16 @@ HARDKERNEL_BOOT_BINS += sd_fuse/bl1.bin.hardkernel \
                        u-boot.gxbb
 define HARDKERNEL_BOOT_BUILD_CMDS
 	$(@D)/fip/fip_create --bl30  $(@D)/fip/gxb/bl30.bin \
-												--bl301 $(@D)/fip/gxb/bl301.bin \
-												--bl31  $(@D)/fip/gxb/bl31.bin \
-												--bl33  $(BINARIES_DIR)/u-boot.bin \
-												$(@D)/fip.bin
+		--bl301 $(@D)/fip/gxb/bl301.bin \
+		--bl31  $(@D)/fip/gxb/bl31.bin \
+		--bl33  $(BINARIES_DIR)/u-boot.bin \
+		$(@D)/fip.bin
+
 	cat $(@D)/fip/gxb/bl2.package $(@D)/fip.bin > $(@D)/boot_new.bin
 	$(@D)/fip/gxb/aml_encrypt_gxb --bootsig \
-															--input $(@D)/boot_new.bin \
-															--output $(@D)/u-boot.img
+		--input $(@D)/boot_new.bin \
+		--output $(@D)/u-boot.img
+
 	dd if=$(@D)/u-boot.img of=$(@D)/u-boot.gxbb bs=512 skip=96
 endef
 
@@ -38,6 +39,59 @@ HARDKERNEL_BOOT_BINS += sd_fuse/bl1.bin.hardkernel \
                         sd_fuse/bl2.bin.hardkernel.720k_uboot \
 						sd_fuse/tzsw.bin.hardkernel
 define HARDKERNEL_BOOT_BUILD_CMDS
+endef
+
+else ifeq ($(BR2_PACKAGE_HARDKERNEL_BOOT_ODROID_N2),y)
+HARDKERNEL_BOOT_VERSION = c989da31a5c1da3ab57d7c6dc5a3fdbcc1c3eed7
+
+HARDKERNEL_BOOT_BINS += u-boot.g12b
+define HARDKERNEL_BOOT_BUILD_CMDS
+	curl -L -o $(@D)/fip/blx_fix.sh https://raw.githubusercontent.com/home-assistant/hassos-blobs/6877aeb72dae1afb4f7f0e6414c9de8ebfe32147/odroid-n2/blx_fix_g12a.sh
+	curl -L -o $(@D)/fip/acs.bin https://raw.githubusercontent.com/home-assistant/hassos-blobs/6877aeb72dae1afb4f7f0e6414c9de8ebfe32147/odroid-n2/acs.bin
+	curl -L -o $(@D)/fip/bl301.bin https://raw.githubusercontent.com/home-assistant/hassos-blobs/6877aeb72dae1afb4f7f0e6414c9de8ebfe32147/odroid-n2/bl301.bin
+
+	sh $(@D)/fip/blx_fix.sh \
+		$(@D)/fip/g12b/bl30.bin $(@D)/fip/zero_tmp $(@D)/fip/bl30_zero.bin \
+		$(@D)/fip/bl301.bin $(@D)/fip/bl301_zero.bin $(@D)/fip/bl30_new.bin \
+		bl30
+
+	sh $(@D)/fip/blx_fix.sh \
+		$(@D)/fip/g12b/bl2.bin $(@D)/fip/zero_tmp $(@D)/fip/bl2_zero.bin \
+		$(@D)/fip/acs.bin $(@D)/fip/bl21_zero.bin $(@D)/fip/bl2_new.bin \
+		bl2
+
+	$(@D)/fip/g12b/aml_encrypt_g12b --bl30sig --input $(@D)/fip/bl30_new.bin \
+		--output $(@D)/fip/bl30_new.bin.g12a.enc \
+		--level v3
+	$(@D)/fip/g12b/aml_encrypt_g12b --bl3sig --input $(@D)/fip/bl30_new.bin.g12a.enc \
+		--output $(@D)/fip/bl30_new.bin.enc \
+		--level v3 --type bl30
+	$(@D)/fip/g12b/aml_encrypt_g12b --bl3sig --input $(@D)/fip/g12b/bl31.img \
+		--output $(@D)/fip/bl31.img.enc \
+		--level v3 --type bl31
+	$(@D)/fip/g12b/aml_encrypt_g12b --bl3sig --input $(BINARIES_DIR)/u-boot.bin --compress lz4 \
+		--output $(@D)/fip/bl33.bin.enc \
+		--level v3 --type bl33 --compress lz4
+	$(@D)/fip/g12b/aml_encrypt_g12b --bl2sig --input $(@D)/fip/bl2_new.bin \
+		--output $(@D)/fip/bl2.n.bin.sig
+	$(@D)/fip/g12b/aml_encrypt_g12b --bootmk \
+		--output $(@D)/fip/u-boot.bin \
+		--bl2 $(@D)/fip/bl2.n.bin.sig \
+		--bl30 $(@D)/fip/bl30_new.bin.enc \
+		--bl31 $(@D)/fip/bl31.img.enc \
+		--bl33 $(@D)/fip/bl33.bin.enc \
+		--ddrfw1 $(@D)/fip/g12b/ddr4_1d.fw \
+		--ddrfw2 $(@D)/fip/g12b/ddr4_2d.fw \
+		--ddrfw3 $(@D)/fip/g12b/ddr3_1d.fw \
+		--ddrfw4 $(@D)/fip/g12b/piei.fw \
+		--ddrfw5 $(@D)/fip/g12b/lpddr4_1d.fw \
+		--ddrfw6 $(@D)/fip/g12b/lpddr4_2d.fw \
+		--ddrfw7 $(@D)/fip/g12b/diag_lpddr4.fw \
+		--ddrfw8 $(@D)/fip/g12b/aml_ddr.fw \
+		--level v3
+
+	dd if=$(@D)fip/u-boot.bin of=$(@D)/u-boot.g12b conv=notrunc bs=512 skip=1 seek=1
+	dd if=$(@D)fip/u-boot.bin of=$(@D)/u-boot.g12b conv=notrunc bs=1 count=444
 endef
 endif
 
