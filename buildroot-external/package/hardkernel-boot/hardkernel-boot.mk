@@ -46,9 +46,9 @@ HARDKERNEL_BOOT_VERSION = c989da31a5c1da3ab57d7c6dc5a3fdbcc1c3eed7
 
 HARDKERNEL_BOOT_BINS += u-boot.g12b
 define HARDKERNEL_BOOT_BUILD_CMDS
-	curl -L -o $(@D)/fip/blx_fix.sh https://raw.githubusercontent.com/home-assistant/hassos-blobs/6877aeb72dae1afb4f7f0e6414c9de8ebfe32147/odroid-n2/blx_fix_g12a.sh
-	curl -L -o $(@D)/fip/acs.bin https://raw.githubusercontent.com/home-assistant/hassos-blobs/6877aeb72dae1afb4f7f0e6414c9de8ebfe32147/odroid-n2/acs.bin
-	curl -L -o $(@D)/fip/bl301.bin https://raw.githubusercontent.com/home-assistant/hassos-blobs/6877aeb72dae1afb4f7f0e6414c9de8ebfe32147/odroid-n2/bl301.bin
+	curl -L -o $(@D)/fip/blx_fix.sh https://raw.githubusercontent.com/home-assistant/hassos-blobs/d271a9c4aedf740e4fa716c3cb7faee93257e968/odroid-n2/blx_fix_g12a.sh
+	curl -L -o $(@D)/fip/acs.bin https://raw.githubusercontent.com/home-assistant/hassos-blobs/d271a9c4aedf740e4fa716c3cb7faee93257e968/odroid-n2/acs.bin
+	curl -L -o $(@D)/fip/bl301.bin https://raw.githubusercontent.com/home-assistant/hassos-blobs/d271a9c4aedf740e4fa716c3cb7faee93257e968/odroid-n2/bl301.bin
 
 	sh $(@D)/fip/blx_fix.sh \
 		$(@D)/fip/g12b/bl30.bin $(@D)/fip/zero_tmp $(@D)/fip/bl30_zero.bin \
@@ -61,15 +61,15 @@ define HARDKERNEL_BOOT_BUILD_CMDS
 		bl2
 
 	$(@D)/fip/g12b/aml_encrypt_g12b --bl30sig --input $(@D)/fip/bl30_new.bin \
-		--output $(@D)/fip/bl30_new.bin.g12a.enc \
+		--output $(@D)/fip/bl30_new.bin.g12.enc \
 		--level v3
-	$(@D)/fip/g12b/aml_encrypt_g12b --bl3sig --input $(@D)/fip/bl30_new.bin.g12a.enc \
+	$(@D)/fip/g12b/aml_encrypt_g12b --bl3sig --input $(@D)/fip/bl30_new.bin.g12.enc \
 		--output $(@D)/fip/bl30_new.bin.enc \
 		--level v3 --type bl30
 	$(@D)/fip/g12b/aml_encrypt_g12b --bl3sig --input $(@D)/fip/g12b/bl31.img \
 		--output $(@D)/fip/bl31.img.enc \
 		--level v3 --type bl31
-	$(@D)/fip/g12b/aml_encrypt_g12b --bl3sig --input $(BINARIES_DIR)/u-boot.bin --compress lz4 \
+	$(@D)/fip/g12b/aml_encrypt_g12b --bl3sig --input $(BINARIES_DIR)/u-boot.bin \
 		--output $(@D)/fip/bl33.bin.enc \
 		--level v3 --type bl33 --compress lz4
 	$(@D)/fip/g12b/aml_encrypt_g12b --bl2sig --input $(@D)/fip/bl2_new.bin \
@@ -82,16 +82,11 @@ define HARDKERNEL_BOOT_BUILD_CMDS
 		--bl33 $(@D)/fip/bl33.bin.enc \
 		--ddrfw1 $(@D)/fip/g12b/ddr4_1d.fw \
 		--ddrfw2 $(@D)/fip/g12b/ddr4_2d.fw \
-		--ddrfw3 $(@D)/fip/g12b/ddr3_1d.fw \
 		--ddrfw4 $(@D)/fip/g12b/piei.fw \
-		--ddrfw5 $(@D)/fip/g12b/lpddr4_1d.fw \
-		--ddrfw6 $(@D)/fip/g12b/lpddr4_2d.fw \
-		--ddrfw7 $(@D)/fip/g12b/diag_lpddr4.fw \
 		--ddrfw8 $(@D)/fip/g12b/aml_ddr.fw \
 		--level v3
 
-	dd if=$(@D)fip/u-boot.bin of=$(@D)/u-boot.g12b conv=notrunc bs=512 skip=1 seek=1
-	dd if=$(@D)fip/u-boot.bin of=$(@D)/u-boot.g12b conv=notrunc bs=1 count=444
+	cp $(@D)/fip/u-boot.bin $(@D)/u-boot.g12b
 endef
 endif
 
