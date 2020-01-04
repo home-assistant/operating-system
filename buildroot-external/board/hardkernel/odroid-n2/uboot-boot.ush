@@ -1,5 +1,5 @@
 # Default Console Device Setting
-setenv condev "console=ttyAML0,115200n8 console=tty1"
+setenv condev "console=ttyAML0,115200n8 console=tty0"
  
 # Auto Detection of Monitor settings based on your Screen information
 setenv display_autodetect "true"
@@ -84,7 +84,7 @@ if test "${display_autodetect}" = "true"; then hdmitx edid; fi
 if test "${hdmimode}" = "custombuilt"; then setenv cmode "modeline=${modeline}"; fi
  
 # Boot Args
-setenv bootargs "root=PARTUUID=48617373-06 rootfstype=squashfs ro rootwait ${condev} ${amlogic} no_console_suspend hdmimode=${hdmimode} cvbsmode=576cvbs max_freq_a53=${max_freq_a53} max_freq_a73=${max_freq_a73} maxcpus=${maxcpus} ${cmode} voutmode=${voutmode} disablehpd=${disablehpd} overscan=${overscan} zram.enabled=1 zram.num_devices=3 apparmor=1 security=apparmor cgroup_enable=memory"
+setenv bootargs "root=PARTUUID=48617373-06 rootfstype=squashfs ro rootwait ${condev} clk_ignore_unused hdmimode=${hdmimode} cvbsmode=576cvbs max_freq_a53=${max_freq_a53} max_freq_a73=${max_freq_a73} maxcpus=${maxcpus} ${cmode} voutmode=${voutmode} disablehpd=${disablehpd} overscan=${overscan} zram.enabled=1 zram.num_devices=3 apparmor=1 security=apparmor cgroup_enable=memory"
  
 # Set load addresses
 setenv dtb_addr "0x1000000"
