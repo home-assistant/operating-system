@@ -6,9 +6,6 @@
 # For more information check our wiki:
 # https://wiki.odroid.com/odroid-n2/application_note/software/set_display_mode
 
-# Auto Detection of Monitor settings based on your Screen information
-display_autodetect=true
- 
 # HDMI Mode
 # Resolution Configuration
 #    Symbol             | Resolution

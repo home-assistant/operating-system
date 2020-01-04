@@ -50,12 +50,12 @@ define HARDKERNEL_BOOT_BUILD_CMDS
 	curl -L -o $(@D)/fip/acs.bin https://raw.githubusercontent.com/home-assistant/hassos-blobs/d271a9c4aedf740e4fa716c3cb7faee93257e968/odroid-n2/acs.bin
 	curl -L -o $(@D)/fip/bl301.bin https://raw.githubusercontent.com/home-assistant/hassos-blobs/d271a9c4aedf740e4fa716c3cb7faee93257e968/odroid-n2/bl301.bin
 
-	sh $(@D)/fip/blx_fix.sh \
+	bash $(@D)/fip/blx_fix.sh \
 		$(@D)/fip/g12b/bl30.bin $(@D)/fip/zero_tmp $(@D)/fip/bl30_zero.bin \
 		$(@D)/fip/bl301.bin $(@D)/fip/bl301_zero.bin $(@D)/fip/bl30_new.bin \
 		bl30
 
-	sh $(@D)/fip/blx_fix.sh \
+	bash $(@D)/fip/blx_fix.sh \
 		$(@D)/fip/g12b/bl2.bin $(@D)/fip/zero_tmp $(@D)/fip/bl2_zero.bin \
 		$(@D)/fip/acs.bin $(@D)/fip/bl21_zero.bin $(@D)/fip/bl2_new.bin \
 		bl2
