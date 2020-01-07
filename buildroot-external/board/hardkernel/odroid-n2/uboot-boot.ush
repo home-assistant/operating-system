@@ -23,8 +23,10 @@ if load mmc ${devnum}:1 ${ramdisk_addr_r} config.txt; then
 fi
 
 # Board bootargs
-if test "${m}" = "custombuilt"; then setenv cmode "modeline=${modeline}"; fi
-setenv bootargs_odroidc2 "no_console_suspend hdmimode=${m} ${cmode} m_bpp=${m_bpp} vout=${vout} net.ifnames=0 elevator=noop disablehpd=${hpd} max_freq=${max_freq} maxcpus=${maxcpus} monitor_onoff=${monitor_onoff} disableuhs=${disableuhs} mmc_removable=${mmc_removable} usbmulticam=${usbmulticam}"
+if test "${hdmimode}" = "custombuilt"; then setenv cmode "modeline=${modeline}"; fi
+ 
+# Boot Args
+setenv bootargs_odroidn2 "clk_ignore_unused hdmimode=${hdmimode} cvbsmode=576cvbs max_freq_a53=${max_freq_a53} max_freq_a73=${max_freq_a73} maxcpus=${maxcpus} ${cmode} voutmode=${voutmode} disablehpd=${disablehpd} overscan=${overscan}"
 
 # HassOS bootargs
 setenv bootargs_hassos "zram.enabled=1 zram.num_devices=3 apparmor=1 security=apparmor cgroup_enable=memory"
@@ -37,7 +39,7 @@ usb start
 
 # Load extraargs
 fileenv mmc ${devnum}:1 ${ramdisk_addr_r} cmdline.txt cmdline
-fatload mmc ${devnum}:1 ${fdt_addr_r} meson-gxbb-odroidc2.dtb
+fatload mmc ${devnum}:1 ${fdt_addr_r} meson-g12b-odroid-n2.dtb
 #fdt addr ${fdt_addr_r}
 
 # logical volumes get numbered after physical ones.
@@ -59,14 +61,14 @@ for BOOT_SLOT in "${BOOT_ORDER}"; do
       setexpr BOOT_A_LEFT ${BOOT_A_LEFT} - 1
       echo "Found valid slot A, ${BOOT_A_LEFT} attempts remaining"
       setenv load_kernel "ext4load mmc ${devnum}:5 ${kernel_addr_r} Image"
-      setenv bootargs "${bootargs_hassos} ${bootargs_odroidc2} ${bootargs_a} rauc.slot=A ${cmdline}"
+      setenv bootargs "${bootargs_hassos} ${bootargs_odroidn2} ${bootargs_a} rauc.slot=A ${cmdline}"
     fi
   elif test "x${BOOT_SLOT}" = "xB"; then
     if test ${BOOT_B_LEFT} -gt 0; then
       setexpr BOOT_B_LEFT ${BOOT_B_LEFT} - 1
       echo "Found valid slot B, ${BOOT_B_LEFT} attempts remaining"
       setenv load_kernel "ext4load mmc ${devnum}:7 ${kernel_addr_r} Image"
-      setenv bootargs "${bootargs_hassos} ${bootargs_odroidc2} ${bootargs_b} rauc.slot=B ${cmdline}"
+      setenv bootargs "${bootargs_hassos} ${bootargs_odroidn2} ${bootargs_b} rauc.slot=B ${cmdline}"
     fi
   fi
 done

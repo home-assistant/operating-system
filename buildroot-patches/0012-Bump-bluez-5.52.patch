@@ -1,0 +1,51 @@
+From 4e3d6b2b4d600babb79492fbcd04d7bbd16a2a58 Mon Sep 17 00:00:00 2001
+From: Pascal Vizeli <pvizeli@syshack.ch>
+Date: Mon, 30 Dec 2019 13:18:34 +0000
+Subject: [PATCH 1/1] Bump bluez 5.52
+
+Signed-off-by: Pascal Vizeli <pvizeli@syshack.ch>
+---
+ package/bluez5_utils-headers/bluez5_utils-headers.mk | 2 +-
+ package/bluez5_utils/bluez5_utils.hash               | 2 +-
+ package/bluez5_utils/bluez5_utils.mk                 | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/package/bluez5_utils-headers/bluez5_utils-headers.mk b/package/bluez5_utils-headers/bluez5_utils-headers.mk
+index 020e8b4d4e..c61f93a23c 100644
+--- a/package/bluez5_utils-headers/bluez5_utils-headers.mk
++++ b/package/bluez5_utils-headers/bluez5_utils-headers.mk
+@@ -5,7 +5,7 @@
+ ################################################################################
+ 
+ # Keep the version and patches in sync with bluez5_utils
+-BLUEZ5_UTILS_HEADERS_VERSION = 5.50
++BLUEZ5_UTILS_HEADERS_VERSION = 5.52
+ BLUEZ5_UTILS_HEADERS_SOURCE = bluez-$(BLUEZ5_UTILS_VERSION).tar.xz
+ BLUEZ5_UTILS_HEADERS_SITE = $(BR2_KERNEL_MIRROR)/linux/bluetooth
+ BLUEZ5_UTILS_HEADERS_DL_SUBDIR = bluez5_utils
+diff --git a/package/bluez5_utils/bluez5_utils.hash b/package/bluez5_utils/bluez5_utils.hash
+index b965708559..00112bc0b6 100644
+--- a/package/bluez5_utils/bluez5_utils.hash
++++ b/package/bluez5_utils/bluez5_utils.hash
+@@ -1,4 +1,4 @@
+ # From https://www.kernel.org/pub/linux/bluetooth/sha256sums.asc:
+-sha256  5ffcaae18bbb6155f1591be8c24898dc12f062075a40b538b745bfd477481911  bluez-5.50.tar.xz
++sha256  f7144ce2039202cfac18ccb52426efea11c98e4f6e1bb8041bcb994b8378560a  bluez-5.52.tar.xz
+ sha256  b499eddebda05a8859e32b820a64577d91f1de2b52efa2a1575a2cb4000bc259  COPYING
+ sha256  ec60b993835e2c6b79e6d9226345f4e614e686eb57dc13b6420c15a33a8996e5  COPYING.LIB
+diff --git a/package/bluez5_utils/bluez5_utils.mk b/package/bluez5_utils/bluez5_utils.mk
+index 15c9b670a7..7c5202b717 100644
+--- a/package/bluez5_utils/bluez5_utils.mk
++++ b/package/bluez5_utils/bluez5_utils.mk
+@@ -5,7 +5,7 @@
+ ################################################################################
+ 
+ # Keep the version and patches in sync with bluez5_utils-headers
+-BLUEZ5_UTILS_VERSION = 5.50
++BLUEZ5_UTILS_VERSION = 5.52
+ BLUEZ5_UTILS_SOURCE = bluez-$(BLUEZ5_UTILS_VERSION).tar.xz
+ BLUEZ5_UTILS_SITE = $(BR2_KERNEL_MIRROR)/linux/bluetooth
+ BLUEZ5_UTILS_INSTALL_STAGING = YES
+-- 
+2.17.1
+
