@@ -38,7 +38,7 @@ index 9988dda717..3eae7e270b 100644
 @@ -1,2 +1,2 @@
  # Locally computed
 -sha256	f1d631920ed4ae15f368ba7b8b3caa4ed604f5223372cc6debbd39a101eb8d74  rpi-firmware-81cca1a9380c828299e884dba5efd0d4acb39e8d.tar.gz
-+sha256	484d52caed909fcafbf593cc3e726ea44a9218db7f0aeec843b825797eb9b0fc  rpi-firmware-9d6be5b07e81bdfb9c4b9a560e90fbc7477fdc6e.tar.gz
++sha256	b4f62adf4dc572b1a482169e9688edd2d6a68500ad0d37257faab70eba2bb275  rpi-firmware-dc5622560a2589a417007156b75db71f52b60d80.tar.gz
 diff --git a/package/rpi-firmware/rpi-firmware.mk b/package/rpi-firmware/rpi-firmware.mk
 index 630bc670ca..fd2970333e 100644
 --- a/package/rpi-firmware/rpi-firmware.mk
@@ -48,7 +48,7 @@ index 630bc670ca..fd2970333e 100644
  ################################################################################
  
 -RPI_FIRMWARE_VERSION = 81cca1a9380c828299e884dba5efd0d4acb39e8d
-+RPI_FIRMWARE_VERSION = 9d6be5b07e81bdfb9c4b9a560e90fbc7477fdc6e
++RPI_FIRMWARE_VERSION = dc5622560a2589a417007156b75db71f52b60d80
  RPI_FIRMWARE_SITE = $(call github,raspberrypi,firmware,$(RPI_FIRMWARE_VERSION))
  RPI_FIRMWARE_LICENSE = BSD-3-Clause
  RPI_FIRMWARE_LICENSE_FILES = boot/LICENCE.broadcom
