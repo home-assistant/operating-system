@@ -1,7 +1,0 @@
-BOARD_ID=opi-prime
-BOARD_NAME="Orange Pi Prime"
-CHASSIS=embedded
-BOOTLOADER=uboot
-KERNEL_FILE=Image
-BOOT_SYS=spl
-BOOT_ENV_SIZE=0x8000
