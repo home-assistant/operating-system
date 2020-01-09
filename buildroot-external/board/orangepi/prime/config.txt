@@ -1,3 +1,0 @@
-i2c0_enable=true
-i2c1_enable=false
-i2c2_enable=false
