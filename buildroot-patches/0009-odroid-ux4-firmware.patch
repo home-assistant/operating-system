@@ -1,7 +1,7 @@
-diff --git a/buildroot/package/linux-firmware/Config.in b/buildroot/package/linux-firmware/Config.in
+diff --git a/package/linux-firmware/Config.in b/package/linux-firmware/Config.in
 index 6b182dc6..8e3be238 100644
---- a/buildroot/package/linux-firmware/Config.in
-+++ b/buildroot/package/linux-firmware/Config.in
+--- a/package/linux-firmware/Config.in
++++ b/package/linux-firmware/Config.in
 @@ -44,6 +44,12 @@ config BR2_PACKAGE_LINUX_FIRMWARE_QCOM_ADRENO
  	help
  	  Firmware files for Qualcomm Adreno GPU firmware
@@ -15,10 +15,10 @@ index 6b182dc6..8e3be238 100644
  endmenu # Video
  
  menu "Bluetooth firmware"
-diff --git a/buildroot/package/linux-firmware/linux-firmware.mk b/buildroot/package/linux-firmware/linux-firmware.mk
+diff --git a/package/linux-firmware/linux-firmware.mk b/package/linux-firmware/linux-firmware.mk
 index 86e1d1e7..6453c402 100644
---- a/buildroot/package/linux-firmware/linux-firmware.mk
-+++ b/buildroot/package/linux-firmware/linux-firmware.mk
+--- a/package/linux-firmware/linux-firmware.mk
++++ b/package/linux-firmware/linux-firmware.mk
 @@ -39,6 +39,12 @@ LINUX_FIRMWARE_FILES += qcom/a*
  LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENSE.qcom qcom/NOTICE.txt
  endif
