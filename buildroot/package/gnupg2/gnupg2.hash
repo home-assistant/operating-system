@@ -1,7 +1,7 @@
-# From https://lists.gnupg.org/pipermail/gnupg-announce/2018q4/000433.html
-sha1 2aeccc35ea8034306ff7a1072b84abbaa79619c3  gnupg-2.2.12.tar.bz2
+# From https://lists.gnupg.org/pipermail/gnupg-announce/2019q3/000439.html
+sha1 12c1cee8871c03f0315fc8f27876364b75c95b12  gnupg-2.2.17.tar.bz2
 # Calculated based on the hash above and signature
-# https://gnupg.org/ftp/gcrypt/gnupg/gnupg-2.2.12.tar.bz2.sig
+# https://gnupg.org/ftp/gcrypt/gnupg/gnupg-2.2.17.tar.bz2.sig
 # using key D8692123C4065DEA5E0F3AB5249B39D24F25E3B6
-sha256 db030f8b4c98640e91300d36d516f1f4f8fe09514a94ea9fc7411ee1a34082cb  gnupg-2.2.12.tar.bz2
+sha256 afa262868e39b651a2db4c071fba90415154243e83a830ca00516f9a807fd514  gnupg-2.2.17.tar.bz2
 sha256 bc2d6664f6276fa0a72d57633b3ae68dc7dcb677b71018bf08c8e93e509f1357  COPYING
