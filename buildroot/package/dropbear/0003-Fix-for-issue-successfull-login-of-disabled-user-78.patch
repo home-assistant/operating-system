@@ -1,0 +1,35 @@
+From a0aa2749813331134452f80bb8a808bdc871ba41 Mon Sep 17 00:00:00 2001
+From: vincentto13 <33652988+vincentto13@users.noreply.github.com>
+Date: Wed, 20 Mar 2019 15:03:40 +0100
+Subject: [PATCH] Fix for issue successfull login of disabled user (#78)
+
+This commit introduces fix for scenario:
+1. Root login disabled on dropbear
+2. PAM authentication model enabled
+
+While login as root user, after prompt for password
+user is being notified about login failrue, but
+after second attempt of prompt for password within
+same session, login becames succesfull.
+
+Signed-off-by: Pawel Rapkiewicz <pawel.rapkiewicz@gmail.com>
+Signed-off-by: Peter Korsgaard <peter@korsgaard.com>
+---
+ svr-authpam.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/svr-authpam.c b/svr-authpam.c
+index d201bc9..e236db4 100644
+--- a/svr-authpam.c
++++ b/svr-authpam.c
+@@ -275,6 +275,7 @@ void svr_auth_pam(int valid_user) {
+ 		/* PAM auth succeeded but the username isn't allowed in for another reason
+ 		(checkusername() failed) */
+ 		send_msg_userauth_failure(0, 1);
++		goto cleanup;
+ 	}
+ 
+ 	/* successful authentication */
+-- 
+2.11.0
+
