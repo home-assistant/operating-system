@@ -48,8 +48,6 @@ jobs:
         board: 'odroid_c2'
       OdroidXU4:
         board: 'odroid_xu4'
-      OrangePiPrime:
-        board: 'opi_prime'
       RaspberryPi:
         board: 'rpi'
       RaspberryPi0-W:
