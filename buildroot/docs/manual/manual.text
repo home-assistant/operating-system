@@ -161,13 +161,13 @@ List of Examples
 
 ---------------------------------------------------------------------
 
-Buildroot 2019.02.8 manual generated on 2019-12-07 19:24:23 UTC from
-git revision aaa1437b11
+Buildroot 2019.02.9 manual generated on 2020-01-12 15:28:51 UTC from
+git revision 24f25c8d23
 
 The Buildroot manual is written by the Buildroot developers. It is
 licensed under the GNU General Public License, version 2. Refer to
 the COPYING [http://git.buildroot.org/buildroot/tree/COPYING?id=
-aaa1437b110f886ee24757595542f715a77d702a] file in the Buildroot
+24f25c8d23bd85d57b6e9c776f2c7716f2ddd4af] file in the Buildroot
 sources for the full text of this license.
 
 Copyright © 2004-2019 The Buildroot developers
@@ -1197,6 +1197,15 @@ can help you understand how to work with Buildroot:
     overlay, a post-build script or a post-image script are made,
     there is no need for a full rebuild: a simple make invocation
     will take the changes into account.
+  * When a package listed in FOO_DEPENDENCIES is rebuilt or removed,
+    the package foo is not automatically rebuilt. For example, if a
+    package bar is listed in FOO_DEPENDENCIES with FOO_DEPENDENCIES =
+    bar and the configuration of the bar package is changed, the
+    configuration change would not result in a rebuild of package foo
+    automatically. In this scenario, you may need to either rebuild
+    any packages in your build which reference bar in their
+    DEPENDENCIES, or perform a full rebuild to ensure any bar
+    dependent packages are up to date.
 
 Generally speaking, when you’re facing a build error and you’re
 unsure of the potential consequences of the configuration changes
@@ -4369,8 +4378,10 @@ information is (assuming the package name is libfoo) :
     name) that are required for the current target package to
     compile. These dependencies are guaranteed to be compiled and
     installed before the configuration of the current package starts.
-    In a similar way, HOST_LIBFOO_DEPENDENCIES lists the dependencies
-    for the current host package.
+    However, modifications to configuration of these dependencies
+    will not force a rebuild of the current package. In a similar
+    way, HOST_LIBFOO_DEPENDENCIES lists the dependencies for the
+    current host package.
   * LIBFOO_EXTRACT_DEPENDENCIES lists the dependencies (in terms of
     package name) that are required for the current target package to
     be extracted. These dependencies are guaranteed to be compiled
