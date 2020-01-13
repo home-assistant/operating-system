@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-CLAMAV_VERSION = 0.101.2
+CLAMAV_VERSION = 0.101.5
 CLAMAV_SITE = https://www.clamav.net/downloads/production
 CLAMAV_LICENSE = GPL-2.0
 CLAMAV_LICENSE_FILES = COPYING COPYING.bzip2 COPYING.file COPYING.getopt \
@@ -12,6 +12,7 @@ CLAMAV_LICENSE_FILES = COPYING COPYING.bzip2 COPYING.file COPYING.getopt \
 	COPYING.unrar COPYING.zlib
 CLAMAV_DEPENDENCIES = \
 	host-pkgconf \
+	libmspack \
 	libtool \
 	openssl \
 	zlib \
@@ -32,6 +33,7 @@ CLAMAV_CONF_OPTS = \
 	--with-ltdl-include=$(STAGING_DIR)/usr/include \
 	--with-ltdl-lib=$(STAGING_DIR)/usr/lib \
 	--with-openssl=$(STAGING_DIR)/usr \
+	--with-system-libmspack=$(STAGING_DIR)/usr \
 	--with-zlib=$(STAGING_DIR)/usr \
 	--disable-zlib-vcheck \
 	--disable-rpath \

@@ -1,9 +1,0 @@
-[Unit]
-Description=HassOS rauc good 
-RefuseManualStart=true
-RefuseManualStop=true
-
-[Service]
-Type=oneshot
-ExecStart=/usr/libexec/hassos-rate
-RemainAfterExit=true

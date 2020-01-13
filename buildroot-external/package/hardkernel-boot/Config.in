@@ -19,6 +19,11 @@ config BR2_PACKAGE_HARDKERNEL_BOOT_ODROID_XU4
 	help
 	  For the Odroid-XU4
 
+config BR2_PACKAGE_HARDKERNEL_BOOT_ODROID_N2
+	bool "Odroid-N2"
+	help
+	  For the Odroid-N2
+
 endchoice
 
 endif

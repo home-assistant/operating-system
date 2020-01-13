@@ -1,0 +1,68 @@
+From 3c3fc8727fcdfec1521f5dde0b70c0a1dcc722cc Mon Sep 17 00:00:00 2001
+From: Pascal Vizeli <pvizeli@syshack.ch>
+Date: Mon, 15 Jul 2019 17:11:29 +0000
+Subject: [PATCH 1/1] rpi-firmware: Bump firmware for kernel 4.19 / RPi4
+
+---
+ package/rpi-firmware/Config.in         | 6 ++++++
+ package/rpi-firmware/rpi-firmware.hash | 2 +-
+ package/rpi-firmware/rpi-firmware.mk   | 6 +++---
+ 3 files changed, 10 insertions(+), 4 deletions(-)
+
+diff --git a/package/rpi-firmware/Config.in b/package/rpi-firmware/Config.in
+index 0ebbe7a4cd..143ef4c712 100644
+--- a/package/rpi-firmware/Config.in
++++ b/package/rpi-firmware/Config.in
+@@ -40,11 +40,17 @@ config BR2_PACKAGE_RPI_FIRMWARE_CD
+ 	  The cut-down firmware, for emergency situations, with only
+ 	  features required to boot a Linux kernel.
+ 
++config BR2_PACKAGE_RPI_FIRMWARE_PI4
++	bool "Pi 4"
++	help
++	  The Raspberry Pi 4 boot files
++
+ endchoice
+ 
+ config BR2_PACKAGE_RPI_FIRMWARE_BOOT
+ 	string
+ 	default ""      if BR2_PACKAGE_RPI_FIRMWARE_DEFAULT
++	default "4"     if BR2_PACKAGE_RPI_FIRMWARE_PI4
+ 	default "_x"    if BR2_PACKAGE_RPI_FIRMWARE_X
+ 	default "_cd"   if BR2_PACKAGE_RPI_FIRMWARE_CD
+ 
+diff --git a/package/rpi-firmware/rpi-firmware.hash b/package/rpi-firmware/rpi-firmware.hash
+index 9988dda717..3eae7e270b 100644
+--- a/package/rpi-firmware/rpi-firmware.hash
++++ b/package/rpi-firmware/rpi-firmware.hash
+@@ -1,2 +1,2 @@
+ # Locally computed
+-sha256	f1d631920ed4ae15f368ba7b8b3caa4ed604f5223372cc6debbd39a101eb8d74  rpi-firmware-81cca1a9380c828299e884dba5efd0d4acb39e8d.tar.gz
++sha256	088d094618924a90f65bb511808bbeb921e0769c878fa7baa9626954206f61a2  rpi-firmware-62a0d75b67484cb306a2a6f8fa954d9644868169.tar.gz
+diff --git a/package/rpi-firmware/rpi-firmware.mk b/package/rpi-firmware/rpi-firmware.mk
+index 630bc670ca..fd2970333e 100644
+--- a/package/rpi-firmware/rpi-firmware.mk
++++ b/package/rpi-firmware/rpi-firmware.mk
+@@ -4,7 +4,7 @@
+ #
+ ################################################################################
+ 
+-RPI_FIRMWARE_VERSION = 81cca1a9380c828299e884dba5efd0d4acb39e8d
++RPI_FIRMWARE_VERSION = 62a0d75b67484cb306a2a6f8fa954d9644868169
+ RPI_FIRMWARE_SITE = $(call github,raspberrypi,firmware,$(RPI_FIRMWARE_VERSION))
+ RPI_FIRMWARE_LICENSE = BSD-3-Clause
+ RPI_FIRMWARE_LICENSE_FILES = boot/LICENCE.broadcom
+@@ -43,8 +43,8 @@ endif # INSTALL_VCDBG
+ 
+ define RPI_FIRMWARE_INSTALL_IMAGES_CMDS
+ 	$(INSTALL) -D -m 0644 $(@D)/boot/bootcode.bin $(BINARIES_DIR)/rpi-firmware/bootcode.bin
+-	$(INSTALL) -D -m 0644 $(@D)/boot/start$(BR2_PACKAGE_RPI_FIRMWARE_BOOT).elf $(BINARIES_DIR)/rpi-firmware/start.elf
+-	$(INSTALL) -D -m 0644 $(@D)/boot/fixup$(BR2_PACKAGE_RPI_FIRMWARE_BOOT).dat $(BINARIES_DIR)/rpi-firmware/fixup.dat
++	$(INSTALL) -D -m 0644 $(@D)/boot/start$(BR2_PACKAGE_RPI_FIRMWARE_BOOT).elf $(BINARIES_DIR)/rpi-firmware/start$(BR2_PACKAGE_RPI_FIRMWARE_BOOT).elf
++	$(INSTALL) -D -m 0644 $(@D)/boot/fixup$(BR2_PACKAGE_RPI_FIRMWARE_BOOT).dat $(BINARIES_DIR)/rpi-firmware/fixup$(BR2_PACKAGE_RPI_FIRMWARE_BOOT).dat
+ 	$(INSTALL) -D -m 0644 package/rpi-firmware/config.txt $(BINARIES_DIR)/rpi-firmware/config.txt
+ 	$(INSTALL) -D -m 0644 package/rpi-firmware/cmdline.txt $(BINARIES_DIR)/rpi-firmware/cmdline.txt
+ 	$(RPI_FIRMWARE_INSTALL_DTB)
+-- 
+2.17.1
+

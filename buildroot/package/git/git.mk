@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-GIT_VERSION = 2.16.5
+GIT_VERSION = 2.16.6
 GIT_SOURCE = git-$(GIT_VERSION).tar.xz
 GIT_SITE = $(BR2_KERNEL_MIRROR)/software/scm/git
 GIT_LICENSE = GPL-2.0, LGPL-2.1+
@@ -65,6 +65,14 @@ endif
 ifeq ($(BR2_SYSTEM_ENABLE_NLS),)
 GIT_MAKE_OPTS += NO_GETTEXT=1
 endif
+
+GIT_CFLAGS = $(TARGET_CFLAGS)
+
+ifeq ($(BR2_TOOLCHAIN_HAS_GCC_BUG_85180),y)
+GIT_CFLAGS += -O0
+endif
+
+GIT_CONF_OPTS += CFLAGS="$(GIT_CFLAGS)"
 
 GIT_INSTALL_TARGET_OPTS = $(GIT_MAKE_OPTS) DESTDIR=$(TARGET_DIR) install
 

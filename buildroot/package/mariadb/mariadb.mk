@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-MARIADB_VERSION = 10.3.13
+MARIADB_VERSION = 10.3.17
 MARIADB_SITE = https://downloads.mariadb.org/interstitial/mariadb-$(MARIADB_VERSION)/source
 MARIADB_LICENSE = GPL-2.0 (server), GPL-2.0 with FLOSS exception (GPL client library), LGPL-2.0 (LGPL client library)
 # Tarball no longer contains LGPL license text
@@ -19,8 +19,10 @@ MARIADB_DEPENDENCIES = \
 	openssl \
 	zlib \
 	libaio \
-	libxml2 \
-	readline
+	libxml2
+
+# use bundled GPL-2.0+ licensed readline as package/readline is GPL-3.0+
+MARIADB_CONF_OPTS += -DWITH_READLINE=ON
 
 # We won't need unit tests
 MARIADB_CONF_OPTS += -DWITH_UNIT_TESTS=0
@@ -86,7 +88,8 @@ MARIADB_CONF_OPTS += \
 	-DMYSQL_DATADIR=/var/lib/mysql \
 	-DMYSQL_UNIX_ADDR=$(MYSQL_SOCKET)
 
-HOST_MARIADB_CONF_OPTS += -DWITH_SSL=OFF
+HOST_MARIADB_DEPENDENCIES = host-openssl
+HOST_MARIADB_CONF_OPTS += -DWITH_SSL=system
 
 # Some helpers must be compiled for host in order to crosscompile mariadb for
 # the target. They are then included by import_executables.cmake which is

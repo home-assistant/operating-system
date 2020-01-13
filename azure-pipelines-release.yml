@@ -11,7 +11,7 @@ pr: none
 
 variables:
   - name: versionGHR
-    value: 'v0.12.1'
+    value: 'v0.13.0'
   - group: github
   - group: hassos
 
@@ -46,10 +46,10 @@ jobs:
         board: 'intel_nuc'
       OdroidC2:
         board: 'odroid_c2'
+      OdroidN2:
+        board: 'odroid_n2'
       OdroidXU4:
         board: 'odroid_xu4'
-      OrangePiPrime:
-        board: 'opi_prime'
       RaspberryPi:
         board: 'rpi'
       RaspberryPi0-W:

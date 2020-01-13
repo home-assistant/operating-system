@@ -1,0 +1,37 @@
+From 7da4f3e43f393ce09156cdb902bd879e2b6d7431 Mon Sep 17 00:00:00 2001
+From: Pascal Vizeli <pvizeli@syshack.ch>
+Date: Mon, 30 Dec 2019 13:44:59 +0000
+Subject: [PATCH 1/1] Bump WireGuard 20191219
+
+Signed-off-by: Pascal Vizeli <pvizeli@syshack.ch>
+---
+ package/wireguard/wireguard.hash | 2 +-
+ package/wireguard/wireguard.mk   | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/package/wireguard/wireguard.hash b/package/wireguard/wireguard.hash
+index 70558de720..8097aeb95b 100644
+--- a/package/wireguard/wireguard.hash
++++ b/package/wireguard/wireguard.hash
+@@ -1,4 +1,4 @@
+ # https://lists.zx2c4.com/pipermail/wireguard/2019-January/003805.html
+-sha256 edd13c7631af169e3838621b1a1bff3ef73cf7bc778eec2bd55f7c1089ffdf9b  WireGuard-0.0.20190123.tar.xz
++sha256 5aba6f0c38e97faa0b155623ba594bb0e4bd5e29deacd8d5ed8bda8d8283b0e7  WireGuard-0.0.20191219.tar.xz
+ # Locally calculated
+ sha256 8177f97513213526df2cf6184d8ff986c675afb514d4e68a404010521b880643  COPYING
+diff --git a/package/wireguard/wireguard.mk b/package/wireguard/wireguard.mk
+index 8d6cdb8e56..500c7dbd21 100644
+--- a/package/wireguard/wireguard.mk
++++ b/package/wireguard/wireguard.mk
+@@ -4,7 +4,7 @@
+ #
+ ################################################################################
+ 
+-WIREGUARD_VERSION = 0.0.20190123
++WIREGUARD_VERSION = 0.0.20191219
+ WIREGUARD_SITE = https://git.zx2c4.com/WireGuard/snapshot
+ WIREGUARD_SOURCE = WireGuard-$(WIREGUARD_VERSION).tar.xz
+ WIREGUARD_LICENSE = GPL-2.0
+-- 
+2.17.1
+
