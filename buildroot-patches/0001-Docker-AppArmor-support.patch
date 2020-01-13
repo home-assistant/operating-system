@@ -1,0 +1,53 @@
+From a874e0babaeefacd8e3d04a9c056dd6f1121307d Mon Sep 17 00:00:00 2001
+From: Pascal Vizeli <pvizeli@syshack.ch>
+Date: Mon, 13 Jan 2020 12:27:06 +0000
+Subject: [PATCH 1/1] Docker: AppArmor support
+
+Signed-off-by: Pascal Vizeli <pvizeli@syshack.ch>
+---
+ package/docker-containerd/docker-containerd.mk | 1 +
+ package/docker-engine/docker-engine.mk         | 2 +-
+ package/runc/runc.mk                           | 2 +-
+ 3 files changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/package/docker-containerd/docker-containerd.mk b/package/docker-containerd/docker-containerd.mk
+index 69068e44f8..4dc0ef4672 100644
+--- a/package/docker-containerd/docker-containerd.mk
++++ b/package/docker-containerd/docker-containerd.mk
+@@ -17,6 +17,7 @@ DOCKER_CONTAINERD_LDFLAGS = \
+ DOCKER_CONTAINERD_BUILD_TARGETS = cmd/ctr cmd/containerd cmd/containerd-shim
+ 
+ DOCKER_CONTAINERD_INSTALL_BINS = containerd containerd-shim
++DOCKER_CONTAINERD_TAGS = apparmor
+ 
+ ifeq ($(BR2_PACKAGE_LIBSECCOMP),y)
+ DOCKER_CONTAINERD_DEPENDENCIES += libseccomp host-pkgconf
+diff --git a/package/docker-engine/docker-engine.mk b/package/docker-engine/docker-engine.mk
+index 24022f7107..14673f3183 100644
+--- a/package/docker-engine/docker-engine.mk
++++ b/package/docker-engine/docker-engine.mk
+@@ -17,7 +17,7 @@ DOCKER_ENGINE_LDFLAGS = \
+ 	-X main.GitCommit=$(DOCKER_ENGINE_VERSION) \
+ 	-X main.Version=$(DOCKER_ENGINE_VERSION)
+ 
+-DOCKER_ENGINE_TAGS = cgo exclude_graphdriver_zfs autogen
++DOCKER_ENGINE_TAGS = cgo exclude_graphdriver_zfs autogen apparmor
+ DOCKER_ENGINE_BUILD_TARGETS = cmd/dockerd
+ 
+ ifeq ($(BR2_PACKAGE_LIBSECCOMP),y)
+diff --git a/package/runc/runc.mk b/package/runc/runc.mk
+index acf61ab160..3432dd5fe0 100644
+--- a/package/runc/runc.mk
++++ b/package/runc/runc.mk
+@@ -13,7 +13,7 @@ RUNC_WORKSPACE = Godeps/_workspace
+ 
+ RUNC_LDFLAGS = -X main.gitCommit=$(RUNC_VERSION)
+ 
+-RUNC_TAGS = cgo static_build
++RUNC_TAGS = cgo static_build apparmor
+ 
+ ifeq ($(BR2_PACKAGE_LIBSECCOMP),y)
+ RUNC_TAGS += seccomp
+-- 
+2.17.1
+
