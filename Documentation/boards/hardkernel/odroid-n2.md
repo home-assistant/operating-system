@@ -4,7 +4,7 @@
 
 eMMC support is provided transparently. Just flash the image to the eMMC board as you would an SD card.
 
-## MicroSD Card
+## SD Card
 
 If you want use Hassos on microSD card you must flash image on card and then insert it to Odroid N2 slot and switch from SPI to MMC. Only if you select switch on MMC you can boot hassos.
 
