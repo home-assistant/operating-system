@@ -1,0 +1,6 @@
+config BR2_PACKAGE_HOST_OATHTOOLKIT
+        bool "host oathtoolkit"
+        help
+          Generate and validate OATH one−time passwords. 
+
+          http://www.nongnu.org/oath-toolkit/
