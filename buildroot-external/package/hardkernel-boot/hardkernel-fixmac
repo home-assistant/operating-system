@@ -11,18 +11,20 @@ BOARD="$(cat /sys/firmware/devicetree/base/compatible | awk -F, '{print $2}' | h
 
 # Read board specific MAC
 if [ "${BOARD}" = "odroid-n2" ]; then
-    EFUSE_MAC="$(cut -c 21-32 /sys/bus/nvmem/devices/efuse0/nvmem | head -1 | awk -v FIELDWIDTHS='2 2 2 2 2 2' -v OFS=':' '{ $1=$1 ""; print}')"
+    EFUSE_MAC="$(cut -c 21-32 /sys/bus/nvmem/devices/efuse0/nvmem | head -1)"
 elif [ "${BOARD}" = "odroid-c2" ]; then
-    EFUSE_MAC="$(cut -b 52-58 /sys/bus/nvmem/devices/efuse0/nvmem | head -1 | hexdump -e '"%x"' | awk -v FIELDWIDTHS='2 2 2 2 2 2' -v OFS=':' '{ $1=$1 ""; print}')"
+    EFUSE_MAC="$(cut -b 52-58 /sys/bus/nvmem/devices/efuse0/nvmem | head -1 | hexdump -e '"%x"')"
 else
     echo "Unknown odroid board"
     exit 0
 fi
 
+MAC="{EFUSE_MAC:0:2}:{EFUSE_MAC:2:2}:{EFUSE_MAC:4:2}:{EFUSE_MAC:6:2}:{EFUSE_MAC:8:2}:{EFUSE_MAC:10:2}"
+
 # Update MAC
-echo "Read MAC from efuse ${BOARD}: ${EFUSE_MAC}"
-fw_setenv ethaddr "${EFUSE_MAC}"
+echo "Read MAC from efuse ${BOARD}: ${MAC}"
+fw_setenv ethaddr "${MAC}"
 
 ip link set eth0 down
-ip link set eth0 address "${EFUSE_MAC}"
+ip link set eth0 address "${MAC}"
 ip link set eth0 up
