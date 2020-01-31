@@ -1,0 +1,29 @@
+From 409a0daa72f6fc1652e17cfea7ea1055e9c483c9 Mon Sep 17 00:00:00 2001
+From: Neil Armstrong <narmstrong@baylibre.com>
+Date: Mon, 21 Oct 2019 16:29:02 +0200
+Subject: [PATCH] arm64: dts: meson-g12b-odroid-n2: add missing amlogic, s922x
+ compatible
+
+This fixes the following DT schemas check errors:
+meson-g12b-odroid-n2.dt.yaml: /: compatible: ['hardkernel,odroid-n2', 'amlogic,g12b'] is not valid under any of the given schemas
+
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts
+index 42f15405750cd..0e54c1dc2842b 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts
+@@ -12,7 +12,7 @@
+ #include <dt-bindings/sound/meson-g12a-tohdmitx.h>
+ 
+ / {
+-	compatible = "hardkernel,odroid-n2", "amlogic,g12b";
++	compatible = "hardkernel,odroid-n2", "amlogic,s922x", "amlogic,g12b";
+ 	model = "Hardkernel ODROID-N2";
+ 
+ 	aliases {

@@ -1,0 +1,28 @@
+#!/bin/sh
+
+# Check if MAC is set for u-boot
+if fw_printenv ethaddr > /dev/null; then
+    echo "ethaddr exists for u-boot"
+    exit 0
+fi
+
+# Get board details
+BOARD="$(cat /sys/firmware/devicetree/base/compatible | awk -F, '{print $2}' | head -1)"
+
+# Read board specific MAC
+if [ "${BOARD}" = "odroid-n2" ]; then
+    EFUSE_MAC="$(cut -c 21-32 /sys/bus/nvmem/devices/efuse0/nvmem | head -1 | awk -v FIELDWIDTHS='2 2 2 2 2 2' -v OFS=':' '{ $1=$1 ""; print}')"
+elif [ "${BOARD}" = "odroid-c2" ]; then
+    EFUSE_MAC="$(cut -b 52-58 /sys/bus/nvmem/devices/efuse0/nvmem | head -1 | hexdump -e '"%x"' | awk -v FIELDWIDTHS='2 2 2 2 2 2' -v OFS=':' '{ $1=$1 ""; print}')"
+else
+    echo "Unknown odroid board"
+    exit 0
+fi
+
+# Update MAC
+echo "Read MAC from efuse ${BOARD}: ${EFUSE_MAC}"
+fw_setenv ethaddr "${EFUSE_MAC}"
+
+ip link set eth0 down
+ip link set eth0 address "${EFUSE_MAC}"
+ip link set eth0 up

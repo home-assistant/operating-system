@@ -94,6 +94,10 @@ define HARDKERNEL_BOOT_INSTALL_IMAGES_CMDS
 	$(foreach f,$(HARDKERNEL_BOOT_BINS), \
 			cp -dpf $(@D)/$(f) $(BINARIES_DIR)/
 	)
+
+	$(INSTALL) -m 0755 $(HARDKERNEL_BOOT_PKGDIR)/hardkernel-fixmac $(TARGET_DIR)/usr/libexec/
+	$(INSTALL) -m 0644 $(HARDKERNEL_BOOT_PKGDIR)/hardkernel-fixmac.service $(TARGET_DIR)/usr/lib/systemd/system/
+	ln -fs /usr/lib/systemd/system/hardkernel-fixmac.service $(TARGET_DIR)/etc/systemd/system/hassos-hardware.target.wants/
 endef
 
 $(eval $(generic-package))

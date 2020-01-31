@@ -1,0 +1,10 @@
+[Unit]
+Description=Write MAC address to bootenv from efuse
+Before=network.target NetworkManager.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/libexec/hardkernel-fixmac
+
+[Install]
+WantedBy=multi-user.target
