@@ -7,4 +7,4 @@ Type=oneshot
 ExecStart=/usr/libexec/hardkernel-fixmac
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=hassos-hardware.target

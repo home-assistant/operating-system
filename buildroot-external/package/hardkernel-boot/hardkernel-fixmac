@@ -19,7 +19,7 @@ else
     exit 0
 fi
 
-MAC="{EFUSE_MAC:0:2}:{EFUSE_MAC:2:2}:{EFUSE_MAC:4:2}:{EFUSE_MAC:6:2}:{EFUSE_MAC:8:2}:{EFUSE_MAC:10:2}"
+MAC="${EFUSE_MAC:0:2}:${EFUSE_MAC:2:2}:${EFUSE_MAC:4:2}:${EFUSE_MAC:6:2}:${EFUSE_MAC:8:2}:${EFUSE_MAC:10:2}"
 
 # Update MAC on bootloader
 echo "Read MAC from efuse ${BOARD}: ${MAC}"
