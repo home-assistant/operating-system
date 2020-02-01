@@ -82,7 +82,11 @@ define HARDKERNEL_BOOT_BUILD_CMDS
 		--bl33 $(@D)/fip/bl33.bin.enc \
 		--ddrfw1 $(@D)/fip/g12b/ddr4_1d.fw \
 		--ddrfw2 $(@D)/fip/g12b/ddr4_2d.fw \
+		--ddrfw3 $(@D)fip/g12b/ddr3_1d.fw \
 		--ddrfw4 $(@D)/fip/g12b/piei.fw \
+		--ddrfw5 $(@D)/fip/g12b/lpddr4_1d.fw \
+		--ddrfw6 $(@D)/fip/g12b/lpddr4_2d.fw \
+		--ddrfw7 $(@D)/fip/g12b/diag_lpddr4.fw \
 		--ddrfw8 $(@D)/fip/g12b/aml_ddr.fw \
 		--level v3
 
