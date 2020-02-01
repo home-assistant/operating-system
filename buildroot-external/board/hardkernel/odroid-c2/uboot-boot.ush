@@ -38,7 +38,6 @@ usb start
 # Load extraargs
 fileenv mmc ${devnum}:1 ${ramdisk_addr_r} cmdline.txt cmdline
 fatload mmc ${devnum}:1 ${fdt_addr_r} meson-gxbb-odroidc2.dtb
-#fdt addr ${fdt_addr_r}
 
 # logical volumes get numbered after physical ones.
 # 1. boot
