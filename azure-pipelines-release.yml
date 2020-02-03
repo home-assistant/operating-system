@@ -13,7 +13,7 @@ variables:
   - name: versionGHR
     value: 'v0.13.0'
   - group: github
-  - group: hassos
+  - group: rauc
 
 jobs:
 
