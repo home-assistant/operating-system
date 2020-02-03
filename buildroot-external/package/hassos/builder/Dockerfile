@@ -13,7 +13,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - \
     && add-apt-repository "deb https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" \
     && apt-get update && apt-get install -y --no-install-recommends \
-        docker-ce=5:18.09.6~3-0~ubuntu-bionic \
+        docker-ce=5:19.03.5~3-0~ubuntu-bionic \
     && rm -rf /var/lib/apt/lists/*
 
 COPY hostapp.sh /usr/bin/
