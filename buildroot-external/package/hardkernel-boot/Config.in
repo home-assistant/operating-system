@@ -26,4 +26,9 @@ config BR2_PACKAGE_HARDKERNEL_BOOT_ODROID_N2
 
 endchoice
 
+config BR2_PACKAGE_HARDKERNEL_BOOT_FIX_MAC
+	bool "Hardkernel fix mac"
+	help
+	  Install script to fix the mac address.
+
 endif

@@ -103,7 +103,7 @@ define QEMU_GUEST_AGENT_INSTALL_INIT_SYSTEMD
 	$(INSTALL) -D -m 644 $(QEMU_GUEST_AGENT_PKGDIR)/qemu-guest.service \
 		$(TARGET_DIR)/usr/lib/systemd/system/qemu-guest.service
 	$(INSTALL) -d $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants
-	ln -fs ../../../../usr/lib/systemd/system/qemu-guest.service \
+	ln -fs /usr/lib/systemd/system/qemu-guest.service \
 		$(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/qemu-guest.service
 endef
 
