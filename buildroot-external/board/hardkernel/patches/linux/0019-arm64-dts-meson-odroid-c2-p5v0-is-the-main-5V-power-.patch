@@ -1,0 +1,43 @@
+From fcf19f29d79dfe4edce0376dd027ea7a5456ea32 Mon Sep 17 00:00:00 2001
+From: Anand Moon <linux.amoon@gmail.com>
+Date: Mon, 2 Sep 2019 05:49:33 +0000
+Subject: [PATCH] arm64: dts: meson: odroid-c2: p5v0 is the main 5V power input
+
+As per the schematic Monolithic Power Systems MP2161GJ-C499
+supply a fixed output voltage of 5.0V. This supplies linked
+to VDD_EE, HDMI_P5V0, USB_POWER, VCCK, VDDIO_AO1V8, VDDIO_AO3V3,
+VDD3V3, DDR3_1V5 according to the schematics.
+
+Cc: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Neil Armstrong <narmstrong@baylibre.com>
+Acked-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts b/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
+index 6039adda12ee..0cb5831d9daf 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
+@@ -50,6 +50,15 @@
+ 		};
+ 	};
+ 
++	p5v0: regulator-p5v0 {
++		compatible = "regulator-fixed";
++
++		regulator-name = "P5V0";
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++		regulator-always-on;
++	};
++
+ 	tflash_vdd: regulator-tflash_vdd {
+ 		/*
+ 		 * signal name from schematics: TFLASH_VDD_EN
+-- 
+2.17.1
+

@@ -1,0 +1,60 @@
+From d80b817e975c0911f130d502292b209f34ea1e2c Mon Sep 17 00:00:00 2001
+From: Neil Armstrong <narmstrong@baylibre.com>
+Date: Tue, 27 Aug 2019 12:03:07 +0200
+Subject: [PATCH 171/200] FROMLIST: arm64: dts: meson-g12b: specify suspend OPP
+
+Tag the 1,2GHz OPPs as suspend OPP to be set before going in suspend mode.
+
+It has been reported that using various OPPs can lead to error or
+resume with a different OPP from the ROM, thus use this safe OPP as
+it is the default OPP used by the BL2 boot firmware on the 2 clusters.
+
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-g12b-a311d.dtsi | 2 ++
+ arch/arm64/boot/dts/amlogic/meson-g12b-s922x.dtsi | 2 ++
+ 2 files changed, 4 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-g12b-a311d.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12b-a311d.dtsi
+index d61f43052a34..00ea181bc018 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-g12b-a311d.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-g12b-a311d.dtsi
+@@ -39,6 +39,7 @@
+ 		opp-1200000000 {
+ 			opp-hz = /bits/ 64 <1200000000>;
+ 			opp-microvolt = <781000>;
++			opp-suspend;
+ 		};
+ 
+ 		opp-1398000000 {
+@@ -99,6 +100,7 @@
+ 		opp-1200000000 {
+ 			opp-hz = /bits/ 64 <1200000000>;
+ 			opp-microvolt = <751000>;
++			opp-suspend;
+ 		};
+ 
+ 		opp-1398000000 {
+diff --git a/arch/arm64/boot/dts/amlogic/meson-g12b-s922x.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12b-s922x.dtsi
+index 046cc332d07f..d68323c6c780 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-g12b-s922x.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-g12b-s922x.dtsi
+@@ -39,6 +39,7 @@
+ 		opp-1200000000 {
+ 			opp-hz = /bits/ 64 <1200000000>;
+ 			opp-microvolt = <731000>;
++			opp-suspend;
+ 		};
+ 
+ 		opp-1398000000 {
+@@ -99,6 +100,7 @@
+ 		opp-1200000000 {
+ 			opp-hz = /bits/ 64 <1200000000>;
+ 			opp-microvolt = <771000>;
++			opp-suspend;
+ 		};
+ 
+ 		opp-1398000000 {
+-- 
+2.17.1
+
