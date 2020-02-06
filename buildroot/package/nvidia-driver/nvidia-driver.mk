@@ -35,7 +35,7 @@ NVIDIA_DRIVER_PROVIDES += libgl libegl libgles
 # NVidia extensions (which is deemed bad now), while the former follows
 # the newly-introduced vendor-neutral "dispatching" API/ABI:
 #   https://github.com/aritger/linux-opengl-abi-proposal/blob/master/linux-opengl-abi-proposal.txt
-# However, this is not very usefull to us, as we don't support multiple
+# However, this is not very useful to us, as we don't support multiple
 # GL providers at the same time on the system, which this proposal is
 # aimed at supporting.
 #
