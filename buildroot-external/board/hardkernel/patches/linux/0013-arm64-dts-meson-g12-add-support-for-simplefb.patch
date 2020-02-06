@@ -1,0 +1,99 @@
+From 15767cfd81eb9ff2fb783d0c6f458b90efa7d4d3 Mon Sep 17 00:00:00 2001
+From: Neil Armstrong <narmstrong@baylibre.com>
+Date: Thu, 3 Oct 2019 15:08:41 +0200
+Subject: [PATCH] arm64: dts: meson-g12: add support for simplefb
+
+SimpleFB allows transferring a framebuffer from the firmware/bootloader
+to the kernel, while making sure the related clocks and power supplies
+stay enabled.
+
+Add nodes for CVBS and HDMI Simple Framebuffers, based on the GXBB/GXL/GXM
+support at [1].
+
+[1] 03b370357907 ("arm64: dts: meson-gx: add support for simplef")
+
+Cc: Maxime Jourdan <mjourdan@baylibre.com>
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Reviewed-by: Kevin Hilman <khilman@baylibre.com>
+Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+---
+ .../boot/dts/amlogic/meson-g12-common.dtsi    | 26 +++++++++++++++++++
+ arch/arm64/boot/dts/amlogic/meson-g12.dtsi    |  8 ++++++
+ arch/arm64/boot/dts/amlogic/meson-sm1.dtsi    |  8 ++++++
+ 3 files changed, 42 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi
+index f76773cabdb1..21c155f4508c 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi
+@@ -16,6 +16,32 @@
+ 	#address-cells = <2>;
+ 	#size-cells = <2>;
+ 
++	chosen {
++		#address-cells = <2>;
++		#size-cells = <2>;
++		ranges;
++
++		simplefb_cvbs: framebuffer-cvbs {
++			compatible = "amlogic,simple-framebuffer",
++				     "simple-framebuffer";
++			amlogic,pipeline = "vpu-cvbs";
++			clocks = <&clkc CLKID_HDMI>,
++				 <&clkc CLKID_HTX_PCLK>,
++				 <&clkc CLKID_VPU_INTR>;
++			status = "disabled";
++		};
++
++		simplefb_hdmi: framebuffer-hdmi {
++			compatible = "amlogic,simple-framebuffer",
++				    "simple-framebuffer";
++			amlogic,pipeline = "vpu-hdmi";
++			clocks = <&clkc CLKID_HDMI>,
++				 <&clkc CLKID_HTX_PCLK>,
++				 <&clkc CLKID_VPU_INTR>;
++			status = "disabled";
++		};
++	};
++
+ 	efuse: efuse {
+ 		compatible = "amlogic,meson-gxbb-efuse";
+ 		clocks = <&clkc CLKID_EFUSE>;
+diff --git a/arch/arm64/boot/dts/amlogic/meson-g12.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12.dtsi
+index 3cf74fc96434..1e0e056c3d62 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-g12.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-g12.dtsi
+@@ -358,3 +358,11 @@
+ &sd_emmc_a {
+ 	amlogic,dram-access-quirk;
+ };
++
++&simplefb_cvbs {
++	power-domains = <&pwrc PWRC_G12A_VPU_ID>;
++};
++
++&simplefb_hdmi {
++	power-domains = <&pwrc PWRC_G12A_VPU_ID>;
++};
+diff --git a/arch/arm64/boot/dts/amlogic/meson-sm1.dtsi b/arch/arm64/boot/dts/amlogic/meson-sm1.dtsi
+index 1fdc5af5ae23..f89d744c9648 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-sm1.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-sm1.dtsi
+@@ -147,6 +147,14 @@
+ 	compatible = "amlogic,meson-sm1-pwrc";
+ };
+ 
++&simplefb_cvbs {
++	power-domains = <&pwrc PWRC_SM1_VPU_ID>;
++};
++
++&simplefb_hdmi {
++	power-domains = <&pwrc PWRC_SM1_VPU_ID>;
++};
++
+ &vpu {
+ 	power-domains = <&pwrc PWRC_SM1_VPU_ID>;
+ };
+-- 
+2.17.1
+
