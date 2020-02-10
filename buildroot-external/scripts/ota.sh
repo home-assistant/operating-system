@@ -23,7 +23,7 @@ function create_ota_update() {
     cp -f "${kernel}" "${rauc_folder}/kernel.ext4"
     cp -f "${boot}" "${rauc_folder}/boot.vfat"
     cp -f "${rootfs}" "${rauc_folder}/rootfs.img"
-    cp -f "${BR2_EXTERNAL_HASSOS_PATH}/misc/rauc-hook" "${rauc_folder}/hook"
+    cp -f "${BR2_EXTERNAL_HASSOS_PATH}/ota/rauc-hook" "${rauc_folder}/hook"
 
     (
         echo "[update]"
