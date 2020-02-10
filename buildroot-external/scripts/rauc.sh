@@ -27,7 +27,7 @@ function _write_rauc_boot() {
     ) >> "${TARGET_DIR}/etc/rauc/system.conf"
 
     # SPL
-    if ! [[ "${BOOT_SPL}" == "true" ]]; then
+    if ! [ "${BOOT_SPL}" == "true" ]; then
         return 0
     fi
 
