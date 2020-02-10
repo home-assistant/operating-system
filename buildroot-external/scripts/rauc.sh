@@ -27,7 +27,7 @@ function _write_rauc_boot() {
     ) >> "${TARGET_DIR}/etc/rauc/system.conf"
 
     # SPL
-    if ! [[ "${BOOT_SYS}" =~ (spl|mbr) ]]; then
+    if ! [ "${BOOT_SPL}" == "true" ]; then
         return 0
     fi
 
@@ -69,9 +69,9 @@ function write_rauc_config() {
 
 function install_rauc_certs() {
     if [ "${DEPLOYMENT}" == "production" ]; then
-        cp "${BR2_EXTERNAL_HASSOS_PATH}/misc/rel-ca.pem" "${TARGET_DIR}/etc/rauc/keyring.pem"
+        cp "${BR2_EXTERNAL_HASSOS_PATH}/ota/rel-ca.pem" "${TARGET_DIR}/etc/rauc/keyring.pem"
     else
-        cp "${BR2_EXTERNAL_HASSOS_PATH}/misc/dev-ca.pem" "${TARGET_DIR}/etc/rauc/keyring.pem"
+        cp "${BR2_EXTERNAL_HASSOS_PATH}/ota/dev-ca.pem" "${TARGET_DIR}/etc/rauc/keyring.pem"
     fi
 }
 
@@ -87,6 +87,6 @@ function install_bootloader_config() {
     # Fix MBR
     if [ "${BOOT_SYS}" == "mbr" ]; then
         mkdir -p "${TARGET_DIR}/usr/lib/udev/rules.d"
-	cp -f "${BR2_EXTERNAL_HASSOS_PATH}/misc/mbr-part.rules" "${TARGET_DIR}/usr/lib/udev/rules.d/"
+	    cp -f "${BR2_EXTERNAL_HASSOS_PATH}/misc/mbr-part.rules" "${TARGET_DIR}/usr/lib/udev/rules.d/"
     fi
 }

@@ -3,5 +3,6 @@ BOARD_NAME="Asus TinkerBoard"
 CHASSIS=embedded
 BOOTLOADER=uboot
 KERNEL_FILE=zImage
-BOOT_SYS=spl
+BOOT_SYS=hyprid
+BOOT_SPL=true
 BOOT_ENV_SIZE=0x8000

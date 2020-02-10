@@ -4,4 +4,5 @@ CHASSIS=embedded
 BOOTLOADER=uboot
 KERNEL_FILE=Image
 BOOT_SYS=hyprid
+BOOT_SPL=false
 BOOT_ENV_SIZE=0x4000

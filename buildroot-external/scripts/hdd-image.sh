@@ -45,7 +45,7 @@ function size2sectors() {
 
 
 function get_boot_size() {
-    if [ "${BOOT_SYS}" == "spl" ]; then
+    if [ "${BOOT_SPL}" == "true" ]; then
         echo "${BOOT_SIZE[1]}"
     else
         echo "${BOOT_SIZE[0]}"
@@ -138,7 +138,7 @@ function _create_disk_gpt() {
     # Partition layout
 
     # SPL
-    if [ "${BOOT_SYS}" == "spl" ]; then
+    if [ "${BOOT_SPL}" == "true" ]; then
         sgdisk -j 16384 "${hdd_img}"
     fi
 
@@ -180,10 +180,13 @@ function _create_disk_gpt() {
     dd if="${overlay_img}" of="${hdd_img}" conv=notrunc bs=512 seek="${overlay_offset}"
     dd if="${data_img}" of="${hdd_img}" conv=notrunc bs=512 seek="${data_offset}"
 
-    # Fix boot
+    # Set Hyprid partition
     if [ "${BOOT_SYS}" == "hyprid" ]; then
         _fix_disk_hyprid
-    elif [ "${BOOT_SYS}" == "spl" ]; then
+    fi
+
+    # Write SPL
+    if [ "${BOOT_SPL}" == "true" ]; then
         _fix_disk_spl_gpt
     fi
 }
@@ -255,8 +258,10 @@ function _create_disk_mbr() {
     dd if="${overlay_img}" of="${hdd_img}" conv=notrunc bs=512 seek="${overlay_offset}"
     dd if="${data_img}" of="${hdd_img}" conv=notrunc bs=512 seek="${data_offset}"
 
-    # Wripte SPL
-    _fix_disk_spl_mbr
+    # Write SPL
+    if [ "${BOOT_SPL}" == "true" ]; then
+        _fix_disk_spl_mbr
+    fi
 }
 
 
