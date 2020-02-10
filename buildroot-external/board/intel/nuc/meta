@@ -4,4 +4,5 @@ CHASSIS=embedded
 BOOTLOADER=barebox
 KERNEL_FILE=bzImage
 BOOT_SYS=efi
+BOOT_SPL=false
 DISK_SIZE=6
