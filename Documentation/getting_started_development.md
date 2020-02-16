@@ -101,6 +101,6 @@ $ /usr/bin/qemu-system-x86_64 -enable-kvm -name hassos_ova -smp 2 -m 1024 -drive
 
 This should pop up qemu's SDL frontend, displaying _hassos_' VT/CLI environment. Specifying addtional options and flags to qemu for network access, keyboard layout et al. are left as an exercise for the reader.
 
-After the boot process has finished, you can log in to _hassos_ without a password, providing *root* as the username. From there, executing `login` on the *hassio>* shell prompt will yield a root shell in the host OS.
+After the boot process has finished, you can log in to _hassos_ without a password, providing *root* as the username. From there, executing `login` on the *ha>* shell prompt will yield a root shell in the host OS.
 
 Happy hacking! :)
