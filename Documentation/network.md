@@ -106,12 +106,12 @@ powersave=0
 Log into the HASSOS base system via a console:
 
 ```
-Welcome to HassOS
-Hassio login:
+Welcome to Home Assistant
+homeassistant login:
 ```
 Login as `root` (no password needed)
 
-At the `hassio >` prompt, type `login` (as instructed).
+At the `ha >` prompt, type `login` (as instructed).
 
 From here you will use the `nmcli` configuration tool.
 
