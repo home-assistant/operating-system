@@ -41,4 +41,8 @@ if [ -e /usr/sbin/fw_setenv ]; then
     fw_setenv fdt_addr
 fi
 
+# rename CLI Hass.io
+sed -i "s/hassio:172.30.32.2/supervisor:172.30.32.2/g" /mnt/data/hassos.json
+
+
 exit 0
