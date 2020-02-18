@@ -16,7 +16,7 @@
 **Supervisor logs:**
 <!--
 - Frontend -> Hass.io -> System
-- Or use this command: hassio su logs
+- Or use this command: ha su logs
 -->
 
 **Journal logs:**
