@@ -3,9 +3,9 @@
 
 | Board | Version |
 |-------|---------|
-| Open Virtual Applicance | 4.19.104 |
+| Open Virtual Applicance | 4.19.107 |
 | Raspberry Pi | 4.19.93 |
-| Tinker Board | 4.19.104 |
+| Tinker Board | 4.19.107 |
 | Odroid-C2 | 4.19.72 |
 | Odroid-XU4 | 4.19.72 |
-| Intel NUC | 4.19.104 |
+| Intel NUC | 4.19.107 |
