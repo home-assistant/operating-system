@@ -161,13 +161,13 @@ List of Examples
 
 ---------------------------------------------------------------------
 
-Buildroot 2019.02.3 manual generated on 2019-06-07 07:39:18 UTC from
-git revision 3e8b918b87
+Buildroot 2019.02.9 manual generated on 2020-01-12 15:28:51 UTC from
+git revision 24f25c8d23
 
 The Buildroot manual is written by the Buildroot developers. It is
 licensed under the GNU General Public License, version 2. Refer to
 the COPYING [http://git.buildroot.org/buildroot/tree/COPYING?id=
-3e8b918b871f484b3ef57832aa41982e368d74c2] file in the Buildroot
+24f25c8d23bd85d57b6e9c776f2c7716f2ddd4af] file in the Buildroot
 sources for the full text of this license.
 
 Copyright © 2004-2019 The Buildroot developers
@@ -362,9 +362,8 @@ All of these "make" commands will need to build a configuration
 utility (including the interface), so you may need to install
 "development" packages for relevant libraries used by the
 configuration utilities. Refer to Chapter 2, System requirements for
-more details, specifically the optional requirements Section 2.2,
-“Optional packages” to get the dependencies of your favorite
-interface.
+more details, specifically the optional requirements to get the
+dependencies of your favorite interface.
 
 For each menu entry in the configuration tool, you can find
 associated help that describes the purpose of the entry. Refer to
@@ -404,15 +403,21 @@ directory contains several subdirectories:
     needed by Buildroot on the host and packages compiled for the
     target). This directory contains one subdirectory for each of
     these components.
-  * staging/ which contains a hierarchy similar to a root filesystem
-    hierarchy. This directory contains the headers and libraries of
-    the cross-compilation toolchain and all the userspace packages
-    selected for the target. However, this directory is not intended
-    to be the root filesystem for the target: it contains a lot of
-    development files, unstripped binaries and libraries that make it
-    far too big for an embedded system. These development files are
-    used to compile libraries and applications for the target that
-    depend on other libraries.
+  * host/ contains both the tools built for the host, and the sysroot
+    of the target toolchain. The former is an installation of tools
+    compiled for the host that are needed for the proper execution of
+    Buildroot, including the cross-compilation toolchain. The latter
+    is a hierarchy similar to a root filesystem hierarchy. It
+    contains the headers and libraries of all user-space packages
+    that provide and install libraries used by other packages.
+    However, this directory is not intended to be the root filesystem
+    for the target: it contains a lot of development files,
+    unstripped binaries and libraries that make it far too big for an
+    embedded system. These development files are used to compile
+    libraries and applications for the target that depend on other
+    libraries.
+  * staging/ is a symlink to the target toolchain sysroot inside host
+    /, which exists for backwards compatibility.
   * target/ which contains almost the complete root filesystem for
     the target: everything needed is present except the device files
     in /dev/ (Buildroot can’t create them because Buildroot doesn’t
@@ -426,9 +431,6 @@ directory contains several subdirectories:
     /, target/ contains only the files and libraries needed to run
     the selected target applications: the development files (headers,
     etc.) are not present, the binaries are stripped.
-  * host/ contains the installation of tools compiled for the host
-    that are needed for the proper execution of Buildroot, including
-    the cross-compilation toolchain.
 
 These commands, make menuconfig|nconfig|gconfig|xconfig and make, are
 the basic ones that allow to easily and quickly generate images
@@ -765,9 +767,9 @@ Buildroot or crosstool-NG.
 
 If you want to generate a custom toolchain for your project, that can
 be used as an external toolchain in Buildroot, our recommendation is
-definitely to build it with crosstool-NG [http://crosstool-ng.org].
-We recommend to build the toolchain separately from Buildroot, and
-then import it in Buildroot using the external toolchain backend.
+to build it either with Buildroot itself (see Section 6.1.3, “Build
+an external toolchain with Buildroot”) or with crosstool-NG [http://
+crosstool-ng.org].
 
 Advantages of this backend:
 
@@ -781,9 +783,45 @@ Drawbacks of this backend:
 
   * If your pre-built external toolchain has a bug, may be hard to
     get a fix from the toolchain vendor, unless you build your
-    external toolchain by yourself using Crosstool-NG.
+    external toolchain by yourself using Buildroot or Crosstool-NG.
 
-6.1.2.1. External toolchain wrapper
+6.1.3. Build an external toolchain with Buildroot
+
+The Buildroot internal toolchain option can be used to create an
+external toolchain. Here are a series of steps to build an internal
+toolchain and package it up for reuse by Buildroot itself (or other
+projects).
+
+Create a new Buildroot configuration, with the following details:
+
+  * Select the appropriate Target options for your target CPU
+    architecture
+  * In the Toolchain menu, keep the default of Buildroot toolchain
+    for Toolchain type, and configure your toolchain as desired
+  * In the System configuration menu, select None as the Init system
+    and none as /bin/sh
+  * In the Target packages menu, disable BusyBox
+  * In the Filesystem images menu, disable tar the root filesystem
+
+Then, we can trigger the build, and also ask Buildroot to generate a
+SDK. This will conveniently generate for us a tarball which contains
+our toolchain:
+
+make sdk
+
+This produces the SDK tarball in $(O)/images, with a name similar to
+arm-buildroot-linux-uclibcgnueabi_sdk-buildroot.tar.gz. Save this
+tarball, as it is now the toolchain that you can re-use as an
+external toolchain in other Buildroot projects.
+
+In those other Buildroot projects, in the Toolchain menu:
+
+  * Set Toolchain type to External toolchain
+  * Set Toolchain to Custom toolchain
+  * Set Toolchain origin to Toolchain to be downloaded and installed
+  * Set Toolchain URL to file:///path/to/your/sdk/tarball.tar.gz
+
+6.1.3.1. External toolchain wrapper
 
 When using an external toolchain, Buildroot generates a wrapper
 program, that transparently passes the appropriate options (according
@@ -1159,6 +1197,15 @@ can help you understand how to work with Buildroot:
     overlay, a post-build script or a post-image script are made,
     there is no need for a full rebuild: a simple make invocation
     will take the changes into account.
+  * When a package listed in FOO_DEPENDENCIES is rebuilt or removed,
+    the package foo is not automatically rebuilt. For example, if a
+    package bar is listed in FOO_DEPENDENCIES with FOO_DEPENDENCIES =
+    bar and the configuration of the bar package is changed, the
+    configuration change would not result in a rebuild of package foo
+    automatically. In this scenario, you may need to either rebuild
+    any packages in your build which reference bar in their
+    DEPENDENCIES, or perform a full rebuild to ensure any bar
+    dependent packages are up to date.
 
 Generally speaking, when you’re facing a build error and you’re
 unsure of the potential consequences of the configuration changes
@@ -1193,15 +1240,21 @@ command.
 
 On the other hand, if you only want to restart the build process of a
 package from its compilation step, you can run make <package>
--rebuild, followed by make or make <package>. It will restart the
-compilation and installation of the package, but not from scratch: it
-basically re-executes make and make install inside the package, so it
-will only rebuild files that changed.
+-rebuild. It will restart the compilation and installation of the
+package, but not from scratch: it basically re-executes make and make
+install inside the package, so it will only rebuild files that
+changed.
 
 If you want to restart the build process of a package from its
-configuration step, you can run make <package>-reconfigure, followed
-by make or make <package>. It will restart the configuration,
-compilation and installation of the package.
+configuration step, you can run make <package>-reconfigure. It will
+restart the configuration, compilation and installation of the
+package.
+
+While <package>-rebuild implies <package>-reinstall and <package>
+-reconfigure implies <package>-rebuild, these targets as well as
+<package> only act on the said package, and do not trigger
+re-creating the root filesystem image. If re-creating the root
+filesystem in necessary, one should in addition run make or make all.
 
 Internally, Buildroot creates so-called stamp files to keep track of
 which build steps have been completed for each package. They are
@@ -1469,10 +1522,10 @@ installed (python-matplotlib on most distributions), and also the
 argparse module if you’re using a Python version older than 2.7
 (python-argparse on most distributions).
 
-Just like for the duration graph, a BR2_GRAPH_OUT environment is
-supported to adjust the output file format. See Section 8.8,
-“Graphing the dependencies between packages” for details about this
-environment variable.
+Just like for the duration graph, a BR2_GRAPH_OUT environment
+variable is supported to adjust the output file format. See
+Section 8.8, “Graphing the dependencies between packages” for details
+about this environment variable.
 
 Note. The collected filesystem size data is only meaningful after a
 complete clean rebuild. Be sure to run make clean all before using
@@ -1738,10 +1791,8 @@ Additionally, there are some other useful make targets:
 |     graph-depends     |Generate a dependency graph of the  |
 |                       |package, in the context of the      |
 |                       |current Buildroot configuration. See|
-|                       |this section Section 8.8, “Graphing |
-|                       |the dependencies between packages”  |
-|                       |for more details about dependency   |
-|                       |graphs.                             |
+|                       |this section for more details about |
+|                       |dependency graphs.                  |
 |-----------------------+------------------------------------|
 |    graph-rdepends     |Generate a graph of this package    |
 |                       |reverse dependencies (i.e the       |
@@ -1863,6 +1914,15 @@ WEBKITGTK_OVERRIDE_SRCDIR_RSYNC_EXCLUSIONS = \
         --exclude JSTests --exclude ManualTests --exclude PerformanceTests \
         --exclude WebDriverTests --exclude WebKitBuild --exclude WebKitLibraries \
         --exclude WebKit.xcworkspace --exclude Websites --exclude Examples
+
+By default, Buildroot skips syncing of VCS artifacts (e.g., the .git
+and .svn directories). Some packages prefer to have these VCS
+directories available during build, for example for automatically
+determining a precise commit reference for version information. To
+undo this built-in filtering at a cost of a slower speed, add these
+directories back:
+
+LINUX_OVERRIDE_SRCDIR_RSYNC_EXCLUSIONS = --include .git
 
 Chapter 9. Project-specific customization
 
@@ -2531,8 +2591,7 @@ from the post-build script.
 Instead, Buildroot provides support for so-called permission tables.
 To use this feature, set config option BR2_ROOTFS_DEVICE_TABLE to a
 space-separated list of permission tables, regular text files
-following the makedev syntax Chapter 23, Makedev syntax documentation
-.
+following the makedev syntax.
 
 If you are using a static device table (i.e. not using devtmpfs,
 mdev, or (e)udev) then you can add device nodes using the same
@@ -2554,8 +2613,7 @@ Sometimes it is needed to add specific users in the target system. To
 cover this requirement, Buildroot provides support for so-called 
 users tables. To use this feature, set config option
 BR2_ROOTFS_USERS_TABLES to a space-separated list of users tables,
-regular text files following the makeusers syntax Chapter 24, 
-Makeusers syntax documentation.
+regular text files following the makeusers syntax.
 
 As shown in Section 9.1, “Recommended directory structure”, the
 recommended location for such files is board/<company>/<boardname>/.
@@ -3664,8 +3722,7 @@ also enabled, but not necessarily built before your package. To do
 so, the dependency also needs to be expressed in the .mk file of the
 package.
 
-Further formatting details: see the coding style Section 15.1,
-“Config.in file”.
+Further formatting details: see the coding style.
 
 17.2.4. Dependencies on target and toolchain options
 
@@ -3849,36 +3906,27 @@ different way, using different infrastructures:
     infrastructure must be used for all packages that do not use the
     autotools as their build system. In the future, other specialized
     infrastructures might be written for other build systems. We
-    cover them through in a tutorial Section 17.5.1, “generic-package
-    tutorial” and a reference Section 17.5.2, “generic-package
-    reference”.
+    cover them through in a tutorial and a reference.
   * Makefiles for autotools-based software (autoconf, automake,
     etc.): We provide a dedicated infrastructure for such packages,
     since autotools is a very common build system. This
     infrastructure must be used for new packages that rely on the
     autotools as their build system. We cover them through a tutorial
-    Section 17.6.1, “autotools-package tutorial” and reference
-    Section 17.6.2, “autotools-package reference”.
+    and reference.
   * Makefiles for cmake-based software: We provide a dedicated
     infrastructure for such packages, as CMake is a more and more
     commonly used build system and has a standardized behaviour. This
     infrastructure must be used for new packages that rely on CMake.
-    We cover them through a tutorial Section 17.7.1, “cmake-package
-    tutorial” and reference Section 17.7.2, “cmake-package reference”
-    .
+    We cover them through a tutorial and reference.
   * Makefiles for Python modules: We have a dedicated infrastructure
     for Python modules that use either the distutils or the
-    setuptools mechanism. We cover them through a tutorial
-    Section 17.8.1, “python-package tutorial” and a reference
-    Section 17.8.2, “python-package reference”.
+    setuptools mechanism. We cover them through a tutorial and a
+    reference.
   * Makefiles for Lua modules: We have a dedicated infrastructure for
     Lua modules available through the LuaRocks web site. We cover
-    them through a tutorial Section 17.9.1, “luarocks-package
-    tutorial” and a reference Section 17.9.2, “luarocks-package
-    reference”.
+    them through a tutorial and a reference.
 
-Further formatting details: see the writing rules Section 15.2, “The
-.mk file”.
+Further formatting details: see the writing rules.
 
 17.4. The .hash file
 
@@ -4220,9 +4268,9 @@ information is (assuming the package name is libfoo) :
     are included in Buildroot itself use a different mechanism: all
     files of the form *.patch present in the package directory inside
     Buildroot will be applied to the package after extraction (see
-    patching a package Chapter 18, Patching a package). Finally,
-    patches listed in the LIBFOO_PATCH variable are applied before
-    the patches stored in the Buildroot package directory.
+    patching a package). Finally, patches listed in the LIBFOO_PATCH
+    variable are applied before the patches stored in the Buildroot
+    package directory.
   * LIBFOO_SITE provides the location of the package, which can be a
     URL or a local filesystem path. HTTP, FTP and SCP are supported
     URL types for retrieving package tarballs. In these cases don’t
@@ -4330,8 +4378,10 @@ information is (assuming the package name is libfoo) :
     name) that are required for the current target package to
     compile. These dependencies are guaranteed to be compiled and
     installed before the configuration of the current package starts.
-    In a similar way, HOST_LIBFOO_DEPENDENCIES lists the dependencies
-    for the current host package.
+    However, modifications to configuration of these dependencies
+    will not force a rebuild of the current package. In a similar
+    way, HOST_LIBFOO_DEPENDENCIES lists the dependencies for the
+    current host package.
   * LIBFOO_EXTRACT_DEPENDENCIES lists the dependencies (in terms of
     package name) that are required for the current target package to
     be extracted. These dependencies are guaranteed to be compiled
@@ -4881,9 +4931,13 @@ be named python-<something> in Buildroot. Other packages that use the
 Python build system, but are not Python modules, can freely choose
 their name (existing examples in Buildroot are scons and supervisor).
 
-In their Config.in file, they should depend on BR2_PACKAGE_PYTHON so
-that when Buildroot will enable Python 3 usage for modules, we will
-be able to enable Python modules progressively on Python 3.
+Packages that are only compatible with one version of Python (as in:
+Python 2 or Python 3) should depend on that version explicitely in
+their Config.in file (BR2_PACKAGE_PYTHON for Python 2,
+BR2_PACKAGE_PYTHON3 for Python 3). Packages that are compatible with
+both versions should not explicitely depend on them in their
+Config.in file, since that condition is already expressed for the
+whole "External python modules" menu.
 
 The main macro of the Python package infrastructure is
 python-package. It is similar to the generic-package macro. It is
@@ -4895,12 +4949,11 @@ by defining a number of variables before calling the python-package
 or host-python-package macros.
 
 All the package metadata information variables that exist in the
-generic package infrastructure Section 17.5.2, “generic-package
-reference” also exist in the Python infrastructure:
-PYTHON_FOO_VERSION, PYTHON_FOO_SOURCE, PYTHON_FOO_PATCH,
-PYTHON_FOO_SITE, PYTHON_FOO_SUBDIR, PYTHON_FOO_DEPENDENCIES,
-PYTHON_FOO_LICENSE, PYTHON_FOO_LICENSE_FILES,
-PYTHON_FOO_INSTALL_STAGING, etc.
+generic package infrastructure also exist in the Python
+infrastructure: PYTHON_FOO_VERSION, PYTHON_FOO_SOURCE,
+PYTHON_FOO_PATCH, PYTHON_FOO_SITE, PYTHON_FOO_SUBDIR,
+PYTHON_FOO_DEPENDENCIES, PYTHON_FOO_LICENSE,
+PYTHON_FOO_LICENSE_FILES, PYTHON_FOO_INSTALL_STAGING, etc.
 
 Note that:
 
@@ -5765,7 +5818,7 @@ The Config.in file of Cargo-based package foo should contain:
 
 01: config BR2_PACKAGE_FOO
 02:     bool "foo"
-03:     depends on BR2_PACKAGE_HOST_RUSTC_ARCH_SUPPORTS
+03:     depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS
 04:     select BR2_PACKAGE_HOST_CARGO
 05:     help
 06:       This is a comment that explains what foo is.
@@ -5818,9 +5871,8 @@ The Makefile starts with the definition of the standard variables for
 package declaration (lines 7 to 11).
 
 As seen in line 35, it is based on the generic-package infrastructure
-Section 17.5.1, “generic-package tutorial”. So, it defines the
-variables required by this particular infrastructure, where Cargo is
-invoked:
+. So, it defines the variables required by this particular
+infrastructure, where Cargo is invoked:
 
   * FOO_BUILD_CMDS: Cargo is invoked to perform the build. The
     options required to configure the cross-compilation of the
@@ -5903,10 +5955,10 @@ Just like the generic infrastructure, the Go infrastructure works by
 defining a number of variables before calling the golang-package.
 
 All the package metadata information variables that exist in the
-generic package infrastructure Section 17.5.2, “generic-package
-reference” also exist in the Go infrastructure: FOO_VERSION,
-FOO_SOURCE, FOO_PATCH, FOO_SITE, FOO_SUBDIR, FOO_DEPENDENCIES,
-FOO_LICENSE, FOO_LICENSE_FILES, FOO_INSTALL_STAGING, etc.
+generic package infrastructure also exist in the Go infrastructure:
+FOO_VERSION, FOO_SOURCE, FOO_PATCH, FOO_SITE, FOO_SUBDIR,
+FOO_DEPENDENCIES, FOO_LICENSE, FOO_LICENSE_FILES,
+FOO_INSTALL_STAGING, etc.
 
 Note that it is not necessary to add host-go in the FOO_DEPENDENCIES
 variable of a package, since this basic dependency is automatically
@@ -5995,8 +6047,7 @@ On line 13, we invoke the kernel-module helper infrastructure, that
 generates all the appropriate Makefile rules and variables to build
 that kernel module.
 
-Finally, on line 14, we invoke the generic-package infrastructure
-Section 17.5.1, “generic-package tutorial”.
+Finally, on line 14, we invoke the generic-package infrastructure.
 
 The dependency on linux is automatically added, so it is not needed
 to specify it in FOO_DEPENDENCIES.
@@ -6108,10 +6159,9 @@ there is, as for packages, an infrastructure for rendering documents
 using the AsciiDoc syntax.
 
 Also as for packages, the AsciiDoc infrastructure is available from a
-br2-external tree Section 9.2, “Keeping customizations outside of
-Buildroot”. This allows documentation for a br2-external tree to
-match the Buildroot documentation, as it will be rendered to the same
-formats and use the same layout and theme.
+br2-external tree. This allows documentation for a br2-external tree
+to match the Buildroot documentation, as it will be rendered to the
+same formats and use the same layout and theme.
 
 17.19.1. asciidoc-document tutorial
 
@@ -6282,10 +6332,9 @@ only when the foo tool is selected.
 
 The rest of the Makefile, lines 11-25 defines what should be done at
 the different steps of the Linux tool build process like for a
-generic package Section 17.5.1, “generic-package tutorial”. They will
-actually be used only when the foo tool is selected. The only
-supported commands are _BUILD_CMDS, _INSTALL_STAGING_CMDS and
-_INSTALL_TARGET_CMDS.
+generic package. They will actually be used only when the foo tool is
+selected. The only supported commands are _BUILD_CMDS,
+_INSTALL_STAGING_CMDS and _INSTALL_TARGET_CMDS.
 
 Note. One must not call $(eval $(generic-package)) or any other
 package infrastructure! Linux tools are not packages by themselves,
@@ -6346,8 +6395,7 @@ modify the Linux kernel tree; this is specific to the linux extension
 and can use the variables defined by the foo package, like: $
 (FOO_DIR) or $(FOO_VERSION)… as well as all the Linux variables,
 like: $(LINUX_VERSION) or $(LINUX_VERSION_PROBED), $(KERNEL_ARCH)…
-See the definition of those kernel variables Section 17.18.2,
-“kernel-module reference”.
+See the definition of those kernel variables.
 
 17.21. Hooks available in the various build steps
 
@@ -6937,7 +6985,7 @@ basically two things that can be done:
         patch fixing an autobuild failure, add a reference to the
         build result directory, as follows:
 
-Fixes http://autobuild.buildroot.org/results/51000a9d4656afe9e0ea6f07b9f8ed374c2e4069
+Fixes: http://autobuild.buildroot.org/results/51000a9d4656afe9e0ea6f07b9f8ed374c2e4069
 
 21.3. Reviewing and testing patches
 
@@ -7135,8 +7183,8 @@ options that no longer exist or are no longer needed.
 If you are interested in getting notified of build failures and of
 further changes in the packages you added or modified, please add
 yourself to the DEVELOPERS file. This should be done in the same
-patch creating or modifying the package. See the DEVELOPERS file
-Chapter 22, DEVELOPERS file and get-developers for more information.
+patch creating or modifying the package. See the DEVELOPERS file for
+more information.
 
 Buildroot provides a handy tool to check for common coding style
 mistakes on files you created or modified, called check-package (see
@@ -7244,7 +7292,7 @@ the problem is complex, it is OK to add more paragraphs. All paragraphs
 should be wrapped at 72 characters.
 
 A paragraph that explains the root cause of the problem. Again, more
-than on paragraph is OK.
+than one paragraph is OK.
 
 Finally, one or more paragraphs that explain how the problem is solved.
 Don't hesitate to explain complex solutions in detail.
@@ -7294,14 +7342,12 @@ as superseded.
 21.6. Reporting issues/bugs or getting help
 
 Before reporting any issue, please check in the mailing list archive
-Chapter 5, Community resources whether someone has already reported
-and/or fixed a similar problem.
+whether someone has already reported and/or fixed a similar problem.
 
 However you choose to report bugs or get help, either by opening a
-bug in the bug tracker Chapter 5, Community resources or by sending a
-mail to the mailing list Chapter 5, Community resources, there are a
-number of details to provide in order to help people reproduce and
-find a solution to the issue.
+bug in the bug tracker or by sending a mail to the mailing list,
+there are a number of details to provide in order to help people
+reproduce and find a solution to the issue.
 
 Try to think as if you were trying to help someone else; in that
 case, what would you need?

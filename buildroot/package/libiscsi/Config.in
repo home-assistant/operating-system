@@ -9,4 +9,4 @@ config BR2_PACKAGE_LIBISCSI
 	  scsi tasks, but a sync layer is also provided for ease of use
 	  for simpler applications.
 
-	  https://github.com/sahlberg/libiscsi  (no proper homepage)
+	  https://github.com/sahlberg/libiscsi

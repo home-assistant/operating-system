@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>The Buildroot user manual</title><link rel="stylesheet" type="text/css" href="docbook-xsl.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.79.1" /></head><body><div xml:lang="en" class="book" lang="en"><div class="titlepage"><div><div><h1 class="title"><a id="idm45425311442192"></a>The Buildroot user manual</h1></div></div><hr /></div><div class="toc"><p><strong>Table of Contents</strong></p><dl class="toc"><dt><span class="preface"><a href="#idm45425312300064"></a></span></dt><dt><span class="part"><a href="#_getting_started">I. Getting started</a></span></dt><dd><dl><dt><span class="chapter"><a href="#_about_buildroot">1. About Buildroot</a></span></dt><dt><span class="chapter"><a href="#requirement">2. System requirements</a></span></dt><dd><dl><dt><span class="section"><a href="#requirement-mandatory">2.1. Mandatory packages</a></span></dt><dt><span class="section"><a href="#requirement-optional">2.2. Optional packages</a></span></dt></dl></dd><dt><span class="chapter"><a href="#getting-buildroot">3. Getting Buildroot</a></span></dt><dt><span class="chapter"><a href="#_buildroot_quick_start">4. Buildroot quick start</a></span></dt><dt><span class="chapter"><a href="#community-resources">5. Community resources</a></span></dt></dl></dd><dt><span class="part"><a href="#_user_guide">II. User guide</a></span></dt><dd><dl><dt><span class="chapter"><a href="#configure">6. Buildroot configuration</a></span></dt><dd><dl><dt><span class="section"><a href="#_cross_compilation_toolchain">6.1. Cross-compilation toolchain</a></span></dt><dt><span class="section"><a href="#_dev_management">6.2. /dev management</a></span></dt><dt><span class="section"><a href="#_init_system">6.3. init system</a></span></dt></dl></dd><dt><span class="chapter"><a href="#_configuration_of_other_components">7. Configuration of other components</a></span></dt><dt><span class="chapter"><a href="#_general_buildroot_usage">8. General Buildroot usage</a></span></dt><dd><dl><dt><span class="section"><a href="#make-tips">8.1. <span class="emphasis"><em>make</em></span> tips</a></span></dt><dt><span class="section"><a href="#full-rebuild">8.2. Understanding when a full rebuild is necessary</a></span></dt><dt><span class="section"><a href="#rebuild-pkg">8.3. Understanding how to rebuild packages</a></span></dt><dt><span class="section"><a href="#_offline_builds">8.4. Offline builds</a></span></dt><dt><span class="section"><a href="#_building_out_of_tree">8.5. Building out-of-tree</a></span></dt><dt><span class="section"><a href="#env-vars">8.6. Environment variables</a></span></dt><dt><span class="section"><a href="#_dealing_efficiently_with_filesystem_images">8.7. Dealing efficiently with filesystem images</a></span></dt><dt><span class="section"><a href="#_graphing_the_dependencies_between_packages">8.8. Graphing the dependencies between packages</a></span></dt><dt><span class="section"><a href="#_graphing_the_build_duration">8.9. Graphing the build duration</a></span></dt><dt><span class="section"><a href="#_graphing_the_filesystem_size_contribution_of_packages">8.10. Graphing the filesystem size contribution of packages</a></span></dt><dt><span class="section"><a href="#_integration_with_eclipse">8.11. Integration with Eclipse</a></span></dt><dt><span class="section"><a href="#_advanced_usage">8.12. Advanced usage</a></span></dt></dl></dd><dt><span class="chapter"><a href="#customize">9. Project-specific customization</a></span></dt><dd><dl><dt><span class="section"><a href="#customize-dir-structure">9.1. Recommended directory structure</a></span></dt><dt><span class="section"><a href="#outside-br-custom">9.2. Keeping customizations outside of Buildroot</a></span></dt><dt><span class="section"><a href="#customize-store-buildroot-config">9.3. Storing the Buildroot configuration</a></span></dt><dt><span class="section"><a href="#customize-store-package-config">9.4. Storing the configuration of other components</a></span></dt><dt><span class="section"><a href="#rootfs-custom">9.5. Customizing the generated target filesystem</a></span></dt><dt><span class="section"><a href="#customize-users">9.6. Adding custom user accounts</a></span></dt><dt><span class="section"><a href="#_customization_emphasis_after_emphasis_the_images_have_been_created">9.7. Customization <span class="emphasis"><em>after</em></span> the images have been created</a></span></dt><dt><span class="section"><a href="#customize-patches">9.8. Adding project-specific patches</a></span></dt><dt><span class="section"><a href="#customize-packages">9.9. Adding project-specific packages</a></span></dt><dt><span class="section"><a href="#_quick_guide_to_storing_your_project_specific_customizations">9.10. Quick guide to storing your project-specific customizations</a></span></dt></dl></dd><dt><span class="chapter"><a href="#_frequently_asked_questions_amp_troubleshooting">10. Frequently Asked Questions &amp; Troubleshooting</a></span></dt><dd><dl><dt><span class="section"><a href="#faq-boot-hang-after-starting">10.1. The boot hangs after <span class="emphasis"><em>Starting network…</em></span></a></span></dt><dt><span class="section"><a href="#faq-no-compiler-on-target">10.2. Why is there no compiler on the target?</a></span></dt><dt><span class="section"><a href="#faq-no-dev-files-on-target">10.3. Why are there no development files on the target?</a></span></dt><dt><span class="section"><a href="#faq-no-doc-on-target">10.4. Why is there no documentation on the target?</a></span></dt><dt><span class="section"><a href="#faq-why-not-visible-package">10.5. Why are some packages not visible in the Buildroot config menu?</a></span></dt><dt><span class="section"><a href="#faq-why-not-use-target-as-chroot">10.6. Why not use the target directory as a chroot directory?</a></span></dt><dt><span class="section"><a href="#faq-no-binary-packages">10.7. Why doesn’t Buildroot generate binary packages (.deb, .ipkg…)?</a></span></dt><dt><span class="section"><a href="#faq-speeding-up-build">10.8. How to speed-up the build process?</a></span></dt></dl></dd><dt><span class="chapter"><a href="#_known_issues">11. Known issues</a></span></dt><dt><span class="chapter"><a href="#legal-info">12. Legal notice and licensing</a></span></dt><dd><dl><dt><span class="section"><a href="#_complying_with_open_source_licenses">12.1. Complying with open source licenses</a></span></dt><dt><span class="section"><a href="#legal-info-buildroot">12.2. Complying with the Buildroot license</a></span></dt></dl></dd><dt><span class="chapter"><a href="#_beyond_buildroot">13. Beyond Buildroot</a></span></dt><dd><dl><dt><span class="section"><a href="#_boot_the_generated_images">13.1. Boot the generated images</a></span></dt><dt><span class="section"><a href="#_chroot">13.2. Chroot</a></span></dt></dl></dd></dl></dd><dt><span class="part"><a href="#_developer_guide">III. Developer guide</a></span></dt><dd><dl><dt><span class="chapter"><a href="#_how_buildroot_works">14. How Buildroot works</a></span></dt><dt><span class="chapter"><a href="#_coding_style">15. Coding style</a></span></dt><dd><dl><dt><span class="section"><a href="#writing-rules-config-in">15.1. <code class="literal">Config.in</code> file</a></span></dt><dt><span class="section"><a href="#writing-rules-mk">15.2. The <code class="literal">.mk</code> file</a></span></dt><dt><span class="section"><a href="#_the_documentation">15.3. The documentation</a></span></dt><dt><span class="section"><a href="#_support_scripts">15.4. Support scripts</a></span></dt></dl></dd><dt><span class="chapter"><a href="#adding-board-support">16. Adding support for a particular board</a></span></dt><dt><span class="chapter"><a href="#adding-packages">17. Adding new packages to Buildroot</a></span></dt><dd><dl><dt><span class="section"><a href="#_package_directory">17.1. Package directory</a></span></dt><dt><span class="section"><a href="#_config_files">17.2. Config files</a></span></dt><dt><span class="section"><a href="#_the_literal_mk_literal_file">17.3. The <code class="literal">.mk</code> file</a></span></dt><dt><span class="section"><a href="#adding-packages-hash">17.4. The <code class="literal">.hash</code> file</a></span></dt><dt><span class="section"><a href="#_infrastructure_for_packages_with_specific_build_systems">17.5. Infrastructure for packages with specific build systems</a></span></dt><dt><span class="section"><a href="#_infrastructure_for_autotools_based_packages">17.6. Infrastructure for autotools-based packages</a></span></dt><dt><span class="section"><a href="#_infrastructure_for_cmake_based_packages">17.7. Infrastructure for CMake-based packages</a></span></dt><dt><span class="section"><a href="#_infrastructure_for_python_packages">17.8. Infrastructure for Python packages</a></span></dt><dt><span class="section"><a href="#_infrastructure_for_luarocks_based_packages">17.9. Infrastructure for LuaRocks-based packages</a></span></dt><dt><span class="section"><a href="#_infrastructure_for_perl_cpan_packages">17.10. Infrastructure for Perl/CPAN packages</a></span></dt><dt><span class="section"><a href="#_infrastructure_for_virtual_packages">17.11. Infrastructure for virtual packages</a></span></dt><dt><span class="section"><a href="#_infrastructure_for_packages_using_kconfig_for_configuration_files">17.12. Infrastructure for packages using kconfig for configuration files</a></span></dt><dt><span class="section"><a href="#_infrastructure_for_rebar_based_packages">17.13. Infrastructure for rebar-based packages</a></span></dt><dt><span class="section"><a href="#_infrastructure_for_waf_based_packages">17.14. Infrastructure for Waf-based packages</a></span></dt><dt><span class="section"><a href="#_infrastructure_for_meson_based_packages">17.15. Infrastructure for Meson-based packages</a></span></dt><dt><span class="section"><a href="#_integration_of_cargo_based_packages">17.16. Integration of Cargo-based packages</a></span></dt><dt><span class="section"><a href="#_infrastructure_for_go_packages">17.17. Infrastructure for Go packages</a></span></dt><dt><span class="section"><a href="#_infrastructure_for_packages_building_kernel_modules">17.18. Infrastructure for packages building kernel modules</a></span></dt><dt><span class="section"><a href="#_infrastructure_for_asciidoc_documents">17.19. Infrastructure for asciidoc documents</a></span></dt><dt><span class="section"><a href="#linux-kernel-specific-infra">17.20. Infrastructure specific to the Linux kernel package</a></span></dt><dt><span class="section"><a href="#hooks">17.21. Hooks available in the various build steps</a></span></dt><dt><span class="section"><a href="#_gettext_integration_and_interaction_with_packages">17.22. Gettext integration and interaction with packages</a></span></dt><dt><span class="section"><a href="#_tips_and_tricks">17.23. Tips and tricks</a></span></dt><dt><span class="section"><a href="#_conclusion">17.24. Conclusion</a></span></dt></dl></dd><dt><span class="chapter"><a href="#patch-policy">18. Patching a package</a></span></dt><dd><dl><dt><span class="section"><a href="#_providing_patches">18.1. Providing patches</a></span></dt><dt><span class="section"><a href="#patch-apply-order">18.2. How patches are applied</a></span></dt><dt><span class="section"><a href="#_format_and_licensing_of_the_package_patches">18.3. Format and licensing of the package patches</a></span></dt><dt><span class="section"><a href="#_integrating_patches_found_on_the_web">18.4. Integrating patches found on the Web</a></span></dt></dl></dd><dt><span class="chapter"><a href="#download-infra">19. Download infrastructure</a></span></dt><dt><span class="chapter"><a href="#debugging-buildroot">20. Debugging Buildroot</a></span></dt><dt><span class="chapter"><a href="#_contributing_to_buildroot">21. Contributing to Buildroot</a></span></dt><dd><dl><dt><span class="section"><a href="#_reproducing_analyzing_and_fixing_bugs">21.1. Reproducing, analyzing and fixing bugs</a></span></dt><dt><span class="section"><a href="#_analyzing_and_fixing_autobuild_failures">21.2. Analyzing and fixing autobuild failures</a></span></dt><dt><span class="section"><a href="#_reviewing_and_testing_patches">21.3. Reviewing and testing patches</a></span></dt><dt><span class="section"><a href="#_work_on_items_from_the_todo_list">21.4. Work on items from the TODO list</a></span></dt><dt><span class="section"><a href="#submitting-patches">21.5. Submitting patches</a></span></dt><dt><span class="section"><a href="#reporting-bugs">21.6. Reporting issues/bugs or getting help</a></span></dt></dl></dd><dt><span class="chapter"><a href="#DEVELOPERS">22. DEVELOPERS file and get-developers</a></span></dt></dl></dd><dt><span class="part"><a href="#_appendix">IV. Appendix</a></span></dt><dd><dl><dt><span class="chapter"><a href="#makedev-syntax">23. Makedev syntax documentation</a></span></dt><dt><span class="chapter"><a href="#makeuser-syntax">24. Makeusers syntax documentation</a></span></dt><dt><span class="chapter"><a href="#migrating-from-ol-versions">25. Migrating from older Buildroot versions</a></span></dt><dd><dl><dt><span class="section"><a href="#br2-external-converting">25.1. Migrating to 2016.11</a></span></dt><dt><span class="section"><a href="#migrating-host-usr">25.2. Migrating to 2017.08</a></span></dt></dl></dd></dl></dd></dl></div><div class="list-of-examples"><p><strong>List of Examples</strong></p><dl><dt>17.1. <a href="#idm45425305187040">Config script: <span class="emphasis"><em>divine</em></span> package</a></dt><dt>17.2. <a href="#idm45425305184112">Config script: <span class="emphasis"><em>imagemagick</em></span> package:</a></dt></dl></div><div class="preface"><div class="titlepage"><div><div><h1 class="title"><a id="idm45425312300064"></a></h1></div></div></div><p>Buildroot 2019.02.3 manual generated on 2019-06-07
-07:39:11 UTC from git revision 3e8b918b87</p><p>The Buildroot manual is written by the Buildroot developers.
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>The Buildroot user manual</title><link rel="stylesheet" type="text/css" href="docbook-xsl.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.79.1" /></head><body><div xml:lang="en" class="book" lang="en"><div class="titlepage"><div><div><h1 class="title"><a id="idm45447183491024"></a>The Buildroot user manual</h1></div></div><hr /></div><div class="toc"><p><strong>Table of Contents</strong></p><dl class="toc"><dt><span class="preface"><a href="#idm45447183489824"></a></span></dt><dt><span class="part"><a href="#_getting_started">I. Getting started</a></span></dt><dd><dl><dt><span class="chapter"><a href="#_about_buildroot">1. About Buildroot</a></span></dt><dt><span class="chapter"><a href="#requirement">2. System requirements</a></span></dt><dd><dl><dt><span class="section"><a href="#requirement-mandatory">2.1. Mandatory packages</a></span></dt><dt><span class="section"><a href="#requirement-optional">2.2. Optional packages</a></span></dt></dl></dd><dt><span class="chapter"><a href="#getting-buildroot">3. Getting Buildroot</a></span></dt><dt><span class="chapter"><a href="#_buildroot_quick_start">4. Buildroot quick start</a></span></dt><dt><span class="chapter"><a href="#community-resources">5. Community resources</a></span></dt></dl></dd><dt><span class="part"><a href="#_user_guide">II. User guide</a></span></dt><dd><dl><dt><span class="chapter"><a href="#configure">6. Buildroot configuration</a></span></dt><dd><dl><dt><span class="section"><a href="#_cross_compilation_toolchain">6.1. Cross-compilation toolchain</a></span></dt><dt><span class="section"><a href="#_dev_management">6.2. /dev management</a></span></dt><dt><span class="section"><a href="#_init_system">6.3. init system</a></span></dt></dl></dd><dt><span class="chapter"><a href="#_configuration_of_other_components">7. Configuration of other components</a></span></dt><dt><span class="chapter"><a href="#_general_buildroot_usage">8. General Buildroot usage</a></span></dt><dd><dl><dt><span class="section"><a href="#make-tips">8.1. <span class="emphasis"><em>make</em></span> tips</a></span></dt><dt><span class="section"><a href="#full-rebuild">8.2. Understanding when a full rebuild is necessary</a></span></dt><dt><span class="section"><a href="#rebuild-pkg">8.3. Understanding how to rebuild packages</a></span></dt><dt><span class="section"><a href="#_offline_builds">8.4. Offline builds</a></span></dt><dt><span class="section"><a href="#_building_out_of_tree">8.5. Building out-of-tree</a></span></dt><dt><span class="section"><a href="#env-vars">8.6. Environment variables</a></span></dt><dt><span class="section"><a href="#_dealing_efficiently_with_filesystem_images">8.7. Dealing efficiently with filesystem images</a></span></dt><dt><span class="section"><a href="#_graphing_the_dependencies_between_packages">8.8. Graphing the dependencies between packages</a></span></dt><dt><span class="section"><a href="#_graphing_the_build_duration">8.9. Graphing the build duration</a></span></dt><dt><span class="section"><a href="#_graphing_the_filesystem_size_contribution_of_packages">8.10. Graphing the filesystem size contribution of packages</a></span></dt><dt><span class="section"><a href="#_integration_with_eclipse">8.11. Integration with Eclipse</a></span></dt><dt><span class="section"><a href="#_advanced_usage">8.12. Advanced usage</a></span></dt></dl></dd><dt><span class="chapter"><a href="#customize">9. Project-specific customization</a></span></dt><dd><dl><dt><span class="section"><a href="#customize-dir-structure">9.1. Recommended directory structure</a></span></dt><dt><span class="section"><a href="#outside-br-custom">9.2. Keeping customizations outside of Buildroot</a></span></dt><dt><span class="section"><a href="#customize-store-buildroot-config">9.3. Storing the Buildroot configuration</a></span></dt><dt><span class="section"><a href="#customize-store-package-config">9.4. Storing the configuration of other components</a></span></dt><dt><span class="section"><a href="#rootfs-custom">9.5. Customizing the generated target filesystem</a></span></dt><dt><span class="section"><a href="#customize-users">9.6. Adding custom user accounts</a></span></dt><dt><span class="section"><a href="#_customization_emphasis_after_emphasis_the_images_have_been_created">9.7. Customization <span class="emphasis"><em>after</em></span> the images have been created</a></span></dt><dt><span class="section"><a href="#customize-patches">9.8. Adding project-specific patches</a></span></dt><dt><span class="section"><a href="#customize-packages">9.9. Adding project-specific packages</a></span></dt><dt><span class="section"><a href="#_quick_guide_to_storing_your_project_specific_customizations">9.10. Quick guide to storing your project-specific customizations</a></span></dt></dl></dd><dt><span class="chapter"><a href="#_frequently_asked_questions_amp_troubleshooting">10. Frequently Asked Questions &amp; Troubleshooting</a></span></dt><dd><dl><dt><span class="section"><a href="#faq-boot-hang-after-starting">10.1. The boot hangs after <span class="emphasis"><em>Starting network…</em></span></a></span></dt><dt><span class="section"><a href="#faq-no-compiler-on-target">10.2. Why is there no compiler on the target?</a></span></dt><dt><span class="section"><a href="#faq-no-dev-files-on-target">10.3. Why are there no development files on the target?</a></span></dt><dt><span class="section"><a href="#faq-no-doc-on-target">10.4. Why is there no documentation on the target?</a></span></dt><dt><span class="section"><a href="#faq-why-not-visible-package">10.5. Why are some packages not visible in the Buildroot config menu?</a></span></dt><dt><span class="section"><a href="#faq-why-not-use-target-as-chroot">10.6. Why not use the target directory as a chroot directory?</a></span></dt><dt><span class="section"><a href="#faq-no-binary-packages">10.7. Why doesn’t Buildroot generate binary packages (.deb, .ipkg…)?</a></span></dt><dt><span class="section"><a href="#faq-speeding-up-build">10.8. How to speed-up the build process?</a></span></dt></dl></dd><dt><span class="chapter"><a href="#_known_issues">11. Known issues</a></span></dt><dt><span class="chapter"><a href="#legal-info">12. Legal notice and licensing</a></span></dt><dd><dl><dt><span class="section"><a href="#_complying_with_open_source_licenses">12.1. Complying with open source licenses</a></span></dt><dt><span class="section"><a href="#legal-info-buildroot">12.2. Complying with the Buildroot license</a></span></dt></dl></dd><dt><span class="chapter"><a href="#_beyond_buildroot">13. Beyond Buildroot</a></span></dt><dd><dl><dt><span class="section"><a href="#_boot_the_generated_images">13.1. Boot the generated images</a></span></dt><dt><span class="section"><a href="#_chroot">13.2. Chroot</a></span></dt></dl></dd></dl></dd><dt><span class="part"><a href="#_developer_guide">III. Developer guide</a></span></dt><dd><dl><dt><span class="chapter"><a href="#_how_buildroot_works">14. How Buildroot works</a></span></dt><dt><span class="chapter"><a href="#_coding_style">15. Coding style</a></span></dt><dd><dl><dt><span class="section"><a href="#writing-rules-config-in">15.1. <code class="literal">Config.in</code> file</a></span></dt><dt><span class="section"><a href="#writing-rules-mk">15.2. The <code class="literal">.mk</code> file</a></span></dt><dt><span class="section"><a href="#_the_documentation">15.3. The documentation</a></span></dt><dt><span class="section"><a href="#_support_scripts">15.4. Support scripts</a></span></dt></dl></dd><dt><span class="chapter"><a href="#adding-board-support">16. Adding support for a particular board</a></span></dt><dt><span class="chapter"><a href="#adding-packages">17. Adding new packages to Buildroot</a></span></dt><dd><dl><dt><span class="section"><a href="#_package_directory">17.1. Package directory</a></span></dt><dt><span class="section"><a href="#_config_files">17.2. Config files</a></span></dt><dt><span class="section"><a href="#_the_literal_mk_literal_file">17.3. The <code class="literal">.mk</code> file</a></span></dt><dt><span class="section"><a href="#adding-packages-hash">17.4. The <code class="literal">.hash</code> file</a></span></dt><dt><span class="section"><a href="#_infrastructure_for_packages_with_specific_build_systems">17.5. Infrastructure for packages with specific build systems</a></span></dt><dt><span class="section"><a href="#_infrastructure_for_autotools_based_packages">17.6. Infrastructure for autotools-based packages</a></span></dt><dt><span class="section"><a href="#_infrastructure_for_cmake_based_packages">17.7. Infrastructure for CMake-based packages</a></span></dt><dt><span class="section"><a href="#_infrastructure_for_python_packages">17.8. Infrastructure for Python packages</a></span></dt><dt><span class="section"><a href="#_infrastructure_for_luarocks_based_packages">17.9. Infrastructure for LuaRocks-based packages</a></span></dt><dt><span class="section"><a href="#_infrastructure_for_perl_cpan_packages">17.10. Infrastructure for Perl/CPAN packages</a></span></dt><dt><span class="section"><a href="#_infrastructure_for_virtual_packages">17.11. Infrastructure for virtual packages</a></span></dt><dt><span class="section"><a href="#_infrastructure_for_packages_using_kconfig_for_configuration_files">17.12. Infrastructure for packages using kconfig for configuration files</a></span></dt><dt><span class="section"><a href="#_infrastructure_for_rebar_based_packages">17.13. Infrastructure for rebar-based packages</a></span></dt><dt><span class="section"><a href="#_infrastructure_for_waf_based_packages">17.14. Infrastructure for Waf-based packages</a></span></dt><dt><span class="section"><a href="#_infrastructure_for_meson_based_packages">17.15. Infrastructure for Meson-based packages</a></span></dt><dt><span class="section"><a href="#_integration_of_cargo_based_packages">17.16. Integration of Cargo-based packages</a></span></dt><dt><span class="section"><a href="#_infrastructure_for_go_packages">17.17. Infrastructure for Go packages</a></span></dt><dt><span class="section"><a href="#_infrastructure_for_packages_building_kernel_modules">17.18. Infrastructure for packages building kernel modules</a></span></dt><dt><span class="section"><a href="#_infrastructure_for_asciidoc_documents">17.19. Infrastructure for asciidoc documents</a></span></dt><dt><span class="section"><a href="#linux-kernel-specific-infra">17.20. Infrastructure specific to the Linux kernel package</a></span></dt><dt><span class="section"><a href="#hooks">17.21. Hooks available in the various build steps</a></span></dt><dt><span class="section"><a href="#_gettext_integration_and_interaction_with_packages">17.22. Gettext integration and interaction with packages</a></span></dt><dt><span class="section"><a href="#_tips_and_tricks">17.23. Tips and tricks</a></span></dt><dt><span class="section"><a href="#_conclusion">17.24. Conclusion</a></span></dt></dl></dd><dt><span class="chapter"><a href="#patch-policy">18. Patching a package</a></span></dt><dd><dl><dt><span class="section"><a href="#_providing_patches">18.1. Providing patches</a></span></dt><dt><span class="section"><a href="#patch-apply-order">18.2. How patches are applied</a></span></dt><dt><span class="section"><a href="#_format_and_licensing_of_the_package_patches">18.3. Format and licensing of the package patches</a></span></dt><dt><span class="section"><a href="#_integrating_patches_found_on_the_web">18.4. Integrating patches found on the Web</a></span></dt></dl></dd><dt><span class="chapter"><a href="#download-infra">19. Download infrastructure</a></span></dt><dt><span class="chapter"><a href="#debugging-buildroot">20. Debugging Buildroot</a></span></dt><dt><span class="chapter"><a href="#_contributing_to_buildroot">21. Contributing to Buildroot</a></span></dt><dd><dl><dt><span class="section"><a href="#_reproducing_analyzing_and_fixing_bugs">21.1. Reproducing, analyzing and fixing bugs</a></span></dt><dt><span class="section"><a href="#_analyzing_and_fixing_autobuild_failures">21.2. Analyzing and fixing autobuild failures</a></span></dt><dt><span class="section"><a href="#_reviewing_and_testing_patches">21.3. Reviewing and testing patches</a></span></dt><dt><span class="section"><a href="#_work_on_items_from_the_todo_list">21.4. Work on items from the TODO list</a></span></dt><dt><span class="section"><a href="#submitting-patches">21.5. Submitting patches</a></span></dt><dt><span class="section"><a href="#reporting-bugs">21.6. Reporting issues/bugs or getting help</a></span></dt></dl></dd><dt><span class="chapter"><a href="#DEVELOPERS">22. DEVELOPERS file and get-developers</a></span></dt></dl></dd><dt><span class="part"><a href="#_appendix">IV. Appendix</a></span></dt><dd><dl><dt><span class="chapter"><a href="#makedev-syntax">23. Makedev syntax documentation</a></span></dt><dt><span class="chapter"><a href="#makeuser-syntax">24. Makeusers syntax documentation</a></span></dt><dt><span class="chapter"><a href="#migrating-from-ol-versions">25. Migrating from older Buildroot versions</a></span></dt><dd><dl><dt><span class="section"><a href="#br2-external-converting">25.1. Migrating to 2016.11</a></span></dt><dt><span class="section"><a href="#migrating-host-usr">25.2. Migrating to 2017.08</a></span></dt></dl></dd></dl></dd></dl></div><div class="list-of-examples"><p><strong>List of Examples</strong></p><dl><dt>17.1. <a href="#idm45447181824352">Config script: <span class="emphasis"><em>divine</em></span> package</a></dt><dt>17.2. <a href="#idm45447181821424">Config script: <span class="emphasis"><em>imagemagick</em></span> package:</a></dt></dl></div><div class="preface"><div class="titlepage"><div><div><h1 class="title"><a id="idm45447183489824"></a></h1></div></div></div><p>Buildroot 2019.02.9 manual generated on 2020-01-12
+15:28:43 UTC from git revision 24f25c8d23</p><p>The Buildroot manual is written by the Buildroot developers.
 It is licensed under the GNU General Public License, version 2. Refer to the
-<a class="ulink" href="http://git.buildroot.org/buildroot/tree/COPYING?id=3e8b918b871f484b3ef57832aa41982e368d74c2" target="_top">COPYING</a>
+<a class="ulink" href="http://git.buildroot.org/buildroot/tree/COPYING?id=24f25c8d23bd85d57b6e9c776f2c7716f2ddd4af" target="_top">COPYING</a>
 file in the Buildroot sources for the full text of this license.</p><p>Copyright © 2004-2019 The Buildroot developers</p><div class="informalfigure"><div class="mediaobject"><img src="logo.png" alt="logo.png" /></div></div></div><div class="part"><div class="titlepage"><div><div><h1 class="title"><a id="_getting_started"></a>Part I. Getting started</h1></div></div></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a id="_about_buildroot"></a>Chapter 1. About Buildroot</h2></div></div></div><p>Buildroot is a tool that simplifies and automates the process of
 building a complete Linux system for an embedded system, using
 cross-compilation.</p><p>In order to achieve this, Buildroot is able to generate a
@@ -16,8 +16,8 @@ processors everyone is used to having in his PC. They can be PowerPC
 processors, MIPS processors, ARM processors, etc.</p><p>Buildroot supports numerous processors and their variants; it also
 comes with default configurations for several boards available
 off-the-shelf. Besides this, a number of third-party projects are based on,
-or develop their BSP <a href="#ftn.idm45425309374864" class="footnote" id="idm45425309374864"><sup class="footnote">[1]</sup></a> or
-SDK <a href="#ftn.idm45425309177504" class="footnote" id="idm45425309177504"><sup class="footnote">[2]</sup></a> on top of Buildroot.</p><div class="footnotes"><br /><hr style="width:100; text-align:left;margin-left: 0" /><div id="ftn.idm45425309374864" class="footnote"><p><a href="#idm45425309374864" class="simpara"><sup class="simpara">[1] </sup></a>BSP: Board Support Package</p></div><div id="ftn.idm45425309177504" class="footnote"><p><a href="#idm45425309177504" class="simpara"><sup class="simpara">[2] </sup></a>SDK: Software Development Kit</p></div></div></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a id="requirement"></a>Chapter 2. System requirements</h2></div></div></div><p>Buildroot is designed to run on Linux systems.</p><p>While Buildroot itself will build most host packages it needs for the
+or develop their BSP <a href="#ftn.idm45447186605728" class="footnote" id="idm45447186605728"><sup class="footnote">[1]</sup></a> or
+SDK <a href="#ftn.idm45447186202192" class="footnote" id="idm45447186202192"><sup class="footnote">[2]</sup></a> on top of Buildroot.</p><div class="footnotes"><br /><hr style="width:100; text-align:left;margin-left: 0" /><div id="ftn.idm45447186605728" class="footnote"><p><a href="#idm45447186605728" class="simpara"><sup class="simpara">[1] </sup></a>BSP: Board Support Package</p></div><div id="ftn.idm45447186202192" class="footnote"><p><a href="#idm45447186202192" class="simpara"><sup class="simpara">[2] </sup></a>SDK: Software Development Kit</p></div></div></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a id="requirement"></a>Chapter 2. System requirements</h2></div></div></div><p>Buildroot is designed to run on Linux systems.</p><p>While Buildroot itself will build most host packages it needs for the
 compilation, certain standard Linux utilities are expected to be
 already installed on the host system. Below you will find an overview of
 the mandatory and optional packages (note that package names may vary
@@ -142,7 +142,6 @@ utility (including the interface), so you may need to install
 "development" packages for relevant libraries used by the
 configuration utilities. Refer to <a class="xref" href="#requirement" title="Chapter 2. System requirements">Chapter 2, <em>System requirements</em></a> for more details,
 specifically the <a class="link" href="#requirement-optional" title="2.2. Optional packages">optional requirements</a>
-<a class="xref" href="#requirement-optional" title="2.2. Optional packages">Section 2.2, “Optional packages”</a>
 to get the dependencies of your favorite interface.</p><p>For each menu entry in the configuration tool, you can find associated
 help that describes the purpose of the entry. Refer to <a class="xref" href="#configure" title="Chapter 6. Buildroot configuration">Chapter 6, <em>Buildroot configuration</em></a>
 for details on some specific configuration aspects.</p><p>Once everything is configured, the configuration tool generates a
@@ -174,15 +173,21 @@ This directory contains several subdirectories:</p><div class="itemizedlist"><ul
   target). This directory contains one subdirectory for each of these
   components.
 </li><li class="listitem">
-<code class="literal">staging/</code> which contains a hierarchy similar to a root filesystem
-  hierarchy. This directory contains the headers and libraries of the
-  cross-compilation toolchain and all the userspace packages selected
-  for the target. However, this directory is <span class="emphasis"><em>not</em></span> intended to be
-  the root filesystem for the target: it contains a lot of development
-  files, unstripped binaries and libraries that make it far too big
-  for an embedded system. These development files are used to compile
-  libraries and applications for the target that depend on other
-  libraries.
+<code class="literal">host/</code> contains both the tools built for the host, and the sysroot
+  of the target toolchain. The former is an installation of tools
+  compiled for the host that are needed for the proper execution of
+  Buildroot, including the cross-compilation toolchain. The latter
+  is a hierarchy similar to a root filesystem hierarchy. It contains
+  the headers and libraries of all user-space packages that provide
+  and install libraries used by other packages. However, this
+  directory is <span class="emphasis"><em>not</em></span> intended to be the root filesystem for the target:
+  it contains a lot of development files, unstripped binaries and
+  libraries that make it far too big for an embedded system. These
+  development files are used to compile libraries and applications for
+  the target that depend on other libraries.
+</li><li class="listitem">
+<code class="literal">staging/</code> is a symlink to the target toolchain sysroot inside
+  <code class="literal">host/</code>, which exists for backwards compatibility.
 </li><li class="listitem">
 <code class="literal">target/</code> which contains <span class="emphasis"><em>almost</em></span> the complete root filesystem for
   the target: everything needed is present except the device files in
@@ -197,10 +202,6 @@ This directory contains several subdirectories:</p><div class="itemizedlist"><ul
   libraries needed to run the selected target applications: the
   development files (headers, etc.) are not present, the binaries are
   stripped.
-</li><li class="listitem">
-<code class="literal">host/</code> contains the installation of tools compiled for the host
-  that are needed for the proper execution of Buildroot, including the
-  cross-compilation toolchain.
 </li></ul></div><p>These commands, <code class="literal">make menuconfig|nconfig|gconfig|xconfig</code> and <code class="literal">make</code>, are the
 basic ones that allow to easily and quickly generate images fitting
 your needs, with all the features and applications you enabled.</p><p>More details about the "make" command usage are given in
@@ -272,7 +273,7 @@ processor. Under most Linux systems, the compilation toolchain uses
 the GNU libc (glibc) as the C standard library. This compilation
 toolchain is called the "host compilation toolchain". The machine on
 which it is running, and on which you’re working, is called the "host
-system" <a href="#ftn.idm45425306639232" class="footnote" id="idm45425306639232"><sup class="footnote">[3]</sup></a>.</p><p>The compilation toolchain is provided by your distribution, and
+system" <a href="#ftn.idm45447183310368" class="footnote" id="idm45447183310368"><sup class="footnote">[3]</sup></a>.</p><p>The compilation toolchain is provided by your distribution, and
 Buildroot has nothing to do with it (other than using it to build a
 cross-compilation toolchain and other tools that are run on the
 development host).</p><p>As said above, the compilation toolchain that comes with your system
@@ -398,9 +399,9 @@ build environment. So even if you are building a system for a x86 or
 x86_64 target, you have to generate a cross-compilation toolchain with
 Buildroot or crosstool-NG.</p><p>If you want to generate a custom toolchain for your project, that can
 be used as an external toolchain in Buildroot, our recommendation is
-definitely to build it with <a class="ulink" href="http://crosstool-ng.org" target="_top">crosstool-NG</a>. We
-recommend to build the toolchain separately from Buildroot, and then
-<span class="emphasis"><em>import</em></span> it in Buildroot using the external toolchain backend.</p><p>Advantages of this backend:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+to build it either with Buildroot itself (see
+<a class="xref" href="#build-toolchain-with-buildroot" title="6.1.3. Build an external toolchain with Buildroot">Section 6.1.3, “Build an external toolchain with Buildroot”</a>) or with
+<a class="ulink" href="http://crosstool-ng.org" target="_top">crosstool-NG</a>.</p><p>Advantages of this backend:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 Allows to use well-known and well-tested cross-compilation
   toolchains.
 </li><li class="listitem">
@@ -410,7 +411,36 @@ Avoids the build time of the cross-compilation toolchain, which is
 </li></ul></div><p>Drawbacks of this backend:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 If your pre-built external toolchain has a bug, may be hard to get a
   fix from the toolchain vendor, unless you build your external
-  toolchain by yourself using Crosstool-NG.
+  toolchain by yourself using Buildroot or Crosstool-NG.
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="build-toolchain-with-buildroot"></a>6.1.3. Build an external toolchain with Buildroot</h3></div></div></div><p>The Buildroot internal toolchain option can be used to create an
+external toolchain. Here are a series of steps to build an internal
+toolchain and package it up for reuse by Buildroot itself (or other
+projects).</p><p>Create a new Buildroot configuration, with the following details:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+Select the appropriate <span class="strong"><strong>Target options</strong></span> for your target CPU
+  architecture
+</li><li class="listitem">
+In the <span class="strong"><strong>Toolchain</strong></span> menu, keep the default of <span class="strong"><strong>Buildroot toolchain</strong></span>
+  for <span class="strong"><strong>Toolchain type</strong></span>, and configure your toolchain as desired
+</li><li class="listitem">
+In the <span class="strong"><strong>System configuration</strong></span> menu, select <span class="strong"><strong>None</strong></span> as the <span class="strong"><strong>Init
+  system</strong></span> and <span class="strong"><strong>none</strong></span> as <span class="strong"><strong>/bin/sh</strong></span>
+</li><li class="listitem">
+In the <span class="strong"><strong>Target packages</strong></span> menu, disable <span class="strong"><strong>BusyBox</strong></span>
+</li><li class="listitem">
+In the <span class="strong"><strong>Filesystem images</strong></span> menu, disable <span class="strong"><strong>tar the root filesystem</strong></span>
+</li></ul></div><p>Then, we can trigger the build, and also ask Buildroot to generate a
+SDK. This will conveniently generate for us a tarball which contains
+our toolchain:</p><pre class="screen">make sdk</pre><p>This produces the SDK tarball in <code class="literal">$(O)/images</code>, with a name similar to
+<code class="literal">arm-buildroot-linux-uclibcgnueabi_sdk-buildroot.tar.gz</code>. Save this
+tarball, as it is now the toolchain that you can re-use as an external
+toolchain in other Buildroot projects.</p><p>In those other Buildroot projects, in the <span class="strong"><strong>Toolchain</strong></span> menu:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+Set <span class="strong"><strong>Toolchain type</strong></span> to <span class="strong"><strong>External toolchain</strong></span>
+</li><li class="listitem">
+Set <span class="strong"><strong>Toolchain</strong></span> to <span class="strong"><strong>Custom toolchain</strong></span>
+</li><li class="listitem">
+Set <span class="strong"><strong>Toolchain origin</strong></span> to <span class="strong"><strong>Toolchain to be downloaded and installed</strong></span>
+</li><li class="listitem">
+Set <span class="strong"><strong>Toolchain URL</strong></span> to <code class="literal">file:///path/to/your/sdk/tarball.tar.gz</code>
 </li></ul></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_external_toolchain_wrapper"></a>External toolchain wrapper</h4></div></div></div><p>When using an external toolchain, Buildroot generates a wrapper program,
 that transparently passes the appropriate options (according to the
 configuration) to the external toolchain programs. In case you need to
@@ -547,7 +577,7 @@ The third solution is <span class="strong"><strong>systemd</strong></span>. <cod
    <a class="ulink" href="http://www.freedesktop.org/wiki/Software/systemd" target="_top">http://www.freedesktop.org/wiki/Software/systemd</a>.
 </li></ul></div><p>The solution recommended by Buildroot developers is to use the
 <span class="strong"><strong>BusyBox init</strong></span> as it is sufficient for most embedded
-systems. <span class="strong"><strong>systemd</strong></span> can be used for more complex situations.</p></div><div class="footnotes"><br /><hr style="width:100; text-align:left;margin-left: 0" /><div id="ftn.idm45425306639232" class="footnote"><p><a href="#idm45425306639232" class="simpara"><sup class="simpara">[3] </sup></a>This terminology differs from what is used by GNU
+systems. <span class="strong"><strong>systemd</strong></span> can be used for more complex situations.</p></div><div class="footnotes"><br /><hr style="width:100; text-align:left;margin-left: 0" /><div id="ftn.idm45447183310368" class="footnote"><p><a href="#idm45447183310368" class="simpara"><sup class="simpara">[3] </sup></a>This terminology differs from what is used by GNU
 configure, where the host is the machine on which the application will
 run (which is usually the same as target)</p></div></div></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a id="_configuration_of_other_components"></a>Chapter 7. Configuration of other components</h2></div></div></div><p>Before attempting to modify any of the components below, make sure you
 have already configured Buildroot itself, and have enabled the
@@ -698,6 +728,16 @@ When a change to the root filesystem skeleton is made, a full
    overlay, a post-build script or a post-image script are made,
    there is no need for a full rebuild: a simple <code class="literal">make</code> invocation
    will take the changes into account.
+</li><li class="listitem">
+When a package listed in <code class="literal">FOO_DEPENDENCIES</code> is rebuilt or removed,
+   the package <code class="literal">foo</code> is not automatically rebuilt. For example, if a
+   package <code class="literal">bar</code> is listed in <code class="literal">FOO_DEPENDENCIES</code> with <code class="literal">FOO_DEPENDENCIES
+   = bar</code> and the configuration of the <code class="literal">bar</code> package is changed, the
+   configuration change would not result in a rebuild of package <code class="literal">foo</code>
+   automatically. In this scenario, you may need to either rebuild any
+   packages in your build which reference <code class="literal">bar</code> in their <code class="literal">DEPENDENCIES</code>,
+   or perform a full rebuild to ensure any <code class="literal">bar</code> dependent packages are
+   up to date.
 </li></ul></div><p>Generally speaking, when you’re facing a build error and you’re unsure
 of the potential consequences of the configuration changes you’ve
 made, do a full rebuild. If you get the same build error, then you are
@@ -715,14 +755,16 @@ depending on the availability of another package.</p><p>The easiest way to rebui
 its build directory in <code class="literal">output/build</code>. Buildroot will then re-extract,
 re-configure, re-compile and re-install this package from scratch. You
 can ask buildroot to do this with the <code class="literal">make &lt;package&gt;-dirclean</code> command.</p><p>On the other hand, if you only want to restart the build process of a
-package from its compilation step, you can run <code class="literal">make
-&lt;package&gt;-rebuild</code>, followed by <code class="literal">make</code> or <code class="literal">make &lt;package&gt;</code>. It will
-restart the compilation and installation of the package, but not from
-scratch: it basically re-executes <code class="literal">make</code> and <code class="literal">make install</code>
-inside the package, so it will only rebuild files that changed.</p><p>If you want to restart the build process of a package from its
-configuration step, you can run <code class="literal">make &lt;package&gt;-reconfigure</code>, followed
-by <code class="literal">make</code> or <code class="literal">make &lt;package&gt;</code>. It will restart the configuration,
-compilation and installation of the package.</p><p>Internally, Buildroot creates so-called <span class="emphasis"><em>stamp files</em></span> to keep track of
+package from its compilation step, you can run <code class="literal">make &lt;package&gt;-rebuild</code>. It
+will restart the compilation and installation of the package, but not from
+scratch: it basically re-executes <code class="literal">make</code> and <code class="literal">make install</code> inside the package,
+so it will only rebuild files that changed.</p><p>If you want to restart the build process of a package from its configuration
+step, you can run <code class="literal">make &lt;package&gt;-reconfigure</code>. It will restart the
+configuration, compilation and installation of the package.</p><p>While <code class="literal">&lt;package&gt;-rebuild</code> implies <code class="literal">&lt;package&gt;-reinstall</code> and
+<code class="literal">&lt;package&gt;-reconfigure</code> implies <code class="literal">&lt;package&gt;-rebuild</code>, these targets as well
+as <code class="literal">&lt;package&gt;</code> only act on the said package, and do not trigger re-creating
+the root filesystem image. If re-creating the root filesystem in necessary,
+one should in addition run <code class="literal">make</code> or <code class="literal">make all</code>.</p><p>Internally, Buildroot creates so-called <span class="emphasis"><em>stamp files</em></span> to keep track of
 which build steps have been completed for each package. They are
 stored in the package build directory,
 <code class="literal">output/build/&lt;package&gt;-&lt;version&gt;/</code> and are named
@@ -900,8 +942,8 @@ the different packages.</p><p>To generate these data after a build, run:</p><pre
 </li></ul></div><p>This <code class="literal">graph-size</code> target requires the Python Matplotlib library to be
 installed (<code class="literal">python-matplotlib</code> on most distributions), and also the
 <code class="literal">argparse</code> module if you’re using a Python version older than 2.7
-(<code class="literal">python-argparse</code> on most distributions).</p><p>Just like for the duration graph, a <code class="literal">BR2_GRAPH_OUT</code> environment is
-supported to adjust the output file format. See <a class="xref" href="#graph-depends">Section 8.8, “Graphing the dependencies between packages”</a>
+(<code class="literal">python-argparse</code> on most distributions).</p><p>Just like for the duration graph, a <code class="literal">BR2_GRAPH_OUT</code> environment variable
+is supported to adjust the output file format. See <a class="xref" href="#graph-depends">Section 8.8, “Graphing the dependencies between packages”</a>
 for details about this environment variable.</p><p><strong>Note. </strong>The collected filesystem size data is only meaningful after a complete
 clean rebuild. Be sure to run <code class="literal">make clean all</code> before using <code class="literal">make
 graph-size</code>.</p><p>To compare the root filesystem size of two different Buildroot compilations,
@@ -1025,8 +1067,7 @@ package</p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bott
   dependencies of the package (i.e the packages that depend on it,
   directly or indirectly)</p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="center" valign="top"><p><code class="literal">graph-depends</code></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>Generate a dependency graph of the package, in the
 context of the current Buildroot configuration. See
-<a class="link" href="#graph-depends">this section</a>
-<a class="xref" href="#graph-depends">Section 8.8, “Graphing the dependencies between packages”</a> for more details about dependency
+<a class="link" href="#graph-depends">this section</a> for more details about dependency
 graphs.</p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="center" valign="top"><p><code class="literal">graph-rdepends</code></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>Generate a graph of this package reverse
   dependencies (i.e the packages that depend on it, directly or
   indirectly)</p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="center" valign="top"><p><code class="literal">dirclean</code></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>Remove the whole package build directory</p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="center" valign="top"><p><code class="literal">reinstall</code></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>Re-run the install commands</p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="center" valign="top"><p><code class="literal">rebuild</code></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>Re-run the compilation commands - this only makes
@@ -1093,7 +1134,11 @@ a local WebKit source tree:</p><pre class="screen">WEBKITGTK_OVERRIDE_SRCDIR = /
 WEBKITGTK_OVERRIDE_SRCDIR_RSYNC_EXCLUSIONS = \
         --exclude JSTests --exclude ManualTests --exclude PerformanceTests \
         --exclude WebDriverTests --exclude WebKitBuild --exclude WebKitLibraries \
-        --exclude WebKit.xcworkspace --exclude Websites --exclude Examples</pre></div></div></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a id="customize"></a>Chapter 9. Project-specific customization</h2></div></div></div><p>Typical actions you may need to perform for a given project are:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+        --exclude WebKit.xcworkspace --exclude Websites --exclude Examples</pre><p>By default, Buildroot skips syncing of VCS artifacts (e.g., the <span class="strong"><strong>.git</strong></span> and
+<span class="strong"><strong>.svn</strong></span> directories). Some packages prefer to have these VCS directories
+available during build, for example for automatically determining a precise
+commit reference for version information. To undo this built-in filtering at a
+cost of a slower speed, add these directories back:</p><pre class="screen">LINUX_OVERRIDE_SRCDIR_RSYNC_EXCLUSIONS = --include .git</pre></div></div></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a id="customize"></a>Chapter 9. Project-specific customization</h2></div></div></div><p>Typical actions you may need to perform for a given project are:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 configuring Buildroot (including build options and toolchain,
   bootloader, kernel, package and filesystem image type selection)
 </li><li class="listitem">
@@ -1548,8 +1593,7 @@ such changes from there unless you use an explicit fakeroot from the
 post-build script.</p><p>Instead, Buildroot provides support for so-called <span class="emphasis"><em>permission tables</em></span>.
 To use this feature, set config option <code class="literal">BR2_ROOTFS_DEVICE_TABLE</code> to a
 space-separated list of permission tables, regular text files following
-the <a class="link" href="#makedev-syntax" title="Chapter 23. Makedev syntax documentation">makedev syntax</a>
-<a class="xref" href="#makedev-syntax" title="Chapter 23. Makedev syntax documentation">Chapter 23, <em>Makedev syntax documentation</em></a>.</p><p>If you are using a static device table (i.e. not using <code class="literal">devtmpfs</code>,
+the <a class="link" href="#makedev-syntax" title="Chapter 23. Makedev syntax documentation">makedev syntax</a>.</p><p>If you are using a static device table (i.e. not using <code class="literal">devtmpfs</code>,
 <code class="literal">mdev</code>, or <code class="literal">(e)udev</code>) then you can add device nodes using the same
 syntax, in so-called <span class="emphasis"><em>device tables</em></span>. To use this feature, set config
 option <code class="literal">BR2_ROOTFS_STATIC_DEVICE_TABLE</code> to a space-separated list of
@@ -1561,8 +1605,7 @@ related to a specific application, you should set variables
 To cover this requirement, Buildroot provides support for so-called
 <span class="emphasis"><em>users tables</em></span>. To use this feature, set config option
 <code class="literal">BR2_ROOTFS_USERS_TABLES</code> to a space-separated list of users tables,
-regular text files following the <a class="link" href="#makeuser-syntax" title="Chapter 24. Makeusers syntax documentation">makeusers syntax</a>
-<a class="xref" href="#makeuser-syntax" title="Chapter 24. Makeusers syntax documentation">Chapter 24, <em>Makeusers syntax documentation</em></a>.</p><p>As shown in <a class="xref" href="#customize-dir-structure" title="9.1. Recommended directory structure">Section 9.1, “Recommended directory structure”</a>, the recommended location for
+regular text files following the <a class="link" href="#makeuser-syntax" title="Chapter 24. Makeusers syntax documentation">makeusers syntax</a>.</p><p>As shown in <a class="xref" href="#customize-dir-structure" title="9.1. Recommended directory structure">Section 9.1, “Recommended directory structure”</a>, the recommended location for
 such files is <code class="literal">board/&lt;company&gt;/&lt;boardname&gt;/</code>.</p><p>It should be noted that if the custom users are related to a specific
 application, you should set variable <code class="literal">FOO_USERS</code> in the package’s <code class="literal">.mk</code>
 file instead (see <a class="xref" href="#generic-package-reference" title="17.5.2. generic-package reference">Section 17.5.2, “<code class="literal">generic-package</code> reference”</a>).</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_customization_emphasis_after_emphasis_the_images_have_been_created"></a>9.7. Customization <span class="emphasis"><em>after</em></span> the images have been created</h2></div></div></div><p>While post-build scripts (<a class="xref" href="#rootfs-custom" title="9.5. Customizing the generated target filesystem">Section 9.5, “Customizing the generated target filesystem”</a>) are run <span class="emphasis"><em>before</em></span>
@@ -2332,8 +2375,7 @@ preferred.</p><p>Note that such dependencies will ensure that the dependency opt
 is also enabled, but not necessarily built before your package. To do
 so, the dependency also needs to be expressed in the <code class="literal">.mk</code> file of the
 package.</p><p>Further formatting details: see <a class="link" href="#writing-rules-config-in" title="15.1. Config.in file">the
-coding style</a>
-<a class="xref" href="#writing-rules-config-in" title="15.1. Config.in file">Section 15.1, “<code class="literal">Config.in</code> file”</a>.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="dependencies-target-toolchain-options"></a>17.2.4. Dependencies on target and toolchain options</h3></div></div></div><p>Many packages depend on certain options of the toolchain: the choice of
+coding style</a>.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="dependencies-target-toolchain-options"></a>17.2.4. Dependencies on target and toolchain options</h3></div></div></div><p>Many packages depend on certain options of the toolchain: the choice of
 C library, C++ support, thread support, RPC support, wchar support,
 or dynamic library support. Some packages can only be built on certain
 target architectures, or if an MMU is available in the processor.</p><p>These dependencies have to be expressed with the appropriate <span class="emphasis"><em>depends
@@ -2483,46 +2525,35 @@ different way, using different infrastructures:</p><div class="itemizedlist"><ul
   infrastructure must be used for all packages that do not use the
   autotools as their build system. In the future, other specialized
   infrastructures might be written for other build systems. We cover
-  them through in a <a class="link" href="#generic-package-tutorial" title="17.5.1. generic-package tutorial">tutorial</a>
-<a class="xref" href="#generic-package-tutorial" title="17.5.1. generic-package tutorial">Section 17.5.1, “<code class="literal">generic-package</code> tutorial”</a> and a
-  <a class="link" href="#generic-package-reference" title="17.5.2. generic-package reference">reference</a>
-<a class="xref" href="#generic-package-reference" title="17.5.2. generic-package reference">Section 17.5.2, “<code class="literal">generic-package</code> reference”</a>.
+  them through in a <a class="link" href="#generic-package-tutorial" title="17.5.1. generic-package tutorial">tutorial</a> and a
+  <a class="link" href="#generic-package-reference" title="17.5.2. generic-package reference">reference</a>.
 </li><li class="listitem">
 <span class="strong"><strong>Makefiles for autotools-based software</strong></span> (autoconf, automake, etc.):
   We provide a dedicated infrastructure for such packages, since
   autotools is a very common build system. This infrastructure <span class="emphasis"><em>must</em></span>
   be used for new packages that rely on the autotools as their build
   system. We cover them through a <a class="link" href="#autotools-package-tutorial" title="17.6.1. autotools-package tutorial">tutorial</a>
-<a class="xref" href="#autotools-package-tutorial" title="17.6.1. autotools-package tutorial">Section 17.6.1, “<code class="literal">autotools-package</code> tutorial”</a>
-  and <a class="link" href="#autotools-package-reference" title="17.6.2. autotools-package reference">reference</a>
-<a class="xref" href="#autotools-package-reference" title="17.6.2. autotools-package reference">Section 17.6.2, “<code class="literal">autotools-package</code> reference”</a>.
+  and <a class="link" href="#autotools-package-reference" title="17.6.2. autotools-package reference">reference</a>.
 </li><li class="listitem">
 <span class="strong"><strong>Makefiles for cmake-based software</strong></span>: We provide a dedicated
    infrastructure for such packages, as CMake is a more and more
    commonly used build system and has a standardized behaviour. This
    infrastructure <span class="emphasis"><em>must</em></span> be used for new packages that rely on
    CMake. We cover them through a <a class="link" href="#cmake-package-tutorial" title="17.7.1. cmake-package tutorial">tutorial</a>
-<a class="xref" href="#cmake-package-tutorial" title="17.7.1. cmake-package tutorial">Section 17.7.1, “<code class="literal">cmake-package</code> tutorial”</a>
-   and <a class="link" href="#cmake-package-reference" title="17.7.2. cmake-package reference">reference</a>
-<a class="xref" href="#cmake-package-reference" title="17.7.2. cmake-package reference">Section 17.7.2, “<code class="literal">cmake-package</code> reference”</a>.
+   and <a class="link" href="#cmake-package-reference" title="17.7.2. cmake-package reference">reference</a>.
 </li><li class="listitem">
 <span class="strong"><strong>Makefiles for Python modules</strong></span>: We have a dedicated infrastructure
    for Python modules that use either the <code class="literal">distutils</code> or the
    <code class="literal">setuptools</code> mechanism. We cover them through a
-   <a class="link" href="#python-package-tutorial" title="17.8.1. python-package tutorial">tutorial</a>
-<a class="xref" href="#python-package-tutorial" title="17.8.1. python-package tutorial">Section 17.8.1, “<code class="literal">python-package</code> tutorial”</a> and a
-   <a class="link" href="#python-package-reference" title="17.8.2. python-package reference">reference</a>
-<a class="xref" href="#python-package-reference" title="17.8.2. python-package reference">Section 17.8.2, “<code class="literal">python-package</code> reference”</a>.
+   <a class="link" href="#python-package-tutorial" title="17.8.1. python-package tutorial">tutorial</a> and a
+   <a class="link" href="#python-package-reference" title="17.8.2. python-package reference">reference</a>.
 </li><li class="listitem">
 <span class="strong"><strong>Makefiles for Lua modules</strong></span>: We have a dedicated infrastructure for
    Lua modules available through the LuaRocks web site. We cover them
-   through a <a class="link" href="#luarocks-package-tutorial" title="17.9.1. luarocks-package tutorial">tutorial</a>
-<a class="xref" href="#luarocks-package-tutorial" title="17.9.1. luarocks-package tutorial">Section 17.9.1, “<code class="literal">luarocks-package</code> tutorial”</a> and a
-   <a class="link" href="#luarocks-package-reference" title="17.9.2. luarocks-package reference">reference</a>
-<a class="xref" href="#luarocks-package-reference" title="17.9.2. luarocks-package reference">Section 17.9.2, “<code class="literal">luarocks-package</code> reference”</a>.
+   through a <a class="link" href="#luarocks-package-tutorial" title="17.9.1. luarocks-package tutorial">tutorial</a> and a
+   <a class="link" href="#luarocks-package-reference" title="17.9.2. luarocks-package reference">reference</a>.
 </li></ul></div><p>Further formatting details: see <a class="link" href="#writing-rules-mk" title="15.2. The .mk file">the writing
-rules</a>
-<a class="xref" href="#writing-rules-mk" title="15.2. The .mk file">Section 15.2, “The <code class="literal">.mk</code> file”</a>.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="adding-packages-hash"></a>17.4. The <code class="literal">.hash</code> file</h2></div></div></div><p>When possible, you must add a third file, named <code class="literal">libfoo.hash</code>, that
+rules</a>.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="adding-packages-hash"></a>17.4. The <code class="literal">.hash</code> file</h2></div></div></div><p>When possible, you must add a third file, named <code class="literal">libfoo.hash</code>, that
 contains the hashes of the downloaded files for the <code class="literal">libfoo</code>
 package. The only reason for not adding a <code class="literal">.hash</code> file is when hash
 checking is not possible due to how the package is downloaded.</p><p>When a package has a version selection choice, then the hash file may be
@@ -2679,7 +2710,7 @@ flags.
 The argument to be given to <code class="literal">LIBFOO_CONFIG_SCRIPTS</code> is the file name(s)
 of the shell script(s) needing fixing. All these names are relative to
 <span class="emphasis"><em>$(STAGING_DIR)/usr/bin</em></span> and if needed multiple names can be given.</p><p>In addition, the scripts listed in <code class="literal">LIBFOO_CONFIG_SCRIPTS</code> are removed
-from <code class="literal">$(TARGET_DIR)/usr/bin</code>, since they are not needed on the target.</p><div class="example"><a id="idm45425305187040"></a><p class="title"><strong>Example 17.1. Config script: <span class="emphasis"><em>divine</em></span> package</strong></p><div class="example-contents"><p>Package divine installs shell script <span class="emphasis"><em>$(STAGING_DIR)/usr/bin/divine-config</em></span>.</p><p>So its fixup would be:</p><pre class="screen">DIVINE_CONFIG_SCRIPTS = divine-config</pre></div></div><br class="example-break" /><div class="example"><a id="idm45425305184112"></a><p class="title"><strong>Example 17.2. Config script: <span class="emphasis"><em>imagemagick</em></span> package:</strong></p><div class="example-contents"><p>Package imagemagick installs the following scripts:
+from <code class="literal">$(TARGET_DIR)/usr/bin</code>, since they are not needed on the target.</p><div class="example"><a id="idm45447181824352"></a><p class="title"><strong>Example 17.1. Config script: <span class="emphasis"><em>divine</em></span> package</strong></p><div class="example-contents"><p>Package divine installs shell script <span class="emphasis"><em>$(STAGING_DIR)/usr/bin/divine-config</em></span>.</p><p>So its fixup would be:</p><pre class="screen">DIVINE_CONFIG_SCRIPTS = divine-config</pre></div></div><br class="example-break" /><div class="example"><a id="idm45447181821424"></a><p class="title"><strong>Example 17.2. Config script: <span class="emphasis"><em>imagemagick</em></span> package:</strong></p><div class="example-contents"><p>Package imagemagick installs the following scripts:
 <span class="emphasis"><em>$(STAGING_DIR)/usr/bin/{Magick,Magick++,MagickCore,MagickWand,Wand}-config</em></span></p><p>So it’s fixup would be:</p><pre class="screen">IMAGEMAGICK_CONFIG_SCRIPTS = \
    Magick-config Magick++-config \
    MagickCore-config MagickWand-config Wand-config</pre></div></div><br class="example-break" /><p>On line 14, we specify the list of dependencies this package relies
@@ -2766,8 +2797,7 @@ because two builds can never be perfectly simultaneous, and because
   itself use a different mechanism: all files of the form
   <code class="literal">*.patch</code> present in the package directory inside
   Buildroot will be applied to the package after extraction (see
-  <a class="link" href="#patch-policy" title="Chapter 18. Patching a package">patching a package</a>
-<a class="xref" href="#patch-policy" title="Chapter 18. Patching a package">Chapter 18, <em>Patching a package</em></a>). Finally, patches listed in
+  <a class="link" href="#patch-policy" title="Chapter 18. Patching a package">patching a package</a>). Finally, patches listed in
   the <code class="literal">LIBFOO_PATCH</code> variable are applied <span class="emphasis"><em>before</em></span> the patches stored
   in the Buildroot package directory.
 </li><li class="listitem">
@@ -2898,9 +2928,11 @@ because two builds can never be perfectly simultaneous, and because
 <code class="literal">LIBFOO_DEPENDENCIES</code> lists the dependencies (in terms of package
   name) that are required for the current target package to
   compile. These dependencies are guaranteed to be compiled and
-  installed before the configuration of the current package starts. In
-  a similar way, <code class="literal">HOST_LIBFOO_DEPENDENCIES</code> lists the dependencies for
-  the current host package.
+  installed before the configuration of the current package starts.
+  However, modifications to configuration of these dependencies will
+  not force a rebuild of the current package. In a similar way,
+  <code class="literal">HOST_LIBFOO_DEPENDENCIES</code> lists the dependencies for the current
+  host package.
 </li><li class="listitem">
 <code class="literal">LIBFOO_EXTRACT_DEPENDENCIES</code> lists the dependencies (in terms of
   package name) that are required for the current target package to be
@@ -3385,16 +3417,19 @@ built.</p></div><div class="section"><div class="titlepage"><div><div><h3 class=
 named <code class="literal">python-&lt;something&gt;</code> in Buildroot. Other packages that use the
 Python build system, but are not Python modules, can freely choose
 their name (existing examples in Buildroot are <code class="literal">scons</code> and
-<code class="literal">supervisor</code>).</p><p>In their <code class="literal">Config.in</code> file, they should depend on <code class="literal">BR2_PACKAGE_PYTHON</code>
-so that when Buildroot will enable Python 3 usage for modules, we will
-be able to enable Python modules progressively on Python 3.</p><p>The main macro of the Python package infrastructure is
+<code class="literal">supervisor</code>).</p><p>Packages that are only compatible with one version of Python (as in:
+Python 2 or Python 3) should depend on that version explicitely in
+their <code class="literal">Config.in</code> file (<code class="literal">BR2_PACKAGE_PYTHON</code> for Python 2,
+<code class="literal">BR2_PACKAGE_PYTHON3</code> for Python 3).  Packages that are compatible
+with both versions should not explicitely depend on them in their
+<code class="literal">Config.in</code> file, since that condition is already expressed for the
+whole "External python modules" menu.</p><p>The main macro of the Python package infrastructure is
 <code class="literal">python-package</code>. It is similar to the <code class="literal">generic-package</code> macro. It is
 also possible to create Python host packages with the
 <code class="literal">host-python-package</code> macro.</p><p>Just like the generic infrastructure, the Python infrastructure works
 by defining a number of variables before calling the <code class="literal">python-package</code>
 or <code class="literal">host-python-package</code> macros.</p><p>All the package metadata information variables that exist in the
-<a class="link" href="#generic-package-reference" title="17.5.2. generic-package reference">generic package infrastructure</a>
-<a class="xref" href="#generic-package-reference" title="17.5.2. generic-package reference">Section 17.5.2, “<code class="literal">generic-package</code> reference”</a> also
+<a class="link" href="#generic-package-reference" title="17.5.2. generic-package reference">generic package infrastructure</a> also
 exist in the Python infrastructure: <code class="literal">PYTHON_FOO_VERSION</code>,
 <code class="literal">PYTHON_FOO_SOURCE</code>, <code class="literal">PYTHON_FOO_PATCH</code>, <code class="literal">PYTHON_FOO_SITE</code>,
 <code class="literal">PYTHON_FOO_SUBDIR</code>, <code class="literal">PYTHON_FOO_DEPENDENCIES</code>, <code class="literal">PYTHON_FOO_LICENSE</code>,
@@ -3974,7 +4009,7 @@ user to build programs or libraries written in Rust, but it also downloads and
 manages their dependencies, to ensure repeatable builds. Cargo packages are
 called "crates".</p><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="cargo-package-tutorial"></a>17.16.1. Cargo-based package’s <code class="literal">Config.in</code> file</h3></div></div></div><p>The <code class="literal">Config.in</code> file of Cargo-based package <span class="emphasis"><em>foo</em></span> should contain:</p><pre class="screen">01: config BR2_PACKAGE_FOO
 02:     bool "foo"
-03:     depends on BR2_PACKAGE_HOST_RUSTC_ARCH_SUPPORTS
+03:     depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS
 04:     select BR2_PACKAGE_HOST_CARGO
 05:     help
 06:       This is a comment that explains what foo is.
@@ -4017,8 +4052,7 @@ package. Let’s start with an example:</p><pre class="screen">01: #############
 34:
 35: $(eval $(generic-package))</pre><p>The Makefile starts with the definition of the standard variables for package
 declaration (lines 7 to 11).</p><p>As seen in line 35, it is based on the
-<a class="link" href="#generic-package-tutorial" title="17.5.1. generic-package tutorial"><code class="literal">generic-package</code> infrastructure</a>
-<a class="xref" href="#generic-package-tutorial" title="17.5.1. generic-package tutorial">Section 17.5.1, “<code class="literal">generic-package</code> tutorial”</a>. So, it defines
+<a class="link" href="#generic-package-tutorial" title="17.5.1. generic-package tutorial"><code class="literal">generic-package</code> infrastructure</a>. So, it defines
 the variables required by this particular infrastructure, where Cargo is
 invoked:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 <code class="literal">FOO_BUILD_CMDS</code>: Cargo is invoked to perform the build. The options required
@@ -4064,8 +4098,7 @@ automatically add a dependency on <code class="literal">host-go</code> to such p
 <code class="literal">golang-package</code>. It is similar to the <code class="literal">generic-package</code> macro. Only
 target packages are supported with <code class="literal">golang-package</code>.</p><p>Just like the generic infrastructure, the Go infrastructure works
 by defining a number of variables before calling the <code class="literal">golang-package</code>.</p><p>All the package metadata information variables that exist in the
-<a class="link" href="#generic-package-reference" title="17.5.2. generic-package reference">generic package infrastructure</a>
-<a class="xref" href="#generic-package-reference" title="17.5.2. generic-package reference">Section 17.5.2, “<code class="literal">generic-package</code> reference”</a> also
+<a class="link" href="#generic-package-reference" title="17.5.2. generic-package reference">generic package infrastructure</a> also
 exist in the Go infrastructure: <code class="literal">FOO_VERSION</code>, <code class="literal">FOO_SOURCE</code>,
 <code class="literal">FOO_PATCH</code>, <code class="literal">FOO_SITE</code>, <code class="literal">FOO_SUBDIR</code>, <code class="literal">FOO_DEPENDENCIES</code>,
 <code class="literal">FOO_LICENSE</code>, <code class="literal">FOO_LICENSE_FILES</code>, <code class="literal">FOO_INSTALL_STAGING</code>, etc.</p><p>Note that it is not necessary to add <code class="literal">host-go</code> in the
@@ -4139,8 +4172,7 @@ builds a kernel module, and no other component:</p><pre class="screen">01: #####
 remote URI where to find the package source, licensing information.</p><p>On line 13, we invoke the <code class="literal">kernel-module</code> helper infrastructure, that
 generates all the appropriate Makefile rules and variables to build
 that kernel module.</p><p>Finally, on line 14, we invoke the
-<a class="link" href="#generic-package-tutorial" title="17.5.1. generic-package tutorial"><code class="literal">generic-package</code> infrastructure</a>
-<a class="xref" href="#generic-package-tutorial" title="17.5.1. generic-package tutorial">Section 17.5.1, “<code class="literal">generic-package</code> tutorial”</a>.</p><p>The dependency on <code class="literal">linux</code> is automatically added, so it is not needed to
+<a class="link" href="#generic-package-tutorial" title="17.5.1. generic-package tutorial"><code class="literal">generic-package</code> infrastructure</a>.</p><p>The dependency on <code class="literal">linux</code> is automatically added, so it is not needed to
 specify it in <code class="literal">FOO_DEPENDENCIES</code>.</p><p>What you may have noticed is that, unlike other package infrastructures,
 we explicitly invoke a second infrastructure. This allows a package to
 build a kernel module, but also, if needed, use any one of other package
@@ -4225,8 +4257,7 @@ text
 </li></ul></div><p>Although Buildroot only contains one document written in AsciiDoc, there
 is, as for packages, an infrastructure for rendering documents using the
 AsciiDoc syntax.</p><p>Also as for packages, the AsciiDoc infrastructure is available from a
-<a class="link" href="#outside-br-custom" title="9.2. Keeping customizations outside of Buildroot">br2-external tree</a>
-<a class="xref" href="#outside-br-custom" title="9.2. Keeping customizations outside of Buildroot">Section 9.2, “Keeping customizations outside of Buildroot”</a>. This allows documentation for
+<a class="link" href="#outside-br-custom" title="9.2. Keeping customizations outside of Buildroot">br2-external tree</a>. This allows documentation for
 a br2-external tree to match the Buildroot documentation, as it will be
 rendered to the same formats and use the same layout and theme.</p><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_literal_asciidoc_document_literal_tutorial"></a>17.19.1. <code class="literal">asciidoc-document</code> tutorial</h3></div></div></div><p>Whereas package infrastructures are suffixed with <code class="literal">-package</code>, the document
 infrastructures are suffixed with <code class="literal">-document</code>. So, the AsciiDoc infrastructure
@@ -4349,8 +4380,7 @@ Linux tools.</p><p>On line 9, we specify the list of dependencies this tool reli
 dependencies are added to the Linux package dependencies list only when the
 <code class="literal">foo</code> tool is selected.</p><p>The rest of the Makefile, lines 11-25 defines what should be done at the
 different steps of the Linux tool build process like for a
-<a class="link" href="#generic-package-tutorial" title="17.5.1. generic-package tutorial"><code class="literal">generic package</code></a>
-<a class="xref" href="#generic-package-tutorial" title="17.5.1. generic-package tutorial">Section 17.5.1, “<code class="literal">generic-package</code> tutorial”</a>. They will actually be
+<a class="link" href="#generic-package-tutorial" title="17.5.1. generic-package tutorial"><code class="literal">generic package</code></a>. They will actually be
 used only when the <code class="literal">foo</code> tool is selected. The only supported commands are
 <code class="literal">_BUILD_CMDS</code>, <code class="literal">_INSTALL_STAGING_CMDS</code> and <code class="literal">_INSTALL_TARGET_CMDS</code>.</p><p><strong>Note. </strong>One <span class="strong"><strong>must not</strong></span> call <code class="literal">$(eval $(generic-package))</code> or any other
 package infrastructure! Linux tools are not packages by themselves,
@@ -4391,8 +4421,7 @@ the Linux kernel tree; this is specific to the linux extension and can
 use the variables defined by the <code class="literal">foo</code> package, like: <code class="literal">$(FOO_DIR)</code> or
 <code class="literal">$(FOO_VERSION)</code>… as well as all the Linux variables, like:
 <code class="literal">$(LINUX_VERSION)</code> or <code class="literal">$(LINUX_VERSION_PROBED)</code>, <code class="literal">$(KERNEL_ARCH)</code>…
-See the <a class="link" href="#kernel-variables">definition of those kernel variables</a>
-<a class="xref" href="#kernel-variables">Section 17.18.2, “<code class="literal">kernel-module</code> reference”</a>.</p></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="hooks"></a>17.21. Hooks available in the various build steps</h2></div></div></div><p>The generic infrastructure (and as a result also the derived autotools
+See the <a class="link" href="#kernel-variables">definition of those kernel variables</a>.</p></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="hooks"></a>17.21. Hooks available in the various build steps</h2></div></div></div><p>The generic infrastructure (and as a result also the derived autotools
 and cmake infrastructures) allow packages to specify hooks.
 These define further actions to perform after existing steps.
 Most hooks aren’t really useful for generic packages, since the <code class="literal">.mk</code>
@@ -4816,7 +4845,7 @@ Send the fix to the Buildroot mailing list (see
     can be removed.
     In the commit message of a patch fixing an autobuild failure, add a
     reference to the build result directory, as follows:
-</li></ol></div></li></ul></div><pre class="screen">Fixes http://autobuild.buildroot.org/results/51000a9d4656afe9e0ea6f07b9f8ed374c2e4069</pre></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_reviewing_and_testing_patches"></a>21.3. Reviewing and testing patches</h2></div></div></div><p>With the amount of patches sent to the mailing list each day, the
+</li></ol></div></li></ul></div><pre class="screen">Fixes: http://autobuild.buildroot.org/results/51000a9d4656afe9e0ea6f07b9f8ed374c2e4069</pre></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_reviewing_and_testing_patches"></a>21.3. Reviewing and testing patches</h2></div></div></div><p>With the amount of patches sent to the mailing list each day, the
 maintainer has a very hard job to judge which patches are ready to apply
 and which ones aren’t. Contributors can greatly help here by reviewing
 and testing these patches.</p><p>In the review process, do not hesitate to respond to patch submissions
@@ -4961,7 +4990,6 @@ options that no longer exist or are no longer needed.</p><p>If you are intereste
 further changes in the packages you added or modified, please add
 yourself to the DEVELOPERS file. This should be done in the same patch
 creating or modifying the package. See <a class="link" href="#DEVELOPERS" title="Chapter 22. DEVELOPERS file and get-developers">the DEVELOPERS file</a>
-<a class="xref" href="#DEVELOPERS" title="Chapter 22. DEVELOPERS file and get-developers">Chapter 22, <em>DEVELOPERS file and get-developers</em></a>
 for more information.</p><p>Buildroot provides a handy tool to check for common coding style
 mistakes on files you created or modified, called <code class="literal">check-package</code> (see
 <a class="xref" href="#check-package" title="17.23.2. How to check the coding style">Section 17.23.2, “How to check the coding style”</a> for more information).</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_preparing_a_patch_series"></a>21.5.2. Preparing a patch series</h3></div></div></div><p>Starting from the changes committed in your local git view, <span class="emphasis"><em>rebase</em></span>
@@ -4988,7 +5016,7 @@ large number of commits in the series;
 </li><li class="listitem">
 deep impact of the changes in the rest of the project;
 </li><li class="listitem">
-RFC <a href="#ftn.idm45425303702512" class="footnote" id="idm45425303702512"><sup class="footnote">[4]</sup></a>;
+RFC <a href="#ftn.idm45447180347040" class="footnote" id="idm45447180347040"><sup class="footnote">[4]</sup></a>;
 </li><li class="listitem">
 whenever you feel it will help presenting your work, your choices,
   the review process, etc.
@@ -5012,7 +5040,7 @@ the problem is complex, it is OK to add more paragraphs. All paragraphs
 should be wrapped at 72 characters.
 
 A paragraph that explains the root cause of the problem. Again, more
-than on paragraph is OK.
+than one paragraph is OK.
 
 Finally, one or more paragraphs that explain how the problem is solved.
 Don't hesitate to explain complex solutions in detail.
@@ -5043,13 +5071,10 @@ can be found under the "Message Id" tag on
 <a class="ulink" href="http://patchwork.buildroot.org" target="_top">patchwork</a>.  The advantage of
 <span class="strong"><strong>in-reply-to</strong></span> is that patchwork will automatically mark the previous
 version of the patch as superseded.</p></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="reporting-bugs"></a>21.6. Reporting issues/bugs or getting help</h2></div></div></div><p>Before reporting any issue, please check in
-<a class="link" href="#community-resources" title="Chapter 5. Community resources">the mailing list archive</a>
-<a class="xref" href="#community-resources" title="Chapter 5. Community resources">Chapter 5, <em>Community resources</em></a> whether someone has
+<a class="link" href="#community-resources" title="Chapter 5. Community resources">the mailing list archive</a> whether someone has
 already reported and/or fixed a similar problem.</p><p>However you choose to report bugs or get help, either by
-opening a bug in the <a class="link" href="#community-resources" title="Chapter 5. Community resources">bug tracker</a>
-<a class="xref" href="#community-resources" title="Chapter 5. Community resources">Chapter 5, <em>Community resources</em></a> or by
-<a class="link" href="#community-resources" title="Chapter 5. Community resources">sending a mail to the mailing list</a>
-<a class="xref" href="#community-resources" title="Chapter 5. Community resources">Chapter 5, <em>Community resources</em></a>, there are
+opening a bug in the <a class="link" href="#community-resources" title="Chapter 5. Community resources">bug tracker</a> or by
+<a class="link" href="#community-resources" title="Chapter 5. Community resources">sending a mail to the mailing list</a>, there are
 a number of details to provide in order to help people reproduce and
 find a solution to the issue.</p><p>Try to think as if you were trying to help someone else; in
 that case, what would you need?</p><p>Here is a short list of details to provide in such case:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
@@ -5070,7 +5095,7 @@ pastebin service. Note that not all available pastebin services will
 preserve Unix-style line terminators when downloading raw pastes.
 Following pastebin services are known to work correctly:
 - <a class="ulink" href="https://gist.github.com/" target="_top">https://gist.github.com/</a>
-- <a class="ulink" href="http://code.bulix.org/" target="_top">http://code.bulix.org/</a></p></div><div class="footnotes"><br /><hr style="width:100; text-align:left;margin-left: 0" /><div id="ftn.idm45425303702512" class="footnote"><p><a href="#idm45425303702512" class="simpara"><sup class="simpara">[4] </sup></a>RFC: (Request for comments) change proposal</p></div></div></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a id="DEVELOPERS"></a>Chapter 22. DEVELOPERS file and get-developers</h2></div></div></div><p>The main Buildroot directory contains a file named <code class="literal">DEVELOPERS</code> that
+- <a class="ulink" href="http://code.bulix.org/" target="_top">http://code.bulix.org/</a></p></div><div class="footnotes"><br /><hr style="width:100; text-align:left;margin-left: 0" /><div id="ftn.idm45447180347040" class="footnote"><p><a href="#idm45447180347040" class="simpara"><sup class="simpara">[4] </sup></a>RFC: (Request for comments) change proposal</p></div></div></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a id="DEVELOPERS"></a>Chapter 22. DEVELOPERS file and get-developers</h2></div></div></div><p>The main Buildroot directory contains a file named <code class="literal">DEVELOPERS</code> that
 lists the developers involved with various areas of Buildroot. Thanks
 to this file, the <code class="literal">get-developers</code> tool allows to:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 Calculate the list of developers to whom patches should be sent, by

@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-IMAGEMAGICK_VERSION = 7.0.8-42
+IMAGEMAGICK_VERSION = 7.0.8-59
 IMAGEMAGICK_SOURCE = $(IMAGEMAGICK_VERSION).tar.gz
 IMAGEMAGICK_SITE = https://github.com/ImageMagick/ImageMagick/archive
 IMAGEMAGICK_LICENSE = Apache-2.0
@@ -180,6 +180,9 @@ HOST_IMAGEMAGICK_CONF_OPTS = \
 	--with-jpeg \
 	--with-png \
 	--with-zlib
+
+# uses clock_gettime, which was provided by librt in glibc < 2.17
+HOST_IMAGEMAGICK_CONF_ENV = LIBS="-lrt"
 
 HOST_IMAGEMAGICK_DEPENDENCIES = \
 	host-libjpeg \

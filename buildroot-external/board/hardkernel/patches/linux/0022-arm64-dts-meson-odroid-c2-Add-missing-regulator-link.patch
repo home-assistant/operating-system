@@ -1,0 +1,64 @@
+From 60c5abf6a8f54dee2ccb94a7ec58f73883e6c56d Mon Sep 17 00:00:00 2001
+From: Anand Moon <linux.amoon@gmail.com>
+Date: Tue, 1 Oct 2019 07:38:59 +0000
+Subject: [PATCH] arm64: dts: meson: odroid-c2: Add missing regulator linked to
+ P5V0 regulator
+
+As per schematics VDDIO_AO18, VDDIO_AO3V3/VDD3V3 DDR3_1V5/DDR_VDDC:
+fixed regulator output which is supplied by P5V0.
+
+Cc: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Neil Armstrong <narmstrong@baylibre.com>
+Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
+Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+---
+ .../boot/dts/amlogic/meson-gxbb-odroidc2.dts  | 30 +++++++++++++++++++
+ 1 file changed, 30 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts b/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
+index e739f10f9442..5adecdf3b175 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
+@@ -111,6 +111,36 @@
+ 		regulator-max-microvolt = <3300000>;
+ 	};
+ 
++	vddio_ao1v8: regulator-vddio-ao1v8 {
++		compatible = "regulator-fixed";
++		regulator-name = "VDDIO_AO1V8";
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <1800000>;
++		regulator-always-on;
++		/* U17 RT9179GB */
++		vin-supply = <&p5v0>;
++	};
++
++	vddio_ao3v3: regulator-vddio-ao3v3 {
++		compatible = "regulator-fixed";
++		regulator-name = "VDDIO_AO3V3";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		regulator-always-on;
++		/* U11 MP2161GJ-C499 */
++		vin-supply = <&p5v0>;
++	};
++
++	ddr3_1v5: regulator-ddr3_1v5 {
++		compatible = "regulator-fixed";
++		regulator-name = "DDR3_1V5";
++		regulator-min-microvolt = <1500000>;
++		regulator-max-microvolt = <1500000>;
++		regulator-always-on;
++		/* U15 MP2161GJ-C499 */
++		vin-supply = <&p5v0>;
++	};
++
+ 	emmc_pwrseq: emmc-pwrseq {
+ 		compatible = "mmc-pwrseq-emmc";
+ 		reset-gpios = <&gpio BOOT_9 GPIO_ACTIVE_LOW>;
+-- 
+2.17.1
+

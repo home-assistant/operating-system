@@ -19,7 +19,7 @@ hassos-xy.raucb
 - The `modules` folder is for modules-load configuration files.
 - The `modprobe` folder is for modules configuration files (/etc/modprobe.d)
 - The `udev` folder is for udev rules files.
-- The `authorized_keys` file activates debug SSH access on port `22222`. See [Debugging Hassio][debug-hassio].
+- The `authorized_keys` file activates debug SSH access on port `22222`. See [Debugging Home Assistant][debug-homeassistant].
 - The `timesyncd.conf` file allow you to set different NTP servers. HassOS won't boot without correct working time servers!
 - The `hassos-*.raucb` file is a firmware OTA update which will be installed. These can be found on on the [release][hassos-release] page.
 
@@ -57,4 +57,4 @@ FallbackNTP=0.pool.ntp.org 1.pool.ntp.org 2.pool.ntp.org 3.pool.ntp.org
 [systemd-modules]: https://www.freedesktop.org/software/systemd/man/modules-load.d.html
 [network.md]: network.md
 [hassos-release]: https://github.com/home-assistant/hassos/releases/
-[debug-hassio]: https://developers.home-assistant.io/docs/en/hassio_debugging.html
+[debug-homeassistant]: https://developers.home-assistant.io/docs/en/hassio_debugging.html

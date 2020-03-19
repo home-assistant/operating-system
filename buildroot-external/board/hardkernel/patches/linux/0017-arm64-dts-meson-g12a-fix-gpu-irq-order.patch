@@ -1,0 +1,37 @@
+From 711f9cb1f13aff940cd0a469dcb1a041330af019 Mon Sep 17 00:00:00 2001
+From: Neil Armstrong <narmstrong@baylibre.com>
+Date: Mon, 21 Oct 2019 16:29:00 +0200
+Subject: [PATCH] arm64: dts: meson-g12a: fix gpu irq order
+
+This fixes the following DT schemas check errors:
+meson-g12b-s922x-khadas-vim3.dt.yaml: gpu@ffe40000: interrupt-names:0: 'job' was expected
+meson-g12b-s922x-khadas-vim3.dt.yaml: gpu@ffe40000: interrupt-names:2: 'gpu' was expected
+
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi
+index a063d49b9cb1..7fabc8d9654a 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi
+@@ -2204,10 +2204,10 @@
+ 			compatible = "amlogic,meson-g12a-mali", "arm,mali-bifrost";
+ 			reg = <0x0 0xffe40000 0x0 0x40000>;
+ 			interrupt-parent = <&gic>;
+-			interrupts = <GIC_SPI 160 IRQ_TYPE_LEVEL_HIGH>,
++			interrupts = <GIC_SPI 162 IRQ_TYPE_LEVEL_HIGH>,
+ 				     <GIC_SPI 161 IRQ_TYPE_LEVEL_HIGH>,
+-				     <GIC_SPI 162 IRQ_TYPE_LEVEL_HIGH>;
+-			interrupt-names = "gpu", "mmu", "job";
++				     <GIC_SPI 160 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "job", "mmu", "gpu";
+ 			clocks = <&clkc CLKID_MALI>;
+ 			resets = <&reset RESET_DVALIN_CAPB3>, <&reset RESET_DVALIN>;
+ 
+-- 
+2.17.1
+

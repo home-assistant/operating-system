@@ -13,7 +13,7 @@ variables:
   - name: versionGHR
     value: 'v0.13.0'
   - group: github
-  - group: hassos
+  - group: rauc
 
 jobs:
 
@@ -91,5 +91,5 @@ jobs:
         hassos:azure make $(board)
     displayName: 'Build $(board)'
   - script: |
-      ./ghr -t $(githubToken) $(Build.SourceBranchName) release/
+      ./ghr -t $(githubToken) -replace $(Build.SourceBranchName) release/
     displayName: 'Upload $(board)'

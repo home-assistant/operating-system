@@ -1,0 +1,95 @@
+From 2871626ba6e61e1ace43db491f766d39e6eacd5a Mon Sep 17 00:00:00 2001
+From: Jerome Brunet <jbrunet@baylibre.com>
+Date: Thu, 5 Sep 2019 14:59:55 +0200
+Subject: [PATCH] arm64: dts: meson: g12: factor the power domain.
+
+The power domain declared in the g12a and g12b dtsi are the same.
+Move the declaration of these power domains in the g12 common dtsi.
+
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-g12.dtsi  | 13 +++++++++++++
+ arch/arm64/boot/dts/amlogic/meson-g12a.dtsi | 13 -------------
+ arch/arm64/boot/dts/amlogic/meson-g12b.dtsi | 12 ------------
+ 3 files changed, 13 insertions(+), 25 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-g12.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12.dtsi
+index 1e30061fb2a7..ac5833781611 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-g12.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-g12.dtsi
+@@ -5,3 +5,16 @@
+  */
+ 
+ #include "meson-g12-common.dtsi"
++#include <dt-bindings/power/meson-g12a-power.h>
++
++&ethmac {
++	power-domains = <&pwrc PWRC_G12A_ETH_ID>;
++};
++
++&vpu {
++	power-domains = <&pwrc PWRC_G12A_VPU_ID>;
++};
++
++&sd_emmc_a {
++	amlogic,dram-access-quirk;
++};
+diff --git a/arch/arm64/boot/dts/amlogic/meson-g12a.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12a.dtsi
+index 69339d69dfd4..07450c4babfc 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-g12a.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-g12a.dtsi
+@@ -4,7 +4,6 @@
+  */
+ 
+ #include "meson-g12.dtsi"
+-#include <dt-bindings/power/meson-g12a-power.h>
+ 
+ / {
+ 	compatible = "amlogic,g12a";
+@@ -110,15 +109,3 @@
+ 		};
+ 	};
+ };
+-
+-&ethmac {
+-	power-domains = <&pwrc PWRC_G12A_ETH_ID>;
+-};
+-
+-&vpu {
+-	power-domains = <&pwrc PWRC_G12A_VPU_ID>;
+-};
+-
+-&sd_emmc_a {
+-	amlogic,dram-access-quirk;
+-};
+diff --git a/arch/arm64/boot/dts/amlogic/meson-g12b.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12b.dtsi
+index eefac0ef092b..a9e1db0f1158 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-g12b.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-g12b.dtsi
+@@ -5,7 +5,6 @@
+  */
+ 
+ #include "meson-g12.dtsi"
+-#include <dt-bindings/power/meson-g12a-power.h>
+ 
+ / {
+ 	compatible = "amlogic,g12b";
+@@ -102,14 +101,3 @@
+ 	compatible = "amlogic,g12b-clkc";
+ };
+ 
+-&ethmac {
+-	power-domains = <&pwrc PWRC_G12A_ETH_ID>;
+-};
+-
+-&vpu {
+-	power-domains = <&pwrc PWRC_G12A_VPU_ID>;
+-};
+-
+-&sd_emmc_a {
+-	amlogic,dram-access-quirk;
+-};
+-- 
+2.17.1
+

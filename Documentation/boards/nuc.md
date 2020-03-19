@@ -17,6 +17,7 @@ Requirements:
 | Device | Quirks | 
 |--------|-----------|
 | Intel NUC5CPYH |  |
+| Intel NUC6CAYH |  |
 | Gigabyte GB-BPCE-3455 | needs 'nomodeset' in cmdline.txt if you want a console |
 
 

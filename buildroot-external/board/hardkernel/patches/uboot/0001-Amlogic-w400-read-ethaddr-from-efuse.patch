@@ -1,0 +1,55 @@
+From b93c598b1acfe59ffac342d114483af8a45a78ac Mon Sep 17 00:00:00 2001
+From: Pascal Vizeli <pvizeli@syshack.ch>
+Date: Sat, 1 Feb 2020 20:55:39 +0000
+Subject: [PATCH 1/1] Amlogic w400: read ethaddr from efuse
+
+Signed-off-by: Pascal Vizeli <pvizeli@syshack.ch>
+---
+ board/amlogic/w400/w400.c | 25 ++++++++++++++++++++++++-
+ 1 file changed, 24 insertions(+), 1 deletion(-)
+
+diff --git a/board/amlogic/w400/w400.c b/board/amlogic/w400/w400.c
+index e60dc3a622..d4028c6a39 100644
+--- a/board/amlogic/w400/w400.c
++++ b/board/amlogic/w400/w400.c
+@@ -6,13 +6,36 @@
+ 
+ #include <common.h>
+ #include <dm.h>
+-#include <env_internal.h>
++#include <env.h>
+ #include <asm/io.h>
++#include <asm/arch/sm.h>
+ #include <asm/arch/eth.h>
+ 
++#define EFUSE_MAC_OFFSET	20
++#define EFUSE_MAC_SIZE		12
++
+ int misc_init_r(void)
+ {
++	u8 mac_addr[6];
++	char efuse_mac_addr[EFUSE_MAC_SIZE], buff[3];
++	ssize_t len;
++
+ 	meson_eth_init(PHY_INTERFACE_MODE_RGMII, 0);
+ 
++	if (!eth_env_get_enetaddr("ethaddr", mac_addr)) {
++		len = meson_sm_read_efuse(EFUSE_MAC_OFFSET,
++					  efuse_mac_addr, EFUSE_MAC_SIZE);
++		if (len != EFUSE_MAC_SIZE)
++			return 0; 
++
++		for (int i = 0; i < 6; i++){
++			buff[0] = efuse_mac_addr[i * 2];
++			buff[1] = efuse_mac_addr[i * 2 + 1];
++			mac_addr[i] = simple_strtoul(buff, NULL, 16);
++		}
++		if(is_valid_ethaddr(mac_addr))
++			eth_env_set_enetaddr("ethaddr", mac_addr);
++	}
++
+ 	return 0;
+ }
+-- 
+2.17.1
+

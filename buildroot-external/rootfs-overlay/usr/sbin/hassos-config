@@ -96,7 +96,7 @@ fi
 ##
 # Firmware update / Only USB
 UPTIME=$(awk '{printf "%0.f", $1}' /proc/uptime)
-if ls ${USB_CONFIG}/*.raucb > /dev/null 2>&1 && [ "${UPTIME}" -ge "180" ]; then
+if ls ${USB_CONFIG}/*.raucb > /dev/null 2>&1 && [ "${UPTIME}" -ge "300" ]; then
     echo "[Info] Performe a firmware update"
 
     # shellcheck disable=SC2012
