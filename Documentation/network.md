@@ -57,6 +57,7 @@ ssid=MY_SSID
 
 [802-11-wireless-security]
 auth-alg=open
+# use auth-alg=shared (for WPA) rather than auth-alg=open (for WPE)
 key-mgmt=wpa-psk
 psk=MY_WLAN_SECRET_KEY
 
