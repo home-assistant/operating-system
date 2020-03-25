@@ -3,4 +3,4 @@ config BR2_PACKAGE_BLUETOOTH_BCM43XX
 	depends on BR2_PACKAGE_BLUEZ5_UTILS_CLIENT
 	select BR2_PACKAGE_BLUEZ5_UTILS_DEPRECATED
 	help
-	  Install bluetooth for bcm43xx. 
+	  Install bluetooth for bcm43xx.
