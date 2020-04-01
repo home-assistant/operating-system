@@ -10,15 +10,15 @@ BLUETOOTH_BCM43XX_LICENSE_FILES = $(BR2_EXTERNAL_HASSOS_PATH)/../LICENSE
 BLUETOOTH_BCM43XX_SITE = $(BR2_EXTERNAL_HASSOS_PATH)/package/bluetooth-bcm43xx
 BLUETOOTH_BCM43XX_SITE_METHOD = local
 
-define BLUETOOTH_BCM43XX_FIRMWARE_AND_HELPERS_DOWNLOAD
+define BLUETOOTH_BCM43XX_BUILD_CMDS
 	curl -L -o $(@D)/BCM43430A1.hcd https://raw.githubusercontent.com/RPi-Distro/bluez-firmware/fff76cb15527c435ce99a9787848eacd6288282c/broadcom/BCM43430A1.hcd
 	curl -L -o $(@D)/BCM4345C0.hcd https://raw.githubusercontent.com/RPi-Distro/bluez-firmware/fff76cb15527c435ce99a9787848eacd6288282c/broadcom/BCM4345C0.hcd
 	curl -L -o $(@D)/btuart https://raw.githubusercontent.com/RPi-Distro/pi-bluetooth/cbdbcb66bcc5b9af05f1a9fffe2254c872bb0ace/usr/bin/btuart
 	curl -L -o $(@D)/bthelper https://raw.githubusercontent.com/RPi-Distro/pi-bluetooth/cbdbcb66bcc5b9af05f1a9fffe2254c872bb0ace/usr/bin/bthelper
 	curl -L -o $(@D)/90-pi-bluetooth.rules https://raw.githubusercontent.com/RPi-Distro/pi-bluetooth/cbdbcb66bcc5b9af05f1a9fffe2254c872bb0ace/lib/udev/rules.d/90-pi-bluetooth.rules
-endef
 
-BLUETOOTH_BCM43XX_PRE_PATCH_HOOKS += BLUETOOTH_BCM43XX_FIRMWARE_AND_HELPERS_DOWNLOAD
+	patch $(@D)/btuart $(@D)/0001-btuart-reduced-baud-rate-rpi3b.patch
+endef
 
 define BLUETOOTH_BCM43XX_INSTALL_TARGET_CMDS
 	$(INSTALL) -d $(TARGET_DIR)/etc/systemd/system/hassos-hardware.target.wants
