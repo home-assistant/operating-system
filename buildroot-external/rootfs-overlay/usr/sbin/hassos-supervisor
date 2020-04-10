@@ -1,39 +1,34 @@
 #!/bin/sh
+# ==============================================================================
+# Supervisor on HassOS
+# ==============================================================================
 set -e
 
 # Load configs
-CONFIG_FILE=/mnt/data/hassos.json
-
-SUPERVISOR="$(jq --raw-output '.supervisor' ${CONFIG_FILE})"
-DOCKER_ARGS="$(jq --raw-output '.supervisor_args // empty' ${CONFIG_FILE})"
-APPARMOR="$(jq --raw-output '.supervisor_apparmor // "docker-default"' ${CONFIG_FILE})"
+. /etc/os-release
 
 # Init supervisor
-HASSOS_DATA=/mnt/data/supervisor
-HASSOS_IMAGE_ID=$(docker inspect --format='{{.Id}}' "${SUPERVISOR}")
-HASSOS_CONTAINER_ID=$(docker inspect --format='{{.Image}}' hassos_supervisor || echo "")
-
-# Fix wrong AppArmor profiles
-if ! grep "${APPARMOR}" /sys/kernel/security/apparmor/profiles > /dev/null; then
-    APPARMOR=docker-default
-fi
+SUPERVISOR_IMAGE="homeassistant/${SUPERVISOR_ARCH}-hassio-supervisor"
+SUPERVISOR_DATA=/mnt/data/supervisor
+SUPERVISOR_IMAGE_ID=$(docker inspect --format='{{.Id}}' "${SUPERVISOR_IMAGE}")
+SUPERVISOR_CONTAINER_ID=$(docker inspect --format='{{.Image}}' hassio_supervisor || echo "")
 
 runSupervisor() {
-    docker container rm --force hassos_supervisor || true
+    docker container rm --force hassio_supervisor || true
 
     # shellcheck disable=SC2086
-    docker container run --name hassos_supervisor \
-        --privileged --security-opt apparmor="${APPARMOR}" \
+    docker container run --name hassio_supervisor \
+        --privileged --security-opt apparmor="hassio-supervisor" \
         -v /var/run/docker.sock:/var/run/docker.sock \
         -v /var/run/dbus:/var/run/dbus \
         -v /etc/machine-id:/etc/machine-id:ro \
-        -v ${HASSOS_DATA}:/data \
-        -e SUPERVISOR_SHARE=${HASSOS_DATA} \
-        -e SUPERVISOR_NAME=hassos_supervisor \
-        $DOCKER_ARGS \
-        "${SUPERVISOR}"
+        -v ${SUPERVISOR_DATA}:/data \
+        -e SUPERVISOR_SHARE=${SUPERVISOR_DATA} \
+        -e SUPERVISOR_NAME=hassio_supervisor \
+        -e SUPERVISOR_MACHINE=${SUPERVISOR_MACHINE}
+        "${SUPERVISOR_IMAGE}"
 }
 
 # Run supervisor
-mkdir -p ${HASSOS_DATA}
-([ "${HASSOS_IMAGE_ID}" = "${HASSOS_CONTAINER_ID}" ] && docker container start --attach hassos_supervisor) || runSupervisor
+mkdir -p ${SUPERVISOR_DATA}
+([ "${SUPERVISOR_IMAGE_ID}" = "${SUPERVISOR_CONTAINER_ID}" ] && docker container start --attach hassio_supervisor) || runSupervisor
