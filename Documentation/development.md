@@ -27,3 +27,28 @@ We support mainly uboot but for uefi system we can also use barebox. In future w
 `DISK_SIZE`:
 Default 2. That is the size of end image in GB.
 
+## Supervisor
+
+`SUPERVISOR_MACHINE`:
+- intel-nuc
+- odroid-c2
+- odroid-n2
+- odroid-xu
+- qemuarm
+- qemuarm-64
+- qemux86
+- qemux86-64
+- raspberrypi
+- raspberrypi2
+- raspberrypi3
+- raspberrypi4
+- raspberrypi3-64
+- raspberrypi4-64
+- tinker
+
+`SUPERVISOR_ARCH`
+- amd64
+- i386
+- armhf
+- armv7
+- aarch64
