@@ -87,6 +87,7 @@ jobs:
 
       sudo docker run --rm --privileged -v "$(pwd):/build" \
         -e BUILDER_UID="${BUILDER_UID}" -e BUILDER_GID="${BUILDER_GID}" \
+        -v "/mnt/build-cache:/cache" \
         hassos:azure make $(board)
     displayName: 'Build $(board)'
   - script: |
