@@ -1,0 +1,52 @@
+From c174ab63c7649a47cc43e9049589358336f3cbc0 Mon Sep 17 00:00:00 2001
+From: Pascal Vizeli <pvizeli@syshack.ch>
+Date: Thu, 16 Apr 2020 11:58:26 +0000
+Subject: [PATCH 1/1] network-manager: wpa_supplicant & wait boot
+
+Signed-off-by: Pascal Vizeli <pvizeli@syshack.ch>
+---
+ package/network-manager/Config.in          | 5 +++--
+ package/network-manager/network-manager.mk | 4 +++-
+ 2 files changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/package/network-manager/Config.in b/package/network-manager/Config.in
+index e6a3f5f04f..1334d982e8 100644
+--- a/package/network-manager/Config.in
++++ b/package/network-manager/Config.in
+@@ -15,8 +15,9 @@ config BR2_PACKAGE_NETWORK_MANAGER
+ 	select BR2_PACKAGE_LIBGCRYPT
+ 	select BR2_PACKAGE_UTIL_LINUX
+ 	select BR2_PACKAGE_UTIL_LINUX_LIBUUID
+-	select BR2_PACKAGE_WIRELESS_TOOLS
+-	select BR2_PACKAGE_WIRELESS_TOOLS_LIB
++	select BR2_PACKAGE_WPA_SUPPLICANT
++	select BR2_PACKAGE_WPA_SUPPLICANT_DBUS_NEW
++	select BR2_PACKAGE_WPA_SUPPLICANT_DBUS_INTROSPECTION
+ 	select BR2_PACKAGE_READLINE
+ 	select BR2_PACKAGE_LIBNDP
+ 	help
+diff --git a/package/network-manager/network-manager.mk b/package/network-manager/network-manager.mk
+index 56b768cdef..771ec29a00 100644
+--- a/package/network-manager/network-manager.mk
++++ b/package/network-manager/network-manager.mk
+@@ -10,7 +10,7 @@ NETWORK_MANAGER_SOURCE = NetworkManager-$(NETWORK_MANAGER_VERSION).tar.xz
+ NETWORK_MANAGER_SITE = https://download.gnome.org/sources/NetworkManager/$(NETWORK_MANAGER_VERSION_MAJOR)
+ NETWORK_MANAGER_INSTALL_STAGING = YES
+ NETWORK_MANAGER_DEPENDENCIES = host-pkgconf udev gnutls libglib2 \
+-	libgcrypt wireless_tools util-linux host-intltool readline libndp
++	libgcrypt wpa_supplicant util-linux host-intltool readline libndp
+ # Even though the COPYING file only contains the GPL-2.0 text, many
+ # parts of network-manager are under LGPL-2.0. See the "Legal" section
+ # of the CONTRIBUTING file for details.
+@@ -91,6 +91,8 @@ define NETWORK_MANAGER_INSTALL_INIT_SYSTEMD
+ 	ln -sf /usr/lib/systemd/system/NetworkManager.service \
+ 		$(TARGET_DIR)/etc/systemd/system/dbus-org.freedesktop.NetworkManager.service
+ 
++	ln -sf /usr/lib/systemd/system/NetworkManager-wait-online.service \
++		$(TARGET_DIR)/etc/systemd/system/network-online.target.wants/NetworkManager-wait-online.service
+ endef
+ 
+ $(eval $(autotools-package))
+-- 
+2.17.1
+

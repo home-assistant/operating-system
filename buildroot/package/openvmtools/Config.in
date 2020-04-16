@@ -22,16 +22,6 @@ config BR2_PACKAGE_OPENVMTOOLS
 
 if BR2_PACKAGE_OPENVMTOOLS
 
-config BR2_PACKAGE_OPENVMTOOLS_PROCPS
-	bool "procps support"
-	depends on BR2_PACKAGE_BUSYBOX_SHOW_OTHERS
-	select BR2_PACKAGE_PROCPS_NG
-	help
-	  Enable support for procps / meminfo
-
-comment "procps support needs BR2_PACKAGE_BUSYBOX_SHOW_OTHERS"
-	depends on !BR2_PACKAGE_BUSYBOX_SHOW_OTHERS
-
 config BR2_PACKAGE_OPENVMTOOLS_PAM
 	bool "PAM support"
 	# linux-pam needs locale and wchar, but we already have this
@@ -44,6 +34,20 @@ config BR2_PACKAGE_OPENVMTOOLS_PAM
 
 comment "PAM support needs a glibc toolchain w/ dynamic library"
 	depends on BR2_STATIC_LIBS || BR2_TOOLCHAIN_USES_MUSL
+
+config BR2_PACKAGE_OPENVMTOOLS_RESOLUTIONKMS
+	bool "resolutionkms support"
+	depends on BR2_PACKAGE_HAS_UDEV
+	depends on BR2_TOOLCHAIN_HAS_THREADS # libdrm
+	depends on BR2_i386 || BR2_x86_64 # libdrm vmwgfx
+	select BR2_PACKAGE_LIBDRM
+	select BR2_PACKAGE_LIBDRM_VMWGFX
+	help
+	  Enable support for resolutionkms
+
+comment "resolutionkms needs udev, a toolchain w/ threads"
+	depends on BR2_i386 || BR2_x86_64
+	depends on !BR2_PACKAGE_HAS_UDEV || !BR2_TOOLCHAIN_HAS_THREADS
 
 endif
 

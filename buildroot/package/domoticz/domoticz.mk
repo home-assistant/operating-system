@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-DOMOTICZ_VERSION = 4.9700
+DOMOTICZ_VERSION = 0f411f781ae4fb4a82f592d38a3f40578c149533
 DOMOTICZ_SITE = $(call github,domoticz,domoticz,$(DOMOTICZ_VERSION))
 DOMOTICZ_LICENSE = GPL-3.0
 DOMOTICZ_LICENSE_FILES = License.txt
@@ -78,9 +78,6 @@ endef
 define DOMOTICZ_INSTALL_INIT_SYSTEMD
 	$(INSTALL) -D -m 644 package/domoticz/domoticz.service \
 		$(TARGET_DIR)/usr/lib/systemd/system/domoticz.service
-	mkdir -p $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants
-	ln -sf ../../../../usr/lib/systemd/system/domoticz.service \
-		$(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/domoticz.service
 endef
 
 $(eval $(cmake-package))

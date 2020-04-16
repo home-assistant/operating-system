@@ -1,6 +1,5 @@
-# From https://collectd.org/files/SHA256SUM
-sha256	9d20a0221569a8d6b80bbc52b86e5e84965f5bafdbf5dfc3790e0fed0763e592	collectd-5.7.2.tar.bz2
-
-# Hash for license files
+# Locally computed checksums
+sha512	1296085fb19bba0c7b7d8684ec877851158b25c9f7b58fc3ae602fba7d7dc718876e730e1cdba96d39101cc5452705bb3445aaee717b219025ae816299b6a3c5	collectd-5.10.0.tar.bz2
+sha256	a03359f563023e744c2dc743008a00a848f4cd506e072621d86b6d8313c0375b	collectd-5.10.0.tar.bz2
+sha1	9d64ec4e6e834b8e417e282390e2a9c57934d3bc	collectd-5.10.0.tar.bz2
 sha256	ed0409b2b1c30566dab5fcdaf46ee70e140c99788e22f0267645a9357b476ae4	COPYING
-sha256	f18a0811fa0e220ccbc42f661545e77f0388631e209585ed582a1c693029c6aa	libltdl/COPYING.LIB

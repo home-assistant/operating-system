@@ -7,15 +7,15 @@ config BR2_PACKAGE_SYSDIG
 	depends on !BR2_STATIC_LIBS # luajit, elfutils
 	depends on BR2_USE_WCHAR # elfutils
 	depends on BR2_TOOLCHAIN_USES_UCLIBC || BR2_TOOLCHAIN_USES_GLIBC # elfutils
-	select BR2_PACKAGE_ZLIB
-	select BR2_PACKAGE_LUAJIT
+	select BR2_PACKAGE_ELFUTILS
+	select BR2_PACKAGE_JQ
 	select BR2_PACKAGE_JSONCPP
+	select BR2_PACKAGE_LIBB64
 	select BR2_PACKAGE_LIBCURL
+	select BR2_PACKAGE_LUAJIT
 	select BR2_PACKAGE_NCURSES
 	select BR2_PACKAGE_OPENSSL
-	select BR2_PACKAGE_JQ
-	select BR2_PACKAGE_LIBB64
-	select BR2_PACKAGE_ELFUTILS
+	select BR2_PACKAGE_ZLIB
 	help
 	  Sysdig is open source, system-level exploration:
 	  capture system state and activity from a running Linux
@@ -23,7 +23,7 @@ config BR2_PACKAGE_SYSDIG
 	  Think of it as strace + tcpdump + lsof + awesome sauce.
 	  With a little Lua cherry on top.
 
-	  http://sysdig.org
+	  https://github.com/draios/sysdig/wiki
 
 comment "sysdig needs a glibc or uclibc toolchain w/ C++, gcc >= 4.8, dynamic library and a Linux kernel to be built"
 	depends on !BR2_LINUX_KERNEL || !BR2_INSTALL_LIBSTDCPP \

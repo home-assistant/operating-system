@@ -1,0 +1,5 @@
+# md5, sha256 from https://pypi.org/pypi/redis/json
+md5	c2062a26ea12b69e0d39a23451c89998  redis-3.4.1.tar.gz
+sha256	0dcfb335921b88a850d461dc255ff4708294943322bd55de6cfd68972490ca1f  redis-3.4.1.tar.gz
+# Locally computed sha256 checksums
+sha256	790148d8c12f8a38b2707a74be2343316bad126995ff54801a181b8b231ba124  LICENSE
