@@ -4,13 +4,12 @@
 #
 ################################################################################
 
-NFS_UTILS_VERSION = 1.3.3
+NFS_UTILS_VERSION = 2.4.3
 NFS_UTILS_SOURCE = nfs-utils-$(NFS_UTILS_VERSION).tar.xz
 NFS_UTILS_SITE = https://www.kernel.org/pub/linux/utils/nfs-utils/$(NFS_UTILS_VERSION)
 NFS_UTILS_LICENSE = GPL-2.0+
 NFS_UTILS_LICENSE_FILES = COPYING
-NFS_UTILS_AUTORECONF = YES
-NFS_UTILS_DEPENDENCIES = host-pkgconf libtirpc
+NFS_UTILS_DEPENDENCIES = host-nfs-utils host-pkgconf libtirpc
 
 NFS_UTILS_CONF_ENV = knfsd_cv_bsd_signals=no
 
@@ -23,7 +22,7 @@ NFS_UTILS_CONF_OPTS = \
 	--enable-ipv6 \
 	--without-tcp-wrappers \
 	--with-statedir=/run/nfs \
-	--with-rpcgen=internal
+	--with-rpcgen=$(HOST_DIR)/bin/rpcgen
 
 HOST_NFS_UTILS_CONF_OPTS = \
 	--disable-nfsv4 \
@@ -42,6 +41,8 @@ HOST_NFS_UTILS_DEPENDENCIES = host-pkgconf host-libtirpc
 NFS_UTILS_TARGETS_$(BR2_PACKAGE_NFS_UTILS_RPCDEBUG) += usr/sbin/rpcdebug
 NFS_UTILS_TARGETS_$(BR2_PACKAGE_NFS_UTILS_RPC_LOCKD) += usr/sbin/rpc.lockd
 NFS_UTILS_TARGETS_$(BR2_PACKAGE_NFS_UTILS_RPC_RQUOTAD) += usr/sbin/rpc.rquotad
+NFS_UTILS_TARGETS_$(BR2_PACKAGE_NFS_UTILS_RPC_NFSD) += usr/sbin/exportfs \
+	usr/sbin/rpc.mountd usr/sbin/rpc.nfsd usr/lib/systemd/system/nfs-server.service
 
 ifeq ($(BR2_PACKAGE_LIBCAP),y)
 NFS_UTILS_CONF_OPTS += --enable-caps
@@ -65,26 +66,17 @@ else
 NFS_UTILS_CONF_OPTS += --without-systemd
 endif
 
+ifeq ($(BR2_PACKAGE_NFS_UTILS_RPC_NFSD),y)
 define NFS_UTILS_INSTALL_INIT_SYSV
 	$(INSTALL) -D -m 0755 package/nfs-utils/S60nfs \
 		$(TARGET_DIR)/etc/init.d/S60nfs
 endef
 
+endif
+
 define NFS_UTILS_INSTALL_INIT_SYSTEMD
-	mkdir -p $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants
-
-	ln -fs ../../../../usr/lib/systemd/system/nfs-server.service \
-		$(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/nfs-server.service
-	ln -fs ../../../../usr/lib/systemd/system/nfs-client.target \
-		$(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/nfs-client.target
-
-	mkdir -p $(TARGET_DIR)/etc/systemd/system/remote-fs.target.wants
-
-	ln -fs ../../../../usr/lib/systemd/system/nfs-client.target \
-		$(TARGET_DIR)/etc/systemd/system/remote-fs.target.wants/nfs-client.target
-
 	$(INSTALL) -D -m 0755 package/nfs-utils/nfs-utils_env.sh \
-		$(TARGET_DIR)/usr/lib/systemd/scripts/nfs-utils_env.sh
+		$(TARGET_DIR)/usr/libexec/nfs-utils/nfs-utils_env.sh
 
 	$(INSTALL) -D -m 0644 package/nfs-utils/nfs-utils_tmpfiles.conf \
 		$(TARGET_DIR)/usr/lib/tmpfiles.d/nfs-utils.conf

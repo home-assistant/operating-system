@@ -104,17 +104,15 @@ OPENCV3_CONF_OPTS += \
 
 # Hardware support options.
 #
-# * PowerPC support is turned off since its only effect is altering CFLAGS,
-#   adding '-mcpu=G3 -mtune=G5' to them, which is already handled by Buildroot.
+# * PowerPC and VFPv3 support are turned off since their only effects
+#   are altering CFLAGS, adding '-mcpu=G3 -mtune=G5' or '-mfpu=vfpv3'
+#   to them, which is already handled by Buildroot.
+# * NEON logic is needed as it is not only used to add CFLAGS, but
+#   also to enable additional NEON code.
 OPENCV3_CONF_OPTS += \
 	-DENABLE_POWERPC=OFF \
-	-DENABLE_NEON=$(if $(BR2_ARM_CPU_HAS_NEON),ON,OFF)
-
-ifeq ($(BR2_ARCH_IS_64):$(BR2_ARM_CPU_HAS_VFPV3),:y)
-OPENCV3_CONF_OPTS += -DENABLE_VFPV3=ON
-else
-OPENCV3_CONF_OPTS += -DENABLE_VFPV3=OFF
-endif
+	-DENABLE_NEON=$(if $(BR2_ARM_CPU_HAS_NEON),ON,OFF) \
+	-DENABLE_VFPV3=OFF
 
 # Cuda stuff
 OPENCV3_CONF_OPTS += \
@@ -193,6 +191,7 @@ OPENCV3_CONF_OPTS += \
 	-DBUILD_JPEG=OFF \
 	-DBUILD_OPENEXR=OFF \
 	-DBUILD_PNG=OFF \
+	-DBUILD_PROTOBUF=OFF \
 	-DBUILD_TIFF=OFF \
 	-DBUILD_ZLIB=OFF \
 	-DINSTALL_C_EXAMPLES=OFF \
@@ -207,6 +206,7 @@ OPENCV3_CONF_OPTS += \
 	-DWITH_EIGEN=OFF \
 	-DWITH_GDAL=OFF \
 	-DWITH_GPHOTO2=OFF \
+	-DWITH_GSTREAMER_0_10=OFF \
 	-DWITH_LAPACK=OFF \
 	-DWITH_MATLAB=OFF \
 	-DWITH_OPENCL=OFF \
@@ -228,13 +228,6 @@ OPENCV3_CONF_OPTS += -DWITH_FFMPEG=ON
 OPENCV3_DEPENDENCIES += ffmpeg bzip2
 else
 OPENCV3_CONF_OPTS += -DWITH_FFMPEG=OFF
-endif
-
-ifeq ($(BR2_PACKAGE_OPENCV3_WITH_GSTREAMER),y)
-OPENCV3_CONF_OPTS += -DWITH_GSTREAMER_0_10=ON
-OPENCV3_DEPENDENCIES += gstreamer gst-plugins-base
-else
-OPENCV3_CONF_OPTS += -DWITH_GSTREAMER_0_10=OFF
 endif
 
 ifeq ($(BR2_PACKAGE_OPENCV3_WITH_GSTREAMER1),y)
@@ -279,13 +272,22 @@ else
 OPENCV3_CONF_OPTS += -DWITH_OPENGL=OFF
 endif
 
-OPENCV3_CONF_OPTS += -DWITH_OPENMP=$(if $(BR2_GCC_ENABLE_OPENMP),ON,OFF)
+OPENCV3_CONF_OPTS += -DWITH_OPENMP=$(if $(BR2_TOOLCHAIN_HAS_OPENMP),ON,OFF)
 
 ifeq ($(BR2_PACKAGE_OPENCV3_WITH_PNG),y)
 OPENCV3_CONF_OPTS += -DWITH_PNG=ON
 OPENCV3_DEPENDENCIES += libpng
 else
 OPENCV3_CONF_OPTS += -DWITH_PNG=OFF
+endif
+
+ifeq ($(BR2_PACKAGE_OPENCV3_WITH_PROTOBUF),y)
+OPENCV3_CONF_OPTS += \
+	-DPROTOBUF_UPDATE_FILES=ON \
+	-DWITH_PROTOBUF=ON
+OPENCV3_DEPENDENCIES += protobuf
+else
+OPENCV3_CONF_OPTS += -DWITH_PROTOBUF=OFF
 endif
 
 ifeq ($(BR2_PACKAGE_OPENCV3_WITH_QT5),y)
@@ -329,8 +331,8 @@ OPENCV3_CONF_OPTS += \
 	-DBUILD_opencv_python2=OFF \
 	-DBUILD_opencv_python3=ON \
 	-DPYTHON3_EXECUTABLE=$(HOST_DIR)/bin/python3 \
-	-DPYTHON3_INCLUDE_PATH=$(STAGING_DIR)/usr/include/python$(PYTHON3_VERSION_MAJOR)m \
-	-DPYTHON3_LIBRARIES=$(STAGING_DIR)/usr/lib/libpython$(PYTHON3_VERSION_MAJOR)m.so \
+	-DPYTHON3_INCLUDE_PATH=$(STAGING_DIR)/usr/include/python$(PYTHON3_VERSION_MAJOR) \
+	-DPYTHON3_LIBRARIES=$(STAGING_DIR)/usr/lib/libpython$(PYTHON3_VERSION_MAJOR).so \
 	-DPYTHON3_NUMPY_INCLUDE_DIRS=$(STAGING_DIR)/usr/lib/python$(PYTHON3_VERSION_MAJOR)/site-packages/numpy/core/include \
 	-DPYTHON3_PACKAGES_PATH=/usr/lib/python$(PYTHON3_VERSION_MAJOR)/site-packages \
 	-DPYTHON3_NUMPY_VERSION=$(PYTHON_NUMPY_VERSION)

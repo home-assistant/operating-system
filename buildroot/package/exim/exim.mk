@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-EXIM_VERSION = 4.92.2
+EXIM_VERSION = 4.93.0.4
 EXIM_SOURCE = exim-$(EXIM_VERSION).tar.xz
-EXIM_SITE = https://ftp.exim.org/pub/exim/exim4
+EXIM_SITE = https://ftp.exim.org/pub/exim/exim4/fixes
 EXIM_LICENSE = GPL-2.0+
 EXIM_LICENSE_FILES = LICENCE
 EXIM_DEPENDENCIES = host-berkeleydb host-pcre pcre berkeleydb host-pkgconf
@@ -48,6 +48,7 @@ define EXIM_USE_DEFAULT_CONFIG_FILE
 	$(call exim-config-unset,EXIM_MONITOR)
 	$(call exim-config-change,AUTH_PLAINTEXT,yes)
 	$(call exim-config-change,AUTH_CRAM_MD5,yes)
+	$(call exim-config-unset,SUPPORT_DANE)
 endef
 
 ifeq ($(BR2_PACKAGE_DOVECOT),y)
@@ -67,8 +68,12 @@ endif
 ifeq ($(BR2_PACKAGE_OPENSSL),y)
 EXIM_DEPENDENCIES += host-openssl openssl
 define EXIM_USE_DEFAULT_CONFIG_FILE_OPENSSL
-	$(call exim-config-change,SUPPORT_TLS,yes)
+	$(call exim-config-change,USE_OPENSSL,yes)
 	$(call exim-config-change,USE_OPENSSL_PC,openssl)
+endef
+else
+define EXIM_USE_DEFAULT_CONFIG_FILE_OPENSSL
+	$(call exim-config-change,DISABLE_TLS,yes)
 endef
 endif
 
@@ -120,16 +125,19 @@ define EXIM_BUILD_CMDS
 	$(HOST_MAKE_ENV) $(MAKE1) -C $(@D)/build-br macro_predef \
 		CC=$(HOSTCC) \
 		LNCC=$(HOSTCC) \
-		CFLAGS="$(HOST_CFLAGS)" \
+		CFLAGS="-std=c99 $(HOST_CFLAGS)" \
 		LFLAGS="-fPIC $(HOST_LDFLAGS)"
-	$(TARGET_MAKE_ENV) build=br $(MAKE1) -C $(@D) $(EXIM_STATIC_FLAGS)
+	$(TARGET_MAKE_ENV) build=br $(MAKE1) -C $(@D) $(EXIM_STATIC_FLAGS) \
+		CFLAGS="-std=c99 $(TARGET_CFLAGS)"
 endef
 
 # Need to replicate the LFLAGS in install, as exim still wants to build
 # something when installing...
 define EXIM_INSTALL_TARGET_CMDS
 	DESTDIR=$(TARGET_DIR) INSTALL_ARG="-no_chown -no_symlink" build=br \
-	  $(MAKE1) -C $(@D) $(EXIM_STATIC_FLAGS) install
+	  $(MAKE1) -C $(@D) $(EXIM_STATIC_FLAGS) \
+		CFLAGS="-std=c99 $(TARGET_CFLAGS)" \
+		install
 	chmod u+s $(TARGET_DIR)/usr/sbin/exim
 endef
 
@@ -145,9 +153,6 @@ endef
 define EXIM_INSTALL_INIT_SYSTEMD
 	$(INSTALL) -D -m 644 package/exim/exim.service \
 		$(TARGET_DIR)/usr/lib/systemd/system/exim.service
-	mkdir -p $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants
-	ln -sf ../../../../usr/lib/systemd/system/exim.service \
-		$(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/exim.service
 endef
 
 $(eval $(generic-package))

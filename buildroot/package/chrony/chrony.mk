@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-CHRONY_VERSION = 3.4
+CHRONY_VERSION = 3.5
 CHRONY_SITE = http://download.tuxfamily.org/chrony
 CHRONY_LICENSE = GPL-2.0
 CHRONY_LICENSE_FILES = COPYING
@@ -14,7 +14,8 @@ CHRONY_CONF_OPTS = \
 	--host-machine=$(BR2_ARCH) \
 	--prefix=/usr \
 	--without-readline \
-	--without-tomcrypt
+	--without-tomcrypt \
+	$(if $(BR2_PACKAGE_CHRONY_DEBUG_LOGGING),--enable-debug,--disable-debug)
 
 ifeq ($(BR2_PACKAGE_LIBCAP),y)
 CHRONY_DEPENDENCIES += libcap
@@ -66,9 +67,6 @@ endef
 define CHRONY_INSTALL_INIT_SYSTEMD
 	$(INSTALL) -D -m 644 package/chrony/chrony.service \
 		$(TARGET_DIR)/usr/lib/systemd/system/chrony.service
-	mkdir -p $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants
-	ln -sf ../../../../usr/lib/systemd/system/chrony.service \
-		$(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/chrony.service
 endef
 
 $(eval $(generic-package))

@@ -36,3 +36,8 @@ function install_hassos_cli() {
         echo "/usr/sbin/hassos-cli" >> "${TARGET_DIR}/etc/shells"
     fi
 }
+
+
+function install_tini_docker() {
+    ln -fs /usr/bin/tini "${TARGET_DIR}/usr/bin/docker-init"
+}

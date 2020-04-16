@@ -1,9 +1,14 @@
 config BR2_PACKAGE_PYTHON_AUTOBAHN
 	bool "python-autobahn"
+	depends on BR2_INSTALL_LIBSTDCPP # python-cryptography -> python-pyasn
+	select BR2_PACKAGE_PYTHON_CRYPTOGRAPHY # runtime
 	select BR2_PACKAGE_PYTHON_SIX # runtime
 	select BR2_PACKAGE_PYTHON_TXAIO # runtime
 	help
-	  WebSocket client Hhh server library, WAMP real-time
+	  WebSocket client and server library, WAMP real-time
 	  framework.
 
 	  https://pypi.python.org/pypi/autobahn
+
+comment "python-autobahn needs a toolchain w/ C++"
+	depends on !BR2_INSTALL_LIBSTDCPP

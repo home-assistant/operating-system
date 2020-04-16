@@ -91,7 +91,12 @@ endif
 LINUX_HEADERS_DL_SUBDIR = linux
 
 LINUX_HEADERS_LICENSE = GPL-2.0
-LINUX_HEADERS_LICENSE_FILES = COPYING
+ifeq ($(BR2_KERNEL_HEADERS_LATEST),y)
+LINUX_HEADERS_LICENSE_FILES = \
+	COPYING \
+	LICENSES/preferred/GPL-2.0 \
+	LICENSES/exceptions/Linux-syscall-note
+endif
 
 LINUX_HEADERS_INSTALL_STAGING = YES
 
@@ -131,11 +136,14 @@ define LINUX_HEADERS_INSTALL_STAGING_CMDS
 endef
 
 ifeq ($(BR2_KERNEL_HEADERS_VERSION)$(BR2_KERNEL_HEADERS_AS_KERNEL)$(BR2_KERNEL_HEADERS_CUSTOM_TARBALL)$(BR2_KERNEL_HEADERS_CUSTOM_GIT),y)
+# In this case, we must always do a 'loose' test, because they are all
+# custom versions which may be later than what we know right now.
 define LINUX_HEADERS_CHECK_VERSION
 	$(call check_kernel_headers_version,\
 		$(BUILD_DIR),\
 		$(STAGING_DIR),\
-		$(call qstrip,$(BR2_TOOLCHAIN_HEADERS_AT_LEAST)))
+		$(call qstrip,$(BR2_TOOLCHAIN_HEADERS_AT_LEAST)),\
+		loose)
 endef
 LINUX_HEADERS_POST_INSTALL_STAGING_HOOKS += LINUX_HEADERS_CHECK_VERSION
 endif
