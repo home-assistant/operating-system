@@ -91,8 +91,6 @@ define NETWORK_MANAGER_INSTALL_INIT_SYSTEMD
 	ln -sf /usr/lib/systemd/system/NetworkManager.service \
 		$(TARGET_DIR)/etc/systemd/system/dbus-org.freedesktop.NetworkManager.service
 
-	ln -sf /usr/lib/systemd/system/NetworkManager-wait-online.service \
-		$(TARGET_DIR)/etc/systemd/system/network-online.target.wants/NetworkManager-wait-online.service
 endef
 
 $(eval $(autotools-package))
