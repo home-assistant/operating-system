@@ -1,6 +1,6 @@
-From c174ab63c7649a47cc43e9049589358336f3cbc0 Mon Sep 17 00:00:00 2001
+From 605447fe665a525d465bdb234b1c499814550cec Mon Sep 17 00:00:00 2001
 From: Pascal Vizeli <pvizeli@syshack.ch>
-Date: Thu, 16 Apr 2020 11:58:26 +0000
+Date: Thu, 16 Apr 2020 12:28:05 +0000
 Subject: [PATCH 1/1] network-manager: wpa_supplicant & wait boot
 
 Signed-off-by: Pascal Vizeli <pvizeli@syshack.ch>
@@ -10,7 +10,7 @@ Signed-off-by: Pascal Vizeli <pvizeli@syshack.ch>
  2 files changed, 6 insertions(+), 3 deletions(-)
 
 diff --git a/package/network-manager/Config.in b/package/network-manager/Config.in
-index e6a3f5f04f..1334d982e8 100644
+index e6a3f5f04f..accea923af 100644
 --- a/package/network-manager/Config.in
 +++ b/package/network-manager/Config.in
 @@ -15,8 +15,9 @@ config BR2_PACKAGE_NETWORK_MANAGER
@@ -20,7 +20,7 @@ index e6a3f5f04f..1334d982e8 100644
 -	select BR2_PACKAGE_WIRELESS_TOOLS
 -	select BR2_PACKAGE_WIRELESS_TOOLS_LIB
 +	select BR2_PACKAGE_WPA_SUPPLICANT
-+	select BR2_PACKAGE_WPA_SUPPLICANT_DBUS_NEW
++	select BR2_PACKAGE_WPA_SUPPLICANT_DBUS
 +	select BR2_PACKAGE_WPA_SUPPLICANT_DBUS_INTROSPECTION
  	select BR2_PACKAGE_READLINE
  	select BR2_PACKAGE_LIBNDP
