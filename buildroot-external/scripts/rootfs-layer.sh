@@ -39,5 +39,5 @@ function install_hassos_cli() {
 
 
 function install_tini_docker() {
-    ln -fs /usr/bin/tini $(TARGET_DIR)/usr/bin/docker-init
+    ln -fs /usr/bin/tini "$(TARGET_DIR)/usr/bin/docker-init"
 }
