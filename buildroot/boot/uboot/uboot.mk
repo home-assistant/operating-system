@@ -135,6 +135,7 @@ ifeq ($(KERNEL_ARCH),arm64)
 UBOOT_ARCH = arm
 else ifneq ($(filter $(KERNEL_ARCH),i386 x86_64),)
 UBOOT_ARCH = x86
+UBOOT_CC = "--sysroot=$(STAGING_DIR)"
 else
 UBOOT_ARCH = $(KERNEL_ARCH)
 endif
@@ -142,7 +143,7 @@ endif
 UBOOT_MAKE_OPTS += \
 	CROSS_COMPILE="$(TARGET_CROSS)" \
 	ARCH=$(UBOOT_ARCH) \
-	HOSTCC="$(HOSTCC) $(subst -I/,-isystem /,$(subst -I /,-isystem /,$(HOST_CFLAGS)))" \
+	HOSTCC="$(HOSTCC) $(subst -I/,-isystem /,$(subst -I /,-isystem /,$(HOST_CFLAGS))) $(UBOOT_CC)" \
 	HOSTLDFLAGS="$(HOST_LDFLAGS)" \
 	$(call qstrip,$(BR2_TARGET_UBOOT_CUSTOM_MAKEOPTS))
 
