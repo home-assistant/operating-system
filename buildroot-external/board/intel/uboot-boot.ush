@@ -61,7 +61,7 @@ fi
 echo "Loading kernel"
 run load_kernel
 echo " Starting kernel"
-zboot ${kernel_addr_r} - ${fdt_addr_r}
+zboot ${kernel_addr_r}
 
 echo "Fails on boot"
 reset
