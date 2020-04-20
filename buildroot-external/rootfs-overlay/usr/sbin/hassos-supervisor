@@ -26,7 +26,7 @@ runSupervisor() {
         -v ${SUPERVISOR_DATA}:/data \
         -e SUPERVISOR_SHARE=${SUPERVISOR_DATA} \
         -e SUPERVISOR_NAME=hassio_supervisor \
-        -e SUPERVISOR_MACHINE=${SUPERVISOR_MACHINE}
+        -e SUPERVISOR_MACHINE=${SUPERVISOR_MACHINE} \
         "${SUPERVISOR_IMAGE}"
 }
 
