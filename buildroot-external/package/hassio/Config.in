@@ -1,4 +1,4 @@
-menuconfig BR2_PACKAGE_SUPERVISOR
+menuconfig BR2_PACKAGE_HASSIO
 	bool "Supervisor App"
 	help
 	  This is the Application layer they build the
@@ -6,9 +6,9 @@ menuconfig BR2_PACKAGE_SUPERVISOR
 
 	  https://github.com/home-assistant/supervisor
 
-if BR2_PACKAGE_SUPERVISOR
+if BR2_PACKAGE_HASSIO
 
-config BR2_PACKAGE_SUPERVISOR_ARCH
+config BR2_PACKAGE_HASSIO_ARCH
 	string "Supervisor Arch"
 	help
 	  Supervisor architecture which should be pull.
