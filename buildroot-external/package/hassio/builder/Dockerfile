@@ -8,12 +8,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         apt-transport-https \
         ca-certificates \
         curl \
+        jq \
         gpg-agent \
         software-properties-common \
     && curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - \
     && add-apt-repository "deb https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" \
     && apt-get update && apt-get install -y --no-install-recommends \
-        docker-ce=5:19.03.5~3-0~ubuntu-bionic \
+        docker-ce docker-ce-cli containerd.io \
     && rm -rf /var/lib/apt/lists/*
 
 COPY hostapp.sh /usr/bin/

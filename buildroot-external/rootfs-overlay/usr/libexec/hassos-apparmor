@@ -1,16 +1,7 @@
 #!/bin/sh
 set -e
 
-# Load configs
-CONFIG_FILE=/mnt/data/hassos.json
-
-# Read configs
-PROFILES_DIR="$(jq --raw-output '.apparmor // empty' ${CONFIG_FILE})"
-if [ -z "${PROFILES_DIR}" ]; then
-    exit 0
-fi
-
-PROFILES_DIR="/mnt/data/${PROFILES_DIR}"
+PROFILES_DIR="/mnt/data/supervisor/apparmor"
 CACHE_DIR="${PROFILES_DIR}/cache"
 REMOVE_DIR="${PROFILES_DIR}/remove"
 

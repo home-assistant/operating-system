@@ -30,6 +30,8 @@ install_hassos_cli
     echo "HOME_URL=https://hass.io/"
     echo "VARIANT=\"${HASSOS_NAME} ${BOARD_NAME}\""
     echo "VARIANT_ID=${BOARD_ID}"
+    echo "SUPERVISOR_MACHINE=${SUPERVISOR_MACHINE}"
+    echo "SUPERVISOR_ARCH=${SUPERVISOR_ARCH}"
 ) > "${TARGET_DIR}/usr/lib/os-release"
 
 # Write machine-info
