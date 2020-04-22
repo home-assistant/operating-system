@@ -3,7 +3,7 @@
 # apparmor
 #
 #############################################################
-APPARMOR_VERSION = v2.13.2
+APPARMOR_VERSION = v2.13.4
 APPARMOR_SITE = git://git.launchpad.net/apparmor
 APPARMOR_LICENSE = GPL-2
 APPARMOR_LICENSE_FILES = LICENSE
