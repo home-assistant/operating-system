@@ -6,7 +6,7 @@ Default Kernel tree: 5.4
 | Board | Version |
 |-------|---------|
 | Open Virtual Applicance | 5.4.24 |
-| Raspberry Pi | 4.19.106 |
+| Raspberry Pi | 5.4.32 |
 | Tinker Board | 4.19.88 |
 | Odroid-C2 | 5.4.24 |
 | Odroid-N2 | 5.4.24 |
