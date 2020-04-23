@@ -1,0 +1,48 @@
+From d3d3fe433d9038dcd1a98f4d6711c0777ed06703 Mon Sep 17 00:00:00 2001
+From: "Miouyouyou (Myy)" <myy@miouyouyou.fr>
+Date: Mon, 25 Jun 2018 17:08:32 +0200
+Subject: [PATCH 26/26] ARM: DTSI: rk3288: Set the VPU MMU power domains
+
+Without that, the auto-activation of the VPU hardware IOMMU fails
+when enabling the hardware, before the "probe" phase of its device
+driver.
+
+Basically, when loading a "of_platform" device driver targeting
+the VPU devices, you'll get these errors without this patch :
+
+[12753.996950] rk_iommu ff9c0440.iommu: Error during raw reset. MMU_DTE_ADDR is not functioning
+[12754.007483] rk_iommu ff9c0440.iommu: Disable stall request timed out, status: 0xffffffff
+[12754.026652] rk_iommu ff9c0440.iommu: Disable paging request timed out, status: 0xffffffff
+[12754.045975] rk_iommu ff9c0440.iommu: Disable stall request timed out, status: 0xffffffff
+
+When using this patch, the errors disappear.
+
+This seems to be due to the IOMMU device sharing the same power domain
+than the device.
+When loading an "of_platform" driver, the kernel logic seems to try
+enabling the associated IOMMU device before letting the driver handles
+anything with the actual VPU hardware.
+It appears that setting the power domain of the VPU IOMMU nodes let the
+IOMMU driver enable the IOMMU shared power domain, and make the IOMMU
+device useable.
+
+Signed-off-by: Miouyouyou (Myy) <myy@miouyouyou.fr>
+---
+ arch/arm/boot/dts/rk3288.dtsi | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/arch/arm/boot/dts/rk3288.dtsi b/arch/arm/boot/dts/rk3288.dtsi
+index 45ec4e89..46e1b8e2 100644
+--- a/arch/arm/boot/dts/rk3288.dtsi
++++ b/arch/arm/boot/dts/rk3288.dtsi
+@@ -1262,6 +1263,7 @@
+ 		interrupt-names = "hevc_mmu";
+ 		clocks = <&cru ACLK_HEVC>, <&cru HCLK_HEVC>;
+ 		clock-names = "aclk", "iface";
++		power-domains = <&power RK3288_PD_HEVC>;
+ 		#iommu-cells = <0>;
+ 		status = "disabled";
+ 	};
+-- 
+2.16.4
+

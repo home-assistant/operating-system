@@ -1,0 +1,22 @@
+From d4d128324b8f8a9f5c441203d94703e41fa07df3 Mon Sep 17 00:00:00 2001
+From: "Miouyouyou (Myy)" <myy@miouyouyou.fr>
+Date: Mon, 5 Nov 2018 19:57:56 +0100
+Subject: [PATCH] spi: Added support for Tinkerboard's SPI interface
+
+Imported from ARMbian
+
+Signed-off-by: Miouyouyou (Myy) <myy@miouyouyou.fr>
+---
+
+diff --git a/drivers/spi/spidev.c b/drivers/spi/spidev.c
+index 255786f2e..3a3f2e6fd 100644
+--- a/drivers/spi/spidev.c
++++ b/drivers/spi/spidev.c
+@@ -665,6 +665,7 @@ static const struct of_device_id spidev_dt_ids[] = {
+ 	{ .compatible = "lwn,bk4" },
+ 	{ .compatible = "dh,dhcom-board" },
+ 	{ .compatible = "menlo,m53cpld" },
++	{ .compatible = "rockchip,spi_tinker" },
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(of, spidev_dt_ids);

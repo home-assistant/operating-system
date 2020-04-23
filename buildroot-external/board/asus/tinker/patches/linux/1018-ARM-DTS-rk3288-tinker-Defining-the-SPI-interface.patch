@@ -1,0 +1,50 @@
+From b24b8f83e150811ad54ee2a4843e44cd1421fafa Mon Sep 17 00:00:00 2001
+From: "Miouyouyou (Myy)" <myy@miouyouyou.fr>
+Date: Mon, 5 Nov 2018 22:15:14 +0100
+Subject: [PATCH] ARM: DTS: rk3288-tinker: Defining the SPI interface
+
+Taken from, and tested by @TonyMac32 .
+
+Well, the original one was tested by him but I had to adapt the
+registers definitions to the new 64-bits LPAE-compliant syntax.
+
+Therefore that *might* break, along with a few other patches.
+
+Signed-off-by: Miouyouyou (Myy) <myy@miouyouyou.fr>
+---
+ arch/arm/boot/dts/rk3288-tinker.dts | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
+
+diff --git a/arch/arm/boot/dts/rk3288-tinker.dts b/arch/arm/boot/dts/rk3288-tinker.dts
+index 96d05fc6b..17bfea298 100644
+--- a/arch/arm/boot/dts/rk3288-tinker.dts
++++ b/arch/arm/boot/dts/rk3288-tinker.dts
+@@ -99,6 +99,25 @@
+ 	supports-sdio;
+ };
+ 
++&spi2 {
++	max-freq = <50000000>;
++	status = "okay";
++
++	spidev@0 {
++		compatible = "rockchip,spi_tinker";
++		reg = <0x0 0>;
++		spi-max-frequency = <50000000>;
++		spi-cpha = <1>;
++	};
++
++	spidev@1 {
++		compatible = "rockchip,spi_tinker";
++		reg = <0x1>;
++		spi-max-frequency = <50000000>;
++		spi-cpha = <1>;
++	};
++};
++
+ &uart0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&uart0_xfer>, <&uart0_cts>, <&uart0_rts>;
+-- 
+2.16.4
+

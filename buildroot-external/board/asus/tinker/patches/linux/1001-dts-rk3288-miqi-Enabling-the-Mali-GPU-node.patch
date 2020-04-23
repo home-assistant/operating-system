@@ -1,0 +1,35 @@
+From 604ea7fc311af2b3a41e7fe3b4fbde0ee03dfb9c Mon Sep 17 00:00:00 2001
+From: Myy Miouyouyou <myy@miouyouyou.fr>
+Date: Thu, 19 Oct 2017 21:09:50 +0200
+Subject: [PATCH 04/28] dts: rk3288: miqi: Enabling the Mali GPU node
+
+Why is the MiQi the only one left without a working mali GPU node ?
+
+Seriously, is there a rk3288 chipset WITHOUT a mali GPU ? Couldn't
+they enable it once in the DTSI, instead of defining it as "disabled"
+and enabling it in every DTS file ?
+
+Signed-off-by: Myy Miouyouyou <myy@miouyouyou.fr>
+---
+ arch/arm/boot/dts/rk3288-miqi.dts | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/arch/arm/boot/dts/rk3288-miqi.dts b/arch/arm/boot/dts/rk3288-miqi.dts
+index 4d923aa6..3cd60674 100644
+--- a/arch/arm/boot/dts/rk3288-miqi.dts
++++ b/arch/arm/boot/dts/rk3288-miqi.dts
+@@ -149,6 +149,11 @@
+ 	status = "ok";
+ };
+ 
++&gpu {
++	mali-supply = <&vdd_gpu>;
++	status = "okay";
++};
++
+ &hdmi {
+ 	ddc-i2c-bus = <&i2c5>;
+ 	status = "okay";
+-- 
+2.11.0
+
