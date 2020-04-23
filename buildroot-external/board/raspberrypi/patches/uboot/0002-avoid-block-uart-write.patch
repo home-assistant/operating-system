@@ -1,0 +1,49 @@
+From 5e960cc9b208c53d5385d5a2f6c7f380e9499d4c Mon Sep 17 00:00:00 2001
+From: Alexandru Costache <alexandru@balena.io>
+Date: Wed, 18 Mar 2020 16:54:28 +0100
+Subject: [PATCH] Add a retry limit when writing to uart console
+
+Seems that if the serial console is incorrectly
+configured in the dtb, writing to it may block indefinitely,
+thus preventing the board from booting.
+
+Let's add a retry count to unblock in such cases.
+
+Upstream-status: Inappropriate [configuration]
+Signed-off-by: Alexandru Costache <alexandru@balena.io>
+---
+ drivers/serial/serial_bcm283x_mu.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/serial/serial_bcm283x_mu.c b/drivers/serial/serial_bcm283x_mu.c
+index bd1d89ec83..bd033d14c4 100644
+--- a/drivers/serial/serial_bcm283x_mu.c
++++ b/drivers/serial/serial_bcm283x_mu.c
+@@ -49,7 +49,7 @@ struct bcm283x_mu_regs {
+ struct bcm283x_mu_priv {
+ 	struct bcm283x_mu_regs *regs;
+ };
+-
++static uint16_t putc_retry = 0;
+ static int bcm283x_mu_serial_getc(struct udevice *dev);
+ 
+ static int bcm283x_mu_serial_setbrg(struct udevice *dev, int baudrate)
+@@ -105,8 +105,14 @@ static int bcm283x_mu_serial_putc(struct udevice *dev, const char data)
+ 	struct bcm283x_mu_regs *regs = priv->regs;
+ 
+ 	/* Wait until there is space in the FIFO */
+-	if (!(readl(&regs->lsr) & BCM283X_MU_LSR_TX_EMPTY))
+-		return -EAGAIN;
++	if (!(readl(&regs->lsr) & BCM283X_MU_LSR_TX_EMPTY)) {
++		if (++putc_retry) {
++			return -EAGAIN;
++		} else {
++			/* Couldn't write for too long, drop char */
++			return 0;
++		}
++	}
+ 
+ 	/* Send the character */
+ 	writel(data, &regs->io);
+-- 
+2.17.1
