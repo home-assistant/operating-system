@@ -23,32 +23,32 @@ function hassos_pre_image() {
     fi
 
     # DTS
-    if [[ "${BOARD_ID}" =~ "rpi" ]]; then
+    if [[ "${BOARD_ID}" == "rpi" ]]; then
         cp -t "${BOOT_DATA}" \
         "${BINARIES_DIR}/rpi-firmware/bcm2708-rpi-b.dtb" \
         "${BINARIES_DIR}/rpi-firmware/bcm2708-rpi-b-plus.dtb" \
         "${BINARIES_DIR}/rpi-firmware/bcm2708-rpi-cm.dtb"
-    elif [[ "${BOARD_ID}" =~ "rpi0-w" ]]; then
+    elif [[ "${BOARD_ID}" == "rpi0-w" ]]; then
         cp -t "${BOOT_DATA}" \
         "${BINARIES_DIR}/rpi-firmware/bcm2708-rpi-zero-w.dtb"
-    elif [[ "${BOARD_ID}" =~ "rpi2" ]]; then
+    elif [[ "${BOARD_ID}" == "rpi2" ]]; then
         cp -t "${BOOT_DATA}" \
         "${BINARIES_DIR}/rpi-firmware/bcm2709-rpi-2-b.dtb" \
         "${BINARIES_DIR}/rpi-firmware/bcm2710-rpi-2-b.dtb"
-    elif [[ "${BOARD_ID}" =~ "rpi3" ]]; then
+    elif [[ "${BOARD_ID}" == "rpi3" ]]; then
         cp -t "${BOOT_DATA}" \
         "${BINARIES_DIR}/rpi-firmware/bcm2710-rpi-3-b.dtb" \
         "${BINARIES_DIR}/rpi-firmware/bcm2710-rpi-3-b-plus.dtb" \
         "${BINARIES_DIR}/rpi-firmware/bcm2710-rpi-cm3.dtb"
-    elif [[ "${BOARD_ID}" =~ "rpi3-64" ]]; then
+    elif [[ "${BOARD_ID}" == "rpi3-64" ]]; then
         cp -t "${BOOT_DATA}" \
         "${BINARIES_DIR}/rpi-firmware/bcm2710-rpi-3-b.dtb" \
         "${BINARIES_DIR}/rpi-firmware/bcm2710-rpi-3-b-plus.dtb" \
         "${BINARIES_DIR}/rpi-firmware/bcm2710-rpi-cm3.dtb"
-    elif [[ "${BOARD_ID}" =~ "rpi4" ]]; then
+    elif [[ "${BOARD_ID}" == "rpi4" ]]; then
         cp -t "${BOOT_DATA}" \
         "${BINARIES_DIR}/rpi-firmware/bcm2711-rpi-4-b.dtb"
-    elif [[ "${BOARD_ID}" =~ "rpi4-64" ]]; then
+    elif [[ "${BOARD_ID}" == "rpi4-64" ]]; then
         cp -t "${BOOT_DATA}" \
         "${BINARIES_DIR}/rpi-firmware/bcm2711-rpi-4-b.dtb"
     fi
