@@ -1,25 +1,3 @@
-diff --git a/include/media/rc-map.h b/include/media/rc-map.h
-index bfa3017..c2a21bb 100644
---- a/include/media/rc-map.h
-+++ b/include/media/rc-map.h
-@@ -277,6 +277,7 @@ struct rc_map *rc_map_get(const char *name);
- #define RC_MAP_WINFAST                   "rc-winfast"
- #define RC_MAP_WINFAST_USBII_DELUXE      "rc-winfast-usbii-deluxe"
- #define RC_MAP_SU3000                    "rc-su3000"
-+#define RC_MAP_XT_Q8L_V10                "rc-xt-q8l-v10"
- #define RC_MAP_ZX_IRDEC                  "rc-zx-irdec"
- 
- /*
-diff --git a/drivers/media/rc/keymaps/Makefile b/drivers/media/rc/keymaps/Makefile
-index d6b913a..ee00ce5 100644
---- a/drivers/media/rc/keymaps/Makefile
-+++ b/drivers/media/rc/keymaps/Makefile
-@@ -116,4 +116,5 @@ obj-$(CONFIG_RC_MAP) += rc-adstech-dvb-t-pci.o \
- 			rc-winfast.o \
- 			rc-winfast-usbii-deluxe.o \
- 			rc-su3000.o \
-+           rc-xt-q8l-v10.o \
- 			rc-zx-irdec.o
 diff --git a/drivers/media/rc/keymaps/rc-xt-q8l-v10.c b/drivers/media/rc/keymaps/rc-xt-q8l-v10.c
 index e69de29..19c7d9e 100644
 --- /dev/null
@@ -101,3 +79,25 @@ index e69de29..19c7d9e 100644
 +
 +MODULE_LICENSE("GPL");
 +MODULE_AUTHOR("Paolo Sabatino");
+diff --git a/include/media/rc-map.h b/include/media/rc-map.h
+index d621acadf..ad7abdb97 100644
+--- a/include/media/rc-map.h
++++ b/include/media/rc-map.h
+@@ -278,6 +278,7 @@ struct rc_map *rc_map_get(const char *name);
+ #define RC_MAP_WINFAST_USBII_DELUXE      "rc-winfast-usbii-deluxe"
+ #define RC_MAP_SU3000                    "rc-su3000"
+ #define RC_MAP_XBOX_DVD                  "rc-xbox-dvd"
++#define RC_MAP_XT_Q8L_V10                "rc-xt-q8l-v10"
+ #define RC_MAP_X96MAX                    "rc-x96max"
+ 
+ /*
+diff --git a/drivers/media/rc/keymaps/Makefile b/drivers/media/rc/keymaps/Makefile
+index 5b1399af6..ec9ce1206 100644
+--- a/drivers/media/rc/keymaps/Makefile
++++ b/drivers/media/rc/keymaps/Makefile
+@@ -117,4 +117,5 @@ obj-$(CONFIG_RC_MAP) += rc-adstech-dvb-t-pci.o \
+ 			rc-winfast-usbii-deluxe.o \
+ 			rc-su3000.o \
+ 			rc-xbox-dvd.o \
++			rc-xt-q8l-v10.o \
+ 			rc-x96max.o \
