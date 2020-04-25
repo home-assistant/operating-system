@@ -8,6 +8,10 @@ function hassos_rauc_compatible() {
     echo "${HASSOS_ID}-${BOARD_ID}"
 }
 
+function hassos_base_name() {
+    echo "${HASSOS_ID}-${VERSION_MAJOR}.${VERSION_BUILD}"
+}
+
 function hassos_version() {
     echo "${VERSION_MAJOR}.${VERSION_BUILD}"
 }
