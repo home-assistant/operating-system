@@ -16,8 +16,8 @@ function hassos_pre_image() {
 
 function hassos_post_image() {
     local HDD_IMG="$(hassos_image_name img)"
-    local OVA_DATA="${BINARIES_DIR}/ova"
     local HDD_OVA="$(hassos_image_name ova)"
+    local OVA_DATA="${BINARIES_DIR}/ova"
 
     # Virtual Disk images
     convert_disk_image_virtual
