@@ -29,6 +29,7 @@ function hassos_post_image() {
 
     # OVA
     mkdir -p "${OVA_DATA}"
+    rm -f "${HDD_OVA}"
 
     cp -a ${BOARD_DIR}/home-assistant.ovf "${OVA_DATA}/home-assistant.ovf"
     qemu-img convert -O vmdk -o subformat=streamOptimized "${HDD_IMG}" "${OVA_DATA}/home-assistant.vmdk"

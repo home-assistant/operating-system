@@ -303,13 +303,12 @@ function convert_disk_image_virtual() {
     rm -f "${hdd_vmdk}"
     rm -f "${hdd_vhdx}"
     rm -f "${hdd_vdi}"
+    rm -f "${hdd_qcow2}"
 
     qemu-img convert -O vmdk "${hdd_img}" "${hdd_vmdk}"
     qemu-img convert -O vhdx "${hdd_img}" "${hdd_vhdx}"
     qemu-img convert -O vdi "${hdd_img}" "${hdd_vdi}"
     qemu-img convert -O qcow2 "${hdd_img}" "${hdd_qcow2}"
-
-    rm -f "${hdd_img}"
 }
 
 
