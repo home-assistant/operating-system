@@ -1,0 +1,98 @@
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-nanopi-k2.dts b/arch/arm64/boot/dts/amlogic/meson-gxbb-nanopi-k2.dts
+index 106a6ffd6..a12dc0498 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxbb-nanopi-k2.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-nanopi-k2.dts
+@@ -90,35 +90,6 @@
+ 		clock-names = "ext_clock";
+ 	};
+ 
+-	sound {
+-		compatible = "simple-audio-card";
+-		simple-audio-card,name = "meson-gx-audio";
+-
+-		assigned-clocks = <&clkc CLKID_MPLL2>,
+-				  <&clkc CLKID_MPLL0>,
+-				  <&clkc CLKID_MPLL1>;
+-		assigned-clock-parents = <0>, <0>, <0>;
+-		assigned-clock-rates = <294912000>,
+-				       <270950400>,
+-				       <393216000>;
+-
+-		simple-audio-card,dai-link@0 {
+-			/* HDMI Output */
+-			format = "i2s";
+-			mclk-fs = <256>;
+-			bitclock-master = <&aiu_i2s>;
+-			frame-master = <&aiu_i2s>;
+-
+-			cpu {
+-				sound-dai = <&aiu_i2s>;
+-			};
+-
+-			codec {
+-				sound-dai = <&hdmi_tx>;
+-			};
+-		};
+-	};
+-
+ 	vcc1v8: regulator-vcc1v8 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "VCC1.8V";
+@@ -186,13 +157,38 @@
+ 			spi-max-frequency = <500000>;
+ 		};
+ 	};
+-};
+ 
+-&audio {
+-	status = "okay";
++	sound {
++		compatible = "amlogic,gx-sound-card";
++		model = "Odroid-C2";
++		audio-routing = "I2S ENCODER Playback", "I2S FIFO Playback";
++
++		assigned-clocks = <&clkc CLKID_MPLL2>,
++				  <&clkc CLKID_MPLL0>,
++				  <&clkc CLKID_MPLL1>;
++		assigned-clock-parents = <0>, <0>, <0>;
++		assigned-clock-rates = <294912000>,
++				       <270950400>,
++				       <393216000>;
++		status = "okay";
++
++		dai-link-0 {
++			sound-dai = <&i2s_fifo>;
++		};
++
++		dai-link-1 {
++			sound-dai = <&i2s_encoder>;
++			dai-format = "i2s";
++			mclk-fs = <256>;
++
++			codec-0 {
++				sound-dai = <&hdmi_tx>;
++			};
++		};
++	};
+ };
+ 
+-&aiu_i2s {
++&aiu {
+ 	status = "okay";
+ };
+ 
+@@ -251,6 +247,14 @@
+ 	};
+ };
+ 
++&i2s_fifo {
++	status = "okay";
++};
++
++&i2s_encoder {
++	status = "okay";
++};
++
+ &ir {
+ 	status = "okay";
+ 	pinctrl-0 = <&remote_input_ao_pins>;
