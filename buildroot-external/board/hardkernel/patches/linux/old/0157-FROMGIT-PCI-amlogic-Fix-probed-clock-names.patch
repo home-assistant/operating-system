@@ -1,0 +1,43 @@
+From 710c8bd593ce40567f590c9a43aefba1e75ea891 Mon Sep 17 00:00:00 2001
+From: Neil Armstrong <narmstrong@baylibre.com>
+Date: Mon, 16 Sep 2019 14:50:18 +0200
+Subject: [PATCH 157/200] FROMGIT: PCI: amlogic: Fix probed clock names
+
+Fix the clock names used in the probe function according
+to the bindings.
+
+Fixes: 9c0ef6d34fdb ("PCI: amlogic: Add the Amlogic Meson PCIe controller driver")
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Reviewed-by: Andrew Murray <andrew.murray@arm.com>
+(cherry picked from commit eacaf7dcf08eb062a1059c6c115fa3fced3374ae)
+---
+ drivers/pci/controller/dwc/pci-meson.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/pci/controller/dwc/pci-meson.c b/drivers/pci/controller/dwc/pci-meson.c
+index 541f37a6f6a5..ab79990798f8 100644
+--- a/drivers/pci/controller/dwc/pci-meson.c
++++ b/drivers/pci/controller/dwc/pci-meson.c
+@@ -250,15 +250,15 @@ static int meson_pcie_probe_clocks(struct meson_pcie *mp)
+ 	if (IS_ERR(res->port_clk))
+ 		return PTR_ERR(res->port_clk);
+ 
+-	res->mipi_gate = meson_pcie_probe_clock(dev, "pcie_mipi_en", 0);
++	res->mipi_gate = meson_pcie_probe_clock(dev, "mipi", 0);
+ 	if (IS_ERR(res->mipi_gate))
+ 		return PTR_ERR(res->mipi_gate);
+ 
+-	res->general_clk = meson_pcie_probe_clock(dev, "pcie_general", 0);
++	res->general_clk = meson_pcie_probe_clock(dev, "general", 0);
+ 	if (IS_ERR(res->general_clk))
+ 		return PTR_ERR(res->general_clk);
+ 
+-	res->clk = meson_pcie_probe_clock(dev, "pcie", 0);
++	res->clk = meson_pcie_probe_clock(dev, "pclk", 0);
+ 	if (IS_ERR(res->clk))
+ 		return PTR_ERR(res->clk);
+ 
+-- 
+2.17.1
+

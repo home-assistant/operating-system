@@ -1,0 +1,138 @@
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts b/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
+index a39837dee..bb88c8287 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
+@@ -140,8 +140,9 @@
+ 	};
+ 
+ 	sound {
+-		compatible = "simple-audio-card";
+-		simple-audio-card,name = "meson-gx-audio";
++		compatible = "amlogic,gx-sound-card";
++		model = "GXBB-ODROID-C2";
++		audio-routing = "I2S ENCODER Playback", "I2S FIFO Playback";
+ 
+ 		assigned-clocks = <&clkc CLKID_MPLL2>,
+ 				  <&clkc CLKID_MPLL0>,
+@@ -150,23 +151,26 @@
+ 		assigned-clock-rates = <294912000>,
+ 				       <270950400>,
+ 				       <393216000>;
++		status = "okay";
+ 
+-		simple-audio-card,dai-link@0 {
+-			/* HDMI Output */
+-			format = "i2s";
+-			mclk-fs = <256>;
+-			bitclock-master = <&aiu_i2s>;
+-			frame-master = <&aiu_i2s>;
++		dai-link-0 {
++			sound-dai = <&i2s_fifo>;
++		};
+ 
+-			cpu {
+-				sound-dai = <&aiu_i2s>;
+-			};
++		dai-link-1 {
++			sound-dai = <&i2s_encoder>;
++			dai-format = "i2s";
++			mclk-fs = <256>;
+ 
+-			codec {
++			codec-0 {
+ 				sound-dai = <&hdmi_tx>;
+ 			};
+ 		};
+-	};	
++	};
++};
++
++&aiu {
++	status = "okay";
+ };
+ 
+ &cec_AO {
+@@ -176,13 +180,6 @@
+ 	hdmi-phandle = <&hdmi_tx>;
+ };
+ 
+-&audio {
+-	status = "okay";
+-};
+-
+-&aiu_i2s {
+-	status = "okay";
+-};
+ 
+ &ethmac {
+ 	status = "okay";
+@@ -252,6 +249,14 @@
+ 	pinctrl-names = "default";
+ };
+ 
++&i2s_fifo {
++	status = "okay";
++};
++
++&i2s_encoder {
++	status = "okay";
++};
++
+ &gpio_ao {
+ 	gpio-line-names = "UART TX", "UART RX", "VCCK En", "TF 3V3/1V8 En",
+ 			  "USB HUB nRESET", "USB OTG Power En",
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
+index 0cb40326b..09dd30cd6 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
+@@ -60,6 +60,13 @@
+ 	};
+ };
+ 
++&aiu {
++	clocks = <&clkc CLKID_AIU>,
++     	       	 <&clkc CLKID_AIU_GLUE>;
++	clock-names = "top", "glue";
++	resets = <&reset RESET_AIU>;
++};
++
+ &aobus {
+ 	pinctrl_aobus: pinctrl@14 {
+ 		compatible = "amlogic,meson-gxbb-aobus-pinctrl";
+@@ -362,6 +369,17 @@
+ 	clocks = <&clkc CLKID_I2C>;
+ };
+ 
++&i2s_fifo {
++	clocks = <&clkc CLKID_I2S_OUT>;
++};
++
++&i2s_encoder {
++	clocks = <&clkc CLKID_MIXER_IFACE>,
++	       	 <&clkc CLKID_AOCLK_GATE>,
++		 <&clkc CLKID_CTS_AMCLK>;
++	clock-names = "pclk", "aoclk", "mclk";
++};
++
+ &periphs {
+ 	pinctrl_periphs: pinctrl@4b0 {
+ 		compatible = "amlogic,meson-gxbb-periphs-pinctrl";
+@@ -805,6 +823,18 @@
+ 		 <&clkc CLKID_GCLK_VENCI_INT0>;
+ };
+ 
++&spdif_fifo {
++	clocks = <&clkc CLKID_IEC958>;
++};
++
++&spdif_encoder {
++	clocks = <&clkc CLKID_IEC958_GATE>,
++	       	 <&clkc CLKID_CTS_MCLK_I958>,
++		 <&clkc CLKID_CTS_AMCLK>,
++		 <&clkc CLKID_CTS_I958>;
++	clock-names = "pclk", "mclk_i958", "mclk_i2s", "mclk";
++};
++
+ &spicc {
+ 	clocks = <&clkc CLKID_SPICC>;
+ 	clock-names = "core";

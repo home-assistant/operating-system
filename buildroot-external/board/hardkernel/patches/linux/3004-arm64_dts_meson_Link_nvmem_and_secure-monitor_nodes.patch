@@ -1,0 +1,51 @@
+From de82e74a9f2631e6718ab6a90e0dfbbcd7d952b4 Mon Sep 17 00:00:00 2001
+From: Carlo Caione <ccaione@baylibre.com>
+Date: Wed, 31 Jul 2019 09:23:38 +0100
+Subject: [PATCH] arm64: dts: meson: Link nvmem and secure-monitor nodes
+
+The former is going to use the latter to retrieve the efuses data.
+
+Signed-off-by: Carlo Caione <ccaione@baylibre.com>
+Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-axg.dtsi        | 1 +
+ arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi | 1 +
+ arch/arm64/boot/dts/amlogic/meson-gx.dtsi         | 1 +
+ 3 files changed, 3 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
+index bb4a2acb9970a..04803c3bccfad 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
+@@ -117,6 +117,7 @@
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
+ 		read-only;
++		secure-monitor = <&sm>;
+ 	};
+ 
+ 	psci {
+diff --git a/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi
+index 95e9cf405fe9b..0f6ec1704343f 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi
+@@ -22,6 +22,7 @@
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
+ 		read-only;
++		secure-monitor = <&sm>;
+ 	};
+ 
+ 	psci {
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gx.dtsi b/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
+index 6733050d735fe..e5a601e75ef2e 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
+@@ -161,6 +161,7 @@
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
+ 		read-only;
++		secure-monitor = <&sm>;
+ 
+ 		sn: sn@14 {
+ 			reg = <0x14 0x10>;

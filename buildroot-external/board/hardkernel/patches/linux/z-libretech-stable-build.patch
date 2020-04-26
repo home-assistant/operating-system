@@ -1,0 +1,6107 @@
+diff --git b/Documentation/ABI/testing/sysfs-firmware-devicetree-overlays a/Documentation/ABI/testing/sysfs-firmware-devicetree-overlays
+new file mode 100644
+index 000000000000..88d15498a21b
+--- /dev/null
++++ a/Documentation/ABI/testing/sysfs-firmware-devicetree-overlays
+@@ -0,0 +1,52 @@
++What:		/sys/firmware/devicetree/overlays/
++Date:		October 2015
++Contact:	Pantelis Antoniou <pantelis.antoniou@konsulko.com>
++Description:
++		This directory contains the applied device tree overlays of
++		the running system, as directories of the overlay id.
++
++What:		/sys/firmware/devicetree/overlays/enable
++Date:		October 2015
++Contact:	Pantelis Antoniou <pantelis.antoniou@konsulko.com>
++Description:
++		The master enable switch, by default is 1, and when
++		set to 0 it cannot be re-enabled for security reasons.
++
++		The discussion about this switch takes place in:
++		http://comments.gmane.org/gmane.linux.drivers.devicetree/101871
++
++		Kees Cook:
++		"Coming from the perspective of drawing a bright line between
++		kernel and the root user (which tends to start with disabling
++		kernel module loading), I would say that there at least needs
++		to be a high-level one-way "off" switch for the interface so
++		that systems that have this interface can choose to turn it off
++		during initial boot, etc."
++
++What:		/sys/firmware/devicetree/overlays/<id>
++Date:		October 2015
++Contact:	Pantelis Antoniou <pantelis.antoniou@konsulko.com>
++Description:
++		Each directory represents an applied overlay, containing
++		the following attribute files.
++
++What:		/sys/firmware/devicetree/overlays/<id>/can_remove
++Date:		October 2015
++Contact:	Pantelis Antoniou <pantelis.antoniou@konsulko.com>
++Description:
++		The attribute set to 1 means that the overlay can be removed,
++		while 0 means that the overlay is being overlapped therefore
++		removal is prohibited.
++
++What:		/sys/firmware/devicetree/overlays/<id>/<fragment-name>/
++Date:		October 2015
++Contact:	Pantelis Antoniou <pantelis.antoniou@konsulko.com>
++Description:
++		Each of these directories contain information about of the
++		particular overlay fragment.
++
++What:		/sys/firmware/devicetree/overlays/<id>/<fragment-name>/target
++Date:		October 2015
++Contact:	Pantelis Antoniou <pantelis.antoniou@konsulko.com>
++Description:
++		The full-path of the target of the fragment
+diff --git b/Documentation/admin-guide/kernel-parameters.rst a/Documentation/admin-guide/kernel-parameters.rst
+index d05d531b4ec9..63841437ae65 100644
+--- b/Documentation/admin-guide/kernel-parameters.rst
++++ a/Documentation/admin-guide/kernel-parameters.rst
+@@ -127,6 +127,7 @@ parameter is applicable::
+ 	NET	Appropriate network support is enabled.
+ 	NUMA	NUMA support is enabled.
+ 	NFS	Appropriate NFS support is enabled.
++	OF	Open Firmware support (device tree) is enabled.
+ 	OSS	OSS sound support is enabled.
+ 	PV_OPS	A paravirtualized kernel is enabled.
+ 	PARIDE	The ParIDE (parallel port IDE) subsystem is enabled.
+diff --git b/Documentation/admin-guide/kernel-parameters.txt a/Documentation/admin-guide/kernel-parameters.txt
+index 5594c8bf1dcd..167a8bbe087e 100644
+--- b/Documentation/admin-guide/kernel-parameters.txt
++++ a/Documentation/admin-guide/kernel-parameters.txt
+@@ -3227,6 +3227,8 @@
+ 			This can be set from sysctl after boot.
+ 			See Documentation/admin-guide/sysctl/vm.rst for details.
+ 
++	of_overlay_disable	[OF] Disable device tree overlays at boot time.
++
+ 	ohci1394_dma=early	[HW] enable debugging via the ohci1394 driver.
+ 			See Documentation/debugging-via-ohci1394.txt for more
+ 			info.
+diff --git b/Documentation/devicetree/bindings/arm/amlogic.yaml a/Documentation/devicetree/bindings/arm/amlogic.yaml
+index 99015cef8bb1..19b7851ede34 100644
+--- b/Documentation/devicetree/bindings/arm/amlogic.yaml
++++ a/Documentation/devicetree/bindings/arm/amlogic.yaml
+@@ -104,6 +104,7 @@ properties:
+           - enum:
+               - amlogic,p230
+               - amlogic,p231
++              - libretech,aml-s905d-pc
+               - phicomm,n1
+           - const: amlogic,s905d
+           - const: amlogic,meson-gxl
+@@ -115,6 +116,7 @@ properties:
+               - amlogic,q201
+               - khadas,vim2
+               - kingnovel,r-box-pro
++              - libretech,aml-s912-pc
+               - nexbox,a1
+               - tronsmart,vega-s96
+           - const: amlogic,s912
+diff --git b/arch/arm/boot/dts/meson.dtsi a/arch/arm/boot/dts/meson.dtsi
+index 5d198309058a..c4447f6c8b2c 100644
+--- b/arch/arm/boot/dts/meson.dtsi
++++ a/arch/arm/boot/dts/meson.dtsi
+@@ -282,11 +282,4 @@
+ 			};
+ 		};
+ 	};
+-
+-	xtal: xtal-clk {
+-		compatible = "fixed-clock";
+-		clock-frequency = <24000000>;
+-		clock-output-names = "xtal";
+-		#clock-cells = <0>;
+-	};
+ }; /* end of / */
+diff --git b/arch/arm/boot/dts/meson6.dtsi a/arch/arm/boot/dts/meson6.dtsi
+index 4716030a48d0..2d31b7ce3f8c 100644
+--- b/arch/arm/boot/dts/meson6.dtsi
++++ a/arch/arm/boot/dts/meson6.dtsi
+@@ -36,6 +36,13 @@
+ 		ranges = <0x0 0xd0000000 0x40000>;
+ 	};
+ 
++	xtal: xtal-clk {
++		compatible = "fixed-clock";
++		clock-frequency = <24000000>;
++		clock-output-names = "xtal";
++		#clock-cells = <0>;
++	};
++
+ 	clk81: clk@0 {
+ 		#clock-cells = <0>;
+ 		compatible = "fixed-clock";
+diff --git b/arch/arm/boot/dts/meson8.dtsi a/arch/arm/boot/dts/meson8.dtsi
+index eedb92526968..db2033f674c6 100644
+--- b/arch/arm/boot/dts/meson8.dtsi
++++ a/arch/arm/boot/dts/meson8.dtsi
+@@ -3,7 +3,6 @@
+  * Copyright 2014 Carlo Caione <carlo@caione.org>
+  */
+ 
+-#include <dt-bindings/clock/meson8-ddr-clkc.h>
+ #include <dt-bindings/clock/meson8b-clkc.h>
+ #include <dt-bindings/gpio/meson8-gpio.h>
+ #include <dt-bindings/reset/amlogic,meson8b-clkc-reset.h>
+@@ -196,14 +195,6 @@
+ 		#size-cells = <1>;
+ 		ranges = <0x0 0xc8000000 0x8000>;
+ 
+-		ddr_clkc: clock-controller@400 {
+-			compatible = "amlogic,meson8-ddr-clkc";
+-			reg = <0x400 0x20>;
+-			clocks = <&xtal>;
+-			clock-names = "xtal";
+-			#clock-cells = <1>;
+-		};
+-
+ 		dmcbus: bus@6000 {
+ 			compatible = "simple-bus";
+ 			reg = <0x6000 0x400>;
+@@ -464,8 +455,6 @@
+ &hhi {
+ 	clkc: clock-controller {
+ 		compatible = "amlogic,meson8-clkc";
+-		clocks = <&xtal>, <&ddr_clkc DDR_CLKID_DDR_PLL>;
+-		clock-names = "xtal", "ddr_pll";
+ 		#clock-cells = <1>;
+ 		#reset-cells = <1>;
+ 	};
+@@ -540,7 +529,8 @@
+ 
+ &saradc {
+ 	compatible = "amlogic,meson8-saradc", "amlogic,meson-saradc";
+-	clocks = <&xtal>, <&clkc CLKID_SAR_ADC>;
++	clocks = <&clkc CLKID_XTAL>,
++		<&clkc CLKID_SAR_ADC>;
+ 	clock-names = "clkin", "core";
+ 	amlogic,hhi-sysctrl = <&hhi>;
+ 	nvmem-cells = <&temperature_calib>;
+@@ -558,31 +548,31 @@
+ };
+ 
+ &timer_abcde {
+-	clocks = <&xtal>, <&clkc CLKID_CLK81>;
++	clocks = <&clkc CLKID_XTAL>, <&clkc CLKID_CLK81>;
+ 	clock-names = "xtal", "pclk";
+ };
+ 
+ &uart_AO {
+ 	compatible = "amlogic,meson8-uart", "amlogic,meson-uart";
+-	clocks = <&clkc CLKID_CLK81>, <&xtal>, <&clkc CLKID_CLK81>;
++	clocks = <&clkc CLKID_CLK81>, <&clkc CLKID_XTAL>, <&clkc CLKID_CLK81>;
+ 	clock-names = "baud", "xtal", "pclk";
+ };
+ 
+ &uart_A {
+ 	compatible = "amlogic,meson8-uart", "amlogic,meson-uart";
+-	clocks = <&clkc CLKID_CLK81>, <&xtal>, <&clkc CLKID_UART0>;
++	clocks = <&clkc CLKID_CLK81>, <&clkc CLKID_XTAL>, <&clkc CLKID_UART0>;
+ 	clock-names = "baud", "xtal", "pclk";
+ };
+ 
+ &uart_B {
+ 	compatible = "amlogic,meson8-uart", "amlogic,meson-uart";
+-	clocks = <&clkc CLKID_CLK81>, <&xtal>, <&clkc CLKID_UART1>;
++	clocks = <&clkc CLKID_CLK81>, <&clkc CLKID_XTAL>, <&clkc CLKID_UART1>;
+ 	clock-names = "baud", "xtal", "pclk";
+ };
+ 
+ &uart_C {
+ 	compatible = "amlogic,meson8-uart", "amlogic,meson-uart";
+-	clocks = <&clkc CLKID_CLK81>, <&xtal>, <&clkc CLKID_UART2>;
++	clocks = <&clkc CLKID_CLK81>, <&clkc CLKID_XTAL>, <&clkc CLKID_UART2>;
+ 	clock-names = "baud", "xtal", "pclk";
+ };
+ 
+diff --git b/arch/arm/boot/dts/meson8b-ec100.dts a/arch/arm/boot/dts/meson8b-ec100.dts
+index 163a200d5a7b..bed1dfef1985 100644
+--- b/arch/arm/boot/dts/meson8b-ec100.dts
++++ a/arch/arm/boot/dts/meson8b-ec100.dts
+@@ -377,7 +377,7 @@
+ 	status = "okay";
+ 	pinctrl-0 = <&pwm_c1_pins>, <&pwm_d_pins>;
+ 	pinctrl-names = "default";
+-	clocks = <&xtal>, <&xtal>;
++	clocks = <&clkc CLKID_XTAL>, <&clkc CLKID_XTAL>;
+ 	clock-names = "clkin0", "clkin1";
+ };
+ 
+diff --git b/arch/arm/boot/dts/meson8b-mxq.dts a/arch/arm/boot/dts/meson8b-mxq.dts
+index 33037ef62d0a..6e39ad52e42d 100644
+--- b/arch/arm/boot/dts/meson8b-mxq.dts
++++ a/arch/arm/boot/dts/meson8b-mxq.dts
+@@ -165,7 +165,7 @@
+ 	status = "okay";
+ 	pinctrl-0 = <&pwm_c1_pins>, <&pwm_d_pins>;
+ 	pinctrl-names = "default";
+-	clocks = <&xtal>, <&xtal>;
++	clocks = <&clkc CLKID_XTAL>, <&clkc CLKID_XTAL>;
+ 	clock-names = "clkin0", "clkin1";
+ };
+ 
+diff --git b/arch/arm/boot/dts/meson8b-odroidc1.dts a/arch/arm/boot/dts/meson8b-odroidc1.dts
+index a2a47804fc4a..a24eccc354b9 100644
+--- b/arch/arm/boot/dts/meson8b-odroidc1.dts
++++ a/arch/arm/boot/dts/meson8b-odroidc1.dts
+@@ -340,7 +340,7 @@
+ 	status = "okay";
+ 	pinctrl-0 = <&pwm_c1_pins>, <&pwm_d_pins>;
+ 	pinctrl-names = "default";
+-	clocks = <&xtal>, <&xtal>;
++	clocks = <&clkc CLKID_XTAL>, <&clkc CLKID_XTAL>;
+ 	clock-names = "clkin0", "clkin1";
+ };
+ 
+diff --git b/arch/arm/boot/dts/meson8b.dtsi a/arch/arm/boot/dts/meson8b.dtsi
+index 2737b99da5f6..1e8c5d7bc824 100644
+--- b/arch/arm/boot/dts/meson8b.dtsi
++++ a/arch/arm/boot/dts/meson8b.dtsi
+@@ -4,7 +4,6 @@
+  * Author: Carlo Caione <carlo@endlessm.com>
+  */
+ 
+-#include <dt-bindings/clock/meson8-ddr-clkc.h>
+ #include <dt-bindings/clock/meson8b-clkc.h>
+ #include <dt-bindings/gpio/meson8b-gpio.h>
+ #include <dt-bindings/reset/amlogic,meson8b-reset.h>
+@@ -173,14 +172,6 @@
+ 		#size-cells = <1>;
+ 		ranges = <0x0 0xc8000000 0x8000>;
+ 
+-		ddr_clkc: clock-controller@400 {
+-			compatible = "amlogic,meson8b-ddr-clkc";
+-			reg = <0x400 0x20>;
+-			clocks = <&xtal>;
+-			clock-names = "xtal";
+-			#clock-cells = <1>;
+-		};
+-
+ 		dmcbus: bus@6000 {
+ 			compatible = "simple-bus";
+ 			reg = <0x6000 0x400>;
+@@ -443,8 +434,6 @@
+ &hhi {
+ 	clkc: clock-controller {
+ 		compatible = "amlogic,meson8-clkc";
+-		clocks = <&xtal>, <&ddr_clkc DDR_CLKID_DDR_PLL>;
+-		clock-names = "xtal", "ddr_pll";
+ 		#clock-cells = <1>;
+ 		#reset-cells = <1>;
+ 	};
+@@ -519,7 +508,8 @@
+ 
+ &saradc {
+ 	compatible = "amlogic,meson8b-saradc", "amlogic,meson-saradc";
+-	clocks = <&xtal>, <&clkc CLKID_SAR_ADC>;
++	clocks = <&clkc CLKID_XTAL>,
++		<&clkc CLKID_SAR_ADC>;
+ 	clock-names = "clkin", "core";
+ 	amlogic,hhi-sysctrl = <&hhi>;
+ 	nvmem-cells = <&temperature_calib>;
+@@ -533,31 +523,31 @@
+ };
+ 
+ &timer_abcde {
+-	clocks = <&xtal>, <&clkc CLKID_CLK81>;
++	clocks = <&clkc CLKID_XTAL>, <&clkc CLKID_CLK81>;
+ 	clock-names = "xtal", "pclk";
+ };
+ 
+ &uart_AO {
+ 	compatible = "amlogic,meson8b-uart", "amlogic,meson-uart";
+-	clocks = <&clkc CLKID_CLK81>, <&xtal>, <&clkc CLKID_CLK81>;
++	clocks = <&clkc CLKID_CLK81>, <&clkc CLKID_XTAL>, <&clkc CLKID_CLK81>;
+ 	clock-names = "baud", "xtal", "pclk";
+ };
+ 
+ &uart_A {
+ 	compatible = "amlogic,meson8b-uart", "amlogic,meson-uart";
+-	clocks = <&clkc CLKID_CLK81>, <&xtal>, <&clkc CLKID_UART0>;
++	clocks = <&clkc CLKID_CLK81>, <&clkc CLKID_XTAL>, <&clkc CLKID_UART0>;
+ 	clock-names = "baud", "xtal", "pclk";
+ };
+ 
+ &uart_B {
+ 	compatible = "amlogic,meson8b-uart", "amlogic,meson-uart";
+-	clocks = <&clkc CLKID_CLK81>, <&xtal>, <&clkc CLKID_UART1>;
++	clocks = <&clkc CLKID_CLK81>, <&clkc CLKID_XTAL>, <&clkc CLKID_UART1>;
+ 	clock-names = "baud", "xtal", "pclk";
+ };
+ 
+ &uart_C {
+ 	compatible = "amlogic,meson8b-uart", "amlogic,meson-uart";
+-	clocks = <&clkc CLKID_CLK81>, <&xtal>, <&clkc CLKID_UART2>;
++	clocks = <&clkc CLKID_CLK81>, <&clkc CLKID_XTAL>, <&clkc CLKID_UART2>;
+ 	clock-names = "baud", "xtal", "pclk";
+ };
+ 
+diff --git b/arch/arm64/boot/dts/amlogic/Makefile a/arch/arm64/boot/dts/amlogic/Makefile
+index f726804d32ed..f25cd8675db8 100644
+--- b/arch/arm64/boot/dts/amlogic/Makefile
++++ a/arch/arm64/boot/dts/amlogic/Makefile
+@@ -28,13 +28,13 @@ dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905d-phicomm-n1.dtb
+ dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s805x-p241.dtb
+ dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905w-p281.dtb
+ dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905w-tx3-mini.dtb
++dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905d-libretech-pc.dtb
+ dtb-$(CONFIG_ARCH_MESON) += meson-gxm-khadas-vim2.dtb
+ dtb-$(CONFIG_ARCH_MESON) += meson-gxm-nexbox-a1.dtb
+ dtb-$(CONFIG_ARCH_MESON) += meson-gxm-q200.dtb
+ dtb-$(CONFIG_ARCH_MESON) += meson-gxm-q201.dtb
+ dtb-$(CONFIG_ARCH_MESON) += meson-gxm-rbox-pro.dtb
++dtb-$(CONFIG_ARCH_MESON) += meson-gxm-s912-libretech-pc.dtb
+ dtb-$(CONFIG_ARCH_MESON) += meson-gxm-vega-s96.dtb
+ dtb-$(CONFIG_ARCH_MESON) += meson-sm1-sei610.dtb
+ dtb-$(CONFIG_ARCH_MESON) += meson-sm1-khadas-vim3l.dtb
+-
+-subdir-y       := $(dts-dirs) overlay
+diff --git b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
+index 04803c3bccfa..bb4a2acb9970 100644
+--- b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
++++ a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
+@@ -117,7 +117,6 @@
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
+ 		read-only;
+-		secure-monitor = <&sm>;
+ 	};
+ 
+ 	psci {
+diff --git b/arch/arm64/boot/dts/amlogic/meson-gx-libretech-pc.dtsi a/arch/arm64/boot/dts/amlogic/meson-gx-libretech-pc.dtsi
+new file mode 100644
+index 000000000000..a3fce8f2cf48
+--- /dev/null
++++ a/arch/arm64/boot/dts/amlogic/meson-gx-libretech-pc.dtsi
+@@ -0,0 +1,416 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (c) 2019 BayLibre SAS.
++ * Author: Jerome Brunet <jbrunet@baylibre.com>
++ */
++
++/* Libretech Amlogic GX PC form factor - AKA: Tartiflette */
++
++#include <dt-bindings/input/input.h>
++#include <dt-bindings/leds/common.h>
++
++/ {
++	adc-keys {
++		compatible = "adc-keys";
++		io-channels = <&saradc 0>;
++		io-channel-names = "buttons";
++		keyup-threshold-microvolt = <1800000>;
++
++		update-button {
++			label = "update";
++			linux,code = <KEY_VENDOR>;
++			press-threshold-microvolt = <1300000>;
++		};
++	};
++
++	aliases {
++		serial0 = &uart_AO;
++		ethernet0 = &ethmac;
++		spi0 = &spifc;
++	};
++
++	chosen {
++		stdout-path = "serial0:115200n8";
++	};
++
++	cvbs-connector {
++		compatible = "composite-video-connector";
++		status = "disabled";
++
++		port {
++			cvbs_connector_in: endpoint {
++				remote-endpoint = <&cvbs_vdac_out>;
++			};
++		};
++	};
++
++	emmc_pwrseq: emmc-pwrseq {
++		compatible = "mmc-pwrseq-emmc";
++		reset-gpios = <&gpio BOOT_9 GPIO_ACTIVE_LOW>;
++	};
++
++	hdmi-connector {
++		compatible = "hdmi-connector";
++		type = "a";
++
++		port {
++			hdmi_connector_in: endpoint {
++				remote-endpoint = <&hdmi_tx_tmds_out>;
++			};
++		};
++	};
++
++	gpio-keys-polled {
++		compatible = "gpio-keys-polled";
++		poll-interval = <100>;
++
++		power-button {
++			label = "power";
++			linux,code = <KEY_POWER>;
++			gpios = <&gpio_ao GPIOAO_2 GPIO_ACTIVE_LOW>;
++		};
++	};
++
++	memory@0 {
++		device_type = "memory";
++		reg = <0x0 0x0 0x0 0x80000000>;
++	};
++
++	ao_5v: regulator-ao_5v {
++		compatible = "regulator-fixed";
++		regulator-name = "AO_5V";
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++		vin-supply = <&dc_in>;
++		regulator-always-on;
++	};
++
++	dc_in: regulator-dc_in {
++		compatible = "regulator-fixed";
++		regulator-name = "DC_IN";
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++		regulator-always-on;
++	};
++
++	leds {
++		compatible = "gpio-leds";
++
++		green {
++			color = <LED_COLOR_ID_GREEN>;
++			function = LED_FUNCTION_DISK_ACTIVITY;
++			gpios = <&gpio_ao GPIOAO_9 GPIO_ACTIVE_HIGH>;
++			linux,default-trigger = "disk-activity";
++		};
++
++		blue {
++			color = <LED_COLOR_ID_BLUE>;
++			function = LED_FUNCTION_STATUS;
++			gpios = <&gpio GPIODV_28 GPIO_ACTIVE_HIGH>;
++			linux,default-trigger = "heartbeat";
++			panic-indicator;
++		};
++	};
++
++	vcc_card: regulator-vcc_card {
++		compatible = "regulator-fixed";
++		regulator-name = "VCC_CARD";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		vin-supply = <&vddio_ao3v3>;
++
++		gpio = <&gpio GPIODV_4 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++	};
++
++	vcc5v: regulator-vcc5v {
++		compatible = "regulator-fixed";
++		regulator-name = "VCC5V";
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++		vin-supply = <&ao_5v>;
++
++		gpio = <&gpio GPIOH_3 GPIO_OPEN_DRAIN>;
++	};
++
++	vddio_ao18: regulator-vddio_ao18 {
++		compatible = "regulator-fixed";
++		regulator-name = "VDDIO_AO18";
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <1800000>;
++		vin-supply = <&ao_5v>;
++		regulator-always-on;
++	};
++
++	vddio_ao3v3: regulator-vddio_ao3v3 {
++		compatible = "regulator-fixed";
++		regulator-name = "VDDIO_AO3V3";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		vin-supply = <&ao_5v>;
++		regulator-always-on;
++	};
++
++	vddio_boot: regulator-vddio_boot {
++		compatible = "regulator-fixed";
++		regulator-name = "VDDIO_BOOT";
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <1800000>;
++		vin-supply = <&vddio_ao3v3>;
++		regulator-always-on;
++	};
++
++	vddio_card: regulator-vddio-card {
++		compatible = "regulator-gpio";
++		regulator-name = "VDDIO_CARD";
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <3300000>;
++
++		gpios = <&gpio GPIODV_5 GPIO_ACTIVE_HIGH>;
++		gpios-states = <0>;
++
++		states = <3300000 0>,
++			 <1800000 1>;
++
++		regulator-settling-time-up-us = <200>;
++		regulator-settling-time-down-us = <50000>;
++	};
++
++	sound {
++		compatible = "amlogic,gx-sound-card";
++		model = "GXL-LIBRETECH-S9XX-PC";
++		audio-routing = "I2S ENCODER Playback", "I2S FIFO Playback";
++
++		assigned-clocks = <&clkc CLKID_MPLL2>,
++				  <&clkc CLKID_MPLL0>,
++				  <&clkc CLKID_MPLL1>;
++		assigned-clock-parents = <0>, <0>, <0>;
++		assigned-clock-rates = <294912000>,
++				       <270950400>,
++				       <393216000>;
++		status = "okay";
++
++		dai-link-0 {
++			sound-dai = <&i2s_fifo>;
++		};
++
++		dai-link-1 {
++			sound-dai = <&i2s_encoder>;
++			dai-format = "i2s";
++			mclk-fs = <256>;
++
++			codec-0 {
++				sound-dai = <&hdmi_tx>;
++			};
++		};
++	};
++};
++
++&aiu {
++	status = "okay";
++};
++
++&cec_AO {
++	pinctrl-0 = <&ao_cec_pins>;
++	pinctrl-names = "default";
++	hdmi-phandle = <&hdmi_tx>;
++	status = "okay";
++};
++
++&cvbs_vdac_port {
++	cvbs_vdac_out: endpoint {
++		remote-endpoint = <&cvbs_connector_in>;
++	};
++};
++
++&ethmac {
++	pinctrl-0 = <&eth_pins>, <&eth_phy_irq_pins>;
++	pinctrl-names = "default";
++	phy-handle = <&external_phy>;
++	amlogic,tx-delay-ns = <2>;
++	phy-mode = "rgmii";
++	status = "okay";
++};
++
++&external_mdio {
++	external_phy: ethernet-phy@0 {
++		reg = <0>;
++		max-speed = <1000>;
++		reset-assert-us = <10000>;
++		reset-deassert-us = <30000>;
++		reset-gpios = <&gpio GPIOZ_14 GPIO_ACTIVE_LOW>;
++		interrupt-parent = <&gpio_intc>;
++		interrupts = <25 IRQ_TYPE_LEVEL_LOW>;
++	};
++};
++
++&i2s_fifo {
++	status = "okay";
++};
++
++&i2s_encoder {
++	status = "okay";
++};
++
++&pinctrl_periphs {
++	/*
++	 * Make sure the reset pin of the usb HUB is driven high to take
++	 * it out of reset.
++	 */
++	usb1_rst_pins: usb1_rst_irq {
++		mux {
++			groups = "GPIODV_3";
++			function = "gpio_periphs";
++			bias-disable;
++			output-high;
++		};
++	};
++
++	/* Make sure the phy irq pin is properly configured as input */
++	eth_phy_irq_pins: eth_phy_irq {
++		mux {
++			groups = "GPIOZ_15";
++			function = "gpio_periphs";
++			bias-disable;
++			output-disable;
++		};
++	};
++};
++
++&hdmi_tx {
++	pinctrl-0 = <&hdmi_hpd_pins>, <&hdmi_i2c_pins>;
++	pinctrl-names = "default";
++	hdmi-supply = <&vcc5v>;
++	status = "okay";
++};
++
++&hdmi_tx_tmds_port {
++	hdmi_tx_tmds_out: endpoint {
++		remote-endpoint = <&hdmi_connector_in>;
++	};
++};
++
++&ir {
++	pinctrl-0 = <&remote_input_ao_pins>;
++	pinctrl-names = "default";
++	status = "okay";
++};
++
++&i2c_C {
++	pinctrl-0 = <&i2c_c_dv18_pins>;
++	pinctrl-names = "default";
++	status = "okay";
++
++	rtc: rtc@51 {
++		reg = <0x51>;
++		compatible = "nxp,pcf8563";
++		#clock-cells = <0>;
++		clock-output-names = "rtc_clkout";
++	};
++};
++
++&pwm_AO_ab {
++	pinctrl-0 = <&pwm_ao_a_3_pins>;
++	pinctrl-names = "default";
++	clocks = <&clkc CLKID_FCLK_DIV4>;
++	clock-names = "clkin0";
++	status = "okay";
++};
++
++&pwm_ab {
++	pinctrl-0 = <&pwm_b_pins>;
++	pinctrl-names = "default";
++	clocks = <&clkc CLKID_FCLK_DIV4>;
++	clock-names = "clkin0";
++	status = "okay";
++};
++
++&pwm_ef {
++	pinctrl-0 = <&pwm_e_pins>, <&pwm_f_clk_pins>;
++	pinctrl-names = "default";
++	clocks = <&clkc CLKID_FCLK_DIV4>;
++	clock-names = "clkin0";
++	status = "okay";
++};
++
++&saradc {
++	vref-supply = <&vddio_ao18>;
++	status = "okay";
++};
++
++/* SD card */
++&sd_emmc_b {
++	pinctrl-0 = <&sdcard_pins>;
++	pinctrl-1 = <&sdcard_clk_gate_pins>;
++	pinctrl-names = "default", "clk-gate";
++
++	bus-width = <4>;
++	cap-sd-highspeed;
++	sd-uhs-sdr12;
++	sd-uhs-sdr25;
++	sd-uhs-sdr50;
++	sd-uhs-ddr50;
++	max-frequency = <200000000>;
++	disable-wp;
++
++	cd-gpios = <&gpio CARD_6 GPIO_ACTIVE_LOW>;
++
++	vmmc-supply = <&vcc_card>;
++	vqmmc-supply = <&vddio_card>;
++
++	status = "okay";
++};
++
++/* eMMC */
++&sd_emmc_c {
++	pinctrl-0 = <&emmc_pins>;
++	pinctrl-1 = <&emmc_clk_gate_pins>;
++	pinctrl-names = "default", "clk-gate";
++
++	bus-width = <8>;
++	cap-mmc-highspeed;
++	mmc-ddr-1_8v;
++	mmc-hs200-1_8v;
++	max-frequency = <200000000>;
++	disable-wp;
++
++	mmc-pwrseq = <&emmc_pwrseq>;
++	vmmc-supply = <&vddio_ao3v3>;
++	vqmmc-supply = <&vddio_boot>;
++
++	status = "okay";
++};
++
++&spifc {
++	pinctrl-0 = <&nor_pins>;
++	pinctrl-names = "default";
++	status = "okay";
++
++	gd25lq128: spi-flash@0 {
++		compatible = "jedec,spi-nor";
++		#address-cells = <1>;
++		#size-cells = <1>;
++		reg = <0>;
++		spi-max-frequency = <12000000>;
++	};
++};
++
++&uart_AO {
++	pinctrl-0 = <&uart_ao_a_pins>;
++	pinctrl-names = "default";
++	status = "okay";
++};
++
++&usb0 {
++	status = "okay";
++};
++
++&usb2_phy0 {
++	pinctrl-0 = <&usb1_rst_pins>;
++	pinctrl-names = "default";
++	phy-supply = <&vcc5v>;
++};
++
++&usb2_phy1 {
++	phy-supply = <&vcc5v>;
++};
+diff --git b/arch/arm64/boot/dts/amlogic/meson-gx.dtsi a/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
+index cbbd6b40ea9e..ec60b3cc6d14 100644
+--- b/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
++++ a/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
+@@ -161,7 +161,6 @@
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
+ 		read-only;
+-		secure-monitor = <&sm>;
+ 
+ 		sn: sn@14 {
+ 			reg = <0x14 0x10>;
+@@ -596,6 +606,7 @@
+ 			interrupts = <GIC_SPI 57 IRQ_TYPE_EDGE_RISING>;
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
++			#sound-dai-cells = <0>;
+ 			status = "disabled";
+ 
+ 			/* VPU VENC Input */
+diff --git b/arch/arm64/boot/dts/amlogic/meson-gxl-s805x-libretech-ac.dts a/arch/arm64/boot/dts/amlogic/meson-gxl-s805x-libretech-ac.dts
+index 82b1c4851147..97bd6e2da92c 100644
+--- b/arch/arm64/boot/dts/amlogic/meson-gxl-s805x-libretech-ac.dts
++++ a/arch/arm64/boot/dts/amlogic/meson-gxl-s805x-libretech-ac.dts
+@@ -105,6 +105,35 @@
+ 		vin-supply = <&vcc_3v3>;
+ 		regulator-always-on;
+ 	};
++
++	sound {
++		compatible = "amlogic,gx-sound-card";
++		model = "GXL-LIBRETECH-S805X-AC";
++		audio-routing = "I2S ENCODER Playback", "I2S FIFO Playback";
++
++		assigned-clocks = <&clkc CLKID_MPLL2>,
++				  <&clkc CLKID_MPLL0>,
++				  <&clkc CLKID_MPLL1>;
++		assigned-clock-parents = <0>, <0>, <0>;
++		assigned-clock-rates = <294912000>,
++				       <270950400>,
++				       <393216000>;
++		status = "okay";
++
++		dai-link-0 {
++			sound-dai = <&i2s_fifo>;
++		};
++
++		dai-link-1 {
++			sound-dai = <&i2s_encoder>;
++			dai-format = "i2s";
++			mclk-fs = <256>;
++
++			codec-0 {
++				sound-dai = <&hdmi_tx>;
++			};
++		};
++	};
+ };
+ 
+ &cec_AO {
+@@ -135,6 +164,14 @@
+ 	pinctrl-names = "default";
+ };
+ 
++&i2s_fifo {
++	status = "okay";
++};
++
++&i2s_encoder {
++	status = "okay";
++};
++
+ &hdmi_tx {
+ 	status = "okay";
+ 	pinctrl-0 = <&hdmi_hpd_pins>, <&hdmi_i2c_pins>;
+diff --git b/arch/arm64/boot/dts/amlogic/meson-gxl-s905d-libretech-pc.dts a/arch/arm64/boot/dts/amlogic/meson-gxl-s905d-libretech-pc.dts
+new file mode 100644
+index 000000000000..100a1cfeea15
+--- /dev/null
++++ a/arch/arm64/boot/dts/amlogic/meson-gxl-s905d-libretech-pc.dts
+@@ -0,0 +1,16 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (c) 2019 BayLibre SAS. All rights reserved.
++ * Author: Jerome Brunet <jbrunet@baylibre.com>
++ */
++
++/dts-v1/;
++
++#include "meson-gxl-s905d.dtsi"
++#include "meson-gx-libretech-pc.dtsi"
++
++/ {
++	compatible = "libretech,aml-s905d-pc", "amlogic,s905d",
++		     "amlogic,meson-gxl";
++	model = "Libre Computer AML-S905D-PC";
++};
+diff --git b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts
+index 969ee02e7429..af1cf92c1d0a 100644
+--- b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts
++++ a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts
+@@ -14,6 +14,8 @@
+ / {
+ 	compatible = "libretech,cc", "amlogic,s905x", "amlogic,meson-gxl";
+ 	model = "Libre Computer Board AML-S905X-CC";
++	vendor = "libre-computer";
++	boardname = "aml-s905x-cc";
+ 
+ 	aliases {
+ 		serial0 = &uart_AO;
+@@ -54,16 +56,16 @@
+ 		compatible = "gpio-leds";
+ 
+ 		system {
+-			label = "librecomputer:system-status";
++			label = "librecomputer:green:disk";
+ 			gpios = <&gpio GPIODV_24 GPIO_ACTIVE_HIGH>;
+-			default-state = "on";
++			linux,default-trigger = "heartbeat";
+ 			panic-indicator;
+ 		};
+ 
+ 		blue {
+-			label = "librecomputer:blue";
++			label = "librecomputer:blue:cpu";
+ 			gpios = <&gpio_ao GPIOAO_2 GPIO_ACTIVE_HIGH>;
+-			linux,default-trigger = "heartbeat";
++			linux,default-trigger = "activity";
+ 		};
+ 	};
+ 
+@@ -152,6 +125,39 @@
+ 		regulator-max-microvolt = <1800000>;
+ 		vin-supply = <&vcc_3v3>;
+ 	};
++
++	sound {
++		compatible = "amlogic,gx-sound-card";
++		model = "GXL-LIBRETECH-S905X-CC";
++		audio-routing = "I2S ENCODER Playback", "I2S FIFO Playback";
++
++		assigned-clocks = <&clkc CLKID_MPLL2>,
++				  <&clkc CLKID_MPLL0>,
++				  <&clkc CLKID_MPLL1>;
++		assigned-clock-parents = <0>, <0>, <0>;
++		assigned-clock-rates = <294912000>,
++				       <270950400>,
++				       <393216000>;
++		status = "okay";
++
++		dai-link-0 {
++			sound-dai = <&i2s_fifo>;
++		};
++
++		dai-link-1 {
++			sound-dai = <&i2s_encoder>;
++			dai-format = "i2s";
++			mclk-fs = <256>;
++
++			codec-0 {
++				sound-dai = <&hdmi_tx>;
++			};
++		};
++	};
++};
++
++&aiu {
++	status = "okay";
+ };
+ 
+ &cec_AO {
+@@ -190,6 +188,14 @@
+ 	pinctrl-names = "default";
+ };
+ 
++&i2s_fifo {
++	status = "okay";
++};
++
++&i2s_encoder {
++	status = "okay";
++};
++
+ &hdmi_tx {
+ 	status = "okay";
+ 	pinctrl-0 = <&hdmi_hpd_pins>, <&hdmi_i2c_pins>;
+@@ -274,7 +280,7 @@
+ 
+ 	bus-width = <4>;
+ 	cap-sd-highspeed;
+-	max-frequency = <50000000>;
++	max-frequency = <100000000>;
+ 	disable-wp;
+ 
+ 	cd-gpios = <&gpio CARD_6 GPIO_ACTIVE_LOW>;
+diff --git b/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi a/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
+index da899d07f2d3..321ed8b3bf53 100644
+--- b/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
++++ a/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
+@@ -36,19 +36,16 @@
+ 				phys = <&usb3_phy>, <&usb2_phy0>, <&usb2_phy1>;
+ 			};
+ 		};
+-
+-		crypto: crypto@c883e000 {
+-			compatible = "amlogic,gxl-crypto";
+-			reg = <0x0 0xc883e000 0x0 0x36>;
+-			interrupts = <GIC_SPI 188 IRQ_TYPE_EDGE_RISING>,
+-				     <GIC_SPI 189 IRQ_TYPE_EDGE_RISING>;
+-			clocks = <&clkc CLKID_BLKMV>;
+-			clock-names = "blkmv";
+-			status = "okay";
+-		};
+ 	};
+ };
+ 
++&aiu {
++	clocks = <&clkc CLKID_AIU>,
++     	       	 <&clkc CLKID_AIU_GLUE>;
++	clock-names = "top", "glue";
++	resets = <&reset RESET_AIU>;
++};
++
+ &apb {
+ 	usb2_phy0: phy@78000 {
+ 		compatible = "amlogic,meson-gxl-usb2-phy";
+@@ -315,6 +311,17 @@
+ 	clocks = <&clkc CLKID_I2C>;
+ };
+ 
++&i2s_fifo {
++	clocks = <&clkc CLKID_I2S_OUT>;
++};
++
++&i2s_encoder {
++	clocks = <&clkc CLKID_MIXER_IFACE>,
++	       	 <&clkc CLKID_AOCLK_GATE>,
++		 <&clkc CLKID_CTS_AMCLK>;
++	clock-names = "pclk", "aoclk", "mclk";
++};
++
+ &periphs {
+ 	pinctrl_periphs: pinctrl@4b0 {
+ 		compatible = "amlogic,meson-gxl-periphs-pinctrl";
+@@ -534,6 +541,15 @@
+ 			};
+ 		};
+ 
++		i2c_c_dv18_pins: i2c_c_dv18 {
++			mux {
++				groups = "i2c_sck_c_dv19",
++				      "i2c_sda_c_dv18";
++				function = "i2c_c";
++				bias-disable;
++			};
++		};
++
+ 		eth_pins: eth_c {
+ 			mux {
+ 				groups = "eth_mdio",
+@@ -834,6 +832,18 @@
+ 		 <&clkc CLKID_GCLK_VENCI_INT0>;
+ };
+ 
++&spdif_fifo {
++	clocks = <&clkc CLKID_IEC958>;
++};
++
++&spdif_encoder {
++	clocks = <&clkc CLKID_IEC958_GATE>,
++	       	 <&clkc CLKID_CTS_MCLK_I958>,
++		 <&clkc CLKID_CTS_AMCLK>,
++		 <&clkc CLKID_CTS_I958>;
++	clock-names = "pclk", "mclk_i958", "mclk_i2s", "mclk";
++};
++
+ &spicc {
+ 	clocks = <&clkc CLKID_SPICC>;
+ 	clock-names = "core";
+diff --git b/arch/arm64/boot/dts/amlogic/meson-gxm-s912-libretech-pc.dts a/arch/arm64/boot/dts/amlogic/meson-gxm-s912-libretech-pc.dts
+new file mode 100644
+index 000000000000..444c249863cb
+--- /dev/null
++++ a/arch/arm64/boot/dts/amlogic/meson-gxm-s912-libretech-pc.dts
+@@ -0,0 +1,62 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (c) 2019 BayLibre SAS. All rights reserved.
++ * Author: Jerome Brunet <jbrunet@baylibre.com>
++ */
++
++/dts-v1/;
++
++#include "meson-gxm.dtsi"
++#include "meson-gx-libretech-pc.dtsi"
++
++/ {
++	compatible = "libretech,aml-s912-pc", "amlogic,s912",
++		     "amlogic,meson-gxm";
++	model = "Libre Computer AML-S912-PC";
++
++	typec2_vbus: regulator-typec2_vbus {
++		compatible = "regulator-fixed";
++		regulator-name = "TYPEC2_VBUS";
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++		vin-supply = <&vcc5v>;
++
++		gpio = <&gpio GPIODV_1 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++	};
++};
++
++&pinctrl_periphs {
++	/*
++	 * Make sure the irq pin of the TYPE C controller is not driven
++	 * by the SoC.
++	 */
++	fusb302_irq_pins: fusb302_irq {
++		mux {
++			groups = "GPIODV_0";
++			function = "gpio_periphs";
++			bias-pull-up;
++			output-disable;
++		};
++	};
++};
++
++&i2c_C {
++	fusb302@22 {
++		compatible = "fcs,fusb302";
++		reg = <0x22>;
++
++		pinctrl-0 = <&fusb302_irq_pins>;
++		pinctrl-names = "default";
++		interrupt-parent = <&gpio_intc>;
++		interrupts = <59 IRQ_TYPE_LEVEL_LOW>;
++
++		vbus-supply = <&typec2_vbus>;
++
++		status = "okay";
++	};
++};
++
++&usb2_phy2 {
++	phy-supply = <&typec2_vbus>;
++};
+diff --git b/arch/arm64/configs/defconfig a/arch/arm64/configs/defconfig
+index c9a867ac32d4..1923266edddc 100644
+--- b/arch/arm64/configs/defconfig
++++ a/arch/arm64/configs/defconfig
+@@ -211,6 +211,8 @@ CONFIG_MTD_NAND_DENALI_DT=y
+ CONFIG_MTD_NAND_MARVELL=y
+ CONFIG_MTD_NAND_QCOM=y
+ CONFIG_MTD_SPI_NOR=y
++CONFIG_OF_OVERLAY=y
++CONFIG_OF_CONFIGFS=y
+ CONFIG_BLK_DEV_LOOP=y
+ CONFIG_BLK_DEV_NBD=m
+ CONFIG_VIRTIO_BLK=y
+@@ -564,7 +566,10 @@ CONFIG_SND_HDA_TEGRA=m
+ CONFIG_SND_HDA_CODEC_HDMI=m
+ CONFIG_SND_SOC=y
+ CONFIG_SND_BCM2835_SOC_I2S=m
++CONFIG_SND_MESON_AIU_I2S_ENCODER=m
++CONFIG_SND_MESON_AIU_SPDIF_ENCODER=m
+ CONFIG_SND_MESON_AXG_SOUND_CARD=m
++CONFIG_SND_MESON_GX_SOUND_CARD=m
+ CONFIG_SND_SOC_ROCKCHIP=m
+ CONFIG_SND_SOC_ROCKCHIP_SPDIF=m
+ CONFIG_SND_SOC_ROCKCHIP_RT5645=m
+@@ -607,6 +612,8 @@ CONFIG_USB_GADGET=y
+ CONFIG_USB_RENESAS_USBHS_UDC=m
+ CONFIG_USB_RENESAS_USB3=m
+ CONFIG_TYPEC=m
++CONFIG_TYPEC_TCPM=m
++CONFIG_TYPEC_FUSB302=m
+ CONFIG_TYPEC_HD3SS3220=m
+ CONFIG_MMC=y
+ CONFIG_MMC_BLOCK_MINORS=32
+@@ -683,6 +690,9 @@ CONFIG_VIRTIO_BALLOON=y
+ CONFIG_VIRTIO_MMIO=y
+ CONFIG_XEN_GNTDEV=y
+ CONFIG_XEN_GRANT_DEV_ALLOC=y
++CONFIG_STAGING=y
++CONFIG_STAGING_MEDIA=y
++CONFIG_VIDEO_MESON_VDEC=m
+ CONFIG_CROS_EC_I2C=y
+ CONFIG_CROS_EC_SPI=y
+ CONFIG_COMMON_CLK_RK808=y
+diff --git b/drivers/gpu/drm/bridge/synopsys/dw-hdmi-i2s-audio.c a/drivers/gpu/drm/bridge/synopsys/dw-hdmi-i2s-audio.c
+index 995d1960a88a..1d15cf9b6821 100644
+--- b/drivers/gpu/drm/bridge/synopsys/dw-hdmi-i2s-audio.c
++++ a/drivers/gpu/drm/bridge/synopsys/dw-hdmi-i2s-audio.c
+@@ -57,8 +57,6 @@ static int dw_hdmi_i2s_hw_params(struct device *dev, void *data,
+ 	inputclkfs	= HDMI_AUD_INPUTCLKFS_64FS;
+ 	conf0		= (HDMI_AUD_CONF0_I2S_SELECT | HDMI_AUD_CONF0_I2S_EN0);
+ 
+-	dev_info(dev, "channels=%d sample_width=%d sample_rate=%d\n", hparms->channels, hparms->sample_width, hparms->sample_rate);
+-
+ 	/* Enable the required i2s lanes */
+ 	switch (hparms->channels) {
+ 	case 7 ... 8:
+@@ -104,7 +102,6 @@ static int dw_hdmi_i2s_hw_params(struct device *dev, void *data,
+ 	}
+ 
+ 	dw_hdmi_set_sample_rate(hdmi, hparms->sample_rate);
+-	dw_hdmi_set_channel_status(hdmi, hparms->iec.status);
+ 	dw_hdmi_set_channel_count(hdmi, hparms->channels);
+ 	dw_hdmi_set_channel_allocation(hdmi, hparms->cea.channel_allocation);
+ 
+diff --git b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+index afc22e6f8c9c..1326f2c734bf 100644
+--- b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
++++ a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+@@ -590,26 +590,6 @@ static unsigned int hdmi_compute_n(unsigned int freq, unsigned long pixel_clk)
+ 	return n;
+ }
+ 
+-/*
+- * When transmitting IEC60958 linear PCM audio, these registers allow to
+- * configure the channel status information of all the channel status
+- * bits in the IEC60958 frame. For the moment this configuration is only
+- * used when the I2S audio interface, General Purpose Audio (GPA),
+- * or AHB audio DMA (AHBAUDDMA) interface is active
+- * (for S/PDIF interface this information comes from the stream).
+- */
+-void dw_hdmi_set_channel_status(struct dw_hdmi *hdmi,
+-				u8 *channel_status)
+-{
+-	/*
+-	 * Set channel status register for frequency and word length.
+-	 * Use default values for other registers.
+-	 */
+-	hdmi_writeb(hdmi, channel_status[3], HDMI_FC_AUDSCHNLS7);
+-	hdmi_writeb(hdmi, channel_status[4], HDMI_FC_AUDSCHNLS8);
+-}
+-EXPORT_SYMBOL_GPL(dw_hdmi_set_channel_status);
+-
+ static void hdmi_set_clk_regenerator(struct dw_hdmi *hdmi,
+ 	unsigned long pixel_clk, unsigned int sample_rate)
+ {
+diff --git b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.h a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.h
+index fcff5059db24..6988f12d89d9 100644
+--- b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.h
++++ a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.h
+@@ -158,8 +158,6 @@
+ #define HDMI_FC_SPDDEVICEINF                    0x1062
+ #define HDMI_FC_AUDSCONF                        0x1063
+ #define HDMI_FC_AUDSSTAT                        0x1064
+-#define HDMI_FC_AUDSCHNLS7                      0x106e
+-#define HDMI_FC_AUDSCHNLS8                      0x106f
+ #define HDMI_FC_DATACH0FILL                     0x1070
+ #define HDMI_FC_DATACH1FILL                     0x1071
+ #define HDMI_FC_DATACH2FILL                     0x1072
+diff --git b/drivers/gpu/drm/drm_gem.c a/drivers/gpu/drm/drm_gem.c
+index a5e88c3e6d25..6854f5867d51 100644
+--- b/drivers/gpu/drm/drm_gem.c
++++ a/drivers/gpu/drm/drm_gem.c
+@@ -679,11 +679,11 @@ static int objects_lookup(struct drm_file *filp, u32 *handle, int count,
+ /**
+  * drm_gem_objects_lookup - look up GEM objects from an array of handles
+  * @filp: DRM file private date
+- * @bo_handles: array of GEM object handles
++ * @bo_handles: user pointer to array of userspace handle
+  * @count: size of handle array
+  * @objs_out: returned pointer to array of drm_gem_object pointers
+  *
+- * Takes an array of GEM object handles and returns a newly allocated array of
++ * Takes an array of userspace handles and returns a newly allocated array of
+  * GEM objects.
+  *
+  * For a single handle lookup, use drm_gem_object_lookup().
+@@ -695,56 +695,26 @@ static int objects_lookup(struct drm_file *filp, u32 *handle, int count,
+  * failure. 0 is returned on success.
+  *
+  */
+-int drm_gem_objects_lookup(struct drm_file *filp, u32 *bo_handles,
++int drm_gem_objects_lookup(struct drm_file *filp, void __user *bo_handles,
+ 			   int count, struct drm_gem_object ***objs_out)
+ {
+ 	int ret;
++	u32 *handles;
+ 	struct drm_gem_object **objs;
+ 
++	if (!count)
++		return 0;
++
+ 	objs = kvmalloc_array(count, sizeof(struct drm_gem_object *),
+ 			     GFP_KERNEL | __GFP_ZERO);
+ 	if (!objs)
+ 		return -ENOMEM;
+ 
+-	ret = objects_lookup(filp, bo_handles, count, objs);
+-	if (ret)
+-		kvfree(objs);
+-	else
+-		*objs_out = objs;
+-
+-	return ret;
+-
+-}
+-EXPORT_SYMBOL(drm_gem_objects_lookup);
+-
+-/**
+- * drm_gem_objects_lookup_user - look up GEM objects from an array of handles
+- * @filp: DRM file private date
+- * @bo_handles: user pointer to array of userspace handle
+- * @count: size of handle array
+- * @objs_out: returned pointer to array of drm_gem_object pointers
+- *
+- * Takes an array of userspace handles and returns a newly allocated array of
+- * GEM objects.
+- *
+- * For a single handle lookup, use drm_gem_object_lookup().
+- *
+- * Returns:
+- *
+- * @objs filled in with GEM object pointers. Returned GEM objects need to be
+- * released with drm_gem_object_put(). -ENOENT is returned on a lookup
+- * failure. 0 is returned on success.
+- *
+- */
+-int drm_gem_objects_lookup_user(struct drm_file *filp, void __user *bo_handles,
+-				int count, struct drm_gem_object ***objs_out)
+-{
+-	int ret;
+-	u32 *handles;
+-
+ 	handles = kvmalloc_array(count, sizeof(u32), GFP_KERNEL);
+-	if (!handles)
+-		return -ENOMEM;
++	if (!handles) {
++		ret = -ENOMEM;
++		goto out;
++	}
+ 
+ 	if (copy_from_user(handles, bo_handles, count * sizeof(u32))) {
+ 		ret = -EFAULT;
+@@ -752,14 +722,15 @@ int drm_gem_objects_lookup_user(struct drm_file *filp, void __user *bo_handles,
+ 		goto out;
+ 	}
+ 
+-	ret = drm_gem_objects_lookup(filp, handles, count, objs_out);
++	ret = objects_lookup(filp, handles, count, objs);
++	*objs_out = objs;
+ 
+ out:
+ 	kvfree(handles);
+ 	return ret;
+ 
+ }
+-EXPORT_SYMBOL(drm_gem_objects_lookup_user);
++EXPORT_SYMBOL(drm_gem_objects_lookup);
+ 
+ /**
+  * drm_gem_object_lookup - look up a GEM object from its handle
+diff --git b/drivers/gpu/drm/lima/Kconfig a/drivers/gpu/drm/lima/Kconfig
+index cdd24b68b5d4..bb4ddc6bb0a6 100644
+--- b/drivers/gpu/drm/lima/Kconfig
++++ a/drivers/gpu/drm/lima/Kconfig
+@@ -9,7 +9,5 @@ config DRM_LIMA
+        depends on COMMON_CLK
+        depends on OF
+        select DRM_SCHED
+-       select DRM_GEM_SHMEM_HELPER
+-       select PM_DEVFREQ
+        help
+          DRM driver for ARM Mali 400/450 GPUs.
+diff --git b/drivers/gpu/drm/lima/Makefile a/drivers/gpu/drm/lima/Makefile
+index 5e5c29875e9c..38cc70281ba5 100644
+--- b/drivers/gpu/drm/lima/Makefile
++++ a/drivers/gpu/drm/lima/Makefile
+@@ -13,8 +13,9 @@ lima-y := \
+ 	lima_vm.o \
+ 	lima_sched.o \
+ 	lima_ctx.o \
++	lima_gem_prime.o \
+ 	lima_dlbu.o \
+ 	lima_bcast.o \
+-	lima_devfreq.o
++	lima_object.o
+ 
+ obj-$(CONFIG_DRM_LIMA) += lima.o
+diff --git b/drivers/gpu/drm/lima/lima_device.c a/drivers/gpu/drm/lima/lima_device.c
+index 2a1a683585ad..d86b8d81a483 100644
+--- b/drivers/gpu/drm/lima/lima_device.c
++++ a/drivers/gpu/drm/lima/lima_device.c
+@@ -213,8 +213,6 @@ static int lima_init_gp_pipe(struct lima_device *dev)
+ 	struct lima_sched_pipe *pipe = dev->pipe + lima_pipe_gp;
+ 	int err;
+ 
+-	pipe->ldev = dev;
+-
+ 	err = lima_sched_pipe_init(pipe, "gp");
+ 	if (err)
+ 		return err;
+@@ -245,8 +243,6 @@ static int lima_init_pp_pipe(struct lima_device *dev)
+ 	struct lima_sched_pipe *pipe = dev->pipe + lima_pipe_pp;
+ 	int err, i;
+ 
+-	pipe->ldev = dev;
+-
+ 	err = lima_sched_pipe_init(pipe, "pp");
+ 	if (err)
+ 		return err;
+@@ -317,7 +313,7 @@ int lima_device_init(struct lima_device *ldev)
+ 		ldev->va_end = LIMA_VA_RESERVE_START;
+ 		ldev->dlbu_cpu = dma_alloc_wc(
+ 			ldev->dev, LIMA_PAGE_SIZE,
+-			&ldev->dlbu_dma, GFP_KERNEL | __GFP_NOWARN);
++			&ldev->dlbu_dma, GFP_KERNEL);
+ 		if (!ldev->dlbu_cpu) {
+ 			err = -ENOMEM;
+ 			goto err_out2;
+diff --git b/drivers/gpu/drm/lima/lima_device.h a/drivers/gpu/drm/lima/lima_device.h
+index 26f0efdd17f1..31158d86271c 100644
+--- b/drivers/gpu/drm/lima/lima_device.h
++++ a/drivers/gpu/drm/lima/lima_device.h
+@@ -5,7 +5,6 @@
+ #define __LIMA_DEVICE_H__
+ 
+ #include <drm/drm_device.h>
+-#include <linux/atomic.h>
+ #include <linux/delay.h>
+ 
+ #include "lima_sched.h"
+@@ -95,22 +94,6 @@ struct lima_device {
+ 
+ 	u32 *dlbu_cpu;
+ 	dma_addr_t dlbu_dma;
+-
+-	struct {
+-		struct devfreq *devfreq;
+-		struct opp_table *opp_table;
+-		struct thermal_cooling_device *cooling;
+-		ktime_t busy_time;
+-		ktime_t idle_time;
+-		ktime_t time_last_update;
+-		atomic_t busy_count;
+-		/*
+-		 * Protect busy_time, idle_time and time_last_update because
+-		 * these can be updated concurrently - for example by the GP
+-		 * and PP interrupts.
+-		 */
+-		spinlock_t lock;
+-	} devfreq;
+ };
+ 
+ static inline struct lima_device *
+diff --git b/drivers/gpu/drm/lima/lima_drv.c a/drivers/gpu/drm/lima/lima_drv.c
+index b618b33f066a..75ec703d22e0 100644
+--- b/drivers/gpu/drm/lima/lima_drv.c
++++ a/drivers/gpu/drm/lima/lima_drv.c
+@@ -10,9 +10,9 @@
+ #include <drm/drm_prime.h>
+ #include <drm/lima_drm.h>
+ 
+-#include "lima_devfreq.h"
+ #include "lima_drv.h"
+ #include "lima_gem.h"
++#include "lima_gem_prime.h"
+ #include "lima_vm.h"
+ 
+ int lima_sched_timeout_ms;
+@@ -108,7 +108,7 @@ static int lima_ioctl_gem_submit(struct drm_device *dev, void *data, struct drm_
+ 	if (args->frame_size != pipe->frame_size)
+ 		return -EINVAL;
+ 
+-	bos = kvcalloc(args->nr_bos, sizeof(*submit.bos), GFP_KERNEL);
++	bos = kvcalloc(args->nr_bos, sizeof(*submit.bos) + sizeof(*submit.lbos), GFP_KERNEL);
+ 	if (!bos)
+ 		return -ENOMEM;
+ 
+@@ -142,6 +142,7 @@ static int lima_ioctl_gem_submit(struct drm_device *dev, void *data, struct drm_
+ 
+ 	submit.pipe = args->pipe;
+ 	submit.bos = bos;
++	submit.lbos = (void *)bos + size;
+ 	submit.nr_bos = args->nr_bos;
+ 	submit.task = task;
+ 	submit.ctx = ctx;
+@@ -158,8 +159,6 @@ static int lima_ioctl_gem_submit(struct drm_device *dev, void *data, struct drm_
+ 		kmem_cache_free(pipe->task_slab, task);
+ out0:
+ 	kvfree(bos);
+-	if (submit.lbos)
+-		kvfree(submit.lbos);
+ 	return err;
+ }
+ 
+@@ -241,7 +240,16 @@ static const struct drm_ioctl_desc lima_drm_driver_ioctls[] = {
+ 	DRM_IOCTL_DEF_DRV(LIMA_CTX_FREE, lima_ioctl_ctx_free, DRM_RENDER_ALLOW),
+ };
+ 
+-DEFINE_DRM_GEM_SHMEM_FOPS(lima_drm_driver_fops);
++static const struct file_operations lima_drm_driver_fops = {
++	.owner              = THIS_MODULE,
++	.open               = drm_open,
++	.release            = drm_release,
++	.unlocked_ioctl     = drm_ioctl,
++#ifdef CONFIG_COMPAT
++	.compat_ioctl       = drm_compat_ioctl,
++#endif
++	.mmap               = lima_gem_mmap,
++};
+ 
+ static struct drm_driver lima_drm_driver = {
+ 	.driver_features    = DRIVER_RENDER | DRIVER_GEM | DRIVER_SYNCOBJ,
+@@ -250,6 +258,10 @@ static struct drm_driver lima_drm_driver = {
+ 	.ioctls             = lima_drm_driver_ioctls,
+ 	.num_ioctls         = ARRAY_SIZE(lima_drm_driver_ioctls),
+ 	.fops               = &lima_drm_driver_fops,
++	.gem_free_object_unlocked = lima_gem_free_object,
++	.gem_open_object    = lima_gem_object_open,
++	.gem_close_object   = lima_gem_object_close,
++	.gem_vm_ops         = &lima_gem_vm_ops,
+ 	.name               = "lima",
+ 	.desc               = "lima DRM",
+ 	.date               = "20190217",
+@@ -257,11 +269,11 @@ static struct drm_driver lima_drm_driver = {
+ 	.minor              = 0,
+ 	.patchlevel         = 0,
+ 
+-	.gem_create_object  = lima_gem_create_object,
+ 	.prime_fd_to_handle = drm_gem_prime_fd_to_handle,
+-	.gem_prime_import_sg_table = drm_gem_shmem_prime_import_sg_table,
++	.gem_prime_import_sg_table = lima_gem_prime_import_sg_table,
+ 	.prime_handle_to_fd = drm_gem_prime_handle_to_fd,
+-	.gem_prime_mmap = drm_gem_prime_mmap,
++	.gem_prime_get_sg_table = lima_gem_prime_get_sg_table,
++	.gem_prime_mmap = lima_gem_prime_mmap,
+ };
+ 
+ static int lima_pdev_probe(struct platform_device *pdev)
+@@ -298,26 +310,18 @@ static int lima_pdev_probe(struct platform_device *pdev)
+ 	if (err)
+ 		goto err_out1;
+ 
+-	err = lima_devfreq_init(ldev);
+-	if (err) {
+-		dev_err(&pdev->dev, "Fatal error during devfreq init\n");
+-		goto err_out2;
+-	}
+-
+ 	/*
+ 	 * Register the DRM device with the core and the connectors with
+ 	 * sysfs.
+ 	 */
+ 	err = drm_dev_register(ddev, 0);
+ 	if (err < 0)
+-		goto err_out3;
++		goto err_out2;
+ 
+ 	return 0;
+ 
+-err_out3:
+-	lima_device_fini(ldev);
+ err_out2:
+-	lima_devfreq_fini(ldev);
++	lima_device_fini(ldev);
+ err_out1:
+ 	drm_dev_put(ddev);
+ err_out0:
+@@ -331,7 +335,6 @@ static int lima_pdev_remove(struct platform_device *pdev)
+ 	struct drm_device *ddev = ldev->ddev;
+ 
+ 	drm_dev_unregister(ddev);
+-	lima_devfreq_fini(ldev);
+ 	lima_device_fini(ldev);
+ 	drm_dev_put(ddev);
+ 	lima_sched_slab_fini();
+diff --git b/drivers/gpu/drm/lima/lima_gem.c a/drivers/gpu/drm/lima/lima_gem.c
+index 894d505f4f78..4da21353c3a2 100644
+--- b/drivers/gpu/drm/lima/lima_gem.c
++++ a/drivers/gpu/drm/lima/lima_gem.c
+@@ -3,7 +3,7 @@
+ 
+ #include <linux/mm.h>
+ #include <linux/sync_file.h>
+-#include <linux/pagemap.h>
++#include <linux/pfn_t.h>
+ 
+ #include <drm/drm_file.h>
+ #include <drm/drm_syncobj.h>
+@@ -13,55 +13,40 @@
+ 
+ #include "lima_drv.h"
+ #include "lima_gem.h"
++#include "lima_gem_prime.h"
+ #include "lima_vm.h"
++#include "lima_object.h"
+ 
+ int lima_gem_create_handle(struct drm_device *dev, struct drm_file *file,
+ 			   u32 size, u32 flags, u32 *handle)
+ {
+ 	int err;
+-	gfp_t mask;
+-	struct drm_gem_shmem_object *shmem;
+-	struct drm_gem_object *obj;
+-	struct sg_table *sgt;
++	struct lima_bo *bo;
++	struct lima_device *ldev = to_lima_dev(dev);
+ 
+-	shmem = drm_gem_shmem_create(dev, size);
+-	if (IS_ERR(shmem))
+-		return PTR_ERR(shmem);
++	bo = lima_bo_create(ldev, size, flags, NULL);
++	if (IS_ERR(bo))
++		return PTR_ERR(bo);
+ 
+-	obj = &shmem->base;
++	err = drm_gem_handle_create(file, &bo->gem, handle);
+ 
+-	/* Mali Utgard GPU can only support 32bit address space */
+-	mask = mapping_gfp_mask(obj->filp->f_mapping);
+-	mask &= ~__GFP_HIGHMEM;
+-	mask |= __GFP_DMA32;
+-	mapping_set_gfp_mask(obj->filp->f_mapping, mask);
+-
+-	sgt = drm_gem_shmem_get_pages_sgt(obj);
+-	if (IS_ERR(sgt)) {
+-		err = PTR_ERR(sgt);
+-		goto out;
+-	}
+-
+-	err = drm_gem_handle_create(file, obj, handle);
+-
+-out:
+ 	/* drop reference from allocate - handle holds it now */
+-	drm_gem_object_put_unlocked(obj);
++	drm_gem_object_put_unlocked(&bo->gem);
+ 
+ 	return err;
+ }
+ 
+-static void lima_gem_free_object(struct drm_gem_object *obj)
++void lima_gem_free_object(struct drm_gem_object *obj)
+ {
+ 	struct lima_bo *bo = to_lima_bo(obj);
+ 
+ 	if (!list_empty(&bo->va))
+ 		dev_err(obj->dev->dev, "lima gem free bo still has va\n");
+ 
+-	drm_gem_shmem_free_object(obj);
++	lima_bo_destroy(bo);
+ }
+ 
+-static int lima_gem_object_open(struct drm_gem_object *obj, struct drm_file *file)
++int lima_gem_object_open(struct drm_gem_object *obj, struct drm_file *file)
+ {
+ 	struct lima_bo *bo = to_lima_bo(obj);
+ 	struct lima_drm_priv *priv = to_lima_drm_priv(file);
+@@ -70,7 +55,7 @@ static int lima_gem_object_open(struct drm_gem_object *obj, struct drm_file *fil
+ 	return lima_vm_bo_add(vm, bo, true);
+ }
+ 
+-static void lima_gem_object_close(struct drm_gem_object *obj, struct drm_file *file)
++void lima_gem_object_close(struct drm_gem_object *obj, struct drm_file *file)
+ {
+ 	struct lima_bo *bo = to_lima_bo(obj);
+ 	struct lima_drm_priv *priv = to_lima_drm_priv(file);
+@@ -79,41 +64,13 @@ static void lima_gem_object_close(struct drm_gem_object *obj, struct drm_file *f
+ 	lima_vm_bo_del(vm, bo);
+ }
+ 
+-static const struct drm_gem_object_funcs lima_gem_funcs = {
+-	.free = lima_gem_free_object,
+-	.open = lima_gem_object_open,
+-	.close = lima_gem_object_close,
+-	.print_info = drm_gem_shmem_print_info,
+-	.pin = drm_gem_shmem_pin,
+-	.unpin = drm_gem_shmem_unpin,
+-	.get_sg_table = drm_gem_shmem_get_sg_table,
+-	.vmap = drm_gem_shmem_vmap,
+-	.vunmap = drm_gem_shmem_vunmap,
+-	.vm_ops = &drm_gem_shmem_vm_ops,
+-};
+-
+-struct drm_gem_object *lima_gem_create_object(struct drm_device *dev, size_t size)
+-{
+-	struct lima_bo *bo;
+-
+-	bo = kzalloc(sizeof(*bo), GFP_KERNEL);
+-	if (!bo)
+-		return NULL;
+-
+-	mutex_init(&bo->lock);
+-	INIT_LIST_HEAD(&bo->va);
+-
+-	bo->base.base.funcs = &lima_gem_funcs;
+-
+-	return &bo->base.base;
+-}
+-
+ int lima_gem_get_info(struct drm_file *file, u32 handle, u32 *va, u64 *offset)
+ {
+ 	struct drm_gem_object *obj;
+ 	struct lima_bo *bo;
+ 	struct lima_drm_priv *priv = to_lima_drm_priv(file);
+ 	struct lima_vm *vm = priv->vm;
++	int err;
+ 
+ 	obj = drm_gem_object_lookup(file, handle);
+ 	if (!obj)
+@@ -123,38 +80,63 @@ int lima_gem_get_info(struct drm_file *file, u32 handle, u32 *va, u64 *offset)
+ 
+ 	*va = lima_vm_get_va(vm, bo);
+ 
+-	*offset = drm_vma_node_offset_addr(&obj->vma_node);
++	err = drm_gem_create_mmap_offset(obj);
++	if (!err)
++		*offset = drm_vma_node_offset_addr(&obj->vma_node);
+ 
+ 	drm_gem_object_put_unlocked(obj);
++	return err;
++}
++
++static vm_fault_t lima_gem_fault(struct vm_fault *vmf)
++{
++	struct vm_area_struct *vma = vmf->vma;
++	struct drm_gem_object *obj = vma->vm_private_data;
++	struct lima_bo *bo = to_lima_bo(obj);
++	pfn_t pfn;
++	pgoff_t pgoff;
++
++	/* We don't use vmf->pgoff since that has the fake offset: */
++	pgoff = (vmf->address - vma->vm_start) >> PAGE_SHIFT;
++	pfn = __pfn_to_pfn_t(page_to_pfn(bo->pages[pgoff]), PFN_DEV);
++
++	return vmf_insert_mixed(vma, vmf->address, pfn);
++}
++
++const struct vm_operations_struct lima_gem_vm_ops = {
++	.fault = lima_gem_fault,
++	.open = drm_gem_vm_open,
++	.close = drm_gem_vm_close,
++};
++
++void lima_set_vma_flags(struct vm_area_struct *vma)
++{
++	pgprot_t prot = vm_get_page_prot(vma->vm_flags);
++
++	vma->vm_flags |= VM_MIXEDMAP;
++	vma->vm_flags &= ~VM_PFNMAP;
++	vma->vm_page_prot = pgprot_writecombine(prot);
++}
++
++int lima_gem_mmap(struct file *filp, struct vm_area_struct *vma)
++{
++	int ret;
++
++	ret = drm_gem_mmap(filp, vma);
++	if (ret)
++		return ret;
++
++	lima_set_vma_flags(vma);
+ 	return 0;
+ }
+ 
+-static int lima_gem_lookup_bos(struct drm_file *file, struct lima_submit *submit)
+-{
+-	int i, ret;
+-	u32 *handles;
+-
+-	handles = kvmalloc_array(submit->nr_bos, sizeof(u32), GFP_KERNEL);
+-	if (!handles)
+-		return -ENOMEM;
+-
+-	for (i = 0; i < submit->nr_bos; i++)
+-		handles[i] = submit->bos[i].handle;
+-
+-	ret = drm_gem_objects_lookup(file, handles, submit->nr_bos,
+-				     (struct drm_gem_object ***)&submit->lbos);
+-
+-	kvfree(handles);
+-	return ret;
+-}
+-
+ static int lima_gem_sync_bo(struct lima_sched_task *task, struct lima_bo *bo,
+ 			    bool write, bool explicit)
+ {
+ 	int err = 0;
+ 
+ 	if (!write) {
+-		err = dma_resv_reserve_shared(lima_bo_resv(bo), 1);
++		err = dma_resv_reserve_shared(bo->gem.resv, 1);
+ 		if (err)
+ 			return err;
+ 	}
+@@ -163,7 +145,62 @@ static int lima_gem_sync_bo(struct lima_sched_task *task, struct lima_bo *bo,
+ 	if (explicit)
+ 		return 0;
+ 
+-	return drm_gem_fence_array_add_implicit(&task->deps, &bo->base.base, write);
++	return drm_gem_fence_array_add_implicit(&task->deps, &bo->gem, write);
++}
++
++static int lima_gem_lock_bos(struct lima_bo **bos, u32 nr_bos,
++			     struct ww_acquire_ctx *ctx)
++{
++	int i, ret = 0, contended, slow_locked = -1;
++
++	ww_acquire_init(ctx, &reservation_ww_class);
++
++retry:
++	for (i = 0; i < nr_bos; i++) {
++		if (i == slow_locked) {
++			slow_locked = -1;
++			continue;
++		}
++
++		ret = ww_mutex_lock_interruptible(&bos[i]->gem.resv->lock, ctx);
++		if (ret < 0) {
++			contended = i;
++			goto err;
++		}
++	}
++
++	ww_acquire_done(ctx);
++	return 0;
++
++err:
++	for (i--; i >= 0; i--)
++		ww_mutex_unlock(&bos[i]->gem.resv->lock);
++
++	if (slow_locked >= 0)
++		ww_mutex_unlock(&bos[slow_locked]->gem.resv->lock);
++
++	if (ret == -EDEADLK) {
++		/* we lost out in a seqno race, lock and retry.. */
++		ret = ww_mutex_lock_slow_interruptible(
++			&bos[contended]->gem.resv->lock, ctx);
++		if (!ret) {
++			slow_locked = contended;
++			goto retry;
++		}
++	}
++	ww_acquire_fini(ctx);
++
++	return ret;
++}
++
++static void lima_gem_unlock_bos(struct lima_bo **bos, u32 nr_bos,
++				struct ww_acquire_ctx *ctx)
++{
++	int i;
++
++	for (i = 0; i < nr_bos; i++)
++		ww_mutex_unlock(&bos[i]->gem.resv->lock);
++	ww_acquire_fini(ctx);
+ }
+ 
+ static int lima_gem_add_deps(struct drm_file *file, struct lima_submit *submit)
+@@ -199,7 +236,7 @@ int lima_gem_submit(struct drm_file *file, struct lima_submit *submit)
+ 	struct lima_vm *vm = priv->vm;
+ 	struct drm_syncobj *out_sync = NULL;
+ 	struct dma_fence *fence;
+-	struct lima_bo **bos;
++	struct lima_bo **bos = submit->lbos;
+ 
+ 	if (submit->out_sync) {
+ 		out_sync = drm_syncobj_find(file, submit->out_sync);
+@@ -207,38 +244,43 @@ int lima_gem_submit(struct drm_file *file, struct lima_submit *submit)
+ 			return -ENOENT;
+ 	}
+ 
+-	err = lima_gem_lookup_bos(file, submit);
++	for (i = 0; i < submit->nr_bos; i++) {
++		struct drm_gem_object *obj;
++		struct lima_bo *bo;
++
++		obj = drm_gem_object_lookup(file, submit->bos[i].handle);
++		if (!obj) {
++			err = -ENOENT;
++			goto err_out0;
++		}
++
++		bo = to_lima_bo(obj);
++
++		/* increase refcnt of gpu va map to prevent unmapped when executing,
++		 * will be decreased when task done
++		 */
++		err = lima_vm_bo_add(vm, bo, false);
++		if (err) {
++			drm_gem_object_put_unlocked(obj);
++			goto err_out0;
++		}
++
++		bos[i] = bo;
++	}
++
++	err = lima_gem_lock_bos(bos, submit->nr_bos, &ctx);
+ 	if (err)
+ 		goto err_out0;
+ 
+-	bos = submit->lbos;
+-
+-	/* increase refcnt of gpu va map to prevent unmapped when executing,
+-	 * will be decreased when task done
+-	 */
+-	for (i = 0; i < submit->nr_bos; i++) {
+-		err = lima_vm_bo_add(vm, bos[i], false);
+-		if (err) {
+-			for (i--; i >= 0; i--)
+-				lima_vm_bo_del(vm, bos[i]);
+-			goto err_out1;
+-		}
+-	}
+-
+-	err = drm_gem_lock_reservations((struct drm_gem_object **)bos,
+-					submit->nr_bos, &ctx);
+-	if (err)
+-		goto err_out2;
+-
+ 	err = lima_sched_task_init(
+ 		submit->task, submit->ctx->context + submit->pipe,
+ 		bos, submit->nr_bos, vm);
+ 	if (err)
+-		goto err_out3;
++		goto err_out1;
+ 
+ 	err = lima_gem_add_deps(file, submit);
+ 	if (err)
+-		goto err_out4;
++		goto err_out2;
+ 
+ 	for (i = 0; i < submit->nr_bos; i++) {
+ 		err = lima_gem_sync_bo(
+@@ -246,7 +288,7 @@ int lima_gem_submit(struct drm_file *file, struct lima_submit *submit)
+ 			submit->bos[i].flags & LIMA_SUBMIT_BO_WRITE,
+ 			submit->flags & LIMA_SUBMIT_FLAG_EXPLICIT_FENCE);
+ 		if (err)
+-			goto err_out4;
++			goto err_out2;
+ 	}
+ 
+ 	fence = lima_sched_context_queue_task(
+@@ -254,16 +296,15 @@ int lima_gem_submit(struct drm_file *file, struct lima_submit *submit)
+ 
+ 	for (i = 0; i < submit->nr_bos; i++) {
+ 		if (submit->bos[i].flags & LIMA_SUBMIT_BO_WRITE)
+-			dma_resv_add_excl_fence(lima_bo_resv(bos[i]), fence);
++			dma_resv_add_excl_fence(bos[i]->gem.resv, fence);
+ 		else
+-			dma_resv_add_shared_fence(lima_bo_resv(bos[i]), fence);
++			dma_resv_add_shared_fence(bos[i]->gem.resv, fence);
+ 	}
+ 
+-	drm_gem_unlock_reservations((struct drm_gem_object **)bos,
+-				    submit->nr_bos, &ctx);
++	lima_gem_unlock_bos(bos, submit->nr_bos, &ctx);
+ 
+ 	for (i = 0; i < submit->nr_bos; i++)
+-		drm_gem_object_put_unlocked(&bos[i]->base.base);
++		drm_gem_object_put_unlocked(&bos[i]->gem);
+ 
+ 	if (out_sync) {
+ 		drm_syncobj_replace_fence(out_sync, fence);
+@@ -274,18 +315,17 @@ int lima_gem_submit(struct drm_file *file, struct lima_submit *submit)
+ 
+ 	return 0;
+ 
+-err_out4:
+-	lima_sched_task_fini(submit->task);
+-err_out3:
+-	drm_gem_unlock_reservations((struct drm_gem_object **)bos,
+-				    submit->nr_bos, &ctx);
+ err_out2:
+-	for (i = 0; i < submit->nr_bos; i++)
+-		lima_vm_bo_del(vm, bos[i]);
++	lima_sched_task_fini(submit->task);
+ err_out1:
+-	for (i = 0; i < submit->nr_bos; i++)
+-		drm_gem_object_put_unlocked(&bos[i]->base.base);
++	lima_gem_unlock_bos(bos, submit->nr_bos, &ctx);
+ err_out0:
++	for (i = 0; i < submit->nr_bos; i++) {
++		if (!bos[i])
++			break;
++		lima_vm_bo_del(vm, bos[i]);
++		drm_gem_object_put_unlocked(&bos[i]->gem);
++	}
+ 	if (out_sync)
+ 		drm_syncobj_put(out_sync);
+ 	return err;
+diff --git b/drivers/gpu/drm/lima/lima_gem.h a/drivers/gpu/drm/lima/lima_gem.h
+index 1800feb3e47f..556111a01135 100644
+--- b/drivers/gpu/drm/lima/lima_gem.h
++++ a/drivers/gpu/drm/lima/lima_gem.h
+@@ -4,37 +4,19 @@
+ #ifndef __LIMA_GEM_H__
+ #define __LIMA_GEM_H__
+ 
+-#include <drm/drm_gem_shmem_helper.h>
+-
++struct lima_bo;
+ struct lima_submit;
+ 
+-struct lima_bo {
+-	struct drm_gem_shmem_object base;
++extern const struct vm_operations_struct lima_gem_vm_ops;
+ 
+-	struct mutex lock;
+-	struct list_head va;
+-};
+-
+-static inline struct lima_bo *
+-to_lima_bo(struct drm_gem_object *obj)
+-{
+-	return container_of(to_drm_gem_shmem_obj(obj), struct lima_bo, base);
+-}
+-
+-static inline size_t lima_bo_size(struct lima_bo *bo)
+-{
+-	return bo->base.base.size;
+-}
+-
+-static inline struct dma_resv *lima_bo_resv(struct lima_bo *bo)
+-{
+-	return bo->base.base.resv;
+-}
+-
+-struct drm_gem_object *lima_gem_create_object(struct drm_device *dev, size_t size);
++struct lima_bo *lima_gem_create_bo(struct drm_device *dev, u32 size, u32 flags);
+ int lima_gem_create_handle(struct drm_device *dev, struct drm_file *file,
+ 			   u32 size, u32 flags, u32 *handle);
++void lima_gem_free_object(struct drm_gem_object *obj);
++int lima_gem_object_open(struct drm_gem_object *obj, struct drm_file *file);
++void lima_gem_object_close(struct drm_gem_object *obj, struct drm_file *file);
+ int lima_gem_get_info(struct drm_file *file, u32 handle, u32 *va, u64 *offset);
++int lima_gem_mmap(struct file *filp, struct vm_area_struct *vma);
+ int lima_gem_submit(struct drm_file *file, struct lima_submit *submit);
+ int lima_gem_wait(struct drm_file *file, u32 handle, u32 op, s64 timeout_ns);
+ 
+diff --git b/drivers/gpu/drm/lima/lima_gem_prime.c a/drivers/gpu/drm/lima/lima_gem_prime.c
+new file mode 100644
+index 000000000000..e3eb251e0a12
+--- /dev/null
++++ a/drivers/gpu/drm/lima/lima_gem_prime.c
+@@ -0,0 +1,46 @@
++// SPDX-License-Identifier: GPL-2.0 OR MIT
++/* Copyright 2018-2019 Qiang Yu <yuq825@gmail.com> */
++
++#include <linux/dma-buf.h>
++#include <drm/drm_prime.h>
++#include <drm/drm_drv.h>
++#include <drm/drm_file.h>
++
++#include "lima_device.h"
++#include "lima_object.h"
++#include "lima_gem.h"
++#include "lima_gem_prime.h"
++
++struct drm_gem_object *lima_gem_prime_import_sg_table(
++	struct drm_device *dev, struct dma_buf_attachment *attach,
++	struct sg_table *sgt)
++{
++	struct lima_device *ldev = to_lima_dev(dev);
++	struct lima_bo *bo;
++
++	bo = lima_bo_create(ldev, attach->dmabuf->size, 0, sgt);
++	if (IS_ERR(bo))
++		return ERR_CAST(bo);
++
++	return &bo->gem;
++}
++
++struct sg_table *lima_gem_prime_get_sg_table(struct drm_gem_object *obj)
++{
++	struct lima_bo *bo = to_lima_bo(obj);
++	int npages = obj->size >> PAGE_SHIFT;
++
++	return drm_prime_pages_to_sg(bo->pages, npages);
++}
++
++int lima_gem_prime_mmap(struct drm_gem_object *obj, struct vm_area_struct *vma)
++{
++	int ret;
++
++	ret = drm_gem_mmap_obj(obj, obj->size, vma);
++	if (ret)
++		return ret;
++
++	lima_set_vma_flags(vma);
++	return 0;
++}
+diff --git b/drivers/gpu/drm/lima/lima_gem_prime.h a/drivers/gpu/drm/lima/lima_gem_prime.h
+new file mode 100644
+index 000000000000..34b4d35c21e3
+--- /dev/null
++++ a/drivers/gpu/drm/lima/lima_gem_prime.h
+@@ -0,0 +1,13 @@
++/* SPDX-License-Identifier: GPL-2.0 OR MIT */
++/* Copyright 2018-2019 Qiang Yu <yuq825@gmail.com> */
++
++#ifndef __LIMA_GEM_PRIME_H__
++#define __LIMA_GEM_PRIME_H__
++
++struct drm_gem_object *lima_gem_prime_import_sg_table(
++	struct drm_device *dev, struct dma_buf_attachment *attach,
++	struct sg_table *sgt);
++struct sg_table *lima_gem_prime_get_sg_table(struct drm_gem_object *obj);
++int lima_gem_prime_mmap(struct drm_gem_object *obj, struct vm_area_struct *vma);
++
++#endif
+diff --git b/drivers/gpu/drm/lima/lima_mmu.c a/drivers/gpu/drm/lima/lima_mmu.c
+index 97ec09dee572..8e1651d6a61f 100644
+--- b/drivers/gpu/drm/lima/lima_mmu.c
++++ a/drivers/gpu/drm/lima/lima_mmu.c
+@@ -8,6 +8,7 @@
+ #include "lima_device.h"
+ #include "lima_mmu.h"
+ #include "lima_vm.h"
++#include "lima_object.h"
+ #include "lima_regs.h"
+ 
+ #define mmu_write(reg, data) writel(data, ip->iomem + reg)
+diff --git b/drivers/gpu/drm/lima/lima_object.c a/drivers/gpu/drm/lima/lima_object.c
+new file mode 100644
+index 000000000000..87123b1d083c
+--- /dev/null
++++ a/drivers/gpu/drm/lima/lima_object.c
+@@ -0,0 +1,119 @@
++// SPDX-License-Identifier: GPL-2.0 OR MIT
++/* Copyright 2018-2019 Qiang Yu <yuq825@gmail.com> */
++
++#include <drm/drm_prime.h>
++#include <linux/pagemap.h>
++#include <linux/dma-mapping.h>
++
++#include "lima_object.h"
++
++void lima_bo_destroy(struct lima_bo *bo)
++{
++	if (bo->sgt) {
++		kfree(bo->pages);
++		drm_prime_gem_destroy(&bo->gem, bo->sgt);
++	} else {
++		if (bo->pages_dma_addr) {
++			int i, npages = bo->gem.size >> PAGE_SHIFT;
++
++			for (i = 0; i < npages; i++) {
++				if (bo->pages_dma_addr[i])
++					dma_unmap_page(bo->gem.dev->dev,
++						       bo->pages_dma_addr[i],
++						       PAGE_SIZE, DMA_BIDIRECTIONAL);
++			}
++		}
++
++		if (bo->pages)
++			drm_gem_put_pages(&bo->gem, bo->pages, true, true);
++	}
++
++	kfree(bo->pages_dma_addr);
++	drm_gem_object_release(&bo->gem);
++	kfree(bo);
++}
++
++static struct lima_bo *lima_bo_create_struct(struct lima_device *dev, u32 size, u32 flags)
++{
++	struct lima_bo *bo;
++	int err;
++
++	size = PAGE_ALIGN(size);
++
++	bo = kzalloc(sizeof(*bo), GFP_KERNEL);
++	if (!bo)
++		return ERR_PTR(-ENOMEM);
++
++	mutex_init(&bo->lock);
++	INIT_LIST_HEAD(&bo->va);
++
++	err = drm_gem_object_init(dev->ddev, &bo->gem, size);
++	if (err) {
++		kfree(bo);
++		return ERR_PTR(err);
++	}
++
++	return bo;
++}
++
++struct lima_bo *lima_bo_create(struct lima_device *dev, u32 size,
++			       u32 flags, struct sg_table *sgt)
++{
++	int i, err;
++	size_t npages;
++	struct lima_bo *bo, *ret;
++
++	bo = lima_bo_create_struct(dev, size, flags);
++	if (IS_ERR(bo))
++		return bo;
++
++	npages = bo->gem.size >> PAGE_SHIFT;
++
++	bo->pages_dma_addr = kcalloc(npages, sizeof(dma_addr_t), GFP_KERNEL);
++	if (!bo->pages_dma_addr) {
++		ret = ERR_PTR(-ENOMEM);
++		goto err_out;
++	}
++
++	if (sgt) {
++		bo->sgt = sgt;
++
++		bo->pages = kcalloc(npages, sizeof(*bo->pages), GFP_KERNEL);
++		if (!bo->pages) {
++			ret = ERR_PTR(-ENOMEM);
++			goto err_out;
++		}
++
++		err = drm_prime_sg_to_page_addr_arrays(
++			sgt, bo->pages, bo->pages_dma_addr, npages);
++		if (err) {
++			ret = ERR_PTR(err);
++			goto err_out;
++		}
++	} else {
++		mapping_set_gfp_mask(bo->gem.filp->f_mapping, GFP_DMA32);
++		bo->pages = drm_gem_get_pages(&bo->gem);
++		if (IS_ERR(bo->pages)) {
++			ret = ERR_CAST(bo->pages);
++			bo->pages = NULL;
++			goto err_out;
++		}
++
++		for (i = 0; i < npages; i++) {
++			dma_addr_t addr = dma_map_page(dev->dev, bo->pages[i], 0,
++						       PAGE_SIZE, DMA_BIDIRECTIONAL);
++			if (dma_mapping_error(dev->dev, addr)) {
++				ret = ERR_PTR(-EFAULT);
++				goto err_out;
++			}
++			bo->pages_dma_addr[i] = addr;
++		}
++
++	}
++
++	return bo;
++
++err_out:
++	lima_bo_destroy(bo);
++	return ret;
++}
+diff --git b/drivers/gpu/drm/lima/lima_object.h a/drivers/gpu/drm/lima/lima_object.h
+new file mode 100644
+index 000000000000..31ca2d8dc0a1
+--- /dev/null
++++ a/drivers/gpu/drm/lima/lima_object.h
+@@ -0,0 +1,35 @@
++/* SPDX-License-Identifier: GPL-2.0 OR MIT */
++/* Copyright 2018-2019 Qiang Yu <yuq825@gmail.com> */
++
++#ifndef __LIMA_OBJECT_H__
++#define __LIMA_OBJECT_H__
++
++#include <drm/drm_gem.h>
++
++#include "lima_device.h"
++
++struct lima_bo {
++	struct drm_gem_object gem;
++
++	struct page **pages;
++	dma_addr_t *pages_dma_addr;
++	struct sg_table *sgt;
++	void *vaddr;
++
++	struct mutex lock;
++	struct list_head va;
++};
++
++static inline struct lima_bo *
++to_lima_bo(struct drm_gem_object *obj)
++{
++	return container_of(obj, struct lima_bo, gem);
++}
++
++struct lima_bo *lima_bo_create(struct lima_device *dev, u32 size,
++			       u32 flags, struct sg_table *sgt);
++void lima_bo_destroy(struct lima_bo *bo);
++void *lima_bo_vmap(struct lima_bo *bo);
++void lima_bo_vunmap(struct lima_bo *bo);
++
++#endif
+diff --git b/drivers/gpu/drm/lima/lima_sched.c a/drivers/gpu/drm/lima/lima_sched.c
+index 851c496a168b..4127cacac454 100644
+--- b/drivers/gpu/drm/lima/lima_sched.c
++++ a/drivers/gpu/drm/lima/lima_sched.c
+@@ -5,13 +5,12 @@
+ #include <linux/slab.h>
+ #include <linux/xarray.h>
+ 
+-#include "lima_devfreq.h"
+ #include "lima_drv.h"
+ #include "lima_sched.h"
+ #include "lima_vm.h"
+ #include "lima_mmu.h"
+ #include "lima_l2_cache.h"
+-#include "lima_gem.h"
++#include "lima_object.h"
+ 
+ struct lima_fence {
+ 	struct dma_fence base;
+@@ -118,7 +117,7 @@ int lima_sched_task_init(struct lima_sched_task *task,
+ 		return -ENOMEM;
+ 
+ 	for (i = 0; i < num_bos; i++)
+-		drm_gem_object_get(&bos[i]->base.base);
++		drm_gem_object_get(&bos[i]->gem);
+ 
+ 	err = drm_sched_job_init(&task->base, &context->base, vm);
+ 	if (err) {
+@@ -149,7 +148,7 @@ void lima_sched_task_fini(struct lima_sched_task *task)
+ 
+ 	if (task->bos) {
+ 		for (i = 0; i < task->num_bos; i++)
+-			drm_gem_object_put_unlocked(&task->bos[i]->base.base);
++			drm_gem_object_put_unlocked(&task->bos[i]->gem);
+ 		kfree(task->bos);
+ 	}
+ 
+@@ -214,8 +213,6 @@ static struct dma_fence *lima_sched_run_job(struct drm_sched_job *job)
+ 	 */
+ 	ret = dma_fence_get(task->fence);
+ 
+-	lima_devfreq_record_busy(pipe->ldev);
+-
+ 	pipe->current_task = task;
+ 
+ 	/* this is needed for MMU to work correctly, otherwise GP/PP
+@@ -283,8 +280,6 @@ static void lima_sched_handle_error_task(struct lima_sched_pipe *pipe,
+ 	pipe->current_vm = NULL;
+ 	pipe->current_task = NULL;
+ 
+-	lima_devfreq_record_idle(pipe->ldev);
+-
+ 	drm_sched_resubmit_jobs(&pipe->base);
+ 	drm_sched_start(&pipe->base, true);
+ }
+@@ -353,8 +348,6 @@ void lima_sched_pipe_fini(struct lima_sched_pipe *pipe)
+ 
+ void lima_sched_pipe_task_done(struct lima_sched_pipe *pipe)
+ {
+-	lima_devfreq_record_idle(pipe->ldev);
+-
+ 	if (pipe->error)
+ 		schedule_work(&pipe->error_work);
+ 	else {
+diff --git b/drivers/gpu/drm/lima/lima_sched.h a/drivers/gpu/drm/lima/lima_sched.h
+index 9ae7df7d7fbb..928af91c1118 100644
+--- b/drivers/gpu/drm/lima/lima_sched.h
++++ a/drivers/gpu/drm/lima/lima_sched.h
+@@ -6,7 +6,6 @@
+ 
+ #include <drm/gpu_scheduler.h>
+ 
+-struct lima_device;
+ struct lima_vm;
+ 
+ struct lima_sched_task {
+@@ -42,8 +41,6 @@ struct lima_sched_pipe {
+ 	u32 fence_seqno;
+ 	spinlock_t fence_lock;
+ 
+-	struct lima_device *ldev;
+-
+ 	struct lima_sched_task *current_task;
+ 	struct lima_vm *current_vm;
+ 
+diff --git b/drivers/gpu/drm/lima/lima_vm.c a/drivers/gpu/drm/lima/lima_vm.c
+index 840e2350d872..19e88ca16527 100644
+--- b/drivers/gpu/drm/lima/lima_vm.c
++++ a/drivers/gpu/drm/lima/lima_vm.c
+@@ -6,7 +6,7 @@
+ 
+ #include "lima_device.h"
+ #include "lima_vm.h"
+-#include "lima_gem.h"
++#include "lima_object.h"
+ #include "lima_regs.h"
+ 
+ struct lima_bo_va {
+@@ -32,7 +32,7 @@ struct lima_bo_va {
+ #define LIMA_BTE(va) ((va & LIMA_VM_BT_MASK) >> LIMA_VM_BT_SHIFT)
+ 
+ 
+-static void lima_vm_unmap_range(struct lima_vm *vm, u32 start, u32 end)
++static void lima_vm_unmap_page_table(struct lima_vm *vm, u32 start, u32 end)
+ {
+ 	u32 addr;
+ 
+@@ -44,32 +44,41 @@ static void lima_vm_unmap_range(struct lima_vm *vm, u32 start, u32 end)
+ 	}
+ }
+ 
+-static int lima_vm_map_page(struct lima_vm *vm, dma_addr_t pa, u32 va)
++static int lima_vm_map_page_table(struct lima_vm *vm, dma_addr_t *dma,
++				  u32 start, u32 end)
+ {
+-	u32 pbe = LIMA_PBE(va);
+-	u32 bte = LIMA_BTE(va);
++	u64 addr;
++	int i = 0;
+ 
+-	if (!vm->bts[pbe].cpu) {
+-		dma_addr_t pts;
+-		u32 *pd;
+-		int j;
++	for (addr = start; addr <= end; addr += LIMA_PAGE_SIZE) {
++		u32 pbe = LIMA_PBE(addr);
++		u32 bte = LIMA_BTE(addr);
+ 
+-		vm->bts[pbe].cpu = dma_alloc_wc(
+-			vm->dev->dev, LIMA_PAGE_SIZE << LIMA_VM_NUM_PT_PER_BT_SHIFT,
+-			&vm->bts[pbe].dma, GFP_KERNEL | __GFP_NOWARN | __GFP_ZERO);
+-		if (!vm->bts[pbe].cpu)
+-			return -ENOMEM;
++		if (!vm->bts[pbe].cpu) {
++			dma_addr_t pts;
++			u32 *pd;
++			int j;
+ 
+-		pts = vm->bts[pbe].dma;
+-		pd = vm->pd.cpu + (pbe << LIMA_VM_NUM_PT_PER_BT_SHIFT);
+-		for (j = 0; j < LIMA_VM_NUM_PT_PER_BT; j++) {
+-			pd[j] = pts | LIMA_VM_FLAG_PRESENT;
+-			pts += LIMA_PAGE_SIZE;
++			vm->bts[pbe].cpu = dma_alloc_wc(
++				vm->dev->dev, LIMA_PAGE_SIZE << LIMA_VM_NUM_PT_PER_BT_SHIFT,
++				&vm->bts[pbe].dma, GFP_KERNEL | __GFP_ZERO);
++			if (!vm->bts[pbe].cpu) {
++				if (addr != start)
++					lima_vm_unmap_page_table(vm, start, addr - 1);
++				return -ENOMEM;
++			}
++
++			pts = vm->bts[pbe].dma;
++			pd = vm->pd.cpu + (pbe << LIMA_VM_NUM_PT_PER_BT_SHIFT);
++			for (j = 0; j < LIMA_VM_NUM_PT_PER_BT; j++) {
++				pd[j] = pts | LIMA_VM_FLAG_PRESENT;
++				pts += LIMA_PAGE_SIZE;
++			}
+ 		}
++
++		vm->bts[pbe].cpu[bte] = dma[i++] | LIMA_VM_FLAGS_CACHE;
+ 	}
+ 
+-	vm->bts[pbe].cpu[bte] = pa | LIMA_VM_FLAGS_CACHE;
+-
+ 	return 0;
+ }
+ 
+@@ -91,8 +100,7 @@ lima_vm_bo_find(struct lima_vm *vm, struct lima_bo *bo)
+ int lima_vm_bo_add(struct lima_vm *vm, struct lima_bo *bo, bool create)
+ {
+ 	struct lima_bo_va *bo_va;
+-	struct sg_dma_page_iter sg_iter;
+-	int offset = 0, err;
++	int err;
+ 
+ 	mutex_lock(&bo->lock);
+ 
+@@ -120,18 +128,14 @@ int lima_vm_bo_add(struct lima_vm *vm, struct lima_bo *bo, bool create)
+ 
+ 	mutex_lock(&vm->lock);
+ 
+-	err = drm_mm_insert_node(&vm->mm, &bo_va->node, lima_bo_size(bo));
++	err = drm_mm_insert_node(&vm->mm, &bo_va->node, bo->gem.size);
+ 	if (err)
+ 		goto err_out1;
+ 
+-	for_each_sg_dma_page(bo->base.sgt->sgl, &sg_iter, bo->base.sgt->nents, 0) {
+-		err = lima_vm_map_page(vm, sg_page_iter_dma_address(&sg_iter),
+-				       bo_va->node.start + offset);
+-		if (err)
+-			goto err_out2;
+-
+-		offset += PAGE_SIZE;
+-	}
++	err = lima_vm_map_page_table(vm, bo->pages_dma_addr, bo_va->node.start,
++				     bo_va->node.start + bo_va->node.size - 1);
++	if (err)
++		goto err_out2;
+ 
+ 	mutex_unlock(&vm->lock);
+ 
+@@ -141,8 +145,6 @@ int lima_vm_bo_add(struct lima_vm *vm, struct lima_bo *bo, bool create)
+ 	return 0;
+ 
+ err_out2:
+-	if (offset)
+-		lima_vm_unmap_range(vm, bo_va->node.start, bo_va->node.start + offset - 1);
+ 	drm_mm_remove_node(&bo_va->node);
+ err_out1:
+ 	mutex_unlock(&vm->lock);
+@@ -166,8 +168,8 @@ void lima_vm_bo_del(struct lima_vm *vm, struct lima_bo *bo)
+ 
+ 	mutex_lock(&vm->lock);
+ 
+-	lima_vm_unmap_range(vm, bo_va->node.start,
+-			    bo_va->node.start + bo_va->node.size - 1);
++	lima_vm_unmap_page_table(vm, bo_va->node.start,
++				 bo_va->node.start + bo_va->node.size - 1);
+ 
+ 	drm_mm_remove_node(&bo_va->node);
+ 
+@@ -208,13 +210,14 @@ struct lima_vm *lima_vm_create(struct lima_device *dev)
+ 	kref_init(&vm->refcount);
+ 
+ 	vm->pd.cpu = dma_alloc_wc(dev->dev, LIMA_PAGE_SIZE, &vm->pd.dma,
+-				  GFP_KERNEL | __GFP_NOWARN | __GFP_ZERO);
++				  GFP_KERNEL | __GFP_ZERO);
+ 	if (!vm->pd.cpu)
+ 		goto err_out0;
+ 
+ 	if (dev->dlbu_cpu) {
+-		int err = lima_vm_map_page(
+-			vm, dev->dlbu_dma, LIMA_VA_RESERVE_DLBU);
++		int err = lima_vm_map_page_table(
++			vm, &dev->dlbu_dma, LIMA_VA_RESERVE_DLBU,
++			LIMA_VA_RESERVE_DLBU + LIMA_PAGE_SIZE - 1);
+ 		if (err)
+ 			goto err_out1;
+ 	}
+diff --git b/drivers/gpu/drm/meson/meson_crtc.c a/drivers/gpu/drm/meson/meson_crtc.c
+index eefefc488cd6..57ae1c13d1e6 100644
+--- b/drivers/gpu/drm/meson/meson_crtc.c
++++ a/drivers/gpu/drm/meson/meson_crtc.c
+@@ -357,7 +357,7 @@ void meson_crtc_irq(struct meson_drm *priv)
+ 					    MESON_CANVAS_WRAP_NONE,
+ 					    MESON_CANVAS_BLKMODE_LINEAR,
+ 					    MESON_CANVAS_ENDIAN_SWAP64);
+-		}
++		};
+ 
+ 		writel_relaxed(priv->viu.vd1_if0_gen_reg,
+ 				priv->io_base + meson_crtc->viu_offset +
+diff --git b/drivers/gpu/drm/meson/meson_plane.c a/drivers/gpu/drm/meson/meson_plane.c
+index b96fa431c1ce..ed543227b00d 100644
+--- b/drivers/gpu/drm/meson/meson_plane.c
++++ a/drivers/gpu/drm/meson/meson_plane.c
+@@ -178,7 +178,7 @@ static void meson_plane_atomic_update(struct drm_plane *plane,
+ 		priv->viu.osd1_blk0_cfg[0] |= OSD_BLK_MODE_16 |
+ 					      OSD_COLOR_MATRIX_16_RGB565;
+ 		break;
+-	}
++	};
+ 
+ 	/* Default scaler parameters */
+ 	vsc_bot_rcv_num = 0;
+diff --git b/drivers/gpu/drm/panfrost/panfrost_drv.c a/drivers/gpu/drm/panfrost/panfrost_drv.c
+index f57dd195dfb8..5906c80c4b2c 100644
+--- b/drivers/gpu/drm/panfrost/panfrost_drv.c
++++ a/drivers/gpu/drm/panfrost/panfrost_drv.c
+@@ -166,7 +166,6 @@ panfrost_lookup_bos(struct drm_device *dev,
+ 			break;
+ 		}
+ 
+-		atomic_inc(&bo->gpu_usecount);
+ 		job->mappings[i] = mapping;
+ 	}
+ 
+diff --git b/drivers/gpu/drm/panfrost/panfrost_gem.h a/drivers/gpu/drm/panfrost/panfrost_gem.h
+index b3517ff9630c..ca1bc9019600 100644
+--- b/drivers/gpu/drm/panfrost/panfrost_gem.h
++++ a/drivers/gpu/drm/panfrost/panfrost_gem.h
+@@ -30,12 +30,6 @@ struct panfrost_gem_object {
+ 		struct mutex lock;
+ 	} mappings;
+ 
+-	/*
+-	 * Count the number of jobs referencing this BO so we don't let the
+-	 * shrinker reclaim this object prematurely.
+-	 */
+-	atomic_t gpu_usecount;
+-
+ 	bool noexec		:1;
+ 	bool is_heap		:1;
+ };
+diff --git b/drivers/gpu/drm/panfrost/panfrost_gem_shrinker.c a/drivers/gpu/drm/panfrost/panfrost_gem_shrinker.c
+index 288e46c40673..f5dd7b29bc95 100644
+--- b/drivers/gpu/drm/panfrost/panfrost_gem_shrinker.c
++++ a/drivers/gpu/drm/panfrost/panfrost_gem_shrinker.c
+@@ -41,9 +41,6 @@ static bool panfrost_gem_purge(struct drm_gem_object *obj)
+ 	struct drm_gem_shmem_object *shmem = to_drm_gem_shmem_obj(obj);
+ 	struct panfrost_gem_object *bo = to_panfrost_bo(obj);
+ 
+-	if (atomic_read(&bo->gpu_usecount))
+-		return false;
+-
+ 	if (!mutex_trylock(&shmem->pages_lock))
+ 		return false;
+ 
+diff --git b/drivers/gpu/drm/panfrost/panfrost_gpu.c a/drivers/gpu/drm/panfrost/panfrost_gpu.c
+index 90728a177208..8822ec13a0d6 100644
+--- b/drivers/gpu/drm/panfrost/panfrost_gpu.c
++++ a/drivers/gpu/drm/panfrost/panfrost_gpu.c
+@@ -7,9 +7,7 @@
+ #include <linux/delay.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/interrupt.h>
+-#include <linux/reset.h>
+ #include <linux/io.h>
+-#include <linux/of.h>
+ #include <linux/iopoll.h>
+ #include <linux/platform_device.h>
+ 
+@@ -61,16 +59,7 @@ int panfrost_gpu_soft_reset(struct panfrost_device *pfdev)
+ 
+ 	gpu_write(pfdev, GPU_INT_MASK, 0);
+ 	gpu_write(pfdev, GPU_INT_CLEAR, GPU_IRQ_RESET_COMPLETED);
+-
+-	if (of_device_is_compatible(pfdev->dev->of_node, "amlogic,meson-gxm-mali")) {
+-		reset_control_assert(pfdev->rstc);
+-		udelay(10);
+-		reset_control_deassert(pfdev->rstc);
+-
+-		gpu_write(pfdev, GPU_PWR_KEY, 0x2968A819);
+-		gpu_write(pfdev, GPU_PWR_OVERRIDE1, 0xfff | (0x20 << 16));
+-	} else
+-		gpu_write(pfdev, GPU_CMD, GPU_CMD_SOFT_RESET);
++	gpu_write(pfdev, GPU_CMD, GPU_CMD_SOFT_RESET);
+ 
+ 	ret = readl_relaxed_poll_timeout(pfdev->iomem + GPU_INT_RAWSTAT,
+ 		val, val & GPU_IRQ_RESET_COMPLETED, 100, 10000);
+diff --git b/drivers/gpu/drm/panfrost/panfrost_job.c a/drivers/gpu/drm/panfrost/panfrost_job.c
+index 9f770d454684..bbb0c5e3ca6f 100644
+--- b/drivers/gpu/drm/panfrost/panfrost_job.c
++++ a/drivers/gpu/drm/panfrost/panfrost_job.c
+@@ -270,13 +270,8 @@ static void panfrost_job_cleanup(struct kref *ref)
+ 	dma_fence_put(job->render_done_fence);
+ 
+ 	if (job->mappings) {
+-		for (i = 0; i < job->bo_count; i++) {
+-			if (!job->mappings[i])
+-				break;
+-
+-			atomic_dec(&job->mappings[i]->obj->gpu_usecount);
++		for (i = 0; i < job->bo_count; i++)
+ 			panfrost_gem_mapping_put(job->mappings[i]);
+-		}
+ 		kvfree(job->mappings);
+ 	}
+ 
+diff --git b/drivers/gpu/drm/panfrost/panfrost_regs.h a/drivers/gpu/drm/panfrost/panfrost_regs.h
+index 7a0cfa629760..ea38ac60581c 100644
+--- b/drivers/gpu/drm/panfrost/panfrost_regs.h
++++ a/drivers/gpu/drm/panfrost/panfrost_regs.h
+@@ -69,10 +69,6 @@
+ #define GPU_PRFCNT_TILER_EN		0x74
+ #define GPU_PRFCNT_MMU_L2_EN		0x7c
+ 
+-#define GPU_PWR_KEY			0x050	/* (WO) Power manager key register */
+-#define GPU_PWR_OVERRIDE0		0x054	/* (RW) Power manager override settings */
+-#define GPU_PWR_OVERRIDE1		0x058	/* (RW) Power manager override settings */
+-
+ #define GPU_THREAD_MAX_THREADS		0x0A0	/* (RO) Maximum number of threads per core */
+ #define GPU_THREAD_MAX_WORKGROUP_SIZE	0x0A4	/* (RO) Maximum workgroup size */
+ #define GPU_THREAD_MAX_BARRIER_SIZE	0x0A8	/* (RO) Maximum threads waiting at a barrier */
+diff --git b/drivers/gpu/drm/sun4i/sun4i_drv.c a/drivers/gpu/drm/sun4i/sun4i_drv.c
+index 5b54eff12cc0..a5757b11b730 100644
+--- b/drivers/gpu/drm/sun4i/sun4i_drv.c
++++ a/drivers/gpu/drm/sun4i/sun4i_drv.c
+@@ -85,6 +85,7 @@ static int sun4i_drv_bind(struct device *dev)
+ 	}
+ 
+ 	drm_mode_config_init(drm);
++	drm->mode_config.allow_fb_modifiers = true;
+ 
+ 	ret = component_bind_all(drm->dev, drm);
+ 	if (ret) {
+diff --git b/drivers/gpu/drm/v3d/v3d_gem.c a/drivers/gpu/drm/v3d/v3d_gem.c
+index 810d2138e594..19c092d75266 100644
+--- b/drivers/gpu/drm/v3d/v3d_gem.c
++++ a/drivers/gpu/drm/v3d/v3d_gem.c
+@@ -290,6 +290,10 @@ v3d_lookup_bos(struct drm_device *dev,
+ 	       u64 bo_handles,
+ 	       u32 bo_count)
+ {
++	u32 *handles;
++	int ret = 0;
++	int i;
++
+ 	job->bo_count = bo_count;
+ 
+ 	if (!job->bo_count) {
+@@ -300,9 +304,48 @@ v3d_lookup_bos(struct drm_device *dev,
+ 		return -EINVAL;
+ 	}
+ 
+-	return drm_gem_objects_lookup_user(file_priv,
+-					   (void __user *)(uintptr_t)bo_handles,
+-					   job->bo_count, &job->bo);
++	job->bo = kvmalloc_array(job->bo_count,
++				 sizeof(struct drm_gem_cma_object *),
++				 GFP_KERNEL | __GFP_ZERO);
++	if (!job->bo) {
++		DRM_DEBUG("Failed to allocate validated BO pointers\n");
++		return -ENOMEM;
++	}
++
++	handles = kvmalloc_array(job->bo_count, sizeof(u32), GFP_KERNEL);
++	if (!handles) {
++		ret = -ENOMEM;
++		DRM_DEBUG("Failed to allocate incoming GEM handles\n");
++		goto fail;
++	}
++
++	if (copy_from_user(handles,
++			   (void __user *)(uintptr_t)bo_handles,
++			   job->bo_count * sizeof(u32))) {
++		ret = -EFAULT;
++		DRM_DEBUG("Failed to copy in GEM handles\n");
++		goto fail;
++	}
++
++	spin_lock(&file_priv->table_lock);
++	for (i = 0; i < job->bo_count; i++) {
++		struct drm_gem_object *bo = idr_find(&file_priv->object_idr,
++						     handles[i]);
++		if (!bo) {
++			DRM_DEBUG("Failed to look up GEM BO %d: %d\n",
++				  i, handles[i]);
++			ret = -ENOENT;
++			spin_unlock(&file_priv->table_lock);
++			goto fail;
++		}
++		drm_gem_object_get(bo);
++		job->bo[i] = bo;
++	}
++	spin_unlock(&file_priv->table_lock);
++
++fail:
++	kvfree(handles);
++	return ret;
+ }
+ 
+ static void
+diff --git b/drivers/gpu/drm/vgem/vgem_drv.c a/drivers/gpu/drm/vgem/vgem_drv.c
+index 909eba43664a..5bd60ded3d81 100644
+--- b/drivers/gpu/drm/vgem/vgem_drv.c
++++ a/drivers/gpu/drm/vgem/vgem_drv.c
+@@ -196,10 +196,9 @@ static struct drm_gem_object *vgem_gem_create(struct drm_device *dev,
+ 		return ERR_CAST(obj);
+ 
+ 	ret = drm_gem_handle_create(file, &obj->base, handle);
+-	if (ret) {
+-		drm_gem_object_put_unlocked(&obj->base);
++	drm_gem_object_put_unlocked(&obj->base);
++	if (ret)
+ 		return ERR_PTR(ret);
+-	}
+ 
+ 	return &obj->base;
+ }
+@@ -222,9 +221,7 @@ static int vgem_gem_dumb_create(struct drm_file *file, struct drm_device *dev,
+ 	args->size = gem_object->size;
+ 	args->pitch = pitch;
+ 
+-	drm_gem_object_put_unlocked(gem_object);
+-
+-	DRM_DEBUG("Created object of size %llu\n", args->size);
++	DRM_DEBUG("Created object of size %lld\n", size);
+ 
+ 	return 0;
+ }
+diff --git b/drivers/media/platform/meson/ao-cec-g12a.c a/drivers/media/platform/meson/ao-cec-g12a.c
+index 9d7f10ea0692..3d8fe854feb0 100644
+--- b/drivers/media/platform/meson/ao-cec-g12a.c
++++ a/drivers/media/platform/meson/ao-cec-g12a.c
+@@ -25,7 +25,6 @@
+ #include <media/cec.h>
+ #include <media/cec-notifier.h>
+ #include <linux/clk-provider.h>
+-#include <linux/mfd/syscon.h>
+ 
+ /* CEC Registers */
+ 
+@@ -169,18 +168,6 @@
+ 
+ #define CECB_WAKEUPCTRL		0x31
+ 
+-#define CECB_FUNC_CFG_REG		0xA0
+-#define CECB_FUNC_CFG_MASK		GENMASK(6, 0)
+-#define CECB_FUNC_CFG_CEC_ON		0x01
+-#define CECB_FUNC_CFG_OTP_ON		0x02
+-#define CECB_FUNC_CFG_AUTO_STANDBY	0x04
+-#define CECB_FUNC_CFG_AUTO_POWER_ON	0x08
+-#define CECB_FUNC_CFG_ALL		0x2f
+-#define CECB_FUNC_CFG_NONE		0x0
+-
+-#define CECB_LOG_ADDR_REG	0xA4
+-#define CECB_LOG_ADDR_MASK	GENMASK(22, 16)
+-
+ struct meson_ao_cec_g12a_data {
+ 	/* Setup the internal CECB_CTRL2 register */
+ 	bool				ctrl2_setup;
+@@ -190,7 +177,6 @@ struct meson_ao_cec_g12a_device {
+ 	struct platform_device		*pdev;
+ 	struct regmap			*regmap;
+ 	struct regmap			*regmap_cec;
+-	struct regmap			*regmap_ao_sysctrl;
+ 	spinlock_t			cec_reg_lock;
+ 	struct cec_notifier		*notify;
+ 	struct cec_adapter		*adap;
+@@ -532,13 +518,6 @@ meson_ao_cec_g12a_set_log_addr(struct cec_adapter *adap, u8 logical_addr)
+ 					 BIT(logical_addr - 8));
+ 	}
+ 
+-	if (ao_cec->regmap_ao_sysctrl)
+-		ret |= regmap_update_bits(ao_cec->regmap_ao_sysctrl,
+-					 CECB_LOG_ADDR_REG,
+-					 CECB_LOG_ADDR_MASK,
+-					 FIELD_PREP(CECB_LOG_ADDR_MASK,
+-						    logical_addr));
+-
+ 	/* Always set Broadcast/Unregistered 15 address */
+ 	ret |= regmap_update_bits(ao_cec->regmap_cec, CECB_LADD_HIGH,
+ 				  BIT(CEC_LOG_ADDR_UNREGISTERED - 8),
+@@ -639,13 +618,6 @@ static int meson_ao_cec_g12a_adap_enable(struct cec_adapter *adap, bool enable)
+ 		regmap_write(ao_cec->regmap_cec, CECB_CTRL2,
+ 			     FIELD_PREP(CECB_CTRL2_RISE_DEL_MAX, 2));
+ 
+-	if (ao_cec->regmap_ao_sysctrl) {
+-		regmap_update_bits(ao_cec->regmap_ao_sysctrl,
+-				   CECB_FUNC_CFG_REG,
+-				   CECB_FUNC_CFG_MASK,
+-				   CECB_FUNC_CFG_ALL);
+-	}
+-
+ 	meson_ao_cec_g12a_irq_setup(ao_cec, true);
+ 
+ 	return 0;
+@@ -713,11 +685,6 @@ static int meson_ao_cec_g12a_probe(struct platform_device *pdev)
+ 		goto out_probe_adapter;
+ 	}
+ 
+-	ao_cec->regmap_ao_sysctrl = syscon_regmap_lookup_by_phandle
+-		(pdev->dev.of_node, "amlogic,ao-sysctrl");
+-	if (IS_ERR(ao_cec->regmap_ao_sysctrl))
+-		dev_warn(&pdev->dev, "ao-sysctrl syscon regmap lookup failed.\n");
+-
+ 	irq = platform_get_irq(pdev, 0);
+ 	ret = devm_request_threaded_irq(&pdev->dev, irq,
+ 					meson_ao_cec_g12a_irq,
+diff --git b/drivers/media/rc/meson-ir.c a/drivers/media/rc/meson-ir.c
+index 4e257cc74b7b..51c6dd3406a0 100644
+--- b/drivers/media/rc/meson-ir.c
++++ a/drivers/media/rc/meson-ir.c
+@@ -91,8 +91,7 @@ static irqreturn_t meson_ir_irq(int irqno, void *dev_id)
+ 	status = readl_relaxed(ir->reg + IR_DEC_STATUS);
+ 	rawir.pulse = !!(status & STATUS_IR_DEC_IN);
+ 
+-	if (ir_raw_event_store_with_filter(ir->rc, &rawir))
+-		ir_raw_event_handle(ir->rc);
++	ir_raw_event_store_with_timeout(ir->rc, &rawir);
+ 
+ 	spin_unlock(&ir->lock);
+ 
+diff --git b/drivers/soc/amlogic/meson-canvas.c a/drivers/soc/amlogic/meson-canvas.c
+index 561044063319..c655f5f92b12 100644
+--- b/drivers/soc/amlogic/meson-canvas.c
++++ a/drivers/soc/amlogic/meson-canvas.c
+@@ -166,6 +166,7 @@ EXPORT_SYMBOL_GPL(meson_canvas_free);
+ 
+ static int meson_canvas_probe(struct platform_device *pdev)
+ {
++	struct resource *res;
+ 	struct meson_canvas *canvas;
+ 	struct device *dev = &pdev->dev;
+ 
+@@ -173,7 +174,8 @@ static int meson_canvas_probe(struct platform_device *pdev)
+ 	if (!canvas)
+ 		return -ENOMEM;
+ 
+-	canvas->reg_base = devm_platform_ioremap_resource(pdev, 0);
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	canvas->reg_base = devm_ioremap_resource(dev, res);
+ 	if (IS_ERR(canvas->reg_base))
+ 		return PTR_ERR(canvas->reg_base);
+ 
+diff --git b/drivers/soc/amlogic/meson-clk-measure.c a/drivers/soc/amlogic/meson-clk-measure.c
+index 173baa53fce3..0fa47d77577d 100644
+--- b/drivers/soc/amlogic/meson-clk-measure.c
++++ a/drivers/soc/amlogic/meson-clk-measure.c
+@@ -605,6 +605,7 @@ static int meson_msr_probe(struct platform_device *pdev)
+ {
+ 	const struct meson_msr_id *match_data;
+ 	struct meson_msr *priv;
++	struct resource *res;
+ 	struct dentry *root, *clks;
+ 	void __iomem *base;
+ 	int i;
+@@ -622,7 +623,8 @@ static int meson_msr_probe(struct platform_device *pdev)
+ 
+ 	memcpy(priv->msr_table, match_data, sizeof(priv->msr_table));
+ 
+-	base = devm_platform_ioremap_resource(pdev, 0);
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	base = devm_ioremap_resource(&pdev->dev, res);
+ 	if (IS_ERR(base)) {
+ 		dev_err(&pdev->dev, "io resource mapping failed\n");
+ 		return PTR_ERR(base);
+diff --git b/include/drm/bridge/dw_hdmi.h a/include/drm/bridge/dw_hdmi.h
+index 4b3e863c4f8a..cf528c289857 100644
+--- b/include/drm/bridge/dw_hdmi.h
++++ a/include/drm/bridge/dw_hdmi.h
+@@ -156,7 +156,6 @@ void dw_hdmi_setup_rx_sense(struct dw_hdmi *hdmi, bool hpd, bool rx_sense);
+ 
+ void dw_hdmi_set_sample_rate(struct dw_hdmi *hdmi, unsigned int rate);
+ void dw_hdmi_set_channel_count(struct dw_hdmi *hdmi, unsigned int cnt);
+-void dw_hdmi_set_channel_status(struct dw_hdmi *hdmi, u8 *channel_status);
+ void dw_hdmi_set_channel_allocation(struct dw_hdmi *hdmi, unsigned int ca);
+ void dw_hdmi_audio_enable(struct dw_hdmi *hdmi);
+ void dw_hdmi_audio_disable(struct dw_hdmi *hdmi);
+diff --git b/include/drm/drm_gem.h a/include/drm/drm_gem.h
+index 354fc8d240e4..6aaba14f5972 100644
+--- b/include/drm/drm_gem.h
++++ a/include/drm/drm_gem.h
+@@ -387,10 +387,8 @@ struct page **drm_gem_get_pages(struct drm_gem_object *obj);
+ void drm_gem_put_pages(struct drm_gem_object *obj, struct page **pages,
+ 		bool dirty, bool accessed);
+ 
+-int drm_gem_objects_lookup(struct drm_file *filp, u32 *bo_handles,
++int drm_gem_objects_lookup(struct drm_file *filp, void __user *bo_handles,
+ 			   int count, struct drm_gem_object ***objs_out);
+-int drm_gem_objects_lookup_user(struct drm_file *filp, void __user *bo_handles,
+-				int count, struct drm_gem_object ***objs_out);
+ struct drm_gem_object *drm_gem_object_lookup(struct drm_file *filp, u32 handle);
+ long drm_gem_dma_resv_wait(struct drm_file *filep, u32 handle,
+ 				    bool wait_all, unsigned long timeout);
+diff --git b/sound/soc/meson/Kconfig a/sound/soc/meson/Kconfig
+index 2e3676147cea..77611ddd64b4 100644
+--- b/sound/soc/meson/Kconfig
++++ a/sound/soc/meson/Kconfig
+@@ -2,6 +2,47 @@
+ menu "ASoC support for Amlogic platforms"
+ 	depends on ARCH_MESON || COMPILE_TEST
+ 
++config SND_MESON_AIU_BUS
++	tristate "Amlogic AIU bus support"
++	select REGMAP_MMIO
++	help
++	  Select Y or M to add support for audio output interfaces
++	  embedded in the Amlogic GX SoC families
++
++config SND_MESON_AIU_FIFO
++	tristate
++	imply SND_MESON_AIU_BUS
++	select MFD_SYSCON
++
++config SND_MESON_AIU_I2S_FIFO
++	tristate "Amlogic AIU I2S FIFO"
++	select SND_MESON_AIU_FIFO
++	help
++	  Select Y or M to add support for i2s FIFO of the GXL family
++
++config SND_MESON_AIU_SPDIF_FIFO
++	tristate "Amlogic AIU SPDIF FIFO"
++	select SND_MESON_AIU_FIFO
++	help
++	  Select Y or M to add support for spdif FIFO of the GXL family
++
++config SND_MESON_AIU_I2S_ENCODER
++	tristate "Amlogic AIU I2S Encoder"
++	imply SND_MESON_AIU_I2S_FIFO
++	imply SND_MESON_AIU_BUS
++	select MFD_SYSCON
++	help
++	  Select Y or M to add support for i2s Encoder of the GXL family
++
++config SND_MESON_AIU_SPDIF_ENCODER
++	tristate "Amlogic AIU SPDIF Encoder"
++	imply SND_MESON_AIU_SPDIF_FIFO
++	imply SND_MESON_AIU_BUS
++	select SND_PCM_IEC958
++	select MFD_SYSCON
++	help
++	  Select Y or M to add support for spdif Encoder of the GXL family
++
+ config SND_MESON_AXG_FIFO
+ 	tristate
+ 	select REGMAP_MMIO
+@@ -50,6 +91,7 @@ config SND_MESON_AXG_TDMOUT
+ config SND_MESON_AXG_SOUND_CARD
+ 	tristate "Amlogic AXG Sound Card Support"
+ 	select SND_MESON_AXG_TDM_INTERFACE
++	select SND_MESON_CARD_UTILS
+ 	imply SND_MESON_AXG_FRDDR
+ 	imply SND_MESON_AXG_TODDR
+ 	imply SND_MESON_AXG_TDMIN
+@@ -85,6 +127,19 @@ config SND_MESON_AXG_PDM
+ 	  Select Y or M to add support for PDM input embedded
+ 	  in the Amlogic AXG SoC family
+ 
++config SND_MESON_CARD_UTILS
++       tristate
++
++config SND_MESON_GX_SOUND_CARD
++	tristate "Amlogic GX Sound Card Support"
++	select SND_MESON_CARD_UTILS
++	imply SND_MESON_AIU_I2S_FIFO
++	imply SND_MESON_AIU_SPDIF_FIFO
++	imply SND_MESON_AIU_I2S_ENCODE
++	imply SND_MESON_AIU_SPDIF_ENCODE
++	help
++	  Select Y or M to add support for the GXBB/GXL SoC sound card
++
+ config SND_MESON_G12A_TOHDMITX
+ 	tristate "Amlogic G12A To HDMI TX Control Support"
+ 	select REGMAP_MMIO
+diff --git b/sound/soc/meson/Makefile a/sound/soc/meson/Makefile
+index 1a8b1470ed84..b09de82a4714 100644
+--- b/sound/soc/meson/Makefile
++++ a/sound/soc/meson/Makefile
+@@ -1,5 +1,11 @@
+ # SPDX-License-Identifier: (GPL-2.0 OR MIT)
+ 
++snd-soc-meson-aiu-bus-objs := aiu-bus.o
++snd-soc-meson-aiu-fifo-objs := aiu-fifo.o
++snd-soc-meson-aiu-i2s-fifo-objs := aiu-i2s-fifo.o
++snd-soc-meson-aiu-spdif-fifo-objs := aiu-spdif-fifo.o
++snd-soc-meson-aiu-i2s-encode-objs := aiu-i2s-encode.o
++snd-soc-meson-aiu-spdif-encode-objs := aiu-spdif-encode.o
+ snd-soc-meson-axg-fifo-objs := axg-fifo.o
+ snd-soc-meson-axg-frddr-objs := axg-frddr.o
+ snd-soc-meson-axg-toddr-objs := axg-toddr.o
+@@ -11,8 +17,17 @@ snd-soc-meson-axg-sound-card-objs := axg-card.o
+ snd-soc-meson-axg-spdifin-objs := axg-spdifin.o
+ snd-soc-meson-axg-spdifout-objs := axg-spdifout.o
+ snd-soc-meson-axg-pdm-objs := axg-pdm.o
++snd-soc-meson-card-utils-objs := meson-card-utils.o
++snd-soc-meson-gx-sound-card-objs := gx-card.o
++snd-soc-meson-g12a-toacodec-objs := g12a-toacodec.o
+ snd-soc-meson-g12a-tohdmitx-objs := g12a-tohdmitx.o
+ 
++obj-$(CONFIG_SND_MESON_AIU_BUS) += snd-soc-meson-aiu-bus.o
++obj-$(CONFIG_SND_MESON_AIU_FIFO) += snd-soc-meson-aiu-fifo.o
++obj-$(CONFIG_SND_MESON_AIU_I2S_FIFO) += snd-soc-meson-aiu-i2s-fifo.o
++obj-$(CONFIG_SND_MESON_AIU_SPDIF_FIFO) += snd-soc-meson-aiu-spdif-fifo.o
++obj-$(CONFIG_SND_MESON_AIU_I2S_ENCODER) += snd-soc-meson-aiu-i2s-encode.o
++obj-$(CONFIG_SND_MESON_AIU_SPDIF_ENCODER) += snd-soc-meson-aiu-spdif-encode.o
+ obj-$(CONFIG_SND_MESON_AXG_FIFO) += snd-soc-meson-axg-fifo.o
+ obj-$(CONFIG_SND_MESON_AXG_FRDDR) += snd-soc-meson-axg-frddr.o
+ obj-$(CONFIG_SND_MESON_AXG_TODDR) += snd-soc-meson-axg-toddr.o
+@@ -24,4 +39,6 @@ obj-$(CONFIG_SND_MESON_AXG_SOUND_CARD) += snd-soc-meson-axg-sound-card.o
+ obj-$(CONFIG_SND_MESON_AXG_SPDIFIN) += snd-soc-meson-axg-spdifin.o
+ obj-$(CONFIG_SND_MESON_AXG_SPDIFOUT) += snd-soc-meson-axg-spdifout.o
+ obj-$(CONFIG_SND_MESON_AXG_PDM) += snd-soc-meson-axg-pdm.o
++obj-$(CONFIG_SND_MESON_CARD_UTILS) += snd-soc-meson-card-utils.o
++obj-$(CONFIG_SND_MESON_GX_SOUND_CARD) += snd-soc-meson-gx-sound-card.o
+ obj-$(CONFIG_SND_MESON_G12A_TOHDMITX) += snd-soc-meson-g12a-tohdmitx.o
+diff --git b/sound/soc/meson/aiu-bus.c a/sound/soc/meson/aiu-bus.c
+new file mode 100644
+index 000000000000..479c5e6b0f93
+--- /dev/null
++++ a/sound/soc/meson/aiu-bus.c
+@@ -0,0 +1,82 @@
++// SPDX-License-Identifier: GPL-2.0
++//
++// Copyright (c) 2019 BayLibre, SAS.
++// Author: Jerome Brunet <jbrunet@baylibre.com>
++
++#include <linux/clk.h>
++#include <linux/module.h>
++#include <linux/of_platform.h>
++#include <linux/reset.h>
++
++static const char * const aiu_bus_clk_names[] = { "top", "glue", };
++
++static int aiu_bus_enable_pclks(struct device *dev)
++{
++	struct clk *clock;
++	int i, ret;
++
++	for (i = 0; i < ARRAY_SIZE(aiu_bus_clk_names); i++) {
++		clock = devm_clk_get(dev, aiu_bus_clk_names[i]);
++		if (IS_ERR(clock)) {
++			if (PTR_ERR(clock) != -EPROBE_DEFER)
++				dev_err(dev, "Failed to get %s clock\n",
++					aiu_bus_clk_names[i]);
++			return PTR_ERR(clock);
++		}
++
++		ret = clk_prepare_enable(clock);
++		if (ret) {
++			dev_err(dev, "Failed to enable %s clock\n",
++				aiu_bus_clk_names[i]);
++			return ret;
++		}
++
++		ret = devm_add_action_or_reset(dev,
++				(void(*)(void *))clk_disable_unprepare,
++				clock);
++		if (ret)
++			return ret;
++	}
++
++	return 0;
++}
++
++static const struct of_device_id aiu_bus_of_match[] = {
++	{
++		.compatible = "amlogic,aiu-bus",
++		.data = NULL,
++	}, {}
++};
++MODULE_DEVICE_TABLE(of, aiu_bus_of_match);
++
++static int aiu_bus_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	int ret;
++
++	/* Fire and forget bus pclks */
++	ret = aiu_bus_enable_pclks(dev);
++	if (ret)
++		return ret;
++
++	ret = device_reset(dev);
++	if (ret) {
++		dev_err(dev, "reset failed\n");
++		return ret;
++	}
++
++	return devm_of_platform_populate(dev);
++}
++
++static struct platform_driver aiu_bus_pdrv = {
++	.probe = aiu_bus_probe,
++	.driver = {
++		.name = "meson-aiu-bus",
++		.of_match_table = aiu_bus_of_match,
++	},
++};
++module_platform_driver(aiu_bus_pdrv);
++
++MODULE_DESCRIPTION("Amlogic AIU bus driver");
++MODULE_AUTHOR("Jerome Brunet <jbrunet@baylibre.com>");
++MODULE_LICENSE("GPL v2");
+diff --git b/sound/soc/meson/aiu-fifo.c a/sound/soc/meson/aiu-fifo.c
+new file mode 100644
+index 000000000000..2c50145a6cac
+--- /dev/null
++++ a/sound/soc/meson/aiu-fifo.c
+@@ -0,0 +1,276 @@
++// SPDX-License-Identifier: GPL-2.0
++//
++// Copyright (c) 2019 BayLibre, SAS.
++// Author: Jerome Brunet <jbrunet@baylibre.com>
++
++#include <linux/bitfield.h>
++#include <linux/clk.h>
++#include <linux/mfd/syscon.h>
++#include <linux/module.h>
++#include <linux/of_platform.h>
++#include <sound/pcm_params.h>
++#include <sound/soc.h>
++#include <sound/soc-dai.h>
++
++#include "aiu-fifo.h"
++
++#define AIU_MEM_START	0x00
++#define AIU_MEM_RD	0x04
++#define AIU_MEM_END	0x08
++#define AIU_MEM_MASKS	0x0c
++#define  AIU_MEM_MASK_CH_RD GENMASK(7, 0)
++#define  AIU_MEM_MASK_CH_MEM GENMASK(15, 8)
++#define AIU_MEM_CONTROL	0x10
++#define  AIU_MEM_CONTROL_INIT BIT(0)
++#define  AIU_MEM_CONTROL_FILL_EN BIT(1)
++#define  AIU_MEM_CONTROL_EMPTY_EN BIT(2)
++
++snd_pcm_uframes_t aiu_fifo_pointer(struct snd_pcm_substream *substream)
++{
++	struct snd_soc_pcm_runtime *rtd = substream->private_data;
++	struct snd_soc_dai *dai = rtd->cpu_dai;
++	struct snd_soc_component *component = dai->component;
++	struct aiu_fifo *fifo = snd_soc_component_get_drvdata(component);
++	struct snd_pcm_runtime *runtime = substream->runtime;
++	unsigned int addr;
++
++	snd_soc_component_read(component, fifo->hw->mem_offset + AIU_MEM_RD,
++			       &addr);
++
++	return bytes_to_frames(runtime, addr - (unsigned int)runtime->dma_addr);
++}
++EXPORT_SYMBOL_GPL(aiu_fifo_pointer);
++
++static void aiu_fifo_enable(struct snd_soc_component *component,
++			    bool enable)
++{
++	struct aiu_fifo *fifo = snd_soc_component_get_drvdata(component);
++	unsigned int en_mask = (AIU_MEM_CONTROL_FILL_EN |
++				AIU_MEM_CONTROL_EMPTY_EN);
++
++	snd_soc_component_update_bits(component,
++				      fifo->hw->mem_offset + AIU_MEM_CONTROL,
++				      en_mask, enable ? en_mask : 0);
++}
++
++int aiu_fifo_trigger(struct snd_pcm_substream *substream, int cmd,
++		     struct snd_soc_dai *dai)
++{
++	struct snd_soc_component *component = dai->component;
++
++	switch (cmd) {
++	case SNDRV_PCM_TRIGGER_START:
++	case SNDRV_PCM_TRIGGER_RESUME:
++	case SNDRV_PCM_TRIGGER_PAUSE_RELEASE:
++	        aiu_fifo_enable(component, true);
++		break;
++	case SNDRV_PCM_TRIGGER_SUSPEND:
++	case SNDRV_PCM_TRIGGER_PAUSE_PUSH:
++	case SNDRV_PCM_TRIGGER_STOP:
++		aiu_fifo_enable(component, false);
++		break;
++	default:
++		return -EINVAL;
++	}
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(aiu_fifo_trigger);
++
++
++int aiu_fifo_prepare(struct snd_pcm_substream *substream,
++		     struct snd_soc_dai *dai)
++{
++	struct snd_soc_component *component = dai->component;
++	struct aiu_fifo *fifo = snd_soc_component_get_drvdata(component);
++
++        snd_soc_component_update_bits(component,
++				      fifo->hw->mem_offset + AIU_MEM_CONTROL,
++				      AIU_MEM_CONTROL_INIT,
++				      AIU_MEM_CONTROL_INIT);
++	snd_soc_component_update_bits(component,
++				      fifo->hw->mem_offset + AIU_MEM_CONTROL,
++				      AIU_MEM_CONTROL_INIT, 0);
++	return 0;
++}
++EXPORT_SYMBOL_GPL(aiu_fifo_prepare);
++
++int aiu_fifo_hw_params(struct snd_pcm_substream *substream,
++		       struct snd_pcm_hw_params *params,
++		       struct snd_soc_dai *dai)
++{
++	struct snd_pcm_runtime *runtime = substream->runtime;
++	struct snd_soc_component *component = dai->component;
++	struct aiu_fifo *fifo = snd_soc_component_get_drvdata(component);
++	dma_addr_t end;
++	int ret;
++
++	ret = snd_pcm_lib_malloc_pages(substream, params_buffer_bytes(params));
++	if (ret < 0)
++		return ret;
++
++	/* Setup the fifo boundaries */
++	end = runtime->dma_addr + runtime->dma_bytes - fifo->hw->fifo_block;
++	snd_soc_component_write(component, fifo->hw->mem_offset + AIU_MEM_START,
++				runtime->dma_addr);
++	snd_soc_component_write(component, fifo->hw->mem_offset + AIU_MEM_RD,
++				runtime->dma_addr);
++	snd_soc_component_write(component, fifo->hw->mem_offset + AIU_MEM_END,
++				end);
++
++	/* Setup the fifo to read all the memory - no skip */
++	snd_soc_component_update_bits(component,
++				      fifo->hw->mem_offset + AIU_MEM_MASKS,
++				      AIU_MEM_MASK_CH_RD | AIU_MEM_MASK_CH_MEM,
++				      FIELD_PREP(AIU_MEM_MASK_CH_RD, 0xff) |
++				      FIELD_PREP(AIU_MEM_MASK_CH_MEM, 0xff));
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(aiu_fifo_hw_params);
++
++int aiu_fifo_hw_free(struct snd_pcm_substream *substream,
++			    struct snd_soc_dai *dai)
++{
++	return snd_pcm_lib_free_pages(substream);
++}
++EXPORT_SYMBOL_GPL(aiu_fifo_hw_free);
++
++static irqreturn_t aiu_fifo_isr(int irq, void *dev_id)
++{
++	struct snd_pcm_substream *playback = dev_id;
++
++	snd_pcm_period_elapsed(playback);
++
++	return IRQ_HANDLED;
++}
++
++int aiu_fifo_startup(struct snd_pcm_substream *substream,
++		     struct snd_soc_dai *dai)
++{
++	struct snd_soc_component *component = dai->component;
++	struct aiu_fifo *fifo = snd_soc_component_get_drvdata(component);
++	int ret;
++
++	snd_soc_set_runtime_hwparams(substream, fifo->hw->pcm);
++
++	/*
++	 * Make sure the buffer and period size are multiple of the fifo burst
++	 * size
++	 */
++	ret = snd_pcm_hw_constraint_step(substream->runtime, 0,
++					 SNDRV_PCM_HW_PARAM_BUFFER_BYTES,
++					 fifo->hw->fifo_block);
++	if (ret)
++		return ret;
++
++	ret = snd_pcm_hw_constraint_step(substream->runtime, 0,
++					 SNDRV_PCM_HW_PARAM_PERIOD_BYTES,
++					 fifo->hw->fifo_block);
++	if (ret)
++		return ret;
++
++	ret = clk_prepare_enable(fifo->pclk);
++	if (ret)
++		return ret;
++
++	ret = request_irq(fifo->irq, aiu_fifo_isr, 0, dev_name(dai->dev),
++			  substream);
++	if (ret)
++		clk_disable_unprepare(fifo->pclk);
++
++	return ret;
++}
++EXPORT_SYMBOL_GPL(aiu_fifo_startup);
++
++void aiu_fifo_shutdown(struct snd_pcm_substream *substream,
++		       struct snd_soc_dai *dai)
++{
++	struct snd_soc_component *component = dai->component;
++	struct aiu_fifo *fifo = snd_soc_component_get_drvdata(component);
++
++	free_irq(fifo->irq, substream);
++	clk_disable_unprepare(fifo->pclk);
++}
++EXPORT_SYMBOL_GPL(aiu_fifo_shutdown);
++
++const struct snd_pcm_ops aiu_fifo_pcm_ops = {
++	.ioctl =	snd_pcm_lib_ioctl,
++	.pointer =	aiu_fifo_pointer,
++};
++EXPORT_SYMBOL_GPL(aiu_fifo_pcm_ops);
++
++int aiu_fifo_pcm_new(struct snd_soc_pcm_runtime *rtd,
++		     struct snd_soc_dai *dai)
++{
++	struct snd_card *card = rtd->card->snd_card;
++	struct snd_soc_component *component = dai->component;
++	struct aiu_fifo *fifo = snd_soc_component_get_drvdata(component);
++	size_t size = fifo->hw->pcm->buffer_bytes_max;
++
++
++	snd_pcm_lib_preallocate_pages(
++		rtd->pcm->streams[SNDRV_PCM_STREAM_PLAYBACK].substream,
++		SNDRV_DMA_TYPE_DEV, card->dev, size, size);
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(aiu_fifo_pcm_new);
++
++int aiu_fifo_component_probe(struct snd_soc_component *component)
++{
++	struct device *dev = component->dev;
++	struct regmap *map;
++
++	map = syscon_node_to_regmap(dev->parent->of_node);
++	if (IS_ERR(map)) {
++		dev_err(dev, "Could not get regmap\n");
++		return PTR_ERR(map);
++	}
++
++	snd_soc_component_init_regmap(component, map);
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(aiu_fifo_component_probe);
++
++int aiu_fifo_probe(struct platform_device *pdev)
++{
++	const struct aiu_fifo_match_data *data;
++	struct device *dev = &pdev->dev;
++	struct aiu_fifo *fifo;
++
++	data = of_device_get_match_data(dev);
++	if (!data) {
++		dev_err(dev, "failed to match device\n");
++		return -ENODEV;
++	}
++
++	fifo = devm_kzalloc(dev, sizeof(*fifo), GFP_KERNEL);
++	if (!fifo)
++		return -ENOMEM;
++	platform_set_drvdata(pdev, fifo);
++	fifo->hw = data->hw;
++
++	fifo->pclk = devm_clk_get(dev, NULL);
++	if (IS_ERR(fifo->pclk)) {
++		if (PTR_ERR(fifo->pclk) != -EPROBE_DEFER)
++			dev_err(dev, "failed to get pclk: %ld\n",
++				PTR_ERR(fifo->pclk));
++		return PTR_ERR(fifo->pclk);
++	}
++
++	fifo->irq = platform_get_irq(pdev, 0);
++	if (fifo->irq <= 0) {
++		dev_err(dev, "Can't get irq\n");
++		return fifo->irq;
++	}
++
++	return devm_snd_soc_register_component(dev, data->component_drv,
++					       data->dai_drv, 1);
++}
++EXPORT_SYMBOL_GPL(aiu_fifo_probe);
++
++MODULE_DESCRIPTION("Amlogic AIU FIFO driver");
++MODULE_AUTHOR("Jerome Brunet <jbrunet@baylibre.com>");
++MODULE_LICENSE("GPL v2");
+diff --git b/sound/soc/meson/aiu-fifo.h a/sound/soc/meson/aiu-fifo.h
+new file mode 100644
+index 000000000000..eb44f013f1b8
+--- /dev/null
++++ a/sound/soc/meson/aiu-fifo.h
+@@ -0,0 +1,59 @@
++/* SPDX-License-Identifier: (GPL-2.0 OR MIT) */
++/*
++ * Copyright (c) 2019 BayLibre, SAS.
++ * Author: Jerome Brunet <jbrunet@baylibre.com>
++ */
++
++#ifndef _MESON_AIU_FIFO_H
++#define _MESON_AIU_FIFO_H
++
++struct snd_pcm_hardware;
++struct snd_soc_component_driver;
++struct snd_soc_dai_driver;
++struct clk;
++struct snd_pcm_ops;
++struct snd_pcm_substream;
++struct snd_soc_dai;
++struct snd_pcm_hw_params;
++struct platform_device;
++
++struct aiu_fifo_hw {
++	struct snd_pcm_hardware *pcm;
++	unsigned int mem_offset;
++	unsigned int fifo_block;
++};
++
++struct aiu_fifo_match_data {
++	const struct snd_soc_component_driver *component_drv;
++	const struct aiu_fifo_hw *hw;
++	struct snd_soc_dai_driver *dai_drv;
++};
++
++struct aiu_fifo {
++	const struct aiu_fifo_hw *hw;
++	struct clk *pclk;
++	int irq;
++};
++
++extern const struct snd_pcm_ops aiu_fifo_pcm_ops;
++
++int aiu_fifo_trigger(struct snd_pcm_substream *substream, int cmd,
++		     struct snd_soc_dai *dai);
++int aiu_fifo_prepare(struct snd_pcm_substream *substream,
++		     struct snd_soc_dai *dai);
++int aiu_fifo_hw_params(struct snd_pcm_substream *substream,
++		       struct snd_pcm_hw_params *params,
++		       struct snd_soc_dai *dai);
++int aiu_fifo_hw_free(struct snd_pcm_substream *substream,
++		     struct snd_soc_dai *dai);
++int aiu_fifo_startup(struct snd_pcm_substream *substream,
++		     struct snd_soc_dai *dai);
++void aiu_fifo_shutdown(struct snd_pcm_substream *substream,
++		       struct snd_soc_dai *dai);
++int aiu_fifo_pcm_new(struct snd_soc_pcm_runtime *rtd,
++		     struct snd_soc_dai *dai);
++
++int aiu_fifo_component_probe(struct snd_soc_component *component);
++int aiu_fifo_probe(struct platform_device *pdev);
++
++#endif /* _MESON_AIU_FIFO_H */
+diff --git b/sound/soc/meson/aiu-i2s-encode.c a/sound/soc/meson/aiu-i2s-encode.c
+new file mode 100644
+index 000000000000..4a77fba5f799
+--- /dev/null
++++ a/sound/soc/meson/aiu-i2s-encode.c
+@@ -0,0 +1,426 @@
++// SPDX-License-Identifier: GPL-2.0
++//
++// Copyright (c) 2018 BayLibre, SAS.
++// Author: Jerome Brunet <jbrunet@baylibre.com>
++
++#include <linux/bitfield.h>
++#include <linux/clk.h>
++#include <linux/mfd/syscon.h>
++#include <linux/module.h>
++#include <linux/of_platform.h>
++#include <sound/pcm_params.h>
++#include <sound/soc.h>
++#include <sound/soc-dai.h>
++
++#define AIU_CLK_CTRL			0x058
++#define  AIU_CLK_CTRL_I2S_DIV_EN	BIT(0)
++#define  AIU_CLK_CTRL_I2S_DIV		GENMASK(3, 2)
++#define  AIU_CLK_CTRL_AOCLK_INVERT	BIT(6)
++#define  AIU_CLK_CTRL_LRCLK_INVERT	BIT(7)
++#define  AIU_CLK_CTRL_LRCLK_SKEW	GENMASK(9, 8)
++#define AIU_CLK_CTRL_MORE		0x064
++#define  AIU_CLK_CTRL_MORE_HDMI_AMCLK	BIT(6)
++#define  AIU_CLK_CTRL_MORE_I2S_DIV	GENMASK(5, 0)
++#define AIU_I2S_SOURCE_DESC		0x034
++#define  AIU_I2S_SOURCE_DESC_MODE_8CH	BIT(0)
++#define  AIU_I2S_SOURCE_DESC_MODE_24BIT	BIT(5)
++#define  AIU_I2S_SOURCE_DESC_MODE_32BIT	BIT(9)
++#define  AIU_I2S_SOURCE_DESC_MODE_SPLIT	BIT(11)
++#define AIU_I2S_DAC_CFG			0x040
++#define  AIU_I2S_DAC_CFG_PAYLOAD_SIZE	GENMASK(1, 0)
++#define   CFG_AOCLK_64			3
++#define AIU_CODEC_DAC_LRCLK_CTRL	0x0a0
++#define AIU_CODEC_DAC_LRCLK_CTRL_DIV	GENMASK(11, 0)
++#define AIU_I2S_MISC			0x048
++#define  AIU_I2S_MISC_HOLD_EN		BIT(2)
++
++struct aiu_i2s_encode {
++	struct clk *aoclk;
++	struct clk *mclk;
++	struct clk *pclk;
++};
++
++static void aiu_i2s_encode_divider_enable(struct snd_soc_component *component,
++					    bool enable)
++{
++	snd_soc_component_update_bits(component, AIU_CLK_CTRL,
++				      AIU_CLK_CTRL_I2S_DIV_EN,
++				      enable ? AIU_CLK_CTRL_I2S_DIV_EN : 0);
++}
++
++static void aiu_i2s_encode_hold(struct snd_soc_component *component,
++				  bool enable)
++{
++	snd_soc_component_update_bits(component, AIU_I2S_MISC,
++				      AIU_I2S_MISC_HOLD_EN,
++				      enable ? AIU_I2S_MISC_HOLD_EN : 0);
++}
++
++static int aiu_i2s_encode_trigger(struct snd_pcm_substream *substream, int cmd,
++				   struct snd_soc_dai *dai)
++{
++	struct snd_soc_component *component = dai->component;
++
++	switch (cmd) {
++	case SNDRV_PCM_TRIGGER_START:
++	case SNDRV_PCM_TRIGGER_RESUME:
++	case SNDRV_PCM_TRIGGER_PAUSE_RELEASE:
++	        aiu_i2s_encode_hold(component, false);
++		return 0;
++
++	case SNDRV_PCM_TRIGGER_STOP:
++	case SNDRV_PCM_TRIGGER_SUSPEND:
++	case SNDRV_PCM_TRIGGER_PAUSE_PUSH:
++		aiu_i2s_encode_hold(component, true);
++		return 0;
++
++	default:
++		return -EINVAL;
++	}
++}
++
++/* Does this register/setting belong in the FIFO driver */
++static int aiu_i2s_encode_setup_desc(struct snd_soc_component *component,
++				     struct snd_pcm_hw_params *params)
++{
++	/* Always operate in split (classic interleaved) mode */
++	unsigned int desc = AIU_I2S_SOURCE_DESC_MODE_SPLIT;
++
++	/*
++	 * TODO: The encoder probably supports S24_3LE (24 bits
++	 * physical width) formats but it is not clear how to support
++	 * this in the FIFO driver so we can't test it yet
++	 */
++	switch (params_physical_width(params)) {
++	case 16: /* Nothing to do */
++		break;
++
++	case 32:
++		desc |= (AIU_I2S_SOURCE_DESC_MODE_24BIT |
++			 AIU_I2S_SOURCE_DESC_MODE_32BIT);
++		break;
++
++	default:
++		return -EINVAL;
++	}
++
++	switch (params_channels(params)) {
++	case 2: /* Nothing to do */
++		break;
++	case 8:
++		desc |= AIU_I2S_SOURCE_DESC_MODE_8CH;
++		break;
++	default:
++		return -EINVAL;
++	}
++
++        snd_soc_component_update_bits(component, AIU_I2S_SOURCE_DESC,
++				      AIU_I2S_SOURCE_DESC_MODE_8CH |
++				      AIU_I2S_SOURCE_DESC_MODE_24BIT |
++				      AIU_I2S_SOURCE_DESC_MODE_32BIT |
++				      AIU_I2S_SOURCE_DESC_MODE_SPLIT,
++				      desc);
++
++	return 0;
++}
++
++static int aiu_i2s_encode_set_clocks(struct snd_soc_component *component,
++				     struct snd_pcm_hw_params *params)
++{
++	struct aiu_i2s_encode *encoder = snd_soc_component_get_drvdata(component);
++	unsigned int srate = params_rate(params);
++	unsigned int fs;
++
++	/* Get the oversampling factor */
++	fs = DIV_ROUND_CLOSEST(clk_get_rate(encoder->mclk), srate);
++
++	/* TODO: add support for 24 and 16 bits slot width */
++	if (fs % 64)
++		return -EINVAL;
++
++	/* Set the divider between bclk and lrclk to 64 */
++	snd_soc_component_update_bits(component, AIU_I2S_DAC_CFG,
++				      AIU_I2S_DAC_CFG_PAYLOAD_SIZE,
++				      FIELD_PREP(AIU_I2S_DAC_CFG_PAYLOAD_SIZE,
++						 CFG_AOCLK_64));
++
++	snd_soc_component_update_bits(component, AIU_CODEC_DAC_LRCLK_CTRL,
++				      AIU_CODEC_DAC_LRCLK_CTRL_DIV,
++				      FIELD_PREP(AIU_CODEC_DAC_LRCLK_CTRL_DIV,
++						 64 - 1));
++
++	/* Use CLK_MORE for mclk to bclk divider */
++	snd_soc_component_update_bits(component, AIU_CLK_CTRL,
++				      AIU_CLK_CTRL_I2S_DIV, 0);
++
++	snd_soc_component_update_bits(component, AIU_CLK_CTRL_MORE,
++				      AIU_CLK_CTRL_MORE_I2S_DIV,
++				      FIELD_PREP(AIU_CLK_CTRL_MORE_I2S_DIV,
++						 (fs / 64) - 1));
++
++	/* Make sure amclk is used for HDMI i2s as well */
++	snd_soc_component_update_bits(component, AIU_CLK_CTRL_MORE,
++				      AIU_CLK_CTRL_MORE_HDMI_AMCLK,
++				      AIU_CLK_CTRL_MORE_HDMI_AMCLK);
++
++	/* REMOVE ME: HARD CODED TEST */
++	/* Set HDMI path */
++	snd_soc_component_write(component, 0xa8, 0x22);
++
++	/* Internal DAC Path */
++	snd_soc_component_write(component, 0xb0, 0x8058);
++
++	return 0;
++}
++
++static int aiu_i2s_encode_hw_params(struct snd_pcm_substream *substream,
++				  struct snd_pcm_hw_params *params,
++				  struct snd_soc_dai *dai)
++{
++	struct snd_soc_component *component = dai->component;
++	int ret;
++
++	/* Disable the clock while changing the settings */
++	aiu_i2s_encode_divider_enable(component, false);
++
++	ret = aiu_i2s_encode_setup_desc(component, params);
++	if (ret) {
++		dev_err(dai->dev, "setting i2s desc failed\n");
++		return ret;
++	}
++
++	ret = aiu_i2s_encode_set_clocks(component, params);
++	if (ret) {
++		dev_err(dai->dev, "setting i2s clocks failed\n");
++		return ret;
++	}
++
++	aiu_i2s_encode_divider_enable(component, true);
++
++	return 0;
++}
++
++static int aiu_i2s_encode_hw_free(struct snd_pcm_substream *substream,
++				    struct snd_soc_dai *dai)
++{
++	struct snd_soc_component *component = dai->component;
++
++	aiu_i2s_encode_divider_enable(component, false);
++
++	return 0;
++}
++
++static int aiu_i2s_encode_set_fmt(struct snd_soc_dai *dai, unsigned int fmt)
++{
++	struct snd_soc_component *component = dai->component;
++	unsigned int inv = fmt & SND_SOC_DAIFMT_INV_MASK;
++	unsigned int val = 0;
++	unsigned int skew;
++
++	/* Only CPU Master / Codec Slave supported ATM */
++	if ((fmt & SND_SOC_DAIFMT_MASTER_MASK) != SND_SOC_DAIFMT_CBS_CFS)
++		return -EINVAL;
++
++	if ((inv == SND_SOC_DAIFMT_NB_IF) || (inv == SND_SOC_DAIFMT_IB_IF))
++		val |= AIU_CLK_CTRL_LRCLK_INVERT;
++
++	if ((inv == SND_SOC_DAIFMT_IB_NF) || (inv == SND_SOC_DAIFMT_IB_IF))
++		val |= AIU_CLK_CTRL_AOCLK_INVERT;
++
++	/* Signal skew */
++	switch (fmt & SND_SOC_DAIFMT_FORMAT_MASK) {
++	case SND_SOC_DAIFMT_I2S:
++		/* Invert sample clock for i2s */
++		val ^= AIU_CLK_CTRL_LRCLK_INVERT;
++	        skew = 1;
++		break;
++	case SND_SOC_DAIFMT_LEFT_J:
++		skew = 0;
++		break;
++	case SND_SOC_DAIFMT_RIGHT_J:
++		skew = 2;
++		break;
++	default:
++		return -EINVAL;
++	}
++
++	val |= FIELD_PREP(AIU_CLK_CTRL_LRCLK_SKEW, skew);
++        snd_soc_component_update_bits(component, AIU_CLK_CTRL,
++				      AIU_CLK_CTRL_LRCLK_INVERT |
++				      AIU_CLK_CTRL_AOCLK_INVERT |
++				      AIU_CLK_CTRL_LRCLK_SKEW,
++				      val);
++
++	return 0;
++}
++
++static int aiu_i2s_encode_set_sysclk(struct snd_soc_dai *dai, int clk_id,
++				     unsigned int freq, int dir)
++{
++	struct aiu_i2s_encode *encoder = snd_soc_dai_get_drvdata(dai);
++	int ret;
++
++	if (WARN_ON(clk_id != 0))
++		return -EINVAL;
++
++	if (dir == SND_SOC_CLOCK_IN)
++		return 0;
++
++	ret = clk_set_rate(encoder->mclk, freq);
++	if (ret)
++		dev_err(dai->dev, "Failed to set sysclk to %uHz", freq);
++
++	return ret;
++}
++
++static const unsigned int hw_channels[] = {2, 8};
++static const struct snd_pcm_hw_constraint_list hw_channel_constraints = {
++	.list = hw_channels,
++	.count = ARRAY_SIZE(hw_channels),
++	.mask = 0,
++};
++
++static int aiu_i2s_encode_startup(struct snd_pcm_substream *substream,
++				    struct snd_soc_dai *dai)
++{
++	struct aiu_i2s_encode *encoder = snd_soc_dai_get_drvdata(dai);
++	int ret;
++
++	/* Make sure the encoder gets either 2 or 8 channels */
++	ret = snd_pcm_hw_constraint_list(substream->runtime, 0,
++					 SNDRV_PCM_HW_PARAM_CHANNELS,
++					 &hw_channel_constraints);
++	if (ret) {
++		dev_err(dai->dev, "adding channels constraints failed\n");
++		return ret;
++	}
++
++	ret = clk_prepare_enable(encoder->pclk);
++	if (ret)
++	        return ret;
++
++	ret = clk_prepare_enable(encoder->mclk);
++	if (ret)
++		goto err_mclk;
++
++	ret = clk_prepare_enable(encoder->aoclk);
++	if (ret)
++		goto err_aoclk;
++
++	return 0;
++
++err_aoclk:
++	clk_disable_unprepare(encoder->mclk);
++err_mclk:
++	clk_disable_unprepare(encoder->pclk);
++	return ret;
++}
++
++static void aiu_i2s_encode_shutdown(struct snd_pcm_substream *substream,
++				    struct snd_soc_dai *dai)
++{
++	struct aiu_i2s_encode *encoder = snd_soc_dai_get_drvdata(dai);
++
++	clk_disable_unprepare(encoder->aoclk);
++	clk_disable_unprepare(encoder->mclk);
++	clk_disable_unprepare(encoder->pclk);
++}
++
++static const struct snd_soc_dai_ops aiu_i2s_encode_dai_ops = {
++	.trigger	= aiu_i2s_encode_trigger,
++	.hw_params	= aiu_i2s_encode_hw_params,
++	.hw_free	= aiu_i2s_encode_hw_free,
++	.set_fmt	= aiu_i2s_encode_set_fmt,
++	.set_sysclk	= aiu_i2s_encode_set_sysclk,
++	.startup	= aiu_i2s_encode_startup,
++	.shutdown	= aiu_i2s_encode_shutdown,
++};
++
++static struct snd_soc_dai_driver aiu_i2s_encode_dai_drv = {
++	.playback = {
++		.stream_name = "Playback",
++		.channels_min = 2,
++		.channels_max = 8,
++		.rates = SNDRV_PCM_RATE_8000_192000,
++		.formats = (SNDRV_PCM_FMTBIT_S16_LE |
++			    SNDRV_PCM_FMTBIT_S20_LE |
++			    SNDRV_PCM_FMTBIT_S24_LE |
++			    SNDRV_PCM_FMTBIT_S32_LE)
++	},
++	.ops = &aiu_i2s_encode_dai_ops,
++};
++
++int aiu_i2s_encode_component_probe(struct snd_soc_component *component)
++{
++	struct device *dev = component->dev;
++	struct regmap *map;
++
++	map = syscon_node_to_regmap(dev->parent->of_node);
++	if (IS_ERR(map)) {
++		dev_err(dev, "Could not get regmap\n");
++		return PTR_ERR(map);
++	}
++
++	snd_soc_component_init_regmap(component, map);
++
++	return 0;
++}
++
++static const struct snd_soc_component_driver aiu_i2s_encode_component = {
++	.probe 			= aiu_i2s_encode_component_probe,
++};
++
++static int aiu_i2s_encode_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct aiu_i2s_encode *encoder;
++
++	encoder = devm_kzalloc(dev, sizeof(*encoder), GFP_KERNEL);
++	if (!encoder)
++		return -ENOMEM;
++	platform_set_drvdata(pdev, encoder);
++
++	encoder->pclk = devm_clk_get(dev, "pclk");
++	if (IS_ERR(encoder->pclk)) {
++		if (PTR_ERR(encoder->pclk) != -EPROBE_DEFER)
++			dev_err(dev,
++				"Can't get the peripheral clock\n");
++		return PTR_ERR(encoder->pclk);
++	}
++
++	encoder->aoclk = devm_clk_get(dev, "aoclk");
++	if (IS_ERR(encoder->aoclk)) {
++		if (PTR_ERR(encoder->aoclk) != -EPROBE_DEFER)
++			dev_err(dev, "Can't get the ao clock\n");
++		return PTR_ERR(encoder->aoclk);
++	}
++
++	encoder->mclk = devm_clk_get(dev, "mclk");
++	if (IS_ERR(encoder->mclk)) {
++		if (PTR_ERR(encoder->mclk) != -EPROBE_DEFER)
++			dev_err(dev, "Can't get the i2s m\n");
++		return PTR_ERR(encoder->mclk);
++	}
++
++	return devm_snd_soc_register_component(dev, &aiu_i2s_encode_component,
++					       &aiu_i2s_encode_dai_drv, 1);
++}
++
++static const struct of_device_id aiu_i2s_encode_of_match[] = {
++	{ .compatible = "amlogic,aiu-i2s-encode", },
++	{}
++};
++MODULE_DEVICE_TABLE(of, aiu_i2s_encode_of_match);
++
++static struct platform_driver aiu_i2s_encode_pdrv = {
++	.probe = aiu_i2s_encode_probe,
++	.driver = {
++		.name = "meson-aiu-i2s-encode",
++		.of_match_table = aiu_i2s_encode_of_match,
++	},
++};
++module_platform_driver(aiu_i2s_encode_pdrv);
++
++MODULE_DESCRIPTION("Meson AIU I2S Encode Driver");
++MODULE_AUTHOR("Jerome Brunet <jbrunet@baylibre.com>");
++MODULE_LICENSE("GPL v2");
+diff --git b/sound/soc/meson/aiu-i2s-fifo.c a/sound/soc/meson/aiu-i2s-fifo.c
+new file mode 100644
+index 000000000000..7a9aa1439a60
+--- /dev/null
++++ a/sound/soc/meson/aiu-i2s-fifo.c
+@@ -0,0 +1,169 @@
++// SPDX-License-Identifier: GPL-2.0
++//
++// Copyright (c) 2019 BayLibre, SAS.
++// Author: Jerome Brunet <jbrunet@baylibre.com>
++
++#include <linux/bitfield.h>
++#include <linux/clk.h>
++#include <linux/module.h>
++#include <linux/of_platform.h>
++#include <sound/pcm_params.h>
++#include <sound/soc.h>
++#include <sound/soc-dai.h>
++
++#include "aiu-fifo.h"
++
++#define AIU_MEM_I2S_START		0x180
++#define AIU_MEM_I2S_MASKS		0x18c
++#define  AIU_MEM_I2S_MASKS_IRQ_BLOCK	GENMASK(31, 16)
++#define AIU_MEM_I2S_CONTROL		0x190
++#define  AIU_MEM_I2S_CONTROL_MODE_16BIT	BIT(6)
++#define AIU_MEM_I2S_BUF_CNTL		0x1d8
++#define  AIU_MEM_I2S_BUF_CNTL_INIT	BIT(0)
++
++#define AIU_I2S_FIFO_BLOCK 		256
++#define AIU_I2S_FIFO_FORMATS 		(SNDRV_PCM_FMTBIT_S16_LE | \
++					 SNDRV_PCM_FMTBIT_S20_LE | \
++					 SNDRV_PCM_FMTBIT_S24_LE | \
++					 SNDRV_PCM_FMTBIT_S32_LE)
++
++static int i2s_fifo_prepare(struct snd_pcm_substream *substream,
++			    struct snd_soc_dai *dai)
++{
++	struct snd_soc_component *component = dai->component;
++	int ret;
++
++	ret = aiu_fifo_prepare(substream, dai);
++	if (ret)
++		return ret;
++
++	snd_soc_component_update_bits(component,
++				      AIU_MEM_I2S_BUF_CNTL,
++				      AIU_MEM_I2S_BUF_CNTL_INIT,
++				      AIU_MEM_I2S_BUF_CNTL_INIT);
++	snd_soc_component_update_bits(component,
++				      AIU_MEM_I2S_BUF_CNTL,
++				      AIU_MEM_I2S_BUF_CNTL_INIT, 0);
++
++	return 0;
++}
++
++static int i2s_fifo_hw_params(struct snd_pcm_substream *substream,
++			      struct snd_pcm_hw_params *params,
++			      struct snd_soc_dai *dai)
++{
++	struct snd_soc_component *component = dai->component;
++	struct aiu_fifo *fifo = snd_soc_component_get_drvdata(component);
++	unsigned int val;
++	int ret;
++
++	ret = aiu_fifo_hw_params(substream, params, dai);
++	if (ret)
++		return ret;
++
++	switch (params_physical_width(params)) {
++	case 16:
++		val = AIU_MEM_I2S_CONTROL_MODE_16BIT;
++		break;
++	case 32:
++		val = 0;
++		break;
++	default:
++		dev_err(dai->dev, "Unsupported physical width %u\n",
++			params_physical_width(params));
++		return -EINVAL;
++	}
++
++	snd_soc_component_update_bits(component, AIU_MEM_I2S_CONTROL,
++				      AIU_MEM_I2S_CONTROL_MODE_16BIT,
++				      val);
++
++	/* Setup the irq periodicity */
++	val = params_period_bytes(params) / fifo->hw->fifo_block;
++	val = FIELD_PREP(AIU_MEM_I2S_MASKS_IRQ_BLOCK, val);
++	snd_soc_component_update_bits(component, AIU_MEM_I2S_MASKS,
++				      AIU_MEM_I2S_MASKS_IRQ_BLOCK, val);
++
++	return 0;
++}
++
++static const struct snd_soc_dai_ops i2s_fifo_dai_ops = {
++	.trigger	= aiu_fifo_trigger,
++	.prepare	= i2s_fifo_prepare,
++	.hw_params	= i2s_fifo_hw_params,
++	.hw_free	= aiu_fifo_hw_free,
++	.startup	= aiu_fifo_startup,
++	.shutdown	= aiu_fifo_shutdown,
++};
++
++static struct snd_soc_dai_driver i2s_fifo_dai_drv = {
++	.name = "AIU I2S FIFO",
++	.playback = {
++		.stream_name	= "Playback",
++		.channels_min	= 2,
++		.channels_max	= 8,
++		.rates		= SNDRV_PCM_RATE_CONTINUOUS,
++		.rate_min	= 5512,
++		.rate_max	= 192000,
++		.formats	= AIU_I2S_FIFO_FORMATS,
++	},
++	.ops		= &i2s_fifo_dai_ops,
++	.pcm_new	= aiu_fifo_pcm_new,
++};
++
++static const struct snd_soc_component_driver i2s_fifo_component_drv = {
++	.probe		= aiu_fifo_component_probe,
++	.ops		= &aiu_fifo_pcm_ops,
++};
++
++static struct snd_pcm_hardware i2s_fifo_pcm = {
++	.info = (SNDRV_PCM_INFO_INTERLEAVED |
++		 SNDRV_PCM_INFO_MMAP |
++		 SNDRV_PCM_INFO_MMAP_VALID |
++		 SNDRV_PCM_INFO_PAUSE),
++	.formats = AIU_I2S_FIFO_FORMATS,
++	.rate_min = 5512,
++	.rate_max = 192000,
++	.channels_min = 2,
++	.channels_max = 8,
++	.period_bytes_min = AIU_I2S_FIFO_BLOCK,
++	.period_bytes_max = AIU_I2S_FIFO_BLOCK * USHRT_MAX,
++	.periods_min = 2,
++	.periods_max = UINT_MAX,
++
++	/* No real justification for this */
++	.buffer_bytes_max = 1 * 1024 * 1024,
++};
++
++static const struct aiu_fifo_hw i2s_fifo_hw = {
++	.fifo_block = AIU_I2S_FIFO_BLOCK,
++	.mem_offset = AIU_MEM_I2S_START,
++	.pcm = &i2s_fifo_pcm,
++};
++
++static const struct aiu_fifo_match_data i2s_fifo_data = {
++	.component_drv = &i2s_fifo_component_drv,
++	.dai_drv = &i2s_fifo_dai_drv,
++	.hw = &i2s_fifo_hw,
++};
++
++static const struct of_device_id aiu_i2s_fifo_of_match[] = {
++	{
++		.compatible = "amlogic,aiu-i2s-fifo",
++		.data = &i2s_fifo_data,
++	}, {}
++};
++MODULE_DEVICE_TABLE(of, aiu_i2s_fifo_of_match);
++
++static struct platform_driver aiu_i2s_fifo_pdrv = {
++	.probe = aiu_fifo_probe,
++	.driver = {
++		.name = "meson-aiu-i2s-fifo",
++		.of_match_table = aiu_i2s_fifo_of_match,
++	},
++};
++module_platform_driver(aiu_i2s_fifo_pdrv);
++
++MODULE_DESCRIPTION("Amlogic AIU I2S FIFO driver");
++MODULE_AUTHOR("Jerome Brunet <jbrunet@baylibre.com>");
++MODULE_LICENSE("GPL v2");
+diff --git b/sound/soc/meson/aiu-spdif-encode.c a/sound/soc/meson/aiu-spdif-encode.c
+new file mode 100644
+index 000000000000..92b101117fd7
+--- /dev/null
++++ a/sound/soc/meson/aiu-spdif-encode.c
+@@ -0,0 +1,348 @@
++// SPDX-License-Identifier: GPL-2.0
++//
++// Copyright (c) 2018 BayLibre, SAS.
++// Author: Jerome Brunet <jbrunet@baylibre.com>
++
++#include <linux/bitfield.h>
++#include <linux/clk.h>
++#include <linux/mfd/syscon.h>
++#include <linux/module.h>
++#include <linux/of_platform.h>
++#include <sound/pcm_params.h>
++#include <sound/pcm_iec958.h>
++#include <sound/soc.h>
++#include <sound/soc-dai.h>
++
++#define AIU_958_MISC			0x010
++#define  AIU_958_MISC_NON_PCM		BIT(0)
++#define  AIU_958_MISC_MODE_16BITS	BIT(1)
++#define  AIU_958_MISC_16BITS_ALIGN	GENMASK(6, 5)
++#define  AIU_958_MISC_MODE_32BITS	BIT(7)
++#define  AIU_958_MISC_U_FROM_STREAM	BIT(12)
++#define  AIU_958_MISC_FORCE_LR		BIT(13)
++#define AIU_958_CHSTAT_L0		0x020
++#define AIU_958_CHSTAT_L1		0x024
++#define AIU_958_CTRL			0x028
++#define  AIU_958_CTRL_HOLD_EN		BIT(0)
++#define AIU_I2S_MISC			0x048
++#define  AIU_I2S_MISC_958_SRC_SHIFT	3
++#define AIU_CLK_CTRL			0x058
++#define  AIU_CLK_CTRL_958_DIV_EN	BIT(1)
++#define  AIU_CLK_CTRL_958_DIV		GENMASK(5, 4)
++#define  AIU_CLK_CTRL_958_DIV_MORE	BIT(12)
++#define AIU_958_CHSTAT_R0		0x0c0
++#define AIU_958_CHSTAT_R1		0x0c4
++
++#define AIU_CS_WORD_LEN			4
++#define AIU_958_INTERNAL_DIV		2
++
++struct aiu_spdif_encode {
++	struct clk *mclk_i958;
++	struct clk *mclk_i2s;
++	struct clk *mclk;
++	struct clk *pclk;
++};
++
++static void aiu_spdif_encode_divider_enable(struct snd_soc_component *component,
++					    bool enable)
++{
++	snd_soc_component_update_bits(component, AIU_CLK_CTRL,
++				      AIU_CLK_CTRL_958_DIV_EN,
++				      enable ? AIU_CLK_CTRL_958_DIV_EN : 0);
++}
++
++static void aiu_spdif_encode_hold(struct snd_soc_component *component,
++				  bool enable)
++{
++	snd_soc_component_update_bits(component, AIU_958_CTRL,
++				      AIU_958_CTRL_HOLD_EN,
++				      enable ? AIU_958_CTRL_HOLD_EN : 0);
++}
++
++static int aiu_spdif_encode_trigger(struct snd_pcm_substream *substream, int cmd,
++				    struct snd_soc_dai *dai)
++{
++	struct snd_soc_component *component = dai->component;
++
++	switch (cmd) {
++	case SNDRV_PCM_TRIGGER_START:
++	case SNDRV_PCM_TRIGGER_RESUME:
++	case SNDRV_PCM_TRIGGER_PAUSE_RELEASE:
++	        aiu_spdif_encode_hold(component, false);
++		return 0;
++
++	case SNDRV_PCM_TRIGGER_STOP:
++	case SNDRV_PCM_TRIGGER_SUSPEND:
++	case SNDRV_PCM_TRIGGER_PAUSE_PUSH:
++		aiu_spdif_encode_hold(component, true);
++		return 0;
++
++	default:
++		return -EINVAL;
++	}
++}
++
++static int aiu_spdif_encode_setup_cs_word(struct snd_soc_component *component,
++					  struct snd_pcm_hw_params *params)
++{
++	u8 cs[AIU_CS_WORD_LEN];
++	unsigned int val;
++	int ret;
++
++	ret = snd_pcm_create_iec958_consumer_hw_params(params, cs,
++						       AIU_CS_WORD_LEN);
++	if (ret < 0)
++		return ret;
++
++	/* Write the 1st half word */
++	val = cs[1] | cs[0] << 8;
++	snd_soc_component_write(component, AIU_958_CHSTAT_L0, val);
++	snd_soc_component_write(component, AIU_958_CHSTAT_R0, val);
++
++	/* Write the 2nd half word */
++	val = cs[3] | cs[2] << 8;
++	snd_soc_component_write(component, AIU_958_CHSTAT_L1, val);
++	snd_soc_component_write(component, AIU_958_CHSTAT_R1, val);
++
++	return 0;
++}
++
++static int aiu_spdif_encode_hw_params(struct snd_pcm_substream *substream,
++				  struct snd_pcm_hw_params *params,
++				  struct snd_soc_dai *dai)
++{
++	struct snd_soc_component *component = dai->component;
++	struct aiu_spdif_encode *encoder = snd_soc_dai_get_drvdata(dai);
++	unsigned int val = 0, mrate;
++	int ret;
++
++	/* Disable the clock while changing the settings */
++	aiu_spdif_encode_divider_enable(component, false);
++
++	switch (params_physical_width(params)) {
++	case 16:
++		val |= AIU_958_MISC_MODE_16BITS;
++		val |= FIELD_PREP(AIU_958_MISC_16BITS_ALIGN, 2);
++		break;
++	case 32:
++		val |= AIU_958_MISC_MODE_32BITS;
++		break;
++	default:
++		dev_err(dai->dev, "Unsupport physical width\n");
++		return -EINVAL;
++	}
++
++	snd_soc_component_update_bits(component, AIU_958_MISC,
++				      AIU_958_MISC_NON_PCM |
++				      AIU_958_MISC_MODE_16BITS |
++				      AIU_958_MISC_16BITS_ALIGN |
++				      AIU_958_MISC_MODE_32BITS |
++				      AIU_958_MISC_FORCE_LR |
++				      AIU_958_MISC_U_FROM_STREAM,
++				      val);
++
++	/* Set the stream channel status word */
++	ret = aiu_spdif_encode_setup_cs_word(component, params);
++	if (ret) {
++		dev_err(dai->dev, "failed to set channel status word\n");
++		return ret;
++	}
++
++	snd_soc_component_update_bits(component, AIU_CLK_CTRL,
++				      AIU_CLK_CTRL_958_DIV |
++				      AIU_CLK_CTRL_958_DIV_MORE,
++				      FIELD_PREP(AIU_CLK_CTRL_958_DIV,
++						 __ffs(AIU_958_INTERNAL_DIV)));
++
++	/* 2 * 32bits per subframe * 2 channels = 128 */
++	mrate = params_rate(params) * 128 * AIU_958_INTERNAL_DIV;
++	ret = clk_set_rate(encoder->mclk, mrate);
++	if (ret) {
++		dev_err(dai->dev, "failed to set mclk rate\n");
++		return ret;
++	}
++
++	aiu_spdif_encode_divider_enable(component, true);
++
++	return 0;
++}
++
++static int aiu_spdif_encode_hw_free(struct snd_pcm_substream *substream,
++				    struct snd_soc_dai *dai)
++{
++	struct snd_soc_component *component = dai->component;
++
++	aiu_spdif_encode_divider_enable(component, false);
++
++	return 0;
++}
++
++static int aiu_spdif_encode_startup(struct snd_pcm_substream *substream,
++				    struct snd_soc_dai *dai)
++{
++	struct aiu_spdif_encode *encoder = snd_soc_dai_get_drvdata(dai);
++	int ret;
++
++	/* make sure the spdif block is on its own divider */
++	ret = clk_set_parent(encoder->mclk, encoder->mclk_i958);
++	if (ret)
++		return ret;
++
++	ret = clk_prepare_enable(encoder->pclk);
++	if (ret)
++		return ret;
++
++	ret = clk_prepare_enable(encoder->mclk);
++	if (ret)
++		clk_disable_unprepare(encoder->pclk);
++
++	return ret;
++}
++
++static void aiu_spdif_encode_shutdown(struct snd_pcm_substream *substream,
++				      struct snd_soc_dai *dai)
++{
++	struct aiu_spdif_encode *encoder = snd_soc_dai_get_drvdata(dai);
++
++	clk_disable_unprepare(encoder->mclk);
++	clk_disable_unprepare(encoder->pclk);
++}
++
++static const struct snd_soc_dai_ops aiu_spdif_encode_dai_ops = {
++	.trigger	= aiu_spdif_encode_trigger,
++	.hw_params	= aiu_spdif_encode_hw_params,
++	.hw_free	= aiu_spdif_encode_hw_free,
++	.startup	= aiu_spdif_encode_startup,
++	.shutdown	= aiu_spdif_encode_shutdown,
++};
++
++static struct snd_soc_dai_driver aiu_spdif_encode_dai_drv = {
++	.playback = {
++		.stream_name = "Playback",
++		.channels_min = 2,
++		.channels_max = 2,
++		.rates = (SNDRV_PCM_RATE_32000  |
++			  SNDRV_PCM_RATE_44100  |
++			  SNDRV_PCM_RATE_48000  |
++			  SNDRV_PCM_RATE_88200  |
++			  SNDRV_PCM_RATE_96000  |
++			  SNDRV_PCM_RATE_176400 |
++			  SNDRV_PCM_RATE_192000),
++		.formats = (SNDRV_PCM_FMTBIT_S16_LE |
++			    SNDRV_PCM_FMTBIT_S20_LE |
++			    SNDRV_PCM_FMTBIT_S24_LE),
++	},
++	.ops = &aiu_spdif_encode_dai_ops,
++};
++
++int aiu_spdif_encode_component_probe(struct snd_soc_component *component)
++{
++	struct device *dev = component->dev;
++	struct regmap *map;
++
++	map = syscon_node_to_regmap(dev->parent->of_node);
++	if (IS_ERR(map)) {
++		dev_err(dev, "Could not get regmap\n");
++		return PTR_ERR(map);
++	}
++
++	snd_soc_component_init_regmap(component, map);
++
++	return 0;
++}
++
++static const char * const aiu_spdif_encode_sel_texts[] = {
++	"SPDIF", "I2S",
++};
++
++static SOC_ENUM_SINGLE_DECL(aiu_spdif_encode_sel_enum, AIU_I2S_MISC,
++			    AIU_I2S_MISC_958_SRC_SHIFT,
++			    aiu_spdif_encode_sel_texts);
++
++static const struct snd_kcontrol_new aiu_spdif_encode_mux =
++	SOC_DAPM_ENUM("Buffer Src", aiu_spdif_encode_sel_enum);
++
++static const struct snd_soc_dapm_widget aiu_spdif_encode_dapm_widgets[] = {
++	SND_SOC_DAPM_AIF_IN("SPDIF IN", NULL, 0, SND_SOC_NOPM, 0, 0),
++	SND_SOC_DAPM_AIF_IN("I2S IN", NULL, 0, SND_SOC_NOPM, 0, 0),
++	SND_SOC_DAPM_MUX("SRC SEL", SND_SOC_NOPM, 0, 0, &aiu_spdif_encode_mux),
++};
++
++static const struct snd_soc_dapm_route aiu_spdif_encode_dapm_routes[] = {
++	{ "SRC SEL", "SPDIF", "SPDIF IN" },
++	{ "SRC SEL", "I2S", "I2S IN" },
++	{ "Playback", NULL, "SRC SEL" },
++};
++
++static const struct snd_soc_component_driver aiu_spdif_encode_component = {
++	.dapm_widgets		= aiu_spdif_encode_dapm_widgets,
++	.num_dapm_widgets	= ARRAY_SIZE(aiu_spdif_encode_dapm_widgets),
++	.dapm_routes		= aiu_spdif_encode_dapm_routes,
++	.num_dapm_routes	= ARRAY_SIZE(aiu_spdif_encode_dapm_routes),
++	.probe 			= aiu_spdif_encode_component_probe,
++};
++
++static int aiu_spdif_encode_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct aiu_spdif_encode *encoder;
++
++	encoder = devm_kzalloc(dev, sizeof(*encoder), GFP_KERNEL);
++	if (!encoder)
++		return -ENOMEM;
++	platform_set_drvdata(pdev, encoder);
++
++	encoder->pclk = devm_clk_get(dev, "pclk");
++	if (IS_ERR(encoder->pclk)) {
++		if (PTR_ERR(encoder->pclk) != -EPROBE_DEFER)
++			dev_err(dev,
++				"Can't get the dai clock gate\n");
++		return PTR_ERR(encoder->pclk);
++	}
++
++	encoder->mclk_i958 = devm_clk_get(dev, "mclk_i958");
++	if (IS_ERR(encoder->mclk_i958)) {
++		if (PTR_ERR(encoder->mclk_i958) != -EPROBE_DEFER)
++			dev_err(dev, "Can't get the spdif master clock\n");
++		return PTR_ERR(encoder->mclk_i958);
++	}
++
++	/*
++	 * NOTE: the spdif can be clock by i2s master clock or its own clock,
++	 * We should (maybe) change the source depending on the origin of the
++	 * data.
++	 * However, considering the clocking scheme used on these platforms,
++	 * the master clocks should pick the same PLL source when they are
++	 * playing from the same FIFO. The clock should be in sync so, it
++	 * should not be necessary to reparent the spdif master clock.
++	 */
++
++	encoder->mclk = devm_clk_get(dev, "mclk");
++	if (IS_ERR(encoder->mclk)) {
++		if (PTR_ERR(encoder->mclk) != -EPROBE_DEFER)
++			dev_err(dev, "Can't get the spdif input mux clock\n");
++		return PTR_ERR(encoder->mclk);
++	}
++
++	return devm_snd_soc_register_component(dev, &aiu_spdif_encode_component,
++					       &aiu_spdif_encode_dai_drv, 1);
++}
++
++static const struct of_device_id aiu_spdif_encode_of_match[] = {
++	{ .compatible = "amlogic,aiu-spdif-encode", },
++	{}
++};
++MODULE_DEVICE_TABLE(of, aiu_spdif_encode_of_match);
++
++static struct platform_driver aiu_spdif_encode_pdrv = {
++	.probe = aiu_spdif_encode_probe,
++	.driver = {
++		.name = "meson-aiu-spdif-encode",
++		.of_match_table = aiu_spdif_encode_of_match,
++	},
++};
++module_platform_driver(aiu_spdif_encode_pdrv);
++
++MODULE_DESCRIPTION("Meson AIU SPDIF Encode Driver");
++MODULE_AUTHOR("Jerome Brunet <jbrunet@baylibre.com>");
++MODULE_LICENSE("GPL v2");
+diff --git b/sound/soc/meson/aiu-spdif-fifo.c a/sound/soc/meson/aiu-spdif-fifo.c
+new file mode 100644
+index 000000000000..8d34ca51c6d0
+--- /dev/null
++++ a/sound/soc/meson/aiu-spdif-fifo.c
+@@ -0,0 +1,226 @@
++// SPDX-License-Identifier: GPL-2.0
++//
++// Copyright (c) 2019 BayLibre, SAS.
++// Author: Jerome Brunet <jbrunet@baylibre.com>
++
++#include <linux/clk.h>
++#include <linux/module.h>
++#include <linux/of_platform.h>
++#include <sound/pcm_params.h>
++#include <sound/soc.h>
++#include <sound/soc-dai.h>
++
++#include "aiu-fifo.h"
++
++#define AIU_IEC958_BPF				0x000
++#define AIU_IEC958_DCU_FF_CTRL			0x01c
++#define  AIU_IEC958_DCU_FF_CTRL_EN		BIT(0)
++#define  AIU_IEC958_DCU_FF_CTRL_AUTO_DISABLE	BIT(1)
++#define  AIU_IEC958_DCU_FF_CTRL_IRQ_MODE	GENMASK(3, 2)
++#define  AIU_IEC958_DCU_FF_CTRL_IRQ_OUT_THD	BIT(2)
++#define  AIU_IEC958_DCU_FF_CTRL_IRQ_FRAME_READ 	BIT(3)
++#define  AIU_IEC958_DCU_FF_CTRL_SYNC_HEAD_EN	BIT(4)
++#define  AIU_IEC958_DCU_FF_CTRL_BYTE_SEEK	BIT(5)
++#define  AIU_IEC958_DCU_FF_CTRL_CONTINUE	BIT(6)
++#define AIU_MEM_IEC958_START			0x194
++#define AIU_MEM_IEC958_CONTROL			0x1a4
++#define AIU_MEM_IEC958_CONTROL_ENDIAN		GENMASK(5, 3)
++#define AIU_MEM_IEC958_CONTROL_RD_DDR		BIT(6)
++#define AIU_MEM_IEC958_CONTROL_MODE_16BIT	BIT(7)
++#define AIU_MEM_IEC958_CONTROL_MODE_LINEAR	BIT(8)
++#define AIU_MEM_IEC958_BUF_CNTL			0x1fc
++#define  AIU_MEM_IEC958_BUF_CNTL_INIT		BIT(0)
++
++#define AIU_SPDIF_FIFO_BLOCK 			8
++#define AIU_SPDIF_FIFO_FORMATS 			(SNDRV_PCM_FMTBIT_S16_LE | \
++						 SNDRV_PCM_FMTBIT_S20_LE | \
++						 SNDRV_PCM_FMTBIT_S24_LE)
++
++static void spdif_fifo_dcu_enable(struct snd_soc_component *component,
++				  bool enable)
++{
++	snd_soc_component_update_bits(component, AIU_IEC958_DCU_FF_CTRL,
++				      AIU_IEC958_DCU_FF_CTRL_EN,
++				      enable ? AIU_IEC958_DCU_FF_CTRL_EN : 0);
++}
++
++static int spdif_fifo_trigger(struct snd_pcm_substream *substream, int cmd,
++			      struct snd_soc_dai *dai)
++{
++	struct snd_soc_component *component = dai->component;
++	int ret;
++
++	ret = aiu_fifo_trigger(substream, cmd, dai);
++	if (ret)
++		return ret;
++
++	switch (cmd) {
++	case SNDRV_PCM_TRIGGER_START:
++	case SNDRV_PCM_TRIGGER_RESUME:
++	case SNDRV_PCM_TRIGGER_PAUSE_RELEASE:
++	        spdif_fifo_dcu_enable(component, true);
++		break;
++	case SNDRV_PCM_TRIGGER_SUSPEND:
++	case SNDRV_PCM_TRIGGER_PAUSE_PUSH:
++	case SNDRV_PCM_TRIGGER_STOP:
++		spdif_fifo_dcu_enable(component, false);
++		break;
++	default:
++		return -EINVAL;
++	}
++
++	return 0;
++}
++
++static int spdif_fifo_prepare(struct snd_pcm_substream *substream,
++			      struct snd_soc_dai *dai)
++{
++	struct snd_soc_component *component = dai->component;
++	int ret;
++
++	ret = aiu_fifo_prepare(substream, dai);
++	if (ret)
++		return ret;
++
++	snd_soc_component_update_bits(component,
++				      AIU_MEM_IEC958_BUF_CNTL,
++				      AIU_MEM_IEC958_BUF_CNTL_INIT,
++				      AIU_MEM_IEC958_BUF_CNTL_INIT);
++	snd_soc_component_update_bits(component,
++				      AIU_MEM_IEC958_BUF_CNTL,
++				      AIU_MEM_IEC958_BUF_CNTL_INIT, 0);
++
++	return 0;
++}
++
++static int spdif_fifo_hw_params(struct snd_pcm_substream *substream,
++				struct snd_pcm_hw_params *params,
++				struct snd_soc_dai *dai)
++{
++	struct snd_soc_component *component = dai->component;
++	unsigned int val;
++	int ret;
++
++	ret = aiu_fifo_hw_params(substream, params, dai);
++	if (ret)
++		return ret;
++
++	val = AIU_MEM_IEC958_CONTROL_RD_DDR |
++	      AIU_MEM_IEC958_CONTROL_MODE_LINEAR;
++
++	switch (params_physical_width(params)) {
++	case 16:
++		val |= AIU_MEM_IEC958_CONTROL_MODE_16BIT;
++		break;
++	case 32:
++		break;
++	default:
++		dev_err(dai->dev, "Unsupported physical width %u\n",
++			params_physical_width(params));
++		return -EINVAL;
++	}
++
++	snd_soc_component_update_bits(component, AIU_MEM_IEC958_CONTROL,
++				      AIU_MEM_IEC958_CONTROL_ENDIAN |
++				      AIU_MEM_IEC958_CONTROL_RD_DDR |
++				      AIU_MEM_IEC958_CONTROL_MODE_LINEAR |
++				      AIU_MEM_IEC958_CONTROL_MODE_16BIT,
++				      val);
++
++	/* Number bytes read by the FIFO between each IRQ */
++	snd_soc_component_write(component, AIU_IEC958_BPF,
++				params_period_bytes(params));
++
++	/*
++	 * AUTO_DISABLE and SYNC_HEAD are enabled by default but
++	 * this should be disabled in PCM (uncompressed) mode
++	 */
++	snd_soc_component_update_bits(component, AIU_IEC958_DCU_FF_CTRL,
++				      AIU_IEC958_DCU_FF_CTRL_AUTO_DISABLE |
++				      AIU_IEC958_DCU_FF_CTRL_IRQ_MODE |
++				      AIU_IEC958_DCU_FF_CTRL_SYNC_HEAD_EN,
++				      AIU_IEC958_DCU_FF_CTRL_IRQ_FRAME_READ);
++
++	return 0;
++}
++
++static const struct snd_soc_dai_ops spdif_fifo_dai_ops = {
++	.trigger	= spdif_fifo_trigger,
++	.prepare	= spdif_fifo_prepare,
++	.hw_params	= spdif_fifo_hw_params,
++	.hw_free	= aiu_fifo_hw_free,
++	.startup	= aiu_fifo_startup,
++	.shutdown	= aiu_fifo_shutdown,
++};
++
++static struct snd_soc_dai_driver spdif_fifo_dai_drv = {
++	.name = "AIU SPDIF FIFO",
++	.playback = {
++		.stream_name	= "Playback",
++		.channels_min	= 2,
++		.channels_max	= 2,
++		.rates		= SNDRV_PCM_RATE_CONTINUOUS,
++		.rate_min	= 5512,
++		.rate_max	= 192000,
++		.formats	= AIU_SPDIF_FIFO_FORMATS,
++	},
++	.ops		= &spdif_fifo_dai_ops,
++	.pcm_new	= aiu_fifo_pcm_new,
++};
++
++static const struct snd_soc_component_driver spdif_fifo_component_drv = {
++	.probe		= aiu_fifo_component_probe,
++	.ops		= &aiu_fifo_pcm_ops,
++};
++
++static struct snd_pcm_hardware spdif_fifo_pcm = {
++	.info = (SNDRV_PCM_INFO_INTERLEAVED |
++		 SNDRV_PCM_INFO_MMAP |
++		 SNDRV_PCM_INFO_MMAP_VALID |
++		 SNDRV_PCM_INFO_PAUSE),
++	.formats = AIU_SPDIF_FIFO_FORMATS,
++	.rate_min = 5512,
++	.rate_max = 192000,
++	.channels_min = 2,
++	.channels_max = 2,
++	.period_bytes_min = AIU_SPDIF_FIFO_BLOCK,
++	.period_bytes_max = AIU_SPDIF_FIFO_BLOCK * USHRT_MAX,
++	.periods_min = 2,
++	.periods_max = UINT_MAX,
++
++	/* No real justification for this */
++	.buffer_bytes_max = 1 * 1024 * 1024,
++};
++
++static const struct aiu_fifo_hw spdif_fifo_hw = {
++	.fifo_block = /*AIU_SPDIF_FIFO_BLOCK*/ 1,
++	.mem_offset = AIU_MEM_IEC958_START,
++	.pcm = &spdif_fifo_pcm,
++};
++
++static const struct aiu_fifo_match_data spdif_fifo_data = {
++	.component_drv = &spdif_fifo_component_drv,
++	.dai_drv = &spdif_fifo_dai_drv,
++	.hw = &spdif_fifo_hw,
++};
++
++static const struct of_device_id aiu_spdif_fifo_of_match[] = {
++	{
++		.compatible = "amlogic,aiu-spdif-fifo",
++		.data = &spdif_fifo_data,
++	}, {}
++};
++MODULE_DEVICE_TABLE(of, aiu_spdif_fifo_of_match);
++
++static struct platform_driver aiu_spdif_fifo_pdrv = {
++	.probe = aiu_fifo_probe,
++	.driver = {
++		.name = "meson-aiu-spdif-fifo",
++		.of_match_table = aiu_spdif_fifo_of_match,
++	},
++};
++module_platform_driver(aiu_spdif_fifo_pdrv);
++
++MODULE_DESCRIPTION("Amlogic AIU SPDIF FIFO driver");
++MODULE_AUTHOR("Jerome Brunet <jbrunet@baylibre.com>");
++MODULE_LICENSE("GPL v2");
+diff --git b/sound/soc/meson/axg-card.c a/sound/soc/meson/axg-card.c
+index 1f698adde506..ebf058d0651e 100644
+--- b/sound/soc/meson/axg-card.c
++++ a/sound/soc/meson/axg-card.c
+@@ -9,11 +9,7 @@
+ #include <sound/soc-dai.h>
+ 
+ #include "axg-tdm.h"
+-
+-struct axg_card {
+-	struct snd_soc_card card;
+-	void **link_data;
+-};
++#include "meson-card.h"
+ 
+ struct axg_dai_link_tdm_mask {
+ 	u32 tx;
+@@ -41,161 +37,15 @@ static const struct snd_soc_pcm_stream codec_params = {
+ 	.channels_max = 8,
+ };
+ 
+-#define PREFIX "amlogic,"
+-
+-static int axg_card_reallocate_links(struct axg_card *priv,
+-				     unsigned int num_links)
+-{
+-	struct snd_soc_dai_link *links;
+-	void **ldata;
+-
+-	links = krealloc(priv->card.dai_link,
+-			 num_links * sizeof(*priv->card.dai_link),
+-			 GFP_KERNEL | __GFP_ZERO);
+-	ldata = krealloc(priv->link_data,
+-			 num_links * sizeof(*priv->link_data),
+-			 GFP_KERNEL | __GFP_ZERO);
+-
+-	if (!links || !ldata) {
+-		dev_err(priv->card.dev, "failed to allocate links\n");
+-		return -ENOMEM;
+-	}
+-
+-	priv->card.dai_link = links;
+-	priv->link_data = ldata;
+-	priv->card.num_links = num_links;
+-	return 0;
+-}
+-
+-static int axg_card_parse_dai(struct snd_soc_card *card,
+-			      struct device_node *node,
+-			      struct device_node **dai_of_node,
+-			      const char **dai_name)
+-{
+-	struct of_phandle_args args;
+-	int ret;
+-
+-	if (!dai_name || !dai_of_node || !node)
+-		return -EINVAL;
+-
+-	ret = of_parse_phandle_with_args(node, "sound-dai",
+-					 "#sound-dai-cells", 0, &args);
+-	if (ret) {
+-		if (ret != -EPROBE_DEFER)
+-			dev_err(card->dev, "can't parse dai %d\n", ret);
+-		return ret;
+-	}
+-	*dai_of_node = args.np;
+-
+-	return snd_soc_get_dai_name(&args, dai_name);
+-}
+-
+-static int axg_card_set_link_name(struct snd_soc_card *card,
+-				  struct snd_soc_dai_link *link,
+-				  struct device_node *node,
+-				  const char *prefix)
+-{
+-	char *name = devm_kasprintf(card->dev, GFP_KERNEL, "%s.%s",
+-				    prefix, node->full_name);
+-	if (!name)
+-		return -ENOMEM;
+-
+-	link->name = name;
+-	link->stream_name = name;
+-
+-	return 0;
+-}
+-
+-static void axg_card_clean_references(struct axg_card *priv)
+-{
+-	struct snd_soc_card *card = &priv->card;
+-	struct snd_soc_dai_link *link;
+-	struct snd_soc_dai_link_component *codec;
+-	struct snd_soc_aux_dev *aux;
+-	int i, j;
+-
+-	if (card->dai_link) {
+-		for_each_card_prelinks(card, i, link) {
+-			if (link->cpus)
+-				of_node_put(link->cpus->of_node);
+-			for_each_link_codecs(link, j, codec)
+-				of_node_put(codec->of_node);
+-		}
+-	}
+-
+-	if (card->aux_dev) {
+-		for_each_card_pre_auxs(card, i, aux)
+-			of_node_put(aux->dlc.of_node);
+-	}
+-
+-	kfree(card->dai_link);
+-	kfree(priv->link_data);
+-}
+-
+-static int axg_card_add_aux_devices(struct snd_soc_card *card)
+-{
+-	struct device_node *node = card->dev->of_node;
+-	struct snd_soc_aux_dev *aux;
+-	int num, i;
+-
+-	num = of_count_phandle_with_args(node, "audio-aux-devs", NULL);
+-	if (num == -ENOENT) {
+-		/*
+-		 * It is ok to have no auxiliary devices but for this card it
+-		 * is a strange situtation. Let's warn the about it.
+-		 */
+-		dev_warn(card->dev, "card has no auxiliary devices\n");
+-		return 0;
+-	} else if (num < 0) {
+-		dev_err(card->dev, "error getting auxiliary devices: %d\n",
+-			num);
+-		return num;
+-	}
+-
+-	aux = devm_kcalloc(card->dev, num, sizeof(*aux), GFP_KERNEL);
+-	if (!aux)
+-		return -ENOMEM;
+-	card->aux_dev = aux;
+-	card->num_aux_devs = num;
+-
+-	for_each_card_pre_auxs(card, i, aux) {
+-		aux->dlc.of_node =
+-			of_parse_phandle(node, "audio-aux-devs", i);
+-		if (!aux->dlc.of_node)
+-			return -EINVAL;
+-	}
+-
+-	return 0;
+-}
+-
+ static int axg_card_tdm_be_hw_params(struct snd_pcm_substream *substream,
+ 				     struct snd_pcm_hw_params *params)
+ {
+ 	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+-	struct axg_card *priv = snd_soc_card_get_drvdata(rtd->card);
++	struct meson_card *priv = snd_soc_card_get_drvdata(rtd->card);
+ 	struct axg_dai_link_tdm_data *be =
+ 		(struct axg_dai_link_tdm_data *)priv->link_data[rtd->num];
+-	struct snd_soc_dai *codec_dai;
+-	unsigned int mclk;
+-	int ret, i;
+ 
+-	if (be->mclk_fs) {
+-		mclk = params_rate(params) * be->mclk_fs;
+-
+-		for_each_rtd_codec_dai(rtd, i, codec_dai) {
+-			ret = snd_soc_dai_set_sysclk(codec_dai, 0, mclk,
+-						     SND_SOC_CLOCK_IN);
+-			if (ret && ret != -ENOTSUPP)
+-				return ret;
+-		}
+-
+-		ret = snd_soc_dai_set_sysclk(rtd->cpu_dai, 0, mclk,
+-					     SND_SOC_CLOCK_OUT);
+-		if (ret && ret != -ENOTSUPP)
+-			return ret;
+-	}
+-
+-	return 0;
++	return meson_card_i2s_set_sysclk(substream, params, be->mclk_fs);
+ }
+ 
+ static const struct snd_soc_ops axg_card_tdm_be_ops = {
+@@ -204,7 +54,7 @@ static const struct snd_soc_ops axg_card_tdm_be_ops = {
+ 
+ static int axg_card_tdm_dai_init(struct snd_soc_pcm_runtime *rtd)
+ {
+-	struct axg_card *priv = snd_soc_card_get_drvdata(rtd->card);
++	struct meson_card *priv = snd_soc_card_get_drvdata(rtd->card);
+ 	struct axg_dai_link_tdm_data *be =
+ 		(struct axg_dai_link_tdm_data *)priv->link_data[rtd->num];
+ 	struct snd_soc_dai *codec_dai;
+@@ -234,7 +84,7 @@ static int axg_card_tdm_dai_init(struct snd_soc_pcm_runtime *rtd)
+ 
+ static int axg_card_tdm_dai_lb_init(struct snd_soc_pcm_runtime *rtd)
+ {
+-	struct axg_card *priv = snd_soc_card_get_drvdata(rtd->card);
++	struct meson_card *priv = snd_soc_card_get_drvdata(rtd->card);
+ 	struct axg_dai_link_tdm_data *be =
+ 		(struct axg_dai_link_tdm_data *)priv->link_data[rtd->num];
+ 	int ret;
+@@ -253,14 +103,14 @@ static int axg_card_tdm_dai_lb_init(struct snd_soc_pcm_runtime *rtd)
+ static int axg_card_add_tdm_loopback(struct snd_soc_card *card,
+ 				     int *index)
+ {
+-	struct axg_card *priv = snd_soc_card_get_drvdata(card);
++	struct meson_card *priv = snd_soc_card_get_drvdata(card);
+ 	struct snd_soc_dai_link *pad = &card->dai_link[*index];
+ 	struct snd_soc_dai_link *lb;
+ 	struct snd_soc_dai_link_component *dlc;
+ 	int ret;
+ 
+ 	/* extend links */
+-	ret = axg_card_reallocate_links(priv, card->num_links + 1);
++	ret = meson_card_reallocate_links(card, card->num_links + 1);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -304,32 +154,6 @@ static int axg_card_add_tdm_loopback(struct snd_soc_card *card,
+ 	return 0;
+ }
+ 
+-static unsigned int axg_card_parse_daifmt(struct device_node *node,
+-					  struct device_node *cpu_node)
+-{
+-	struct device_node *bitclkmaster = NULL;
+-	struct device_node *framemaster = NULL;
+-	unsigned int daifmt;
+-
+-	daifmt = snd_soc_of_parse_daifmt(node, PREFIX,
+-					 &bitclkmaster, &framemaster);
+-	daifmt &= ~SND_SOC_DAIFMT_MASTER_MASK;
+-
+-	/* If no master is provided, default to cpu master */
+-	if (!bitclkmaster || bitclkmaster == cpu_node) {
+-		daifmt |= (!framemaster || framemaster == cpu_node) ?
+-			SND_SOC_DAIFMT_CBS_CFS : SND_SOC_DAIFMT_CBS_CFM;
+-	} else {
+-		daifmt |= (!framemaster || framemaster == cpu_node) ?
+-			SND_SOC_DAIFMT_CBM_CFS : SND_SOC_DAIFMT_CBM_CFM;
+-	}
+-
+-	of_node_put(bitclkmaster);
+-	of_node_put(framemaster);
+-
+-	return daifmt;
+-}
+-
+ static int axg_card_parse_cpu_tdm_slots(struct snd_soc_card *card,
+ 					struct snd_soc_dai_link *link,
+ 					struct device_node *node,
+@@ -424,7 +248,7 @@ static int axg_card_parse_tdm(struct snd_soc_card *card,
+ 			      struct device_node *node,
+ 			      int *index)
+ {
+-	struct axg_card *priv = snd_soc_card_get_drvdata(card);
++	struct meson_card *priv = snd_soc_card_get_drvdata(card);
+ 	struct snd_soc_dai_link *link = &card->dai_link[*index];
+ 	struct axg_dai_link_tdm_data *be;
+ 	int ret;
+@@ -438,7 +262,7 @@ static int axg_card_parse_tdm(struct snd_soc_card *card,
+ 	/* Setup tdm link */
+ 	link->ops = &axg_card_tdm_be_ops;
+ 	link->init = axg_card_tdm_dai_init;
+-	link->dai_fmt = axg_card_parse_daifmt(node, link->cpus->of_node);
++	link->dai_fmt = meson_card_parse_daifmt(node, link->cpus->of_node);
+ 
+ 	of_property_read_u32(node, "mclk-fs", &be->mclk_fs);
+ 
+@@ -462,97 +286,24 @@ static int axg_card_parse_tdm(struct snd_soc_card *card,
+ 	return 0;
+ }
+ 
+-static int axg_card_set_be_link(struct snd_soc_card *card,
+-				struct snd_soc_dai_link *link,
+-				struct device_node *node)
+-{
+-	struct snd_soc_dai_link_component *codec;
+-	struct device_node *np;
+-	int ret, num_codecs;
+-
+-	link->no_pcm = 1;
+-	link->dpcm_playback = 1;
+-	link->dpcm_capture = 1;
+-
+-	num_codecs = of_get_child_count(node);
+-	if (!num_codecs) {
+-		dev_err(card->dev, "be link %s has no codec\n",
+-			node->full_name);
+-		return -EINVAL;
+-	}
+-
+-	codec = devm_kcalloc(card->dev, num_codecs, sizeof(*codec), GFP_KERNEL);
+-	if (!codec)
+-		return -ENOMEM;
+-
+-	link->codecs = codec;
+-	link->num_codecs = num_codecs;
+-
+-	for_each_child_of_node(node, np) {
+-		ret = axg_card_parse_dai(card, np, &codec->of_node,
+-					 &codec->dai_name);
+-		if (ret) {
+-			of_node_put(np);
+-			return ret;
+-		}
+-
+-		codec++;
+-	}
+-
+-	ret = axg_card_set_link_name(card, link, node, "be");
+-	if (ret)
+-		dev_err(card->dev, "error setting %pOFn link name\n", np);
+-
+-	return ret;
+-}
+-
+-static int axg_card_set_fe_link(struct snd_soc_card *card,
+-				struct snd_soc_dai_link *link,
+-				struct device_node *node,
+-				bool is_playback)
+-{
+-	struct snd_soc_dai_link_component *codec;
+-
+-	codec = devm_kzalloc(card->dev, sizeof(*codec), GFP_KERNEL);
+-	if (!codec)
+-		return -ENOMEM;
+-
+-	link->codecs = codec;
+-	link->num_codecs = 1;
+-
+-	link->dynamic = 1;
+-	link->dpcm_merged_format = 1;
+-	link->dpcm_merged_chan = 1;
+-	link->dpcm_merged_rate = 1;
+-	link->codecs->dai_name = "snd-soc-dummy-dai";
+-	link->codecs->name = "snd-soc-dummy";
+-
+-	if (is_playback)
+-		link->dpcm_playback = 1;
+-	else
+-		link->dpcm_capture = 1;
+-
+-	return axg_card_set_link_name(card, link, node, "fe");
+-}
+-
+ static int axg_card_cpu_is_capture_fe(struct device_node *np)
+ {
+-	return of_device_is_compatible(np, PREFIX "axg-toddr");
++	return of_device_is_compatible(np, DT_PREFIX "axg-toddr");
+ }
+ 
+ static int axg_card_cpu_is_playback_fe(struct device_node *np)
+ {
+-	return of_device_is_compatible(np, PREFIX "axg-frddr");
++	return of_device_is_compatible(np, DT_PREFIX "axg-frddr");
+ }
+ 
+ static int axg_card_cpu_is_tdm_iface(struct device_node *np)
+ {
+-	return of_device_is_compatible(np, PREFIX "axg-tdm-iface");
++	return of_device_is_compatible(np, DT_PREFIX "axg-tdm-iface");
+ }
+ 
+ static int axg_card_cpu_is_codec(struct device_node *np)
+ {
+-	return of_device_is_compatible(np, PREFIX "g12a-tohdmitx");
++	return of_device_is_compatible(np, DT_PREFIX "g12a-tohdmitx");
+ }
+ 
+ static int axg_card_add_link(struct snd_soc_card *card, struct device_node *np,
+@@ -569,17 +320,17 @@ static int axg_card_add_link(struct snd_soc_card *card, struct device_node *np,
+ 	dai_link->cpus = cpu;
+ 	dai_link->num_cpus = 1;
+ 
+-	ret = axg_card_parse_dai(card, np, &dai_link->cpus->of_node,
++	ret = meson_card_parse_dai(card, np, &dai_link->cpus->of_node,
+ 				 &dai_link->cpus->dai_name);
+ 	if (ret)
+ 		return ret;
+ 
+ 	if (axg_card_cpu_is_playback_fe(dai_link->cpus->of_node))
+-		ret = axg_card_set_fe_link(card, dai_link, np, true);
++		ret = meson_card_set_fe_link(card, dai_link, np, true);
+ 	else if (axg_card_cpu_is_capture_fe(dai_link->cpus->of_node))
+-		ret = axg_card_set_fe_link(card, dai_link, np, false);
++		ret = meson_card_set_fe_link(card, dai_link, np, false);
+ 	else
+-		ret = axg_card_set_be_link(card, dai_link, np);
++		ret = meson_card_set_be_link(card, dai_link, np);
+ 
+ 	if (ret)
+ 		return ret;
+@@ -592,121 +343,21 @@ static int axg_card_add_link(struct snd_soc_card *card, struct device_node *np,
+ 	return ret;
+ }
+ 
+-static int axg_card_add_links(struct snd_soc_card *card)
+-{
+-	struct axg_card *priv = snd_soc_card_get_drvdata(card);
+-	struct device_node *node = card->dev->of_node;
+-	struct device_node *np;
+-	int num, i, ret;
+-
+-	num = of_get_child_count(node);
+-	if (!num) {
+-		dev_err(card->dev, "card has no links\n");
+-		return -EINVAL;
+-	}
+-
+-	ret = axg_card_reallocate_links(priv, num);
+-	if (ret)
+-		return ret;
+-
+-	i = 0;
+-	for_each_child_of_node(node, np) {
+-		ret = axg_card_add_link(card, np, &i);
+-		if (ret) {
+-			of_node_put(np);
+-			return ret;
+-		}
+-
+-		i++;
+-	}
+-
+-	return 0;
+-}
+-
+-static int axg_card_parse_of_optional(struct snd_soc_card *card,
+-				      const char *propname,
+-				      int (*func)(struct snd_soc_card *c,
+-						  const char *p))
+-{
+-	/* If property is not provided, don't fail ... */
+-	if (!of_property_read_bool(card->dev->of_node, propname))
+-		return 0;
+-
+-	/* ... but do fail if it is provided and the parsing fails */
+-	return func(card, propname);
+-}
++static const struct meson_card_match_data axg_card_match_data = {
++	.add_link = axg_card_add_link,
++};
+ 
+ static const struct of_device_id axg_card_of_match[] = {
+-	{ .compatible = "amlogic,axg-sound-card", },
+-	{}
++	{
++		.compatible = "amlogic,axg-sound-card",
++		.data = &axg_card_match_data,
++	}, {}
+ };
+ MODULE_DEVICE_TABLE(of, axg_card_of_match);
+ 
+-static int axg_card_probe(struct platform_device *pdev)
+-{
+-	struct device *dev = &pdev->dev;
+-	struct axg_card *priv;
+-	int ret;
+-
+-	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+-	if (!priv)
+-		return -ENOMEM;
+-
+-	platform_set_drvdata(pdev, priv);
+-	snd_soc_card_set_drvdata(&priv->card, priv);
+-
+-	priv->card.owner = THIS_MODULE;
+-	priv->card.dev = dev;
+-
+-	ret = snd_soc_of_parse_card_name(&priv->card, "model");
+-	if (ret < 0)
+-		return ret;
+-
+-	ret = axg_card_parse_of_optional(&priv->card, "audio-routing",
+-					 snd_soc_of_parse_audio_routing);
+-	if (ret) {
+-		dev_err(dev, "error while parsing routing\n");
+-		return ret;
+-	}
+-
+-	ret = axg_card_parse_of_optional(&priv->card, "audio-widgets",
+-					 snd_soc_of_parse_audio_simple_widgets);
+-	if (ret) {
+-		dev_err(dev, "error while parsing widgets\n");
+-		return ret;
+-	}
+-
+-	ret = axg_card_add_links(&priv->card);
+-	if (ret)
+-		goto out_err;
+-
+-	ret = axg_card_add_aux_devices(&priv->card);
+-	if (ret)
+-		goto out_err;
+-
+-	ret = devm_snd_soc_register_card(dev, &priv->card);
+-	if (ret)
+-		goto out_err;
+-
+-	return 0;
+-
+-out_err:
+-	axg_card_clean_references(priv);
+-	return ret;
+-}
+-
+-static int axg_card_remove(struct platform_device *pdev)
+-{
+-	struct axg_card *priv = platform_get_drvdata(pdev);
+-
+-	axg_card_clean_references(priv);
+-
+-	return 0;
+-}
+-
+ static struct platform_driver axg_card_pdrv = {
+-	.probe = axg_card_probe,
+-	.remove = axg_card_remove,
++	.probe = meson_card_probe,
++	.remove = meson_card_remove,
+ 	.driver = {
+ 		.name = "axg-sound-card",
+ 		.of_match_table = axg_card_of_match,
+diff --git b/sound/soc/meson/gx-card.c a/sound/soc/meson/gx-card.c
+new file mode 100644
+index 000000000000..b7a0e89aaf8c
+--- /dev/null
++++ a/sound/soc/meson/gx-card.c
+@@ -0,0 +1,142 @@
++// SPDX-License-Identifier: (GPL-2.0 OR MIT)
++//
++// Copyright (c) 2019 BayLibre, SAS.
++// Author: Jerome Brunet <jbrunet@baylibre.com>
++
++#include <linux/module.h>
++#include <linux/of_platform.h>
++#include <sound/soc.h>
++#include <sound/soc-dai.h>
++
++#include "meson-card.h"
++
++struct gx_dai_link_i2s_data {
++	unsigned int mclk_fs;
++};
++
++/*
++ * Base params for the codec to codec links
++ * Those will be over-written by the CPU side of the link
++ */
++static const struct snd_soc_pcm_stream codec_params = {
++	.formats = SNDRV_PCM_FMTBIT_S24_LE,
++	.rate_min = 5525,
++	.rate_max = 192000,
++	.channels_min = 1,
++	.channels_max = 8,
++};
++
++static int gx_card_i2s_be_hw_params(struct snd_pcm_substream *substream,
++				     struct snd_pcm_hw_params *params)
++{
++	struct snd_soc_pcm_runtime *rtd = substream->private_data;
++	struct meson_card *priv = snd_soc_card_get_drvdata(rtd->card);
++	struct gx_dai_link_i2s_data *be =
++		(struct gx_dai_link_i2s_data *)priv->link_data[rtd->num];
++
++	return meson_card_i2s_set_sysclk(substream, params, be->mclk_fs);
++}
++
++static const struct snd_soc_ops gx_card_i2s_be_ops = {
++	.hw_params = gx_card_i2s_be_hw_params,
++};
++
++static int gx_card_parse_i2s(struct snd_soc_card *card,
++			      struct device_node *node,
++			      int *index)
++{
++	struct meson_card *priv = snd_soc_card_get_drvdata(card);
++	struct snd_soc_dai_link *link = &card->dai_link[*index];
++	struct gx_dai_link_i2s_data *be;
++
++	/* Allocate i2s link parameters */
++	be = devm_kzalloc(card->dev, sizeof(*be), GFP_KERNEL);
++	if (!be)
++		return -ENOMEM;
++	priv->link_data[*index] = be;
++
++	/* Setup i2s link */
++	link->ops = &gx_card_i2s_be_ops;
++	link->dai_fmt = meson_card_parse_daifmt(node, link->cpus->of_node);
++
++	of_property_read_u32(node, "mclk-fs", &be->mclk_fs);
++
++	return 0;
++}
++
++static int gx_card_cpu_is_playback_fe(struct device_node *np)
++{
++	return of_device_is_compatible(np, DT_PREFIX "aiu-fifo");
++}
++
++static int gx_card_cpu_is_i2s_encoder(struct device_node *np)
++{
++	return of_device_is_compatible(np, DT_PREFIX "aiu-i2s-encode");
++}
++
++static int gx_card_cpu_is_codec(struct device_node *np)
++{
++	return of_device_is_compatible(np, DT_PREFIX "gx-tohdmitx") ||
++		of_device_is_compatible(np, DT_PREFIX "gxl-toacodec");
++}
++
++static int gx_card_add_link(struct snd_soc_card *card, struct device_node *np,
++			     int *index)
++{
++	struct snd_soc_dai_link *dai_link = &card->dai_link[*index];
++	struct snd_soc_dai_link_component *cpu;
++	int ret;
++
++	cpu = devm_kzalloc(card->dev, sizeof(*cpu), GFP_KERNEL);
++	if (!cpu)
++		return -ENOMEM;
++
++	dai_link->cpus = cpu;
++	dai_link->num_cpus = 1;
++
++	ret = meson_card_parse_dai(card, np, &dai_link->cpus->of_node,
++				 &dai_link->cpus->dai_name);
++	if (ret)
++		return ret;
++
++	if (gx_card_cpu_is_playback_fe(dai_link->cpus->of_node))
++		ret = meson_card_set_fe_link(card, dai_link, np, true);
++	else
++		ret = meson_card_set_be_link(card, dai_link, np);
++
++	if (ret)
++		return ret;
++
++	if (gx_card_cpu_is_i2s_encoder(dai_link->cpus->of_node))
++		ret = gx_card_parse_i2s(card, np, index);
++	else if (gx_card_cpu_is_codec(dai_link->cpus->of_node))
++		dai_link->params = &codec_params;
++
++	return ret;
++}
++
++static const struct meson_card_match_data gx_card_match_data = {
++	.add_link = gx_card_add_link,
++};
++
++static const struct of_device_id gx_card_of_match[] = {
++	{
++		.compatible = "amlogic,gx-sound-card",
++		.data = &gx_card_match_data,
++	}, {}
++};
++MODULE_DEVICE_TABLE(of, gx_card_of_match);
++
++static struct platform_driver gx_card_pdrv = {
++	.probe = meson_card_probe,
++	.remove = meson_card_remove,
++	.driver = {
++		.name = "gx-sound-card",
++		.of_match_table = gx_card_of_match,
++	},
++};
++module_platform_driver(gx_card_pdrv);
++
++MODULE_DESCRIPTION("Amlogic GX ALSA machine driver");
++MODULE_AUTHOR("Jerome Brunet <jbrunet@baylibre.com>");
++MODULE_LICENSE("GPL v2");
+diff --git b/sound/soc/meson/meson-card-utils.c a/sound/soc/meson/meson-card-utils.c
+new file mode 100644
+index 000000000000..88250b6699f8
+--- /dev/null
++++ a/sound/soc/meson/meson-card-utils.c
+@@ -0,0 +1,386 @@
++// SPDX-License-Identifier: GPL-2.0
++//
++// Copyright (c) 2019 BayLibre, SAS.
++// Author: Jerome Brunet <jbrunet@baylibre.com>
++
++#include <linux/module.h>
++#include <linux/of_platform.h>
++#include <sound/soc.h>
++
++#include "meson-card.h"
++
++int meson_card_i2s_set_sysclk(struct snd_pcm_substream *substream,
++			      struct snd_pcm_hw_params *params,
++			      unsigned int mclk_fs)
++{
++	struct snd_soc_pcm_runtime *rtd = substream->private_data;
++	struct snd_soc_dai *codec_dai;
++	unsigned int mclk;
++	int ret, i;
++
++	if (!mclk_fs)
++		return 0;
++
++	mclk = params_rate(params) * mclk_fs;
++
++	for_each_rtd_codec_dai(rtd, i, codec_dai) {
++		ret = snd_soc_dai_set_sysclk(codec_dai, 0, mclk,
++					     SND_SOC_CLOCK_IN);
++		if (ret && ret != -ENOTSUPP)
++			return ret;
++	}
++
++	ret = snd_soc_dai_set_sysclk(rtd->cpu_dai, 0, mclk,
++				     SND_SOC_CLOCK_OUT);
++	if (ret && ret != -ENOTSUPP)
++		return ret;
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(meson_card_i2s_set_sysclk);
++
++int meson_card_reallocate_links(struct snd_soc_card *card,
++				unsigned int num_links)
++{
++	struct meson_card *priv = snd_soc_card_get_drvdata(card);
++	struct snd_soc_dai_link *links;
++	void **ldata;
++
++	links = krealloc(priv->card.dai_link,
++			 num_links * sizeof(*priv->card.dai_link),
++			 GFP_KERNEL | __GFP_ZERO);
++	ldata = krealloc(priv->link_data,
++			 num_links * sizeof(*priv->link_data),
++			 GFP_KERNEL | __GFP_ZERO);
++
++	if (!links || !ldata) {
++		dev_err(priv->card.dev, "failed to allocate links\n");
++		return -ENOMEM;
++	}
++
++	priv->card.dai_link = links;
++	priv->link_data = ldata;
++	priv->card.num_links = num_links;
++	return 0;
++}
++EXPORT_SYMBOL_GPL(meson_card_reallocate_links);
++
++int meson_card_parse_dai(struct snd_soc_card *card,
++			 struct device_node *node,
++			 struct device_node **dai_of_node,
++			 const char **dai_name)
++{
++	struct of_phandle_args args;
++	int ret;
++
++	if (!dai_name || !dai_of_node || !node)
++		return -EINVAL;
++
++	ret = of_parse_phandle_with_args(node, "sound-dai",
++					 "#sound-dai-cells", 0, &args);
++	if (ret) {
++		if (ret != -EPROBE_DEFER)
++			dev_err(card->dev, "can't parse dai %d\n", ret);
++		return ret;
++	}
++	*dai_of_node = args.np;
++
++	return snd_soc_get_dai_name(&args, dai_name);
++}
++EXPORT_SYMBOL_GPL(meson_card_parse_dai);
++
++static int meson_card_set_link_name(struct snd_soc_card *card,
++				  struct snd_soc_dai_link *link,
++				  struct device_node *node,
++				  const char *prefix)
++{
++	char *name = devm_kasprintf(card->dev, GFP_KERNEL, "%s.%s",
++				    prefix, node->full_name);
++	if (!name)
++		return -ENOMEM;
++
++	link->name = name;
++	link->stream_name = name;
++
++	return 0;
++}
++
++
++unsigned int meson_card_parse_daifmt(struct device_node *node,
++				     struct device_node *cpu_node)
++{
++	struct device_node *bitclkmaster = NULL;
++	struct device_node *framemaster = NULL;
++	unsigned int daifmt;
++
++	daifmt = snd_soc_of_parse_daifmt(node, DT_PREFIX,
++					 &bitclkmaster, &framemaster);
++	daifmt &= ~SND_SOC_DAIFMT_MASTER_MASK;
++
++	/* If no master is provided, default to cpu master */
++	if (!bitclkmaster || bitclkmaster == cpu_node) {
++		daifmt |= (!framemaster || framemaster == cpu_node) ?
++			SND_SOC_DAIFMT_CBS_CFS : SND_SOC_DAIFMT_CBS_CFM;
++	} else {
++		daifmt |= (!framemaster || framemaster == cpu_node) ?
++			SND_SOC_DAIFMT_CBM_CFS : SND_SOC_DAIFMT_CBM_CFM;
++	}
++
++	of_node_put(bitclkmaster);
++	of_node_put(framemaster);
++
++	return daifmt;
++}
++EXPORT_SYMBOL_GPL(meson_card_parse_daifmt);
++
++int meson_card_set_be_link(struct snd_soc_card *card,
++			   struct snd_soc_dai_link *link,
++			   struct device_node *node)
++{
++	struct snd_soc_dai_link_component *codec;
++	struct device_node *np;
++	int ret, num_codecs;
++
++	link->no_pcm = 1;
++	link->dpcm_playback = 1;
++	link->dpcm_capture = 1;
++
++	num_codecs = of_get_child_count(node);
++	if (!num_codecs) {
++		dev_err(card->dev, "be link %s has no codec\n",
++			node->full_name);
++		return -EINVAL;
++	}
++
++	codec = devm_kcalloc(card->dev, num_codecs, sizeof(*codec), GFP_KERNEL);
++	if (!codec)
++		return -ENOMEM;
++
++	link->codecs = codec;
++	link->num_codecs = num_codecs;
++
++	for_each_child_of_node(node, np) {
++		ret = meson_card_parse_dai(card, np, &codec->of_node,
++					 &codec->dai_name);
++		if (ret) {
++			of_node_put(np);
++			return ret;
++		}
++
++		codec++;
++	}
++
++	ret = meson_card_set_link_name(card, link, node, "be");
++	if (ret)
++		dev_err(card->dev, "error setting %pOFn link name\n", np);
++
++	return ret;
++}
++EXPORT_SYMBOL_GPL(meson_card_set_be_link);
++
++int meson_card_set_fe_link(struct snd_soc_card *card,
++			   struct snd_soc_dai_link *link,
++			   struct device_node *node,
++			   bool is_playback)
++{
++	struct snd_soc_dai_link_component *codec;
++
++	codec = devm_kzalloc(card->dev, sizeof(*codec), GFP_KERNEL);
++	if (!codec)
++		return -ENOMEM;
++
++	link->codecs = codec;
++	link->num_codecs = 1;
++
++	link->dynamic = 1;
++	link->dpcm_merged_format = 1;
++	link->dpcm_merged_chan = 1;
++	link->dpcm_merged_rate = 1;
++	link->codecs->dai_name = "snd-soc-dummy-dai";
++	link->codecs->name = "snd-soc-dummy";
++
++	if (is_playback)
++		link->dpcm_playback = 1;
++	else
++		link->dpcm_capture = 1;
++
++	return meson_card_set_link_name(card, link, node, "fe");
++}
++EXPORT_SYMBOL_GPL(meson_card_set_fe_link);
++
++static int meson_card_add_links(struct snd_soc_card *card)
++{
++	struct meson_card *priv = snd_soc_card_get_drvdata(card);
++	struct device_node *node = card->dev->of_node;
++	struct device_node *np;
++	int num, i, ret;
++
++	num = of_get_child_count(node);
++	if (!num) {
++		dev_err(card->dev, "card has no links\n");
++		return -EINVAL;
++	}
++
++	ret = meson_card_reallocate_links(card, num);
++	if (ret)
++		return ret;
++
++	i = 0;
++	for_each_child_of_node(node, np) {
++		ret = priv->match_data->add_link(card, np, &i);
++		if (ret) {
++			of_node_put(np);
++			return ret;
++		}
++
++		i++;
++	}
++
++	return 0;
++}
++
++static int meson_card_parse_of_optional(struct snd_soc_card *card,
++				      const char *propname,
++				      int (*func)(struct snd_soc_card *c,
++						  const char *p))
++{
++	/* If property is not provided, don't fail ... */
++	if (!of_property_read_bool(card->dev->of_node, propname))
++		return 0;
++
++	/* ... but do fail if it is provided and the parsing fails */
++	return func(card, propname);
++}
++
++static int meson_card_add_aux_devices(struct snd_soc_card *card)
++{
++	struct device_node *node = card->dev->of_node;
++	struct snd_soc_aux_dev *aux;
++	int num, i;
++
++	num = of_count_phandle_with_args(node, "audio-aux-devs", NULL);
++	if (num == -ENOENT) {
++		return 0;
++	} else if (num < 0) {
++		dev_err(card->dev, "error getting auxiliary devices: %d\n",
++			num);
++		return num;
++	}
++
++	aux = devm_kcalloc(card->dev, num, sizeof(*aux), GFP_KERNEL);
++	if (!aux)
++		return -ENOMEM;
++	card->aux_dev = aux;
++	card->num_aux_devs = num;
++
++	for_each_card_pre_auxs(card, i, aux) {
++		aux->dlc.of_node =
++			of_parse_phandle(node, "audio-aux-devs", i);
++		if (!aux->dlc.of_node)
++			return -EINVAL;
++	}
++
++	return 0;
++}
++
++static void meson_card_clean_references(struct meson_card *priv)
++{
++	struct snd_soc_card *card = &priv->card;
++	struct snd_soc_dai_link *link;
++	struct snd_soc_dai_link_component *codec;
++	struct snd_soc_aux_dev *aux;
++	int i, j;
++
++	if (card->dai_link) {
++		for_each_card_prelinks(card, i, link) {
++			if (link->cpus)
++				of_node_put(link->cpus->of_node);
++			for_each_link_codecs(link, j, codec)
++				of_node_put(codec->of_node);
++		}
++	}
++
++	if (card->aux_dev) {
++		for_each_card_pre_auxs(card, i, aux)
++			of_node_put(aux->dlc.of_node);
++	}
++
++	kfree(card->dai_link);
++	kfree(priv->link_data);
++}
++
++int meson_card_probe(struct platform_device *pdev)
++{
++	const struct meson_card_match_data *data;
++	struct device *dev = &pdev->dev;
++	struct meson_card *priv;
++	int ret;
++
++	data = of_device_get_match_data(dev);
++	if (!data) {
++		dev_err(dev, "failed to match device\n");
++		return -ENODEV;
++	}
++
++	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
++	if (!priv)
++		return -ENOMEM;
++
++	platform_set_drvdata(pdev, priv);
++	snd_soc_card_set_drvdata(&priv->card, priv);
++
++	priv->card.owner = THIS_MODULE;
++	priv->card.dev = dev;
++	priv->match_data = data;
++
++	ret = snd_soc_of_parse_card_name(&priv->card, "model");
++	if (ret < 0)
++		return ret;
++
++	ret = meson_card_parse_of_optional(&priv->card, "audio-routing",
++					   snd_soc_of_parse_audio_routing);
++	if (ret) {
++		dev_err(dev, "error while parsing routing\n");
++		return ret;
++	}
++
++	ret = meson_card_parse_of_optional(&priv->card, "audio-widgets",
++					   snd_soc_of_parse_audio_simple_widgets);
++	if (ret) {
++		dev_err(dev, "error while parsing widgets\n");
++		return ret;
++	}
++
++	ret = meson_card_add_links(&priv->card);
++	if (ret)
++		goto out_err;
++
++	ret = meson_card_add_aux_devices(&priv->card);
++	if (ret)
++		goto out_err;
++
++	ret = devm_snd_soc_register_card(dev, &priv->card);
++	if (ret)
++		goto out_err;
++
++	return 0;
++
++out_err:
++	meson_card_clean_references(priv);
++	return ret;
++}
++EXPORT_SYMBOL_GPL(meson_card_probe);
++
++int meson_card_remove(struct platform_device *pdev)
++{
++	struct meson_card *priv = platform_get_drvdata(pdev);
++
++	meson_card_clean_references(priv);
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(meson_card_remove);
++
++MODULE_DESCRIPTION("Amlogic Sound Card Utils");
++MODULE_AUTHOR("Jerome Brunet <jbrunet@baylibre.com>");
++MODULE_LICENSE("GPL v2");
+diff --git b/sound/soc/meson/meson-card.h a/sound/soc/meson/meson-card.h
+new file mode 100644
+index 000000000000..15920c71cde5
+--- /dev/null
++++ a/sound/soc/meson/meson-card.h
+@@ -0,0 +1,53 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (c) 2019 BayLibre, SAS.
++ * Author: Jerome Brunet <jbrunet@baylibre.com>
++ */
++
++#ifndef _MESON_SND_CARD_H
++#define _MESON_SND_CARD_H
++
++struct device_node;
++struct platform_device;
++
++struct snd_soc_card;
++struct snd_pcm_substream;
++struct snd_pcm_hw_params;
++
++#define DT_PREFIX "amlogic,"
++
++struct meson_card_match_data {
++	int (*add_link)(struct snd_soc_card *, struct device_node *, int *);
++};
++
++struct meson_card {
++	const struct meson_card_match_data *match_data;
++	struct snd_soc_card card;
++	void **link_data;
++};
++
++unsigned int meson_card_parse_daifmt(struct device_node *node,
++				     struct device_node *cpu_node);
++
++int meson_card_i2s_set_sysclk(struct snd_pcm_substream *substream,
++			      struct snd_pcm_hw_params *params,
++			      unsigned int mclk_fs);
++
++int meson_card_reallocate_links(struct snd_soc_card *card,
++				unsigned int num_links);
++int meson_card_parse_dai(struct snd_soc_card *card,
++			 struct device_node *node,
++			 struct device_node **dai_of_node,
++			 const char **dai_name);
++int meson_card_set_be_link(struct snd_soc_card *card,
++			   struct snd_soc_dai_link *link,
++			   struct device_node *node);
++int meson_card_set_fe_link(struct snd_soc_card *card,
++			   struct snd_soc_dai_link *link,
++			   struct device_node *node,
++			   bool is_playback);
++
++int meson_card_probe(struct platform_device *pdev);
++int meson_card_remove(struct platform_device *pdev);
++
++#endif /* _MESON_SND_CARD_H */
+diff --git b/sound/usb/clock.c a/sound/usb/clock.c
+index a48313dfa967..6b8c14f9b5d4 100644
+--- b/sound/usb/clock.c
++++ a/sound/usb/clock.c
+@@ -151,34 +151,8 @@ static int uac_clock_selector_set_val(struct snd_usb_audio *chip, int selector_i
+ 	return ret;
+ }
+ 
+-/*
+- * Assume the clock is valid if clock source supports only one single sample
+- * rate, the terminal is connected directly to it (there is no clock selector)
+- * and clock type is internal. This is to deal with some Denon DJ controllers
+- * that always reports that clock is invalid.
+- */
+-static bool uac_clock_source_is_valid_quirk(struct snd_usb_audio *chip,
+-					    struct audioformat *fmt,
+-					    int source_id)
+-{
+-	if (fmt->protocol == UAC_VERSION_2) {
+-		struct uac_clock_source_descriptor *cs_desc =
+-			snd_usb_find_clock_source(chip->ctrl_intf, source_id);
+-
+-		if (!cs_desc)
+-			return false;
+-
+-		return (fmt->nr_rates == 1 &&
+-			(fmt->clock & 0xff) == cs_desc->bClockID &&
+-			(cs_desc->bmAttributes & 0x3) !=
+-				UAC_CLOCK_SOURCE_TYPE_EXT);
+-	}
+-
+-	return false;
+-}
+-
+ static bool uac_clock_source_is_valid(struct snd_usb_audio *chip,
+-				      struct audioformat *fmt,
++				      int protocol,
+ 				      int source_id)
+ {
+ 	int err;
+@@ -186,26 +160,26 @@ static bool uac_clock_source_is_valid(struct snd_usb_audio *chip,
+ 	struct usb_device *dev = chip->dev;
+ 	u32 bmControls;
+ 
+-	if (fmt->protocol == UAC_VERSION_3) {
++	if (protocol == UAC_VERSION_3) {
+ 		struct uac3_clock_source_descriptor *cs_desc =
+ 			snd_usb_find_clock_source_v3(chip->ctrl_intf, source_id);
+ 
+ 		if (!cs_desc)
+-			return false;
++			return 0;
+ 		bmControls = le32_to_cpu(cs_desc->bmControls);
+ 	} else { /* UAC_VERSION_1/2 */
+ 		struct uac_clock_source_descriptor *cs_desc =
+ 			snd_usb_find_clock_source(chip->ctrl_intf, source_id);
+ 
+ 		if (!cs_desc)
+-			return false;
++			return 0;
+ 		bmControls = cs_desc->bmControls;
+ 	}
+ 
+ 	/* If a clock source can't tell us whether it's valid, we assume it is */
+ 	if (!uac_v2v3_control_is_readable(bmControls,
+ 				      UAC2_CS_CONTROL_CLOCK_VALID))
+-		return true;
++		return 1;
+ 
+ 	err = snd_usb_ctl_msg(dev, usb_rcvctrlpipe(dev, 0), UAC2_CS_CUR,
+ 			      USB_TYPE_CLASS | USB_RECIP_INTERFACE | USB_DIR_IN,
+@@ -217,17 +191,13 @@ static bool uac_clock_source_is_valid(struct snd_usb_audio *chip,
+ 		dev_warn(&dev->dev,
+ 			 "%s(): cannot get clock validity for id %d\n",
+ 			   __func__, source_id);
+-		return false;
++		return 0;
+ 	}
+ 
+-	if (data)
+-		return true;
+-	else
+-		return uac_clock_source_is_valid_quirk(chip, fmt, source_id);
++	return !!data;
+ }
+ 
+-static int __uac_clock_find_source(struct snd_usb_audio *chip,
+-				   struct audioformat *fmt, int entity_id,
++static int __uac_clock_find_source(struct snd_usb_audio *chip, int entity_id,
+ 				   unsigned long *visited, bool validate)
+ {
+ 	struct uac_clock_source_descriptor *source;
+@@ -247,7 +217,7 @@ static int __uac_clock_find_source(struct snd_usb_audio *chip,
+ 	source = snd_usb_find_clock_source(chip->ctrl_intf, entity_id);
+ 	if (source) {
+ 		entity_id = source->bClockID;
+-		if (validate && !uac_clock_source_is_valid(chip, fmt,
++		if (validate && !uac_clock_source_is_valid(chip, UAC_VERSION_2,
+ 								entity_id)) {
+ 			usb_audio_err(chip,
+ 				"clock source %d is not valid, cannot use\n",
+@@ -278,9 +248,8 @@ static int __uac_clock_find_source(struct snd_usb_audio *chip,
+ 		}
+ 
+ 		cur = ret;
+-		ret = __uac_clock_find_source(chip, fmt,
+-					      selector->baCSourceID[ret - 1],
+-					      visited, validate);
++		ret = __uac_clock_find_source(chip, selector->baCSourceID[ret - 1],
++					       visited, validate);
+ 		if (!validate || ret > 0 || !chip->autoclock)
+ 			return ret;
+ 
+@@ -291,9 +260,8 @@ static int __uac_clock_find_source(struct snd_usb_audio *chip,
+ 			if (i == cur)
+ 				continue;
+ 
+-			ret = __uac_clock_find_source(chip, fmt,
+-						      selector->baCSourceID[i - 1],
+-						      visited, true);
++			ret = __uac_clock_find_source(chip, selector->baCSourceID[i - 1],
++				visited, true);
+ 			if (ret < 0)
+ 				continue;
+ 
+@@ -313,16 +281,14 @@ static int __uac_clock_find_source(struct snd_usb_audio *chip,
+ 	/* FIXME: multipliers only act as pass-thru element for now */
+ 	multiplier = snd_usb_find_clock_multiplier(chip->ctrl_intf, entity_id);
+ 	if (multiplier)
+-		return __uac_clock_find_source(chip, fmt,
+-					       multiplier->bCSourceID,
+-					       visited, validate);
++		return __uac_clock_find_source(chip, multiplier->bCSourceID,
++						visited, validate);
+ 
+ 	return -EINVAL;
+ }
+ 
+-static int __uac3_clock_find_source(struct snd_usb_audio *chip,
+-				    struct audioformat *fmt, int entity_id,
+-				    unsigned long *visited, bool validate)
++static int __uac3_clock_find_source(struct snd_usb_audio *chip, int entity_id,
++				   unsigned long *visited, bool validate)
+ {
+ 	struct uac3_clock_source_descriptor *source;
+ 	struct uac3_clock_selector_descriptor *selector;
+@@ -341,7 +307,7 @@ static int __uac3_clock_find_source(struct snd_usb_audio *chip,
+ 	source = snd_usb_find_clock_source_v3(chip->ctrl_intf, entity_id);
+ 	if (source) {
+ 		entity_id = source->bClockID;
+-		if (validate && !uac_clock_source_is_valid(chip, fmt,
++		if (validate && !uac_clock_source_is_valid(chip, UAC_VERSION_3,
+ 								entity_id)) {
+ 			usb_audio_err(chip,
+ 				"clock source %d is not valid, cannot use\n",
+@@ -372,8 +338,7 @@ static int __uac3_clock_find_source(struct snd_usb_audio *chip,
+ 		}
+ 
+ 		cur = ret;
+-		ret = __uac3_clock_find_source(chip, fmt,
+-					       selector->baCSourceID[ret - 1],
++		ret = __uac3_clock_find_source(chip, selector->baCSourceID[ret - 1],
+ 					       visited, validate);
+ 		if (!validate || ret > 0 || !chip->autoclock)
+ 			return ret;
+@@ -385,9 +350,8 @@ static int __uac3_clock_find_source(struct snd_usb_audio *chip,
+ 			if (i == cur)
+ 				continue;
+ 
+-			ret = __uac3_clock_find_source(chip, fmt,
+-						       selector->baCSourceID[i - 1],
+-						       visited, true);
++			ret = __uac3_clock_find_source(chip, selector->baCSourceID[i - 1],
++				visited, true);
+ 			if (ret < 0)
+ 				continue;
+ 
+@@ -408,8 +372,7 @@ static int __uac3_clock_find_source(struct snd_usb_audio *chip,
+ 	multiplier = snd_usb_find_clock_multiplier_v3(chip->ctrl_intf,
+ 						      entity_id);
+ 	if (multiplier)
+-		return __uac3_clock_find_source(chip, fmt,
+-						multiplier->bCSourceID,
++		return __uac3_clock_find_source(chip, multiplier->bCSourceID,
+ 						visited, validate);
+ 
+ 	return -EINVAL;
+@@ -426,18 +389,18 @@ static int __uac3_clock_find_source(struct snd_usb_audio *chip,
+  *
+  * Returns the clock source UnitID (>=0) on success, or an error.
+  */
+-int snd_usb_clock_find_source(struct snd_usb_audio *chip,
+-			      struct audioformat *fmt, bool validate)
++int snd_usb_clock_find_source(struct snd_usb_audio *chip, int protocol,
++			      int entity_id, bool validate)
+ {
+ 	DECLARE_BITMAP(visited, 256);
+ 	memset(visited, 0, sizeof(visited));
+ 
+-	switch (fmt->protocol) {
++	switch (protocol) {
+ 	case UAC_VERSION_2:
+-		return __uac_clock_find_source(chip, fmt, fmt->clock, visited,
++		return __uac_clock_find_source(chip, entity_id, visited,
+ 					       validate);
+ 	case UAC_VERSION_3:
+-		return __uac3_clock_find_source(chip, fmt, fmt->clock, visited,
++		return __uac3_clock_find_source(chip, entity_id, visited,
+ 					       validate);
+ 	default:
+ 		return -EINVAL;
+@@ -538,7 +501,8 @@ static int set_sample_rate_v2v3(struct snd_usb_audio *chip, int iface,
+ 	 * automatic clock selection if the current clock is not
+ 	 * valid.
+ 	 */
+-	clock = snd_usb_clock_find_source(chip, fmt, true);
++	clock = snd_usb_clock_find_source(chip, fmt->protocol,
++					  fmt->clock, true);
+ 	if (clock < 0) {
+ 		/* We did not find a valid clock, but that might be
+ 		 * because the current sample rate does not match an
+@@ -546,7 +510,8 @@ static int set_sample_rate_v2v3(struct snd_usb_audio *chip, int iface,
+ 		 * and we will do another validation after setting the
+ 		 * rate.
+ 		 */
+-		clock = snd_usb_clock_find_source(chip, fmt, false);
++		clock = snd_usb_clock_find_source(chip, fmt->protocol,
++						  fmt->clock, false);
+ 		if (clock < 0)
+ 			return clock;
+ 	}
+@@ -612,7 +577,7 @@ static int set_sample_rate_v2v3(struct snd_usb_audio *chip, int iface,
+ 
+ validation:
+ 	/* validate clock after rate change */
+-	if (!uac_clock_source_is_valid(chip, fmt, clock))
++	if (!uac_clock_source_is_valid(chip, fmt->protocol, clock))
+ 		return -ENXIO;
+ 	return 0;
+ }
+diff --git b/sound/usb/clock.h a/sound/usb/clock.h
+index 68df0fbe09d0..076e31b79ee0 100644
+--- b/sound/usb/clock.h
++++ a/sound/usb/clock.h
+@@ -6,7 +6,7 @@ int snd_usb_init_sample_rate(struct snd_usb_audio *chip, int iface,
+ 			     struct usb_host_interface *alts,
+ 			     struct audioformat *fmt, int rate);
+ 
+-int snd_usb_clock_find_source(struct snd_usb_audio *chip,
+-			      struct audioformat *fmt, bool validate);
++int snd_usb_clock_find_source(struct snd_usb_audio *chip, int protocol,
++			     int entity_id, bool validate);
+ 
+ #endif /* __USBAUDIO_CLOCK_H */
+diff --git b/sound/usb/format.c a/sound/usb/format.c
+index 25668ba5e68e..d79db71305f6 100644
+--- b/sound/usb/format.c
++++ a/sound/usb/format.c
+@@ -322,7 +322,8 @@ static int parse_audio_format_rates_v2v3(struct snd_usb_audio *chip,
+ 	struct usb_device *dev = chip->dev;
+ 	unsigned char tmp[2], *data;
+ 	int nr_triplets, data_size, ret = 0, ret_l6;
+-	int clock = snd_usb_clock_find_source(chip, fp, false);
++	int clock = snd_usb_clock_find_source(chip, fp->protocol,
++					      fp->clock, false);
+ 
+ 	if (clock < 0) {
+ 		dev_err(&dev->dev,
+diff --git b/sound/usb/mixer.c a/sound/usb/mixer.c
+index d2a050bb8341..6cd4ff09c5ee 100644
+--- b/sound/usb/mixer.c
++++ a/sound/usb/mixer.c
+@@ -897,15 +897,6 @@ static int parse_term_proc_unit(struct mixer_build *state,
+ 	return 0;
+ }
+ 
+-static int parse_term_effect_unit(struct mixer_build *state,
+-				  struct usb_audio_term *term,
+-				  void *p1, int id)
+-{
+-	term->type = UAC3_EFFECT_UNIT << 16; /* virtual type */
+-	term->id = id;
+-	return 0;
+-}
+-
+ static int parse_term_uac2_clock_source(struct mixer_build *state,
+ 					struct usb_audio_term *term,
+ 					void *p1, int id)
+@@ -990,7 +981,8 @@ static int __check_input_term(struct mixer_build *state, int id,
+ 						    UAC3_PROCESSING_UNIT);
+ 		case PTYPE(UAC_VERSION_2, UAC2_EFFECT_UNIT):
+ 		case PTYPE(UAC_VERSION_3, UAC3_EFFECT_UNIT):
+-			return parse_term_effect_unit(state, term, p1, id);
++			return parse_term_proc_unit(state, term, p1, id,
++						    UAC3_EFFECT_UNIT);
+ 		case PTYPE(UAC_VERSION_1, UAC1_EXTENSION_UNIT):
+ 		case PTYPE(UAC_VERSION_2, UAC2_EXTENSION_UNIT_V2):
+ 		case PTYPE(UAC_VERSION_3, UAC3_EXTENSION_UNIT):
+diff --git b/sound/usb/quirks.c a/sound/usb/quirks.c
+index 1ed25b1d2a6a..82184036437b 100644
+--- b/sound/usb/quirks.c
++++ a/sound/usb/quirks.c
+@@ -1402,7 +1402,6 @@ bool snd_usb_get_sample_rate_quirk(struct snd_usb_audio *chip)
+ 	case USB_ID(0x1395, 0x740a): /* Sennheiser DECT */
+ 	case USB_ID(0x1901, 0x0191): /* GE B850V3 CP2114 audio interface */
+ 	case USB_ID(0x21B4, 0x0081): /* AudioQuest DragonFly */
+-	case USB_ID(0x2912, 0x30c8): /* Audioengine D1 */
+ 		return true;
+ 	}
+ 

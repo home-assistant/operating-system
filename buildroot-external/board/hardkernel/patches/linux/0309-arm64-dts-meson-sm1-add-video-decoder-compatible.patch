@@ -1,0 +1,23 @@
+
+Add the video decoder specific compatible for Amlogic SM1 SoC.
+
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-sm1.dtsi | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-sm1.dtsi b/arch/arm64/boot/dts/amlogic/meson-sm1.dtsi
+index 521573f3a5ba..b94a4eae973f 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-sm1.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-sm1.dtsi
+@@ -138,6 +138,10 @@
+ 	compatible = "amlogic,meson-sm1-pwrc";
+ };
+ 
++&vdec {
++	compatible = "amlogic,sm1-vdec";
++};
++
+ &vpu {
+ 	power-domains = <&pwrc PWRC_SM1_VPU_ID>;
+ };

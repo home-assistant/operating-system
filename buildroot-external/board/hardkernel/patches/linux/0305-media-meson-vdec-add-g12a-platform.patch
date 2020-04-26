@@ -1,0 +1,128 @@
+
+Add support for the G12A platform by:
+- adding the G12A codec support, here MPEG1 & MPEG2
+- getting the new hevcf clock for the upcoming HEVC/VP9 decoding support
+
+Signed-off-by: Maxime Jourdan <mjourdan@baylibre.com>
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ drivers/staging/media/meson/vdec/vdec.c       | 13 ++++++--
+ drivers/staging/media/meson/vdec/vdec.h       |  1 +
+ .../staging/media/meson/vdec/vdec_platform.c  | 30 +++++++++++++++++++
+ .../staging/media/meson/vdec/vdec_platform.h  |  2 ++
+ 4 files changed, 44 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/staging/media/meson/vdec/vdec.c b/drivers/staging/media/meson/vdec/vdec.c
+index 0a1a04fd5d13..875a12be9c9e 100644
+--- a/drivers/staging/media/meson/vdec/vdec.c
++++ b/drivers/staging/media/meson/vdec/vdec.c
+@@ -956,6 +956,8 @@ static const struct of_device_id vdec_dt_match[] = {
+ 	  .data = &vdec_platform_gxm },
+ 	{ .compatible = "amlogic,gxl-vdec",
+ 	  .data = &vdec_platform_gxl },
++	{ .compatible = "amlogic,g12a-vdec",
++	  .data = &vdec_platform_g12a },
+ 	{}
+ };
+ MODULE_DEVICE_TABLE(of, vdec_dt_match);
+@@ -1003,6 +1005,15 @@ static int vdec_probe(struct platform_device *pdev)
+ 	if (IS_ERR(core->canvas))
+ 		return PTR_ERR(core->canvas);
+ 
++	of_id = of_match_node(vdec_dt_match, dev->of_node);
++	core->platform = of_id->data;
++
++	if (core->platform->revision == VDEC_REVISION_G12A) {
++		core->vdec_hevcf_clk = devm_clk_get(dev, "vdec_hevcf");
++		if (IS_ERR(core->vdec_hevcf_clk))
++			return -EPROBE_DEFER;
++	}
++
+ 	core->dos_parser_clk = devm_clk_get(dev, "dos_parser");
+ 	if (IS_ERR(core->dos_parser_clk))
+ 		return -EPROBE_DEFER;
+@@ -1045,8 +1056,6 @@ static int vdec_probe(struct platform_device *pdev)
+ 		goto err_vdev_release;
+ 	}
+ 
+-	of_id = of_match_node(vdec_dt_match, dev->of_node);
+-	core->platform = of_id->data;
+ 	core->vdev_dec = vdev;
+ 	core->dev_dec = dev;
+ 	mutex_init(&core->lock);
+diff --git a/drivers/staging/media/meson/vdec/vdec.h b/drivers/staging/media/meson/vdec/vdec.h
+index d811e7976519..0faa1ec4858e 100644
+--- a/drivers/staging/media/meson/vdec/vdec.h
++++ b/drivers/staging/media/meson/vdec/vdec.h
+@@ -74,6 +74,7 @@ struct amvdec_core {
+ 	struct clk *dos_clk;
+ 	struct clk *vdec_1_clk;
+ 	struct clk *vdec_hevc_clk;
++	struct clk *vdec_hevcf_clk;
+ 
+ 	struct reset_control *esparser_reset;
+ 
+diff --git a/drivers/staging/media/meson/vdec/vdec_platform.c b/drivers/staging/media/meson/vdec/vdec_platform.c
+index 824dbc7f46f5..7845a889ce24 100644
+--- a/drivers/staging/media/meson/vdec/vdec_platform.c
++++ b/drivers/staging/media/meson/vdec/vdec_platform.c
+@@ -82,6 +82,30 @@ static const struct amvdec_format vdec_formats_gxm[] = {
+ 	},
+ };
+ 
++static const struct amvdec_format vdec_formats_g12a[] = {
++	{
++		.pixfmt = V4L2_PIX_FMT_MPEG1,
++		.min_buffers = 8,
++		.max_buffers = 8,
++		.max_width = 1920,
++		.max_height = 1080,
++		.vdec_ops = &vdec_1_ops,
++		.codec_ops = &codec_mpeg12_ops,
++		.firmware_path = "meson/vdec/gxl_mpeg12.bin",
++		.pixfmts_cap = { V4L2_PIX_FMT_NV12M, V4L2_PIX_FMT_YUV420M, 0 },
++	}, {
++		.pixfmt = V4L2_PIX_FMT_MPEG2,
++		.min_buffers = 8,
++		.max_buffers = 8,
++		.max_width = 1920,
++		.max_height = 1080,
++		.vdec_ops = &vdec_1_ops,
++		.codec_ops = &codec_mpeg12_ops,
++		.firmware_path = "meson/vdec/gxl_mpeg12.bin",
++		.pixfmts_cap = { V4L2_PIX_FMT_NV12M, V4L2_PIX_FMT_YUV420M, 0 },
++	},
++};
++
+ const struct vdec_platform vdec_platform_gxbb = {
+ 	.formats = vdec_formats_gxbb,
+ 	.num_formats = ARRAY_SIZE(vdec_formats_gxbb),
+@@ -99,3 +123,9 @@ const struct vdec_platform vdec_platform_gxm = {
+ 	.num_formats = ARRAY_SIZE(vdec_formats_gxm),
+ 	.revision = VDEC_REVISION_GXM,
+ };
++
++const struct vdec_platform vdec_platform_g12a = {
++	.formats = vdec_formats_g12a,
++	.num_formats = ARRAY_SIZE(vdec_formats_g12a),
++	.revision = VDEC_REVISION_G12A,
++};
+diff --git a/drivers/staging/media/meson/vdec/vdec_platform.h b/drivers/staging/media/meson/vdec/vdec_platform.h
+index f6025326db1d..7c61b941b39f 100644
+--- a/drivers/staging/media/meson/vdec/vdec_platform.h
++++ b/drivers/staging/media/meson/vdec/vdec_platform.h
+@@ -15,6 +15,7 @@ enum vdec_revision {
+ 	VDEC_REVISION_GXBB,
+ 	VDEC_REVISION_GXL,
+ 	VDEC_REVISION_GXM,
++	VDEC_REVISION_G12A,
+ };
+ 
+ struct vdec_platform {
+@@ -26,5 +27,6 @@ struct vdec_platform {
+ extern const struct vdec_platform vdec_platform_gxbb;
+ extern const struct vdec_platform vdec_platform_gxm;
+ extern const struct vdec_platform vdec_platform_gxl;
++extern const struct vdec_platform vdec_platform_g12a;
+ 
+ #endif

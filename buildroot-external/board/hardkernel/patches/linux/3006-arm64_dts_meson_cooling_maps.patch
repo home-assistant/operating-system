@@ -1,0 +1,97 @@
+armbian
+---
+ arch/arm64/boot/dts/amlogic/meson-g12.dtsi  | 24 +++++++++++++++++++++
+ arch/arm64/boot/dts/amlogic/meson-g12b.dtsi |  6 ++++++
+ 2 files changed, 30 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-g12b.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12b.dtsi
+index 1e0e056c3d62e..b3ba2fda8af88 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-g12b.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-g12b.dtsi
+@@ -347,6 +347,29 @@
+ 	compatible = "amlogic,g12b-clkc";
+ };
+ 
++&cpu_thermal {
++	cooling-maps {
++		map0 {
++			trip = <&cpu_passive>;
++			cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++					 <&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++					 <&cpu100 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++					 <&cpu101 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++					 <&cpu102 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++					 <&cpu103 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
++		};
++		map1 {
++			trip = <&cpu_hot>;
++			cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++					 <&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++					 <&cpu100 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++					 <&cpu101 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++					 <&cpu102 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++					 <&cpu103 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
++		};
++	};
++};
++
+ &ethmac {
+ 	power-domains = <&pwrc PWRC_G12A_ETH_ID>;
+ };
+@@ -366,3 +389,4 @@
+ &simplefb_hdmi {
+ 	power-domains = <&pwrc PWRC_G12A_VPU_ID>;
+ };
++
+diff --git a/arch/arm64/boot/dts/amlogic/meson-g12b.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12b.dtsi
+index b3f9e3a029636..6dbc3968045b8 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-g12b.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-g12b.dtsi
+@@ -50,6 +50,7 @@
+ 			enable-method = "psci";
+ 			capacity-dmips-mhz = <592>;
+ 			next-level-cache = <&l2>;
++			#cooling-cells = <2>;
+ 		};
+ 
+ 		cpu1: cpu@1 {
+@@ -59,6 +60,7 @@
+ 			enable-method = "psci";
+ 			capacity-dmips-mhz = <592>;
+ 			next-level-cache = <&l2>;
++			#cooling-cells = <2>;
+ 		};
+ 
+ 		cpu100: cpu@100 {
+@@ -68,6 +70,7 @@
+ 			enable-method = "psci";
+ 			capacity-dmips-mhz = <1024>;
+ 			next-level-cache = <&l2>;
++			#cooling-cells = <2>;
+ 		};
+ 
+ 		cpu101: cpu@101 {
+@@ -77,6 +80,7 @@
+ 			enable-method = "psci";
+ 			capacity-dmips-mhz = <1024>;
+ 			next-level-cache = <&l2>;
++			#cooling-cells = <2>;
+ 		};
+ 
+ 		cpu102: cpu@102 {
+@@ -86,6 +90,7 @@
+ 			enable-method = "psci";
+ 			capacity-dmips-mhz = <1024>;
+ 			next-level-cache = <&l2>;
++			#cooling-cells = <2>;
+ 		};
+ 
+ 		cpu103: cpu@103 {
+@@ -95,6 +100,7 @@
+ 			enable-method = "psci";
+ 			capacity-dmips-mhz = <1024>;
+ 			next-level-cache = <&l2>;
++			#cooling-cells = <2>;
+ 		};
+ 
+ 		l2: l2-cache0 {

@@ -1,0 +1,38 @@
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-nanopi-k2.dts b/arch/arm64/boot/dts/amlogic/meson-gxbb-nanopi-k2.dts
+index fa4d9f927..b498186a5 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxbb-nanopi-k2.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-nanopi-k2.dts
+@@ -162,6 +162,32 @@
+ 			};
+ 		};
+ 	};
++
++	spi-gpio {
++		compatible = "spi-gpio";
++		#address-cells = <0x1>;
++		#size-cells = <0x0>;
++		ranges;
++		status = "ok";
++		sck-gpios  = <&gpio GPIOY_9 0>;
++		miso-gpios = <&gpio GPIOY_7 0>;
++		mosi-gpios = <&gpio GPIOY_5 0>;
++		cs-gpios  = <&gpio GPIOY_8 0
++			     &gpio GPIOY_10 0>;
++		num-chipselects = <2>;
++
++		/* clients */
++		spidev0@0 {
++			compatible = "spidev";
++			reg = <0>;
++			spi-max-frequency = <500000>;
++		};
++		spidev0@1 {
++			compatible = "spidev";
++			reg = <1>;
++			spi-max-frequency = <500000>;
++		};
++	};
+ };
+ 
+ &audio {
+

@@ -1,0 +1,32 @@
+From 2db0e3b62c2e6dbe5880197f7b8cf58a5e0663c7 Mon Sep 17 00:00:00 2001
+From: Jerome Brunet <jbrunet@baylibre.com>
+Date: Wed, 14 Aug 2019 17:28:21 +0200
+Subject: [PATCH] WIP: arm64: dts: meson: g12a: add internal DAC
+
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi
+index 87b9a47a51b92..b241512dd3b9d 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi
+@@ -250,6 +250,17 @@
+ 				};
+ 			};
+ 
++			acodec: audio-controller@32000 {
++				compatible = "amlogic,t9015";
++				reg = <0x0 0x32000 0x0 0x14>;
++				#sound-dai-cells = <0>;
++				sound-name-prefix = "ACODEC";
++				clocks = <&clkc CLKID_AUDIO_CODEC>;
++				clock-names = "pclk";
++				resets = <&reset RESET_AUDIO_CODEC>;
++				status = "disabled";
++			};
++
+ 			periphs: bus@34400 {
+ 				compatible = "simple-bus";
+ 				reg = <0x0 0x34400 0x0 0x400>;

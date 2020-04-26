@@ -1,0 +1,102 @@
+From e7251ed74ef79b80fc5e77636832be7baf1f40a6 Mon Sep 17 00:00:00 2001
+From: Guillaume La Roque <glaroque@baylibre.com>
+Date: Fri, 4 Oct 2019 11:01:11 +0200
+Subject: [PATCH] arm64: dts: meson: g12: Add minimal thermal zone
+
+Add minimal thermal zone for two temperature sensor
+One is located close to the DDR and the other one is
+located close to the PLLs (between the CPU and GPU)
+
+Acked-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
+Reviewed-by: Amit Kucheria <amit.kucheria@linaro.org>
+Tested-by: Christian Hewitt <christianshewitt@gmail.com>
+Tested-by: Kevin Hilman <khilman@baylibre.com>
+Signed-off-by: Guillaume La Roque <glaroque@baylibre.com>
+Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+---
+ .../boot/dts/amlogic/meson-g12-common.dtsi    | 57 +++++++++++++++++++
+ 1 file changed, 57 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi
+index f153194b9bf3a..a063d49b9cb14 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi
+@@ -10,6 +10,7 @@
+ #include <dt-bindings/interrupt-controller/irq.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/reset/amlogic,meson-g12a-reset.h>
++#include <dt-bindings/thermal/thermal.h>
+ 
+ / {
+ 	interrupt-parent = <&gic>;
+@@ -119,6 +120,61 @@
+ 			status = "disabled";
+ 		};
+ 
++		thermal-zones {
++			cpu_thermal: cpu-thermal {
++				polling-delay = <1000>;
++				polling-delay-passive = <100>;
++				thermal-sensors = <&cpu_temp>;
++
++				trips {
++					cpu_passive: cpu-passive {
++						temperature = <85000>; /* millicelsius */
++						hysteresis = <2000>; /* millicelsius */
++						type = "passive";
++					};
++
++					cpu_hot: cpu-hot {
++						temperature = <95000>; /* millicelsius */
++						hysteresis = <2000>; /* millicelsius */
++						type = "hot";
++					};
++
++					cpu_critical: cpu-critical {
++						temperature = <110000>; /* millicelsius */
++						hysteresis = <2000>; /* millicelsius */
++						type = "critical";
++					};
++				};
++			};
++
++			ddr_thermal: ddr-thermal {
++				polling-delay = <1000>;
++				polling-delay-passive = <100>;
++				thermal-sensors = <&ddr_temp>;
++
++				trips {
++					ddr_passive: ddr-passive {
++						temperature = <85000>; /* millicelsius */
++						hysteresis = <2000>; /* millicelsius */
++						type = "passive";
++					};
++
++					ddr_critical: ddr-critical {
++						temperature = <110000>; /* millicelsius */
++						hysteresis = <2000>; /* millicelsius */
++						type = "critical";
++					};
++				};
++
++				cooling-maps {
++					map {
++						trip = <&ddr_passive>;
++						cooling-device = <&mali THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
++					};
++				};
++			};
++		};
++
+ 		ethmac: ethernet@ff3f0000 {
+ 			compatible = "amlogic,meson-axg-dwmac",
+ 				     "snps,dwmac-3.70a",
+@@ -2169,6 +2225,7 @@
+ 			assigned-clock-rates = <0>, /* Do Nothing */
+ 					       <800000000>,
+ 					       <0>; /* Do Nothing */
++			#cooling-cells = <2>;
+ 		};
+ 	};
+ 

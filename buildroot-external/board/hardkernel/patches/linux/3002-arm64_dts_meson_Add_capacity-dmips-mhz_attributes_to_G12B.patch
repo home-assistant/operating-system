@@ -1,0 +1,85 @@
+From 6eeaf4d2452ec8b1ece58776812140734fc2e088 Mon Sep 17 00:00:00 2001
+From: Frank Hartung <supervisedthinking@gmail.com>
+Date: Sat, 14 Sep 2019 06:49:40 +0400
+Subject: arm64: dts: meson: Add capacity-dmips-mhz attributes to G12B
+
+Meson G12B SoCs (S922X and A311D) are a big-little design where not all CPUs
+are equal; the A53s cores are weaker than the A72s.
+
+Include capacity-dmips-mhz properties to tell the OS there is a difference
+in processing capacity. The dmips values are based on similar submissions for
+other A53/A72 SoCs: HiSilicon 3660 [1] and Rockchip RK3399 [2].
+
+This change is particularly beneficial for use-cases like retro gaming where
+emulators often run on a single core. The OS now chooses an A72 core instead
+of an A53 core.
+
+[1] https://lore.kernel.org/patchwork/patch/862742/
+[2] https://patchwork.kernel.org/patch/10836577/
+
+Signed-off-by: Frank Hartung <supervisedthinking@gmail.com>
+Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
+Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
+Reviewed-by: Kevin Hilman <khilman@baylibre.com>
+Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-g12b.dtsi | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+(limited to 'arch/arm64/boot/dts/amlogic/meson-g12b.dtsi')
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-g12b.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12b.dtsi
+index a9e1db0f1158..b3f9e3a02963 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-g12b.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-g12b.dtsi
+@@ -48,6 +48,7 @@
+ 			compatible = "arm,cortex-a53";
+ 			reg = <0x0 0x0>;
+ 			enable-method = "psci";
++			capacity-dmips-mhz = <592>;
+ 			next-level-cache = <&l2>;
+ 		};
+ 
+@@ -56,6 +57,7 @@
+ 			compatible = "arm,cortex-a53";
+ 			reg = <0x0 0x1>;
+ 			enable-method = "psci";
++			capacity-dmips-mhz = <592>;
+ 			next-level-cache = <&l2>;
+ 		};
+ 
+@@ -64,6 +66,7 @@
+ 			compatible = "arm,cortex-a73";
+ 			reg = <0x0 0x100>;
+ 			enable-method = "psci";
++			capacity-dmips-mhz = <1024>;
+ 			next-level-cache = <&l2>;
+ 		};
+ 
+@@ -72,6 +75,7 @@
+ 			compatible = "arm,cortex-a73";
+ 			reg = <0x0 0x101>;
+ 			enable-method = "psci";
++			capacity-dmips-mhz = <1024>;
+ 			next-level-cache = <&l2>;
+ 		};
+ 
+@@ -80,6 +84,7 @@
+ 			compatible = "arm,cortex-a73";
+ 			reg = <0x0 0x102>;
+ 			enable-method = "psci";
++			capacity-dmips-mhz = <1024>;
+ 			next-level-cache = <&l2>;
+ 		};
+ 
+@@ -88,6 +93,7 @@
+ 			compatible = "arm,cortex-a73";
+ 			reg = <0x0 0x103>;
+ 			enable-method = "psci";
++			capacity-dmips-mhz = <1024>;
+ 			next-level-cache = <&l2>;
+ 		};
+ 
+-- 
+cgit 1.2-0.3.lf.el7
+

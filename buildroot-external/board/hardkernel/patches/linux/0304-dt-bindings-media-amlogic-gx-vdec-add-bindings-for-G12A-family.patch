@@ -1,0 +1,96 @@
+
+Add bindings to support the Amlogic Video Decoder on the Amlogic G12A
+family.
+
+For the G12A family, a supplementary clock is needed to operate the
+HEVC/VP9 decoder.
+
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ .../bindings/media/amlogic,gx-vdec.yaml       | 57 +++++++++++++++----
+ 1 file changed, 46 insertions(+), 11 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/media/amlogic,gx-vdec.yaml b/Documentation/devicetree/bindings/media/amlogic,gx-vdec.yaml
+index 878944867d6e..8ea979bb97e6 100644
+--- a/Documentation/devicetree/bindings/media/amlogic,gx-vdec.yaml
++++ b/Documentation/devicetree/bindings/media/amlogic,gx-vdec.yaml
+@@ -27,12 +27,15 @@ description: |
+ 
+ properties:
+   compatible:
+-    items:
++    oneOf:
++      - items:
++        - enum:
++          - amlogic,gxbb-vdec # GXBB (S905)
++          - amlogic,gxl-vdec # GXL (S905X, S905D)
++          - amlogic,gxm-vdec # GXM (S912)
++        - const: amlogic,gx-vdec
+       - enum:
+-        - amlogic,gxbb-vdec # GXBB (S905)
+-        - amlogic,gxl-vdec # GXL (S905X, S905D)
+-        - amlogic,gxm-vdec # GXM (S912)
+-      - const: amlogic,gx-vdec
++        - amlogic,g12a-vdec # G12A (S905X2, S905D2)
+ 
+   interrupts:
+     minItems: 2
+@@ -59,13 +62,9 @@ properties:
+ 
+   clocks:
+     minItems: 4
++    maxItems: 5
+ 
+-  clock-names:
+-    items:
+-      - const: dos_parser
+-      - const: dos
+-      - const: vdec_1
+-      - const: vdec_hevc
++  clock-names: true
+ 
+   amlogic,ao-sysctrl:
+     description: should point to the AOBUS sysctrl node
+@@ -77,6 +76,42 @@ properties:
+     allOf:
+       - $ref: /schemas/types.yaml#/definitions/phandle
+ 
++allOf:
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - amlogic,gx-vdec
++
++    then:
++      properties:
++        clock-names:
++          minItems: 4
++          items:
++            - const: dos_parser
++            - const: dos
++            - const: vdec_1
++            - const: vdec_hevc
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - amlogic,g12a-vdec
++
++    then:
++      properties:
++        clock-names:
++          minItems: 5
++          items:
++            - const: dos_parser
++            - const: dos
++            - const: vdec_1
++            - const: vdec_hevc
++            - const: vdec_hevcf
++
+ required:
+   - compatible
+   - reg

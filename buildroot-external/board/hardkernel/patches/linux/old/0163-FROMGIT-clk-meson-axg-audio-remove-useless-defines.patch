@@ -1,0 +1,35 @@
+From 8fdefd1e35b9ab9a849fd3928de3c9dff15f466a Mon Sep 17 00:00:00 2001
+From: Jerome Brunet <jbrunet@baylibre.com>
+Date: Wed, 2 Oct 2019 11:15:25 +0200
+Subject: [PATCH 163/200] FROMGIT: clk: meson: axg-audio: remove useless
+ defines
+
+Defining the number of each input type is no longer necessary since
+we are not using the clk-input hack anymore
+
+Fixes: 282420eed23f ("clk: meson: axg-audio: migrate to the new parent description method")
+Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+(cherry picked from commit 38340cb2ac4a814e74f36d80752a343b4747afc5)
+---
+ drivers/clk/meson/axg-audio.c | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/drivers/clk/meson/axg-audio.c b/drivers/clk/meson/axg-audio.c
+index 18b23cdf679c..60ac71856e5e 100644
+--- a/drivers/clk/meson/axg-audio.c
++++ b/drivers/clk/meson/axg-audio.c
+@@ -20,10 +20,6 @@
+ #include "clk-phase.h"
+ #include "sclk-div.h"
+ 
+-#define AUD_MST_IN_COUNT	8
+-#define AUD_SLV_SCLK_COUNT	10
+-#define AUD_SLV_LRCLK_COUNT	10
+-
+ #define AUD_GATE(_name, _reg, _bit, _phws, _iflags)			\
+ struct clk_regmap aud_##_name = {					\
+ 	.data = &(struct clk_regmap_gate_data){				\
+-- 
+2.17.1
+

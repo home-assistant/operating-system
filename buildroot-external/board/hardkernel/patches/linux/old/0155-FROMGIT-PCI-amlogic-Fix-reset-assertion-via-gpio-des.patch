@@ -1,0 +1,45 @@
+From 596f731e15fd41825db14b5838923c715a887336 Mon Sep 17 00:00:00 2001
+From: Remi Pommarel <repk@triplefau.lt>
+Date: Sun, 1 Sep 2019 15:39:15 +0200
+Subject: [PATCH 155/200] FROMGIT: PCI: amlogic: Fix reset assertion via gpio
+ descriptor
+
+Normally asserting reset signal on gpio would be achieved with:
+	gpiod_set_value_cansleep(reset_gpio, 1);
+
+Meson PCI driver set reset value to '0' instead of '1' as it takes into
+account the PERST# signal polarity. The polarity should be taken care
+in the device tree instead.
+
+This fixes the reset assertion meaning and moves out the polarity
+configuration in DT (please note that there is no DT currently using
+this driver).
+
+Signed-off-by: Remi Pommarel <repk@triplefau.lt>
+Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
+(cherry picked from commit 4d3186a525b3f6af7d5f468e94b79b9e92cf3853)
+---
+ drivers/pci/controller/dwc/pci-meson.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/pci/controller/dwc/pci-meson.c b/drivers/pci/controller/dwc/pci-meson.c
+index e35e9eaa50ee..541f37a6f6a5 100644
+--- a/drivers/pci/controller/dwc/pci-meson.c
++++ b/drivers/pci/controller/dwc/pci-meson.c
+@@ -287,9 +287,9 @@ static inline void meson_cfg_writel(struct meson_pcie *mp, u32 val, u32 reg)
+ 
+ static void meson_pcie_assert_reset(struct meson_pcie *mp)
+ {
+-	gpiod_set_value_cansleep(mp->reset_gpio, 0);
+-	udelay(500);
+ 	gpiod_set_value_cansleep(mp->reset_gpio, 1);
++	udelay(500);
++	gpiod_set_value_cansleep(mp->reset_gpio, 0);
+ }
+ 
+ static void meson_pcie_init_dw(struct meson_pcie *mp)
+-- 
+2.17.1
+

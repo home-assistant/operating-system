@@ -1,0 +1,308 @@
+The clock controller driver has provided the XTAL clock so far. This
+does not match how the hardware actually works because the XTAL clock is
+an actual crystal which is mounted on the PCB.
+
+Add the "xtal" clock to meson.dtsi and replace all references to the
+clock controller's CLKID_XTAL with the new xtal clock node.
+
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+---
+ arch/arm/boot/dts/meson.dtsi           |  7 +++++++
+ arch/arm/boot/dts/meson6.dtsi          |  7 -------
+ arch/arm/boot/dts/meson8.dtsi          | 15 ++++++++-------
+ arch/arm/boot/dts/meson8b-ec100.dts    |  2 +-
+ arch/arm/boot/dts/meson8b-mxq.dts      |  2 +-
+ arch/arm/boot/dts/meson8b-odroidc1.dts |  2 +-
+ arch/arm/boot/dts/meson8b.dtsi         | 15 ++++++++-------
+ 7 files changed, 26 insertions(+), 24 deletions(-)
+
+diff --git a/arch/arm/boot/dts/meson.dtsi b/arch/arm/boot/dts/meson.dtsi
+index c4447f6c8b2c..5d198309058a 100644
+--- a/arch/arm/boot/dts/meson.dtsi
++++ b/arch/arm/boot/dts/meson.dtsi
+@@ -282,4 +282,11 @@ efuse: nvmem@0 {
+ 			};
+ 		};
+ 	};
++
++	xtal: xtal-clk {
++		compatible = "fixed-clock";
++		clock-frequency = <24000000>;
++		clock-output-names = "xtal";
++		#clock-cells = <0>;
++	};
+ }; /* end of / */
+diff --git a/arch/arm/boot/dts/meson6.dtsi b/arch/arm/boot/dts/meson6.dtsi
+index 2d31b7ce3f8c..4716030a48d0 100644
+--- a/arch/arm/boot/dts/meson6.dtsi
++++ b/arch/arm/boot/dts/meson6.dtsi
+@@ -36,13 +36,6 @@ apb2: bus@d0000000 {
+ 		ranges = <0x0 0xd0000000 0x40000>;
+ 	};
+ 
+-	xtal: xtal-clk {
+-		compatible = "fixed-clock";
+-		clock-frequency = <24000000>;
+-		clock-output-names = "xtal";
+-		#clock-cells = <0>;
+-	};
+-
+ 	clk81: clk@0 {
+ 		#clock-cells = <0>;
+ 		compatible = "fixed-clock";
+diff --git a/arch/arm/boot/dts/meson8.dtsi b/arch/arm/boot/dts/meson8.dtsi
+index 3c534cd50ee3..add6d7991fdf 100644
+--- a/arch/arm/boot/dts/meson8.dtsi
++++ b/arch/arm/boot/dts/meson8.dtsi
+@@ -455,6 +455,8 @@ &gpio_intc {
+ &hhi {
+ 	clkc: clock-controller {
+ 		compatible = "amlogic,meson8-clkc";
++		clocks = <&xtal>;
++		clock-names = "xtal";
+ 		#clock-cells = <1>;
+ 		#reset-cells = <1>;
+ 	};
+@@ -529,8 +531,7 @@ &rtc {
+ 
+ &saradc {
+ 	compatible = "amlogic,meson8-saradc", "amlogic,meson-saradc";
+-	clocks = <&clkc CLKID_XTAL>,
+-		<&clkc CLKID_SAR_ADC>;
++	clocks = <&xtal>, <&clkc CLKID_SAR_ADC>;
+ 	clock-names = "clkin", "core";
+ 	amlogic,hhi-sysctrl = <&hhi>;
+ 	nvmem-cells = <&temperature_calib>;
+@@ -548,31 +549,31 @@ &spifc {
+ };
+ 
+ &timer_abcde {
+-	clocks = <&clkc CLKID_XTAL>, <&clkc CLKID_CLK81>;
++	clocks = <&xtal>, <&clkc CLKID_CLK81>;
+ 	clock-names = "xtal", "pclk";
+ };
+ 
+ &uart_AO {
+ 	compatible = "amlogic,meson8-uart", "amlogic,meson-uart";
+-	clocks = <&clkc CLKID_CLK81>, <&clkc CLKID_XTAL>, <&clkc CLKID_CLK81>;
++	clocks = <&clkc CLKID_CLK81>, <&xtal>, <&clkc CLKID_CLK81>;
+ 	clock-names = "baud", "xtal", "pclk";
+ };
+ 
+ &uart_A {
+ 	compatible = "amlogic,meson8-uart", "amlogic,meson-uart";
+-	clocks = <&clkc CLKID_CLK81>, <&clkc CLKID_XTAL>, <&clkc CLKID_UART0>;
++	clocks = <&clkc CLKID_CLK81>, <&xtal>, <&clkc CLKID_UART0>;
+ 	clock-names = "baud", "xtal", "pclk";
+ };
+ 
+ &uart_B {
+ 	compatible = "amlogic,meson8-uart", "amlogic,meson-uart";
+-	clocks = <&clkc CLKID_CLK81>, <&clkc CLKID_XTAL>, <&clkc CLKID_UART1>;
++	clocks = <&clkc CLKID_CLK81>, <&xtal>, <&clkc CLKID_UART1>;
+ 	clock-names = "baud", "xtal", "pclk";
+ };
+ 
+ &uart_C {
+ 	compatible = "amlogic,meson8-uart", "amlogic,meson-uart";
+-	clocks = <&clkc CLKID_CLK81>, <&clkc CLKID_XTAL>, <&clkc CLKID_UART2>;
++	clocks = <&clkc CLKID_CLK81>, <&xtal>, <&clkc CLKID_UART2>;
+ 	clock-names = "baud", "xtal", "pclk";
+ };
+ 
+diff --git a/arch/arm/boot/dts/meson8b-ec100.dts b/arch/arm/boot/dts/meson8b-ec100.dts
+index bed1dfef1985..163a200d5a7b 100644
+--- a/arch/arm/boot/dts/meson8b-ec100.dts
++++ b/arch/arm/boot/dts/meson8b-ec100.dts
+@@ -377,7 +377,7 @@ &pwm_cd {
+ 	status = "okay";
+ 	pinctrl-0 = <&pwm_c1_pins>, <&pwm_d_pins>;
+ 	pinctrl-names = "default";
+-	clocks = <&clkc CLKID_XTAL>, <&clkc CLKID_XTAL>;
++	clocks = <&xtal>, <&xtal>;
+ 	clock-names = "clkin0", "clkin1";
+ };
+ 
+diff --git a/arch/arm/boot/dts/meson8b-mxq.dts b/arch/arm/boot/dts/meson8b-mxq.dts
+index 6e39ad52e42d..33037ef62d0a 100644
+--- a/arch/arm/boot/dts/meson8b-mxq.dts
++++ b/arch/arm/boot/dts/meson8b-mxq.dts
+@@ -165,7 +165,7 @@ &pwm_cd {
+ 	status = "okay";
+ 	pinctrl-0 = <&pwm_c1_pins>, <&pwm_d_pins>;
+ 	pinctrl-names = "default";
+-	clocks = <&clkc CLKID_XTAL>, <&clkc CLKID_XTAL>;
++	clocks = <&xtal>, <&xtal>;
+ 	clock-names = "clkin0", "clkin1";
+ };
+ 
+diff --git a/arch/arm/boot/dts/meson8b-odroidc1.dts b/arch/arm/boot/dts/meson8b-odroidc1.dts
+index a24eccc354b9..a2a47804fc4a 100644
+--- a/arch/arm/boot/dts/meson8b-odroidc1.dts
++++ b/arch/arm/boot/dts/meson8b-odroidc1.dts
+@@ -340,7 +340,7 @@ &pwm_cd {
+ 	status = "okay";
+ 	pinctrl-0 = <&pwm_c1_pins>, <&pwm_d_pins>;
+ 	pinctrl-names = "default";
+-	clocks = <&clkc CLKID_XTAL>, <&clkc CLKID_XTAL>;
++	clocks = <&xtal>, <&xtal>;
+ 	clock-names = "clkin0", "clkin1";
+ };
+ 
+diff --git a/arch/arm/boot/dts/meson8b.dtsi b/arch/arm/boot/dts/meson8b.dtsi
+index 099bf8e711c9..1934666ff60f 100644
+--- a/arch/arm/boot/dts/meson8b.dtsi
++++ b/arch/arm/boot/dts/meson8b.dtsi
+@@ -434,6 +434,8 @@ &gpio_intc {
+ &hhi {
+ 	clkc: clock-controller {
+ 		compatible = "amlogic,meson8-clkc";
++		clocks = <&xtal>;
++		clock-names = "xtal";
+ 		#clock-cells = <1>;
+ 		#reset-cells = <1>;
+ 	};
+@@ -508,8 +510,7 @@ &rtc {
+ 
+ &saradc {
+ 	compatible = "amlogic,meson8b-saradc", "amlogic,meson-saradc";
+-	clocks = <&clkc CLKID_XTAL>,
+-		<&clkc CLKID_SAR_ADC>;
++	clocks = <&xtal>, <&clkc CLKID_SAR_ADC>;
+ 	clock-names = "clkin", "core";
+ 	amlogic,hhi-sysctrl = <&hhi>;
+ 	nvmem-cells = <&temperature_calib>;
+@@ -523,31 +524,31 @@ &sdio {
+ };
+ 
+ &timer_abcde {
+-	clocks = <&clkc CLKID_XTAL>, <&clkc CLKID_CLK81>;
++	clocks = <&xtal>, <&clkc CLKID_CLK81>;
+ 	clock-names = "xtal", "pclk";
+ };
+ 
+ &uart_AO {
+ 	compatible = "amlogic,meson8b-uart", "amlogic,meson-uart";
+-	clocks = <&clkc CLKID_CLK81>, <&clkc CLKID_XTAL>, <&clkc CLKID_CLK81>;
++	clocks = <&clkc CLKID_CLK81>, <&xtal>, <&clkc CLKID_CLK81>;
+ 	clock-names = "baud", "xtal", "pclk";
+ };
+ 
+ &uart_A {
+ 	compatible = "amlogic,meson8b-uart", "amlogic,meson-uart";
+-	clocks = <&clkc CLKID_CLK81>, <&clkc CLKID_XTAL>, <&clkc CLKID_UART0>;
++	clocks = <&clkc CLKID_CLK81>, <&xtal>, <&clkc CLKID_UART0>;
+ 	clock-names = "baud", "xtal", "pclk";
+ };
+ 
+ &uart_B {
+ 	compatible = "amlogic,meson8b-uart", "amlogic,meson-uart";
+-	clocks = <&clkc CLKID_CLK81>, <&clkc CLKID_XTAL>, <&clkc CLKID_UART1>;
++	clocks = <&clkc CLKID_CLK81>, <&xtal>, <&clkc CLKID_UART1>;
+ 	clock-names = "baud", "xtal", "pclk";
+ };
+ 
+ &uart_C {
+ 	compatible = "amlogic,meson8b-uart", "amlogic,meson-uart";
+-	clocks = <&clkc CLKID_CLK81>, <&clkc CLKID_XTAL>, <&clkc CLKID_UART2>;
++	clocks = <&clkc CLKID_CLK81>, <&xtal>, <&clkc CLKID_UART2>;
+ 	clock-names = "baud", "xtal", "pclk";
+ };
+ 
+
+Add the DDR clock controller and pass it's DDR_CLKID_DDR_PLL to the main
+(HHI) clock controller as "ddr_clk". The "ddr_clk" is used as one of the
+inputs for the audio clock muxes.
+
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Reported-by: kbuild test robot <lkp@intel.com>
+---
+ arch/arm/boot/dts/meson8.dtsi | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm/boot/dts/meson8.dtsi b/arch/arm/boot/dts/meson8.dtsi
+index add6d7991fdf..b35d7444c1f4 100644
+--- a/arch/arm/boot/dts/meson8.dtsi
++++ b/arch/arm/boot/dts/meson8.dtsi
+@@ -3,6 +3,7 @@
+  * Copyright 2014 Carlo Caione <carlo@caione.org>
+  */
+ 
++#include <dt-bindings/clock/meson8-ddr-clkc.h>
+ #include <dt-bindings/clock/meson8b-clkc.h>
+ #include <dt-bindings/gpio/meson8-gpio.h>
+ #include <dt-bindings/reset/amlogic,meson8b-clkc-reset.h>
+@@ -195,6 +196,14 @@ mmcbus: bus@c8000000 {
+ 		#size-cells = <1>;
+ 		ranges = <0x0 0xc8000000 0x8000>;
+ 
++		ddr_clkc: clock-controller@400 {
++			compatible = "amlogic,meson8-ddr-clkc";
++			reg = <0x400 0x20>;
++			clocks = <&xtal>;
++			clock-names = "xtal";
++			#clock-cells = <1>;
++		};
++
+ 		dmcbus: bus@6000 {
+ 			compatible = "simple-bus";
+ 			reg = <0x6000 0x400>;
+@@ -455,8 +464,8 @@ &gpio_intc {
+ &hhi {
+ 	clkc: clock-controller {
+ 		compatible = "amlogic,meson8-clkc";
+-		clocks = <&xtal>;
+-		clock-names = "xtal";
++		clocks = <&xtal>, <&ddr_clkc DDR_CLKID_DDR_PLL>;
++		clock-names = "xtal", "ddr_pll";
+ 		#clock-cells = <1>;
+ 		#reset-cells = <1>;
+ 	};
+
+Add the DDR clock controller and pass it's DDR_CLKID_DDR_PLL to the main
+(HHI) clock controller as "ddr_clk". The "ddr_clk" is used as one of the
+inputs for the audio clock muxes.
+
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+---
+ arch/arm/boot/dts/meson8b.dtsi | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm/boot/dts/meson8b.dtsi b/arch/arm/boot/dts/meson8b.dtsi
+index 1934666ff60f..8ac8bdfaf58f 100644
+--- a/arch/arm/boot/dts/meson8b.dtsi
++++ b/arch/arm/boot/dts/meson8b.dtsi
+@@ -4,6 +4,7 @@
+  * Author: Carlo Caione <carlo@endlessm.com>
+  */
+ 
++#include <dt-bindings/clock/meson8-ddr-clkc.h>
+ #include <dt-bindings/clock/meson8b-clkc.h>
+ #include <dt-bindings/gpio/meson8b-gpio.h>
+ #include <dt-bindings/reset/amlogic,meson8b-reset.h>
+@@ -172,6 +173,14 @@ mmcbus: bus@c8000000 {
+ 		#size-cells = <1>;
+ 		ranges = <0x0 0xc8000000 0x8000>;
+ 
++		ddr_clkc: clock-controller@400 {
++			compatible = "amlogic,meson8b-ddr-clkc";
++			reg = <0x400 0x20>;
++			clocks = <&xtal>;
++			clock-names = "xtal";
++			#clock-cells = <1>;
++		};
++
+ 		dmcbus: bus@6000 {
+ 			compatible = "simple-bus";
+ 			reg = <0x6000 0x400>;
+@@ -434,8 +443,8 @@ &gpio_intc {
+ &hhi {
+ 	clkc: clock-controller {
+ 		compatible = "amlogic,meson8-clkc";
+-		clocks = <&xtal>;
+-		clock-names = "xtal";
++		clocks = <&xtal>, <&ddr_clkc DDR_CLKID_DDR_PLL>;
++		clock-names = "xtal", "ddr_pll";
+ 		#clock-cells = <1>;
+ 		#reset-cells = <1>;
+ 	};

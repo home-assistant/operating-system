@@ -1,0 +1,12 @@
+diff --git a/drivers/usb/dwc2/params.c b/drivers/usb/dwc2/params.c
+index bf7052e03..93561a2df 100644
+--- a/drivers/usb/dwc2/params.c
++++ b/drivers/usb/dwc2/params.c
+@@ -110,6 +110,7 @@ static void dwc2_set_amlogic_params(struct dwc2_hsotg *hsotg)
+ 	p->phy_type = DWC2_PHY_TYPE_PARAM_UTMI;
+ 	p->ahbcfg = GAHBCFG_HBSTLEN_INCR8 <<
+ 		GAHBCFG_HBSTLEN_SHIFT;
++	p->power_down = false;
+ }
+ 
+ static void dwc2_set_amcc_params(struct dwc2_hsotg *hsotg)

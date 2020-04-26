@@ -1,0 +1,167 @@
+From patchwork Mon Jan  6 19:29:50 2020
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Patchwork-Submitter: Corentin Labbe <clabbe.montjoie@gmail.com>
+X-Patchwork-Id: 11319983
+Return-Path: 
+ <SRS0=3EmA=23=lists.infradead.org=linux-amlogic-bounces+patchwork-linux-amlogic=patchwork.kernel.org@kernel.org>
+Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org
+ [172.30.200.123])
+	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id 03E37930
+	for <patchwork-linux-amlogic@patchwork.kernel.org>;
+ Mon,  6 Jan 2020 19:30:00 +0000 (UTC)
+Received: from bombadil.infradead.org (bombadil.infradead.org
+ [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mail.kernel.org (Postfix) with ESMTPS id D525E207FD
+	for <patchwork-linux-amlogic@patchwork.kernel.org>;
+ Mon,  6 Jan 2020 19:29:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=lists.infradead.org
+ header.i=@lists.infradead.org header.b="mBnjrc6G";
+	dkim=fail reason="signature verification failed" (2048-bit key)
+ header.d=gmail.com header.i=@gmail.com header.b="MFDHoVhh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D525E207FD
+Authentication-Results: mail.kernel.org;
+ dmarc=fail (p=none dis=none) header.from=gmail.com
+Authentication-Results: mail.kernel.org;
+ spf=none
+ smtp.mailfrom=linux-amlogic-bounces+patchwork-linux-amlogic=patchwork.kernel.org@lists.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=lists.infradead.org; s=bombadil.20170209; h=Sender:
+	Content-Transfer-Encoding:Content-Type:Cc:List-Subscribe:List-Help:List-Post:
+	List-Archive:List-Unsubscribe:List-Id:MIME-Version:Message-Id:Date:Subject:To
+	:From:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:
+	List-Owner; bh=89cgIB5HlDb2I4iTttzHAUYk94MUSAaT2AEXpvjAJDE=; b=mBnjrc6Gy9iAMT
+	lne+XSeI6NxcyEGKoOUifNWQxjVbY0MarlOXLwHW5fhiiIjO3TpUSgch81QI3heZ5DmyogE41IjS2
+	LKmbxz8p9YREJ0X/KxjoSxhrN8E66qu+CVp0I4dxfLnTNxEiVcvIPK8ZrhxargF+CExe2RuVkMNzo
+	hXBWXi20rUPCgUw9j+9ZC/bImvuoE9vWy0BvQrNWywasTi0UDUQLhabXW+27fgRkMDlbtC2v4LxmM
+	5lgH+Iol9hHzW73U1EXRMwy7qlA6oGbLM1ommJAykyT1prFzOxOo32KQpjlLU5b2z/UyS/fn+GX+D
+	s+RlgYD2z17y1d8aC65g==;
+Received: from localhost ([127.0.0.1] helo=bombadil.infradead.org)
+	by bombadil.infradead.org with esmtp (Exim 4.92.3 #3 (Red Hat Linux))
+	id 1ioY4d-0008AS-Jo; Mon, 06 Jan 2020 19:29:59 +0000
+Received: from mail-wm1-x344.google.com ([2a00:1450:4864:20::344])
+ by bombadil.infradead.org with esmtps (Exim 4.92.3 #3 (Red Hat Linux))
+ id 1ioY4b-00089n-4m
+ for linux-amlogic@lists.infradead.org; Mon, 06 Jan 2020 19:29:58 +0000
+Received: by mail-wm1-x344.google.com with SMTP id c127so12589591wme.1
+ for <linux-amlogic@lists.infradead.org>;
+ Mon, 06 Jan 2020 11:29:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20161025;
+ h=from:to:cc:subject:date:message-id:mime-version
+ :content-transfer-encoding;
+ bh=9Ur3CxFG0cQbKNwUJ75Zx2lXsthVwW+wWDfRyfXmnKM=;
+ b=MFDHoVhhfNfJOoS+7B7TS0SyZvJrXkAmv9gGVyRrLcFaG6lMwTT7g8Nw48eUSo/ihd
+ iE09TrqHNUuJ1yrNx8eqPe/Bf6gJegD+DVCBYVFa3za5W8hLkWvdoLTpZDEEiHtar4+Q
+ pKqqaX4vnkREBw8bLnRfq2kh5v610vdQecjHN/TN8/sSUkLUv+JvKm8Jsa/rdrblmhq0
+ uhLdN8vIor7xFd3r94ysMJs7hOqQZN08M/sKaaagiqHpkuGpBI7l5slMNOoFkja7LlFr
+ 5lUstKr4VwNTFvhDrVj8RMeFN1GPti+JFk5/Hjf9t0KfwFGuOpMcuYVstzFEf8e8EJkN
+ F22Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20161025;
+ h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+ :content-transfer-encoding;
+ bh=9Ur3CxFG0cQbKNwUJ75Zx2lXsthVwW+wWDfRyfXmnKM=;
+ b=qQPhdUPoMsvsgU9d2CukIwU9859TqatMH1SnTrZvkekTdxmntIRxFea1Dk2WreO0bt
+ pCD2n/L1u/S54H6MrTatwUoLSJIAJejD2g3CwmzlqlCdu3yEGqzvgSVOpCkMx5i0/NVU
+ 7G1wK9F6//q0DBPuQ/Jmrrf4zRQC9B5p0LNbwK4uoZE6mjD4e0kksw74U4sdGwaAycmH
+ tS8sM4mLinfSdoVNcmCk7itJHz50cofmJi7m7y1Rg516xiQVRRTjyFlV60m2s+szXvXs
+ +LvACnlw15R2/Afntx6ItBWkaSU7IXUZOtyEubgG0EA74mnlltHrGZA3qS+53V47/gti
+ bQLQ==
+X-Gm-Message-State: APjAAAVfuqk7uAKGGw84URMNJS9uSoCXyf4sG0XPXD6739T3y9rglZlQ
+ CQ2OfZAGcNs0ZtfmrRUt1Fc=
+X-Google-Smtp-Source: 
+ APXvYqyQllloLFr5JAArKfaDOfayLtkqaScpZ+uJ6DkBjZ3d+DoyF58NzIDEURVT4mhNYEGilCH9JA==
+X-Received: by 2002:a1c:1dd7:: with SMTP id d206mr34934742wmd.5.1578338994696;
+ Mon, 06 Jan 2020 11:29:54 -0800 (PST)
+Received: from Red.localdomain ([2a01:cb1d:147:7200:2e56:dcff:fed2:c6d6])
+ by smtp.googlemail.com with ESMTPSA id
+ g21sm23802398wmh.17.2020.01.06.11.29.53
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Mon, 06 Jan 2020 11:29:54 -0800 (PST)
+From: Corentin Labbe <clabbe.montjoie@gmail.com>
+To: davem@davemloft.net, herbert@gondor.apana.org.au, narmstrong@baylibre.com
+Subject: [PATCH] crypto: amlogic: fix removal of module
+Date: Mon,  6 Jan 2020 20:29:50 +0100
+Message-Id: <20200106192950.23475-1-clabbe.montjoie@gmail.com>
+X-Mailer: git-send-email 2.24.1
+MIME-Version: 1.0
+X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-646709E3 
+X-CRM114-CacheID: sfid-20200106_112957_186126_D53DE925 
+X-CRM114-Status: UNSURE (   9.71  )
+X-CRM114-Notice: Please train this message.
+X-Spam-Score: -0.2 (/)
+X-Spam-Report: SpamAssassin version 3.4.2 on bombadil.infradead.org summary:
+ Content analysis details:   (-0.2 points)
+ pts rule name              description
+ ---- ----------------------
+ --------------------------------------------------
+ -0.0 RCVD_IN_DNSWL_NONE     RBL: Sender listed at https://www.dnswl.org/,
+ no trust [2a00:1450:4864:20:0:0:0:344 listed in]
+ [list.dnswl.org]
+ 0.0 FREEMAIL_FROM          Sender email is commonly abused enduser mail
+ provider (clabbe.montjoie[at]gmail.com)
+ 0.0 SPF_HELO_NONE          SPF: HELO does not publish an SPF Record
+ -0.0 SPF_PASS               SPF: sender matches SPF record
+ -0.1 DKIM_VALID Message has at least one valid DKIM or DK signature
+ -0.1 DKIM_VALID_AU          Message has a valid DKIM or DK signature from
+ author's domain
+ 0.1 DKIM_SIGNED            Message has a DKIM or DK signature,
+ not necessarily
+ valid
+ -0.1 DKIM_VALID_EF          Message has a valid DKIM or DK signature from
+ envelope-from domain
+X-BeenThere: linux-amlogic@lists.infradead.org
+X-Mailman-Version: 2.1.29
+Precedence: list
+List-Id: <linux-amlogic.lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-amlogic>,
+ <mailto:linux-amlogic-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-amlogic/>
+List-Post: <mailto:linux-amlogic@lists.infradead.org>
+List-Help: <mailto:linux-amlogic-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-amlogic>,
+ <mailto:linux-amlogic-request@lists.infradead.org?subject=subscribe>
+Cc: linux-amlogic@lists.infradead.org,
+ Corentin Labbe <clabbe.montjoie@gmail.com>, linux-crypto@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Sender: "linux-amlogic" <linux-amlogic-bounces@lists.infradead.org>
+Errors-To: 
+ linux-amlogic-bounces+patchwork-linux-amlogic=patchwork.kernel.org@lists.infradead.org
+
+Removing the driver cause an oops due to the fact we clean an extra
+channel.
+Let's give the right index to the cleaning function.
+Fixes: 48fe583fe541 ("crypto: amlogic - Add crypto accelerator for amlogic GXL")
+
+Signed-off-by: Corentin Labbe <clabbe.montjoie@gmail.com>
+---
+ drivers/crypto/amlogic/amlogic-gxl-core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/crypto/amlogic/amlogic-gxl-core.c b/drivers/crypto/amlogic/amlogic-gxl-core.c
+index fa05fce1c0de..9d4ead2f7ebb 100644
+--- a/drivers/crypto/amlogic/amlogic-gxl-core.c
++++ b/drivers/crypto/amlogic/amlogic-gxl-core.c
+@@ -289,7 +289,7 @@ static int meson_crypto_probe(struct platform_device *pdev)
+ error_alg:
+ 	meson_unregister_algs(mc);
+ error_flow:
+-	meson_free_chanlist(mc, MAXFLOW);
++	meson_free_chanlist(mc, MAXFLOW - 1);
+ 	clk_disable_unprepare(mc->busclk);
+ 	return err;
+ }
+@@ -304,7 +304,7 @@ static int meson_crypto_remove(struct platform_device *pdev)
+ 
+ 	meson_unregister_algs(mc);
+ 
+-	meson_free_chanlist(mc, MAXFLOW);
++	meson_free_chanlist(mc, MAXFLOW - 1);
+ 
+ 	clk_disable_unprepare(mc->busclk);
+ 	return 0;

@@ -1,0 +1,145 @@
+
+If a decoder needs a minimal buffer count to be queued on it's CAPTURE
+queue, if a CMD_STOP is sent after a STREAMON but before all the required
+buffers are queued, it should comply to the drain sequence and mark the
+last queued buffer with V4L2_BUF_FLAG_LAST and mark it done to be dequeued.
+
+This introduces a v4l2-mem2mem ioctl decoder command to track the command
+sent to the decoder, and should be called by the affected drivers.
+
+Suggested-by: Hans Verkuil <hverkuil@xs4all.nl>
+Suggested-by: Maxime Jourdan <mjourdan@baylibre.com>
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ drivers/media/v4l2-core/v4l2-mem2mem.c | 61 +++++++++++++++++++++++++-
+ include/media/v4l2-mem2mem.h           | 14 ++++++
+ 2 files changed, 73 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/media/v4l2-core/v4l2-mem2mem.c b/drivers/media/v4l2-core/v4l2-mem2mem.c
+index 1afd9c6ad908..b09616f9f102 100644
+--- a/drivers/media/v4l2-core/v4l2-mem2mem.c
++++ b/drivers/media/v4l2-core/v4l2-mem2mem.c
+@@ -556,6 +556,28 @@ int v4l2_m2m_querybuf(struct file *file, struct v4l2_m2m_ctx *m2m_ctx,
+ }
+ EXPORT_SYMBOL_GPL(v4l2_m2m_querybuf);
+ 
++static void v4l2_m2m_flag_last_buf_done(struct vb2_queue *q)
++{
++	struct vb2_buffer *vb;
++	struct vb2_v4l2_buffer *vbuf;
++	unsigned int i;
++
++	if (WARN_ON(q->is_output))
++		return;
++	if (list_empty(&q->queued_list))
++		return;
++
++	vb = list_first_entry(&q->queued_list, struct vb2_buffer, queued_entry);
++	for (i = 0; i < vb->num_planes; i++)
++		vb2_set_plane_payload(vb, i, 0);
++
++	vb->state = VB2_BUF_STATE_ACTIVE;
++	atomic_inc(&q->owned_by_drv_count);
++	vbuf = to_vb2_v4l2_buffer(vb);
++	vbuf->flags |= V4L2_BUF_FLAG_LAST;
++	vb2_buffer_done(vb, VB2_BUF_STATE_DONE);
++}
++
+ int v4l2_m2m_qbuf(struct file *file, struct v4l2_m2m_ctx *m2m_ctx,
+ 		  struct v4l2_buffer *buf)
+ {
+@@ -570,11 +592,22 @@ int v4l2_m2m_qbuf(struct file *file, struct v4l2_m2m_ctx *m2m_ctx,
+ 			__func__);
+ 		return -EPERM;
+ 	}
++
+ 	ret = vb2_qbuf(vq, vdev->v4l2_dev->mdev, buf);
+-	if (!ret && !(buf->flags & V4L2_BUF_FLAG_IN_REQUEST))
++	if (ret)
++		return ret;
++
++	/*
++	 * If the capture queue isn't streaming and we were asked to
++	 * stop, DONE the buffer instantly and flag as LAST
++	 */
++	if (!V4L2_TYPE_IS_OUTPUT(vq->type) && m2m_ctx->stopped &&
++	    vb2_is_streaming(vq) && !vb2_start_streaming_called(vq))
++		v4l2_m2m_flag_last_buf_done(vq);
++	else if ((buf->flags & V4L2_BUF_FLAG_IN_REQUEST))
+ 		v4l2_m2m_try_schedule(m2m_ctx);
+ 
+-	return ret;
++	return 0;
+ }
+ EXPORT_SYMBOL_GPL(v4l2_m2m_qbuf);
+ 
+@@ -1225,6 +1258,30 @@ int v4l2_m2m_ioctl_try_decoder_cmd(struct file *file, void *fh,
+ }
+ EXPORT_SYMBOL_GPL(v4l2_m2m_ioctl_try_decoder_cmd);
+ 
++int v4l2_m2m_decoder_cmd(struct file *file, struct v4l2_m2m_ctx *m2m_ctx,
++			 struct v4l2_decoder_cmd *dc)
++{
++	if (dc->cmd != V4L2_DEC_CMD_STOP && dc->cmd != V4L2_DEC_CMD_START)
++		return -EINVAL;
++
++	if (dc->cmd == V4L2_DEC_CMD_STOP)
++		m2m_ctx->stopped = true;
++	else
++		m2m_ctx->stopped = false;
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(v4l2_m2m_decoder_cmd);
++
++int v4l2_m2m_ioctl_decoder_cmd(struct file *file, void *priv,
++			       struct v4l2_decoder_cmd *dc)
++{
++	struct v4l2_fh *fh = file->private_data;
++
++	return v4l2_m2m_decoder_cmd(file, fh->m2m_ctx, dc);
++}
++EXPORT_SYMBOL_GPL(v4l2_m2m_ioctl_decoder_cmd);
++
+ /*
+  * v4l2_file_operations helpers. It is assumed here same lock is used
+  * for the output and the capture buffer queue.
+diff --git a/include/media/v4l2-mem2mem.h b/include/media/v4l2-mem2mem.h
+index 1d85e24791e4..4c083cffdd86 100644
+--- a/include/media/v4l2-mem2mem.h
++++ b/include/media/v4l2-mem2mem.h
+@@ -98,6 +98,8 @@ struct v4l2_m2m_ctx {
+ 
+ 	bool				new_frame;
+ 
++	bool				stopped;
++
+ 	/* internal use only */
+ 	struct v4l2_m2m_dev		*m2m_dev;
+ 
+@@ -312,6 +314,16 @@ int v4l2_m2m_streamon(struct file *file, struct v4l2_m2m_ctx *m2m_ctx,
+ int v4l2_m2m_streamoff(struct file *file, struct v4l2_m2m_ctx *m2m_ctx,
+ 		       enum v4l2_buf_type type);
+ 
++/**
++ * v4l2_m2m_decoder_cmd() - execute a decoder command
++ *
++ * @file: pointer to struct &file
++ * @m2m_ctx: m2m context assigned to the instance given by struct &v4l2_m2m_ctx
++ * @dc: pointer to the decoder command
++ */
++int v4l2_m2m_decoder_cmd(struct file *file, struct v4l2_m2m_ctx *m2m_ctx,
++			 struct v4l2_decoder_cmd *dc);
++
+ /**
+  * v4l2_m2m_poll() - poll replacement, for destination buffers only
+  *
+@@ -704,6 +716,8 @@ int v4l2_m2m_ioctl_streamon(struct file *file, void *fh,
+ 				enum v4l2_buf_type type);
+ int v4l2_m2m_ioctl_streamoff(struct file *file, void *fh,
+ 				enum v4l2_buf_type type);
++int v4l2_m2m_ioctl_decoder_cmd(struct file *file, void *fh,
++			       struct v4l2_decoder_cmd *dc);
+ int v4l2_m2m_ioctl_try_encoder_cmd(struct file *file, void *fh,
+ 				   struct v4l2_encoder_cmd *ec);
+ int v4l2_m2m_ioctl_try_decoder_cmd(struct file *file, void *fh,

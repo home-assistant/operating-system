@@ -1,0 +1,79 @@
+From 1f8607d597635c283e397e87575b49184874d507 Mon Sep 17 00:00:00 2001
+From: Neil Armstrong <narmstrong@baylibre.com>
+Date: Mon, 16 Sep 2019 14:50:21 +0200
+Subject: [PATCH] arm64: dts: meson-g12a: Add PCIe node
+
+This adds the Amlogic G12A PCI Express controller node, also
+using the USB3+PCIe Combo PHY.
+
+The PHY mode selection is static, thus the USB3+PCIe Combo PHY
+phandle would need to be removed from the USB control node if the
+shared differential lines are used for PCIe instead of USB3.
+
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Reviewed-by: Andrew Murray <andrew.murray@arm.com>
+Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+---
+ .../boot/dts/amlogic/meson-g12-common.dtsi    | 33 +++++++++++++++++++
+ arch/arm64/boot/dts/amlogic/meson-sm1.dtsi    |  4 +++
+ 2 files changed, 37 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi
+index 0f6ec1704343f..f76773cabdb1a 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi
+@@ -60,6 +60,39 @@
+ 		#size-cells = <2>;
+ 		ranges;
+ 
++		pcie: pcie@fc000000 {
++			compatible = "amlogic,g12a-pcie", "snps,dw-pcie";
++			reg = <0x0 0xfc000000 0x0 0x400000
++			       0x0 0xff648000 0x0 0x2000
++			       0x0 0xfc400000 0x0 0x200000>;
++			reg-names = "elbi", "cfg", "config";
++			interrupts = <GIC_SPI 221 IRQ_TYPE_LEVEL_HIGH>;
++			#interrupt-cells = <1>;
++			interrupt-map-mask = <0 0 0 0>;
++			interrupt-map = <0 0 0 0 &gic GIC_SPI 223 IRQ_TYPE_LEVEL_HIGH>;
++			bus-range = <0x0 0xff>;
++			#address-cells = <3>;
++			#size-cells = <2>;
++			device_type = "pci";
++			ranges = <0x81000000 0 0 0x0 0xfc600000 0 0x00100000
++				  0x82000000 0 0xfc700000 0x0 0xfc700000 0 0x1900000>;
++
++			clocks = <&clkc CLKID_PCIE_PHY
++				  &clkc CLKID_PCIE_COMB
++				  &clkc CLKID_PCIE_PLL>;
++			clock-names = "general",
++				      "pclk",
++				      "port";
++			resets = <&reset RESET_PCIE_CTRL_A>,
++				 <&reset RESET_PCIE_APB>;
++			reset-names = "port",
++				      "apb";
++			num-lanes = <1>;
++			phys = <&usb3_pcie_phy PHY_TYPE_PCIE>;
++			phy-names = "pcie";
++			status = "disabled";
++		};
++
+ 		ethmac: ethernet@ff3f0000 {
+ 			compatible = "amlogic,meson-axg-dwmac",
+ 				     "snps,dwmac-3.70a",
+diff --git a/arch/arm64/boot/dts/amlogic/meson-sm1.dtsi b/arch/arm64/boot/dts/amlogic/meson-sm1.dtsi
+index 6152e928aef2f..1fdc5af5ae233 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-sm1.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-sm1.dtsi
+@@ -139,6 +139,10 @@
+ 		     "amlogic,meson-gpio-intc";
+ };
+ 
++&pcie {
++	power-domains = <&pwrc PWRC_SM1_PCIE_ID>;
++};
++
+ &pwrc {
+ 	compatible = "amlogic,meson-sm1-pwrc";
+ };

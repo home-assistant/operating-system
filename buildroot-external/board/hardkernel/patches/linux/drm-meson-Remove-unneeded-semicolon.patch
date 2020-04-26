@@ -1,0 +1,42 @@
+Fixes coccicheck warning:
+
+drivers/gpu/drm/meson/meson_crtc.c:360:3-4: Unneeded semicolon
+drivers/gpu/drm/meson/meson_plane.c:181:2-3: Unneeded semicolon
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: zhengbin <zhengbin13@huawei.com>
+Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ drivers/gpu/drm/meson/meson_crtc.c  | 2 +-
+ drivers/gpu/drm/meson/meson_plane.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+--
+2.7.4
+
+diff --git a/drivers/gpu/drm/meson/meson_crtc.c b/drivers/gpu/drm/meson/meson_crtc.c
+index 57ae1c1..eefefc4 100644
+--- a/drivers/gpu/drm/meson/meson_crtc.c
++++ b/drivers/gpu/drm/meson/meson_crtc.c
+@@ -357,7 +357,7 @@ void meson_crtc_irq(struct meson_drm *priv)
+ 					    MESON_CANVAS_WRAP_NONE,
+ 					    MESON_CANVAS_BLKMODE_LINEAR,
+ 					    MESON_CANVAS_ENDIAN_SWAP64);
+-		};
++		}
+
+ 		writel_relaxed(priv->viu.vd1_if0_gen_reg,
+ 				priv->io_base + meson_crtc->viu_offset +
+diff --git a/drivers/gpu/drm/meson/meson_plane.c b/drivers/gpu/drm/meson/meson_plane.c
+index ed54322..b96fa43 100644
+--- a/drivers/gpu/drm/meson/meson_plane.c
++++ b/drivers/gpu/drm/meson/meson_plane.c
+@@ -178,7 +178,7 @@ static void meson_plane_atomic_update(struct drm_plane *plane,
+ 		priv->viu.osd1_blk0_cfg[0] |= OSD_BLK_MODE_16 |
+ 					      OSD_COLOR_MATRIX_16_RGB565;
+ 		break;
+-	};
++	}
+
+ 	/* Default scaler parameters */
+ 	vsc_bot_rcv_num = 0;

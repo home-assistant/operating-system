@@ -1,0 +1,166 @@
+
+Add support for the Amlogic SM1 platform for the current MPEG1 & MPEG2
+support.
+
+The SM1 family, very close to the G12A SoCs, has a slighly different power
+management control, thus needing a separate compatible and family id.
+
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ drivers/staging/media/meson/vdec/vdec.c       |  5 +++-
+ drivers/staging/media/meson/vdec/vdec_1.c     | 29 ++++++++++++++----
+ .../staging/media/meson/vdec/vdec_platform.c  | 30 +++++++++++++++++++
+ .../staging/media/meson/vdec/vdec_platform.h  |  2 ++
+ 4 files changed, 59 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/staging/media/meson/vdec/vdec.c b/drivers/staging/media/meson/vdec/vdec.c
+index 875a12be9c9e..a8a4c380ccc9 100644
+--- a/drivers/staging/media/meson/vdec/vdec.c
++++ b/drivers/staging/media/meson/vdec/vdec.c
+@@ -958,6 +958,8 @@ static const struct of_device_id vdec_dt_match[] = {
+ 	  .data = &vdec_platform_gxl },
+ 	{ .compatible = "amlogic,g12a-vdec",
+ 	  .data = &vdec_platform_g12a },
++	{ .compatible = "amlogic,sm1-vdec",
++	  .data = &vdec_platform_sm1 },
+ 	{}
+ };
+ MODULE_DEVICE_TABLE(of, vdec_dt_match);
+@@ -1008,7 +1010,8 @@ static int vdec_probe(struct platform_device *pdev)
+ 	of_id = of_match_node(vdec_dt_match, dev->of_node);
+ 	core->platform = of_id->data;
+ 
+-	if (core->platform->revision == VDEC_REVISION_G12A) {
++	if (core->platform->revision == VDEC_REVISION_G12A ||
++	    core->platform->revision == VDEC_REVISION_SM1) {
+ 		core->vdec_hevcf_clk = devm_clk_get(dev, "vdec_hevcf");
+ 		if (IS_ERR(core->vdec_hevcf_clk))
+ 			return -EPROBE_DEFER;
+diff --git a/drivers/staging/media/meson/vdec/vdec_1.c b/drivers/staging/media/meson/vdec/vdec_1.c
+index 3a15c6fc0567..3fe2de0c9331 100644
+--- a/drivers/staging/media/meson/vdec/vdec_1.c
++++ b/drivers/staging/media/meson/vdec/vdec_1.c
+@@ -18,6 +18,7 @@
+ #define AO_RTI_GEN_PWR_SLEEP0	0xe8
+ #define AO_RTI_GEN_PWR_ISO0	0xec
+ 	#define GEN_PWR_VDEC_1 (BIT(3) | BIT(2))
++	#define GEN_PWR_VDEC_1_SM1 (BIT(1))
+ 
+ #define MC_SIZE			(4096 * 4)
+ 
+@@ -142,12 +143,20 @@ static int vdec_1_stop(struct amvdec_session *sess)
+ 	amvdec_read_dos(core, DOS_SW_RESET0);
+ 
+ 	/* enable vdec1 isolation */
+-	regmap_write(core->regmap_ao, AO_RTI_GEN_PWR_ISO0, 0xc0);
++	if (core->platform->revision == VDEC_REVISION_SM1)
++		regmap_update_bits(core->regmap_ao, AO_RTI_GEN_PWR_ISO0,
++				   GEN_PWR_VDEC_1_SM1, GEN_PWR_VDEC_1_SM1);
++	else
++		regmap_write(core->regmap_ao, AO_RTI_GEN_PWR_ISO0, 0xc0);
+ 	/* power off vdec1 memories */
+ 	amvdec_write_dos(core, DOS_MEM_PD_VDEC, 0xffffffff);
+ 	/* power off vdec1 */
+-	regmap_update_bits(core->regmap_ao, AO_RTI_GEN_PWR_SLEEP0,
+-			   GEN_PWR_VDEC_1, GEN_PWR_VDEC_1);
++	if (core->platform->revision == VDEC_REVISION_SM1)
++		regmap_update_bits(core->regmap_ao, AO_RTI_GEN_PWR_SLEEP0,
++				   GEN_PWR_VDEC_1_SM1, GEN_PWR_VDEC_1_SM1);
++	else
++		regmap_update_bits(core->regmap_ao, AO_RTI_GEN_PWR_SLEEP0,
++				   GEN_PWR_VDEC_1, GEN_PWR_VDEC_1);
+ 
+ 	clk_disable_unprepare(core->vdec_1_clk);
+ 
+@@ -170,8 +179,12 @@ static int vdec_1_start(struct amvdec_session *sess)
+ 		return ret;
+ 
+ 	/* Enable power for VDEC_1 */
+-	regmap_update_bits(core->regmap_ao, AO_RTI_GEN_PWR_SLEEP0,
+-			   GEN_PWR_VDEC_1, 0);
++	if (core->platform->revision == VDEC_REVISION_SM1)
++		regmap_update_bits(core->regmap_ao, AO_RTI_GEN_PWR_SLEEP0,
++				   GEN_PWR_VDEC_1_SM1, 0);
++	else
++		regmap_update_bits(core->regmap_ao, AO_RTI_GEN_PWR_SLEEP0,
++				   GEN_PWR_VDEC_1, 0);
+ 	usleep_range(10, 20);
+ 
+ 	/* Reset VDEC1 */
+@@ -183,7 +196,11 @@ static int vdec_1_start(struct amvdec_session *sess)
+ 	/* enable VDEC Memories */
+ 	amvdec_write_dos(core, DOS_MEM_PD_VDEC, 0);
+ 	/* Remove VDEC1 Isolation */
+-	regmap_write(core->regmap_ao, AO_RTI_GEN_PWR_ISO0, 0);
++	if (core->platform->revision == VDEC_REVISION_SM1)
++		regmap_update_bits(core->regmap_ao, AO_RTI_GEN_PWR_ISO0,
++				   GEN_PWR_VDEC_1_SM1, 0);
++	else
++		regmap_write(core->regmap_ao, AO_RTI_GEN_PWR_ISO0, 0);
+ 	/* Reset DOS top registers */
+ 	amvdec_write_dos(core, DOS_VDEC_MCRCC_STALL_CTRL, 0);
+ 
+diff --git a/drivers/staging/media/meson/vdec/vdec_platform.c b/drivers/staging/media/meson/vdec/vdec_platform.c
+index 7845a889ce24..ea39f8209ec7 100644
+--- a/drivers/staging/media/meson/vdec/vdec_platform.c
++++ b/drivers/staging/media/meson/vdec/vdec_platform.c
+@@ -106,6 +106,30 @@ static const struct amvdec_format vdec_formats_g12a[] = {
+ 	},
+ };
+ 
++static const struct amvdec_format vdec_formats_sm1[] = {
++	{
++		.pixfmt = V4L2_PIX_FMT_MPEG1,
++		.min_buffers = 8,
++		.max_buffers = 8,
++		.max_width = 1920,
++		.max_height = 1080,
++		.vdec_ops = &vdec_1_ops,
++		.codec_ops = &codec_mpeg12_ops,
++		.firmware_path = "meson/vdec/gxl_mpeg12.bin",
++		.pixfmts_cap = { V4L2_PIX_FMT_NV12M, V4L2_PIX_FMT_YUV420M, 0 },
++	}, {
++		.pixfmt = V4L2_PIX_FMT_MPEG2,
++		.min_buffers = 8,
++		.max_buffers = 8,
++		.max_width = 1920,
++		.max_height = 1080,
++		.vdec_ops = &vdec_1_ops,
++		.codec_ops = &codec_mpeg12_ops,
++		.firmware_path = "meson/vdec/gxl_mpeg12.bin",
++		.pixfmts_cap = { V4L2_PIX_FMT_NV12M, V4L2_PIX_FMT_YUV420M, 0 },
++	},
++};
++
+ const struct vdec_platform vdec_platform_gxbb = {
+ 	.formats = vdec_formats_gxbb,
+ 	.num_formats = ARRAY_SIZE(vdec_formats_gxbb),
+@@ -129,3 +153,9 @@ const struct vdec_platform vdec_platform_g12a = {
+ 	.num_formats = ARRAY_SIZE(vdec_formats_g12a),
+ 	.revision = VDEC_REVISION_G12A,
+ };
++
++const struct vdec_platform vdec_platform_sm1 = {
++	.formats = vdec_formats_sm1,
++	.num_formats = ARRAY_SIZE(vdec_formats_sm1),
++	.revision = VDEC_REVISION_SM1,
++};
+diff --git a/drivers/staging/media/meson/vdec/vdec_platform.h b/drivers/staging/media/meson/vdec/vdec_platform.h
+index 7c61b941b39f..731877a771f4 100644
+--- a/drivers/staging/media/meson/vdec/vdec_platform.h
++++ b/drivers/staging/media/meson/vdec/vdec_platform.h
+@@ -16,6 +16,7 @@ enum vdec_revision {
+ 	VDEC_REVISION_GXL,
+ 	VDEC_REVISION_GXM,
+ 	VDEC_REVISION_G12A,
++	VDEC_REVISION_SM1,
+ };
+ 
+ struct vdec_platform {
+@@ -28,5 +29,6 @@ extern const struct vdec_platform vdec_platform_gxbb;
+ extern const struct vdec_platform vdec_platform_gxm;
+ extern const struct vdec_platform vdec_platform_gxl;
+ extern const struct vdec_platform vdec_platform_g12a;
++extern const struct vdec_platform vdec_platform_sm1;
+ 
+ #endif

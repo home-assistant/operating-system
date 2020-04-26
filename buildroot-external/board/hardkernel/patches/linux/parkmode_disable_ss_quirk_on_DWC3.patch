@@ -1,0 +1,37 @@
+From 763f3438359ec0b4a84c70295ddca6f6e67ab323 Mon Sep 17 00:00:00 2001
+From: Neil Armstrong <narmstrong@baylibre.com>
+Date: Mon, 14 Oct 2019 16:17:18 +0200
+Subject: [PATCH] arm64: dts: g12-common: add parkmode_disable_ss_quirk on DWC3
+ controller
+
+When high load on the DWC3 SuperSpee port, the controller crashed as:
+[  221.141621] xhci-hcd xhci-hcd.0.auto: xHCI host not responding to stop endpoint command.
+[  221.157631] xhci-hcd xhci-hcd.0.auto: Host halt failed, -110
+[  221.157635] xhci-hcd xhci-hcd.0.auto: xHCI host controller not responding, assume dead
+[  221.159901] xhci-hcd xhci-hcd.0.auto: xHCI host not responding to stop endpoint command.
+[  221.159961] hub 2-1.1:1.0: hub_ext_port_status failed (err = -22)
+[  221.160076] xhci-hcd xhci-hcd.0.auto: HC died; cleaning up
+[  221.165946] usb 2-1.1-port1: cannot reset (err = -22)
+
+Setting the parkmode_disable_ss_quirk quirk fixes the issue.
+
+CC: Dongjin Kim <tobetter@gmail.com>
+Cc: Jianxin Pan <jianxin.pan@amlogic.com>
+Reported-by: Tim <elatllat@gmail.com>
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi
+index 3f39e020f74e62..4b002e799e5c2f 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi
+@@ -2381,6 +2381,7 @@
+ 				dr_mode = "host";
+ 				snps,dis_u2_susphy_quirk;
+ 				snps,quirk-frame-length-adjustment;
++				snps,parkmode-disable-ss-quirk;
+ 			};
+ 		};
+ 
