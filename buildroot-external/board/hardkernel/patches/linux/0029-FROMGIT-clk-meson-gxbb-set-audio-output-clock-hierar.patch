@@ -1,0 +1,56 @@
+From d6a0ab839aaa36c6952e61e64500191126c74f40 Mon Sep 17 00:00:00 2001
+From: Jerome Brunet <jbrunet@baylibre.com>
+Date: Wed, 22 Jan 2020 11:04:51 +0100
+Subject: [PATCH 011/146] FROMGIT: clk: meson: gxbb: set audio output clock
+ hierarchy
+
+The aiu devices peripheral clocks needs the aiu and aiu_glue clocks to
+operate. Reflect this hierarchy in the gxbb clock tree.
+
+Fixes: 738f66d3211d ("clk: gxbb: add AmLogic GXBB clk controller driver")
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ drivers/clk/meson/gxbb.c | 18 ++++++++++--------
+ 1 file changed, 10 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+index 47916c4f1700..5fd6a574f8c3 100644
+--- a/drivers/clk/meson/gxbb.c
++++ b/drivers/clk/meson/gxbb.c
+@@ -2619,14 +2619,6 @@ static MESON_GATE(gxbb_spi, HHI_GCLK_MPEG0, 30);
+ static MESON_GATE(gxbb_i2s_spdif, HHI_GCLK_MPEG1, 2);
+ static MESON_GATE(gxbb_eth, HHI_GCLK_MPEG1, 3);
+ static MESON_GATE(gxbb_demux, HHI_GCLK_MPEG1, 4);
+-static MESON_GATE(gxbb_aiu_glue, HHI_GCLK_MPEG1, 6);
+-static MESON_GATE(gxbb_iec958, HHI_GCLK_MPEG1, 7);
+-static MESON_GATE(gxbb_i2s_out, HHI_GCLK_MPEG1, 8);
+-static MESON_GATE(gxbb_amclk, HHI_GCLK_MPEG1, 9);
+-static MESON_GATE(gxbb_aififo2, HHI_GCLK_MPEG1, 10);
+-static MESON_GATE(gxbb_mixer, HHI_GCLK_MPEG1, 11);
+-static MESON_GATE(gxbb_mixer_iface, HHI_GCLK_MPEG1, 12);
+-static MESON_GATE(gxbb_adc, HHI_GCLK_MPEG1, 13);
+ static MESON_GATE(gxbb_blkmv, HHI_GCLK_MPEG1, 14);
+ static MESON_GATE(gxbb_aiu, HHI_GCLK_MPEG1, 15);
+ static MESON_GATE(gxbb_uart1, HHI_GCLK_MPEG1, 16);
+@@ -2681,6 +2673,16 @@ static MESON_GATE(gxbb_ao_ahb_bus, HHI_GCLK_AO, 2);
+ static MESON_GATE(gxbb_ao_iface, HHI_GCLK_AO, 3);
+ static MESON_GATE(gxbb_ao_i2c, HHI_GCLK_AO, 4);
+ 
++/* AIU gates */
++static MESON_PCLK(gxbb_aiu_glue, HHI_GCLK_MPEG1, 6, &gxbb_aiu.hw);
++static MESON_PCLK(gxbb_iec958, HHI_GCLK_MPEG1, 7, &gxbb_aiu_glue.hw);
++static MESON_PCLK(gxbb_i2s_out, HHI_GCLK_MPEG1, 8, &gxbb_aiu_glue.hw);
++static MESON_PCLK(gxbb_amclk, HHI_GCLK_MPEG1, 9, &gxbb_aiu_glue.hw);
++static MESON_PCLK(gxbb_aififo2, HHI_GCLK_MPEG1, 10, &gxbb_aiu_glue.hw);
++static MESON_PCLK(gxbb_mixer, HHI_GCLK_MPEG1, 11, &gxbb_aiu_glue.hw);
++static MESON_PCLK(gxbb_mixer_iface, HHI_GCLK_MPEG1, 12, &gxbb_aiu_glue.hw);
++static MESON_PCLK(gxbb_adc, HHI_GCLK_MPEG1, 13, &gxbb_aiu_glue.hw);
++
+ /* Array of all clocks provided by this provider */
+ 
+ static struct clk_hw_onecell_data gxbb_hw_onecell_data = {
+-- 
+2.17.1
+

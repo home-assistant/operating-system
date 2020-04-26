@@ -1,0 +1,31 @@
+From 1760f0adce918aae57e9cc292b10b891e55fb629 Mon Sep 17 00:00:00 2001
+From: Jerome Brunet <jbrunet@baylibre.com>
+Date: Mon, 17 Feb 2020 02:51:14 +0000
+Subject: [PATCH 023/146] FROMGIT: ASoC: meson: aiu: fix clk bulk size
+ allocation
+
+Fix the size of allocated memory for the clock bulk data
+
+Fixes: 6ae9ca9ce986 ("ASoC: meson: aiu: add i2s and spdif support")
+Reported-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ sound/soc/meson/aiu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sound/soc/meson/aiu.c b/sound/soc/meson/aiu.c
+index 5c4845a23a34..de678a9d5cab 100644
+--- a/sound/soc/meson/aiu.c
++++ b/sound/soc/meson/aiu.c
+@@ -203,7 +203,7 @@ static int aiu_clk_bulk_get(struct device *dev,
+ 	struct clk_bulk_data *clks;
+ 	int i, ret;
+ 
+-	clks = devm_kcalloc(dev, num, sizeof(clks), GFP_KERNEL);
++	clks = devm_kcalloc(dev, num, sizeof(*clks), GFP_KERNEL);
+ 	if (!clks)
+ 		return -ENOMEM;
+ 
+-- 
+2.17.1
+

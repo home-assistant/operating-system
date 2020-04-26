@@ -1,0 +1,29 @@
+From 8502dc53c6d999458b198a953d52339411524c9c Mon Sep 17 00:00:00 2001
+From: Jerome Brunet <jbrunet@baylibre.com>
+Date: Wed, 22 Jan 2020 11:04:49 +0100
+Subject: [PATCH 009/146] FROMGIT: dt-bindings: clk: meson: add the gxl
+ internal dac gate
+
+Add the gxl ACODEC clock id to the gxbb clock controller bindings
+
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ include/dt-bindings/clock/gxbb-clkc.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/include/dt-bindings/clock/gxbb-clkc.h b/include/dt-bindings/clock/gxbb-clkc.h
+index db0763e96173..4073eb7a9da1 100644
+--- a/include/dt-bindings/clock/gxbb-clkc.h
++++ b/include/dt-bindings/clock/gxbb-clkc.h
+@@ -146,5 +146,6 @@
+ #define CLKID_CTS_VDAC		201
+ #define CLKID_HDMI_TX		202
+ #define CLKID_HDMI		205
++#define CLKID_ACODEC		206
+ 
+ #endif /* __GXBB_CLKC_H */
+-- 
+2.17.1
+

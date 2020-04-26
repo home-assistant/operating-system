@@ -1,0 +1,30 @@
+From 1ba9f7539547f066632ac14ec70edff578392904 Mon Sep 17 00:00:00 2001
+From: Jerome Brunet <jbrunet@baylibre.com>
+Date: Mon, 17 Feb 2020 02:53:13 +0000
+Subject: [PATCH 025/146] FROMGIT: ASoC: meson: aiu: fix acodec dai input name
+ init
+
+Remove the double initialization of the dai input name as reported by
+sparse.
+
+Fixes: 65816025d461 ("ASoC: meson: aiu: add internal dac codec control support")
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ sound/soc/meson/aiu-acodec-ctrl.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/sound/soc/meson/aiu-acodec-ctrl.c b/sound/soc/meson/aiu-acodec-ctrl.c
+index 12d8a4d351a1..b8e88b1a4fc8 100644
+--- a/sound/soc/meson/aiu-acodec-ctrl.c
++++ b/sound/soc/meson/aiu-acodec-ctrl.c
+@@ -128,7 +128,6 @@ static const struct snd_soc_dai_ops aiu_acodec_ctrl_output_ops = {
+ 
+ #define AIU_ACODEC_INPUT(xname) {				\
+ 	.name = "ACODEC CTRL " xname,				\
+-	.name = xname,						\
+ 	.playback = AIU_ACODEC_STREAM(xname, "Playback", 8),	\
+ 	.ops = &aiu_acodec_ctrl_input_ops,			\
+ 	.probe = meson_codec_glue_input_dai_probe,		\
+-- 
+2.17.1
+
