@@ -6041,3 +6041,16 @@ index 1ed25b1d2a6a..82184036437b 100644
  		return true;
  	}
  
+diff --git a/drivers/gpu/drm/panfrost/panfrost_drv.c b/drivers/gpu/drm/panfrost/panfrost_drv.c
+index 4dd94482c..852322e1c 100644
+--- a/drivers/gpu/drm/panfrost/panfrost_drv.c
++++ b/drivers/gpu/drm/panfrost/panfrost_drv.c
+@@ -144,7 +144,7 @@ panfrost_lookup_bos(struct drm_device *dev,
+ 	if (!job->implicit_fences)
+ 		return -ENOMEM;
+ 
+-	ret = drm_gem_objects_lookup_user(file_priv,
++	ret = drm_gem_objects_lookup(file_priv,
+ 									(void __user *)(uintptr_t)args->bo_handles,
+ 									job->bo_count, &job->bos);
+ 
