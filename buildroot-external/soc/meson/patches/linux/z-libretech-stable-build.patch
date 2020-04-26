@@ -340,26 +340,6 @@ index 2737b99da5f6..1e8c5d7bc824 100644
  	clock-names = "baud", "xtal", "pclk";
  };
  
-diff --git b/arch/arm64/boot/dts/amlogic/Makefile a/arch/arm64/boot/dts/amlogic/Makefile
-index f726804d32ed..f25cd8675db8 100644
---- b/arch/arm64/boot/dts/amlogic/Makefile
-+++ a/arch/arm64/boot/dts/amlogic/Makefile
-@@ -28,13 +28,13 @@ dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905d-phicomm-n1.dtb
- dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s805x-p241.dtb
- dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905w-p281.dtb
- dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905w-tx3-mini.dtb
-+dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905d-libretech-pc.dtb
- dtb-$(CONFIG_ARCH_MESON) += meson-gxm-khadas-vim2.dtb
- dtb-$(CONFIG_ARCH_MESON) += meson-gxm-nexbox-a1.dtb
- dtb-$(CONFIG_ARCH_MESON) += meson-gxm-q200.dtb
- dtb-$(CONFIG_ARCH_MESON) += meson-gxm-q201.dtb
- dtb-$(CONFIG_ARCH_MESON) += meson-gxm-rbox-pro.dtb
-+dtb-$(CONFIG_ARCH_MESON) += meson-gxm-s912-libretech-pc.dtb
- dtb-$(CONFIG_ARCH_MESON) += meson-gxm-vega-s96.dtb
- dtb-$(CONFIG_ARCH_MESON) += meson-sm1-sei610.dtb
- dtb-$(CONFIG_ARCH_MESON) += meson-sm1-khadas-vim3l.dtb
--
--subdir-y       := $(dts-dirs) overlay
 diff --git b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
 index 04803c3bccfa..bb4a2acb9970 100644
 --- b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
@@ -2853,50 +2833,6 @@ index 4e257cc74b7b..51c6dd3406a0 100644
  
  	spin_unlock(&ir->lock);
  
-diff --git b/drivers/soc/amlogic/meson-canvas.c a/drivers/soc/amlogic/meson-canvas.c
-index 561044063319..c655f5f92b12 100644
---- b/drivers/soc/amlogic/meson-canvas.c
-+++ a/drivers/soc/amlogic/meson-canvas.c
-@@ -166,6 +166,7 @@ EXPORT_SYMBOL_GPL(meson_canvas_free);
- 
- static int meson_canvas_probe(struct platform_device *pdev)
- {
-+	struct resource *res;
- 	struct meson_canvas *canvas;
- 	struct device *dev = &pdev->dev;
- 
-@@ -173,7 +174,8 @@ static int meson_canvas_probe(struct platform_device *pdev)
- 	if (!canvas)
- 		return -ENOMEM;
- 
--	canvas->reg_base = devm_platform_ioremap_resource(pdev, 0);
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	canvas->reg_base = devm_ioremap_resource(dev, res);
- 	if (IS_ERR(canvas->reg_base))
- 		return PTR_ERR(canvas->reg_base);
- 
-diff --git b/drivers/soc/amlogic/meson-clk-measure.c a/drivers/soc/amlogic/meson-clk-measure.c
-index 173baa53fce3..0fa47d77577d 100644
---- b/drivers/soc/amlogic/meson-clk-measure.c
-+++ a/drivers/soc/amlogic/meson-clk-measure.c
-@@ -605,6 +605,7 @@ static int meson_msr_probe(struct platform_device *pdev)
- {
- 	const struct meson_msr_id *match_data;
- 	struct meson_msr *priv;
-+	struct resource *res;
- 	struct dentry *root, *clks;
- 	void __iomem *base;
- 	int i;
-@@ -622,7 +623,8 @@ static int meson_msr_probe(struct platform_device *pdev)
- 
- 	memcpy(priv->msr_table, match_data, sizeof(priv->msr_table));
- 
--	base = devm_platform_ioremap_resource(pdev, 0);
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	base = devm_ioremap_resource(&pdev->dev, res);
- 	if (IS_ERR(base)) {
- 		dev_err(&pdev->dev, "io resource mapping failed\n");
- 		return PTR_ERR(base);
 diff --git b/include/drm/bridge/dw_hdmi.h a/include/drm/bridge/dw_hdmi.h
 index 4b3e863c4f8a..cf528c289857 100644
 --- b/include/drm/bridge/dw_hdmi.h
