@@ -1,0 +1,36 @@
+From b3672f6db74d266e680d5a0820818c75e094f908 Mon Sep 17 00:00:00 2001
+From: Neil Armstrong <narmstrong@baylibre.com>
+Date: Thu, 29 Aug 2019 17:23:37 +0200
+Subject: [PATCH 017/108] FROMGIT: arm64: dts: meson-gxl-s805x-p241: add
+ keep-power-in-suspend property in SDIO node
+
+The WiFi firmware requires that the power is kept enabled while in
+suspend mode. Add the keep-power-in-suspend property in the SDIO node
+to specify that the power must be kept when entering in a system wide
+suspend state.
+
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+(cherry picked from commit cfd7a215e2d67e4a91638375da9dd96e65c54297)
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-gxl-s805x-p241.dts | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s805x-p241.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s805x-p241.dts
+index 3a1484e5b8e1..a1119cfb0280 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxl-s805x-p241.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s805x-p241.dts
+@@ -165,6 +165,9 @@
+ 	non-removable;
+ 	disable-wp;
+ 
++	/* WiFi firmware requires power to be kept while in suspend */
++	keep-power-in-suspend;
++
+ 	mmc-pwrseq = <&sdio_pwrseq>;
+ 
+ 	vmmc-supply = <&vddao_3v3>;
+-- 
+2.17.1
+

@@ -1,0 +1,36 @@
+From 068acc64ecfece0fe7502d0df9806938984fdac8 Mon Sep 17 00:00:00 2001
+From: Corentin Labbe <clabbe@baylibre.com>
+Date: Thu, 17 Oct 2019 05:06:24 +0000
+Subject: [PATCH 082/108] FROMLIST: MAINTAINERS: Add myself as maintainer of
+ amlogic crypto
+
+I will maintain the amlogic crypto driver.
+
+Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
+Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ MAINTAINERS | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 53206c065019..9d44dc462b14 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1470,6 +1470,13 @@ F:	drivers/soc/amlogic/
+ F:	drivers/rtc/rtc-meson*
+ N:	meson
+ 
++ARM/Amlogic Meson SoC Crypto Drivers
++M:	Corentin Labbe <clabbe@baylibre.com>
++L:	linux-crypto@vger.kernel.org
++S:	Maintained
++F:	drivers/crypto/amlogic/
++F:	Documentation/devicetree/bindings/crypto/amlogic*
++
+ ARM/Amlogic Meson SoC Sound Drivers
+ M:	Jerome Brunet <jbrunet@baylibre.com>
+ L:	alsa-devel@alsa-project.org (moderated for non-subscribers)
+-- 
+2.17.1
+

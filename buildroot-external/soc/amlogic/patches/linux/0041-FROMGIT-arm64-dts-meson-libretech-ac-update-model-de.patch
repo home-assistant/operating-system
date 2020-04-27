@@ -1,0 +1,34 @@
+From 51ac90d5889fdb0a67e86861c950434e0be4e724 Mon Sep 17 00:00:00 2001
+From: Christian Hewitt <christianshewitt@gmail.com>
+Date: Mon, 9 Sep 2019 19:01:25 +0400
+Subject: [PATCH 041/108] FROMGIT: arm64: dts: meson: libretech-ac: update
+ model description
+
+Shorten the model description to improve readability in some app GUIs
+that show the string.
+
+Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
+Reviewed-by: Kevin Hilman <khilman@baylibre.com>
+Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+(cherry picked from commit b1ae8ca54e3c746b2c80300ad2ed72ef4181b3a9)
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-gxl-s805x-libretech-ac.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s805x-libretech-ac.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s805x-libretech-ac.dts
+index 82b1c4851147..4d5949496596 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxl-s805x-libretech-ac.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s805x-libretech-ac.dts
+@@ -14,7 +14,7 @@
+ / {
+ 	compatible = "libretech,aml-s805x-ac", "amlogic,s805x",
+ 		     "amlogic,meson-gxl";
+-	model = "Libre Computer Board AML-S805X-AC";
++	model = "Libre Computer AML-S805X-AC";
+ 
+ 	aliases {
+ 		serial0 = &uart_AO;
+-- 
+2.17.1
+

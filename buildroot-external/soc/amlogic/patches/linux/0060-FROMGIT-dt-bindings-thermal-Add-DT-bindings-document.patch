@@ -1,0 +1,86 @@
+From 1c234c57635e16d45fbd12b42209acea6209f146 Mon Sep 17 00:00:00 2001
+From: Guillaume La Roque <glaroque@baylibre.com>
+Date: Fri, 4 Oct 2019 11:01:08 +0200
+Subject: [PATCH 060/108] FROMGIT: dt-bindings: thermal: Add DT bindings
+ documentation for Amlogic Thermal
+
+Adding the devicetree binding documentation for the Amlogic temperature
+sensor found in the Amlogic Meson G12A and G12B SoCs.
+
+Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Amit Kucheria <amit.kucheria@linaro.org>
+Tested-by: Christian Hewitt <christianshewitt@gmail.com>
+Tested-by: Kevin Hilman <khilman@baylibre.com>
+Signed-off-by: Guillaume La Roque <glaroque@baylibre.com>
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Link: https://lore.kernel.org/r/20191004090114.30694-2-glaroque@baylibre.com
+(cherry picked from commit bf9a5f5d8ee986df9e3293d91a15efa588190b06)
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ .../bindings/thermal/amlogic,thermal.yaml     | 54 +++++++++++++++++++
+ 1 file changed, 54 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/thermal/amlogic,thermal.yaml
+
+diff --git a/Documentation/devicetree/bindings/thermal/amlogic,thermal.yaml b/Documentation/devicetree/bindings/thermal/amlogic,thermal.yaml
+new file mode 100644
+index 000000000000..f761681e4c0d
+--- /dev/null
++++ b/Documentation/devicetree/bindings/thermal/amlogic,thermal.yaml
+@@ -0,0 +1,54 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/thermal/amlogic,thermal.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Amlogic Thermal
++
++maintainers:
++  - Guillaume La Roque <glaroque@baylibre.com>
++
++description: Binding for Amlogic Thermal
++
++properties:
++  compatible:
++      items:
++        - enum:
++            - amlogic,g12a-cpu-thermal
++            - amlogic,g12a-ddr-thermal
++        - const: amlogic,g12a-thermal
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  clocks:
++    maxItems: 1
++
++  amlogic,ao-secure:
++    description: phandle to the ao-secure syscon
++    $ref: '/schemas/types.yaml#/definitions/phandle'
++
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - clocks
++  - amlogic,ao-secure
++
++examples:
++  - |
++        cpu_temp: temperature-sensor@ff634800 {
++                compatible = "amlogic,g12a-cpu-thermal",
++                             "amlogic,g12a-thermal";
++                reg = <0xff634800 0x50>;
++                interrupts = <0x0 0x24 0x0>;
++                clocks = <&clk 164>;
++                #thermal-sensor-cells = <0>;
++                amlogic,ao-secure = <&sec_AO>;
++        };
++...
+-- 
+2.17.1
+

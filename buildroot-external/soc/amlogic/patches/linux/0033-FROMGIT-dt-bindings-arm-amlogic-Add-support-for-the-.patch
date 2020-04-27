@@ -1,0 +1,33 @@
+From 4d17c2a5102df09844ea5875d6e13d63cc0c2ec0 Mon Sep 17 00:00:00 2001
+From: Christian Hewitt <christianshewitt@gmail.com>
+Date: Mon, 23 Sep 2019 18:13:55 +0400
+Subject: [PATCH 033/108] FROMGIT: dt-bindings: arm: amlogic: Add support for
+ the Ugoos AM6
+
+The Ugoos AM6 is based on the Amlogic W400 (G12B) reference design using the
+S922X chipset.
+
+Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
+Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+(cherry picked from commit 150778111f8bac18034a54511aaec05ee6424c72)
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ Documentation/devicetree/bindings/arm/amlogic.yaml | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Documentation/devicetree/bindings/arm/amlogic.yaml b/Documentation/devicetree/bindings/arm/amlogic.yaml
+index ee5703c4eded..84b07ef9864e 100644
+--- a/Documentation/devicetree/bindings/arm/amlogic.yaml
++++ b/Documentation/devicetree/bindings/arm/amlogic.yaml
+@@ -147,6 +147,7 @@ properties:
+           - enum:
+               - hardkernel,odroid-n2
+               - khadas,vim3
++              - ugoos,am6
+           - const: amlogic,s922x
+           - const: amlogic,g12b
+ 
+-- 
+2.17.1
+

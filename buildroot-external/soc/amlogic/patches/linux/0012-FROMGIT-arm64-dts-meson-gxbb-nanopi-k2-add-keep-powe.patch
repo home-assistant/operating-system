@@ -1,0 +1,36 @@
+From 0e9f90b1a9c770b10bc276461a8e00381b86408b Mon Sep 17 00:00:00 2001
+From: Neil Armstrong <narmstrong@baylibre.com>
+Date: Thu, 29 Aug 2019 17:23:32 +0200
+Subject: [PATCH 012/108] FROMGIT: arm64: dts: meson-gxbb-nanopi-k2: add
+ keep-power-in-suspend property in SDIO node
+
+The WiFi firmware requires that the power is kept enabled while in
+suspend mode. Add the keep-power-in-suspend property in the SDIO node
+to specify that the power must be kept when entering in a system wide
+suspend state.
+
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+(cherry picked from commit f7caa8b5cce296ac777a5d8ecb8f3f157f6737c5)
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-gxbb-nanopi-k2.dts | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-nanopi-k2.dts b/arch/arm64/boot/dts/amlogic/meson-gxbb-nanopi-k2.dts
+index 233eb1cd7967..d6ca684e0e61 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxbb-nanopi-k2.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-nanopi-k2.dts
+@@ -280,6 +280,9 @@
+ 	non-removable;
+ 	disable-wp;
+ 
++	/* WiFi firmware requires power to be kept while in suspend */
++	keep-power-in-suspend;
++
+ 	mmc-pwrseq = <&sdio_pwrseq>;
+ 
+ 	vmmc-supply = <&vddio_ao3v3>;
+-- 
+2.17.1
+

@@ -1,0 +1,31 @@
+From ff2b77ff0bf1b1b4ca113edeb8885da7c3a49816 Mon Sep 17 00:00:00 2001
+From: Neil Armstrong <narmstrong@baylibre.com>
+Date: Tue, 27 Aug 2019 12:03:05 +0200
+Subject: [PATCH 077/108] FROMLIST: arm64: dts: meson-g12a: specify suspend OPP
+
+Tag the 1,2GHz OPP as suspend OPP to be set before going in suspend mode.
+
+It has been reported that using various OPPs can lead to error or
+resume with a different OPP from the ROM, thus use this safe OPP as
+it is the default OPP used by the BL2 boot firmware.
+
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-g12a.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-g12a.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12a.dtsi
+index fb0ab27d1f64..a6a7587aa63f 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-g12a.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-g12a.dtsi
+@@ -85,6 +85,7 @@
+ 		opp-1200000000 {
+ 			opp-hz = /bits/ 64 <1200000000>;
+ 			opp-microvolt = <731000>;
++			opp-suspend;
+ 		};
+ 
+ 		opp-1398000000 {
+-- 
+2.17.1
+

@@ -1,0 +1,32 @@
+From 1e375b4ebc137691fbb01cbcab2344317bd1b4d3 Mon Sep 17 00:00:00 2001
+From: Neil Armstrong <narmstrong@baylibre.com>
+Date: Mon, 21 Oct 2019 16:29:03 +0200
+Subject: [PATCH 088/108] FROMLIST: arm64: dts: meson-gx: cec node should be
+ disabled by default
+
+This fixes the following DT schemas check errors:
+meson-gxl-s905x-hwacom-amazetv.dt.yaml: cec@100: 'hdmi-phandle' is a required property
+meson-gxm-rbox-pro.dt.yaml: cec@100: 'hdmi-phandle' is a required property
+
+because CEC is not enabled on these boards.
+
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-gx.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gx.dtsi b/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
+index e5a601e75ef2..688e45061be8 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
+@@ -392,6 +392,7 @@
+ 				compatible = "amlogic,meson-gx-ao-cec";
+ 				reg = <0x0 0x00100 0x0 0x14>;
+ 				interrupts = <GIC_SPI 199 IRQ_TYPE_EDGE_RISING>;
++				status = "disabled";
+ 			};
+ 
+ 			sec_AO: ao-secure@140 {
+-- 
+2.17.1
+

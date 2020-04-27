@@ -1,0 +1,79 @@
+From fd7e68590547e4b7ecebf4a81a8a6eabd537c3b4 Mon Sep 17 00:00:00 2001
+From: Neil Armstrong <narmstrong@baylibre.com>
+Date: Tue, 27 Aug 2019 11:58:25 +0200
+Subject: [PATCH 002/108] FROMGIT: drm/meson: add resume/suspend hooks
+
+Add the suspend and resume hooks to:
+- save and disable the entire DRM driver on suspend
+- re-init the entire VPU subsystem on resume, to recover CRTC and pixel
+generator functionnal usage after DDR suspend, then recover DRM driver
+state
+
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Tested-by: Kevin Hilman <khilman@baylibre.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20190827095825.21015-3-narmstrong@baylibre.com
+(cherry picked from commit cf3d4e534711059f77884697dc93b97d60a4ed9f
+ git://anongit.freedesktop.org/drm/drm-misc drm-misc-next)
+---
+ drivers/gpu/drm/meson/meson_drv.c | 32 +++++++++++++++++++++++++++++++
+ 1 file changed, 32 insertions(+)
+
+diff --git a/drivers/gpu/drm/meson/meson_drv.c b/drivers/gpu/drm/meson/meson_drv.c
+index a24f8dec5adc..397c33182f4f 100644
+--- a/drivers/gpu/drm/meson/meson_drv.c
++++ b/drivers/gpu/drm/meson/meson_drv.c
+@@ -372,6 +372,33 @@ static const struct component_master_ops meson_drv_master_ops = {
+ 	.unbind	= meson_drv_unbind,
+ };
+ 
++static int __maybe_unused meson_drv_pm_suspend(struct device *dev)
++{
++	struct meson_drm *priv = dev_get_drvdata(dev);
++
++	if (!priv)
++		return 0;
++
++	return drm_mode_config_helper_suspend(priv->drm);
++}
++
++static int __maybe_unused meson_drv_pm_resume(struct device *dev)
++{
++	struct meson_drm *priv = dev_get_drvdata(dev);
++
++	if (!priv)
++		return 0;
++
++	meson_vpu_init(priv);
++	meson_venc_init(priv);
++	meson_vpp_init(priv);
++	meson_viu_init(priv);
++
++	drm_mode_config_helper_resume(priv->drm);
++
++	return 0;
++}
++
+ static int compare_of(struct device *dev, void *data)
+ {
+ 	DRM_DEBUG_DRIVER("Comparing of node %pOF with %pOF\n",
+@@ -467,11 +494,16 @@ static const struct of_device_id dt_match[] = {
+ };
+ MODULE_DEVICE_TABLE(of, dt_match);
+ 
++static const struct dev_pm_ops meson_drv_pm_ops = {
++	SET_SYSTEM_SLEEP_PM_OPS(meson_drv_pm_suspend, meson_drv_pm_resume)
++};
++
+ static struct platform_driver meson_drm_platform_driver = {
+ 	.probe      = meson_drv_probe,
+ 	.driver     = {
+ 		.name	= "meson-drm",
+ 		.of_match_table = dt_match,
++		.pm = &meson_drv_pm_ops,
+ 	},
+ };
+ 
+-- 
+2.17.1
+

@@ -1,0 +1,41 @@
+From da547293703eb78daf5228d5f3ab66d37e2d5bab Mon Sep 17 00:00:00 2001
+From: Guillaume La Roque <glaroque@baylibre.com>
+Date: Fri, 4 Oct 2019 11:01:14 +0200
+Subject: [PATCH 062/108] FROMGIT: MAINTAINERS: add entry for Amlogic Thermal
+ driver
+
+Add myself as maintainer for Amlogic Thermal driver.
+
+Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
+Signed-off-by: Guillaume La Roque <glaroque@baylibre.com>
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Link: https://lore.kernel.org/r/20191004090114.30694-8-glaroque@baylibre.com
+(cherry picked from commit c3b909e1bf1cc4179bf0a4cdb241799251cd192c)
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ MAINTAINERS | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 296de2b51c83..53206c065019 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -16098,6 +16098,15 @@ F:	Documentation/driver-api/thermal/cpu-cooling-api.rst
+ F:	drivers/thermal/cpu_cooling.c
+ F:	include/linux/cpu_cooling.h
+ 
++THERMAL DRIVER FOR AMLOGIC SOCS
++M:	Guillaume La Roque <glaroque@baylibre.com>
++L:	linux-pm@vger.kernel.org
++L:	linux-amlogic@lists.infradead.org
++W:	http://linux-meson.com/
++S:	Supported
++F:	drivers/thermal/amlogic_thermal.c
++F:	Documentation/devicetree/bindings/thermal/amlogic,thermal.yaml
++
+ THINKPAD ACPI EXTRAS DRIVER
+ M:	Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>
+ L:	ibm-acpi-devel@lists.sourceforge.net
+-- 
+2.17.1
+

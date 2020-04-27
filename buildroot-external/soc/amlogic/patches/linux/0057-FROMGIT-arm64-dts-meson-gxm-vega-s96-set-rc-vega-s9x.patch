@@ -1,0 +1,32 @@
+From 456faa67392773d3b544802b59a95fbfa7654264 Mon Sep 17 00:00:00 2001
+From: Christian Hewitt <christianshewitt@gmail.com>
+Date: Wed, 16 Oct 2019 21:07:36 +0400
+Subject: [PATCH 057/108] FROMGIT: arm64: dts: meson-gxm-vega-s96: set
+ rc-vega-s9x ir keymap
+
+Add an IR node to the Vega S96 dts to include the rc-vega-s9x keymap.
+
+Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
+Reviewed-by: Kevin Hilman <khilman@baylibre.com>
+Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+(cherry picked from commit 49284e673dae17f7defd1dd25070ec6e31253225)
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-gxm-vega-s96.dts | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxm-vega-s96.dts b/arch/arm64/boot/dts/amlogic/meson-gxm-vega-s96.dts
+index e2ea6753263b..0bdf51d041ae 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxm-vega-s96.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-gxm-vega-s96.dts
+@@ -35,3 +35,7 @@
+ 		reg = <0>;
+ 	};
+ };
++
++&ir {
++	linux,rc-map-name = "rc-vega-s9x";
++};
+-- 
+2.17.1
+

@@ -1,0 +1,43 @@
+From 7641d929f774c081a6b72d7dbd7b6851a00f4167 Mon Sep 17 00:00:00 2001
+From: Jerome Brunet <jbrunet@baylibre.com>
+Date: Wed, 2 Oct 2019 11:15:24 +0200
+Subject: [PATCH 050/108] FROMGIT: dt-bindings: clock: meson: add sm1 resets to
+ the axg-audio controller
+
+Add the reset id of the sm1 audio clock controller
+
+Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+(cherry picked from commit aa03ea9bce8c4e45749077254f376b236026f6a0)
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ .../reset/amlogic,meson-g12a-audio-reset.h        | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
+
+diff --git a/include/dt-bindings/reset/amlogic,meson-g12a-audio-reset.h b/include/dt-bindings/reset/amlogic,meson-g12a-audio-reset.h
+index 14b78dabed0e..f805129ca7af 100644
+--- a/include/dt-bindings/reset/amlogic,meson-g12a-audio-reset.h
++++ b/include/dt-bindings/reset/amlogic,meson-g12a-audio-reset.h
+@@ -35,4 +35,19 @@
+ #define AUD_RESET_TOHDMITX	24
+ #define AUD_RESET_CLKTREE	25
+ 
++/* SM1 added resets */
++#define AUD_RESET_RESAMPLE_B	26
++#define AUD_RESET_TOVAD		27
++#define AUD_RESET_LOCKER	28
++#define AUD_RESET_SPDIFIN_LB	29
++#define AUD_RESET_FRATV		30
++#define AUD_RESET_FRHDMIRX	31
++#define AUD_RESET_FRDDR_D	32
++#define AUD_RESET_TODDR_D	33
++#define AUD_RESET_LOOPBACK_B	34
++#define AUD_RESET_EARCTX	35
++#define AUD_RESET_EARCRX	36
++#define AUD_RESET_FRDDR_E	37
++#define AUD_RESET_TODDR_E	38
++
+ #endif
+-- 
+2.17.1
+

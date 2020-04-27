@@ -1,0 +1,36 @@
+From 711f069acdbcb795f5a719f8168b9e2d1ed6a4b6 Mon Sep 17 00:00:00 2001
+From: Neil Armstrong <narmstrong@baylibre.com>
+Date: Thu, 29 Aug 2019 17:23:33 +0200
+Subject: [PATCH 013/108] FROMGIT: arm64: dts: meson-gxbb-nexbox-a95x: add
+ keep-power-in-suspend property in SDIO node
+
+The WiFi firmware requires that the power is kept enabled while in
+suspend mode. Add the keep-power-in-suspend property in the SDIO node
+to specify that the power must be kept when entering in a system wide
+suspend state.
+
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+(cherry picked from commit 42d7815c2200e4808f8e2e1c4f9c37bf19776fbc)
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-gxbb-nexbox-a95x.dts | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-nexbox-a95x.dts b/arch/arm64/boot/dts/amlogic/meson-gxbb-nexbox-a95x.dts
+index afcf8a9f667b..65ec7dea828c 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxbb-nexbox-a95x.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-nexbox-a95x.dts
+@@ -220,6 +220,9 @@
+ 	non-removable;
+ 	disable-wp;
+ 
++	/* WiFi firmware requires power to be kept while in suspend */
++	keep-power-in-suspend;
++
+ 	mmc-pwrseq = <&sdio_pwrseq>;
+ 
+ 	vmmc-supply = <&vddao_3v3>;
+-- 
+2.17.1
+

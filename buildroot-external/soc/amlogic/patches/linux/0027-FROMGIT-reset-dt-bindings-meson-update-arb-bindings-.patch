@@ -1,0 +1,47 @@
+From 185e0a6ff38bbaa70cd7fb1108eb8318a8e47ae2 Mon Sep 17 00:00:00 2001
+From: Jerome Brunet <jbrunet@baylibre.com>
+Date: Thu, 5 Sep 2019 15:50:39 +0200
+Subject: [PATCH 027/108] FROMGIT: reset: dt-bindings: meson: update arb
+ bindings for sm1
+
+SM1 SoC family adds two new audio FIFOs with the related arb reset lines
+
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+(cherry picked from commit c2016cc612db7b88483073d6ff51edd200bc6ddc)
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ .../devicetree/bindings/reset/amlogic,meson-axg-audio-arb.txt  | 3 ++-
+ include/dt-bindings/reset/amlogic,meson-axg-audio-arb.h        | 2 ++
+ 2 files changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/Documentation/devicetree/bindings/reset/amlogic,meson-axg-audio-arb.txt b/Documentation/devicetree/bindings/reset/amlogic,meson-axg-audio-arb.txt
+index 26e542eb96df..43e580ef64ba 100644
+--- a/Documentation/devicetree/bindings/reset/amlogic,meson-axg-audio-arb.txt
++++ b/Documentation/devicetree/bindings/reset/amlogic,meson-axg-audio-arb.txt
+@@ -4,7 +4,8 @@ The Amlogic Audio ARB is a simple device which enables or
+ disables the access of Audio FIFOs to DDR on AXG based SoC.
+ 
+ Required properties:
+-- compatible: 'amlogic,meson-axg-audio-arb'
++- compatible: 'amlogic,meson-axg-audio-arb' or
++	      'amlogic,meson-sm1-audio-arb'
+ - reg: physical base address of the controller and length of memory
+        mapped region.
+ - clocks: phandle to the fifo peripheral clock provided by the audio
+diff --git a/include/dt-bindings/reset/amlogic,meson-axg-audio-arb.h b/include/dt-bindings/reset/amlogic,meson-axg-audio-arb.h
+index 05c36367875c..1ef807856cb8 100644
+--- a/include/dt-bindings/reset/amlogic,meson-axg-audio-arb.h
++++ b/include/dt-bindings/reset/amlogic,meson-axg-audio-arb.h
+@@ -13,5 +13,7 @@
+ #define AXG_ARB_FRDDR_A	3
+ #define AXG_ARB_FRDDR_B	4
+ #define AXG_ARB_FRDDR_C	5
++#define AXG_ARB_TODDR_D	6
++#define AXG_ARB_FRDDR_D	7
+ 
+ #endif /* _DT_BINDINGS_AMLOGIC_MESON_AXG_AUDIO_ARB_H */
+-- 
+2.17.1
+

@@ -1,0 +1,37 @@
+From 9bfba4fca51e859fc0118c7b2293c9cd1699b415 Mon Sep 17 00:00:00 2001
+From: Jerome Brunet <jbrunet@baylibre.com>
+Date: Mon, 2 Sep 2019 18:03:34 +0200
+Subject: [PATCH 003/108] FROMGIT: arm64: dts: meson: sm1: set gpio interrupt
+ controller compatible
+
+Set the appropriate gpio interrupt controller compatible for the
+sm1 SoC family. This newer version of the controller can now
+trig irq on both edge of the input signal
+
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+(cherry picked from commit e6b6d9d3e58de2b8c5364479ad15a8c5074ca625)
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-sm1.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-sm1.dtsi b/arch/arm64/boot/dts/amlogic/meson-sm1.dtsi
+index 521573f3a5ba..6152e928aef2 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-sm1.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-sm1.dtsi
+@@ -134,6 +134,11 @@
+ 	power-domains = <&pwrc PWRC_SM1_ETH_ID>;
+ };
+ 
++&gpio_intc {
++	compatible = "amlogic,meson-sm1-gpio-intc",
++		     "amlogic,meson-gpio-intc";
++};
++
+ &pwrc {
+ 	compatible = "amlogic,meson-sm1-pwrc";
+ };
+-- 
+2.17.1
+

@@ -1,0 +1,116 @@
+From cabea4a2ae56241fe5174fabd8654b78a8ad2c55 Mon Sep 17 00:00:00 2001
+From: Guillaume La Roque <glaroque@baylibre.com>
+Date: Fri, 4 Oct 2019 11:01:13 +0200
+Subject: [PATCH 056/108] FROMGIT: arm64: dts: meson: g12b: add cooling
+ properties
+
+Add missing #colling-cells field for G12B SoC
+Add cooling-map for passive and hot trip point
+
+Tested-by: Christian Hewitt <christianshewitt@gmail.com>
+Tested-by: Kevin Hilman <khilman@baylibre.com>
+Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
+Reviewed-by: Amit Kucheria <amit.kucheria@linaro.org>
+Signed-off-by: Guillaume La Roque <glaroque@baylibre.com>
+Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+(cherry picked from commit 195f140318a9510f27078847796461498384c862)
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-g12.dtsi  | 24 +++++++++++++++++++++
+ arch/arm64/boot/dts/amlogic/meson-g12b.dtsi |  6 ++++++
+ 2 files changed, 30 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-g12.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12.dtsi
+index 1e0e056c3d62..b3ba2fda8af8 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-g12.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-g12.dtsi
+@@ -347,6 +347,29 @@
+ 	};
+ };
+ 
++&cpu_thermal {
++	cooling-maps {
++		map0 {
++			trip = <&cpu_passive>;
++			cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++					 <&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++					 <&cpu100 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++					 <&cpu101 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++					 <&cpu102 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++					 <&cpu103 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
++		};
++		map1 {
++			trip = <&cpu_hot>;
++			cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++					 <&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++					 <&cpu100 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++					 <&cpu101 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++					 <&cpu102 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++					 <&cpu103 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
++		};
++	};
++};
++
+ &ethmac {
+ 	power-domains = <&pwrc PWRC_G12A_ETH_ID>;
+ };
+@@ -366,3 +389,4 @@
+ &simplefb_hdmi {
+ 	power-domains = <&pwrc PWRC_G12A_VPU_ID>;
+ };
++
+diff --git a/arch/arm64/boot/dts/amlogic/meson-g12b.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12b.dtsi
+index b3f9e3a02963..6dbc3968045b 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-g12b.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-g12b.dtsi
+@@ -50,6 +50,7 @@
+ 			enable-method = "psci";
+ 			capacity-dmips-mhz = <592>;
+ 			next-level-cache = <&l2>;
++			#cooling-cells = <2>;
+ 		};
+ 
+ 		cpu1: cpu@1 {
+@@ -59,6 +60,7 @@
+ 			enable-method = "psci";
+ 			capacity-dmips-mhz = <592>;
+ 			next-level-cache = <&l2>;
++			#cooling-cells = <2>;
+ 		};
+ 
+ 		cpu100: cpu@100 {
+@@ -68,6 +70,7 @@
+ 			enable-method = "psci";
+ 			capacity-dmips-mhz = <1024>;
+ 			next-level-cache = <&l2>;
++			#cooling-cells = <2>;
+ 		};
+ 
+ 		cpu101: cpu@101 {
+@@ -77,6 +80,7 @@
+ 			enable-method = "psci";
+ 			capacity-dmips-mhz = <1024>;
+ 			next-level-cache = <&l2>;
++			#cooling-cells = <2>;
+ 		};
+ 
+ 		cpu102: cpu@102 {
+@@ -86,6 +90,7 @@
+ 			enable-method = "psci";
+ 			capacity-dmips-mhz = <1024>;
+ 			next-level-cache = <&l2>;
++			#cooling-cells = <2>;
+ 		};
+ 
+ 		cpu103: cpu@103 {
+@@ -95,6 +100,7 @@
+ 			enable-method = "psci";
+ 			capacity-dmips-mhz = <1024>;
+ 			next-level-cache = <&l2>;
++			#cooling-cells = <2>;
+ 		};
+ 
+ 		l2: l2-cache0 {
+-- 
+2.17.1
+

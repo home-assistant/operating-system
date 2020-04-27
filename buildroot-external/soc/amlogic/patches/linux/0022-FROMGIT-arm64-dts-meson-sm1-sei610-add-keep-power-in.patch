@@ -1,0 +1,36 @@
+From c6f360a5a036a89d353e093e584c0bb803a735d0 Mon Sep 17 00:00:00 2001
+From: Neil Armstrong <narmstrong@baylibre.com>
+Date: Thu, 29 Aug 2019 17:23:42 +0200
+Subject: [PATCH 022/108] FROMGIT: arm64: dts: meson-sm1-sei610: add
+ keep-power-in-suspend property in SDIO node
+
+The WiFi firmware requires that the power is kept enabled while in
+suspend mode. Add the keep-power-in-suspend property in the SDIO node
+to specify that the power must be kept when entering in a system wide
+suspend state.
+
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+(cherry picked from commit 2e09574d172e6da4ee251203660c5a56b0b4c068)
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-sm1-sei610.dts | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-sm1-sei610.dts b/arch/arm64/boot/dts/amlogic/meson-sm1-sei610.dts
+index 3435aaa4e8db..1d627f7f47b2 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-sm1-sei610.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-sm1-sei610.dts
+@@ -305,6 +305,9 @@
+ 	non-removable;
+ 	disable-wp;
+ 
++	/* WiFi firmware requires power to be kept while in suspend */
++	keep-power-in-suspend;
++
+ 	mmc-pwrseq = <&sdio_pwrseq>;
+ 
+ 	vmmc-supply = <&vddao_3v3>;
+-- 
+2.17.1
+

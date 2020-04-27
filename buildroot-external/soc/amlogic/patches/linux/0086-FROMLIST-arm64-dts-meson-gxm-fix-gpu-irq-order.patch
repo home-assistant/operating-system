@@ -1,0 +1,35 @@
+From e824fcd66653783212e0cf3cdf7f983c766ce7df Mon Sep 17 00:00:00 2001
+From: Neil Armstrong <narmstrong@baylibre.com>
+Date: Mon, 21 Oct 2019 16:29:01 +0200
+Subject: [PATCH 086/108] FROMLIST: arm64: dts: meson-gxm: fix gpu irq order
+
+This fixes the following DT schemas check errors:
+meson-gxm-khadas-vim2.dt.yaml: gpu@c0000: interrupt-names:0: 'job' was expected
+meson-gxm-khadas-vim2.dt.yaml: gpu@c0000: interrupt-names:2: 'gpu' was expected
+
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-gxm.dtsi | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxm.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxm.dtsi
+index a0e677d5a8f7..5ff64a0d2dcf 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxm.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gxm.dtsi
+@@ -96,10 +96,10 @@
+ 		compatible = "amlogic,meson-gxm-mali", "arm,mali-t820";
+ 		reg = <0x0 0xc0000 0x0 0x40000>;
+ 		interrupt-parent = <&gic>;
+-		interrupts = <GIC_SPI 160 IRQ_TYPE_LEVEL_HIGH>,
++		interrupts = <GIC_SPI 162 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <GIC_SPI 161 IRQ_TYPE_LEVEL_HIGH>,
+-			     <GIC_SPI 162 IRQ_TYPE_LEVEL_HIGH>;
+-		interrupt-names = "gpu", "mmu", "job";
++			     <GIC_SPI 160 IRQ_TYPE_LEVEL_HIGH>;
++		interrupt-names = "job", "mmu", "gpu";
+ 		clocks = <&clkc CLKID_MALI>;
+ 		resets = <&reset RESET_MALI_CAPB3>, <&reset RESET_MALI>;
+ 
+-- 
+2.17.1
+

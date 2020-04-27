@@ -1,0 +1,34 @@
+From 9948e02cca7dff49cb985f76e188d0f8241dc150 Mon Sep 17 00:00:00 2001
+From: Jianxin Pan <jianxin.pan@amlogic.com>
+Date: Thu, 12 Sep 2019 04:19:29 -0400
+Subject: [PATCH 029/108] FROMGIT: dt-bindings: arm: amlogic: add Amlogic AD401
+ bindings
+
+Add the compatible for the Amlogic A1 Based AD401 board.
+
+Signed-off-by: Jianxin Pan <jianxin.pan@amlogic.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Reviewed-by: Kevin Hilman <khilman@baylibre.com>
+Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+(cherry picked from commit 46e723133fdc5ef903e5d11121a44fdbd2ca306c)
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ Documentation/devicetree/bindings/arm/amlogic.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/arm/amlogic.yaml b/Documentation/devicetree/bindings/arm/amlogic.yaml
+index 0ef45ac2ecb6..ee5703c4eded 100644
+--- a/Documentation/devicetree/bindings/arm/amlogic.yaml
++++ b/Documentation/devicetree/bindings/arm/amlogic.yaml
+@@ -159,5 +159,7 @@ properties:
+ 
+       - description: Boards with the Amlogic Meson A1 A113L SoC
+         items:
++          - enum:
++              - amlogic,ad401
+           - const: amlogic,a1
+ ...
+-- 
+2.17.1
+

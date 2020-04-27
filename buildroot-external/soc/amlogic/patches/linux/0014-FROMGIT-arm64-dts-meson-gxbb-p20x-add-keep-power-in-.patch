@@ -1,0 +1,36 @@
+From 4ed7c4701a6ae1c44e619b15199f660689dd93b3 Mon Sep 17 00:00:00 2001
+From: Neil Armstrong <narmstrong@baylibre.com>
+Date: Thu, 29 Aug 2019 17:23:34 +0200
+Subject: [PATCH 014/108] FROMGIT: arm64: dts: meson-gxbb-p20x: add
+ keep-power-in-suspend property in SDIO node
+
+The WiFi firmware requires that the power is kept enabled while in
+suspend mode. Add the keep-power-in-suspend property in the SDIO node
+to specify that the power must be kept when entering in a system wide
+suspend state.
+
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+(cherry picked from commit 0060bd29fc0c81a8ac1165daa17ae4b668866746)
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-gxbb-p20x.dtsi | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-p20x.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxbb-p20x.dtsi
+index 89f7b41b0e9e..e803a466fe4e 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxbb-p20x.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-p20x.dtsi
+@@ -170,6 +170,9 @@
+ 	non-removable;
+ 	disable-wp;
+ 
++	/* WiFi firmware requires power to be kept while in suspend */
++	keep-power-in-suspend;
++
+ 	mmc-pwrseq = <&sdio_pwrseq>;
+ 
+ 	vmmc-supply = <&vddao_3v3>;
+-- 
+2.17.1
+

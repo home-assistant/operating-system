@@ -1,0 +1,37 @@
+From 0f9a333c4f783f4d16f97bf03c7c286cdea156ac Mon Sep 17 00:00:00 2001
+From: Jianxin Pan <jianxin.pan@amlogic.com>
+Date: Thu, 12 Sep 2019 04:19:28 -0400
+Subject: [PATCH 028/108] FROMGIT: dt-bindings: arm: amlogic: add A1 bindings
+
+Add bindings for the new Amlogic A1 SoC family.
+
+A1 is an application processor designed for smart audio and IoT applications,
+with dual core Cortex-A35.
+
+Signed-off-by: Jianxin Pan <jianxin.pan@amlogic.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Reviewed-by: Kevin Hilman <khilman@baylibre.com>
+Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+(cherry picked from commit b7dda5cae714db40c9c161e0cab10d00b2d1f8a1)
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ Documentation/devicetree/bindings/arm/amlogic.yaml | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/arm/amlogic.yaml b/Documentation/devicetree/bindings/arm/amlogic.yaml
+index 99015cef8bb1..0ef45ac2ecb6 100644
+--- a/Documentation/devicetree/bindings/arm/amlogic.yaml
++++ b/Documentation/devicetree/bindings/arm/amlogic.yaml
+@@ -156,4 +156,8 @@ properties:
+               - seirobotics,sei610
+               - khadas,vim3l
+           - const: amlogic,sm1
++
++      - description: Boards with the Amlogic Meson A1 A113L SoC
++        items:
++          - const: amlogic,a1
+ ...
+-- 
+2.17.1
+

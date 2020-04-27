@@ -1,0 +1,84 @@
+From 64b611f5172d10f23908f65f8629bc8b34384188 Mon Sep 17 00:00:00 2001
+From: Guillaume La Roque <glaroque@baylibre.com>
+Date: Fri, 4 Oct 2019 11:01:12 +0200
+Subject: [PATCH 055/108] FROMGIT: arm64: dts: meson: g12a: add cooling
+ properties
+
+Add missing #colling-cells field for G12A SoC
+Add cooling-map for passive and hot trip point
+
+Tested-by: Christian Hewitt <christianshewitt@gmail.com>
+Tested-by: Kevin Hilman <khilman@baylibre.com>
+Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
+Reviewed-by: Amit Kucheria <amit.kucheria@linaro.org>
+Signed-off-by: Guillaume La Roque <glaroque@baylibre.com>
+Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+(cherry picked from commit 8eef8bca1242d18616929c4ae037bdee8a58c238)
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-g12a.dtsi | 24 +++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-g12a.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12a.dtsi
+index 07450c4babfc..fb0ab27d1f64 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-g12a.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-g12a.dtsi
+@@ -18,6 +18,7 @@
+ 			reg = <0x0 0x0>;
+ 			enable-method = "psci";
+ 			next-level-cache = <&l2>;
++			#cooling-cells = <2>;
+ 		};
+ 
+ 		cpu1: cpu@1 {
+@@ -26,6 +27,7 @@
+ 			reg = <0x0 0x1>;
+ 			enable-method = "psci";
+ 			next-level-cache = <&l2>;
++			#cooling-cells = <2>;
+ 		};
+ 
+ 		cpu2: cpu@2 {
+@@ -34,6 +36,7 @@
+ 			reg = <0x0 0x2>;
+ 			enable-method = "psci";
+ 			next-level-cache = <&l2>;
++			#cooling-cells = <2>;
+ 		};
+ 
+ 		cpu3: cpu@3 {
+@@ -42,6 +45,7 @@
+ 			reg = <0x0 0x3>;
+ 			enable-method = "psci";
+ 			next-level-cache = <&l2>;
++			#cooling-cells = <2>;
+ 		};
+ 
+ 		l2: l2-cache0 {
+@@ -109,3 +113,23 @@
+ 		};
+ 	};
+ };
++
++&cpu_thermal {
++	cooling-maps {
++		map0 {
++			trip = <&cpu_passive>;
++			cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++					<&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++					<&cpu2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++					<&cpu3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
++		};
++
++		map1 {
++			trip = <&cpu_hot>;
++			cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++					<&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++					<&cpu2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++					<&cpu3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
++		};
++	};
++};
+-- 
+2.17.1
+

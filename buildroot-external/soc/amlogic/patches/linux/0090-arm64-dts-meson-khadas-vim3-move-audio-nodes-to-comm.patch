@@ -1,0 +1,269 @@
+From 37083b133aa6e1bb8499345ccdb7579733a64759 Mon Sep 17 00:00:00 2001
+From: Christian Hewitt <christianshewitt@gmail.com>
+Date: Fri, 18 Oct 2019 20:29:45 +0400
+Subject: [PATCH 090/108] arm64: dts: meson: khadas-vim3: move audio nodes to
+ common dtsi
+
+Move VIM3 audio nodes to meson-khadas-vim3.dtsi to enable audio for all
+boards in the VIM3 family including VIM3L.
+
+This change depends on [1] being merged/applied first.
+
+[1] https://patchwork.kernel.org/patch/11198535/
+
+Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
+Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ .../dts/amlogic/meson-g12b-khadas-vim3.dtsi   | 89 -------------------
+ .../boot/dts/amlogic/meson-khadas-vim3.dtsi   | 88 ++++++++++++++++++
+ 2 files changed, 88 insertions(+), 89 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-g12b-khadas-vim3.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12b-khadas-vim3.dtsi
+index e2094575f528..190e9340591f 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-g12b-khadas-vim3.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-g12b-khadas-vim3.dtsi
+@@ -5,8 +5,6 @@
+  * Copyright (c) 2019 Christian Hewitt <christianshewitt@gmail.com>
+  */
+ 
+-#include <dt-bindings/sound/meson-g12a-tohdmitx.h>
+-
+ / {
+ 	vddcpu_a: regulator-vddcpu-a {
+ 		/*
+@@ -45,69 +43,6 @@
+ 		regulator-boot-on;
+ 		regulator-always-on;
+ 	};
+-
+-	sound {
+-		compatible = "amlogic,axg-sound-card";
+-		model = "G12A-KHADAS-VIM3";
+-		audio-aux-devs = <&tdmout_b>;
+-		audio-routing = "TDMOUT_B IN 0", "FRDDR_A OUT 1",
+-				"TDMOUT_B IN 1", "FRDDR_B OUT 1",
+-				"TDMOUT_B IN 2", "FRDDR_C OUT 1",
+-				"TDM_B Playback", "TDMOUT_B OUT";
+-
+-		assigned-clocks = <&clkc CLKID_MPLL2>,
+-				  <&clkc CLKID_MPLL0>,
+-				  <&clkc CLKID_MPLL1>;
+-		assigned-clock-parents = <0>, <0>, <0>;
+-		assigned-clock-rates = <294912000>,
+-				       <270950400>,
+-				       <393216000>;
+-		status = "okay";
+-
+-		dai-link-0 {
+-			sound-dai = <&frddr_a>;
+-		};
+-
+-		dai-link-1 {
+-			sound-dai = <&frddr_b>;
+-		};
+-
+-		dai-link-2 {
+-			sound-dai = <&frddr_c>;
+-		};
+-
+-		/* 8ch hdmi interface */
+-		dai-link-3 {
+-			sound-dai = <&tdmif_b>;
+-			dai-format = "i2s";
+-			dai-tdm-slot-tx-mask-0 = <1 1>;
+-			dai-tdm-slot-tx-mask-1 = <1 1>;
+-			dai-tdm-slot-tx-mask-2 = <1 1>;
+-			dai-tdm-slot-tx-mask-3 = <1 1>;
+-			mclk-fs = <256>;
+-
+-			codec {
+-				sound-dai = <&tohdmitx TOHDMITX_I2S_IN_B>;
+-			};
+-		};
+-
+-		/* hdmi glue */
+-		dai-link-4 {
+-			sound-dai = <&tohdmitx TOHDMITX_I2S_OUT>;
+-
+-			codec {
+-				sound-dai = <&hdmi_tx>;
+-			};
+-		};
+-	};
+-};
+-
+-&arb {
+-	status = "okay";
+-};
+-
+-&clkc_audio {
+-	status = "okay";
+ };
+ 
+ &cpu0 {
+@@ -152,18 +87,6 @@
+ 	clock-latency = <50000>;
+ };
+ 
+-&frddr_a {
+-	status = "okay";
+-};
+-
+-&frddr_b {
+-	status = "okay";
+-};
+-
+-&frddr_c {
+-	status = "okay";
+-};
+-
+ &pwm_ab {
+ 	pinctrl-0 = <&pwm_a_e_pins>;
+ 	pinctrl-names = "default";
+@@ -179,15 +102,3 @@
+ 	clock-names = "clkin1";
+ 	status = "okay";
+ };
+-
+-&tdmif_b {
+-	status = "okay";
+-};
+-
+-&tdmout_b {
+-	status = "okay";
+-};
+-
+-&tohdmitx {
+-	status = "okay";
+-};
+diff --git a/arch/arm64/boot/dts/amlogic/meson-khadas-vim3.dtsi b/arch/arm64/boot/dts/amlogic/meson-khadas-vim3.dtsi
+index 90815fa25ec6..3f5c373f893d 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-khadas-vim3.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-khadas-vim3.dtsi
+@@ -7,6 +7,7 @@
+ 
+ #include <dt-bindings/input/input.h>
+ #include <dt-bindings/gpio/meson-g12a-gpio.h>
++#include <dt-bindings/sound/meson-g12a-tohdmitx.h>
+ 
+ / {
+ 	model = "Khadas VIM3";
+@@ -76,6 +77,61 @@
+ 		clock-names = "ext_clock";
+ 	};
+ 
++	sound {
++		compatible = "amlogic,axg-sound-card";
++		model = "G12A-KHADAS-VIM3";
++		audio-aux-devs = <&tdmout_b>;
++		audio-routing = "TDMOUT_B IN 0", "FRDDR_A OUT 1",
++				"TDMOUT_B IN 1", "FRDDR_B OUT 1",
++				"TDMOUT_B IN 2", "FRDDR_C OUT 1",
++				"TDM_B Playback", "TDMOUT_B OUT";
++
++		assigned-clocks = <&clkc CLKID_MPLL2>,
++				  <&clkc CLKID_MPLL0>,
++				  <&clkc CLKID_MPLL1>;
++		assigned-clock-parents = <0>, <0>, <0>;
++		assigned-clock-rates = <294912000>,
++				       <270950400>,
++				       <393216000>;
++		status = "okay";
++
++		dai-link-0 {
++			sound-dai = <&frddr_a>;
++		};
++
++		dai-link-1 {
++			sound-dai = <&frddr_b>;
++		};
++
++		dai-link-2 {
++			sound-dai = <&frddr_c>;
++		};
++
++		/* 8ch hdmi interface */
++		dai-link-3 {
++			sound-dai = <&tdmif_b>;
++			dai-format = "i2s";
++			dai-tdm-slot-tx-mask-0 = <1 1>;
++			dai-tdm-slot-tx-mask-1 = <1 1>;
++			dai-tdm-slot-tx-mask-2 = <1 1>;
++			dai-tdm-slot-tx-mask-3 = <1 1>;
++			mclk-fs = <256>;
++
++			codec {
++				sound-dai = <&tohdmitx TOHDMITX_I2S_IN_B>;
++			};
++		};
++
++		/* hdmi glue */
++		dai-link-4 {
++			sound-dai = <&tohdmitx TOHDMITX_I2S_OUT>;
++
++			codec {
++				sound-dai = <&hdmi_tx>;
++			};
++		};
++	};
++
+ 	dc_in: regulator-dc_in {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "DC_IN";
+@@ -171,6 +227,14 @@
+ 	};
+ };
+ 
++&arb {
++	status = "okay";
++};
++
++&clkc_audio {
++	status = "okay";
++};
++
+ &cec_AO {
+ 	pinctrl-0 = <&cec_ao_a_h_pins>;
+ 	pinctrl-names = "default";
+@@ -206,6 +270,18 @@
+         amlogic,tx-delay-ns = <2>;
+ };
+ 
++&frddr_a {
++	status = "okay";
++};
++
++&frddr_b {
++	status = "okay";
++};
++
++&frddr_c {
++	status = "okay";
++};
++
+ &hdmi_tx {
+ 	status = "okay";
+ 	pinctrl-0 = <&hdmitx_hpd_pins>, <&hdmitx_ddc_pins>;
+@@ -328,6 +404,18 @@
+ 	vqmmc-supply = <&emmc_1v8>;
+ };
+ 
++&tdmif_b {
++	status = "okay";
++};
++
++&tdmout_b {
++	status = "okay";
++};
++
++&tohdmitx {
++	status = "okay";
++};
++
+ &uart_A {
+ 	status = "okay";
+ 	pinctrl-0 = <&uart_a_pins>, <&uart_a_cts_rts_pins>;
+-- 
+2.17.1
+

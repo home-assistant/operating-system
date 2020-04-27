@@ -1,0 +1,30 @@
+From 32b4286506385f0ff7ce6b3674fe2b9ccdf2a8ff Mon Sep 17 00:00:00 2001
+From: Guillaume La Roque <glaroque@baylibre.com>
+Date: Wed, 11 Dec 2019 09:00:13 +0100
+Subject: [PATCH 80/82] FROMLIST: arm64: dts: meson-g12g12: add syscon phandle
+ in cec node
+
+add syscon phandle in cec node to activate wakeup support
+
+Change-Id: I4ca0a63825eca287c35a86dcad8a0eae9b2ae998
+Tested-by: Kevin Hilman <khilman@baylibre.com>
+Signed-off-by: Guillaume La Roque <glaroque@baylibre.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi
+index 5eafd885acfd..a87ae9e80cb3 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi
+@@ -1839,6 +1839,7 @@
+ 				interrupts = <GIC_SPI 203 IRQ_TYPE_EDGE_RISING>;
+ 				clocks = <&clkc_AO CLKID_AO_CTS_OSCIN>;
+ 				clock-names = "oscin";
++				amlogic,ao-sysctrl = <&rti>;
+ 				status = "disabled";
+ 			};
+ 
+-- 
+2.17.1
+

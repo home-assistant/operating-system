@@ -1,0 +1,54 @@
+From c669757a7564c19d042bc5ac18199bb6f3f4e928 Mon Sep 17 00:00:00 2001
+From: Neil Armstrong <narmstrong@baylibre.com>
+Date: Fri, 27 Sep 2019 15:16:38 +0200
+Subject: [PATCH 1/1] dwc3: add parkmode_disable_ss_quirk for G12A
+
+Could you validate this fixes the following issue ?
+[  221.141621] xhci-hcd xhci-hcd.0.auto: xHCI host not responding to stop endpoint command.
+[  221.157631] xhci-hcd xhci-hcd.0.auto: Host halt failed, -110
+[  221.157635] xhci-hcd xhci-hcd.0.auto: xHCI host controller not responding, assume dead
+[  221.159901] xhci-hcd xhci-hcd.0.auto: xHCI host not responding to stop endpoint command.
+[  221.159961] hub 2-1.1:1.0: hub_ext_port_status failed (err = -22)
+[  221.160076] xhci-hcd xhci-hcd.0.auto: HC died; cleaning up
+[  221.165946] usb 2-1.1-port1: cannot reset (err = -22)
+
+Cc: Tim <elatllat@gmail.com>
+CC: Dongjin Kim <tobetter@gmail.com>
+Cc: Jianxin Pan <jianxin.pan@amlogic.com>
+CC: linux-amlogic@lists.infradead.org
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ Documentation/devicetree/bindings/usb/dwc3.txt    | 2 ++
+ arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi | 1 +
+ drivers/usb/dwc3/core.c                           | 5 +++++
+ drivers/usb/dwc3/core.h                           | 4 ++++
+ 4 files changed, 12 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/usb/dwc3.txt b/Documentation/devicetree/bindings/usb/dwc3.txt
+index 66780a47ad85..c977a3ba2f35 100644
+--- a/Documentation/devicetree/bindings/usb/dwc3.txt
++++ b/Documentation/devicetree/bindings/usb/dwc3.txt
+@@ -75,6 +75,8 @@ Optional properties:
+ 			from P0 to P1/P2/P3 without delay.
+  - snps,dis-tx-ipgap-linecheck-quirk: when set, disable u2mac linestate check
+ 			during HS transmit.
++ - snps,parkmode-disable-ss-quirk: when set, all SuperSpeed bus instances in
++			park mode are disabled.
+  - snps,dis_metastability_quirk: when set, disable metastability workaround.
+ 			CAUTION: use only if you are absolutely sure of it.
+  - snps,is-utmi-l1-suspend: true when DWC3 asserts output signal
+diff --git a/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi
+index 852cf9cf121b..139f24975c0e 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi
+@@ -2401,6 +2401,7 @@
+ 				dr_mode = "host";
+ 				snps,dis_u2_susphy_quirk;
+ 				snps,quirk-frame-length-adjustment;
++				snps,parkmode-disable-ss-quirk;
+ 			};
+ 		};
+ 
+-- 
+2.17.1
+

@@ -1,0 +1,35 @@
+From f71c7279ef74cc6f711da9f153f17589c381a533 Mon Sep 17 00:00:00 2001
+From: Christian Hewitt <christianshewitt@gmail.com>
+Date: Mon, 23 Sep 2019 18:13:54 +0400
+Subject: [PATCH 032/108] FROMGIT: dt-bindings: Add vendor prefix for Ugoos
+
+Ugoos Industrial Co., Ltd. are a manufacturer of ARM based TV Boxes/Dongles,
+Digital Signage and Advertisement Solutions [0].
+
+[0] (https://ugoos.com)
+
+Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
+Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+(cherry picked from commit 46f4fa76fc7d0d8ec9dbd83044bb7e10f4d7b9a0)
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+index 967e78c5ec0a..e711cbc8e55b 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
++++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+@@ -988,6 +988,8 @@ patternProperties:
+     description: Ubiquiti Networks
+   "^udoo,.*":
+     description: Udoo
++  "^ugoos,.*":
++    description: Ugoos Industrial Co., Ltd.
+   "^uniwest,.*":
+     description: United Western Technologies Corp (UniWest)
+   "^upisemi,.*":
+-- 
+2.17.1
+

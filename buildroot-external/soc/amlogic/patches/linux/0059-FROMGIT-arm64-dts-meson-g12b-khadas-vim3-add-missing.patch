@@ -1,0 +1,40 @@
+From fc5765782a03ef348e5f36f9fe6d847735c42c75 Mon Sep 17 00:00:00 2001
+From: Neil Armstrong <narmstrong@baylibre.com>
+Date: Fri, 18 Oct 2019 14:02:16 +0000
+Subject: [PATCH 059/108] FROMGIT: arm64: dts: meson-g12b-khadas-vim3: add
+ missing frddr_a status property
+
+In the process of moving the VIM3 audio nodes to a G12B specific dtsi
+for enabling the SM1 based VIM3L, the frddr_a status = "okay" property
+got dropped.
+This re-enables the frddr_a node to fix audio support.
+
+Fixes: 4f26cc1c96c9 ("arm64: dts: khadas-vim3: move common nodes into meson-khadas-vim3.dtsi")
+Reported-by: Christian Hewitt <christianshewitt@gmail.com>
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Acked-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+(cherry picked from commit 01c285a0082a7db9ed33bb3128b74ba7d3cf93ab)
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-g12b-khadas-vim3.dtsi | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-g12b-khadas-vim3.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12b-khadas-vim3.dtsi
+index 554863429aa6..e2094575f528 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-g12b-khadas-vim3.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-g12b-khadas-vim3.dtsi
+@@ -152,6 +152,10 @@
+ 	clock-latency = <50000>;
+ };
+ 
++&frddr_a {
++	status = "okay";
++};
++
+ &frddr_b {
+ 	status = "okay";
+ };
+-- 
+2.17.1
+

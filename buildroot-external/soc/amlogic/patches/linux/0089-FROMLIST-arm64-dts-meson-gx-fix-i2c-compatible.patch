@@ -1,0 +1,58 @@
+From 4bb5d4e063067b1aa42edd0d0ea047afd74cae76 Mon Sep 17 00:00:00 2001
+From: Neil Armstrong <narmstrong@baylibre.com>
+Date: Mon, 21 Oct 2019 16:29:04 +0200
+Subject: [PATCH 089/108] FROMLIST: arm64: dts: meson-gx: fix i2c compatible
+
+This fixes the following DT schemas check errors:
+meson-gxbb-nanopi-k2.dt.yaml: i2c@8500: compatible: Additional items are not allowed ('amlogic,meson-gxbb-i2c' was unexpected)
+meson-gxbb-nanopi-k2.dt.yaml: i2c@8500: compatible:0: 'amlogic,meson-gx-i2c' is not one of ['amlogic,meson6-i2c', 'amlogic,meson-gxbb-i2c', 'amlogic,meson-axg-i2c']
+meson-gxbb-nanopi-k2.dt.yaml: i2c@8500: compatible: ['amlogic,meson-gx-i2c', 'amlogic,meson-gxbb-i2c'] is too long
+
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-gx.dtsi | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gx.dtsi b/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
+index 688e45061be8..40db06e28b66 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
+@@ -241,7 +241,7 @@
+ 			};
+ 
+ 			i2c_A: i2c@8500 {
+-				compatible = "amlogic,meson-gx-i2c", "amlogic,meson-gxbb-i2c";
++				compatible = "amlogic,meson-gxbb-i2c";
+ 				reg = <0x0 0x08500 0x0 0x20>;
+ 				interrupts = <GIC_SPI 21 IRQ_TYPE_EDGE_RISING>;
+ 				#address-cells = <1>;
+@@ -291,7 +291,7 @@
+ 			};
+ 
+ 			i2c_B: i2c@87c0 {
+-				compatible = "amlogic,meson-gx-i2c", "amlogic,meson-gxbb-i2c";
++				compatible = "amlogic,meson-gxbb-i2c";
+ 				reg = <0x0 0x087c0 0x0 0x20>;
+ 				interrupts = <GIC_SPI 214 IRQ_TYPE_EDGE_RISING>;
+ 				#address-cells = <1>;
+@@ -300,7 +300,7 @@
+ 			};
+ 
+ 			i2c_C: i2c@87e0 {
+-				compatible = "amlogic,meson-gx-i2c", "amlogic,meson-gxbb-i2c";
++				compatible = "amlogic,meson-gxbb-i2c";
+ 				reg = <0x0 0x087e0 0x0 0x20>;
+ 				interrupts = <GIC_SPI 215 IRQ_TYPE_EDGE_RISING>;
+ 				#address-cells = <1>;
+@@ -416,7 +416,7 @@
+ 			};
+ 
+ 			i2c_AO: i2c@500 {
+-				compatible = "amlogic,meson-gx-i2c", "amlogic,meson-gxbb-i2c";
++				compatible = "amlogic,meson-gxbb-i2c";
+ 				reg = <0x0 0x500 0x0 0x20>;
+ 				interrupts = <GIC_SPI 195 IRQ_TYPE_EDGE_RISING>;
+ 				#address-cells = <1>;
+-- 
+2.17.1
+

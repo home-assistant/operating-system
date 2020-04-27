@@ -1,0 +1,97 @@
+From c649fd108a712d478328b90cd1ae38620e206646 Mon Sep 17 00:00:00 2001
+From: Guillaume La Roque <glaroque@baylibre.com>
+Date: Wed, 11 Dec 2019 09:01:55 +0100
+Subject: [PATCH 81/82] FROMLIST: media: platform: meson-ao-cec-g12a: add
+ wakeup support
+
+add register configuration to activate wakeup feature in bl301
+
+Change-Id: Ia4d39fe02f805fe079097f22f902cd6d1d43d309
+Tested-by: Kevin Hilman <khilman@baylibre.com>
+Signed-off-by: Guillaume La Roque <glaroque@baylibre.com>
+---
+ drivers/media/platform/meson/ao-cec-g12a.c | 33 ++++++++++++++++++++++
+ 1 file changed, 33 insertions(+)
+
+diff --git a/drivers/media/platform/meson/ao-cec-g12a.c b/drivers/media/platform/meson/ao-cec-g12a.c
+index 3b39e875292e..3da35332be81 100644
+--- a/drivers/media/platform/meson/ao-cec-g12a.c
++++ b/drivers/media/platform/meson/ao-cec-g12a.c
+@@ -25,6 +25,7 @@
+ #include <media/cec.h>
+ #include <media/cec-notifier.h>
+ #include <linux/clk-provider.h>
++#include <linux/mfd/syscon.h>
+ 
+ /* CEC Registers */
+ 
+@@ -168,6 +169,18 @@
+ 
+ #define CECB_WAKEUPCTRL		0x31
+ 
++#define CECB_FUNC_CFG_REG		0xA0
++#define CECB_FUNC_CFG_MASK		GENMASK(6, 0)
++#define CECB_FUNC_CFG_CEC_ON		0x01
++#define CECB_FUNC_CFG_OTP_ON		0x02
++#define CECB_FUNC_CFG_AUTO_STANDBY	0x04
++#define CECB_FUNC_CFG_AUTO_POWER_ON	0x08
++#define CECB_FUNC_CFG_ALL		0x2f
++#define CECB_FUNC_CFG_NONE		0x0
++
++#define CECB_LOG_ADDR_REG	0xA4
++#define CECB_LOG_ADDR_MASK	GENMASK(22, 16)
++
+ struct meson_ao_cec_g12a_data {
+ 	/* Setup the internal CECB_CTRL2 register */
+ 	bool				ctrl2_setup;
+@@ -177,6 +190,7 @@ struct meson_ao_cec_g12a_device {
+ 	struct platform_device		*pdev;
+ 	struct regmap			*regmap;
+ 	struct regmap			*regmap_cec;
++	struct regmap			*regmap_ao_sysctrl;
+ 	spinlock_t			cec_reg_lock;
+ 	struct cec_notifier		*notify;
+ 	struct cec_adapter		*adap;
+@@ -518,6 +532,13 @@ meson_ao_cec_g12a_set_log_addr(struct cec_adapter *adap, u8 logical_addr)
+ 					 BIT(logical_addr - 8));
+ 	}
+ 
++	if (ao_cec->regmap_ao_sysctrl)
++		ret |= regmap_update_bits(ao_cec->regmap_ao_sysctrl,
++					 CECB_LOG_ADDR_REG,
++					 CECB_LOG_ADDR_MASK,
++					 FIELD_PREP(CECB_LOG_ADDR_MASK,
++						    logical_addr));
++
+ 	/* Always set Broadcast/Unregistered 15 address */
+ 	ret |= regmap_update_bits(ao_cec->regmap_cec, CECB_LADD_HIGH,
+ 				  BIT(CEC_LOG_ADDR_UNREGISTERED - 8),
+@@ -618,6 +639,13 @@ static int meson_ao_cec_g12a_adap_enable(struct cec_adapter *adap, bool enable)
+ 		regmap_write(ao_cec->regmap_cec, CECB_CTRL2,
+ 			     FIELD_PREP(CECB_CTRL2_RISE_DEL_MAX, 2));
+ 
++	if (ao_cec->regmap_ao_sysctrl) {
++		regmap_update_bits(ao_cec->regmap_ao_sysctrl,
++				   CECB_FUNC_CFG_REG,
++				   CECB_FUNC_CFG_MASK,
++				   CECB_FUNC_CFG_ALL);
++	}
++
+ 	meson_ao_cec_g12a_irq_setup(ao_cec, true);
+ 
+ 	return 0;
+@@ -692,6 +720,11 @@ static int meson_ao_cec_g12a_probe(struct platform_device *pdev)
+ 		goto out_probe_notify;
+ 	}
+ 
++	ao_cec->regmap_ao_sysctrl = syscon_regmap_lookup_by_phandle
++		(pdev->dev.of_node, "amlogic,ao-sysctrl");
++	if (IS_ERR(ao_cec->regmap_ao_sysctrl))
++		dev_warn(&pdev->dev, "ao-sysctrl syscon regmap lookup failed.\n");
++
+ 	irq = platform_get_irq(pdev, 0);
+ 	ret = devm_request_threaded_irq(&pdev->dev, irq,
+ 					meson_ao_cec_g12a_irq,
+-- 
+2.17.1
+

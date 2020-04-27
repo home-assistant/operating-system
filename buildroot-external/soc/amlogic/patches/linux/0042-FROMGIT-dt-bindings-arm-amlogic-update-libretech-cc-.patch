@@ -1,0 +1,34 @@
+From 20dbfac30466e4cb31afa95fabefc826f8da2cf1 Mon Sep 17 00:00:00 2001
+From: Christian Hewitt <christianshewitt@gmail.com>
+Date: Mon, 9 Sep 2019 19:01:26 +0400
+Subject: [PATCH 042/108] FROMGIT: dt-bindings: arm: amlogic: update
+ libretech-cc compatible
+
+Update the compatible for the Libre Computer aml-s905x-cc to be more
+descriptive using the format introduced with the aml-s805x-ac board.
+
+Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
+Reviewed-by: Kevin Hilman <khilman@baylibre.com>
+Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+(cherry picked from commit 39f137f55cc26992da897dac0450fb53076d8d5b)
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ Documentation/devicetree/bindings/arm/amlogic.yaml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Documentation/devicetree/bindings/arm/amlogic.yaml b/Documentation/devicetree/bindings/arm/amlogic.yaml
+index 84b07ef9864e..c6a443352ef8 100644
+--- a/Documentation/devicetree/bindings/arm/amlogic.yaml
++++ b/Documentation/devicetree/bindings/arm/amlogic.yaml
+@@ -94,7 +94,7 @@ properties:
+               - amlogic,p212
+               - hwacom,amazetv
+               - khadas,vim
+-              - libretech,cc
++              - libretech,aml-s905x-cc
+               - nexbox,a95x
+           - const: amlogic,s905x
+           - const: amlogic,meson-gxl
+-- 
+2.17.1
+
