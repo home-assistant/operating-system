@@ -1,0 +1,32 @@
+From b38c4a8a0291c31a660cd77761202ebb18332fb7 Mon Sep 17 00:00:00 2001
+From: Jerome Brunet <jbrunet@baylibre.com>
+Date: Fri, 21 Feb 2020 16:36:07 +0100
+Subject: [PATCH] ASoC: meson: axg-card: add toacodec support
+
+Make sure the axg audio card driver recognise the dai_link as a
+codec-to-codec link if the cpu dai is the internal dac glue.
+
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Link: https://lore.kernel.org/r/20200221153607.1585499-4-jbrunet@baylibre.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/meson/axg-card.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/sound/soc/meson/axg-card.c b/sound/soc/meson/axg-card.c
+index 372dc696cc8e..48651631bdcf 100644
+--- a/sound/soc/meson/axg-card.c
++++ b/sound/soc/meson/axg-card.c
+@@ -303,7 +303,8 @@ static int axg_card_cpu_is_tdm_iface(struct device_node *np)
+ 
+ static int axg_card_cpu_is_codec(struct device_node *np)
+ {
+-	return of_device_is_compatible(np, DT_PREFIX "g12a-tohdmitx");
++	return of_device_is_compatible(np, DT_PREFIX "g12a-tohdmitx") ||
++		of_device_is_compatible(np, DT_PREFIX "g12a-toacodec");
+ }
+ 
+ static int axg_card_add_link(struct snd_soc_card *card, struct device_node *np,
+-- 
+2.17.1
+
