@@ -18,7 +18,7 @@ index 8830d3844..45bc9435e 100644
  
 +&acodec {
 +	status = "okay";
-+}
++};
 +
  &usb {
  	status = "okay";
