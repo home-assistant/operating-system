@@ -1,0 +1,30 @@
+From fbffdc84fa2b464b209a6944e0ab32c8bb496ae7 Mon Sep 17 00:00:00 2001
+From: Neil Armstrong <narmstrong@baylibre.com>
+Date: Tue, 13 Aug 2019 16:21:27 +0200
+Subject: [PATCH 098/146] FROMLIST: drm/meson: dw-hdmi: stop enforcing
+ input_bus_format
+
+To allow using formats from negotiation, stop enforcing input_bus_format
+in the private dw-plat-data struct.
+
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
+---
+ drivers/gpu/drm/meson/meson_dw_hdmi.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/meson/meson_dw_hdmi.c b/drivers/gpu/drm/meson/meson_dw_hdmi.c
+index 4b3809626f7e..686c47106a18 100644
+--- a/drivers/gpu/drm/meson/meson_dw_hdmi.c
++++ b/drivers/gpu/drm/meson/meson_dw_hdmi.c
+@@ -1035,7 +1035,6 @@ static int meson_dw_hdmi_bind(struct device *dev, struct device *master,
+ 	dw_plat_data->phy_ops = &meson_dw_hdmi_phy_ops;
+ 	dw_plat_data->phy_name = "meson_dw_hdmi_phy";
+ 	dw_plat_data->phy_data = meson_dw_hdmi;
+-	dw_plat_data->input_bus_format = MEDIA_BUS_FMT_YUV8_1X24;
+ 	dw_plat_data->input_bus_encoding = V4L2_YCBCR_ENC_709;
+ 
+ 	if (dw_hdmi_is_compatible(meson_dw_hdmi, "amlogic,meson-gxl-dw-hdmi") ||
+-- 
+2.17.1
+

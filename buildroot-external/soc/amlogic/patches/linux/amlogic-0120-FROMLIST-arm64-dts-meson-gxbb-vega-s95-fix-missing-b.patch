@@ -1,0 +1,45 @@
+From 50c13c5012dc6884799e2166a6452dc8c49683b1 Mon Sep 17 00:00:00 2001
+From: chewitt <github@chrishewitt.net>
+Date: Sat, 13 Apr 2019 06:18:39 +0000
+Subject: [PATCH 120/146] FROMLIST: arm64: dts: meson-gxbb-vega-s95: fix
+ missing bindings and bluetooth node
+
+Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-gxbb-vega-s95.dtsi | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-vega-s95.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxbb-vega-s95.dtsi
+index 5eab3dfdbd55..3cacd32be986 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxbb-vega-s95.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-vega-s95.dtsi
+@@ -4,6 +4,8 @@
+  */
+ 
+ #include "meson-gxbb.dtsi"
++#include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/input/input.h>
+ 
+ / {
+ 	compatible = "tronsmart,vega-s95", "amlogic,meson-gxbb";
+@@ -124,7 +126,6 @@
+ 		eth_phy0: ethernet-phy@0 {
+ 			/* Realtek RTL8211F (0x001cc916) */
+ 			reg = <0>;
+-
+ 			reset-assert-us = <10000>;
+ 			reset-deassert-us = <30000>;
+ 			reset-gpios = <&gpio GPIOZ_14 GPIO_ACTIVE_LOW>;
+@@ -245,6 +246,9 @@
+ 	bluetooth {
+ 		compatible = "brcm,bcm43438-bt";
+ 		shutdown-gpios = <&gpio GPIOX_20 GPIO_ACTIVE_HIGH>;
++		max-speed = <2000000>;
++		clocks = <&wifi32k>;
++		clock-names = "lpo";
+ 	};
+ };
+ 
+-- 
+2.17.1
+

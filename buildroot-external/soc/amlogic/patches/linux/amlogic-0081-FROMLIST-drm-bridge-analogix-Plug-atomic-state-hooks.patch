@@ -1,0 +1,45 @@
+From d1cf8cf8857aa4f9ff8750717d3c2371052a94ed Mon Sep 17 00:00:00 2001
+From: Boris Brezillon <boris.brezillon@collabora.com>
+Date: Tue, 21 Jan 2020 16:35:10 +0100
+Subject: [PATCH 081/146] FROMLIST: drm/bridge: analogix: Plug atomic state
+ hooks to the default implementation
+
+This is needed to pass a bridge state to all atomic hooks, if we don't
+do that, the core can't duplicate/create bridge states.
+
+v10:
+* Add changelog to the commit message
+
+v9:
+* Add Neil's R-b
+* Move earlier in the series
+
+v8:
+* No changes
+
+v7:
+* New patch
+
+Signed-off-by: Boris Brezillon <boris.brezillon@collabora.com>
+Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+index 6effe532f820..aaaec39ec2a7 100644
+--- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
++++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+@@ -1563,6 +1563,9 @@ static void analogix_dp_bridge_mode_set(struct drm_bridge *bridge,
+ }
+ 
+ static const struct drm_bridge_funcs analogix_dp_bridge_funcs = {
++	.atomic_duplicate_state = drm_atomic_helper_bridge_duplicate_state,
++	.atomic_destroy_state = drm_atomic_helper_bridge_destroy_state,
++	.atomic_reset = drm_atomic_helper_bridge_reset,
+ 	.atomic_pre_enable = analogix_dp_bridge_atomic_pre_enable,
+ 	.atomic_enable = analogix_dp_bridge_atomic_enable,
+ 	.atomic_disable = analogix_dp_bridge_atomic_disable,
+-- 
+2.17.1
+

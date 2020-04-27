@@ -1,0 +1,157 @@
+From 12d1a0d333ed209569376378ea097b11136fd804 Mon Sep 17 00:00:00 2001
+From: Christian Hewitt <christianshewitt@gmail.com>
+Date: Wed, 19 Feb 2020 04:33:58 +0000
+Subject: [PATCH 063/146] WIP: arm64: dts: meson: add audio playback to nexbox
+ a1
+
+Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
+---
+ .../boot/dts/amlogic/meson-gxm-nexbox-a1.dts  | 113 ++++++++++++++++++
+ 1 file changed, 113 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxm-nexbox-a1.dts b/arch/arm64/boot/dts/amlogic/meson-gxm-nexbox-a1.dts
+index c2bd4dbbf38c..3b0538f75a68 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxm-nexbox-a1.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-gxm-nexbox-a1.dts
+@@ -9,6 +9,8 @@
+ 
+ /dts-v1/;
+ 
++#include <dt-bindings/sound/meson-aiu.h>
++
+ #include "meson-gxm.dtsi"
+ 
+ / {
+@@ -24,11 +26,44 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
++	dio2133: analog-amplifier {
++		compatible = "simple-audio-amplifier";
++		sound-name-prefix = "AU2";
++		VCC-supply = <&hdmi_5v>;
++		enable-gpios = <&gpio GPIOH_5 GPIO_ACTIVE_HIGH>;
++	};
++
++	spdif_dit: audio-codec-0 {
++		#sound-dai-cells = <0>;
++		compatible = "linux,spdif-dit";
++		status = "okay";
++		sound-name-prefix = "DIT";
++	};
++
+ 	memory@0 {
+ 		device_type = "memory";
+ 		reg = <0x0 0x0 0x0 0x80000000>;
+ 	};
+ 
++	vddio_ao18: regulator-vddio_ao18 {
++		compatible = "regulator-fixed";
++		regulator-name = "VDDIO_AO18";
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <1800000>;
++	};
++
++	hdmi_5v: regulator-hdmi-5v {
++		compatible = "regulator-fixed";
++
++		regulator-name = "HDMI_5V";
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++
++		gpio = <&gpio GPIOH_3 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++		regulator-always-on;
++	};
++
+ 	vddio_boot: regulator-vddio-boot {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "VDDIO_BOOT";
+@@ -75,6 +110,84 @@
+ 			};
+ 		};
+ 	};
++
++	sound {
++		compatible = "amlogic,gx-sound-card";
++		model = "GXM-NEXBOX-A1";
++		audio-aux-devs = <&dio2133>;
++		audio-widgets = "Line", "Lineout";
++		audio-routing = "AU2 INL", "ACODEC LOLP",
++				"AU2 INR", "ACODEC LORP",
++				"AU2 INL", "ACODEC LOLN",
++				"AU2 INR", "ACODEC LORN",
++				"Lineout", "AU2 OUTL",
++				"Lineout", "AU2 OUTR";
++		assigned-clocks = <&clkc CLKID_MPLL2>,
++				  <&clkc CLKID_MPLL0>,
++				  <&clkc CLKID_MPLL1>;
++		assigned-clock-parents = <0>, <0>, <0>;
++		assigned-clock-rates = <294912000>,
++				       <270950400>,
++				       <393216000>;
++		status = "okay";
++
++		dai-link-0 {
++			sound-dai = <&aiu AIU_CPU CPU_I2S_FIFO>;
++		};
++
++		dai-link-1 {
++			sound-dai = <&aiu AIU_CPU CPU_SPDIF_FIFO>;
++		};
++
++		dai-link-2 {
++			sound-dai = <&aiu AIU_CPU CPU_I2S_ENCODER>;
++			dai-format = "i2s";
++			mclk-fs = <256>;
++
++			codec-0 {
++				sound-dai = <&aiu AIU_HDMI CTRL_I2S>;
++			};
++
++			codec-1 {
++				sound-dai = <&aiu AIU_ACODEC CTRL_I2S>;
++			};
++		};
++
++		dai-link-3 {
++			sound-dai = <&aiu AIU_CPU CPU_SPDIF_ENCODER>;
++
++			codec-0 {
++				sound-dai = <&spdif_dit>;
++			};
++		};
++
++		dai-link-4 {
++			sound-dai = <&aiu AIU_HDMI CTRL_OUT>;
++
++			codec-0 {
++				sound-dai = <&hdmi_tx>;
++			};
++		};
++
++		dai-link-5 {
++			sound-dai = <&aiu AIU_ACODEC CTRL_OUT>;
++
++			codec-0 {
++				sound-dai = <&acodec>;
++			};
++		};
++	};
++};
++
++&acodec {
++	AVDD-supply = <&vddio_ao18>;
++	status = "okay";
++};
++
++&aiu {
++	status = "okay";
++	pinctrl-0 = <&spdif_out_h_pins>;
++	pinctrl-names = "default";
+ };
+ 
+ &cec_AO {
+-- 
+2.17.1
+

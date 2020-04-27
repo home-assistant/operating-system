@@ -1,0 +1,173 @@
+From 0de05051f486a48f7c1a98c9d78ef4d9e4d0fc21 Mon Sep 17 00:00:00 2001
+From: Jerome Brunet <jbrunet@baylibre.com>
+Date: Fri, 24 Jan 2020 15:40:25 +0100
+Subject: [PATCH 039/146] WIP: ASoC: meson: convert axg fifo to schema
+
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ .../bindings/sound/amlogic,axg-fifo.txt       |  34 ------
+ .../bindings/sound/amlogic,axg-fifo.yaml      | 111 ++++++++++++++++++
+ 2 files changed, 111 insertions(+), 34 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/sound/amlogic,axg-fifo.txt
+ create mode 100644 Documentation/devicetree/bindings/sound/amlogic,axg-fifo.yaml
+
+diff --git a/Documentation/devicetree/bindings/sound/amlogic,axg-fifo.txt b/Documentation/devicetree/bindings/sound/amlogic,axg-fifo.txt
+deleted file mode 100644
+index fa4545ed81ca..000000000000
+--- a/Documentation/devicetree/bindings/sound/amlogic,axg-fifo.txt
++++ /dev/null
+@@ -1,34 +0,0 @@
+-* Amlogic Audio FIFO controllers
+-
+-Required properties:
+-- compatible: 'amlogic,axg-toddr' or
+-	      'amlogic,axg-toddr' or
+-	      'amlogic,g12a-frddr' or
+-	      'amlogic,g12a-toddr' or
+-	      'amlogic,sm1-frddr' or
+-	      'amlogic,sm1-toddr'
+-- reg: physical base address of the controller and length of memory
+-       mapped region.
+-- interrupts: interrupt specifier for the fifo.
+-- clocks: phandle to the fifo peripheral clock provided by the audio
+-	  clock controller.
+-- resets: list of reset phandle, one for each entry reset-names.
+-- reset-names: should contain the following:
+-  * "arb" : memory ARB line (required)
+-  * "rst" : dedicated device reset line (optional)
+-- #sound-dai-cells: must be 0.
+-- amlogic,fifo-depth: The size of the controller's fifo in bytes. This
+-  		      is useful for determining certain configuration such
+-		      as the flush threshold of the fifo
+-
+-Example of FRDDR A on the A113 SoC:
+-
+-frddr_a: audio-controller@1c0 {
+-	compatible = "amlogic,axg-frddr";
+-	reg = <0x0 0x1c0 0x0 0x1c>;
+-	#sound-dai-cells = <0>;
+-	interrupts = <GIC_SPI 88 IRQ_TYPE_EDGE_RISING>;
+-	clocks = <&clkc_audio AUD_CLKID_FRDDR_A>;
+-	resets = <&arb AXG_ARB_FRDDR_A>;
+-	fifo-depth = <512>;
+-};
+diff --git a/Documentation/devicetree/bindings/sound/amlogic,axg-fifo.yaml b/Documentation/devicetree/bindings/sound/amlogic,axg-fifo.yaml
+new file mode 100644
+index 000000000000..d9fe4f624784
+--- /dev/null
++++ b/Documentation/devicetree/bindings/sound/amlogic,axg-fifo.yaml
+@@ -0,0 +1,111 @@
++# SPDX-License-Identifier: GPL-2.0
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/sound/amlogic,axg-fifo.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Amlogic AXG Audio FIFO controllers
++
++maintainers:
++  - Jerome Brunet <jbrunet@baylibre.com>
++
++properties:
++  $nodename:
++    pattern: "^audio-controller@.*"
++
++  "#sound-dai-cells":
++    const: 0
++
++  compatible:
++    oneOf:
++      - items:
++        - const:
++            amlogic,axg-toddr
++      - items:
++        - const:
++            amlogic,axg-frddr
++      - items:
++        - enum:
++          - amlogic,g12a-toddr
++          - amlogic,sm1-toddr
++        - const:
++            amlogic,axg-toddr
++      - items:
++        - enum:
++          - amlogic,g12a-frddr
++          - amlogic,sm1-frddr
++        - const:
++            amlogic,axg-frddr
++
++  clocks:
++    items:
++      - description: Peripheral clock
++
++  interrupts:
++    maxItems: 1
++
++  reg:
++    maxItems: 1
++
++  resets:
++    minItems: 1
++    items:
++      - description: Memory ARB line
++      - description: Dedicated device reset line
++
++  reset-names:
++    minItems: 1
++    items:
++      - const: arb
++      - const: rst
++
++  amlogic,fifo-depth:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description: Size of the controller's fifo in bytes
++
++required:
++  - "#sound-dai-cells"
++  - compatible
++  - interrupts
++  - reg
++  - clocks
++  - resets
++  - amlogic,fifo-depth
++
++if:
++  properties:
++    compatible:
++      contains:
++        enum:
++          - amlogic,g12a-toddr
++          - amlogic,sm1-toddr
++          - amlogic,g12a-frddr
++          - amlogic,sm1-frddr
++then:
++  properties:
++    resets:
++      minItems: 2
++    reset-names:
++      minItems: 2
++  required:
++    - reset-names
++
++examples:
++  - |
++    #include <dt-bindings/clock/axg-audio-clkc.h>
++    #include <dt-bindings/interrupt-controller/irq.h>
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++    #include <dt-bindings/reset/amlogic,meson-axg-audio-arb.h>
++    #include <dt-bindings/reset/amlogic,meson-g12a-audio-reset.h>
++
++    frddr_a: audio-controller@1c0 {
++        compatible = "amlogic,g12a-frddr", "amlogic,axg-frddr";
++        reg = <0x0 0x1c0 0x0 0x1c>;
++        #sound-dai-cells = <0>;
++        interrupts = <GIC_SPI 88 IRQ_TYPE_EDGE_RISING>;
++        clocks = <&clkc_audio AUD_CLKID_FRDDR_A>;
++        resets = <&arb AXG_ARB_FRDDR_A>, <&clkc_audio AUD_RESET_FRDDR_A>;
++        reset-names = "arb", "rst";
++        amlogic,fifo-depth = <512>;
++    };
++
+-- 
+2.17.1
+

@@ -1,0 +1,32 @@
+From 8c5b9df1893669b287e9203a15b6da099d59573e Mon Sep 17 00:00:00 2001
+From: Jerome Brunet <jbrunet@baylibre.com>
+Date: Mon, 17 Feb 2020 02:54:18 +0000
+Subject: [PATCH 026/146] FROMGIT: ASoC: meson: codec-glue: fix pcm format cast
+ warning
+
+Clarify the cast of snd_pcm_format_t and fix the sparse warning:
+restricted snd_pcm_format_t degrades to integer
+
+Fixes: 9c29fd9bdf92 ("ASoC: meson: g12a: extract codec-to-codec utils")
+Reported-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ sound/soc/meson/meson-codec-glue.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sound/soc/meson/meson-codec-glue.c b/sound/soc/meson/meson-codec-glue.c
+index 97bbc967e176..524a33472337 100644
+--- a/sound/soc/meson/meson-codec-glue.c
++++ b/sound/soc/meson/meson-codec-glue.c
+@@ -74,7 +74,7 @@ int meson_codec_glue_input_hw_params(struct snd_pcm_substream *substream,
+ 	data->params.rates = snd_pcm_rate_to_rate_bit(params_rate(params));
+ 	data->params.rate_min = params_rate(params);
+ 	data->params.rate_max = params_rate(params);
+-	data->params.formats = 1 << params_format(params);
++	data->params.formats = 1ULL << (__force int) params_format(params);
+ 	data->params.channels_min = params_channels(params);
+ 	data->params.channels_max = params_channels(params);
+ 	data->params.sig_bits = dai->driver->playback.sig_bits;
+-- 
+2.17.1
+

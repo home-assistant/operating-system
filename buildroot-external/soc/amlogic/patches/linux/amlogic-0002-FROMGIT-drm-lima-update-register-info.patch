@@ -1,0 +1,30 @@
+From 72475ec15080b4a976c3815261723a91bb9a755b Mon Sep 17 00:00:00 2001
+From: Qiang Yu <yuq825@gmail.com>
+Date: Thu, 16 Jan 2020 21:11:53 +0800
+Subject: [PATCH 002/146] FROMGIT: drm/lima: update register info
+
+From Mali r10p0 kernel driver source code.
+
+Reviewed-by: Vasily Khoruzhick <anarsoul@gmail.com>
+Tested-by: Andreas Baierl <ichgeh@imkreisrum.de>
+Signed-off-by: Qiang Yu <yuq825@gmail.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20200116131157.13346-2-yuq825@gmail.com
+---
+ drivers/gpu/drm/lima/lima_regs.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/gpu/drm/lima/lima_regs.h b/drivers/gpu/drm/lima/lima_regs.h
+index ace8ecefbe90..0124c90e0153 100644
+--- a/drivers/gpu/drm/lima/lima_regs.h
++++ b/drivers/gpu/drm/lima/lima_regs.h
+@@ -239,6 +239,7 @@
+ #define   LIMA_MMU_STATUS_REPLAY_BUFFER_EMPTY BIT(4)
+ #define   LIMA_MMU_STATUS_PAGE_FAULT_IS_WRITE BIT(5)
+ #define   LIMA_MMU_STATUS_BUS_ID(x)           ((x >> 6) & 0x1F)
++#define   LIMA_MMU_STATUS_STALL_NOT_ACTIVE    BIT(31)
+ #define LIMA_MMU_COMMAND                      0x0008
+ #define   LIMA_MMU_COMMAND_ENABLE_PAGING      0x00
+ #define   LIMA_MMU_COMMAND_DISABLE_PAGING     0x01
+-- 
+2.17.1
+

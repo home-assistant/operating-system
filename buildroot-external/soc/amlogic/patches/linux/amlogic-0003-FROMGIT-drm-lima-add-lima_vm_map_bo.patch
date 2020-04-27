@@ -1,0 +1,81 @@
+From afbc6ad4851f6df5e6e0befa8d3fe8d664e688e7 Mon Sep 17 00:00:00 2001
+From: Qiang Yu <yuq825@gmail.com>
+Date: Thu, 16 Jan 2020 21:11:54 +0800
+Subject: [PATCH 003/146] FROMGIT: drm/lima: add lima_vm_map_bo
+
+For dynamically mapping added backup memory of lima_bo to vm.
+This is a preparation for adding heap buffer support.
+
+Reviewed-by: Vasily Khoruzhick <anarsoul@gmail.com>
+Tested-by: Andreas Baierl <ichgeh@imkreisrum.de>
+Signed-off-by: Qiang Yu <yuq825@gmail.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20200116131157.13346-3-yuq825@gmail.com
+---
+ drivers/gpu/drm/lima/lima_vm.c | 42 ++++++++++++++++++++++++++++++++++
+ drivers/gpu/drm/lima/lima_vm.h |  1 +
+ 2 files changed, 43 insertions(+)
+
+diff --git a/drivers/gpu/drm/lima/lima_vm.c b/drivers/gpu/drm/lima/lima_vm.c
+index 840e2350d872..2e513841de6c 100644
+--- a/drivers/gpu/drm/lima/lima_vm.c
++++ b/drivers/gpu/drm/lima/lima_vm.c
+@@ -277,3 +277,45 @@ void lima_vm_print(struct lima_vm *vm)
+ 		}
+ 	}
+ }
++
++int lima_vm_map_bo(struct lima_vm *vm, struct lima_bo *bo, int pageoff)
++{
++	struct lima_bo_va *bo_va;
++	struct sg_dma_page_iter sg_iter;
++	int offset = 0, err;
++	u32 base;
++
++	mutex_lock(&bo->lock);
++
++	bo_va = lima_vm_bo_find(vm, bo);
++	if (!bo_va) {
++		err = -ENOENT;
++		goto err_out0;
++	}
++
++	mutex_lock(&vm->lock);
++
++	base = bo_va->node.start + (pageoff << PAGE_SHIFT);
++	for_each_sg_dma_page(bo->base.sgt->sgl, &sg_iter,
++			     bo->base.sgt->nents, pageoff) {
++		err = lima_vm_map_page(vm, sg_page_iter_dma_address(&sg_iter),
++				       base + offset);
++		if (err)
++			goto err_out1;
++
++		offset += PAGE_SIZE;
++	}
++
++	mutex_unlock(&vm->lock);
++
++	mutex_unlock(&bo->lock);
++	return 0;
++
++err_out1:
++	if (offset)
++		lima_vm_unmap_range(vm, base, base + offset - 1);
++	mutex_unlock(&vm->lock);
++err_out0:
++	mutex_unlock(&bo->lock);
++	return err;
++}
+diff --git a/drivers/gpu/drm/lima/lima_vm.h b/drivers/gpu/drm/lima/lima_vm.h
+index e0bdedcf14dd..22aeec77d84d 100644
+--- a/drivers/gpu/drm/lima/lima_vm.h
++++ b/drivers/gpu/drm/lima/lima_vm.h
+@@ -58,5 +58,6 @@ static inline void lima_vm_put(struct lima_vm *vm)
+ }
+ 
+ void lima_vm_print(struct lima_vm *vm);
++int lima_vm_map_bo(struct lima_vm *vm, struct lima_bo *bo, int pageoff);
+ 
+ #endif
+-- 
+2.17.1
+

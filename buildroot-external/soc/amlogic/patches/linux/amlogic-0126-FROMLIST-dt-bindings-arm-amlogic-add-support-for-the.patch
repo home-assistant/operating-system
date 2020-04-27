@@ -1,0 +1,43 @@
+From 9ec6b55b58f139de946d00bac39e0b650da1f476 Mon Sep 17 00:00:00 2001
+From: Christian Hewitt <christianshewitt@gmail.com>
+Date: Fri, 28 Feb 2020 19:10:01 +0000
+Subject: [PATCH 126/146] FROMLIST: dt-bindings: arm: amlogic: add support for
+ the Smartlabs SML-5442TW
+
+The SML-5442TW is an STB for O2 Czech IPTV/VOD and DVB-T/T2 based on the
+Amlogic P231 reference design using the S905D chipset. Specs:
+
+2GB DDR3 RAM
+8GB eMMC storage
+10/100 Base-T Ethernet
+802.11 a/b/g/n/ac + BT 4.1 HS sdio wireless module (QCA9377)
+2x single colour and 1x dual colour LEDs on the front panel
+1x reset button on the front panel
+HDMI 2.0 (4k@60p) video
+Composite video + 2-channel audio output on 3.5mm jack
+S/PDIF audio output
+Single DVB-T/T2 tuner (AVL6762/MxL608)
+2x USB 2.0 ports
+1x micro SD card slot
+UART pins (internal)
+
+Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
+---
+ Documentation/devicetree/bindings/arm/amlogic.yaml | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Documentation/devicetree/bindings/arm/amlogic.yaml b/Documentation/devicetree/bindings/arm/amlogic.yaml
+index f74aba48cec1..c0c0f6619fb3 100644
+--- a/Documentation/devicetree/bindings/arm/amlogic.yaml
++++ b/Documentation/devicetree/bindings/arm/amlogic.yaml
+@@ -107,6 +107,7 @@ properties:
+               - amlogic,p231
+               - libretech,aml-s905d-pc
+               - phicomm,n1
++              - smartlabs,sml5442tw
+           - const: amlogic,s905d
+           - const: amlogic,meson-gxl
+ 
+-- 
+2.17.1
+

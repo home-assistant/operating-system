@@ -1,0 +1,32 @@
+From a2e2208abbb5cc9b65432626c57d593e92f5ffd9 Mon Sep 17 00:00:00 2001
+From: Christian Hewitt <christianshewitt@gmail.com>
+Date: Fri, 28 Feb 2020 19:08:03 +0000
+Subject: [PATCH 125/146] FROMLIST: dt-bindings: add vendor prefix for
+ Smartlabs LLC
+
+Smartlabs LLC are a professional integrator of Interactive TV solutions
+and IPTV/VOD devices [1].
+
+[1] https://www.smartlabs.tv/en/about/
+
+Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
+---
+ Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+index 9e67944bec9c..a34ed82ecead 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
++++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+@@ -901,6 +901,8 @@ patternProperties:
+     description: Sitronix Technology Corporation
+   "^skyworks,.*":
+     description: Skyworks Solutions, Inc.
++  "^smartlabs,.*":
++    description: SmartLabs LLC
+   "^smsc,.*":
+     description: Standard Microsystems Corporation
+   "^snps,.*":
+-- 
+2.17.1
+

@@ -1,0 +1,40 @@
+From d0ecb91fbd0224d36fb4a76ba9d373bdb398e642 Mon Sep 17 00:00:00 2001
+From: Christian Hewitt <christianshewitt@gmail.com>
+Date: Tue, 7 Jan 2020 07:12:47 +0000
+Subject: [PATCH 069/146] HACK: media: cec: silence CEC timeout message
+
+If testing with an AVR that does not pass-through CEC state the system
+log fills with timeout messages. Silence this to stop the log rotation
+and ensure other issues are visible.
+
+[   42.718009] cec-meson_ao_cec: message ff 84 50 00 01 timed out
+[   45.021994] cec-meson_ao_cec: message ff 87 00 15 82 timed out
+[   47.325965] cec-meson_ao_cec: message 10 timed out
+[   49.630023] cec-meson_ao_cec: message 10 timed out
+[   51.933960] cec-meson_ao_cec: message 10 timed out
+
+Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
+---
+ drivers/media/cec/cec-adap.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/media/cec/cec-adap.c b/drivers/media/cec/cec-adap.c
+index 6c95dc471d4c..8613cc93eb93 100644
+--- a/drivers/media/cec/cec-adap.c
++++ b/drivers/media/cec/cec-adap.c
+@@ -510,9 +510,9 @@ int cec_thread_func(void *_adap)
+ 			 * unable to transmit for CEC_XFER_TIMEOUT_MS (2.1s).
+ 			 */
+ 			if (adap->transmitting) {
+-				pr_warn("cec-%s: message %*ph timed out\n", adap->name,
+-					adap->transmitting->msg.len,
+-					adap->transmitting->msg.msg);
++				//pr_warn("cec-%s: message %*ph timed out\n", adap->name,
++				//	adap->transmitting->msg.len,
++				//	adap->transmitting->msg.msg);
+ 				/* Just give up on this. */
+ 				cec_data_cancel(adap->transmitting,
+ 						CEC_TX_STATUS_TIMEOUT);
+-- 
+2.17.1
+

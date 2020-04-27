@@ -1,0 +1,45 @@
+From 2a785aa31675dbdc1039891e3b69ef3d4a680dbd Mon Sep 17 00:00:00 2001
+From: Boris Brezillon <boris.brezillon@collabora.com>
+Date: Tue, 21 Jan 2020 16:34:32 +0100
+Subject: [PATCH 080/146] FROMLIST: drm/rcar-du: Plug atomic state hooks to the
+ default implementation
+
+This is needed to pass a bridge state to all atomic hooks, if we don't
+do that, the core can't duplicate/create bridge states.
+
+v10:
+* Add changelog to the commit message
+
+v9:
+* Add Neil's R-b
+* Move earlier in the series
+
+v8:
+* No changes
+
+v7:
+* New patch
+
+Signed-off-by: Boris Brezillon <boris.brezillon@collabora.com>
+Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ drivers/gpu/drm/rcar-du/rcar_lvds.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/gpu/drm/rcar-du/rcar_lvds.c b/drivers/gpu/drm/rcar-du/rcar_lvds.c
+index 8ffa4fbbdeb3..3a254f1b29fe 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_lvds.c
++++ b/drivers/gpu/drm/rcar-du/rcar_lvds.c
+@@ -682,6 +682,9 @@ static void rcar_lvds_detach(struct drm_bridge *bridge)
+ static const struct drm_bridge_funcs rcar_lvds_bridge_ops = {
+ 	.attach = rcar_lvds_attach,
+ 	.detach = rcar_lvds_detach,
++	.atomic_duplicate_state = drm_atomic_helper_bridge_duplicate_state,
++	.atomic_destroy_state = drm_atomic_helper_bridge_destroy_state,
++	.atomic_reset = drm_atomic_helper_bridge_reset,
+ 	.atomic_enable = rcar_lvds_atomic_enable,
+ 	.atomic_disable = rcar_lvds_atomic_disable,
+ 	.mode_fixup = rcar_lvds_mode_fixup,
+-- 
+2.17.1
+

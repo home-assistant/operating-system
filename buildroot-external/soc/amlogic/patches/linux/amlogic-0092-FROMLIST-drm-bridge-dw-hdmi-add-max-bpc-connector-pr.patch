@@ -1,0 +1,32 @@
+From f3c6742cb0ac7a7b97a3b5a3896207ca8d6b5d5f Mon Sep 17 00:00:00 2001
+From: Jonas Karlman <jonas@kwiboo.se>
+Date: Sun, 15 Dec 2019 17:02:24 +0000
+Subject: [PATCH 092/146] FROMLIST: drm/bridge: dw-hdmi: add max bpc connector
+ property
+
+Add the max_bpc property to the dw-hdmi connector to prepare support
+for 10, 12 & 16bit output support.
+
+Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
+---
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+index 9e0927d22db6..051001f77dd4 100644
+--- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
++++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+@@ -2406,6 +2406,10 @@ static int dw_hdmi_bridge_attach(struct drm_bridge *bridge)
+ 				    DRM_MODE_CONNECTOR_HDMIA,
+ 				    hdmi->ddc);
+ 
++	drm_atomic_helper_connector_reset(connector);
++
++	drm_connector_attach_max_bpc_property(connector, 8, 16);
++
+ 	if (hdmi->version >= 0x200a && hdmi->plat_data->use_drm_infoframe)
+ 		drm_object_attach_property(&connector->base,
+ 			connector->dev->mode_config.hdr_output_metadata_property, 0);
+-- 
+2.17.1
+

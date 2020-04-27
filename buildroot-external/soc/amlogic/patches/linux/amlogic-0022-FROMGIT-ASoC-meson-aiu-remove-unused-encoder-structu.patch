@@ -1,0 +1,36 @@
+From 5c2913e476788639e41b07bbb8f60ee74a4a5db4 Mon Sep 17 00:00:00 2001
+From: Jerome Brunet <jbrunet@baylibre.com>
+Date: Mon, 17 Feb 2020 02:47:55 +0000
+Subject: [PATCH 022/146] FROMGIT: ASoC: meson: aiu: remove unused encoder
+ structure
+
+Remove an unused structure definition which slipped through the initial
+driver submission.
+
+Fixes: 6ae9ca9ce986 ("ASoC: meson: aiu: add i2s and spdif support")
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ sound/soc/meson/aiu-encoder-i2s.c | 7 -------
+ 1 file changed, 7 deletions(-)
+
+diff --git a/sound/soc/meson/aiu-encoder-i2s.c b/sound/soc/meson/aiu-encoder-i2s.c
+index 13bf029086a9..4900e38e7e49 100644
+--- a/sound/soc/meson/aiu-encoder-i2s.c
++++ b/sound/soc/meson/aiu-encoder-i2s.c
+@@ -28,13 +28,6 @@
+ #define AIU_CLK_CTRL_MORE_I2S_DIV	GENMASK(5, 0)
+ #define AIU_CODEC_DAC_LRCLK_CTRL_DIV	GENMASK(11, 0)
+ 
+-struct aiu_encoder_i2s {
+-	struct clk *aoclk;
+-	struct clk *mclk;
+-	struct clk *mixer;
+-	struct clk *pclk;
+-};
+-
+ static void aiu_encoder_i2s_divider_enable(struct snd_soc_component *component,
+ 					   bool enable)
+ {
+-- 
+2.17.1
+

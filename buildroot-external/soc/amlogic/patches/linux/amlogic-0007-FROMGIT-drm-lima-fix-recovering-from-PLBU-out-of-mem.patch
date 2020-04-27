@@ -1,0 +1,38 @@
+From 532b7e7f35698a33640bdf36914d0e0acd8270ef Mon Sep 17 00:00:00 2001
+From: Vasily Khoruzhick <anarsoul@gmail.com>
+Date: Tue, 18 Feb 2020 22:09:52 +0000
+Subject: [PATCH 007/146] FROMGIT: drm/lima: fix recovering from PLBU out of
+ memory
+
+It looks like on PLBU_OUT_OF_MEM interrupt we need to resume from where we
+stopped, i.e. new PLBU heap start is old end. Also update end address
+in GP frame to grow heap on 2nd and subsequent out of memory interrupts.
+
+Fixes: 2081e8dcf1ee ("drm/lima: recover task by enlarging heap buffer")
+Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
+---
+ drivers/gpu/drm/lima/lima_gp.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/lima/lima_gp.c b/drivers/gpu/drm/lima/lima_gp.c
+index 52b210f9a605..d8841c870d90 100644
+--- a/drivers/gpu/drm/lima/lima_gp.c
++++ b/drivers/gpu/drm/lima/lima_gp.c
+@@ -231,8 +231,13 @@ static int lima_gp_task_recover(struct lima_sched_pipe *pipe)
+ 	}
+ 
+ 	gp_write(LIMA_GP_INT_MASK, LIMA_GP_IRQ_MASK_USED);
++	/* Resume from where we stopped, i.e. new start is old end */
++	gp_write(LIMA_GP_PLBU_ALLOC_START_ADDR,
++		 f[LIMA_GP_PLBU_ALLOC_END_ADDR >> 2]);
++	f[LIMA_GP_PLBU_ALLOC_END_ADDR >> 2] =
++		f[LIMA_GP_PLBU_ALLOC_START_ADDR >> 2] + task->heap->heap_size;
+ 	gp_write(LIMA_GP_PLBU_ALLOC_END_ADDR,
+-		 f[LIMA_GP_PLBU_ALLOC_START_ADDR >> 2] + task->heap->heap_size);
++		 f[LIMA_GP_PLBU_ALLOC_END_ADDR >> 2]);
+ 	gp_write(LIMA_GP_CMD, LIMA_GP_CMD_UPDATE_PLBU_ALLOC);
+ 	return 0;
+ }
+-- 
+2.17.1
+

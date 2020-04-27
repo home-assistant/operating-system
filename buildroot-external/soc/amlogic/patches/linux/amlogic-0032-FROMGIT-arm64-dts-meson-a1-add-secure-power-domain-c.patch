@@ -1,0 +1,35 @@
+From 0b4093fcfeaa133997436a41542042ebdc94d31b Mon Sep 17 00:00:00 2001
+From: Jianxin Pan <jianxin.pan@amlogic.com>
+Date: Wed, 15 Jan 2020 19:30:31 +0800
+Subject: [PATCH 032/146] FROMGIT: arm64: dts: meson: a1: add secure power
+ domain controller
+
+Enable power domain controller for Meson A1 SoC.
+
+Signed-off-by: Jianxin Pan <jianxin.pan@amlogic.com>
+Link: https://lore.kernel.org/r/1579087831-94965-5-git-send-email-jianxin.pan@amlogic.com
+Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-a1.dtsi | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-a1.dtsi b/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
+index 4dec518c4dde..755b4ad15184 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
+@@ -60,6 +60,12 @@
+ 
+ 	sm: secure-monitor {
+ 		compatible = "amlogic,meson-gxbb-sm";
++
++		pwrc: power-controller {
++			compatible = "amlogic,meson-a1-pwrc";
++			#power-domain-cells = <1>;
++			status = "okay";
++		};
+ 	};
+ 
+ 	soc {
+-- 
+2.17.1
+

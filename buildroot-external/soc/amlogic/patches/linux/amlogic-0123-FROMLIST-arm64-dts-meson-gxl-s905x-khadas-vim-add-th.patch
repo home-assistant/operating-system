@@ -1,0 +1,93 @@
+From bbb089ffa58fb2ec94f9a73716c457b81e12f74e Mon Sep 17 00:00:00 2001
+From: Christian Hewitt <christianshewitt@gmail.com>
+Date: Fri, 21 Feb 2020 05:28:24 +0000
+Subject: [PATCH 123/146] FROMLIST: arm64: dts: meson: gxl-s905x-khadas-vim:
+ add thermal zones
+
+Add thermal zones to the VIM1 board so that a cooling fan can be driven
+using the i2c interface. Zone config is copied from the VIM2.
+
+Suggested-by: Nick Xie <nick@khadas.com>
+Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
+---
+ .../amlogic/meson-gxl-s905x-khadas-vim.dts    | 50 +++++++++++++++++++
+ 1 file changed, 50 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts
+index 440bc23c7342..2c198c4212b2 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts
+@@ -6,6 +6,7 @@
+ /dts-v1/;
+ 
+ #include <dt-bindings/input/input.h>
++#include <dt-bindings/thermal/thermal.h>
+ 
+ #include "meson-gxl-s905x-p212.dtsi"
+ 
+@@ -63,6 +64,39 @@
+ 			};
+ 		};
+ 	};
++
++	thermal-zones {
++		cpu-thermal {
++			polling-delay-passive = <250>; /* milliseconds */
++			polling-delay = <1000>; /* milliseconds */
++
++			thermal-sensors = <&scpi_sensors 0>;
++
++			trips {
++				cpu_alert0: cpu-alert0 {
++					temperature = <70000>; /* millicelsius */
++					hysteresis = <2000>; /* millicelsius */
++					type = "active";
++				};
++
++				cpu_alert1: cpu-alert1 {
++					temperature = <80000>; /* millicelsius */
++					hysteresis = <2000>; /* millicelsius */
++					type = "passive";
++				};
++			};
++
++			cooling-maps {
++				map0 {
++					trip = <&cpu_alert1>;
++					cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++							 <&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++							 <&cpu2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++							 <&cpu3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
++				};
++			};
++		};
++	};
+ };
+ 
+ &cec_AO {
+@@ -72,6 +106,22 @@
+ 	hdmi-phandle = <&hdmi_tx>;
+ };
+ 
++&cpu0 {
++	#cooling-cells = <2>;
++};
++
++&cpu1 {
++	#cooling-cells = <2>;
++};
++
++&cpu2 {
++	#cooling-cells = <2>;
++};
++
++&cpu3 {
++	#cooling-cells = <2>;
++};
++
+ &hdmi_tx {
+ 	status = "okay";
+ 	pinctrl-0 = <&hdmi_hpd_pins>, <&hdmi_i2c_pins>;
+-- 
+2.17.1
+

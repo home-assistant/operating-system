@@ -1,0 +1,89 @@
+From 539c1c15ac9f9fe95050ed7f8b8674a930dab927 Mon Sep 17 00:00:00 2001
+From: Christian Hewitt <christianshewitt@gmail.com>
+Date: Tue, 18 Feb 2020 12:29:53 +0000
+Subject: [PATCH 067/146] WIP: arm64: dts: meson: add audio playback to wetek
+ play2
+
+Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
+---
+ .../dts/amlogic/meson-gxbb-wetek-play2.dts    | 57 +++++++++++++++++++
+ 1 file changed, 57 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-wetek-play2.dts b/arch/arm64/boot/dts/amlogic/meson-gxbb-wetek-play2.dts
+index 1d32d1f6d032..6c3925e66a56 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxbb-wetek-play2.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-wetek-play2.dts
+@@ -8,6 +8,7 @@
+ 
+ #include "meson-gxbb-wetek.dtsi"
+ #include <dt-bindings/input/input.h>
++#include <dt-bindings/sound/meson-aiu.h>
+ 
+ / {
+ 	compatible = "wetek,play2", "amlogic,meson-gxbb";
+@@ -39,6 +40,62 @@
+ 			gpios = <&gpio_ao GPIOAO_3 GPIO_ACTIVE_LOW>;
+ 		};
+ 	};
++
++	spdif_dit: audio-codec-0 {
++		#sound-dai-cells = <0>;
++		compatible = "linux,spdif-dit";
++		status = "okay";
++		sound-name-prefix = "DIT";
++	};
++
++	sound {
++		compatible = "amlogic,gx-sound-card";
++		model = "GXBB-WETEK-PLAY2";
++		assigned-clocks = <&clkc CLKID_MPLL2>,
++				  <&clkc CLKID_MPLL0>,
++				  <&clkc CLKID_MPLL1>;
++		assigned-clock-parents = <0>, <0>, <0>;
++		assigned-clock-rates = <294912000>,
++				       <270950400>,
++				       <393216000>;
++		status = "okay";
++
++		dai-link-0 {
++			sound-dai = <&aiu AIU_CPU CPU_I2S_FIFO>;
++		};
++
++		dai-link-1 {
++			sound-dai = <&aiu AIU_CPU CPU_I2S_ENCODER>;
++			dai-format = "i2s";
++			mclk-fs = <512>;
++
++			codec-0 {
++				sound-dai = <&aiu AIU_HDMI CTRL_I2S>;
++			};
++		};
++
++		dai-link-2 {
++			sound-dai = <&aiu AIU_CPU CPU_SPDIF_ENCODER>;
++
++			codec-0 {
++				sound-dai = <&spdif_dit>;
++			};
++		};
++
++		dai-link-3 {
++			sound-dai = <&aiu AIU_HDMI CTRL_OUT>;
++
++			codec-0 {
++				sound-dai = <&hdmi_tx>;
++			};
++		};
++	};
++};
++
++&aiu {
++	status = "okay";
++	pinctrl-0 = <&spdif_out_y_pins>;
++	pinctrl-names = "default";
+ };
+ 
+ &i2c_A {
+-- 
+2.17.1
+

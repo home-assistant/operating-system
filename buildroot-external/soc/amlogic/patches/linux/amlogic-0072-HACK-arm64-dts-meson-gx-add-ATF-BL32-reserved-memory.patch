@@ -1,0 +1,37 @@
+From 6cd56ed16246f8022a963438975c669dd9540206 Mon Sep 17 00:00:00 2001
+From: kszaq <kszaquitto@gmail.com>
+Date: Sat, 6 Jul 2019 07:54:44 +0000
+Subject: [PATCH 072/146] HACK: arm64: dts: meson-gx: add ATF BL32 reserved
+ memory region
+
+Vendor firmware/uboot has an additional reserved region for BL32 trusted
+firmware. If a board uses BL32 firmware, booting kernel without knowledge
+of this region would cause an immediate kernel panic on SError Interrupt.
+
+TODO: This should be enabled only for boards actually requiring it.
+
+Signed-off-by: kszaq <kszaquitto@gmail.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-gx.dtsi | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gx.dtsi b/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
+index 962a56e0e8b4..3f55ef2ae021 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
+@@ -41,6 +41,12 @@
+ 			no-map;
+ 		};
+ 
++		/* 32 MiB reserved for ARM Trusted Firmware (BL32) */
++		secmon_reserved_bl32: secmon@5300000 {
++			reg = <0x0 0x05300000 0x0 0x2000000>;
++			no-map;
++		};
++
+ 		linux,cma {
+ 			compatible = "shared-dma-pool";
+ 			reusable;
+-- 
+2.17.1
+

@@ -1,0 +1,36 @@
+From 3816853f9ea2c93c27f462a030f5446b5f7613a5 Mon Sep 17 00:00:00 2001
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+Date: Sun, 1 Mar 2020 16:46:34 +0000
+Subject: [PATCH 103/146] FROMLIST: drm/bridge: dw-hdmi: Fix color space
+ conversion detection
+
+Currently, is_color_space_conversion() compares not only color spaces
+but also formats. For example, function would return true if YCbCr 4:4:4
+and YCbCr 4:2:2 would be set. Obviously in that case color spaces are
+the same.
+
+Fix that by comparing if both values represent RGB color space.
+
+Fixes: b21f4b658df8 ("drm: imx: imx-hdmi: move imx-hdmi to bridge/dw_hdmi")
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+---
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+index 2115b13676cb..97e5eb0e81cd 100644
+--- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
++++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+@@ -956,7 +956,8 @@ static void hdmi_video_sample(struct dw_hdmi *hdmi)
+ 
+ static int is_color_space_conversion(struct dw_hdmi *hdmi)
+ {
+-	return hdmi->hdmi_data.enc_in_bus_format != hdmi->hdmi_data.enc_out_bus_format;
++	return hdmi_bus_fmt_is_rgb(hdmi->hdmi_data.enc_in_bus_format) !=
++		hdmi_bus_fmt_is_rgb(hdmi->hdmi_data.enc_out_bus_format);
+ }
+ 
+ static int is_color_space_decimation(struct dw_hdmi *hdmi)
+-- 
+2.17.1
+

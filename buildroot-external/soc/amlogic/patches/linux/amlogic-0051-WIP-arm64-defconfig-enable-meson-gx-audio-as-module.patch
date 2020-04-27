@@ -1,0 +1,26 @@
+From 8f207ceb43f354e6da4074b38e7e37c7ea496bea Mon Sep 17 00:00:00 2001
+From: Jerome Brunet <jbrunet@baylibre.com>
+Date: Wed, 4 Dec 2019 17:09:06 +0100
+Subject: [PATCH 051/146] WIP: arm64: defconfig: enable meson gx audio as
+ module
+
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ arch/arm64/configs/defconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 905109f6814f..ccc7f6313ef8 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -581,6 +581,7 @@ CONFIG_SND_HDA_CODEC_HDMI=m
+ CONFIG_SND_SOC=y
+ CONFIG_SND_BCM2835_SOC_I2S=m
+ CONFIG_SND_MESON_AXG_SOUND_CARD=m
++CONFIG_SND_MESON_GX_SOUND_CARD=m
+ CONFIG_SND_SOC_ROCKCHIP=m
+ CONFIG_SND_SOC_ROCKCHIP_SPDIF=m
+ CONFIG_SND_SOC_ROCKCHIP_RT5645=m
+-- 
+2.17.1
+

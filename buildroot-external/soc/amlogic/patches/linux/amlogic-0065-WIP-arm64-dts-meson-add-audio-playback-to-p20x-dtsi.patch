@@ -1,0 +1,90 @@
+From d532a10ddc137630f270abc54a49432eb1dcf05c Mon Sep 17 00:00:00 2001
+From: Christian Hewitt <christianshewitt@gmail.com>
+Date: Wed, 19 Feb 2020 11:12:18 +0000
+Subject: [PATCH 065/146] WIP: arm64: dts: meson: add audio playback to p20x
+ dtsi
+
+Signed-off-by: chewitt <christianshewitt@gmail.com>
+---
+ .../boot/dts/amlogic/meson-gxbb-p20x.dtsi     | 58 +++++++++++++++++++
+ 1 file changed, 58 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-p20x.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxbb-p20x.dtsi
+index e803a466fe4e..1c428f9d6039 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxbb-p20x.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-p20x.dtsi
+@@ -6,6 +6,7 @@
+  */
+ 
+ #include "meson-gxbb.dtsi"
++#include <dt-bindings/sound/meson-aiu.h>
+ 
+ / {
+ 	aliases {
+@@ -113,6 +114,63 @@
+ 			};
+ 		};
+ 	};
++
++
++	spdif_dit: audio-codec-0 {
++		#sound-dai-cells = <0>;
++		compatible = "linux,spdif-dit";
++		status = "okay";
++		sound-name-prefix = "DIT";
++	};
++
++	sound {
++		compatible = "amlogic,gx-sound-card";
++		model = "GXBB-P20X";
++		assigned-clocks = <&clkc CLKID_MPLL2>,
++				  <&clkc CLKID_MPLL0>,
++				  <&clkc CLKID_MPLL1>;
++		assigned-clock-parents = <0>, <0>, <0>;
++		assigned-clock-rates = <294912000>,
++				       <270950400>,
++				       <393216000>;
++		status = "okay";
++
++		dai-link-0 {
++			sound-dai = <&aiu AIU_CPU CPU_I2S_FIFO>;
++		};
++
++		dai-link-1 {
++			sound-dai = <&aiu AIU_CPU CPU_I2S_ENCODER>;
++			dai-format = "i2s";
++			mclk-fs = <512>;
++
++			codec-0 {
++				sound-dai = <&aiu AIU_HDMI CTRL_I2S>;
++			};
++		};
++
++		dai-link-2 {
++			sound-dai = <&aiu AIU_CPU CPU_SPDIF_ENCODER>;
++
++			codec-0 {
++				sound-dai = <&spdif_dit>;
++			};
++		};
++
++		dai-link-3 {
++			sound-dai = <&aiu AIU_HDMI CTRL_OUT>;
++
++			codec-0 {
++				sound-dai = <&hdmi_tx>;
++			};
++		};
++	};
++};
++
++&aiu {
++	status = "okay";
++	pinctrl-0 = <&spdif_out_y_pins>;
++	pinctrl-names = "default";
+ };
+ 
+ &cec_AO {
+-- 
+2.17.1
+

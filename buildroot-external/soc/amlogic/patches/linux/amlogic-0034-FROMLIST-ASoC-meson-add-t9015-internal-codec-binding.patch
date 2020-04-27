@@ -1,0 +1,79 @@
+From db99ae06c558d1e9b1ab00c078294ee5448e61af Mon Sep 17 00:00:00 2001
+From: Jerome Brunet <jbrunet@baylibre.com>
+Date: Tue, 28 Jan 2020 13:38:38 +0100
+Subject: [PATCH 034/146] FROMLIST: ASoC: meson: add t9015 internal codec
+ binding documentation
+
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ .../bindings/sound/amlogic,t9015.yaml         | 58 +++++++++++++++++++
+ 1 file changed, 58 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/sound/amlogic,t9015.yaml
+
+diff --git a/Documentation/devicetree/bindings/sound/amlogic,t9015.yaml b/Documentation/devicetree/bindings/sound/amlogic,t9015.yaml
+new file mode 100644
+index 000000000000..b7c38c2b5b54
+--- /dev/null
++++ b/Documentation/devicetree/bindings/sound/amlogic,t9015.yaml
+@@ -0,0 +1,58 @@
++# SPDX-License-Identifier: GPL-2.0
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/sound/amlogic,t9015.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Amlogic T9015 Internal Audio DAC
++
++maintainers:
++  - Jerome Brunet <jbrunet@baylibre.com>
++
++properties:
++  $nodename:
++    pattern: "^audio-controller@.*"
++
++  "#sound-dai-cells":
++    const: 0
++
++  compatible:
++    items:
++      - const: amlogic,t9015
++
++  clocks:
++    items:
++      - description: Peripheral clock
++
++  clock-names:
++    items:
++      - const: pclk
++
++  reg:
++    maxItems: 1
++
++  resets:
++    maxItems: 1
++
++required:
++  - "#sound-dai-cells"
++  - compatible
++  - reg
++  - clocks
++  - clock-names
++  - resets
++
++examples:
++  - |
++    #include <dt-bindings/clock/g12a-clkc.h>
++    #include <dt-bindings/reset/amlogic,meson-g12a-reset.h>
++
++    acodec: audio-controller@32000 {
++        compatible = "amlogic,t9015";
++        reg = <0x0 0x32000 0x0 0x14>;
++        #sound-dai-cells = <0>;
++        clocks = <&clkc CLKID_AUDIO_CODEC>;
++        clock-names = "pclk";
++        resets = <&reset RESET_AUDIO_CODEC>;
++    };
++
+-- 
+2.17.1
+

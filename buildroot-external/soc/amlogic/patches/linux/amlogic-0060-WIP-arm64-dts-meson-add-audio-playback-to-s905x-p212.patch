@@ -1,0 +1,109 @@
+From 17a05478590bd50ba98fbecccdeac66b9c100972 Mon Sep 17 00:00:00 2001
+From: Christian Hewitt <christianshewitt@gmail.com>
+Date: Tue, 18 Feb 2020 03:54:58 +0000
+Subject: [PATCH 060/146] WIP: arm64: dts: meson: add audio playback to
+ s905x-p212 dtsi
+
+Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
+---
+ .../dts/amlogic/meson-gxl-s905x-p212.dtsi     | 70 +++++++++++++++++++
+ 1 file changed, 70 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dtsi
+index 43eb7d149e36..ba74f54c5b3f 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dtsi
+@@ -11,6 +11,7 @@
+ /* Common DTSI for devices which are based on the P212 reference board. */
+ 
+ #include "meson-gxl-s905x.dtsi"
++#include <dt-bindings/sound/meson-aiu.h>
+ 
+ / {
+ 	aliases {
+@@ -23,6 +24,13 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
++	dio2133: analog-amplifier {
++		compatible = "simple-audio-amplifier";
++		sound-name-prefix = "AU2";
++		VCC-supply = <&hdmi_5v>;
++		enable-gpios = <&gpio GPIOH_5 GPIO_ACTIVE_HIGH>;
++	};
++
+ 	memory@0 {
+ 		device_type = "memory";
+ 		reg = <0x0 0x0 0x0 0x80000000>;
+@@ -86,6 +94,68 @@
+ 		clocks = <&wifi32k>;
+ 		clock-names = "ext_clock";
+ 	};
++
++	sound {
++		compatible = "amlogic,gx-sound-card";
++		model = "GXL-S905X-P212";
++		audio-aux-devs = <&dio2133>;
++		audio-widgets = "Line", "Lineout";
++		audio-routing = "AU2 INL", "ACODEC LOLN",
++				"AU2 INR", "ACODEC LORN",
++				"Lineout", "AU2 OUTL",
++				"Lineout", "AU2 OUTR";
++		assigned-clocks = <&clkc CLKID_MPLL2>,
++				  <&clkc CLKID_MPLL0>,
++				  <&clkc CLKID_MPLL1>;
++		assigned-clock-parents = <0>, <0>, <0>;
++		assigned-clock-rates = <294912000>,
++				       <270950400>,
++				       <393216000>;
++		status = "okay";
++
++		dai-link-0 {
++			sound-dai = <&aiu AIU_CPU CPU_I2S_FIFO>;
++		};
++
++		dai-link-1 {
++			sound-dai = <&aiu AIU_CPU CPU_I2S_ENCODER>;
++			dai-format = "i2s";
++			mclk-fs = <512>;
++
++			codec-0 {
++				sound-dai = <&aiu AIU_HDMI CTRL_I2S>;
++			};
++
++			codec-1 {
++				sound-dai = <&aiu AIU_ACODEC CTRL_I2S>;
++			};
++		};
++
++		dai-link-2 {
++			sound-dai = <&aiu AIU_HDMI CTRL_OUT>;
++
++			codec-0 {
++				sound-dai = <&hdmi_tx>;
++			};
++		};
++
++		dai-link-3 {
++			sound-dai = <&aiu AIU_ACODEC CTRL_OUT>;
++
++			codec-0 {
++				sound-dai = <&acodec>;
++			};
++		};
++	};
++};
++
++&acodec {
++	AVDD-supply = <&vddio_ao18>;
++	status = "okay";
++};
++
++&aiu {
++	status = "okay";
+ };
+ 
+ &ethmac {
+-- 
+2.17.1
+

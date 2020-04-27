@@ -1,0 +1,45 @@
+From 4f00623fdae001bad03250a7156983ea874dff97 Mon Sep 17 00:00:00 2001
+From: Christian Hewitt <christianshewitt@gmail.com>
+Date: Fri, 21 Feb 2020 03:40:31 +0000
+Subject: [PATCH 143/146] WIP: arm64: dts: meson: khadas-vim3: change LED
+ behaviours on VIM3/3L
+
+VIM3/3L have two LEDs (red/white) located 1mm apart on the board. In the
+current configuration both are powered on creating a pink visual status
+indication. The boards are also marketed as HTPC devices where heartbeat
+pulses are distracting and undesirable.
+
+This change removes the heartbeat and sets the default state so that only
+the white LED is on while the board is powered.
+
+Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-khadas-vim3.dtsi | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-khadas-vim3.dtsi b/arch/arm64/boot/dts/amlogic/meson-khadas-vim3.dtsi
+index 6022805d2032..6d0163f56b0d 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-khadas-vim3.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-khadas-vim3.dtsi
+@@ -40,14 +40,14 @@
+ 		compatible = "gpio-leds";
+ 
+ 		white {
+-			label = "vim3:white:sys";
+-			gpios = <&gpio_ao GPIOAO_4 GPIO_ACTIVE_LOW>;
+-			linux,default-trigger = "heartbeat";
++			label = "vim3:white:power";
++			gpios = <&gpio_ao GPIOAO_4 GPIO_ACTIVE_HIGH>;
++			linux,default-trigger = "default-on";
+ 		};
+ 
+ 		red {
+ 			label = "vim3:red";
+-			gpios = <&gpio_expander 5 GPIO_ACTIVE_LOW>;
++			gpios = <&gpio_expander 5 GPIO_ACTIVE_HIGH>;
+ 		};
+ 	};
+ 
+-- 
+2.17.1
+

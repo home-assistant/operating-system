@@ -1,0 +1,54 @@
+From 5ecf7dd693dff8c8d05b449313c71529f9690a15 Mon Sep 17 00:00:00 2001
+From: chewitt <github@chrishewitt.net>
+Date: Sun, 11 Aug 2019 10:01:25 +0000
+Subject: [PATCH 134/146] WIP: arm64: dts: meson-g12b-khadas-vim3: add the
+ Ethernet PHY interrupt line
+
+apply the same change as [0] to VIM3.
+
+[0] https://github.com/torvalds/linux/commit/98ba71c94eaff1c3af6170bce9fe63c93dd32f2f
+
+Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
+---
+ .../dts/amlogic/meson-g12b-khadas-vim3.dtsi   | 25 +++++++++++++++++++
+ 1 file changed, 25 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-g12b-khadas-vim3.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12b-khadas-vim3.dtsi
+index c33e85fbdaba..8158a97a92cb 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-g12b-khadas-vim3.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-g12b-khadas-vim3.dtsi
+@@ -154,6 +154,31 @@
+ 	clock-latency = <50000>;
+ };
+ 
++&ext_mdio {
++	external_phy: ethernet-phy@0 {
++		/* Realtek RTL8211F (0x001cc916) */
++		reg = <0>;
++		max-speed = <1000>;
++
++		interrupt-parent = <&gpio_intc>;
++		/* MAC_INTR on GPIOZ_14 */
++		interrupts = <26 IRQ_TYPE_LEVEL_LOW>;
++	};
++};
++
++&ethmac {
++        pinctrl-0 = <&eth_pins>, <&eth_rgmii_pins>;
++        pinctrl-names = "default";
++        status = "okay";
++        phy-mode = "rgmii";
++        phy-handle = <&external_phy>;
++        amlogic,tx-delay-ns = <2>;
++};
++
++&frddr_a {
++	status = "okay";
++};
++
+ &frddr_b {
+ 	status = "okay";
+ };
+-- 
+2.17.1
+

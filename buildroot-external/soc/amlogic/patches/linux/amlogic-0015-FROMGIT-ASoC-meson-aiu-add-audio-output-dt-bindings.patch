@@ -1,0 +1,163 @@
+From 659dbb6904d527ac9a6eebddb849e40f5753edc7 Mon Sep 17 00:00:00 2001
+From: Jerome Brunet <jbrunet@baylibre.com>
+Date: Thu, 13 Feb 2020 16:51:53 +0100
+Subject: [PATCH 015/146] FROMGIT: ASoC: meson: aiu: add audio output
+ dt-bindings
+
+Add the dt-bindings and documentation of the AIU audio controller.
+This component provides most of the audio outputs found on the Amlogic
+Gx SoC family.
+
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ .../bindings/sound/amlogic,aiu.yaml           | 111 ++++++++++++++++++
+ include/dt-bindings/sound/meson-aiu.h         |  18 +++
+ 2 files changed, 129 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/sound/amlogic,aiu.yaml
+ create mode 100644 include/dt-bindings/sound/meson-aiu.h
+
+diff --git a/Documentation/devicetree/bindings/sound/amlogic,aiu.yaml b/Documentation/devicetree/bindings/sound/amlogic,aiu.yaml
+new file mode 100644
+index 000000000000..3ef7632dcb59
+--- /dev/null
++++ b/Documentation/devicetree/bindings/sound/amlogic,aiu.yaml
+@@ -0,0 +1,111 @@
++# SPDX-License-Identifier: GPL-2.0
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/sound/amlogic,aiu.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Amlogic AIU audio output controller
++
++maintainers:
++  - Jerome Brunet <jbrunet@baylibre.com>
++
++properties:
++  $nodename:
++    pattern: "^audio-controller@.*"
++
++  "#sound-dai-cells":
++    const: 2
++
++  compatible:
++    items:
++      - enum:
++        - amlogic,aiu-gxbb
++        - amlogic,aiu-gxl
++      - const:
++          amlogic,aiu
++
++  clocks:
++    items:
++      - description: AIU peripheral clock
++      - description: I2S peripheral clock
++      - description: I2S output clock
++      - description: I2S master clock
++      - description: I2S mixer clock
++      - description: SPDIF peripheral clock
++      - description: SPDIF output clock
++      - description: SPDIF master clock
++      - description: SPDIF master clock multiplexer
++
++  clock-names:
++    items:
++      - const: pclk
++      - const: i2s_pclk
++      - const: i2s_aoclk
++      - const: i2s_mclk
++      - const: i2s_mixer
++      - const: spdif_pclk
++      - const: spdif_aoclk
++      - const: spdif_mclk
++      - const: spdif_mclk_sel
++
++  interrupts:
++    items:
++      - description: I2S interrupt line
++      - description: SPDIF interrupt line
++
++  interrupt-names:
++    items:
++      - const: i2s
++      - const: spdif
++
++  reg:
++    maxItems: 1
++
++  resets:
++    maxItems: 1
++
++required:
++  - "#sound-dai-cells"
++  - compatible
++  - clocks
++  - clock-names
++  - interrupts
++  - interrupt-names
++  - reg
++  - resets
++
++examples:
++  - |
++    #include <dt-bindings/clock/gxbb-clkc.h>
++    #include <dt-bindings/interrupt-controller/irq.h>
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++    #include <dt-bindings/reset/amlogic,meson-gxbb-reset.h>
++
++    aiu: audio-controller@5400 {
++        compatible = "amlogic,aiu-gxl", "amlogic,aiu";
++        #sound-dai-cells = <2>;
++        reg = <0x0 0x5400 0x0 0x2ac>;
++        interrupts = <GIC_SPI 48 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 50 IRQ_TYPE_EDGE_RISING>;
++        interrupt-names = "i2s", "spdif";
++        clocks = <&clkc CLKID_AIU_GLUE>,
++                 <&clkc CLKID_I2S_OUT>,
++                 <&clkc CLKID_AOCLK_GATE>,
++                 <&clkc CLKID_CTS_AMCLK>,
++                 <&clkc CLKID_MIXER_IFACE>,
++                 <&clkc CLKID_IEC958>,
++                 <&clkc CLKID_IEC958_GATE>,
++                 <&clkc CLKID_CTS_MCLK_I958>,
++                 <&clkc CLKID_CTS_I958>;
++        clock-names = "pclk",
++                      "i2s_pclk",
++                      "i2s_aoclk",
++                      "i2s_mclk",
++                      "i2s_mixer",
++                      "spdif_pclk",
++                      "spdif_aoclk",
++                      "spdif_mclk",
++                      "spdif_mclk_sel";
++        resets = <&reset RESET_AIU>;
++    };
++
+diff --git a/include/dt-bindings/sound/meson-aiu.h b/include/dt-bindings/sound/meson-aiu.h
+new file mode 100644
+index 000000000000..1051b8af298b
+--- /dev/null
++++ b/include/dt-bindings/sound/meson-aiu.h
+@@ -0,0 +1,18 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef __DT_MESON_AIU_H
++#define __DT_MESON_AIU_H
++
++#define AIU_CPU			0
++#define AIU_HDMI		1
++#define AIU_ACODEC		2
++
++#define CPU_I2S_FIFO		0
++#define CPU_SPDIF_FIFO		1
++#define CPU_I2S_ENCODER		2
++#define CPU_SPDIF_ENCODER	3
++
++#define CTRL_I2S		0
++#define CTRL_PCM		1
++#define CTRL_OUT		2
++
++#endif /* __DT_MESON_AIU_H */
+-- 
+2.17.1
+

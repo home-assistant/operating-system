@@ -1,0 +1,48 @@
+From 8a53a0031c3cc251bd9f2ef59497b7838b8f0f3b Mon Sep 17 00:00:00 2001
+From: Jonas Karlman <jonas@kwiboo.se>
+Date: Sun, 15 Dec 2019 17:02:24 +0000
+Subject: [PATCH 091/146] FROMLIST: drm/bridge: dw-hdmi: set mtmdsclock for
+ deep color
+
+Configure the correct mtmdsclock for deep colors to prepare support
+for 10, 12 & 16bit output.
+
+Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
+---
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
+
+diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+index 67fca439bbfb..9e0927d22db6 100644
+--- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
++++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+@@ -1818,9 +1818,26 @@ static void hdmi_av_composer(struct dw_hdmi *hdmi,
+ 
+ 	dev_dbg(hdmi->dev, "final pixclk = %d\n", vmode->mpixelclock);
+ 
++	if (!hdmi_bus_fmt_is_yuv422(hdmi->hdmi_data.enc_out_bus_format)) {
++		switch (hdmi_bus_fmt_color_depth(
++				hdmi->hdmi_data.enc_out_bus_format)) {
++		case 16:
++			vmode->mtmdsclock = (u64)vmode->mpixelclock * 2;
++			break;
++		case 12:
++			vmode->mtmdsclock = (u64)vmode->mpixelclock * 3 / 2;
++			break;
++		case 10:
++			vmode->mtmdsclock = (u64)vmode->mpixelclock * 5 / 4;
++			break;
++		}
++	}
++
+ 	if (hdmi_bus_fmt_is_yuv420(hdmi->hdmi_data.enc_out_bus_format))
+ 		vmode->mtmdsclock /= 2;
+ 
++	dev_dbg(hdmi->dev, "final tmdsclk = %d\n", vmode->mtmdsclock);
++
+ 	/* Set up HDMI_FC_INVIDCONF */
+ 	inv_val = (hdmi->hdmi_data.hdcp_enable ||
+ 		   (dw_hdmi_support_scdc(hdmi) &&
+-- 
+2.17.1
+
