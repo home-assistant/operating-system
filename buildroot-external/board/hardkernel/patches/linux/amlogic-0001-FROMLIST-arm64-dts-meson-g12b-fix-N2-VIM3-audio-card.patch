@@ -1,0 +1,43 @@
+From ff56cf9e659e16cfabeb3a678aded0753c6c5807 Mon Sep 17 00:00:00 2001
+From: Christian Hewitt <christianshewitt@gmail.com>
+Date: Mon, 2 Mar 2020 03:10:38 +0000
+Subject: [PATCH 132/146] FROMLIST: arm64: dts: meson-g12b: fix N2/VIM3 audio
+ card model names
+
+Odroid N2 and Khadas VIM3 are G12B devices, so correct the card model.
+
+Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-g12b-khadas-vim3.dtsi | 2 +-
+ arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts    | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-g12b-khadas-vim3.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12b-khadas-vim3.dtsi
+index 2b2d72c7746b..c33e85fbdaba 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-g12b-khadas-vim3.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-g12b-khadas-vim3.dtsi
+@@ -50,7 +50,7 @@
+ 
+ 	sound {
+ 		compatible = "amlogic,axg-sound-card";
+-		model = "G12A-KHADAS-VIM3";
++		model = "G12B-KHADAS-VIM3";
+ 		audio-aux-devs = <&tdmout_b>;
+ 		audio-routing = "TDMOUT_B IN 0", "FRDDR_A OUT 1",
+ 				"TDMOUT_B IN 1", "FRDDR_B OUT 1",
+diff --git a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts
+index 0e54c1dc2842..8830d3844885 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts
+@@ -208,7 +208,7 @@
+ 
+ 	sound {
+ 		compatible = "amlogic,axg-sound-card";
+-		model = "G12A-ODROIDN2";
++		model = "G12B-ODROID-N2";
+ 		audio-aux-devs = <&tdmout_b>;
+ 		audio-routing = "TDMOUT_B IN 0", "FRDDR_A OUT 1",
+ 				"TDMOUT_B IN 1", "FRDDR_B OUT 1",
+-- 
+2.17.1
+
