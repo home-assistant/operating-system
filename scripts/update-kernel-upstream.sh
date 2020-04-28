@@ -1,0 +1,16 @@
+#!/bin/bash
+set -e
+
+if [ -z "$1" ]; then
+    echo "Need a commit ID!"
+    exit 1
+fi
+
+if [ -z "$2" ]; then
+    echo "Need a kernel version!"
+    exit 1
+fi
+
+sed -i "s/BR2_LINUX_KERNEL_CUSTOM_VERSION_VALUE=\".*\"/BR2_LINUX_KERNEL_CUSTOM_VERSION_VALUE=\"$1\"/g" buildroot-external/configs/*
+sed -i "s/| \(Open Virtual Applicance\|Intel NUC\|Tinker Board\) | .* |/| \1 | $2 |/g" Documentation/kernel.md
+git commit -m "Linux: Update kernel $1" buildroot-external/configs/* Documentation/kernel.md
