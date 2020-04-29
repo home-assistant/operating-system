@@ -19,14 +19,15 @@ QEMU_GUEST_AGENT_DEPENDENCIES = host-pkgconf libglib2 zlib
 # not automatically pulled. :-(
 QEMU_GUEST_AGENT_LIBS = -lrt -lm
 
-QEMU_GUEST_AGENT_VARS = LIBTOOL=$(HOST_DIR)/bin/libtool
+QEMU_GUEST_AGENT_OPTS = -lrt -lm
 
-QEMU_GUEST_AGENT_OPTS = --enable-guest-agent
+QEMU_GUEST_AGENT_VARS = LIBTOOL=$(HOST_DIR)/bin/libtool
 
 # Override CPP, as it expects to be able to call it like it'd
 # call the compiler.
 define QEMU_GUEST_AGENT_CONFIGURE_CMDS
-	( cd $(@D); \
+	unset TARGET_DIR; \
+	cd $(@D); \
 		LIBS='$(QEMU_GUEST_AGENT_LIBS)' \
 		$(TARGET_CONFIGURE_OPTS) \
 		$(TARGET_CONFIGURE_ARGS) \
@@ -52,7 +53,6 @@ define QEMU_GUEST_AGENT_CONFIGURE_CMDS
 			--disable-sdl \
 			--disable-system \
 			--disable-user \
-			--disable-guest-agent \
 			--disable-nettle \
 			--disable-gcrypt \
 			--disable-curses \
@@ -86,17 +86,18 @@ define QEMU_GUEST_AGENT_CONFIGURE_CMDS
 			--disable-blobs \
 			--disable-capstone \
 			--disable-tools \
+			--disable-slirp \
 			--disable-tcg-interpreter \
-			$(QEMU_GUEST_AGENT_OPTS) \
-	)
+			--enable-guest-agent
 endef
 
 define QEMU_GUEST_AGENT_BUILD_CMDS
-	$(TARGET_MAKE_ENV) $(MAKE) -C $(@D)
+	unset TARGET_DIR; \
+	$(TARGET_MAKE_ENV) $(MAKE) -C $(@D) qemu-ga
 endef
 
 define QEMU_GUEST_AGENT_INSTALL_TARGET_CMDS
-	$(TARGET_MAKE_ENV) $(MAKE) -C $(@D) $(QEMU_GUEST_AGENT_MAKE_ENV) DESTDIR=$(TARGET_DIR) install
+	$(INSTALL) -m 755 $(@D)/qemu-ga $(TARGET_DIR)/usr/libexec/
 endef
 
 define QEMU_GUEST_AGENT_INSTALL_INIT_SYSTEMD
