@@ -10,6 +10,7 @@ function create_ota_update() {
     local spl="${BINARIES_DIR}/spl.img"
     local key="/build/key.pem"
     local cert="/build/cert.pem"
+    local keyring="${TARGET_DIR}/etc/rauc/keyring.pem"
 
     # Skip if no dev key is arround
     if [ ! -f "${key}" ]; then
@@ -51,5 +52,5 @@ function create_ota_update() {
         ) >> "${rauc_folder}/manifest.raucm"
     fi
 
-    rauc bundle -d --cert="${cert}" --key="${key}" "${rauc_folder}" "${ota_file}"
+    rauc bundle -d --cert="${cert}" --key="${key}" --keyring="${keyring}" "${rauc_folder}" "${ota_file}"
 }
