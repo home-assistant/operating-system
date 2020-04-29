@@ -9,9 +9,9 @@ index 2ff73d7..836d10b 100644
 --- a/drivers/regulator/act8865-regulator.c
 +++ b/drivers/regulator/act8865-regulator.c
 @@ -27,6 +27,7 @@
- #include <linux/of_device.h>
  #include <linux/regulator/of_regulator.h>
  #include <linux/regmap.h>
+ #include <dt-bindings/regulator/active-semi,8865-regulator.h>
 +#include <linux/reboot.h>
  
  /*

@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-BUSYBOX_VERSION = 1.29.3
+BUSYBOX_VERSION = 1.31.1
 BUSYBOX_SITE = http://www.busybox.net/downloads
 BUSYBOX_SOURCE = busybox-$(BUSYBOX_VERSION).tar.bz2
 BUSYBOX_LICENSE = GPL-2.0
@@ -218,8 +218,12 @@ define BUSYBOX_SET_GETTY
 	$(SED) '/# GENERIC_SERIAL$$/s~^.*#~$(SYSTEM_GETTY_PORT)::respawn:/sbin/getty -L $(SYSTEM_GETTY_OPTIONS) $(SYSTEM_GETTY_PORT) $(SYSTEM_GETTY_BAUDRATE) $(SYSTEM_GETTY_TERM) #~' \
 		$(TARGET_DIR)/etc/inittab
 endef
-BUSYBOX_TARGET_FINALIZE_HOOKS += BUSYBOX_SET_GETTY
+else
+define BUSYBOX_SET_GETTY
+	$(SED) '/# GENERIC_SERIAL$$/s~^.*#~#ttyS0::respawn:/sbin/getty -L ttyS0 115200 vt100 #~' $(TARGET_DIR)/etc/inittab
+endef
 endif # BR2_TARGET_GENERIC_GETTY
+BUSYBOX_TARGET_FINALIZE_HOOKS += BUSYBOX_SET_GETTY
 
 BUSYBOX_TARGET_FINALIZE_HOOKS += SYSTEM_REMOUNT_ROOT_INITTAB
 
@@ -256,6 +260,17 @@ define BUSYBOX_INSTALL_LOGGING_SCRIPT
 	then \
 		$(INSTALL) -m 0755 -D package/busybox/S02klogd \
 			$(TARGET_DIR)/etc/init.d/S02klogd; \
+	fi
+endef
+endif
+
+# Only install our sysctl scripts if no other package does it.
+ifeq ($(BR2_PACKAGE_PROCPS_NG),)
+define BUSYBOX_INSTALL_SYSCTL_SCRIPT
+	if grep -q CONFIG_BB_SYSCTL=y $(@D)/.config; \
+	then \
+		$(INSTALL) -m 0755 -D package/busybox/S02sysctl \
+			$(TARGET_DIR)/etc/init.d/S02sysctl ; \
 	fi
 endef
 endif
@@ -303,11 +318,11 @@ endef
 # Add /bin/{a,hu}sh to /etc/shells otherwise some login tools like dropbear
 # can reject the user connection. See man shells.
 define BUSYBOX_INSTALL_ADD_TO_SHELLS
-	if grep -q CONFIG_ASH=y $(@D)/.config; then \
+	if grep -q CONFIG_ASH=y $(BUSYBOX_DIR)/.config; then \
 		grep -qsE '^/bin/ash$$' $(TARGET_DIR)/etc/shells \
 		|| echo "/bin/ash" >> $(TARGET_DIR)/etc/shells; \
 	fi
-	if grep -q CONFIG_HUSH=y $(@D)/.config; then \
+	if grep -q CONFIG_HUSH=y $(BUSYBOX_DIR)/.config; then \
 		grep -qsE '^/bin/hush$$' $(TARGET_DIR)/etc/shells \
 		|| echo "/bin/hush" >> $(TARGET_DIR)/etc/shells; \
 	fi
@@ -334,6 +349,7 @@ define BUSYBOX_INSTALL_TARGET_CMDS
 	# Use the 'noclobber' install rule, to prevent BusyBox from overwriting
 	# any full-blown versions of apps installed by other packages.
 	$(BUSYBOX_MAKE_ENV) $(MAKE) $(BUSYBOX_MAKE_OPTS) -C $(@D) install-noclobber
+	$(BUSYBOX_INSTALL_INDIVIDUAL_BINARIES)
 	$(BUSYBOX_INSTALL_INITTAB)
 	$(BUSYBOX_INSTALL_UDHCPC_SCRIPT)
 	$(BUSYBOX_INSTALL_MDEV_CONF)
@@ -343,8 +359,8 @@ define BUSYBOX_INSTALL_INIT_SYSV
 	$(BUSYBOX_INSTALL_MDEV_SCRIPT)
 	$(BUSYBOX_INSTALL_LOGGING_SCRIPT)
 	$(BUSYBOX_INSTALL_WATCHDOG_SCRIPT)
+	$(BUSYBOX_INSTALL_SYSCTL_SCRIPT)
 	$(BUSYBOX_INSTALL_TELNET_SCRIPT)
-	$(BUSYBOX_INSTALL_INDIVIDUAL_BINARIES)
 endef
 
 # Checks to give errors that the user can understand

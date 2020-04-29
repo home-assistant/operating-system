@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-GERBERA_VERSION = v1.3.0
-GERBERA_SITE = $(call github,gerbera,gerbera,$(GERBERA_VERSION))
+GERBERA_VERSION = 1.3.4
+GERBERA_SITE = $(call github,gerbera,gerbera,v$(GERBERA_VERSION))
 GERBERA_LICENSE = GPL-2.0
 GERBERA_LICENSE_FILES = LICENSE.md
 GERBERA_DEPENDENCIES = \
@@ -102,13 +102,6 @@ endef
 define GERBERA_INSTALL_INIT_SYSV
 	$(INSTALL) -D -m 0755 package/gerbera/S99gerbera \
 		$(TARGET_DIR)/etc/init.d/S99gerbera
-endef
-
-# gerbera.service is installed by cmake in $(TARGET_DIR)/usr/lib/systemd/system
-define GERBERA_INSTALL_INIT_SYSTEMD
-	mkdir -p $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants
-	ln -sf ../../../../usr/lib/systemd/system/gerbera.service \
-		$(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/gerbera.service
 endef
 
 $(eval $(cmake-package))

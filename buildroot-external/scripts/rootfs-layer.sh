@@ -30,9 +30,14 @@ function fix_rootfs() {
 function install_hassos_cli() {
 
     # shellcheck disable=SC1117
-    sed -i "s|\(root.*\)/bin/sh|\1/usr/sbin/hassos-cli|" "${TARGET_DIR}/etc/passwd"
+    sed -i "s|\(root:.*\)/bin/sh|\1/usr/sbin/hassos-cli|" "${TARGET_DIR}/etc/passwd"
     
     if ! grep "hassos-cli" "${TARGET_DIR}/etc/shells"; then
         echo "/usr/sbin/hassos-cli" >> "${TARGET_DIR}/etc/shells"
     fi
+}
+
+
+function install_tini_docker() {
+    ln -fs /usr/bin/tini "${TARGET_DIR}/usr/bin/docker-init"
 }

@@ -42,8 +42,9 @@ II. User guide
         8.8. Graphing the dependencies between packages
         8.9. Graphing the build duration
         8.10. Graphing the filesystem size contribution of packages
-        8.11. Integration with Eclipse
-        8.12. Advanced usage
+        8.11. Top-level parallel build
+        8.12. Integration with Eclipse
+        8.13. Advanced usage
 
     9. Project-specific customization
 
@@ -139,6 +140,7 @@ III. Developer guide
         21.4. Work on items from the TODO list
         21.5. Submitting patches
         21.6. Reporting issues/bugs or getting help
+        21.7. Using the run-tests framework
 
     22. DEVELOPERS file and get-developers
 
@@ -161,16 +163,16 @@ List of Examples
 
 ---------------------------------------------------------------------
 
-Buildroot 2019.02.9 manual generated on 2020-01-12 15:28:51 UTC from
-git revision 24f25c8d23
+Buildroot 2020.02.1 manual generated on 2020-04-10 20:45:00 UTC from
+git revision 80e565bbeb
 
 The Buildroot manual is written by the Buildroot developers. It is
 licensed under the GNU General Public License, version 2. Refer to
 the COPYING [http://git.buildroot.org/buildroot/tree/COPYING?id=
-24f25c8d23bd85d57b6e9c776f2c7716f2ddd4af] file in the Buildroot
+80e565bbebc61bf113bcd3b3475fa27a5127f466] file in the Buildroot
 sources for the full text of this license.
 
-Copyright © 2004-2019 The Buildroot developers
+Copyright © 2004-2020 The Buildroot developers
 
 Part I. Getting started
 
@@ -235,8 +237,8 @@ vary between distributions).
       + make (version 3.81 or any later)
       + binutils
       + build-essential (only for Debian based systems)
-      + gcc (version 4.4 or any later)
-      + g++ (version 4.4 or any later)
+      + gcc (version 4.8 or any later)
+      + g++ (version 4.8 or any later)
       + bash
       + patch
       + gzip
@@ -244,7 +246,6 @@ vary between distributions).
       + perl (version 5.8.7 or any later)
       + tar
       + cpio
-      + python (version 2.7 or any later)
       + unzip
       + rsync
       + file (must be in /usr/bin/file)
@@ -255,6 +256,14 @@ vary between distributions).
 
 2.2. Optional packages
 
+  * Recommended dependencies:
+
+    Some features or utilities in Buildroot, like the legal-info, or
+    the graph generation tools, have additional dependencies.
+    Although they are not mandatory for a simple build, they are
+    still highly recommended:
+
+      + python (version 2.7 or any later)
   * Configuration interface dependencies:
 
     For these libraries, you need to install both runtime and
@@ -263,7 +272,7 @@ vary between distributions).
     -devel suffix.
 
       + ncurses5 to use the menuconfig interface
-      + qt4 to use the xconfig interface
+      + qt5 to use the xconfig interface
       + glib2, gtk2 and glade2 to use the gconfig interface
   * Source fetching tools:
 
@@ -378,10 +387,10 @@ To start the build process, simply run:
 
  $ make
 
-You should never use make -jN with Buildroot: top-level parallel make
-is currently not supported. Instead, use the BR2_JLEVEL option to
-tell Buildroot to run the compilation of each individual package with
-make -jN.
+By default, Buildroot does not support top-level parallel build, so
+running make -jN is not necessary. There is however experimental
+support for top-level parallel build, see Section 8.11, “Top-level
+parallel build”.
 
 The make command will generally perform the following steps:
 
@@ -534,8 +543,9 @@ Table of Contents
     8.8. Graphing the dependencies between packages
     8.9. Graphing the build duration
     8.10. Graphing the filesystem size contribution of packages
-    8.11. Integration with Eclipse
-    8.12. Advanced usage
+    8.11. Top-level parallel build
+    8.12. Integration with Eclipse
+    8.13. Advanced usage
 
 9. Project-specific customization
 
@@ -1092,19 +1102,20 @@ well as the configuration:
 
 Notes. If ccache is enabled, running make clean or distclean does not
 empty the compiler cache used by Buildroot. To delete it, refer to
-Section 8.12.3, “Using ccache in Buildroot”.
+Section 8.13.3, “Using ccache in Buildroot”.
 
-Dumping the internal make variables: One can dump all the variables
-known to make, along with their values:
+Dumping the internal make variables: One can dump the variables known
+to make, along with their values:
 
- $ make -s printvars
- VARIABLE=value_of_variable
- ...
+ $ make -s printvars VARS='VARIABLE1 VARIABLE2'
+ VARIABLE1=value_of_variable
+ VARIABLE2=value_of_variable
 
 It is possible to tweak the output using some variables:
 
   * VARS will limit the listing to variables which names match the
-    specified make-pattern
+    specified make-patterns - this must be set else nothing is
+    printed
   * QUOTED_VARS, if set to YES, will single-quote the value
   * RAW_VARS, if set to YES, will print the unexpanded value
 
@@ -1264,7 +1275,7 @@ above simply manipulate these stamp files to force Buildroot to
 restart a specific set of steps of a package build process.
 
 Further details about package special make targets are explained in
-Section 8.12.5, “Package-specific make targets”.
+Section 8.13.5, “Package-specific make targets”.
 
 8.4. Offline builds
 
@@ -1332,9 +1343,9 @@ passed to make or set in the environment:
   * BR2_CCACHE_DIR to override the directory where Buildroot stores
     the cached files when using ccache.
   * BR2_DL_DIR to override the directory in which Buildroot stores/
-    retrieves downloaded files Note that the Buildroot download
+    retrieves downloaded files. Note that the Buildroot download
     directory can also be set from the configuration interface, so
-    through the Buildroot .config file. See Section 8.12.4, “Location
+    through the Buildroot .config file. See Section 8.13.4, “Location
     of downloaded packages” for more details on how you can set the
     download directory.
   * BR2_GRAPH_ALT, if set and non-empty, to use an alternate
@@ -1346,6 +1357,9 @@ passed to make or set in the environment:
     packages” for the accepted options
   * BR2_GRAPH_DOT_OPTS is passed verbatim as options to the dot
     utility to draw the dependency graph.
+  * BR2_GRAPH_SIZE_OPTS to pass extra options to the size graph; see
+    Section 8.10, “Graphing the filesystem size contribution of
+    packages” for the acepted options
 
 An example that uses config files located in the toplevel directory
 and in your $HOME:
@@ -1527,6 +1541,20 @@ variable is supported to adjust the output file format. See
 Section 8.8, “Graphing the dependencies between packages” for details
 about this environment variable.
 
+Additionally, one may set the environment variable
+BR2_GRAPH_SIZE_OPTS to further control the generated graph. Accepted
+options are:
+
+  * --size-limit X, -l X, will group all packages which individual
+    contribution is below X percent, to a single entry labelled 
+    Others in the graph. By default, X=0.01, which means packages
+    each contributing less than 1% are grouped under Others. Accepted
+    values are in the range [0.0..1.0].
+  * --iec, --binary, --si, --decimal, to use IEC (binary, powers of
+    1024) or SI (decimal, powers of 1000; the default) prefixes.
+  * --biggest-first, to sort packages in decreasing size order,
+    rather than in increasing size order.
+
 Note. The collected filesystem size data is only meaningful after a
 complete clean rebuild. Be sure to run make clean all before using
 make graph-size.
@@ -1540,7 +1568,52 @@ details:
 
 utils/size-stats-compare -h
 
-8.11. Integration with Eclipse
+8.11. Top-level parallel build
+
+Note. This section deals with a very experimental feature, which is
+known to break even in some non-unusual situations. Use at your own
+risk.
+
+Buildroot has always been capable of using parallel build on a per
+package basis: each package is built by Buildroot using make -jN (or
+the equivalent invocation for non-make-based build systems). The
+level of parallelism is by default number of CPUs + 1, but it can be
+adjusted using the BR2_JLEVEL configuration option.
+
+Until 2020.02, Buildroot was however building packages in a serial
+fashion: each package was built one after the other, without
+parallelization of the build between packages. As of 2020.02,
+Buildroot has experimental support for top-level parallel build,
+which allows some signicant build time savings by building packages
+that have no dependency relationship in parallel. This feature is
+however marked as experimental and is known not to work in some
+cases.
+
+In order to use top-level parallel build, one must:
+
+ 1. Enable the option BR2_PER_PACKAGE_DIRECTORIES in the Buildroot
+    configuration
+ 2. Use make -jN when starting the Buildroot build
+
+Internally, the BR2_PER_PACKAGE_DIRECTORIES will enable a mechanism
+called per-package directories, which will have the following
+effects:
+
+  * Instead of a global target directory and a global host directory
+    common to all packages, per-package target and host directories
+    will be used, in $(O)/per-package/<pkg>/target/ and $(O)/
+    per-package/<pkg>/host/ respectively. Those folders will be
+    populated from the corresponding folders of the package
+    dependencies at the beginning of <pkg> build. The compiler and
+    all other tools will therefore only be able to see and access
+    files installed by dependencies explicitly listed by <pkg>.
+  * At the end of the build, the global target and host directories
+    will be populated, located in $(O)/target and $(O)/host
+    respectively. This means that during the build, those folders
+    will be empty and it’s only at the very end of the build that
+    they will be populated.
+
+8.12. Integration with Eclipse
 
 While a part of the embedded Linux developers like classical text
 editors like Vim or Emacs, and command-line based interfaces, a
@@ -1568,9 +1641,9 @@ The Buildroot Eclipse integration installation process and usage is
 described in detail at https://github.com/mbats/
 eclipse-buildroot-bundle/wiki.
 
-8.12. Advanced usage
+8.13. Advanced usage
 
-8.12.1. Using the generated toolchain outside Buildroot
+8.13.1. Using the generated toolchain outside Buildroot
 
 You may want to compile, for your target, your own programs or other
 software that are not packaged in Buildroot. In order to do this you
@@ -1602,7 +1675,7 @@ or will be generating the tarball on your own), Buildroot also allows
 you to just prepare the SDK with make prepare-sdk without actually
 generating a tarball.
 
-8.12.2. Using gdb in Buildroot
+8.13.2. Using gdb in Buildroot
 
 Buildroot allows to do cross-debugging, where the debugger runs on
 the build machine and communicates with gdbserver on the target to
@@ -1647,7 +1720,7 @@ Finally, to connect to the target from the cross gdb:
 
 (gdb) target remote <target ip address>:2345
 
-8.12.3. Using ccache in Buildroot
+8.13.3. Using ccache in Buildroot
 
 ccache [http://ccache.samba.org] is a compiler cache. It stores the
 object files resulting from each compilation process, and is able to
@@ -1698,7 +1771,7 @@ directories" [https://ccache.samba.org/manual.html#
 _compiling_in_different_directories] for more details about this
 rewriting of absolute paths.
 
-8.12.4. Location of downloaded packages
+8.13.4. Location of downloaded packages
 
 The various tarballs that are downloaded by Buildroot are all stored
 in BR2_DL_DIR, which by default is the dl directory. If you want to
@@ -1719,7 +1792,7 @@ The download location can also be set in the .config file, with the
 BR2_DL_DIR option. Unlike most options in the .config file, this
 value is overridden by the BR2_DL_DIR environment variable.
 
-8.12.5. Package-specific make targets
+8.13.5. Package-specific make targets
 
 Running make <package> builds and installs that particular package
 and its dependencies.
@@ -1817,7 +1890,7 @@ Additionally, there are some other useful make targets:
 |                       |the build directory                 |
 +------------------------------------------------------------+
 
-8.12.6. Using Buildroot during development
+8.13.6. Using Buildroot during development
 
 The normal operation of Buildroot is to download a tarball, extract
 it, configure, compile and install the software component found
@@ -2087,7 +2160,7 @@ locations:
 One can tell Buildroot to use one or more br2-external trees by
 setting the BR2_EXTERNAL make variable set to the path(s) of the
 br2-external tree(s) to use. It can be passed to any Buildroot make
-invocation. It is automatically saved in the hidden .br-external.mk
+invocation. It is automatically saved in the hidden .br2-external.mk
 file in the output directory. Thanks to this, there is no need to
 pass BR2_EXTERNAL at every make invocation. It can however be changed
 at any time by passing a new value, and can be removed by passing an
@@ -2136,8 +2209,8 @@ described in the following chapters:
 
 Apart from those mandatory files, there may be additional and
 optional content that may be present in a br2-external tree, like the
-configs/ directory. They are described in the following chapters as
-well.
+configs/ or provides/ directories. They are described in the
+following chapters as well.
 
 A complete example br2-external tree layout is also described later.
 
@@ -2241,7 +2314,24 @@ tree, then the one from the last br2-external tree is used. It is
 thus possible to override a defconfig bundled in Buildroot or another
 br2-external tree.
 
-9.2.1.4. Free-form content
+9.2.1.4. The provides/ directory
+
+For some packages, Buildroot provides a choice between two (or more)
+implementations of API-compatible such packages. For example, there
+is a choice to choose either libjpeg ot jpeg-turbo, and another
+choice between openssl or libressl. Finally, there is a choice to
+select one of the known, pre-configured toolchains.
+
+It is possible for a br2-external to extend those choices, by
+providing a set of files that define those alternatives:
+
+  * provides/toolchains.in defines the pre-configured toolchains,
+    which will then be listed in the toolchain selection;
+  * provides/jpeg.in defines the alternative libjpeg implementations;
+  * provides/openssl.in defines the alternative openssl
+    implementations.
+
+9.2.1.5. Free-form content
 
 One can store all the board-specific configuration files there, such
 as the kernel configuration, the root filesystem overlay, or any
@@ -2255,7 +2345,13 @@ BR2_GLOBAL_PATCH_DIR=$(BR2_EXTERNAL_BAR_42_PATH)/patches/
 BR2_ROOTFS_OVERLAY=$(BR2_EXTERNAL_BAR_42_PATH)/board/<boardname>/overlay/
 BR2_LINUX_KERNEL_CUSTOM_CONFIG_FILE=$(BR2_EXTERNAL_BAR_42_PATH)/board/<boardname>/kernel.config
 
-9.2.1.5. Example layout
+9.2.1.6. Additional Linux kernel extensions
+
+Additional Linux kernel extensions (see Section 17.20.2,
+“linux-kernel-extensions”) can be added by storing them in the linux/
+directory at the root of a br2-external tree.
+
+9.2.1.7. Example layout
 
 Here is an example layout using all features of br2-external (the
 sample content is shown for the file above it, when it is relevant to
@@ -2269,8 +2365,10 @@ the sake of illustration, of course):
   |     `----
   |
   |- Config.in
+  |     |source "$BR2_EXTERNAL_BAR_42_PATH/toolchain/toolchain-external-mine/Config.in.options"
   |     |source "$BR2_EXTERNAL_BAR_42_PATH/package/pkg-1/Config.in"
   |     |source "$BR2_EXTERNAL_BAR_42_PATH/package/pkg-2/Config.in"
+  |     |source "$BR2_EXTERNAL_BAR_42_PATH/package/my-jpeg/Config.in"
   |     |
   |     |config BAR_42_FLASH_ADDR
   |     |    hex "my-board flash address"
@@ -2279,6 +2377,7 @@ the sake of illustration, of course):
   |
   |- external.mk
   |     |include $(sort $(wildcard $(BR2_EXTERNAL_BAR_42_PATH)/package/*/*.mk))
+  |     |include $(sort $(wildcard $(BR2_EXTERNAL_BAR_42_PATH)/toolchain/*/*.mk))
   |     |
   |     |flash-my-board:
   |     |    $(BR2_EXTERNAL_BAR_42_PATH)/board/my-board/flash-image \
@@ -2310,6 +2409,50 @@ the sake of illustration, of course):
   |- package/pkg-2/Config.in
   |- package/pkg-2/pkg-2.hash
   |- package/pkg-2/pkg-2.mk
+  |
+  |- provides/jpeg.in
+  |     |config BR2_PACKAGE_MY_JPEG
+  |     |    bool "my-jpeg"
+  |     `----
+  |- package/my-jpeg/Config.in
+  |     |config BR2_PACKAGE_PROVIDES_JPEG
+  |     |    default "my-jpeg" if BR2_PACKAGE_MY_JPEG
+  |     `----
+  |- package/my-jpeg/my-jpeg.mk
+  |     |# This is a normal package .mk file
+  |     |MY_JPEG_VERSION = 1.2.3
+  |     |MY_JPEG_SITE = https://example.net/some/place
+  |     |MY_JPEG_PROVIDES = jpeg
+  |     |$(eval $(autotools-package))
+  |     `----
+  |
+  |- provides/toolchains.in
+  |     |config BR2_TOOLCHAIN_EXTERNAL_MINE
+  |     |    bool "my custom toolchain"
+  |     |    depends on BR2_some_arch
+  |     |    select BR2_INSTALL_LIBSTDCPP
+  |     `----
+  |- toolchain/toolchain-external-mine/Config.in.options
+  |     |if BR2_TOOLCHAIN_EXTERNAL_MINE
+  |     |config BR2_TOOLCHAIN_EXTERNAL_PREFIX
+  |     |    default "arch-mine-linux-gnu"
+  |     |config BR2_PACKAGE_PROVIDES_TOOLCHAIN_EXTERNAL
+  |     |    default "toolchain-external-mine"
+  |     |endif
+  |     `----
+  |- toolchain/toolchain-external-mine/toolchain-external-mine.mk
+  |     |TOOLCHAIN_EXTERNAL_MINE_SITE = https://example.net/some/place
+  |     |TOOLCHAIN_EXTERNAL_MINE_SOURCE = my-toolchain.tar.gz
+  |     |$(eval $(toolchain-external-package))
+  |     `----
+  |
+  |- linux/Config.ext.in
+  |     |config BR2_LINUX_KERNEL_EXT_EXAMPLE_DRIVER
+  |     |    bool "example-external-driver"
+  |     |    help
+  |     |      Example external driver
+  |     |---
+  |- linux/linux-ext-example-driver.mk
   |
   |- configs/my-board_defconfig
   |     |BR2_GLOBAL_PATCH_DIR="$(BR2_EXTERNAL_BAR_42_PATH)/patches/"
@@ -2358,6 +2501,33 @@ External options  --->
         *** FOO_27 (in /path/to/another-br2-ext)
         [ ] foo
         [ ] bar
+
+Additionally, the jpeg provider will be visible in the jpeg choice:
+
+Target packages  --->
+    Libraries  --->
+        Graphics  --->
+            [*] jpeg support
+                jpeg variant ()  --->
+                    ( ) jpeg
+                    ( ) jpeg-turbo
+                        *** jpeg from: Example br2-external tree ***
+                    (X) my-jpeg
+                        *** jpeg from: FOO_27 ***
+                    ( ) another-jpeg
+
+And similarly for the toolchains:
+
+Toolchain  --->
+    Toolchain ()  --->
+        ( ) Custom toolchain
+            *** Toolchains from: Example br2-external tree ***
+        (X) my custom toolchain
+
+Note. The toolchain options in toolchain/toolchain-external-mine/
+Config.in.options will not appear in the Toolchain menu. They must be
+explicitly included from within the br2-external’s top-level
+Config.in and will thus appear in the External options menu.
 
 9.3. Storing the Buildroot configuration
 
@@ -2574,7 +2744,7 @@ Post-fakeroot scripts (BR2_ROOTFS_POST_FAKEROOT_SCRIPT)
     fakeroot scripts, is that post-build scripts are not called in
     the fakeroot context.
 
-    Note;. Using fakeroot is not an absolute substitute for actually
+    Note: Using fakeroot is not an absolute substitute for actually
     being root. fakeroot only ever fakes the file access rights and
     types (regular, block-or-char device…) and uid/gid; these are
     emulated in-memory.
@@ -2706,8 +2876,8 @@ directory.
 The exception to BR2_GLOBAL_PATCH_DIR being the preferred method for
 specifying custom patches is BR2_LINUX_KERNEL_PATCH.
 BR2_LINUX_KERNEL_PATCH should be used to specify kernel patches that
-are available at an URL. Note: BR2_LINUX_KERNEL_PATCH specifies
-kernel patches that are applied after patches available in
+are available at a URL. Note: BR2_LINUX_KERNEL_PATCH specifies kernel
+patches that are applied after patches available in
 BR2_GLOBAL_PATCH_DIR, as it is done from a post-patch hook of the
 Linux package.
 
@@ -3037,7 +3207,7 @@ help reduce the build time:
     not prevent you to switch back to an internal toolchain (that may
     provide a higher level of customization) once the rest of your
     system is working;
-  * Use the ccache compiler cache (see: Section 8.12.3, “Using ccache
+  * Use the ccache compiler cache (see: Section 8.13.3, “Using ccache
     in Buildroot”);
   * Learn about rebuilding only the few packages you actually care
     about (see Section 8.3, “Understanding how to rebuild packages”),
@@ -3053,6 +3223,8 @@ help reduce the build time:
     a bit.
   * Buy new hardware. SSDs and lots of RAM are key to speeding up the
     builds.
+  * Experiment with top-level parallel build, see Section 8.11,
+    “Top-level parallel build”.
 
 Chapter 11. Known issues
 
@@ -3129,10 +3301,10 @@ to redistribute in source form.
 
 Moreover, due to technical limitations, Buildroot does not produce
 some material that you will or may need, such as the toolchain source
-code and the Buildroot source code itself (including patches to
-packages for which source distribution is required). When you run
-make legal-info, Buildroot produces warnings in the README file to
-inform you of relevant material that could not be saved.
+code for some of the external toolchains and the Buildroot source
+code itself. When you run make legal-info, Buildroot produces
+warnings in the README file to inform you of relevant material that
+could not be saved.
 
 Finally, keep in mind that the output of make legal-info is based on
 declarative statements in each of the packages recipes. The Buildroot
@@ -3295,6 +3467,7 @@ Table of Contents
     21.4. Work on items from the TODO list
     21.5. Submitting patches
     21.6. Reporting issues/bugs or getting help
+    21.7. Using the run-tests framework
 
 22. DEVELOPERS file and get-developers
 
@@ -3472,9 +3645,8 @@ kbuild/kconfig-language.txt.
 The documentation uses the asciidoc [http://www.methods.co.nz/
 asciidoc/] format.
 
-For further details about the asciidoc [http://www.methods.co.nz/
-asciidoc/] syntax, refer to http://www.methods.co.nz/asciidoc/
-userguide.html.
+For further details about the asciidoc syntax, refer to http://
+www.methods.co.nz/asciidoc/userguide.html.
 
 15.4. Support scripts
 
@@ -3828,6 +4000,10 @@ the text to use in the comment.
 
       + Dependency symbol: BR2_INSTALL_LIBSTDCPP
       + Comment string: C++
+  * D support
+
+      + Dependency symbol: BR2_TOOLCHAIN_HAS_DLANG
+      + Comment string: Dlang
   * Fortran support
 
       + Dependency symbol: BR2_TOOLCHAIN_HAS_FORTRAN
@@ -3946,7 +4122,8 @@ The hashes stored in that file are used to validate the integrity of
 the downloaded files and of the license files.
 
 The format of this file is one line for each file for which to check
-the hash, each line being space-separated, with these three fields:
+the hash, each line with the following three fields separated by two
+spaces:
 
   * the type of hash, one of:
 
@@ -3990,9 +4167,6 @@ versions (like Qt5), create the hash file in a subdirectory
 <packageversion> of that package (see also Section 18.2, “How patches
 are applied”).
 
-Note. The number of spaces does not matter, so one can use spaces (or
-tabs) to properly align the different fields.
-
 The none hash type is reserved to those archives downloaded from a
 repository, like a git clone, a subversion checkout…
 
@@ -4002,22 +4176,22 @@ locally-computed sha256 hashes for a binary blob, a sha256 for a
 downloaded patch, and an archive with no hash:
 
 # Hashes from: http://www.foosoftware.org/download/libfoo-1.2.3.tar.bz2.{sha1,sha256}:
-sha1   486fb55c3efa71148fe07895fd713ea3a5ae343a                         libfoo-1.2.3.tar.bz2
-sha256 efc8103cc3bcb06bda6a781532d12701eb081ad83e8f90004b39ab81b65d4369 libfoo-1.2.3.tar.bz2
+sha1  486fb55c3efa71148fe07895fd713ea3a5ae343a  libfoo-1.2.3.tar.bz2
+sha256  efc8103cc3bcb06bda6a781532d12701eb081ad83e8f90004b39ab81b65d4369  libfoo-1.2.3.tar.bz2
 
 # md5 from: http://www.foosoftware.org/download/libfoo-1.2.3.tar.bz2.md5, sha256 locally computed:
-md5    2d608f3c318c6b7557d551a5a09314f03452f1a1                         libfoo-data.bin
-sha256 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b libfoo-data.bin
+md5  2d608f3c318c6b7557d551a5a09314f03452f1a1  libfoo-data.bin
+sha256  01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b  libfoo-data.bin
 
 # Locally computed:
-sha256 ff52101fb90bbfc3fe9475e425688c660f46216d7e751c4bbdb1dc85cdccacb9 libfoo-fix-blabla.patch
+sha256  ff52101fb90bbfc3fe9475e425688c660f46216d7e751c4bbdb1dc85cdccacb9  libfoo-fix-blabla.patch
 
 # No hash for 1234:
-none   xxx                                                              libfoo-1234.tar.gz
+none  xxx  libfoo-1234.tar.gz
 
 # Hash for license files:
-sha256 a45a845012742796534f7e91fe623262ccfb99460a2bd04015bd28d66fba95b8  COPYING
-sha256 01b1f9f2c8ee648a7a596a1abe8aa4ed7899b1c9e5551bda06da6e422b04aa55  doc/COPYING.LGPL
+sha256  a45a845012742796534f7e91fe623262ccfb99460a2bd04015bd28d66fba95b8  COPYING
+sha256  01b1f9f2c8ee648a7a596a1abe8aa4ed7899b1c9e5551bda06da6e422b04aa55  doc/COPYING.LGPL
 
 If the .hash file is present, and it contains one or more hashes for
 a downloaded file, the hash(es) computed by Buildroot (after
@@ -4177,7 +4351,7 @@ install the package in the target space.
 All these steps rely on the $(@D) variable, which contains the
 directory where the source code of the package has been extracted.
 
-On lines 31..43, we define a user that is used by this package (e.g.
+On lines 31..33, we define a user that is used by this package (e.g.
 to run a daemon as non-root) (LIBFOO_USERS).
 
 On line 35..37, we define a device-node file used by this package
@@ -4392,10 +4566,11 @@ information is (assuming the package name is libfoo) :
   * LIBFOO_PATCH_DEPENDENCIES lists the dependencies (in terms of
     package name) that are required for the current package to be
     patched. These dependencies are guaranteed to be extracted and
-    patched before the current package is patched. In a similar way,
-    HOST_LIBFOO_PATCH_DEPENDENCIES lists the dependencies for the
-    current host package. This is seldom used; usually,
-    LIBFOO_DEPENDENCIES is what you really want to use.
+    patched (but not necessarily built) before the current package is
+    patched. In a similar way, HOST_LIBFOO_PATCH_DEPENDENCIES lists
+    the dependencies for the current host package. This is seldom
+    used; usually, LIBFOO_DEPENDENCIES is what you really want to
+    use.
   * LIBFOO_PROVIDES lists all the virtual packages libfoo is an
     implementation of. See Section 17.11, “Infrastructure for virtual
     packages”.
@@ -4451,6 +4626,10 @@ information is (assuming the package name is libfoo) :
         license, then annotate the license with that component,
         between parenthesis (e.g. LIBFOO_LICENSE = GPL-2.0+
         (programs), LGPL-2.1+ (libraries)).
+      + If some licenses are conditioned on a sub-option being
+        enabled, append the conditional licenses with a comma (e.g.:
+        FOO_LICENSE += , GPL-2.0+ (programs)); the infrastructure
+        will internally remove the space before the comma.
       + If the package is dual licensed, then separate licenses with
         the or keyword (e.g. LIBFOO_LICENSE = AFL-2.1 or GPL-2.0+).
   * LIBFOO_LICENSE_FILES is a space-separated list of files in the
@@ -4496,6 +4675,17 @@ information is (assuming the package name is libfoo) :
     binary blobs outside the default locations, /lib/firmware, /usr/
     lib/firmware, /lib/modules, /usr/lib/modules, and /usr/share,
     which are automatically excluded.
+  * LIBFOO_IGNORE_CVES is a space-separated list of CVEs that tells
+    Buildroot CVE tracking tools which CVEs should be ignored for
+    this package. This is typically used when the CVE is fixed by a
+    patch in the package, or when the CVE for some reason does not
+    affect the Buildroot package. A Makefile comment must always
+    precede the addition of a CVE to this variable. Example:
+
+# 0001-fix-cve-2020-12345.patch
+LIBFOO_IGNORE_CVES += CVE-2020-12345
+# only when built with libbaz, which Buildroot doesn't support
+LIBFOO_IGNORE_CVES += CVE-2020-54321
 
 The recommended way to define these variables is to use the following
 syntax:
@@ -4543,12 +4733,21 @@ different steps of the build process.
     example, a package should utilize this step if it has binaries
     which would be similar to the kernel image, bootloader or root
     filesystem images.
-  * LIBFOO_INSTALL_INIT_SYSV and LIBFOO_INSTALL_INIT_SYSTEMD list the
-    actions to install init scripts either for the systemV-like init
-    systems (busybox, sysvinit, etc.) or for the systemd units. These
-    commands will be run only when the relevant init system is
-    installed (i.e. if systemd is selected as the init system in the
-    configuration, only LIBFOO_INSTALL_INIT_SYSTEMD will be run).
+  * LIBFOO_INSTALL_INIT_SYSV, LIBFOO_INSTALL_INIT_OPENRC and
+    LIBFOO_INSTALL_INIT_SYSTEMD list the actions to install init
+    scripts either for the systemV-like init systems (busybox,
+    sysvinit, etc.), openrc or for the systemd units. These commands
+    will be run only when the relevant init system is installed (i.e.
+    if systemd is selected as the init system in the configuration,
+    only LIBFOO_INSTALL_INIT_SYSTEMD will be run). The only exception
+    is when openrc is chosen as init system and
+    LIBFOO_INSTALL_INIT_OPENRC has not been set, in such situation
+    LIBFOO_INSTALL_INIT_SYSV will be called, since openrc supports
+    sysv init scripts. When systemd is used as the init system,
+    buildroot will automatically enable all services using the
+    systemctl preset-all command in the final phase of image
+    building. You can add preset files to prevent a particular unit
+    from being automatically enabled by buildroot.
   * LIBFOO_HELP_CMDS lists the actions to print the package help,
     which is included to the main make help output. These commands
     can print anything in any format. This is seldom used, as
@@ -4577,7 +4776,14 @@ In the action definitions, you can use the following variables:
     cross-compilation utilities
   * $(TARGET_CROSS) to get the cross-compilation toolchain prefix
   * Of course the $(HOST_DIR), $(STAGING_DIR) and $(TARGET_DIR)
-    variables to install the packages properly.
+    variables to install the packages properly. Those variables point
+    to the global host, staging and target directories, unless 
+    per-package directory support is used, in which case they point
+    to the current package host, staging and target directories. In
+    both cases, it doesn’t make any difference from the package point
+    of view: it should simply use HOST_DIR, STAGING_DIR and
+    TARGET_DIR. See Section 8.11, “Top-level parallel build” for more
+    details about per-package directory support.
 
 Finally, you can also use hooks. See Section 17.21, “Hooks available
 in the various build steps” for more information.
@@ -5495,6 +5701,11 @@ This snippet creates the following make targets:
     source configuration file. The configuration file will only list
     the options that differ from the default values. It is not
     possible to use this target when fragment files are set.
+  * foo-diff-config, which outputs the differences between the
+    current configuration and the one defined in the Buildroot
+    configuration for this kconfig package. The output is useful to
+    identify the configuration changes that may have to be propagated
+    to configuration fragments for example.
 
 and ensures that the source configuration file is copied to the build
 directory at the right moment.
@@ -5799,6 +6010,22 @@ typical packages will therefore only use a few of them.
     to meson for the configuration step. By default, empty.
   * FOO_CONF_OPTS, to specify additional options to pass to meson for
     the configuration step. By default, empty.
+  * FOO_CFLAGS, to specify compiler arguments added to the package
+    specific cross-compile.conf file c_args property. By default, the
+    value of TARGET_CFLAGS.
+  * FOO_CXXFLAGS, to specify compiler arguments added to the package
+    specific cross-compile.conf file cpp_args property. By default,
+    the value of TARGET_CXXFLAGS.
+  * FOO_LDFLAGS, to specify compiler arguments added to the package
+    specific cross-compile.conf file c_link_args and cpp_link_args
+    properties. By default, the value of TARGET_LDFLAGS.
+  * FOO_MESON_EXTRA_BINARIES, to specify a space-separated list of
+    programs to add to the [binaries] section of the meson
+    cross-compilation.conf configuration file. The format is
+    program-name='/path/to/program', with no space around the = sign,
+    and with the path of the program between single quotes. By
+    default, empty. Note that Buildroot already sets the correct
+    values for c, cpp, ar, strip, and pkgconfig.
   * FOO_NINJA_ENV, to specify additional environment variables to
     pass to ninja, meson companion tool in charge of the build
     operations. By default, empty.
@@ -5943,13 +6170,17 @@ be built.
 17.17.2. golang-package reference
 
 In their Config.in file, packages using the golang-package
-infrastructure should depend on BR2_PACKAGE_HOST_GO_ARCH_SUPPORTS and
-BR2_PACKAGE_HOST_GO_CGO_LINKING_SUPPORTS because Buildroot will
-automatically add a dependency on host-go to such packages.
+infrastructure should depend on
+BR2_PACKAGE_HOST_GO_TARGET_ARCH_SUPPORTS because Buildroot will
+automatically add a dependency on host-go to such packages. If you
+need CGO support in your package, you must add a dependency on
+BR2_PACKAGE_HOST_GO_TARGET_CGO_LINKING_SUPPORTS.
 
 The main macro of the Go package infrastructure is golang-package. It
-is similar to the generic-package macro. Only target packages are
-supported with golang-package.
+is similar to the generic-package macro. The ability to build host
+packages is also available, with the host-golang-package macro. Host
+packages built by host-golang-package macro should depend on
+BR2_PACKAGE_HOST_GO_HOST_ARCH_SUPPORTS.
 
 Just like the generic infrastructure, the Go infrastructure works by
 defining a number of variables before calling the golang-package.
@@ -6202,8 +6433,6 @@ information is (assuming the document name is foo) :
     (like CSS or images). By default, empty.
   * FOO_DEPENDENCIES, optional, the list of packages (most probably,
     host-packages) that must be built before building this document.
-    If a hook of your document needs to access the Kconfig structure,
-    you may add prepare-kconfig to the list of dependencies.
 
 There are also additional hooks (see Section 17.21, “Hooks available
 in the various build steps” for general information on hooks), that a
@@ -6608,7 +6837,7 @@ with openssl as a TLS backend and the curl program:
 
 $ cat libcurl.config
 BR2_PACKAGE_LIBCURL=y
-BR2_PACKAGE_CURL=y
+BR2_PACKAGE_LIBCURL_CURL=y
 BR2_PACKAGE_OPENSSL=y
 
 Then run the test-pkg script, by telling it what config snippet to
@@ -7369,6 +7598,172 @@ pastebin service. Note that not all available pastebin services will
 preserve Unix-style line terminators when downloading raw pastes.
 Following pastebin services are known to work correctly: - https://
 gist.github.com/ - http://code.bulix.org/
+
+21.7. Using the run-tests framework
+
+Buildroot includes a run-time testing framework called run-tests
+built upon Python scripting and QEMU runtime execution. There are two
+types of test cases within the framework, one for build time tests
+and another for run-time tests that have a QEMU dependency. The goals
+of the framework are the following:
+
+  * build a well defined configuration
+  * optionally, verify some properties of the build output
+  * if it is a run-time test:
+
+      + boot it under QEMU
+      + run some test condition to verify that a given feature is
+        working
+
+The run-tests tool has a series of options documented in the tool’s
+help -h description. Some common options include setting the download
+folder, the output folder, keeping build output, and for multiple
+test cases, you can set the JLEVEL for each.
+
+Here is an example walk through of running a test case.
+
+  * For a first step, let us see what all the test case options are.
+    The test cases can be listed by executing support/testing/
+    run-tests -l. These tests can all be run individually during test
+    development from the console. Both one at a time and selectively
+    as a group of a subset of tests.
+
+$ support/testing/run-tests -l
+List of tests
+test_run (tests.utils.test_check_package.TestCheckPackage)
+Test the various ways the script can be called in a simple top to ... ok
+test_run (tests.toolchain.test_external.TestExternalToolchainBuildrootMusl) ... ok
+test_run (tests.toolchain.test_external.TestExternalToolchainBuildrootuClibc) ... ok
+test_run (tests.toolchain.test_external.TestExternalToolchainCCache) ... ok
+test_run (tests.toolchain.test_external.TestExternalToolchainCtngMusl) ... ok
+test_run (tests.toolchain.test_external.TestExternalToolchainLinaroArm) ... ok
+test_run (tests.toolchain.test_external.TestExternalToolchainSourceryArmv4) ... ok
+test_run (tests.toolchain.test_external.TestExternalToolchainSourceryArmv5) ... ok
+test_run (tests.toolchain.test_external.TestExternalToolchainSourceryArmv7) ... ok
+[snip]
+test_run (tests.init.test_systemd.TestInitSystemSystemdRoFull) ... ok
+test_run (tests.init.test_systemd.TestInitSystemSystemdRoIfupdown) ... ok
+test_run (tests.init.test_systemd.TestInitSystemSystemdRoNetworkd) ... ok
+test_run (tests.init.test_systemd.TestInitSystemSystemdRwFull) ... ok
+test_run (tests.init.test_systemd.TestInitSystemSystemdRwIfupdown) ... ok
+test_run (tests.init.test_systemd.TestInitSystemSystemdRwNetworkd) ... ok
+test_run (tests.init.test_busybox.TestInitSystemBusyboxRo) ... ok
+test_run (tests.init.test_busybox.TestInitSystemBusyboxRoNet) ... ok
+test_run (tests.init.test_busybox.TestInitSystemBusyboxRw) ... ok
+test_run (tests.init.test_busybox.TestInitSystemBusyboxRwNet) ... ok
+
+Ran 157 tests in 0.021s
+
+OK
+
+Those runtime tests are regularly executed by Buildroot Gitlab CI
+infrastructure, see .gitlab.yml and https://gitlab.com/buildroot.org/
+buildroot/-/jobs.
+
+21.7.1. Creating a test case
+
+The best way to get familiar with how to create a test case is to
+look at a few of the basic file system support/testing/tests/fs/ and
+init support/testing/tests/init/ test scripts. Those tests give good
+examples of a basic build and build with run type of tests. There are
+other more advanced cases that use things like nested br2-external
+folders to provide skeletons and additional packages.
+
+The test cases by default use a br-arm-full-* uClibc-ng toolchain and
+the prebuild kernel for a armv5/7 cpu. It is recommended to use the
+default defconfig test configuration except when Glibc/musl or a
+newer kernel are necessary. By using the default it saves build time
+and the test would automatically inherit a kernel/std library upgrade
+when the default is updated.
+
+The basic test case definition involves
+
+  * Creation of a new test file
+  * Defining a unique test class
+  * Determining if the default defconfig plus test options can be
+    used
+  * Implementing a def test_run(self): function to optionally startup
+    the emulator and provide test case conditions.
+
+Beyond creating the test script, there are a couple of additional
+steps that should be taken once you have your initial test case
+script. The first is to add yourself to the DEVELOPERS file to be the
+maintainer of that test case. The second is to update the Gitlab CI
+yml by executing make .gitlab-ci.yml.
+
+21.7.2. Debugging a test case
+
+Within the Buildroot repository, the testing framework is organized
+at the top level in support/testing/ by folders of conf, infra and
+tests. All the test cases live under the test folder and are
+organized in various folders representing the catagory of test.
+
+Lets walk through an example.
+
+  * Using the Busybox Init system test case with a read/write rootfs
+    tests.init.test_busybox.TestInitSystemBusyboxRw
+  * A minimal set of command line arguments when debugging a test
+    case would include -d which points to your dl folder, -o to an
+    output folder, and -k to keep any output on both pass/fail. With
+    those options, the test will retain logging and build artifacts
+    providing status of the build and execution of the test case.
+
+$ support/testing/run-tests -d dl -o output_folder -k tests.init.test_busybox.TestInitSystemBusyboxRw
+15:03:26 TestInitSystemBusyboxRw                  Starting
+15:03:28 TestInitSystemBusyboxRw                  Building
+15:08:18 TestInitSystemBusyboxRw                  Building done
+15:08:27 TestInitSystemBusyboxRw                  Cleaning up
+.
+Ran 1 test in 301.140s
+
+OK
+
+  * For the case of a successful build, the output_folder would
+    contain a <test name> folder with the Buildroot build, build log
+    and run-time log. If the build failed, the console output would
+    show the stage at which it failed (setup / build / run).
+    Depending on the failure stage, the build/run logs and/or
+    Buildroot build artifacts can be inspected and instrumented. If
+    the QEMU instance needs to be launched for additional testing,
+    the first few lines of the run-time log capture it and it would
+    allow some incremental testing without re-running support/testing
+    /run-tests.
+  * You can also make modifications to the current sources inside the
+    output_folder (e.g. for debug purposes) and rerun the standard
+    Buildroot make targets (in order to regenerate the complete image
+    with the new modifications) and then rerun the test. Modifying
+    the sources directly can speed up debugging compared to adding
+    patch files, wiping the output directoy, and starting the test
+    again.
+
+$ ls output_folder/
+TestInitSystemBusyboxRw/
+TestInitSystemBusyboxRw-build.log
+TestInitSystemBusyboxRw-run.log
+
+  * The source file used to implement this example test is found
+    under support/testing/tests/init/test_busybox.py. This file
+    outlines the minimal defconfig that creates the build, QEMU
+    configuration to launch the built images and the test case
+    assertions.
+
+To test an existing or new test case within Gitlab CI, there is a
+method of invoking a specific test by creating a Buildroot fork in
+Gitlab under your account. This can be handy when adding/changing a
+run-time test or fixing a bug on a use case tested by a run-time test
+case.
+
+In the examples below, the <name> component of the branch name is a
+unique string you choose to identify this specific job being created.
+
+  * to trigger all run-test test case jobs:
+
+ $ git push gitlab HEAD:<name>-runtime-tests
+
+  * to trigger one test case job, a specific branch naming string is
+    used that includes the full test case name.
+
+ $ git push gitlab HEAD:<name>-<test case name>
 
 
 ---------------------------------------------------------------------

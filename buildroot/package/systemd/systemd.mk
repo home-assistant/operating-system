@@ -4,18 +4,19 @@
 #
 ################################################################################
 
-SYSTEMD_VERSION = 240
-SYSTEMD_SITE = $(call github,systemd,systemd,v$(SYSTEMD_VERSION))
-SYSTEMD_LICENSE = LGPL-2.1+, GPL-2.0+ (udev), Public Domain (few source files, see README)
-SYSTEMD_LICENSE_FILES = LICENSE.GPL2 LICENSE.LGPL2.1 README
+SYSTEMD_VERSION = 244.3
+SYSTEMD_SITE = $(call github,systemd,systemd-stable,v$(SYSTEMD_VERSION))
+SYSTEMD_LICENSE = LGPL-2.1+, GPL-2.0+ (udev), Public Domain (few source files, see README), BSD-3-Clause (tools/chromiumos)
+SYSTEMD_LICENSE_FILES = LICENSE.GPL2 LICENSE.LGPL2.1 README tools/chromiumos/LICENSE
 SYSTEMD_INSTALL_STAGING = YES
 SYSTEMD_DEPENDENCIES = \
+	$(BR2_COREUTILS_HOST_DEPENDENCY) \
 	$(if $(BR2_PACKAGE_BASH_COMPLETION),bash-completion) \
 	host-gperf \
-	host-intltool \
 	kmod \
 	libcap \
-	util-linux
+	util-linux \
+	$(TARGET_NLS_DEPENDENCIES)
 
 SYSTEMD_PROVIDES = udev
 
@@ -24,10 +25,9 @@ SYSTEMD_CONF_OPTS += \
 	-Dblkid=true \
 	-Dman=false \
 	-Dima=false \
-	-Defi=false \
-	-Dgnu-efi=false \
 	-Dldconfig=false \
 	-Ddefault-dnssec=no \
+	-Ddefault-hierarchy=hybrid \
 	-Dtests=false \
 	-Dsplit-bin=true \
 	-Dsplit-usr=false \
@@ -179,6 +179,12 @@ else
 SYSTEMD_CONF_OPTS += -Dmicrohttpd=false -Dqrencode=false
 endif
 
+ifeq ($(BR2_PACKAGE_SYSTEMD_JOURNAL_REMOTE),y)
+SYSTEMD_CONF_OPTS += -Dremote=true
+else
+SYSTEMD_CONF_OPTS += -Dremote=false
+endif
+
 ifeq ($(BR2_PACKAGE_LIBSELINUX),y)
 SYSTEMD_DEPENDENCIES += libselinux
 SYSTEMD_CONF_OPTS += -Dselinux=true
@@ -188,6 +194,14 @@ endif
 
 ifeq ($(BR2_PACKAGE_SYSTEMD_HWDB),y)
 SYSTEMD_CONF_OPTS += -Dhwdb=true
+define SYSTEMD_BUILD_HWDB
+	$(HOST_DIR)/bin/udevadm hwdb --update --root $(TARGET_DIR)
+endef
+SYSTEMD_TARGET_FINALIZE_HOOKS += SYSTEMD_BUILD_HWDB
+define SYSTEMD_RM_HWDB_SRV
+	rm -rf $(TARGET_DIR)/$(HOST_EUDEV_SYSCONFDIR)/udev/hwdb.d/
+endef
+SYSTEMD_ROOTFS_PRE_CMD_HOOKS += SYSTEMD_RM_HWDB_SRV
 else
 SYSTEMD_CONF_OPTS += -Dhwdb=false
 endif
@@ -295,6 +309,12 @@ else
 SYSTEMD_CONF_OPTS += -Dcoredump=false
 endif
 
+ifeq ($(BR2_PACKAGE_SYSTEMD_PSTORE),y)
+SYSTEMD_CONF_OPTS += -Dpstore=true
+else
+SYSTEMD_CONF_OPTS += -Dpstore=false
+endif
+
 ifeq ($(BR2_PACKAGE_SYSTEMD_POLKIT),y)
 SYSTEMD_CONF_OPTS += -Dpolkit=true
 SYSTEMD_DEPENDENCIES += polkit
@@ -305,16 +325,12 @@ endif
 ifeq ($(BR2_PACKAGE_SYSTEMD_NETWORKD),y)
 SYSTEMD_CONF_OPTS += -Dnetworkd=true
 SYSTEMD_NETWORKD_USER = systemd-network -1 systemd-network -1 * - - - Network Manager
-define SYSTEMD_INSTALL_RESOLVCONF_HOOK
-	ln -sf ../run/systemd/resolve/resolv.conf \
-		$(TARGET_DIR)/etc/resolv.conf
-endef
 SYSTEMD_NETWORKD_DHCP_IFACE = $(call qstrip,$(BR2_SYSTEM_DHCP))
 ifneq ($(SYSTEMD_NETWORKD_DHCP_IFACE),)
 define SYSTEMD_INSTALL_NETWORK_CONFS
 	sed s/SYSTEMD_NETWORKD_DHCP_IFACE/$(SYSTEMD_NETWORKD_DHCP_IFACE)/ \
-		package/systemd/dhcp.network > \
-		$(TARGET_DIR)/etc/systemd/network/dhcp.network
+		$(SYSTEMD_PKGDIR)/dhcp.network > \
+		$(TARGET_DIR)/etc/systemd/network/$(SYSTEMD_NETWORKD_DHCP_IFACE).network
 endef
 endif
 else
@@ -322,6 +338,10 @@ SYSTEMD_CONF_OPTS += -Dnetworkd=false
 endif
 
 ifeq ($(BR2_PACKAGE_SYSTEMD_RESOLVED),y)
+define SYSTEMD_INSTALL_RESOLVCONF_HOOK
+	ln -sf ../run/systemd/resolve/resolv.conf \
+		$(TARGET_DIR)/etc/resolv.conf
+endef
 SYSTEMD_CONF_OPTS += -Dresolve=true
 SYSTEMD_RESOLVED_USER = systemd-resolve -1 systemd-resolve -1 * - - - Network Name Resolution Manager
 else
@@ -331,11 +351,6 @@ endif
 ifeq ($(BR2_PACKAGE_SYSTEMD_TIMESYNCD),y)
 SYSTEMD_CONF_OPTS += -Dtimesyncd=true
 SYSTEMD_TIMESYNCD_USER = systemd-timesync -1 systemd-timesync -1 * - - - Network Time Synchronization
-define SYSTEMD_INSTALL_SERVICE_TIMESYNC
-	mkdir -p $(TARGET_DIR)/etc/systemd/system/sysinit.target.wants
-	ln -sf ../../../../lib/systemd/system/systemd-timesyncd.service \
-		$(TARGET_DIR)/etc/systemd/system/sysinit.target.wants/systemd-timesyncd.service
-endef
 else
 SYSTEMD_CONF_OPTS += -Dtimesyncd=false
 endif
@@ -352,19 +367,42 @@ else
 SYSTEMD_CONF_OPTS += -Dhibernate=false
 endif
 
+ifeq ($(BR2_PACKAGE_SYSTEMD_BOOT),y)
+SYSTEMD_INSTALL_IMAGES = YES
+SYSTEMD_DEPENDENCIES += gnu-efi
+SYSTEMD_CONF_OPTS += \
+	-Defi=true \
+	-Dgnu-efi=true \
+	-Defi-cc=$(TARGET_CC) \
+	-Defi-ld=$(TARGET_LD) \
+	-Defi-libdir=$(STAGING_DIR)/usr/lib \
+	-Defi-ldsdir=$(STAGING_DIR)/usr/lib \
+	-Defi-includedir=$(STAGING_DIR)/usr/include/efi
+
+SYSTEMD_BOOT_EFI_ARCH = $(call qstrip,$(BR2_PACKAGE_SYSTEMD_BOOT_EFI_ARCH))
+define SYSTEMD_INSTALL_BOOT_FILES
+	$(INSTALL) -D -m 0644 $(@D)/build/src/boot/efi/systemd-boot$(SYSTEMD_BOOT_EFI_ARCH).efi \
+		$(BINARIES_DIR)/efi-part/EFI/BOOT/boot$(SYSTEMD_BOOT_EFI_ARCH).efi
+	echo "boot$(SYSTEMD_BOOT_EFI_ARCH).efi" > \
+		$(BINARIES_DIR)/efi-part/startup.nsh
+	$(INSTALL) -D -m 0644 $(SYSTEMD_PKGDIR)/boot-files/loader.conf \
+		$(BINARIES_DIR)/efi-part/loader/loader.conf
+	$(INSTALL) -D -m 0644 $(SYSTEMD_PKGDIR)/boot-files/buildroot.conf \
+		$(BINARIES_DIR)/efi-part/loader/entries/buildroot.conf
+endef
+
+else
+SYSTEMD_CONF_OPTS += -Defi=false -Dgnu-efi=false
+endif # BR2_PACKAGE_SYSTEMD_BOOT == y
+
 SYSTEMD_FALLBACK_HOSTNAME = $(call qstrip,$(BR2_TARGET_GENERIC_HOSTNAME))
 ifneq ($(SYSTEMD_FALLBACK_HOSTNAME),)
 SYSTEMD_CONF_OPTS += -Dfallback-hostname=$(SYSTEMD_FALLBACK_HOSTNAME)
 endif
 
 define SYSTEMD_INSTALL_INIT_HOOK
-	ln -fs ../lib/systemd/systemd $(TARGET_DIR)/sbin/init
-	ln -fs ../bin/systemctl $(TARGET_DIR)/sbin/halt
-	ln -fs ../bin/systemctl $(TARGET_DIR)/sbin/poweroff
-	ln -fs ../bin/systemctl $(TARGET_DIR)/sbin/reboot
-	ln -fs ../bin/systemctl $(TARGET_DIR)/sbin/shutdown
-	ln -fs ../../../lib/systemd/system/multi-user.target \
-		$(TARGET_DIR)/etc/systemd/system/default.target
+	ln -fs multi-user.target \
+		$(TARGET_DIR)/usr/lib/systemd/system/default.target
 endef
 
 define SYSTEMD_INSTALL_MACHINEID_HOOK
@@ -375,6 +413,10 @@ SYSTEMD_POST_INSTALL_TARGET_HOOKS += \
 	SYSTEMD_INSTALL_INIT_HOOK \
 	SYSTEMD_INSTALL_MACHINEID_HOOK \
 	SYSTEMD_INSTALL_RESOLVCONF_HOOK
+
+define SYSTEMD_INSTALL_IMAGES_CMDS
+	$(SYSTEMD_INSTALL_BOOT_FILES)
+endef
 
 define SYSTEMD_USERS
 	- - input -1 * - - - Input device group
@@ -391,29 +433,43 @@ define SYSTEMD_USERS
 	$(SYSTEMD_TIMESYNCD_USER)
 endef
 
-define SYSTEMD_DISABLE_SERVICE_TTY1
-	rm -f $(TARGET_DIR)/etc/systemd/system/getty.target.wants/getty@tty1.service
-endef
-
 ifneq ($(call qstrip,$(BR2_TARGET_GENERIC_GETTY_PORT)),)
 # systemd needs getty.service for VTs and serial-getty.service for serial ttys
 # note that console-getty.service should be used on /dev/console as it should not have dependencies
 # also patch the file to use the correct baud-rate, the default baudrate is 115200 so look for that
+#
+# systemd defaults to only have getty@tty.service enabled
+# * DefaultInstance=tty1 in getty@service
+# * no DefaultInstance in serial-getty@.service
+# * WantedBy=getty.target in console-getty.service
+# * console-getty is not enabled because of 90-systemd.preset
+# We want "systemctl preset-all" to do the right thing, even when run on the target after boot
+# * remove the default instance of getty@.service via a drop-in in /usr/lib
+# * set a new DefaultInstance for getty@.service instead, if needed
+# * set a new DefaultInstance for serial-getty@.service, if needed
+# * override the systemd-provided preset for console-getty.service if needed
 define SYSTEMD_INSTALL_SERVICE_TTY
+	mkdir $(TARGET_DIR)/usr/lib/systemd/system/getty@.service.d; \
+	printf '[Install]\nDefaultInstance=\n' \
+		>$(TARGET_DIR)/usr/lib/systemd/system/getty@.service.d/buildroot-console.conf; \
 	if [ $(BR2_TARGET_GENERIC_GETTY_PORT) = "console" ]; \
 	then \
 		TARGET="console-getty.service"; \
-		LINK_NAME="console-getty.service"; \
+		printf 'enable console-getty.service\n' \
+			>$(TARGET_DIR)/usr/lib/systemd/system-preset/81-buildroot-tty.preset; \
 	elif echo $(BR2_TARGET_GENERIC_GETTY_PORT) | egrep -q 'tty[0-9]*$$'; \
 	then \
 		TARGET="getty@.service"; \
-		LINK_NAME="getty@$(call qstrip,$(BR2_TARGET_GENERIC_GETTY_PORT)).service"; \
+		printf '[Install]\nDefaultInstance=%s\n' \
+			$(call qstrip,$(BR2_TARGET_GENERIC_GETTY_PORT)) \
+			>$(TARGET_DIR)/usr/lib/systemd/system/getty@.service.d/buildroot-console.conf; \
 	else \
 		TARGET="serial-getty@.service"; \
-		LINK_NAME="serial-getty@$(call qstrip,$(BR2_TARGET_GENERIC_GETTY_PORT)).service"; \
+		mkdir $(TARGET_DIR)/usr/lib/systemd/system/serial-getty@.service.d;\
+		printf '[Install]\nDefaultInstance=%s\n' \
+			$(call qstrip,$(BR2_TARGET_GENERIC_GETTY_PORT)) \
+			>$(TARGET_DIR)/usr/lib/systemd/system/serial-getty@.service.d/buildroot-console.conf;\
 	fi; \
-	ln -fs ../../../../lib/systemd/system/$${TARGET} \
-		$(TARGET_DIR)/etc/systemd/system/getty.target.wants/$${LINK_NAME}; \
 	if [ $(call qstrip,$(BR2_TARGET_GENERIC_GETTY_BAUDRATE)) -gt 0 ] ; \
 	then \
 		$(SED) 's,115200,$(BR2_TARGET_GENERIC_GETTY_BAUDRATE),' $(TARGET_DIR)/lib/systemd/system/$${TARGET}; \
@@ -421,14 +477,113 @@ define SYSTEMD_INSTALL_SERVICE_TTY
 endef
 endif
 
+define SYSTEMD_INSTALL_PRESET
+	$(INSTALL) -D -m 644 $(SYSTEMD_PKGDIR)/80-buildroot.preset $(TARGET_DIR)/usr/lib/systemd/system-preset/80-buildroot.preset
+endef
+
 define SYSTEMD_INSTALL_INIT_SYSTEMD
-	$(SYSTEMD_DISABLE_SERVICE_TTY1)
+	$(SYSTEMD_INSTALL_PRESET)
 	$(SYSTEMD_INSTALL_SERVICE_TTY)
-	$(SYSTEMD_INSTALL_SERVICE_TIMESYNC)
 	$(SYSTEMD_INSTALL_NETWORK_CONFS)
 endef
+
+define SYSTEMD_PRESET_ALL
+	$(HOST_DIR)/bin/systemctl --root=$(TARGET_DIR) preset-all
+endef
+SYSTEMD_TARGET_FINALIZE_HOOKS += SYSTEMD_PRESET_ALL
 
 SYSTEMD_CONF_ENV = $(HOST_UTF8_LOCALE_ENV)
 SYSTEMD_NINJA_ENV = $(HOST_UTF8_LOCALE_ENV)
 
+# We need a very minimal host variant, so we disable as much as possible.
+HOST_SYSTEMD_CONF_OPTS = \
+	-Dsplit-bin=true \
+	-Dsplit-usr=false \
+	--prefix=/usr \
+	--libdir=lib \
+	--sysconfdir=/etc \
+	--localstatedir=/var \
+	-Dutmp=false \
+	-Dhibernate=false \
+	-Dldconfig=false \
+	-Dresolve=false \
+	-Defi=false \
+	-Dtpm=false \
+	-Denvironment-d=false \
+	-Dbinfmt=false \
+	-Dcoredump=false \
+	-Dpstore=false \
+	-Dlogind=false \
+	-Dhostnamed=false \
+	-Dlocaled=false \
+	-Dmachined=false \
+	-Dportabled=false \
+	-Dnetworkd=false \
+	-Dtimedated=false \
+	-Dtimesyncd=false \
+	-Dremote=false \
+	-Dcreate-log-dirs=false \
+	-Dnss-myhostname=false \
+	-Dnss-mymachines=false \
+	-Dnss-resolve=false \
+	-Dnss-systemd=false \
+	-Dfirstboot=false \
+	-Drandomseed=false \
+	-Dbacklight=false \
+	-Dvconsole=false \
+	-Dquotacheck=false \
+	-Dsysusers=false \
+	-Dtmpfiles=false \
+	-Dimportd=false \
+	-Dhwdb=false \
+	-Drfkill=false \
+	-Dman=false \
+	-Dhtml=false \
+	-Dsmack=false \
+	-Dpolkit=false \
+	-Dblkid=false \
+	-Didn=false \
+	-Dadm-group=false \
+	-Dwheel-group=false \
+	-Dzlib=false \
+	-Dgshadow=false \
+	-Dima=false \
+	-Dtests=false \
+	-Dglib=false \
+	-Dacl=false \
+	-Dsysvinit-path=''
+
+HOST_SYSTEMD_DEPENDENCIES = \
+	$(BR2_COREUTILS_HOST_DEPENDENCY) \
+	host-util-linux \
+	host-patchelf \
+	host-libcap \
+	host-gperf
+
+# Fix RPATH After installation
+# * systemd provides a install_rpath instruction to meson because the binaries
+#   need to link with libsystemd which is not in a standard path
+# * meson can only replace the RPATH, not append to it
+# * the original rpath is thus lost.
+# * the original path had been tweaked by buildroot via LDFLAGS to add
+#   $(HOST_DIR)/lib
+# * thus re-tweak rpath after the installation for all binaries that need it
+HOST_SYSTEMD_HOST_TOOLS = \
+	systemd-analyze \
+	systemd-machine-id-setup \
+	systemd-mount \
+	systemd-nspawn \
+	systemctl \
+	udevadm
+
+HOST_SYSTEMD_NINJA_ENV = DESTDIR=$(HOST_DIR)
+
+define HOST_SYSTEMD_FIX_RPATH
+	$(foreach f,$(HOST_SYSTEMD_HOST_TOOLS), \
+		$(HOST_DIR)/bin/patchelf --set-rpath $(HOST_DIR)/lib:$(HOST_DIR)/lib/systemd $(HOST_DIR)/bin/$(f)
+	)
+endef
+HOST_SYSTEMD_POST_INSTALL_HOOKS += HOST_SYSTEMD_FIX_RPATH
+
 $(eval $(meson-package))
+$(eval $(host-meson-package))

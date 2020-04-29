@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WEBKITGTK_VERSION = 2.26.2
+WEBKITGTK_VERSION = 2.26.4
 WEBKITGTK_SITE = https://www.webkitgtk.org/releases
 WEBKITGTK_SOURCE = webkitgtk-$(WEBKITGTK_VERSION).tar.xz
 WEBKITGTK_INSTALL_STAGING = YES
@@ -17,18 +17,28 @@ WEBKITGTK_DEPENDENCIES = host-ruby host-python host-gperf \
 	libtasn1 libxml2 libxslt openjpeg sqlite webp woff2
 WEBKITGTK_CONF_OPTS = \
 	-DENABLE_API_TESTS=OFF \
-	-DENABLE_BUBBLEWRAP_SANDBOX=OFF \
 	-DENABLE_GEOLOCATION=OFF \
 	-DENABLE_GTKDOC=OFF \
 	-DENABLE_INTROSPECTION=OFF \
 	-DENABLE_MINIBROWSER=ON \
 	-DENABLE_SPELLCHECK=ON \
 	-DPORT=GTK \
+	-DSILENCE_CROSS_COMPILATION_NOTICES=ON \
 	-DUSE_LIBNOTIFY=OFF \
 	-DUSE_LIBHYPHEN=OFF \
 	-DUSE_OPENJPEG=ON \
 	-DUSE_WOFF2=ON \
 	-DUSE_WPE_RENDERER=OFF
+
+ifeq ($(BR2_PACKAGE_WEBKITGTK_SANDBOX),y)
+WEBKITGTK_CONF_OPTS += \
+	-DENABLE_BUBBLEWRAP_SANDBOX=ON \
+	-DBWRAP_EXECUTABLE=/usr/bin/bwrap \
+	-DDBUS_PROXY_EXECUTABLE=/usr/bin/xdg-dbus-proxy
+WEBKITGTK_DEPENDENCIES += libseccomp
+else
+WEBKITGTK_CONF_OPTS += -DENABLE_BUBBLEWRAP_SANDBOX=OFF
+endif
 
 ifeq ($(BR2_PACKAGE_WEBKITGTK_MULTIMEDIA),y)
 WEBKITGTK_CONF_OPTS += \
@@ -90,9 +100,17 @@ endif
 
 ifeq ($(BR2_PACKAGE_WEBKITGTK_USE_GSTREAMER_GL),y)
 WEBKITGTK_CONF_OPTS += -DUSE_GSTREAMER_GL=ON
-WEBKITGTK_DEPENDENCIES += gst1-plugins-bad
 else
 WEBKITGTK_CONF_OPTS += -DUSE_GSTREAMER_GL=OFF
+endif
+
+# JIT is not supported for MIPS r6, but the WebKit build system does not
+# have a check for these processors. Disable JIT forcibly here and use
+# the CLoop interpreter instead.
+#
+# Upstream bug: https://bugs.webkit.org/show_bug.cgi?id=191258
+ifeq ($(BR2_MIPS_CPU_MIPS32R6)$(BR2_MIPS_CPU_MIPS64R6),y)
+WEBKITGTK_CONF_OPTS += -DENABLE_JIT=OFF -DENABLE_C_LOOP=ON
 endif
 
 $(eval $(cmake-package))

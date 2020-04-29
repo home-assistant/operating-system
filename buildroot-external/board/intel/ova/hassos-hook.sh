@@ -15,10 +15,27 @@ function hassos_pre_image() {
 
 
 function hassos_post_image() {
+    local HDD_IMG="$(hassos_image_name img)"
+    local HDD_OVA="$(hassos_image_name ova)"
+    local OVA_DATA="${BINARIES_DIR}/ova"
+
+    # Virtual Disk images
     convert_disk_image_virtual
 
     convert_disk_image_gz vmdk
     convert_disk_image_gz vhdx
     convert_disk_image_gz vdi
-}
+    convert_disk_image_gz qcow2
 
+    # OVA
+    mkdir -p "${OVA_DATA}"
+    rm -f "${HDD_OVA}"
+
+    cp -a ${BOARD_DIR}/home-assistant.ovf "${OVA_DATA}/home-assistant.ovf"
+    qemu-img convert -O vmdk -o subformat=streamOptimized "${HDD_IMG}" "${OVA_DATA}/home-assistant.vmdk"
+    (cd "${OVA_DATA}"; sha256sum --tag home-assistant.* >home-assistant.mf)
+    tar -C "${OVA_DATA}" --owner=root --group=root -cf "${HDD_OVA}" home-assistant.ovf home-assistant.vmdk home-assistant.mf
+
+    # Cleanup
+    rm -f "${HDD_IMG}"
+}

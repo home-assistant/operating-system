@@ -1,0 +1,23 @@
+From 17735a28503d90db2a7173816861750f475580ea Mon Sep 17 00:00:00 2001
+From: Pascal Vizeli <pvizeli@syshack.ch>
+Date: Fri, 24 Apr 2020 12:41:50 +0000
+Subject: [PATCH 1/1] TLP: Modify entrypoint for u-boot
+
+Signed-off-by: Pascal Vizeli <pvizeli@syshack.ch>
+---
+ configs/tinker-rk3288_defconfig | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/configs/tinker-rk3288_defconfig b/configs/tinker-rk3288_defconfig
+index 83c3450839..648a7904be 100644
+--- a/configs/tinker-rk3288_defconfig
++++ b/configs/tinker-rk3288_defconfig
+@@ -84,3 +84,5 @@ CONFIG_USB_ETHER_ASIX=y
+ CONFIG_USB_ETHER_SMSC95XX=y
+ CONFIG_CMD_DHRYSTONE=y
+ CONFIG_ERRNO_STR=y
++CONFIG_SYS_MMCSD_RAW_MODE_U_BOOT_SECTOR=0x3000
++
+-- 
+2.17.1
+

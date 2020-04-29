@@ -1,0 +1,74 @@
+From e7b60b10cf3fd2f4374ab26c314383121c27fe82 Mon Sep 17 00:00:00 2001
+From: "Miouyouyou (Myy)" <myy@miouyouyou.fr>
+Date: Tue, 22 Jan 2019 21:24:37 +0100
+Subject: [PATCH] soc: rockchip: power-domain: export idle request for RKMPP
+
+This function, and the added header, are required by the RKMPP driver,
+provided by Randy Li. However, I can't attest that the provided code
+is correct.
+
+Signed-off-by: Miouyouyou (Myy) <myy@miouyouyou.fr>
+---
+ drivers/soc/rockchip/pm_domains.c | 23 +++++++++++++++++++++++
+ include/soc/rockchip/pm_domains.h | 15 +++++++++++++++
+ 2 files changed, 38 insertions(+)
+ create mode 100644 include/soc/rockchip/pm_domains.h
+
+diff --git a/drivers/soc/rockchip/pm_domains.c b/drivers/soc/rockchip/pm_domains.c
+index 847c7c482..3e2e252cb 100644
+--- a/drivers/soc/rockchip/pm_domains.c
++++ b/drivers/soc/rockchip/pm_domains.c
+@@ -199,6 +199,29 @@ static int rockchip_pmu_set_idle_request(struct rockchip_pm_domain *pd,
+ 	return 0;
+ }
+ 
++int rockchip_pmu_idle_request(struct device *dev, bool idle)
++{
++	struct generic_pm_domain *genpd;
++	struct rockchip_pm_domain *pd;
++	int ret;
++
++	if (IS_ERR_OR_NULL(dev))
++		return -EINVAL;
++
++	if (IS_ERR_OR_NULL(dev->pm_domain))
++		return -EINVAL;
++
++	genpd = pd_to_genpd(dev->pm_domain);
++	pd = to_rockchip_pd(genpd);
++
++	mutex_lock(&pd->pmu->mutex);
++	ret = rockchip_pmu_set_idle_request(pd, idle);
++	mutex_unlock(&pd->pmu->mutex);
++
++	return ret;
++}
++EXPORT_SYMBOL(rockchip_pmu_idle_request);
++
+ static int rockchip_pmu_save_qos(struct rockchip_pm_domain *pd)
+ {
+ 	int i;
+diff --git a/include/soc/rockchip/pm_domains.h b/include/soc/rockchip/pm_domains.h
+new file mode 100644
+index 000000000..720b3314e
+--- /dev/null
++++ b/include/soc/rockchip/pm_domains.h
+@@ -0,0 +1,15 @@
++/*
++ * pm_domain.h - Definitions and headers related to device power domains.
++ *
++ * Copyright (C) 2017 Randy Li <ayaka@soulik.info>.
++ *
++ * This file is released under the GPLv2.
++ */
++
++#ifndef _LINUX_ROCKCHIP_PM_H
++#define _LINUX_ROCKCHIP_PM_H
++#include <linux/device.h>
++
++int rockchip_pmu_idle_request(struct device *dev, bool idle);
++
++#endif /* _LINUX_ROCKCHIP_PM_H */
+-- 
+2.16.4
+

@@ -3,7 +3,7 @@
 # libapparmor
 #
 #############################################################
-LIBAPPARMOR_VERSION = v2.13.2
+LIBAPPARMOR_VERSION = v2.13.4
 LIBAPPARMOR_SITE = git://git.launchpad.net/apparmor
 LIBAPPARMOR_LICENSE = GPL-2
 LIBAPPARMOR_LICENSE_FILES = LICENSE
