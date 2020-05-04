@@ -8,7 +8,7 @@ MACHINE_ID=$(cat /etc/machine-id)
 if [ -e /usr/sbin/fw_setenv ]; then
 
     # machine-id
-    if [ "$(fw_printenv MACHINE_ID)" != "${MACHINE_ID}" ]; then
+    if [ "$(fw_printenv -n MACHINE_ID)" != "${MACHINE_ID}" ]; then
         echo "[info] set machine-id to ${MACHINE_ID}"
         fw_setenv MACHINE_ID "${MACHINE_ID}"
     else
