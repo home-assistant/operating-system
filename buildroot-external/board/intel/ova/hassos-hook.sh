@@ -8,7 +8,7 @@ function hassos_pre_image() {
     mkdir -p "${BOOT_DATA}/EFI/barebox"
 
     cp "${BINARIES_DIR}/barebox.bin" "${BOOT_DATA}/EFI/BOOT/BOOTx64.EFI"
-    cp "${BR2_EXTERNAL_HASSOS_PATH}/misc/barebox-state-efi.dtb" "${BOOT_DATA}/EFI/barebox/state.dtb"
+    cp "${BR2_EXTERNAL_HASSOS_PATH}/bootloader/barebox-state-efi.dtb" "${BOOT_DATA}/EFI/barebox/state.dtb"
 
     echo "console=tty1" > "${BOOT_DATA}/cmdline.txt"
 }

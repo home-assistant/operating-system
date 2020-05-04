@@ -1,11 +1,11 @@
 [Unit]
 Description=Systemd persistent logging
-Requires=mnt-overlay.mount
-After=mnt-overlay.mount
+Requires=mnt-data.mount
+After=mnt-data.mount
 Before=systemd-journal-flush.service
 
 [Mount]
-What=/mnt/overlay/var/log/journal
+What=/mnt/data/logs
 Where=/var/log/journal
 Type=None
 Options=bind

@@ -81,12 +81,12 @@ function install_bootloader_config() {
     	# shellcheck disable=SC1117
         echo -e "/dev/disk/by-partlabel/hassos-bootstate\t0x0000\t${BOOT_ENV_SIZE}" > "${TARGET_DIR}/etc/fw_env.config"
     else
-        cp -f "${BR2_EXTERNAL_HASSOS_PATH}/misc/barebox-state-efi.dtb" "${TARGET_DIR}/etc/barebox-state.dtb"
+        cp -f "${BR2_EXTERNAL_HASSOS_PATH}/bootloader/barebox-state-efi.dtb" "${TARGET_DIR}/etc/barebox-state.dtb"
     fi
 
     # Fix MBR
     if [ "${BOOT_SYS}" == "mbr" ]; then
         mkdir -p "${TARGET_DIR}/usr/lib/udev/rules.d"
-	    cp -f "${BR2_EXTERNAL_HASSOS_PATH}/misc/mbr-part.rules" "${TARGET_DIR}/usr/lib/udev/rules.d/"
+	    cp -f "${BR2_EXTERNAL_HASSOS_PATH}/bootloader/mbr-part.rules" "${TARGET_DIR}/usr/lib/udev/rules.d/"
     fi
 }

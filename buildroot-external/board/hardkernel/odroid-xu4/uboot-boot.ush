@@ -12,7 +12,7 @@ setenv loadbootstate " \
 
 setenv storebootstate " \
     echo 'storing env...'; \
-    env export -c -s 0x4000 ${ramdisk_addr_r} BOOT_ORDER BOOT_A_LEFT BOOT_B_LEFT; \
+    env export -c -s 0x4000 ${ramdisk_addr_r} BOOT_ORDER BOOT_A_LEFT BOOT_B_LEFT MACHINE_ID; \
     mmc write ${ramdisk_addr_r} ${mmc_env} 0x20;"
 
 run loadbootstate
@@ -33,7 +33,7 @@ if test "${external_watchdog}" = "true"; then setenv external_watchdog "external
 setenv bootargs_odroidxu4 "${videoconfig} ${hdmi_phy_control} ${hid_quirks} smsc95xx.macaddr=${macaddr} ${external_watchdog}"
 
 # HassOS bootargs
-setenv bootargs_hassos "zram.enabled=1 zram.num_devices=3 apparmor=1 security=apparmor cgroup_enable=memory"
+setenv bootargs_hassos "zram.enabled=1 zram.num_devices=3 apparmor=1 security=apparmor systemd.machine_id=${MACHINE_ID} cgroup_enable=memory"
 
 # HassOS system A/B
 setenv bootargs_a "root=PARTUUID=48617373-06 rootfstype=squashfs ro rootwait"
