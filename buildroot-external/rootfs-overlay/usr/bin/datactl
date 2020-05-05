@@ -13,7 +13,7 @@ if [ "${1}" = "move" ] && [ -e "${2}" ]; then
     DEVICE="${2}"
 
     # Check device
-    if ! lsblk ${DEVICE} | grep disk; then
+    if ! lsblk "${DEVICE}" | grep disk; then
         echo "[ERROR] Is not disk!"
         exit 1
     elif [ "${DEVICE}" = "${DATA_DEVICE_ROOT}" ]; then
@@ -24,7 +24,7 @@ if [ "${1}" = "move" ] && [ -e "${2}" ]; then
     # Flag device
     echo "WARNING: ${DEVICE} will be reset on next restart!"
     echo "Press a key to move forward"
-    read WAIT
+    read -r
 
     echo "${DEVICE}" > ${OPTION_FILE}
 fi
