@@ -1,0 +1,16 @@
+[Unit]
+Description=HassOS data partition
+DefaultDependencies=no
+Before=hassos-expand.service
+RefuseManualStart=true
+RefuseManualStop=true
+Requires=mnt-overlay.mount dev-disk-by\x2dlabel-hassos\x2ddata.device
+After=mnt-overlay.mount dev-disk-by\x2dlabel-hassos\x2ddata.device
+ConditionPathExists=/mnt/overlay/data.opt
+
+[Service]
+Type=oneshot
+ExecStart=/usr/libexec/hassos-data
+
+[Install]
+WantedBy=local-fs.target

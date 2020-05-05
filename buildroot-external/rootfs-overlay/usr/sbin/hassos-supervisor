@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/ash
 # shellcheck disable=SC1091
 # ==============================================================================
 # Supervisor on HassOS

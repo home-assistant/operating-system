@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/ash
 set -e
 
 PROFILES_DIR="/mnt/data/supervisor/apparmor"
