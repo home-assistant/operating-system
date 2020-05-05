@@ -13,7 +13,7 @@ if [ "${1}" = "move" ] && [ -e "${2}" ]; then
     DEVICE="${2}"
 
     # Check device
-    if ! lsblk "${DEVICE}" | grep disk; then
+    if ! lsblk "${DEVICE}" | grep disk > /dev/null 2>&1; then
         echo "[ERROR] Is not disk!"
         exit 1
     elif [ "${DEVICE}" = "${DATA_DEVICE_ROOT}" ]; then
