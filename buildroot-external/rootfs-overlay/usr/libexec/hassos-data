@@ -62,8 +62,7 @@ e2fsck -y "${NEW_DEVICE_CHILD}"
 resize2fs -f "${NEW_DEVICE_CHILD}"
 
 # Fix partition layout
-partx -u "${OLD_DEVICE_ROOT}"
+partx -d "${OLD_DEVICE_CHILD}"
+partx -u "${NEW_DEVICE_ROOT}"
 
-systemctl restart hassos-user-rules-udev-trigger
-udevadm settle
 echo "[INFO] Finish hassos data movement"
