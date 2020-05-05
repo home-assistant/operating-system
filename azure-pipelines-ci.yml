@@ -42,14 +42,10 @@ jobs:
 
       # Check build script
       sudo docker run --rm -i \
-        -v $(pwd):/mnt:ro koalaman/shellcheck:$(versionShellCheck) -s bash \
+        -v $(pwd):/mnt:ro koalaman/shellcheck:$(versionShellCheck) \
           scripts/*.sh \
           buildroot-external/scripts/*.sh \
-          buildroot-external/board/**/*.sh
-
-      # Check OS scripts
-      sudo docker run --rm -i \
-        -v $(pwd):/mnt:ro koalaman/shellcheck:$(versionShellCheck) -s dash \
+          buildroot-external/board/**/*.sh \
           buildroot-external/rootfs-overlay/usr/sbin/* \
           buildroot-external/rootfs-overlay/usr/libexec/* \
           buildroot-external/rootfs-overlay/usr/lib/rauc/*

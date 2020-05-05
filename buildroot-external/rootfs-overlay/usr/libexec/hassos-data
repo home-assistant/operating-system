@@ -1,4 +1,4 @@
-#!/bin/ash
+#!/bin/sh
 # ==============================================================================
 # HassOS data partition movment
 # ==============================================================================
@@ -7,7 +7,7 @@ set -e
 OPTION_FILE=/mnt/overlay/data.opt
 
 # New data partition exits
-if ! -e "${OPTION_FILE}"; then
+if ! [ -e "${OPTION_FILE}" ]; then
     echo "[INFO] No data option found"
     exit 0
 else

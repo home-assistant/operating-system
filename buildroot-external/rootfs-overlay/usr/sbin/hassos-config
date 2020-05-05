@@ -1,4 +1,4 @@
-#!/bin/ash
+#!/bin/sh
 
 BOOT_CONFIG="/mnt/boot/CONFIG"
 USB_CONFIG="/mnt/config"

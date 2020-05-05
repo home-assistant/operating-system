@@ -1,4 +1,4 @@
-#!/bin/ash
+#!/bin/sh
 set -e
 
 DEVICE_CHILD="$(findfs LABEL="hassos-data")"
