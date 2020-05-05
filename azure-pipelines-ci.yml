@@ -39,7 +39,7 @@ jobs:
     displayName: 'Install ShellCheck'
   - script: |
       sudo docker run --rm -i \
-        -v $(pwd):/mnt:ro koalaman/shellcheck:$(versionShellCheck) \
+        -v $(pwd):/mnt:ro koalaman/shellcheck:$(versionShellCheck) -s dash \
           scripts/*.sh \
           buildroot-external/scripts/*.sh \
           buildroot-external/board/**/*.sh \
