@@ -11,8 +11,8 @@ if ! -e "${OPTION_FILE}"; then
     echo "[INFO] No data option found"
     exit 0
 else
-    NEW_DEVICE_ROOT="$(cat "${OPTION_FILE}")"
-    rm /mnt/overlay/data.opt
+    NEW_DEVICE_ROOT="$(cat ${OPTION_FILE})"
+    rm ${OPTION_FILE}
 fi
 
 # Get device information
@@ -35,7 +35,14 @@ partx -u "${NEW_DEVICE_ROOT}"
 NEW_DEVICE_CHILD="$(fdisk -l "${NEW_DEVICE_ROOT}" | grep '^/dev' | cut -d' ' -f1 | head -n 1)"
 
 echo "[INFO] Move hassos-data from ${OLD_DEVICE_CHILD} to ${NEW_DEVICE_CHILD}"
-dd if="${OLD_DEVICE_CHILD}" of="${NEW_DEVICE_CHILD}"
+if ! dd if="${OLD_DEVICE_CHILD}" of="${NEW_DEVICE_CHILD}" status=none; then
+    echo "[ERROR] Data copy fails!"
+
+    # Reset new data partition
+    sgdisk -o "${NEW_DEVICE_ROOT}"
+    partx -u "${NEW_DEVICE_ROOT}"
+    exit 1
+fi
 
 echo "[INFO] Remove old hassos-data partition ${OLD_PART_NUM} / ${OLD_DEVICE_ROOT}"
 if sfdisk -dq "${OLD_DEVICE_ROOT}" | grep -q 'label: gpt'; then
