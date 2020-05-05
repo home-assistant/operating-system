@@ -45,3 +45,6 @@ install_hassos_cli
 write_rauc_config
 install_rauc_certs
 install_bootloader_config
+
+# Fix overlay presets
+"${HOST_DIR}/bin/systemctl" --root="${TARGET_DIR}" preset-all

@@ -1,0 +1,31 @@
+#!/bin/sh
+# ==============================================================================
+# HassOS data partition handling 
+# ==============================================================================
+set -e
+
+OPTION_FILE=/mnt/overlay/data.opt
+DATA_DEVICE_CHILD="$(findfs LABEL="hassos-data")"
+DATA_DEVICE_ROOT="/dev/$(lsblk -no pkname "${DATA_DEVICE_CHILD}")"
+
+# Move command
+if [ "${1}" = "move" ] && [ -e "${2}" ]; then
+    DEVICE="${2}"
+
+    # Check device
+    if ! lsblk "${DEVICE}" | grep disk > /dev/null 2>&1; then
+        echo "[ERROR] Is not disk!"
+        exit 1
+    elif [ "${DEVICE}" = "${DATA_DEVICE_ROOT}" ]; then
+        echo "[ERROR] Can't be the same disk!"
+        exit 1
+    fi
+
+    # Flag device
+    echo "WARNING: ${DEVICE} will be reset on next restart!"
+    echo "Press a key to move forward"
+    read -r
+
+    echo "${DEVICE}" > ${OPTION_FILE}
+fi
+
