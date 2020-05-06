@@ -10,7 +10,6 @@ After=dev-disk-by\x2dlabel-hassos\x2ddata.device
 [Service]
 Type=oneshot
 ExecStart=/usr/libexec/hassos-expand
-RemainAfterExit=true
 
 [Install]
 WantedBy=local-fs.target

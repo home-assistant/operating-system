@@ -1,7 +1,7 @@
 Getting started with Hassos development using Docker on GNU/Linux
 =================================================================
 
-First, install **docker** for your distribution - I'd advise to use your distro's provided packages, since that will make sure permissions et al. are sanely set up for what you are about to run. You're also expected to have your current user properly set up in in your sudoers policy, so that this account may elevate to root and execute arbitrary commands as UID 0 (this is required, since at some point during the build process, a new loopback device-backed filesystem image will be mounted inside a docker container - which requires a "privileged" container to run, which can only be done as root).
+First, install **docker-ce** for your distribution - I'd advise to use your distro's provided packages, since that will make sure permissions et al. are sanely set up for what you are about to run. You're also expected to have your current user properly set up in in your sudoers policy, so that this account may elevate to root and execute arbitrary commands as UID 0 (this is required, since at some point during the build process, a new loopback device-backed filesystem image will be mounted inside a docker container - which requires a "privileged" container to run, which can only be done as root).
 
 Next, make sure the docker daemon is running:
 
@@ -83,12 +83,10 @@ total 141M
 In order to be able to use this image file with the **qemu** hypervisor, you'll need to unpack it, and convert it to an image format that qemu can work with. Conveniently, the _hassos_ buildenv already provides all the tools we need for this conversion:
 
 ```
-root@fd292c061896:/build# gunzip release/hassos_ova-2.2.vmdk.gz
-root@fd292c061896:/build# qemu-img convert -O qcow2 release/hassos_ova-2.2.vmdk release/hassos_ova-2.2.qcow2
+root@fd292c061896:/build# gunzip release/hassos_ova-2.2.qcow2.gz
 root@fd292c061896:/build# ls -lh release/
 total 673M
 -rw-r--r-- 1 root root 337M Oct 10 20:25 hassos_ova-2.2.qcow2
--rw-r--r-- 1 root root 337M Oct 10 20:22 hassos_ova-2.2.vmdk
 ```
 
 Now, exit the docker container's environment, and find the build artifacts in the `releases/` directory beneath your repository checkout dir. (The generated files will be owned by _root_; make sure to `chown` them to your user account, if needed.)

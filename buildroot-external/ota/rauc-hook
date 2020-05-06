@@ -31,8 +31,5 @@ fi
 ##
 # Fixups
 
-# Rename CLI Hass.io
-sed -i "s/hassio:172.30.32.2/supervisor:172.30.32.2/g" /mnt/data/hassos.json
-
 
 exit 0

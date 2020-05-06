@@ -8,11 +8,12 @@
 	state: state {
 		#address-cells = <1>;
 		#size-cells = <1>;
-                magic = <0xef98423f>;
-                compatible = "barebox,state";
-                backend = <&backend_state>;
-                backend-type = "raw";
-                backend-stridesize = <4048>;
+		
+		magic = <0xef98423f>;
+		compatible = "barebox,state";
+		backend = <&backend_state>;
+		backend-type = "raw";
+		backend-stridesize = <4048>;
 
 		bootstate {
 			#address-cells = <1>;
@@ -32,6 +33,7 @@
 					default = <20>;
 				};
 			};
+
 			B {
 				#address-cells = <1>;
 				#size-cells = <1>;
@@ -46,10 +48,17 @@
 					default = <10>;
 				};
 			};
+
 			last_chosen@10 {
 				reg = <0x10 0x4>;
 				type = "uint32";
 			};
+		};
+
+		machine_id@14 {
+			reg = <0x14 0x24>;
+			type = "string";
+			default = "";
 		};
 	};
 

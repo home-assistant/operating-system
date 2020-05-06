@@ -1,0 +1,30 @@
+#!/bin/sh
+set -e
+
+MACHINE_ID=$(cat /etc/machine-id)
+
+###
+# u-boot
+if [ -e /usr/sbin/fw_setenv ]; then
+
+    # machine-id
+    if [ "$(fw_printenv -n MACHINE_ID)" != "${MACHINE_ID}" ]; then
+        echo "[INFO] set machine-id to ${MACHINE_ID}"
+        fw_setenv MACHINE_ID "${MACHINE_ID}"
+    else
+        echo "[INFO] machine-id is okay"
+    fi
+
+###
+# Barebox
+else
+
+    # machine-id
+    if [ "$(barebox-state -g state.machine_id -i /etc/barebox-state.dtb)" != "${MACHINE_ID}" ]; then
+        echo "[INFO] set machine-id to ${MACHINE_ID}"
+        barebox-state -s "state.machine_id=${MACHINE_ID}" -i /etc/barebox-state.dtb
+    else
+        echo "[INFO] machine-id is okay"
+    fi
+
+fi

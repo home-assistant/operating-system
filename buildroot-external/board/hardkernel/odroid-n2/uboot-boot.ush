@@ -10,7 +10,7 @@ setenv loadbootstate " \
 
 setenv storebootstate " \
     echo 'storing env...'; \
-    env export -c -s 0x2000 ${ramdisk_addr_r} BOOT_ORDER BOOT_A_LEFT BOOT_B_LEFT; \
+    env export -c -s 0x2000 ${ramdisk_addr_r} BOOT_ORDER BOOT_A_LEFT BOOT_B_LEFT MACHINE_ID; \
     mmc write ${ramdisk_addr_r} ${mmc_env} 0x10;"
 
 run loadbootstate
@@ -29,7 +29,7 @@ if test "${hdmimode}" = "custombuilt"; then setenv cmode "modeline=${modeline}";
 setenv bootargs_odroidn2 "clk_ignore_unused hdmimode=${hdmimode} cvbsmode=576cvbs max_freq_a53=${max_freq_a53} max_freq_a73=${max_freq_a73} maxcpus=${maxcpus} ${cmode} voutmode=${voutmode} disablehpd=${disablehpd} overscan=${overscan}"
 
 # HassOS bootargs
-setenv bootargs_hassos "zram.enabled=1 zram.num_devices=3 apparmor=1 security=apparmor cgroup_enable=memory"
+setenv bootargs_hassos "zram.enabled=1 zram.num_devices=3 apparmor=1 security=apparmor systemd.machine_id=${MACHINE_ID} cgroup_enable=memory"
 
 # HassOS system A/B
 setenv bootargs_a "root=PARTUUID=48617373-06 rootfstype=squashfs ro rootwait"
