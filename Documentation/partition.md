@@ -36,7 +36,9 @@ Sometime the bootloader part can look different because there can be firmware or
 
 ## Data
 
-The data partation is the only partition with I/O. This partition can be offloaded to a different drive with the utility:
+The data partation is the only partition with real I/O. It will be expanded automatic on boot time to the full size of the disk. 
+
+This partition can be offloaded to a different drive with the utility:
 ```sh
 $ datactl move /dev/xxx
 ```
