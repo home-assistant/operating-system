@@ -1,0 +1,46 @@
+From 7e81f99afd91c937f0e66dc135e26c1c4f78b003 Mon Sep 17 00:00:00 2001
+From: Martijn Coenen <maco@android.com>
+Date: Tue, 10 Mar 2020 14:12:30 +0100
+Subject: [PATCH] loop: Only change blocksize when needed.
+
+Return early in loop_set_block_size() if the requested block size is
+identical to the one we already have; this avoids expensive calls to
+freeze the block queue.
+
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Martijn Coenen <maco@android.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+---
+ drivers/block/loop.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/block/loop.c b/drivers/block/loop.c
+index 739b372a5112..93b8d6047c14 100644
+--- a/drivers/block/loop.c
++++ b/drivers/block/loop.c
+@@ -1539,16 +1539,16 @@ static int loop_set_block_size(struct loop_device *lo, unsigned long arg)
+ 	if (arg < 512 || arg > PAGE_SIZE || !is_power_of_2(arg))
+ 		return -EINVAL;
+ 
+-	if (lo->lo_queue->limits.logical_block_size != arg) {
+-		sync_blockdev(lo->lo_device);
+-		kill_bdev(lo->lo_device);
+-	}
++	if (lo->lo_queue->limits.logical_block_size == arg)
++		return 0;
++
++	sync_blockdev(lo->lo_device);
++	kill_bdev(lo->lo_device);
+ 
+ 	blk_mq_freeze_queue(lo->lo_queue);
+ 
+ 	/* kill_bdev should have truncated all the pages */
+-	if (lo->lo_queue->limits.logical_block_size != arg &&
+-			lo->lo_device->bd_inode->i_mapping->nrpages) {
++	if (lo->lo_device->bd_inode->i_mapping->nrpages) {
+ 		err = -EAGAIN;
+ 		pr_warn("%s: loop%d (%s) has still dirty pages (nrpages=%lu)\n",
+ 			__func__, lo->lo_number, lo->lo_file_name,
+-- 
+2.17.1
+
