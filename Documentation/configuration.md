@@ -3,7 +3,7 @@
 ## Automatic
 
 You can use an USB drive with HassOS to configure network options, SSH access to the host and to install updates.
-Format a USB stick with FAT32/EXT4/NTFS and name it `CONFIG` (in all capitals). Alternative you can create a `CONFIG` folder inside boot partition. Use the following directory structure within the USB drive:
+Format a USB stick with FAT32/EXT4/NTFS and name it `CONFIG` (in all capitals). Alternative you can create a `CONFIG` folder inside the `boot` partition. Use the following directory structure within the USB drive:
 
 ```text
 network/
@@ -24,7 +24,7 @@ hassos-xy.raucb
 - The `hassos-*.raucb` file is a firmware OTA update which will be installed. These can be found on on the [release][hassos-release] page.
 
 You can put this USB stick into the device and it will be read on startup and files written to the correct places. You can also trigger this process later over the
-API/UI or by calling `systemctl restart hassos-config` on the host. *The USB Stick just needs to be insterted to the device during this setup process and can be disconnected afterwards.*
+API/UI or by calling `systemctl restart hassos-config` on the host. *The USB Stick just needs to be inserted to the device during this setup process and can be disconnected afterwards.*
 
 ## Local
 
@@ -47,7 +47,9 @@ You can manual add, edit or remove connections configurations from `/etc/Network
 ### NTP
 
 You can manual edit the systemd timesync file on `/etc/systemd/timesyncd.conf`.
-Our default ntp configuration look like:
+
+Our default NTP configuration look like:
+
 ```
 [Time]
 NTP=time1.google.com time2.google.com time3.google.com
