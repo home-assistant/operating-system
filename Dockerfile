@@ -16,10 +16,30 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         docker-ce \
     && rm -rf /var/lib/apt/lists/*
 
-# Build Tools
+# Build tools
 RUN apt-get update && apt-get install -y --no-install-recommends \
-        wget patch vim cpio python unzip rsync bc bzip2 ncurses-dev sudo \
-        git make g++ file perl bash binutils locales qemu-utils bison flex \
+        bash \
+        bc \
+        binutils \
+        bison \
+        bzip2 \
+        cpio \
+        file \
+        flex \
+        g++ \
+        git \
+        locales \
+        make \
+        ncurses-dev \
+        patch \
+        perl \
+        python \
+        qemu-utils \
+        rsync \
+        sudo \
+        unzip \
+        vim \
+        wget \
     && rm -rf /var/lib/apt/lists/*
 
 # Init entry
