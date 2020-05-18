@@ -20,7 +20,7 @@
       <Product>Operating-System</Product>
       <ProductUrl>https://home-assistant.io</ProductUrl>
     </ProductSection>
-    <OperatingSystemSection ovf:id="102" vmw:osType="otherLinux64Guest" ovf:required="false">
+    <OperatingSystemSection ovf:id="100" vmw:osType="other4xLinux64Guest">
       <Info>The kind of installed guest operating system</Info>
       <Description>Linux</Description>
     </OperatingSystemSection>
