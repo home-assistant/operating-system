@@ -32,6 +32,8 @@ if [ ! -b "${NEW_DEVICE_ROOT}" ]; then
     echo "[ERROR] No block device ${NEW_DEVICE_ROOT}!"
     exit 1
 fi
+echo "[INFO] Cleanup device ${NEW_DEVICE_ROOT}!"
+sgdisk -Z "${NEW_DEVICE_ROOT}"
 
 # Create new partition
 echo "[INFO] Create new hassos-data partition"
