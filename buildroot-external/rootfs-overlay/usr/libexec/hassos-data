@@ -63,6 +63,7 @@ resize2fs -f "${NEW_DEVICE_CHILD}"
 
 # Fix partition layout
 partx -d "${OLD_DEVICE_CHILD}"
+partx -u "${OLD_DEVICE_ROOT}"
 partx -u "${NEW_DEVICE_ROOT}"
 
 echo "[INFO] Finish hassos data movement"
