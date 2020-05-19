@@ -21,6 +21,18 @@ OLD_DEVICE_CHILD="$(findfs LABEL="hassos-data")"
 OLD_DEVICE_ROOT="/dev/$(lsblk -no pkname "${OLD_DEVICE_CHILD}")"
 OLD_PART_NUM="${OLD_DEVICE_CHILD: -1}"
 
+# Wait for devices
+timeout 90 \
+    ash -c \
+        "until [ -e \"${NEW_DEVICE_ROOT}\" ]; do sleep 5; done" \
+            > /dev/null 2>&1 || true;
+
+# Check if block device is exists
+if [ ! -b "${NEW_DEVICE_ROOT}" ]; then
+    echo "[ERROR] No block device ${NEW_DEVICE_ROOT}!"
+    exit 1
+fi
+
 # Create new partition
 echo "[INFO] Create new hassos-data partition"
 sgdisk -o "${NEW_DEVICE_ROOT}"
