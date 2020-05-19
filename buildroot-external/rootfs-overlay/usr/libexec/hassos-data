@@ -22,7 +22,7 @@ OLD_DEVICE_ROOT="/dev/$(lsblk -no pkname "${OLD_DEVICE_CHILD}")"
 OLD_PART_NUM="${OLD_DEVICE_CHILD: -1}"
 
 # Wait for devices
-timeout -t 90 \
+timeout 90 \
     ash -c \
         "until [ -e "${NEW_DEVICE_ROOT}" ]; do sleep 5; done" \
             > /dev/null 2>&1 || true;
