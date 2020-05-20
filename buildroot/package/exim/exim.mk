@@ -39,6 +39,8 @@ define EXIM_USE_DEFAULT_CONFIG_FILE
 	$(INSTALL) -m 0644 $(@D)/src/EDITME $(@D)/Local/Makefile
 	$(call exim-config-change,BIN_DIRECTORY,/usr/sbin)
 	$(call exim-config-change,CONFIGURE_FILE,/etc/exim/configure)
+	$(call exim-config-change,LOG_FILE_PATH,/var/log/exim/exim_%slog)
+	$(call exim-config-change,PID_FILE_PATH,/var/run/exim/exim.pid)
 	$(call exim-config-change,EXIM_USER,ref:exim)
 	$(call exim-config-change,EXIM_GROUP,mail)
 	$(call exim-config-change,TRANSPORT_LMTP,yes)
@@ -118,16 +120,14 @@ endif
 
 # We need the host version of macro_predef during the build, before
 # building it we need to prepare the makefile.
-# "The -j (parallel) flag must not be used with make"
-# (http://www.exim.org/exim-html-current/doc/html/spec_html/ch04.html)
 define EXIM_BUILD_CMDS
-	$(TARGET_MAKE_ENV) build=br $(MAKE1) -C $(@D) makefile
-	$(HOST_MAKE_ENV) $(MAKE1) -C $(@D)/build-br macro_predef \
+	$(TARGET_MAKE_ENV) build=br $(MAKE) -C $(@D) makefile
+	$(HOST_MAKE_ENV) $(MAKE) -C $(@D)/build-br macro_predef \
 		CC=$(HOSTCC) \
 		LNCC=$(HOSTCC) \
 		CFLAGS="-std=c99 $(HOST_CFLAGS)" \
 		LFLAGS="-fPIC $(HOST_LDFLAGS)"
-	$(TARGET_MAKE_ENV) build=br $(MAKE1) -C $(@D) $(EXIM_STATIC_FLAGS) \
+	$(TARGET_MAKE_ENV) build=br $(MAKE) -C $(@D) $(EXIM_STATIC_FLAGS) \
 		CFLAGS="-std=c99 $(TARGET_CFLAGS)"
 endef
 
@@ -135,7 +135,7 @@ endef
 # something when installing...
 define EXIM_INSTALL_TARGET_CMDS
 	DESTDIR=$(TARGET_DIR) INSTALL_ARG="-no_chown -no_symlink" build=br \
-	  $(MAKE1) -C $(@D) $(EXIM_STATIC_FLAGS) \
+	  $(MAKE) -C $(@D) $(EXIM_STATIC_FLAGS) \
 		CFLAGS="-std=c99 $(TARGET_CFLAGS)" \
 		install
 	chmod u+s $(TARGET_DIR)/usr/sbin/exim
