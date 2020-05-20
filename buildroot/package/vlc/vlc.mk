@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-VLC_VERSION = 3.0.8
+VLC_VERSION = 3.0.9.2
 VLC_SITE = https://get.videolan.org/vlc/$(VLC_VERSION)
 VLC_SOURCE = vlc-$(VLC_VERSION).tar.xz
 VLC_LICENSE = GPL-2.0+, LGPL-2.1+
@@ -565,6 +565,13 @@ endif
 
 ifeq ($(BR2_PACKAGE_ZLIB),y)
 VLC_DEPENDENCIES += zlib
+endif
+
+ifeq ($(BR2_PACKAGE_GNUTLS),y)
+VLC_CONF_OPTS += --enable-gnutls
+VLC_DEPENDENCIES += gnutls
+else
+VLC_CONF_OPTS += --disable-gnutls
 endif
 
 $(eval $(autotools-package))

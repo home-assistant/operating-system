@@ -199,6 +199,7 @@ HOST_QEMU_DEPENDENCIES = host-pkgconf host-zlib host-libglib2 host-pixman host-p
 #       mips64          mips64
 #       mips64el        mips64el
 #       nios2           nios2
+#       or1k            or1k
 #       powerpc         ppc
 #       powerpc64       ppc64
 #       powerpc64le     ppc64 (system) / ppc64le (usermode)
@@ -303,6 +304,13 @@ define HOST_QEMU_CONFIGURE_CMDS
 		--extra-cflags="$(HOST_QEMU_CFLAGS)" \
 		--extra-ldflags="$(HOST_LDFLAGS)" \
 		--python=$(HOST_DIR)/bin/python3 \
+		--disable-bzip2 \
+		--disable-curl \
+		--disable-libssh \
+		--disable-sdl \
+		--disable-vnc-jpeg \
+		--disable-vnc-png \
+		--disable-vnc-sasl \
 		$(HOST_QEMU_OPTS)
 endef
 
