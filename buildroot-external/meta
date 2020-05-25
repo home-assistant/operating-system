@@ -4,4 +4,4 @@ VERSION_BUILD=7
 HASSOS_NAME="HassOS"
 HASSOS_ID="hassos"
 
-DEPLOYMENT="staging"
+DEPLOYMENT="production"
