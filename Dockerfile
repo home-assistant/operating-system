@@ -37,6 +37,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         sudo \
         unzip \
         wget \
+        qemu-utils \
     && rm -rf /var/lib/apt/lists/*
 
 # Init entry
