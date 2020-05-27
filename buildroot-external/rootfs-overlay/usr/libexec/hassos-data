@@ -65,7 +65,7 @@ if sfdisk -dq "${OLD_DEVICE_ROOT}" | grep -q 'label: gpt'; then
     sgdisk -v "${OLD_DEVICE_ROOT}"
 
 else
-    sfdisk --delete "${OLD_PART_NUM}" "${OLD_DEVICE_ROOT}" --force
+    sfdisk --delete "${OLD_DEVICE_ROOT}" "${OLD_PART_NUM}" --force
     sfdisk -V "${OLD_DEVICE_ROOT}"
 fi
 
