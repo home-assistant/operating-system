@@ -1,6 +1,6 @@
 # Partition
 
-The partition layout is a bit different than for regular setups. We prefer GPT, if possible. With SoCs which don't support GPT, we use the hybrid GPT. For more details about this topic, please refer to the [development](development.mnd) documentation.
+The partition layout is a bit different than for regular setups. We prefer GPT, if possible. With SoCs which don't support GPT, we use the hybrid GPT. For more details about this topic, please refer to the [development](development.md) documentation.
 
 The system is designed to have as less as possible write operations on the storage media. Which means that we have basically only write during the OTA update and 5-6 times per week on the overlay part. The data partition is having I/O. This is the reason which is should be run on a different drive.
 
