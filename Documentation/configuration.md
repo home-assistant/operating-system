@@ -59,4 +59,4 @@ FallbackNTP=0.pool.ntp.org 1.pool.ntp.org 2.pool.ntp.org 3.pool.ntp.org
 [systemd-modules]: https://www.freedesktop.org/software/systemd/man/modules-load.d.html
 [network.md]: network.md
 [hassos-release]: https://github.com/home-assistant/hassos/releases/
-[debug-homeassistant]: https://developers.home-assistant.io/docs/en/hassio_debugging.html
+[debug-homeassistant]: https://developers.home-assistant.io/docs/operating-system/debugging
