@@ -4,7 +4,7 @@
 # ==============================================================================
 
 # Run CLI container
-if [ "$(docker ps -q -f name=hassio_cli)" ];
+if [ "$(docker ps -q -f name=hassio_cli)" ]; then
     docker container exec \
         -ti hassio_cli \
         /usr/bin/cli.sh \
