@@ -81,8 +81,8 @@
       <Item>
         <rasd:AutomaticAllocation>true</rasd:AutomaticAllocation>
         <rasd:Caption>eth0</rasd:Caption>
-        <rasd:Description>Ethernet adapter</rasd:Description>
         <rasd:Connection>Bridged</rasd:Connection>
+        <rasd:Description>Ethernet adapter</rasd:Description>
         <rasd:ElementName>eth0</rasd:ElementName>
         <rasd:InstanceID>6</rasd:InstanceID>
         <rasd:ResourceSubType>E1000</rasd:ResourceSubType>
