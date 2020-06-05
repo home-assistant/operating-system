@@ -25,7 +25,7 @@ if [ -n "${SUPERVISOR_CONTAINER_ID}" ]; then
     if [ -n "${SUPERVISOR_START}" ] && [ -n "${SUPERVISOR_STOP}" ]; then
         START=$(date --date="${SUPERVISOR_START}" +%s)
         STOP=$(date --date="${SUPERVISOR_STOP}" +%s)
-        SUPERVISOR_RUNTIME=$((${STOP}-${START}))
+        SUPERVISOR_RUNTIME=$((STOP-START))
         # Minimial runtime not met, remove container and image
         if [ "${SUPERVISOR_RUNTIME}" -lt "${SUPERVISOR_MIN_RUNTIME}" ]; then
             echo "[WARNING] Supervisor container exited too quickly, forcing a fresh image and container..."
@@ -71,8 +71,8 @@ fi
 
 # If Supervisor container is missing, create it
 if [ -z "${SUPERVISOR_CONTAINER_ID}" ]; then
-    # shellcheck disable=SC2086
     echo "[INFO] Creating a new Supervisor container..."
+    # shellcheck disable=SC2086
     docker container create \
         --name hassio_supervisor \
         --privileged --security-opt apparmor="hassio-supervisor" \
