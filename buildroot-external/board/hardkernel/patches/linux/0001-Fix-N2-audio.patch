@@ -1,14 +1,14 @@
-From 54250d16915a6f6cf9fdd01756a12d8bfd3131de Mon Sep 17 00:00:00 2001
+From 2fb3aa8c5f1534718cce1afd2bf61b1d21a5c851 Mon Sep 17 00:00:00 2001
 From: Pascal Vizeli <pvizeli@syshack.ch>
-Date: Fri, 5 Jun 2020 15:39:45 +0000
+Date: Fri, 5 Jun 2020 20:09:56 +0000
 Subject: [PATCH 1/1] Fix N2 audio
 
 Signed-off-by: Pascal Vizeli <pvizeli@syshack.ch>
 ---
- .../boot/dts/amlogic/meson-g12-common.dtsi    | 13 +++
- arch/arm64/boot/dts/amlogic/meson-g12.dtsi    |  9 ++
- .../boot/dts/amlogic/meson-g12b-odroid-n2.dts | 87 +++++++++++++++++--
- 3 files changed, 102 insertions(+), 7 deletions(-)
+ .../boot/dts/amlogic/meson-g12-common.dtsi    | 13 ++++++
+ arch/arm64/boot/dts/amlogic/meson-g12.dtsi    |  9 +++++
+ .../boot/dts/amlogic/meson-g12b-odroid-n2.dts | 40 +++++++++++++++++--
+ 3 files changed, 58 insertions(+), 4 deletions(-)
 
 diff --git a/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi
 index c0aef7d69117..bfddca4f91bb 100644
@@ -62,7 +62,7 @@ index 55d39020ec72..0d14409f509c 100644
  			compatible = "amlogic,g12a-tohdmitx";
  			reg = <0x0 0x744 0x0 0x4>;
 diff --git a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts
-index 169ea283d4ee..47b979c11688 100644
+index 169ea283d4ee..b0fb25892964 100644
 --- a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts
 +++ b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts
 @@ -10,6 +10,7 @@
@@ -94,48 +94,28 @@ index 169ea283d4ee..47b979c11688 100644
  	memory@0 {
  		device_type = "memory";
  		reg = <0x0 0x0 0x0 0x40000000>;
-@@ -209,13 +224,22 @@
+@@ -209,11 +224,13 @@
  	sound {
  		compatible = "amlogic,axg-sound-card";
  		model = "G12B-ODROID-N2";
 -		audio-aux-devs = <&tdmout_b>;
-+		audio-aux-devs = <&tdmout_b>, <&tdmout_c>, <&dio2133>;
++		audio-aux-devs = <&tdmout_b>, <&dio2133>;
  		audio-routing = "TDMOUT_B IN 0", "FRDDR_A OUT 1",
  				"TDMOUT_B IN 1", "FRDDR_B OUT 1",
  				"TDMOUT_B IN 2", "FRDDR_C OUT 1",
 -				"TDM_B Playback", "TDMOUT_B OUT";
--
--		assigned-clocks = <&clkc CLKID_MPLL2>,
 +				"TDM_B Playback", "TDMOUT_B OUT",
-+				"TDMOUT_C IN 0", "FRDDR_A OUT 2",
-+				"TDMOUT_C IN 1", "FRDDR_B OUT 2",
-+				"TDMOUT_C IN 2", "FRDDR_C OUT 2",
-+				"TDM_C Playback", "TDMOUT_C OUT",
-+				"SPDIFOUT IN 0", "FRDDR_A OUT 3",
-+				"SPDIFOUT IN 1", "FRDDR_B OUT 3",
-+				"SPDIFOUT IN 2", "FRDDR_C OUT 3",
 +				"AMP INL", "ACODEC LOLP",
 +				"AMP INR", "ACODEC LORP";
-+
-+		assigned-clocks = <&clkc CLKID_HIFI_PLL>,
+ 
+ 		assigned-clocks = <&clkc CLKID_MPLL2>,
  				  <&clkc CLKID_MPLL0>,
- 				  <&clkc CLKID_MPLL1>;
- 		assigned-clock-parents = <0>, <0>, <0>;
-@@ -251,14 +275,29 @@
+@@ -251,14 +268,21 @@
  			};
  		};
  
 -		/* hdmi glue */
--		dai-link-4 {
-+		dai-link-5 {
-+			sound-dai = <&spdifout>;
-+
-+			codec@0 {
-+				sound-dai = <&spdif_dit>;
-+			};
-+		};
-+
-+		dai-link-6 {
+ 		dai-link-4 {
  			sound-dai = <&tohdmitx TOHDMITX_I2S_OUT>;
  
 -			codec {
@@ -144,7 +124,7 @@ index 169ea283d4ee..47b979c11688 100644
  			};
  		};
 +
-+		dai-link-7 {
++		dai-link-5 {
 +			sound-dai = <&toacodec TOACODEC_OUT>;
 +
 +			codec@0 {
@@ -154,44 +134,7 @@ index 169ea283d4ee..47b979c11688 100644
  	};
  };
  
-@@ -473,17 +512,51 @@
- };
- 
- &tdmif_b {
-+	pinctrl-0 = <&mclk0_a_pins>, <&tdm_b_fs_pins>, <&tdm_b_sclk_pins>,
-+		    <&tdm_b_dout0_pins>;
-+	pinctrl-names = "default";
- 	status = "okay";
-+
-+	assigned-clocks = <&clkc_audio AUD_CLKID_TDM_MCLK_PAD0>,
-+			  <&clkc_audio AUD_CLKID_TDM_SCLK_PAD1>,
-+			  <&clkc_audio AUD_CLKID_TDM_LRCLK_PAD1>;
-+	assigned-clock-parents = <&clkc_audio AUD_CLKID_MST_B_MCLK>,
-+				 <&clkc_audio AUD_CLKID_MST_B_SCLK>,
-+				 <&clkc_audio AUD_CLKID_MST_B_LRCLK>;
-+	assigned-clock-rates = <0>, <0>, <0>;
-+};
-+
-+&tdmif_c {
-+	status = "okay";
-+	assigned-clocks = <&clkc_audio AUD_CLKID_TDM_MCLK_PAD1>,
-+			  <&clkc_audio AUD_CLKID_TDM_SCLK_PAD2>,
-+			  <&clkc_audio AUD_CLKID_TDM_LRCLK_PAD2>;
-+	assigned-clock-parents = <&clkc_audio AUD_CLKID_MST_C_MCLK>,
-+				 <&clkc_audio AUD_CLKID_MST_C_SCLK>,
-+				 <&clkc_audio AUD_CLKID_MST_C_LRCLK>;
-+	assigned-clock-rates = <0>, <0>, <0>;
- };
- 
- &tdmout_b {
- 	status = "okay";
- };
- 
-+&tdmout_c {
-+	status = "okay";
-+};
-+
- &tohdmitx {
+@@ -484,6 +508,14 @@
  	status = "okay";
  };
  
