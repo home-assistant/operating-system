@@ -1,0 +1,123 @@
+From 40e0bf4c0c36970f8e94591fdb0a5a8910bf9859 Mon Sep 17 00:00:00 2001
+From: "Yann E. MORIN" <yann.morin.1998@free.fr>
+Date: Tue, 12 May 2020 22:33:53 +0200
+Subject: [PATCH 1/1] linux: forcibly disable use of gcc plugins
+
+The soon-to-be-released linux 5.7 has changed the way it detects the
+ability of gcc to use plugins, when it dropped support for gcc 4.7 or
+older [0].
+
+To detect the ability to use gcc plugins, the kernel has to check
+whether the host gcc is capable enough to build them.
+
+When we call one of the configurator for the Linux kernel, we explicitly
+pass a value of HOSTCC=$(HOSTCC_NOCCACHE), because there might be a
+discrepancy between the ncurses headers and libraries as found by the
+Linux kconfig build [1] [2].
+
+But then, when we build the kernel, we pass another value to use [3]
+HOSTCC="$(HOSTCC) $(HOST_CFLAGS) $(HOST_LDFLAGS)" which boils down to
+roughly: gcc -I.../host/include -L.../host/lib -Wl,-rpath,.../host/lib
+This is needed so that at build time, the kernel can build host tools
+that link with our openssl et al.
+
+So, the two HOSTCC we pass to the kernel may have different behaviours.
+For example, on a machine where gmp is missing in the system, it is
+available in $(O)/host/ when using an internal toolchain (and under a
+few other conditions).
+
+In that case, when configuring the kernel, it decides that the host
+compiler can't build plugins, so the dependencies of CONFIG_GCC_PLUGINS
+are not met, and that option is not present in the linux' .config file
+(neither as "=y" nor as "is not set"). But then, when we build the
+kernel, the host compiler suddenly becomes capable of building the
+plugins, and the internal syncconfig run by the kernel will notice that
+the dependencies of CONFIG_GCC_PLUGINS are now met, and that the user
+shall decide on its value. And this blocks a build on an interactive
+console (abbreviated):
+
+    * Restart config...
+    * GCC plugins
+    GCC plugins (GCC_PLUGINS) [Y/n/?] (NEW) _
+
+But most problematic is the behaviour when run in a shell that is not
+interactiove (e.g. a CI job or such) (abbreviated):
+
+    * Restart config...
+    * GCC plugins
+    GCC plugins (GCC_PLUGINS) [Y/n/?] (NEW)
+    Error in reading or end of file.
+      Generate some entropy during boot and runtime (GCC_PLUGIN_LATENT_ENTROPY) [N/y/?] (NEW)
+    Error in reading or end of file.
+      Randomize layout of sensitive kernel structures (GCC_PLUGIN_RANDSTRUCT) [N/y/?] (NEW)
+    Error in reading or end of file.
+    * Memory initialization
+    Initialize kernel stack variables at function entry
+    > 1. no automatic initialization (weakest) (INIT_STACK_NONE)
+      2. zero-init structs marked for userspace (weak) (GCC_PLUGIN_STRUCTLEAK_USER) (NEW)
+      3. zero-init structs passed by reference (strong) (GCC_PLUGIN_STRUCTLEAK_BYREF) (NEW)
+      4. zero-init anything passed by reference (very strong) (GCC_PLUGIN_STRUCTLEAK_BYREF_ALL) (NEW)
+    choice[1-4?]:
+    Error in reading or end of file.
+    Poison kernel stack before returning from syscalls (GCC_PLUGIN_STACKLEAK) [N/y/?] (NEW)
+    Error in reading or end of file.
+    Enable heap memory zeroing on allocation by default (INIT_ON_ALLOC_DEFAULT_ON) [N/y/?] n
+    Enable heap memory zeroing on free by default (INIT_ON_FREE_DEFAULT_ON) [N/y/?] n
+
+The most obvious and simple solution would be to unconditionally disable
+gcc plugins altogether, in the KCONFIG_FIXUP hook. But that can't work
+either, because after applying the fixups, we call olddefconfig (or the
+likes) with the incapable HOSTCC, so the disabled option would be removed
+anyway, and we'd be back to square one.
+
+So, in addition to the above, we also forcibly hack the same call just
+before actually building the kernel.
+
+Note that the two are needed: the one in the fixups is needed for those
+that have a system that already allows building gcc plugins, and the
+second is needed in the other case, where the system does not allow it
+but would work with our additional headers and libs in $(O)/host/. The
+two ensure there is a very similar experience in the two situations.
+
+Forcibly disabling the use of gcc plugins is not a regression on our
+side: it has never been possible to do so so far. We're now making sure
+that can't work by accident.
+
+Reported-by: Ganesh <ganesh45in@gmail.com>,
+Reported-by: Heiko Thiery <heiko.thiery@gmail.com>
+Signed-off-by: Yann E. MORIN <yann.morin.1998@free.fr>
+Cc: Michael Walle <michael.walle@kontron.com>
+Cc: Peter Korsgaard <peter@korsgaard.com>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Cc: Arnout Vandecappelle <arnout@mind.be>
+Tested-by: Heiko Thiery <heiko.thiery@gmail.com>
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ linux/linux.mk | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/buildroot/linux/linux.mk b/buildroot/linux/linux.mk
+index ae1edbeb..5a1cb42e 100644
+--- a/buildroot/linux/linux.mk
++++ b/buildroot/linux/linux.mk
+@@ -408,6 +408,7 @@ define LINUX_KCONFIG_FIXUP_CMDS
+ 		$(call KCONFIG_ENABLE_OPT,CONFIG_FB,$(@D)/.config)
+ 		$(call KCONFIG_ENABLE_OPT,CONFIG_LOGO,$(@D)/.config)
+ 		$(call KCONFIG_ENABLE_OPT,CONFIG_LOGO_LINUX_CLUT224,$(@D)/.config))
++	$(call KCONFIG_DISABLE_OPT,CONFIG_GCC_PLUGINS,$(@D)/.config)
+ endef
+ 
+ ifeq ($(BR2_LINUX_KERNEL_DTS_SUPPORT),y)
+@@ -467,7 +468,10 @@ endif
+ # '$(LINUX_TARGET_NAME)' targets separately because calling them in
+ # the same $(MAKE) invocation has shown to cause parallel build
+ # issues.
++# The call to disable gcc-plugins is a stop-gap measure:
++#   http://lists.busybox.net/pipermail/buildroot/2020-May/282727.html
+ define LINUX_BUILD_CMDS
++	$(call KCONFIG_DISABLE_OPT,CONFIG_GCC_PLUGINS,$(@D)/.config)
+ 	$(foreach dts,$(call qstrip,$(BR2_LINUX_KERNEL_CUSTOM_DTS_PATH)), \
+ 		cp -f $(dts) $(LINUX_ARCH_PATH)/boot/dts/
+ 	)
+-- 
+2.17.1
