@@ -4,6 +4,8 @@
 # See http://buildroot.org/manual.html#rootfs-custom
 # and http://elinux.org/RPiconfig for a description of config.txt syntax
 
+# If your system doesn't work anymore after changing overlays, please report this to the Raspberry Pi kernel project
+
 kernel=zImage
 
 # To use an external initramfs file
