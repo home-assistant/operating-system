@@ -9,7 +9,7 @@ set -e
 . /etc/os-release
 
 # Init supervisor
-SUPERVISOR_MIN_RUNTIME=30
+SUPERVISOR_MIN_RUNTIME=15
 SUPERVISOR_IMAGE="homeassistant/${SUPERVISOR_ARCH}-hassio-supervisor"
 SUPERVISOR_DATA=/mnt/data/supervisor
 SUPERVISOR_IMAGE_ID=$(docker inspect --format='{{.Id}}' "${SUPERVISOR_IMAGE}" || echo "")
@@ -27,7 +27,10 @@ if [ -n "${SUPERVISOR_CONTAINER_ID}" ]; then
         STOP=$(date --date="${SUPERVISOR_STOP}" +%s)
         SUPERVISOR_RUNTIME=$((STOP-START))
         # Minimial runtime not met, remove container and image
-        if [ "${SUPERVISOR_RUNTIME}" -lt "${SUPERVISOR_MIN_RUNTIME}" ]; then
+        # if there is no update process ongoing
+        if [ "${SUPERVISOR_IMAGE_ID}" != "${SUPERVISOR_CONTAINER_ID}" ]; then
+            true
+        elif [ "${SUPERVISOR_RUNTIME}" -lt "${SUPERVISOR_MIN_RUNTIME}" ]; then
             echo "[WARNING] Supervisor container exited too quickly, forcing a fresh image and container..."
             docker container rm --force hassio_supervisor || true
             SUPERVISOR_CONTAINER_ID=""
