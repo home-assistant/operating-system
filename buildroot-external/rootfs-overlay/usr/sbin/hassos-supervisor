@@ -9,7 +9,7 @@ set -e
 . /etc/os-release
 
 # Init supervisor
-SUPERVISOR_MIN_RUNTIME=30
+SUPERVISOR_MIN_RUNTIME=15
 SUPERVISOR_IMAGE="homeassistant/${SUPERVISOR_ARCH}-hassio-supervisor"
 SUPERVISOR_DATA=/mnt/data/supervisor
 SUPERVISOR_IMAGE_ID=$(docker inspect --format='{{.Id}}' "${SUPERVISOR_IMAGE}" || echo "")
@@ -18,7 +18,7 @@ SUPERVISOR_CONTAINER_ID=$(docker inspect --format='{{.Image}}' hassio_supervisor
 # Check if previous runtime of the container meets the minimal runtime
 # If not, we might be in trouble. Image or container corruption, bad release?
 # Delete the container, delete the image, pull a fresh one
-if [ -n "${SUPERVISOR_CONTAINER_ID}" ]; then
+if [ -n "${SUPERVISOR_CONTAINER_ID}" ] && [ "${SUPERVISOR_IMAGE_ID}" = "${SUPERVISOR_CONTAINER_ID}" ]; then
     SUPERVISOR_START=$(docker inspect --format='{{.State.StartedAt}}' hassio_supervisor | sed -re "s/([-0-9]+)T([0-9\:]+).*/\1 \2/g")
     SUPERVISOR_STOP=$(docker inspect --format='{{.State.FinishedAt}}' hassio_supervisor | sed -re "s/([-0-9]+)T([0-9\:]+).*/\1 \2/g")
 
