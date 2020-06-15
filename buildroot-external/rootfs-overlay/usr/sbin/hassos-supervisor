@@ -42,7 +42,7 @@ if [ -z "${SUPERVISOR_IMAGE_ID}" ]; then
     # Get the latest from update information
     # Using updater information instead of config. If the config version is
     # broken, this creates a way (e.g., bad release).
-    SUPERVISOR_VERSION_UPDATER=$(jq -r '.version // empty' "${SUPERVISOR_DATA}/updater.json" || echo "")
+    SUPERVISOR_VERSION_UPDATER=$(jq -r '.version // empty' "${SUPERVISOR_DATA}/config.json" || echo "")
     SUPERVISOR_VERSION="${SUPERVISOR_VERSION_UPDATER:-latest}"
 
     echo "[WARNING] Supervisor image missing, downloading a fresh one: ${SUPERVISOR_VERSION}"
