@@ -1,7 +1,8 @@
 [Unit]
 Description=QEMU Guest Agent
 After=syslog.target network.target
-ConditionVirtualization=kvm
+ConditionVirtualization=|kvm
+ConditionVirtualization=|qemu
 
 [Service]
 ExecStart=/usr/libexec/qemu-ga -m virtio-serial -p /dev/virtio-ports/org.qemu.guest_agent.0
