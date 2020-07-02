@@ -41,23 +41,21 @@ The data partition is the only partition with real I/O. It will be expanded auto
 
 ## Using datactl to move the data partition.
 
-In a Home Assistant OS install, the data is stored on the /mnt/data partition of the SD card. This is the only read+write partition on the SD drive. Using the datactl move command, this partition can be moved off of the SD card onto an externally connected drive, leaving the rest of the read-only system on the SD.
+In a Home Assistant OS installation, the data is stored on the `/mnt/data` partition of the SD card. This is the only read+write partition on the SD drive. Using the `datactl` move command, this partition can be moved off of the SD card onto an externally connected drive, leaving the rest of the read-only system on the SD.
 
 The storage capacity of the external drive must be larger than the storage capacity of the existing SD card.
 
+The command needs to be run from the host console by either connecting a keyboard and monitor or making use of the [debug ssh access](https://developers.home-assistant.io/docs/operating-system/debugging/) over port 22222. The command will not work from within an SSH add-on container.
 
+Log in as `root` to get to the Home Assistant CLI and then enter `login` to continue to the host.
 
-The command needs to be run from the host console by either connecting a keyboard and monitor, or making use of the debug ssh access over port 22222. (See https://developers.home-assistant.io/docs/operating-system/debugging/) The command will not work from within an ssh add-on container.
-
-Login as “root” to get to the HA custom cli and then enter “login” to continue to the host.
-
-Confirm your usb SSD/HD is connected and recognized using `fdisk -l`.
+Confirm your USB SSD/HD is connected and recognized using `fdisk -l`.
 
 It is recommended to use fdisk to remove the existing partition(s) before proceeding.
 
-Type fdisk /dev/XXX (replacing XXX with your drive)
-Type `d` to delete a partition.
-Continue if needed, then write the changes.
+- Type `fdisk /dev/XXX` (replacing XXX with your drive)
+- Type `d` to delete a partition.
+- Continue if needed, then write the changes.
 
 Creating a new partition is not necessary.
 
