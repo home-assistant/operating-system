@@ -7,7 +7,7 @@ if [ -z "$1" ]; then
 fi
 echo "Use firmware: https://github.com/raspberrypi/firmware/archive/$1.tar.gz"
 
-if [ -z "$2" ] && [ -f "$2" ]; then
+if [ -z "$2" ] || ! [ -f "$2" ]; then
     echo "Need buildroot patch file!"
     exit 1
 fi
