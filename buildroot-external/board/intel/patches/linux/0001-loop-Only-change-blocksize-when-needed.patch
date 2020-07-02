@@ -18,7 +18,7 @@ diff --git a/drivers/block/loop.c b/drivers/block/loop.c
 index 739b372a5112..93b8d6047c14 100644
 --- a/drivers/block/loop.c
 +++ b/drivers/block/loop.c
-@@ -1539,16 +1539,16 @@ static int loop_set_block_size(struct loop_device *lo, unsigned long arg)
+@@ -1556,16 +1556,16 @@ static int loop_set_block_size(struct loop_device *lo, unsigned long arg)
  	if (arg < 512 || arg > PAGE_SIZE || !is_power_of_2(arg))
  		return -EINVAL;
  
@@ -34,7 +34,7 @@ index 739b372a5112..93b8d6047c14 100644
  
  	blk_mq_freeze_queue(lo->lo_queue);
  
- 	/* kill_bdev should have truncated all the pages */
+	/* invalidate_bdev should have truncated all the pages */
 -	if (lo->lo_queue->limits.logical_block_size != arg &&
 -			lo->lo_device->bd_inode->i_mapping->nrpages) {
 +	if (lo->lo_device->bd_inode->i_mapping->nrpages) {
