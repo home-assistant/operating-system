@@ -1,0 +1,4 @@
+config BR2_PACKAGE_RTL8125
+	bool "ethernet rtl8125"
+	help
+	  Install ethernet driver for Realtek 8125
