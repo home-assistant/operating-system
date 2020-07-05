@@ -1,0 +1,10 @@
+comment "e1000e needs a Linux kernel to be built"
+	depends on !BR2_LINUX_KERNEL
+
+config BR2_PACKAGE_INTEL_E1000E
+	bool "Intel Network Adapter Driver for PCIe"
+	depends on BR2_LINUX_KERNEL
+	help
+	  Install Intel Network Adapter Driver for PCIe (external module)
+
+	  https://downloadcenter.intel.com/download/15817/Intel-Network-Adapter-Driver-for-PCIe-Intel-Gigabit-Ethernet-Network-Connections-Under-Linux-
