@@ -8,7 +8,8 @@ Requirements:
 - UEFI boot
 - SATA/AHCI storage
 - Supported NIC:
-  - Intel Gigabit NIC (e1000, e1000e, igb)
+  - Intel Gigabit NIC (e1000, igb - via Linux mainline)
+  - Intel PCIe Gigabit NIC (e1000e - via out-of-tree module in *buildroot-external/package/intel-e1000e*)
   - Realtek Gigabit NIC (r8169)
   - Intel Wireless Wifi 802.11ac (iwlwifi, see below)
 
@@ -18,6 +19,7 @@ Requirements:
 |--------|-----------|
 | Intel NUC5CPYH |  |
 | Intel NUC6CAYH |  |
+| Intel NUC10I3FNK2 |  |
 | Gigabyte GB-BPCE-3455 | needs 'nomodeset' in cmdline.txt if you want a console |
 
 
