@@ -1,9 +1,23 @@
 # Intel NUC
 
-This board configuration supports the Intel NUC mini PCs and compatibles. 
-Probably most recent computers will work.
+## Supported Hardware
 
-Requirements:
+This board configuration supports the Intel NUC mini PCs and compatibles. Most recent MUC computers will probably work.
+
+## Tested Hardware
+
+| Device                | Release Date  | Support |
+|-----------------------|---------------|---------|
+| Intel NUC5CPYH        | Q3 2015       | yes     |
+| Intel NUC6CAYH        | Q4 2016       | yes     |
+| Intel NUC10i3FNK2     | Q4 2019       | yes     |
+| Gigabyte GB-BPCE-3455 | 2017          | yes*    |
+
+\* needs 'nomodeset' in cmdline.txt if you want a console
+
+Config is `intel_nuc` for all these devices.
+
+## Requirements
 - x86-64 support
 - UEFI boot
 - SATA/AHCI storage
@@ -12,15 +26,6 @@ Requirements:
   - Intel PCIe Gigabit NIC (e1000e - via out-of-tree module in *buildroot-external/package/intel-e1000e*)
   - Realtek Gigabit NIC (r8169)
   - Intel Wireless Wifi 802.11ac (iwlwifi, see below)
-
-## Tested Hardware
-
-| Device | Quirks | 
-|--------|-----------|
-| Intel NUC5CPYH |  |
-| Intel NUC6CAYH |  |
-| Intel NUC10I3FNK2 |  |
-| Gigabyte GB-BPCE-3455 | needs 'nomodeset' in cmdline.txt if you want a console |
 
 
 ## Wifi
@@ -50,4 +55,3 @@ Currently there is no shiny installation method. Checklist:
 - Copy or download the hassos image into your live environment
 - zcat the image to local harddisk
 - Reboot
-

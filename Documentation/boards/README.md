@@ -1,5 +1,7 @@
 # Boards
 
+## Overview
+
 The following boards/devices are supported:
 
 * Raspberry Pi
@@ -25,11 +27,11 @@ The following boards/devices are supported:
 * Virtual appliance (x86_64/UEFI):
   * OVA
   * VMDK
-  * VHDX∏
+  * VHDX
   * VDI
   * QCOW2
 
-raspberrypi
+## Board specifics
 
 |Board|Build|Config|Docs|
 |-----|----|------|----|

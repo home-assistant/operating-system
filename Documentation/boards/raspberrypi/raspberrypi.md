@@ -1,15 +1,17 @@
 # Raspberry PI
 
-Supported Hardware:
+## Supported Hardware
 
-| Device | Board |
-|--------|-----------|
-| Raspberry Pi A+/B/B+| rpi |
-| Raspberry Pi Zero | rpi |
-| Raspberry Pi Zero W | rpi0-w |
-| Raspberry Pi 2 B | rpi2 |
-| Raspberry Pi 3 B/B+ | rpi3 / rpi3-64 |
-| Raspberry Pi 4 B | rpi4 / rpi4-64 |
+| Device              | Release Date  | Config             | Support         |
+|---------------------|---------------|--------------------|-----------------|
+| Raspberry Pi B/B+/A+|2012/2014/2014 | `rpi`              | not recommended |
+| Raspberry Pi 2 B    |2015           | `rpi2`             | not recommended |
+| Raspberry Pi Zero   |2015           | `rpi`              | not recommended |
+| Raspberry Pi Zero W |2017           | `rpi0-w`           | not recommended |
+| Raspberry Pi 3 B/B+ |2016/2018      | `rpi3` / `rpi3-64` | yes             |
+| Raspberry Pi 4 B    |2019           | `rpi4` / `rpi4-64` | yes*            |
+
+\*1,2 and 4 GiB versions of the Raspberry Pi 4 B are supported. The 8 GiB version is not yet supported
 
 ## Limitation 64bit
 
