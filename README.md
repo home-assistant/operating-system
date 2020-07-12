@@ -55,7 +55,7 @@ If you don't have experience with these, embedded systems, buildroot or the buil
 * [Partition](./Documentation/partition.md) - partition layout
 * [Network](./Documentation/network.md) - approach to networking
 * [Bluetooth](./Documentation/bluetooth.md) - approach to bluetooth
-* [Kernel](./Documentation/kernal.md) - kernel versions
+* [Kernel](./Documentation/kernel.md) - kernel versions
 
 
 
