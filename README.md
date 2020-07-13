@@ -13,11 +13,12 @@ HassOS is uses Linux as a hypervisor for Docker, allowing each component of Home
 - Modular using Docker
 
 ## Supported hardware
-* Raspberry Pi
-* Hardkernel Odroid
-* Intel NUC
-* Asus Tinker Board
-* Virtual appliances
+
+- Raspberry Pi
+- Hardkernel ODROID
+- Intel NUC
+- Asus Tinker Board
+- Virtual appliances
 
 See full list and specific models [here]
 
