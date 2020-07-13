@@ -5,11 +5,12 @@ Home Assistant Operating System (HassOS) is an operating system optimized for ho
 HassOS is uses Linux as a hypervisor for Docker, allowing each component of Home Assistant including add-ons to run in separate docker containers. It uses embedded Linux based on [buildroot](https://buildroot.org/), which is different to a "normal" Linux, and it is optimized for running Home Assistant on IoT devices.
 
 ## Features
-* Lightweight and memory efficient
-* Minimized I/O
-* Over The Air (OTA) updates
-* Offline updates
-* Modular using Docker
+
+- Lightweight and memory-efficient
+- Minimized I/O
+- Over The Air (OTA) updates
+- Offline updates
+- Modular using Docker
 
 ## Supported hardware
 * Raspberry Pi
