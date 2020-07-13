@@ -4,12 +4,12 @@
 
 | Device              | Release Date  | Support         | Config             |
 |---------------------|---------------|-----------------|--------------------|
-| Raspberry Pi B/B+/A+|2012/2014/2014 | not recommended | [rpi](../../../buildroot-external/configs/rpi)              |
-| Raspberry Pi 2 B    |2015           | not recommended | [rpi2](../../../buildroot-external/configs/rpi2)             |
-| Raspberry Pi Zero   |2015           | not recommended | [rpi](../../../buildroot-external/configs/rpi)              |
-| Raspberry Pi Zero W |2017           | not recommended | [rpi0-w](../../../buildroot-external/configs/rpi0-w)           |
-| Raspberry Pi 3 B/B+ |2016/2018      | yes             | [rpi3](../../../buildroot-external/configs/rpi3) / [rpi3-64](../../../buildroot-external/configs/rpi3-64) |
-| Raspberry Pi 4 B    |2019           | yes*            | [rpi4](../../../buildroot-external/configs/rpi4) / [rpi4-64](../../../buildroot-external/configs/rpi4-64) |
+| Raspberry Pi B/B+/A+|2012/2014/2014 | not recommended | [rpi](../../../buildroot-external/configs/rpi_defconfig)              |
+| Raspberry Pi 2 B    |2015           | not recommended | [rpi2](../../../buildroot-external/configs/rpi2_defconfig)             |
+| Raspberry Pi Zero   |2015           | not recommended | [rpi](../../../buildroot-external/configs/rpi_defconfig)              |
+| Raspberry Pi Zero W |2017           | not recommended | [rpi0-w](../../../buildroot-external/configs/rpi0-w_defconfig)           |
+| Raspberry Pi 3 B/B+ |2016/2018      | yes             | [rpi3](../../../buildroot-external/configs/rpi3_defconfig) / [rpi3-64](../../../buildroot-external/configs/rpi3-64_defconfig) |
+| Raspberry Pi 4 B    |2019           | yes*            | [rpi4](../../../buildroot-external/configs/rpi4_defconfig) / [rpi4-64](../../../buildroot-external/configs/rpi4-64_defconfig) |
 
 \*1,2 and 4 GiB versions of the Raspberry Pi 4 B are supported. The 8 GiB version is not yet supported
 

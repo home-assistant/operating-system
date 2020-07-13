@@ -4,8 +4,8 @@
 
 | Device         | Release Date  | Support | Config   |
 |----------------|---------------|---------|----------|
-| Tinker RK3288  | April 2017    | yes     | [tinker](../../../buildroot-external/configs/tinker) |
-| Tinker S RK3288| January 2018  | yes?    | [tinker](../../../buildroot-external/configs/tinker)? |
+| Tinker RK3288  | April 2017    | yes     | [tinker](../../../buildroot-external/configs/tinker_defconfig) |
+| Tinker S RK3288| January 2018  | yes?    | [tinker](../../../buildroot-external/configs/tinker_defconfig)? |
 | Tinker Edge T  | November 2019 | no?     |          |
 | Tinker Edge R  | November 2019 | no?     |          |
 

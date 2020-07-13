@@ -8,10 +8,10 @@ This board configuration supports the Intel NUC mini PCs and compatibles. Most r
 
 | Device                | Release Date | Support | Config      |
 |-----------------------|--------------|---------|-------------|
-| Intel NUC5CPYH        | Q3 2015      | yes     | [intel_nuc](../../../buildroot-external/configs/intel_nuc) |
-| Intel NUC6CAYH        | Q4 2016      | yes     | [intel_nuc](../../../buildroot-external/configs/intel_nuc) |
-| Intel NUC10i3FNK2     | Q4 2019      | yes     | [intel_nuc](../../../buildroot-external/configs/intel_nuc) |
-| Gigabyte GB-BPCE-3455 | 2017         | yes*    | [intel_nuc](../../../buildroot-external/configs/intel_nuc) |
+| Intel NUC5CPYH        | Q3 2015      | yes     | [intel_nuc](../../../buildroot-external/configs/intel_nuc_defconfig) |
+| Intel NUC6CAYH        | Q4 2016      | yes     | [intel_nuc](../../../buildroot-external/configs/intel_nuc_defconfig) |
+| Intel NUC10i3FNK2     | Q4 2019      | yes     | [intel_nuc](../../../buildroot-external/configs/intel_nuc_defconfig) |
+| Gigabyte GB-BPCE-3455 | 2017         | yes*    | [intel_nuc](../../../buildroot-external/configs/intel_nuc_defconfig) |
 
 \* needs 'nomodeset' in cmdline.txt if you want a console
 
