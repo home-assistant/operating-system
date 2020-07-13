@@ -25,11 +25,13 @@ The following boards/devices are supported:
 - Asus
   - Tinker Board
 - Virtual appliance (x86_64/UEFI):
-  - OVA
   - VMDK
-  - VHDX
-  - VDI
-  - QCOW2
+  - OVA ?
+  - VHDX ?
+  - VDI ?
+  - QCOW2 ?
+
+(? are these currently supported? see ova documentation which explains issues with previous OVA distribution)
 
 ## Board specifics
 

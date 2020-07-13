@@ -9,6 +9,7 @@
 | Tinker Edge T  | November 2019 | no?     |          |
 | Tinker Edge R  | November 2019 | no?     |          |
 
+(? is the Tinker S supported?)
 <!--
 ## eMMC
 
