@@ -2,12 +2,12 @@
 
 ## Supported Hardware
 
-| Device         | Release Date  | Config   | Support |
-|----------------|---------------|----------|---------|
-| Tinker RK3288  | April 2017    | `tinker` | yes     |
-| Tinker S RK3288| January 2018  |          | yes?    |
-| Tinker Edge T  | November 2019 |          | no?     |
-| Tinker Edge R  | November 2019 |          | no?     |
+| Device         | Release Date  | Support | Config   |
+|----------------|---------------|---------|----------|
+| Tinker RK3288  | April 2017    | yes     | [tinker](../../../buildroot-external/configs/tinker) |
+| Tinker S RK3288| January 2018  | yes?    | [tinker](../../../buildroot-external/configs/tinker)? |
+| Tinker Edge T  | November 2019 | no?     |          |
+| Tinker Edge R  | November 2019 | no?     |          |
 
 <!--
 ## eMMC

@@ -2,10 +2,10 @@
 
 ## Supported Hardware
 
-| Device         | Release Date  | Config    | Support |
-|----------------|---------------|-----------|---------|
-| ODROID-XU4     | 2015          | odroid_xu4| yes     |
-| ODROID-C2      | 2016          | odroid_c2 | yes     |
-| ODROID-N2      | 2019          | odroid_n2 | yes     |
+| Device         | Release Date  | Support | Config    |
+|----------------|---------------|---------|-----------|
+| ODROID-XU4     | 2015          | yes     | [odroid_xu4](../../../buildroot-external/configs/odroid_xu4)|
+| ODROID-C2      | 2016          | yes     | [odroid_c2](../../../buildroot-external/configs/odroid_c2) |
+| ODROID-N2      | 2019          | yes     | [odroid_n2](../../../buildroot-external/configs/odroid_n2) |
 
 See separate documentation for each board.

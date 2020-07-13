@@ -6,18 +6,18 @@ This board configuration supports the Intel NUC mini PCs and compatibles. Most r
 
 ## Tested Hardware
 
-| Device                | Release Date  | Support |
-|-----------------------|---------------|---------|
-| Intel NUC5CPYH        | Q3 2015       | yes     |
-| Intel NUC6CAYH        | Q4 2016       | yes     |
-| Intel NUC10i3FNK2     | Q4 2019       | yes     |
-| Gigabyte GB-BPCE-3455 | 2017          | yes*    |
+| Device                | Release Date | Support | Config      |
+|-----------------------|--------------|---------|-------------|
+| Intel NUC5CPYH        | Q3 2015      | yes     | [intel_nuc](../../../buildroot-external/configs/intel_nuc) |
+| Intel NUC6CAYH        | Q4 2016      | yes     | [intel_nuc](../../../buildroot-external/configs/intel_nuc) |
+| Intel NUC10i3FNK2     | Q4 2019      | yes     | [intel_nuc](../../../buildroot-external/configs/intel_nuc) |
+| Gigabyte GB-BPCE-3455 | 2017         | yes*    | [intel_nuc](../../../buildroot-external/configs/intel_nuc) |
 
 \* needs 'nomodeset' in cmdline.txt if you want a console
 
-Config is `intel_nuc` for all these devices.
 
 ## Requirements
+
 - x86-64 support
 - UEFI boot
 - SATA/AHCI storage
@@ -26,7 +26,6 @@ Config is `intel_nuc` for all these devices.
   - Intel PCIe Gigabit NIC (e1000e - via out-of-tree module in *buildroot-external/package/intel-e1000e*)
   - Realtek Gigabit NIC (r8169)
   - Intel Wireless Wifi 802.11ac (iwlwifi, see below)
-
 
 ## Wifi
 
