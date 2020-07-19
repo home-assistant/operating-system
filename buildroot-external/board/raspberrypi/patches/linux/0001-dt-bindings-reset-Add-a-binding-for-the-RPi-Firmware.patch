@@ -1,0 +1,41 @@
+From a9f92163e6c07e5c6f57f00f4931098e0e1ee826 Mon Sep 17 00:00:00 2001
+Message-Id: <a9f92163e6c07e5c6f57f00f4931098e0e1ee826.1595152741.git.stefan@agner.ch>
+From: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+Date: Mon, 29 Jun 2020 18:18:37 +0200
+Subject: [PATCH 1/4] dt-bindings: reset: Add a binding for the RPi Firmware
+ reset controller
+
+The firmware running on the RPi VideoCore can be used to reset and
+initialize HW controlled by the firmware.
+
+Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+[backport for RPi 4.19 kernel]
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+---
+ .../dt-bindings/reset/raspberrypi,firmware-reset.h  | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+ create mode 100644 include/dt-bindings/reset/raspberrypi,firmware-reset.h
+
+diff --git a/include/dt-bindings/reset/raspberrypi,firmware-reset.h b/include/dt-bindings/reset/raspberrypi,firmware-reset.h
+new file mode 100644
+index 000000000000..1a4f4c792723
+--- /dev/null
++++ b/include/dt-bindings/reset/raspberrypi,firmware-reset.h
+@@ -0,0 +1,13 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (c) 2020 Nicolas Saenz Julienne
++ * Author: Nicolas Saenz Julienne <nsaenzjulienne@suse.com>
++ */
++
++#ifndef _DT_BINDINGS_RASPBERRYPI_FIRMWARE_RESET_H
++#define _DT_BINDINGS_RASPBERRYPI_FIRMWARE_RESET_H
++
++#define RASPBERRYPI_FIRMWARE_RESET_ID_USB	0
++#define RASPBERRYPI_FIRMWARE_RESET_NUM_IDS	1
++
++#endif
+-- 
+2.27.0
+
