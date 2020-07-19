@@ -31,8 +31,13 @@ i2c-bcm2708
 
 ## USB Boot
 
-USB mass storage boot is available on Raspberry Pi 3B, 3B+, 3A+, and 2B v1.2.
-To enable USB boot, add `program_usb_boot_mode=1` into `config.txt`. Note that this **permanently** alters the one-time programmable memory of the device.
+USB mass storage boot is available on Raspberry Pi 4 (64-bit only), 3B, 3B+, 3A+, and 2B v1.2.
+
+For Raspberry 3B, 3A+ and 2B v1.2, to enable USB boot, add `program_usb_boot_mode=1` into `config.txt`. Note that this **permanently** alters the one-time programmable memory of the device.
+
+For Raspberry 4, make sure to update the bootloader to a stable release
+supporting USB mass storage boot (see
+[bcm2711_bootloader_config.md](https://www.raspberrypi.org/documentation/hardware/raspberrypi/bcm2711_bootloader_config.md#usbmassstorageboot). If no SD card is used add `sd_poll_once=on` to `dtparam` in `config.txt` (comma separated). This gets rid of `mmc0: timeout waiting for hardware interrupt` kernel errors.
 
 For more information see [RaspberryPi](https://www.raspberrypi.org/documentation/hardware/raspberrypi/bootmodes/msd.md).
 
