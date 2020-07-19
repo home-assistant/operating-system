@@ -1,0 +1,44 @@
+From dcfb930f9c271ad303a888ce94227d2d78974e39 Mon Sep 17 00:00:00 2001
+Message-Id: <dcfb930f9c271ad303a888ce94227d2d78974e39.1595152741.git.stefan@agner.ch>
+In-Reply-To: <a9f92163e6c07e5c6f57f00f4931098e0e1ee826.1595152741.git.stefan@agner.ch>
+References: <a9f92163e6c07e5c6f57f00f4931098e0e1ee826.1595152741.git.stefan@agner.ch>
+From: Stefan Agner <stefan@agner.ch>
+Date: Sun, 19 Jul 2020 11:49:45 +0200
+Subject: [PATCH 4/4] ARM: dts: bcm2838: add upstream property to enable PCIe
+ spread-spectrum
+
+Add the upstream device tree property brcm,enable-ssc to enable
+spread-spectrum for PCIe. This is used by the upstream U-Boot.
+
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+---
+ arch/arm/boot/dts/bcm2838.dtsi | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
+
+diff --git a/arch/arm/boot/dts/bcm2838.dtsi b/arch/arm/boot/dts/bcm2838.dtsi
+index 36d250d7053b..d6cc876bc720 100644
+--- a/arch/arm/boot/dts/bcm2838.dtsi
++++ b/arch/arm/boot/dts/bcm2838.dtsi
+@@ -353,11 +353,14 @@
+ 			 */
+ 			ranges = <0x02000000 0x0 0xf8000000  0x6 0x00000000
+ 				  0x0 0x04000000>;
+-			/* Map inbound accesses from pci:0x0_00000000..ffffffff
+-			 * to scb:0x0_00000000-ffffffff
+-			 */
+-			dma-ranges = <0x02000000 0x0 0x00000000  0x0 0x00000000
+-				      0x1 0x00000000>;
++                        /*
++                         * The wrapper around the PCIe block has a bug
++                         * preventing it from accessing beyond the first 3GB of
++                         * memory.
++                         */
++                        dma-ranges = <0x02000000 0x0 0x00000000 0x0 0x00000000
++                                      0x0 0xc0000000>;
++			brcm,enable-ssc;
+ 			status = "okay";
+ 		};
+ 
+-- 
+2.27.0
+
