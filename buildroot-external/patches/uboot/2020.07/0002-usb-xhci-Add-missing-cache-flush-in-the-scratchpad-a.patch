@@ -1,0 +1,41 @@
+From b39cd5ba642ddba46268e8d873b952604844c047 Mon Sep 17 00:00:00 2001
+Message-Id: <b39cd5ba642ddba46268e8d873b952604844c047.1595101389.git.stefan@agner.ch>
+In-Reply-To: <040a141f84f2f84bf8be18f85b4cdb34bf066df0.1595101389.git.stefan@agner.ch>
+References: <040a141f84f2f84bf8be18f85b4cdb34bf066df0.1595101389.git.stefan@agner.ch>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Date: Mon, 25 May 2020 13:39:51 +0200
+Subject: [PATCH 02/20] usb: xhci: Add missing cache flush in the scratchpad
+ array initialization
+
+In current code there is no cache flush after initializing the scratchpad
+buffer array with the scratchpad buffer pointers. This leads to a failure
+of the "slot enable" command on the rpi4 board (Broadcom STB PCIe
+controller + VL805 USB hub) - the very first TRB transfer on the command
+ring fails and there is a timeout while waiting for the command completion
+event. After adding the missing cache flush everything seems to be working
+as expected.
+
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Reviewed-by: Bin Meng <bmeng.cn@gmail.com>
+Reviewed-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+---
+ drivers/usb/host/xhci-mem.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/usb/host/xhci-mem.c b/drivers/usb/host/xhci-mem.c
+index 2d968aafb0..f446520528 100644
+--- a/drivers/usb/host/xhci-mem.c
++++ b/drivers/usb/host/xhci-mem.c
+@@ -395,6 +395,9 @@ static int xhci_scratchpad_alloc(struct xhci_ctrl *ctrl)
+ 		scratchpad->sp_array[i] = cpu_to_le64(ptr);
+ 	}
+ 
++	xhci_flush_cache((uintptr_t)scratchpad->sp_array,
++			 sizeof(u64) * num_sp);
++
+ 	return 0;
+ 
+ fail_sp3:
+-- 
+2.27.0
+

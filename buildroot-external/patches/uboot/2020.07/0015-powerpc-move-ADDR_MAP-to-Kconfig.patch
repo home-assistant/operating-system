@@ -1,0 +1,1813 @@
+From 42992bdb8c358f10fe8cc8da16d4ec5f3cb97efb Mon Sep 17 00:00:00 2001
+Message-Id: <42992bdb8c358f10fe8cc8da16d4ec5f3cb97efb.1595101389.git.stefan@agner.ch>
+In-Reply-To: <040a141f84f2f84bf8be18f85b4cdb34bf066df0.1595101389.git.stefan@agner.ch>
+References: <040a141f84f2f84bf8be18f85b4cdb34bf066df0.1595101389.git.stefan@agner.ch>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Date: Wed, 3 Jun 2020 14:43:40 +0200
+Subject: [PATCH 15/20] powerpc: move ADDR_MAP to Kconfig
+
+Move ADDR_MAP related config options from include/configs/*.h to the
+proper place in lib/Kconfig. This has been done using
+./tools/moveconfig.py and manual inspection of the generated changes.
+This is a preparation to use ADDR_MAP helper on ARM 32bit Raspberry Pi4
+board for mapping the PCIe XHCI MMIO, which is above the 4GiB identity
+mapping limit.
+
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Reviewed-by: Tom Rini <trini@konsulko.com>
+---
+ configs/Cyrus_P5020_defconfig                       |  2 ++
+ configs/Cyrus_P5040_defconfig                       |  2 ++
+ configs/MPC8548CDS_36BIT_defconfig                  |  1 +
+ configs/MPC8572DS_36BIT_defconfig                   |  1 +
+ configs/MPC8641HPCN_36BIT_defconfig                 |  2 ++
+ configs/MPC8641HPCN_defconfig                       |  2 ++
+ configs/P1010RDB-PA_36BIT_NAND_SECBOOT_defconfig    |  1 +
+ configs/P1010RDB-PA_36BIT_NAND_defconfig            |  1 +
+ configs/P1010RDB-PA_36BIT_NOR_SECBOOT_defconfig     |  1 +
+ configs/P1010RDB-PA_36BIT_NOR_defconfig             |  1 +
+ configs/P1010RDB-PA_36BIT_SDCARD_defconfig          |  1 +
+ .../P1010RDB-PA_36BIT_SPIFLASH_SECBOOT_defconfig    |  1 +
+ configs/P1010RDB-PA_36BIT_SPIFLASH_defconfig        |  1 +
+ configs/P1010RDB-PB_36BIT_NAND_SECBOOT_defconfig    |  1 +
+ configs/P1010RDB-PB_36BIT_NAND_defconfig            |  1 +
+ configs/P1010RDB-PB_36BIT_NOR_SECBOOT_defconfig     |  1 +
+ configs/P1010RDB-PB_36BIT_NOR_defconfig             |  1 +
+ configs/P1010RDB-PB_36BIT_SDCARD_defconfig          |  1 +
+ .../P1010RDB-PB_36BIT_SPIFLASH_SECBOOT_defconfig    |  1 +
+ configs/P1010RDB-PB_36BIT_SPIFLASH_defconfig        |  1 +
+ configs/P1020MBG-PC_36BIT_SDCARD_defconfig          |  1 +
+ configs/P1020MBG-PC_36BIT_defconfig                 |  1 +
+ configs/P1020RDB-PC_36BIT_NAND_defconfig            |  1 +
+ configs/P1020RDB-PC_36BIT_SDCARD_defconfig          |  1 +
+ configs/P1020RDB-PC_36BIT_SPIFLASH_defconfig        |  1 +
+ configs/P1020RDB-PC_36BIT_defconfig                 |  1 +
+ configs/P1020UTM-PC_36BIT_SDCARD_defconfig          |  1 +
+ configs/P1020UTM-PC_36BIT_defconfig                 |  1 +
+ configs/P1021RDB-PC_36BIT_NAND_defconfig            |  1 +
+ configs/P1021RDB-PC_36BIT_SDCARD_defconfig          |  1 +
+ configs/P1021RDB-PC_36BIT_SPIFLASH_defconfig        |  1 +
+ configs/P1021RDB-PC_36BIT_defconfig                 |  1 +
+ configs/P1024RDB_36BIT_defconfig                    |  1 +
+ configs/P1025RDB_36BIT_defconfig                    |  1 +
+ configs/P2020RDB-PC_36BIT_NAND_defconfig            |  1 +
+ configs/P2020RDB-PC_36BIT_SDCARD_defconfig          |  1 +
+ configs/P2020RDB-PC_36BIT_SPIFLASH_defconfig        |  1 +
+ configs/P2020RDB-PC_36BIT_defconfig                 |  1 +
+ configs/P2041RDB_NAND_defconfig                     |  2 ++
+ configs/P2041RDB_SDCARD_defconfig                   |  2 ++
+ configs/P2041RDB_SECURE_BOOT_defconfig              |  2 ++
+ configs/P2041RDB_SPIFLASH_defconfig                 |  2 ++
+ configs/P2041RDB_SRIO_PCIE_BOOT_defconfig           |  2 ++
+ configs/P2041RDB_defconfig                          |  2 ++
+ configs/P3041DS_NAND_SECURE_BOOT_defconfig          |  2 ++
+ configs/P3041DS_NAND_defconfig                      |  2 ++
+ configs/P3041DS_SDCARD_defconfig                    |  2 ++
+ configs/P3041DS_SECURE_BOOT_defconfig               |  2 ++
+ configs/P3041DS_SPIFLASH_defconfig                  |  2 ++
+ configs/P3041DS_SRIO_PCIE_BOOT_defconfig            |  2 ++
+ configs/P3041DS_defconfig                           |  2 ++
+ configs/P4080DS_SDCARD_defconfig                    |  2 ++
+ configs/P4080DS_SECURE_BOOT_defconfig               |  2 ++
+ configs/P4080DS_SPIFLASH_defconfig                  |  2 ++
+ configs/P4080DS_SRIO_PCIE_BOOT_defconfig            |  2 ++
+ configs/P4080DS_defconfig                           |  2 ++
+ configs/P5020DS_NAND_SECURE_BOOT_defconfig          |  2 ++
+ configs/P5020DS_NAND_defconfig                      |  2 ++
+ configs/P5020DS_SDCARD_defconfig                    |  2 ++
+ configs/P5020DS_SECURE_BOOT_defconfig               |  2 ++
+ configs/P5020DS_SPIFLASH_defconfig                  |  2 ++
+ configs/P5020DS_SRIO_PCIE_BOOT_defconfig            |  2 ++
+ configs/P5020DS_defconfig                           |  2 ++
+ configs/P5040DS_NAND_SECURE_BOOT_defconfig          |  2 ++
+ configs/P5040DS_NAND_defconfig                      |  2 ++
+ configs/P5040DS_SDCARD_defconfig                    |  2 ++
+ configs/P5040DS_SECURE_BOOT_defconfig               |  2 ++
+ configs/P5040DS_SPIFLASH_defconfig                  |  2 ++
+ configs/P5040DS_defconfig                           |  2 ++
+ configs/T1023RDB_NAND_defconfig                     |  2 ++
+ configs/T1023RDB_SDCARD_defconfig                   |  2 ++
+ configs/T1023RDB_SECURE_BOOT_defconfig              |  2 ++
+ configs/T1023RDB_SPIFLASH_defconfig                 |  2 ++
+ configs/T1023RDB_defconfig                          |  2 ++
+ configs/T1024RDB_NAND_defconfig                     |  2 ++
+ configs/T1024RDB_SDCARD_defconfig                   |  2 ++
+ configs/T1024RDB_SECURE_BOOT_defconfig              |  2 ++
+ configs/T1024RDB_SPIFLASH_defconfig                 |  2 ++
+ configs/T1024RDB_defconfig                          |  2 ++
+ configs/T1040D4RDB_NAND_defconfig                   |  2 ++
+ configs/T1040D4RDB_SDCARD_defconfig                 |  2 ++
+ configs/T1040D4RDB_SECURE_BOOT_defconfig            |  2 ++
+ configs/T1040D4RDB_SPIFLASH_defconfig               |  2 ++
+ configs/T1040D4RDB_defconfig                        |  2 ++
+ configs/T1040RDB_NAND_defconfig                     |  2 ++
+ configs/T1040RDB_SDCARD_defconfig                   |  2 ++
+ configs/T1040RDB_SECURE_BOOT_defconfig              |  2 ++
+ configs/T1040RDB_SPIFLASH_defconfig                 |  2 ++
+ configs/T1040RDB_defconfig                          |  2 ++
+ configs/T1042D4RDB_NAND_defconfig                   |  2 ++
+ configs/T1042D4RDB_SDCARD_defconfig                 |  2 ++
+ configs/T1042D4RDB_SECURE_BOOT_defconfig            |  2 ++
+ configs/T1042D4RDB_SPIFLASH_defconfig               |  2 ++
+ configs/T1042D4RDB_defconfig                        |  2 ++
+ configs/T1042RDB_PI_NAND_SECURE_BOOT_defconfig      |  2 ++
+ configs/T1042RDB_PI_NAND_defconfig                  |  2 ++
+ configs/T1042RDB_PI_SDCARD_defconfig                |  2 ++
+ configs/T1042RDB_PI_SPIFLASH_defconfig              |  2 ++
+ configs/T1042RDB_PI_defconfig                       |  2 ++
+ configs/T1042RDB_SECURE_BOOT_defconfig              |  2 ++
+ configs/T1042RDB_defconfig                          |  2 ++
+ configs/T2080QDS_NAND_defconfig                     |  2 ++
+ configs/T2080QDS_SDCARD_defconfig                   |  2 ++
+ configs/T2080QDS_SECURE_BOOT_defconfig              |  2 ++
+ configs/T2080QDS_SPIFLASH_defconfig                 |  2 ++
+ configs/T2080QDS_SRIO_PCIE_BOOT_defconfig           |  2 ++
+ configs/T2080QDS_defconfig                          |  2 ++
+ configs/T2080RDB_NAND_defconfig                     |  2 ++
+ configs/T2080RDB_SDCARD_defconfig                   |  2 ++
+ configs/T2080RDB_SECURE_BOOT_defconfig              |  2 ++
+ configs/T2080RDB_SPIFLASH_defconfig                 |  2 ++
+ configs/T2080RDB_SRIO_PCIE_BOOT_defconfig           |  2 ++
+ configs/T2080RDB_defconfig                          |  2 ++
+ configs/T2081QDS_NAND_defconfig                     |  2 ++
+ configs/T2081QDS_SDCARD_defconfig                   |  2 ++
+ configs/T2081QDS_SPIFLASH_defconfig                 |  2 ++
+ configs/T2081QDS_SRIO_PCIE_BOOT_defconfig           |  2 ++
+ configs/T2081QDS_defconfig                          |  2 ++
+ configs/T4160RDB_defconfig                          |  2 ++
+ configs/T4240RDB_SDCARD_defconfig                   |  2 ++
+ configs/T4240RDB_defconfig                          |  2 ++
+ .../controlcenterd_36BIT_SDCARD_DEVELOP_defconfig   |  1 +
+ configs/controlcenterd_36BIT_SDCARD_defconfig       |  1 +
+ configs/kmcoge4_defconfig                           |  2 ++
+ configs/qemu-ppce500_defconfig                      |  1 +
+ include/configs/MPC8548CDS.h                        |  5 -----
+ include/configs/MPC8572DS.h                         |  5 -----
+ include/configs/MPC8641HPCN.h                       |  2 --
+ include/configs/P1010RDB.h                          |  5 -----
+ include/configs/P2041RDB.h                          |  5 -----
+ include/configs/T102xRDB.h                          |  5 -----
+ include/configs/T104xRDB.h                          |  3 ---
+ include/configs/T208xQDS.h                          |  5 -----
+ include/configs/T208xRDB.h                          |  5 -----
+ include/configs/T4240RDB.h                          |  3 ---
+ include/configs/controlcenterd.h                    |  5 -----
+ include/configs/corenet_ds.h                        |  5 -----
+ include/configs/cyrus.h                             |  5 -----
+ include/configs/kmp204x.h                           |  3 ---
+ include/configs/p1_p2_rdb_pc.h                      |  5 -----
+ include/configs/qemu-ppce500.h                      |  3 ---
+ include/configs/t4qds.h                             |  3 ---
+ lib/Kconfig                                         | 13 +++++++++++++
+ scripts/config_whitelist.txt                        |  2 --
+ 144 files changed, 226 insertions(+), 74 deletions(-)
+
+diff --git a/configs/Cyrus_P5020_defconfig b/configs/Cyrus_P5020_defconfig
+index 19fc741eb7..d7798ef3aa 100644
+--- a/configs/Cyrus_P5020_defconfig
++++ b/configs/Cyrus_P5020_defconfig
+@@ -42,4 +42,6 @@ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_USB_STORAGE=y
+ CONFIG_USB_KEYBOARD=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+ CONFIG_OF_LIBFDT=y
+diff --git a/configs/Cyrus_P5040_defconfig b/configs/Cyrus_P5040_defconfig
+index 9c6919f387..39191debdf 100644
+--- a/configs/Cyrus_P5040_defconfig
++++ b/configs/Cyrus_P5040_defconfig
+@@ -42,4 +42,6 @@ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_USB_STORAGE=y
+ CONFIG_USB_KEYBOARD=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+ CONFIG_OF_LIBFDT=y
+diff --git a/configs/MPC8548CDS_36BIT_defconfig b/configs/MPC8548CDS_36BIT_defconfig
+index 010e375740..6884754cac 100644
+--- a/configs/MPC8548CDS_36BIT_defconfig
++++ b/configs/MPC8548CDS_36BIT_defconfig
+@@ -46,3 +46,4 @@ CONFIG_DM_PCI_COMPAT=y
+ CONFIG_PCIE_FSL=y
+ CONFIG_CONS_INDEX=2
+ CONFIG_SYS_NS16550=y
++CONFIG_ADDR_MAP=y
+diff --git a/configs/MPC8572DS_36BIT_defconfig b/configs/MPC8572DS_36BIT_defconfig
+index 50912bf245..4053cb70f8 100644
+--- a/configs/MPC8572DS_36BIT_defconfig
++++ b/configs/MPC8572DS_36BIT_defconfig
+@@ -51,4 +51,5 @@ CONFIG_USB=y
+ CONFIG_USB_EHCI_PCI=y
+ CONFIG_USB_STORAGE=y
+ CONFIG_VIDEO=y
++CONFIG_ADDR_MAP=y
+ CONFIG_OF_LIBFDT=y
+diff --git a/configs/MPC8641HPCN_36BIT_defconfig b/configs/MPC8641HPCN_36BIT_defconfig
+index 1e643673ec..c75e665ad9 100644
+--- a/configs/MPC8641HPCN_36BIT_defconfig
++++ b/configs/MPC8641HPCN_36BIT_defconfig
+@@ -42,4 +42,6 @@ CONFIG_SYS_NS16550=y
+ CONFIG_USB=y
+ CONFIG_USB_KEYBOARD=y
+ CONFIG_VIDEO=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=8
+ CONFIG_OF_LIBFDT=y
+diff --git a/configs/MPC8641HPCN_defconfig b/configs/MPC8641HPCN_defconfig
+index 7ce7891d14..b60813d048 100644
+--- a/configs/MPC8641HPCN_defconfig
++++ b/configs/MPC8641HPCN_defconfig
+@@ -42,4 +42,6 @@ CONFIG_SYS_NS16550=y
+ CONFIG_USB=y
+ CONFIG_USB_KEYBOARD=y
+ CONFIG_VIDEO=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=8
+ CONFIG_OF_LIBFDT=y
+diff --git a/configs/P1010RDB-PA_36BIT_NAND_SECBOOT_defconfig b/configs/P1010RDB-PA_36BIT_NAND_SECBOOT_defconfig
+index c1044520d7..c4066672d5 100644
+--- a/configs/P1010RDB-PA_36BIT_NAND_SECBOOT_defconfig
++++ b/configs/P1010RDB-PA_36BIT_NAND_SECBOOT_defconfig
+@@ -57,6 +57,7 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_USB_STORAGE=y
++CONFIG_ADDR_MAP=y
+ CONFIG_RSA=y
+ CONFIG_SPL_RSA=y
+ CONFIG_RSA_SOFTWARE_EXP=y
+diff --git a/configs/P1010RDB-PA_36BIT_NAND_defconfig b/configs/P1010RDB-PA_36BIT_NAND_defconfig
+index 86c90dac27..a5ffbda7e4 100644
+--- a/configs/P1010RDB-PA_36BIT_NAND_defconfig
++++ b/configs/P1010RDB-PA_36BIT_NAND_defconfig
+@@ -83,3 +83,4 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_USB_STORAGE=y
++CONFIG_ADDR_MAP=y
+diff --git a/configs/P1010RDB-PA_36BIT_NOR_SECBOOT_defconfig b/configs/P1010RDB-PA_36BIT_NOR_SECBOOT_defconfig
+index 723f6ca2bb..c3cfaf1a73 100644
+--- a/configs/P1010RDB-PA_36BIT_NOR_SECBOOT_defconfig
++++ b/configs/P1010RDB-PA_36BIT_NOR_SECBOOT_defconfig
+@@ -56,6 +56,7 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_USB_STORAGE=y
++CONFIG_ADDR_MAP=y
+ CONFIG_RSA=y
+ CONFIG_SPL_RSA=y
+ CONFIG_RSA_SOFTWARE_EXP=y
+diff --git a/configs/P1010RDB-PA_36BIT_NOR_defconfig b/configs/P1010RDB-PA_36BIT_NOR_defconfig
+index e6edd395e7..5a2dcaeea2 100644
+--- a/configs/P1010RDB-PA_36BIT_NOR_defconfig
++++ b/configs/P1010RDB-PA_36BIT_NOR_defconfig
+@@ -65,3 +65,4 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_USB_STORAGE=y
++CONFIG_ADDR_MAP=y
+diff --git a/configs/P1010RDB-PA_36BIT_SDCARD_defconfig b/configs/P1010RDB-PA_36BIT_SDCARD_defconfig
+index 2850e305f0..c8c7bedf5a 100644
+--- a/configs/P1010RDB-PA_36BIT_SDCARD_defconfig
++++ b/configs/P1010RDB-PA_36BIT_SDCARD_defconfig
+@@ -77,3 +77,4 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_USB_STORAGE=y
++CONFIG_ADDR_MAP=y
+diff --git a/configs/P1010RDB-PA_36BIT_SPIFLASH_SECBOOT_defconfig b/configs/P1010RDB-PA_36BIT_SPIFLASH_SECBOOT_defconfig
+index 9987cde995..8a13e3a622 100644
+--- a/configs/P1010RDB-PA_36BIT_SPIFLASH_SECBOOT_defconfig
++++ b/configs/P1010RDB-PA_36BIT_SPIFLASH_SECBOOT_defconfig
+@@ -58,6 +58,7 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_USB_STORAGE=y
++CONFIG_ADDR_MAP=y
+ CONFIG_RSA=y
+ CONFIG_SPL_RSA=y
+ CONFIG_RSA_SOFTWARE_EXP=y
+diff --git a/configs/P1010RDB-PA_36BIT_SPIFLASH_defconfig b/configs/P1010RDB-PA_36BIT_SPIFLASH_defconfig
+index 98ad4b6109..2aa476ca69 100644
+--- a/configs/P1010RDB-PA_36BIT_SPIFLASH_defconfig
++++ b/configs/P1010RDB-PA_36BIT_SPIFLASH_defconfig
+@@ -79,3 +79,4 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_USB_STORAGE=y
++CONFIG_ADDR_MAP=y
+diff --git a/configs/P1010RDB-PB_36BIT_NAND_SECBOOT_defconfig b/configs/P1010RDB-PB_36BIT_NAND_SECBOOT_defconfig
+index 66bdebbf99..1f2e969cce 100644
+--- a/configs/P1010RDB-PB_36BIT_NAND_SECBOOT_defconfig
++++ b/configs/P1010RDB-PB_36BIT_NAND_SECBOOT_defconfig
+@@ -57,6 +57,7 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_USB_STORAGE=y
++CONFIG_ADDR_MAP=y
+ CONFIG_RSA=y
+ CONFIG_SPL_RSA=y
+ CONFIG_RSA_SOFTWARE_EXP=y
+diff --git a/configs/P1010RDB-PB_36BIT_NAND_defconfig b/configs/P1010RDB-PB_36BIT_NAND_defconfig
+index bd779aacf6..25fb606ef4 100644
+--- a/configs/P1010RDB-PB_36BIT_NAND_defconfig
++++ b/configs/P1010RDB-PB_36BIT_NAND_defconfig
+@@ -83,3 +83,4 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_USB_STORAGE=y
++CONFIG_ADDR_MAP=y
+diff --git a/configs/P1010RDB-PB_36BIT_NOR_SECBOOT_defconfig b/configs/P1010RDB-PB_36BIT_NOR_SECBOOT_defconfig
+index f2e40668ea..bbaec2beee 100644
+--- a/configs/P1010RDB-PB_36BIT_NOR_SECBOOT_defconfig
++++ b/configs/P1010RDB-PB_36BIT_NOR_SECBOOT_defconfig
+@@ -56,6 +56,7 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_USB_STORAGE=y
++CONFIG_ADDR_MAP=y
+ CONFIG_RSA=y
+ CONFIG_SPL_RSA=y
+ CONFIG_RSA_SOFTWARE_EXP=y
+diff --git a/configs/P1010RDB-PB_36BIT_NOR_defconfig b/configs/P1010RDB-PB_36BIT_NOR_defconfig
+index e85af32e2c..58f4430e80 100644
+--- a/configs/P1010RDB-PB_36BIT_NOR_defconfig
++++ b/configs/P1010RDB-PB_36BIT_NOR_defconfig
+@@ -65,3 +65,4 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_USB_STORAGE=y
++CONFIG_ADDR_MAP=y
+diff --git a/configs/P1010RDB-PB_36BIT_SDCARD_defconfig b/configs/P1010RDB-PB_36BIT_SDCARD_defconfig
+index 8559ffe3f3..137f613158 100644
+--- a/configs/P1010RDB-PB_36BIT_SDCARD_defconfig
++++ b/configs/P1010RDB-PB_36BIT_SDCARD_defconfig
+@@ -77,3 +77,4 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_USB_STORAGE=y
++CONFIG_ADDR_MAP=y
+diff --git a/configs/P1010RDB-PB_36BIT_SPIFLASH_SECBOOT_defconfig b/configs/P1010RDB-PB_36BIT_SPIFLASH_SECBOOT_defconfig
+index 50b5c5f1c5..63ac2f2b17 100644
+--- a/configs/P1010RDB-PB_36BIT_SPIFLASH_SECBOOT_defconfig
++++ b/configs/P1010RDB-PB_36BIT_SPIFLASH_SECBOOT_defconfig
+@@ -58,6 +58,7 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_USB_STORAGE=y
++CONFIG_ADDR_MAP=y
+ CONFIG_RSA=y
+ CONFIG_SPL_RSA=y
+ CONFIG_RSA_SOFTWARE_EXP=y
+diff --git a/configs/P1010RDB-PB_36BIT_SPIFLASH_defconfig b/configs/P1010RDB-PB_36BIT_SPIFLASH_defconfig
+index fe503c1a6b..493597ee01 100644
+--- a/configs/P1010RDB-PB_36BIT_SPIFLASH_defconfig
++++ b/configs/P1010RDB-PB_36BIT_SPIFLASH_defconfig
+@@ -79,3 +79,4 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_USB_STORAGE=y
++CONFIG_ADDR_MAP=y
+diff --git a/configs/P1020MBG-PC_36BIT_SDCARD_defconfig b/configs/P1020MBG-PC_36BIT_SDCARD_defconfig
+index a9befd2e3f..1178c27599 100644
+--- a/configs/P1020MBG-PC_36BIT_SDCARD_defconfig
++++ b/configs/P1020MBG-PC_36BIT_SDCARD_defconfig
+@@ -64,4 +64,5 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_USB_STORAGE=y
++CONFIG_ADDR_MAP=y
+ CONFIG_OF_LIBFDT=y
+diff --git a/configs/P1020MBG-PC_36BIT_defconfig b/configs/P1020MBG-PC_36BIT_defconfig
+index 7930af3b73..2385da49f6 100644
+--- a/configs/P1020MBG-PC_36BIT_defconfig
++++ b/configs/P1020MBG-PC_36BIT_defconfig
+@@ -52,4 +52,5 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_USB_STORAGE=y
++CONFIG_ADDR_MAP=y
+ CONFIG_OF_LIBFDT=y
+diff --git a/configs/P1020RDB-PC_36BIT_NAND_defconfig b/configs/P1020RDB-PC_36BIT_NAND_defconfig
+index c148f4d592..00f9fb58a0 100644
+--- a/configs/P1020RDB-PC_36BIT_NAND_defconfig
++++ b/configs/P1020RDB-PC_36BIT_NAND_defconfig
+@@ -83,3 +83,4 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_DM_USB=y
++CONFIG_ADDR_MAP=y
+diff --git a/configs/P1020RDB-PC_36BIT_SDCARD_defconfig b/configs/P1020RDB-PC_36BIT_SDCARD_defconfig
+index 7b40858de7..7ffac2e1f4 100644
+--- a/configs/P1020RDB-PC_36BIT_SDCARD_defconfig
++++ b/configs/P1020RDB-PC_36BIT_SDCARD_defconfig
+@@ -78,3 +78,4 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_DM_USB=y
++CONFIG_ADDR_MAP=y
+diff --git a/configs/P1020RDB-PC_36BIT_SPIFLASH_defconfig b/configs/P1020RDB-PC_36BIT_SPIFLASH_defconfig
+index 7a7ae29bd7..b8e5e333c6 100644
+--- a/configs/P1020RDB-PC_36BIT_SPIFLASH_defconfig
++++ b/configs/P1020RDB-PC_36BIT_SPIFLASH_defconfig
+@@ -80,3 +80,4 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_DM_USB=y
++CONFIG_ADDR_MAP=y
+diff --git a/configs/P1020RDB-PC_36BIT_defconfig b/configs/P1020RDB-PC_36BIT_defconfig
+index f9a4b735ca..850a1525f4 100644
+--- a/configs/P1020RDB-PC_36BIT_defconfig
++++ b/configs/P1020RDB-PC_36BIT_defconfig
+@@ -67,3 +67,4 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_DM_USB=y
++CONFIG_ADDR_MAP=y
+diff --git a/configs/P1020UTM-PC_36BIT_SDCARD_defconfig b/configs/P1020UTM-PC_36BIT_SDCARD_defconfig
+index a24f14a97f..36bb136c1b 100644
+--- a/configs/P1020UTM-PC_36BIT_SDCARD_defconfig
++++ b/configs/P1020UTM-PC_36BIT_SDCARD_defconfig
+@@ -64,4 +64,5 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_USB_STORAGE=y
++CONFIG_ADDR_MAP=y
+ CONFIG_OF_LIBFDT=y
+diff --git a/configs/P1020UTM-PC_36BIT_defconfig b/configs/P1020UTM-PC_36BIT_defconfig
+index 968d3edbcf..47232d95e1 100644
+--- a/configs/P1020UTM-PC_36BIT_defconfig
++++ b/configs/P1020UTM-PC_36BIT_defconfig
+@@ -52,4 +52,5 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_USB_STORAGE=y
++CONFIG_ADDR_MAP=y
+ CONFIG_OF_LIBFDT=y
+diff --git a/configs/P1021RDB-PC_36BIT_NAND_defconfig b/configs/P1021RDB-PC_36BIT_NAND_defconfig
+index 353f4677f2..873243825e 100644
+--- a/configs/P1021RDB-PC_36BIT_NAND_defconfig
++++ b/configs/P1021RDB-PC_36BIT_NAND_defconfig
+@@ -81,4 +81,5 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_USB_STORAGE=y
++CONFIG_ADDR_MAP=y
+ CONFIG_OF_LIBFDT=y
+diff --git a/configs/P1021RDB-PC_36BIT_SDCARD_defconfig b/configs/P1021RDB-PC_36BIT_SDCARD_defconfig
+index 62cbbc016a..66c37f9407 100644
+--- a/configs/P1021RDB-PC_36BIT_SDCARD_defconfig
++++ b/configs/P1021RDB-PC_36BIT_SDCARD_defconfig
+@@ -76,4 +76,5 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_USB_STORAGE=y
++CONFIG_ADDR_MAP=y
+ CONFIG_OF_LIBFDT=y
+diff --git a/configs/P1021RDB-PC_36BIT_SPIFLASH_defconfig b/configs/P1021RDB-PC_36BIT_SPIFLASH_defconfig
+index 7f71b52477..eaf45a6f3e 100644
+--- a/configs/P1021RDB-PC_36BIT_SPIFLASH_defconfig
++++ b/configs/P1021RDB-PC_36BIT_SPIFLASH_defconfig
+@@ -78,4 +78,5 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_USB_STORAGE=y
++CONFIG_ADDR_MAP=y
+ CONFIG_OF_LIBFDT=y
+diff --git a/configs/P1021RDB-PC_36BIT_defconfig b/configs/P1021RDB-PC_36BIT_defconfig
+index ca1be9c112..608a6d10b1 100644
+--- a/configs/P1021RDB-PC_36BIT_defconfig
++++ b/configs/P1021RDB-PC_36BIT_defconfig
+@@ -64,4 +64,5 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_USB_STORAGE=y
++CONFIG_ADDR_MAP=y
+ CONFIG_OF_LIBFDT=y
+diff --git a/configs/P1024RDB_36BIT_defconfig b/configs/P1024RDB_36BIT_defconfig
+index 5116fac64a..bb016af45e 100644
+--- a/configs/P1024RDB_36BIT_defconfig
++++ b/configs/P1024RDB_36BIT_defconfig
+@@ -58,4 +58,5 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_USB_STORAGE=y
++CONFIG_ADDR_MAP=y
+ CONFIG_OF_LIBFDT=y
+diff --git a/configs/P1025RDB_36BIT_defconfig b/configs/P1025RDB_36BIT_defconfig
+index 8eaddb1290..c096593c18 100644
+--- a/configs/P1025RDB_36BIT_defconfig
++++ b/configs/P1025RDB_36BIT_defconfig
+@@ -60,4 +60,5 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_USB_STORAGE=y
++CONFIG_ADDR_MAP=y
+ CONFIG_OF_LIBFDT=y
+diff --git a/configs/P2020RDB-PC_36BIT_NAND_defconfig b/configs/P2020RDB-PC_36BIT_NAND_defconfig
+index dff2afa344..13f16ef246 100644
+--- a/configs/P2020RDB-PC_36BIT_NAND_defconfig
++++ b/configs/P2020RDB-PC_36BIT_NAND_defconfig
+@@ -88,3 +88,4 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_DM_USB=y
++CONFIG_ADDR_MAP=y
+diff --git a/configs/P2020RDB-PC_36BIT_SDCARD_defconfig b/configs/P2020RDB-PC_36BIT_SDCARD_defconfig
+index 700fabeef1..c11c304d8d 100644
+--- a/configs/P2020RDB-PC_36BIT_SDCARD_defconfig
++++ b/configs/P2020RDB-PC_36BIT_SDCARD_defconfig
+@@ -83,3 +83,4 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_DM_USB=y
++CONFIG_ADDR_MAP=y
+diff --git a/configs/P2020RDB-PC_36BIT_SPIFLASH_defconfig b/configs/P2020RDB-PC_36BIT_SPIFLASH_defconfig
+index 6b6ab7e57d..2ea28e734c 100644
+--- a/configs/P2020RDB-PC_36BIT_SPIFLASH_defconfig
++++ b/configs/P2020RDB-PC_36BIT_SPIFLASH_defconfig
+@@ -85,3 +85,4 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_DM_USB=y
++CONFIG_ADDR_MAP=y
+diff --git a/configs/P2020RDB-PC_36BIT_defconfig b/configs/P2020RDB-PC_36BIT_defconfig
+index 88e24c30ba..1140177bdd 100644
+--- a/configs/P2020RDB-PC_36BIT_defconfig
++++ b/configs/P2020RDB-PC_36BIT_defconfig
+@@ -72,3 +72,4 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_DM_USB=y
++CONFIG_ADDR_MAP=y
+diff --git a/configs/P2041RDB_NAND_defconfig b/configs/P2041RDB_NAND_defconfig
+index 4670d823c2..af48fc5e98 100644
+--- a/configs/P2041RDB_NAND_defconfig
++++ b/configs/P2041RDB_NAND_defconfig
+@@ -65,3 +65,5 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_DM_USB=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+diff --git a/configs/P2041RDB_SDCARD_defconfig b/configs/P2041RDB_SDCARD_defconfig
+index dc23e107b8..0fa5caa54b 100644
+--- a/configs/P2041RDB_SDCARD_defconfig
++++ b/configs/P2041RDB_SDCARD_defconfig
+@@ -64,3 +64,5 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_DM_USB=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+diff --git a/configs/P2041RDB_SECURE_BOOT_defconfig b/configs/P2041RDB_SECURE_BOOT_defconfig
+index 35a9d00e4b..e1b2ee0652 100644
+--- a/configs/P2041RDB_SECURE_BOOT_defconfig
++++ b/configs/P2041RDB_SECURE_BOOT_defconfig
+@@ -54,6 +54,8 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_USB_STORAGE=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+ CONFIG_RSA=y
+ CONFIG_SPL_RSA=y
+ CONFIG_RSA_SOFTWARE_EXP=y
+diff --git a/configs/P2041RDB_SPIFLASH_defconfig b/configs/P2041RDB_SPIFLASH_defconfig
+index bf8d9a2381..99611caf3b 100644
+--- a/configs/P2041RDB_SPIFLASH_defconfig
++++ b/configs/P2041RDB_SPIFLASH_defconfig
+@@ -65,3 +65,5 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_DM_USB=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+diff --git a/configs/P2041RDB_SRIO_PCIE_BOOT_defconfig b/configs/P2041RDB_SRIO_PCIE_BOOT_defconfig
+index dd5f2a4fc0..2832a86e54 100644
+--- a/configs/P2041RDB_SRIO_PCIE_BOOT_defconfig
++++ b/configs/P2041RDB_SRIO_PCIE_BOOT_defconfig
+@@ -47,4 +47,6 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_USB_STORAGE=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+ CONFIG_OF_LIBFDT=y
+diff --git a/configs/P2041RDB_defconfig b/configs/P2041RDB_defconfig
+index bbf6ea61a3..cd05a7ae82 100644
+--- a/configs/P2041RDB_defconfig
++++ b/configs/P2041RDB_defconfig
+@@ -63,3 +63,5 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_DM_USB=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+diff --git a/configs/P3041DS_NAND_SECURE_BOOT_defconfig b/configs/P3041DS_NAND_SECURE_BOOT_defconfig
+index 8ab25373c9..c14a05b644 100644
+--- a/configs/P3041DS_NAND_SECURE_BOOT_defconfig
++++ b/configs/P3041DS_NAND_SECURE_BOOT_defconfig
+@@ -53,6 +53,8 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_USB_STORAGE=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+ CONFIG_RSA=y
+ CONFIG_SPL_RSA=y
+ CONFIG_RSA_SOFTWARE_EXP=y
+diff --git a/configs/P3041DS_NAND_defconfig b/configs/P3041DS_NAND_defconfig
+index 55613ccacd..f774e1f635 100644
+--- a/configs/P3041DS_NAND_defconfig
++++ b/configs/P3041DS_NAND_defconfig
+@@ -62,3 +62,5 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_DM_USB=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+diff --git a/configs/P3041DS_SDCARD_defconfig b/configs/P3041DS_SDCARD_defconfig
+index b52068d050..89678ea1ef 100644
+--- a/configs/P3041DS_SDCARD_defconfig
++++ b/configs/P3041DS_SDCARD_defconfig
+@@ -61,3 +61,5 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_DM_USB=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+diff --git a/configs/P3041DS_SECURE_BOOT_defconfig b/configs/P3041DS_SECURE_BOOT_defconfig
+index d6cabebeb7..afb1aec5cc 100644
+--- a/configs/P3041DS_SECURE_BOOT_defconfig
++++ b/configs/P3041DS_SECURE_BOOT_defconfig
+@@ -51,6 +51,8 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_USB_STORAGE=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+ CONFIG_RSA=y
+ CONFIG_SPL_RSA=y
+ CONFIG_RSA_SOFTWARE_EXP=y
+diff --git a/configs/P3041DS_SPIFLASH_defconfig b/configs/P3041DS_SPIFLASH_defconfig
+index 3af52b90e8..a5d881aa28 100644
+--- a/configs/P3041DS_SPIFLASH_defconfig
++++ b/configs/P3041DS_SPIFLASH_defconfig
+@@ -62,3 +62,5 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_DM_USB=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+diff --git a/configs/P3041DS_SRIO_PCIE_BOOT_defconfig b/configs/P3041DS_SRIO_PCIE_BOOT_defconfig
+index c34311b2f9..6c7b951654 100644
+--- a/configs/P3041DS_SRIO_PCIE_BOOT_defconfig
++++ b/configs/P3041DS_SRIO_PCIE_BOOT_defconfig
+@@ -47,4 +47,6 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_USB_STORAGE=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+ CONFIG_OF_LIBFDT=y
+diff --git a/configs/P3041DS_defconfig b/configs/P3041DS_defconfig
+index cc3234c6b1..0a766c89f3 100644
+--- a/configs/P3041DS_defconfig
++++ b/configs/P3041DS_defconfig
+@@ -60,3 +60,5 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_DM_USB=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+diff --git a/configs/P4080DS_SDCARD_defconfig b/configs/P4080DS_SDCARD_defconfig
+index 18ad56ac8d..c0d184e58f 100644
+--- a/configs/P4080DS_SDCARD_defconfig
++++ b/configs/P4080DS_SDCARD_defconfig
+@@ -60,3 +60,5 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_DM_USB=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+diff --git a/configs/P4080DS_SECURE_BOOT_defconfig b/configs/P4080DS_SECURE_BOOT_defconfig
+index 22a6ebe89c..e4d494bdf9 100644
+--- a/configs/P4080DS_SECURE_BOOT_defconfig
++++ b/configs/P4080DS_SECURE_BOOT_defconfig
+@@ -50,6 +50,8 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_USB_STORAGE=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+ CONFIG_RSA=y
+ CONFIG_SPL_RSA=y
+ CONFIG_RSA_SOFTWARE_EXP=y
+diff --git a/configs/P4080DS_SPIFLASH_defconfig b/configs/P4080DS_SPIFLASH_defconfig
+index 81a513bec9..f171d7cb21 100644
+--- a/configs/P4080DS_SPIFLASH_defconfig
++++ b/configs/P4080DS_SPIFLASH_defconfig
+@@ -61,3 +61,5 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_DM_USB=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+diff --git a/configs/P4080DS_SRIO_PCIE_BOOT_defconfig b/configs/P4080DS_SRIO_PCIE_BOOT_defconfig
+index a740bc4a7b..46aee4dee9 100644
+--- a/configs/P4080DS_SRIO_PCIE_BOOT_defconfig
++++ b/configs/P4080DS_SRIO_PCIE_BOOT_defconfig
+@@ -45,4 +45,6 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_USB_STORAGE=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+ CONFIG_OF_LIBFDT=y
+diff --git a/configs/P4080DS_defconfig b/configs/P4080DS_defconfig
+index 52db2e06c7..2980020d3e 100644
+--- a/configs/P4080DS_defconfig
++++ b/configs/P4080DS_defconfig
+@@ -59,3 +59,5 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_DM_USB=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+diff --git a/configs/P5020DS_NAND_SECURE_BOOT_defconfig b/configs/P5020DS_NAND_SECURE_BOOT_defconfig
+index 52efa92009..5f0c597cef 100644
+--- a/configs/P5020DS_NAND_SECURE_BOOT_defconfig
++++ b/configs/P5020DS_NAND_SECURE_BOOT_defconfig
+@@ -54,6 +54,8 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_USB_STORAGE=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+ CONFIG_RSA=y
+ CONFIG_SPL_RSA=y
+ CONFIG_RSA_SOFTWARE_EXP=y
+diff --git a/configs/P5020DS_NAND_defconfig b/configs/P5020DS_NAND_defconfig
+index baf7d835bc..b711f3bcc2 100644
+--- a/configs/P5020DS_NAND_defconfig
++++ b/configs/P5020DS_NAND_defconfig
+@@ -54,4 +54,6 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_USB_STORAGE=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+ CONFIG_OF_LIBFDT=y
+diff --git a/configs/P5020DS_SDCARD_defconfig b/configs/P5020DS_SDCARD_defconfig
+index c5b424145c..b459047780 100644
+--- a/configs/P5020DS_SDCARD_defconfig
++++ b/configs/P5020DS_SDCARD_defconfig
+@@ -52,4 +52,6 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_USB_STORAGE=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+ CONFIG_OF_LIBFDT=y
+diff --git a/configs/P5020DS_SECURE_BOOT_defconfig b/configs/P5020DS_SECURE_BOOT_defconfig
+index c08f9fffa6..79e8cc9bfa 100644
+--- a/configs/P5020DS_SECURE_BOOT_defconfig
++++ b/configs/P5020DS_SECURE_BOOT_defconfig
+@@ -51,6 +51,8 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_USB_STORAGE=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+ CONFIG_RSA=y
+ CONFIG_SPL_RSA=y
+ CONFIG_RSA_SOFTWARE_EXP=y
+diff --git a/configs/P5020DS_SPIFLASH_defconfig b/configs/P5020DS_SPIFLASH_defconfig
+index 03d7a16a6d..3777c1d2d0 100644
+--- a/configs/P5020DS_SPIFLASH_defconfig
++++ b/configs/P5020DS_SPIFLASH_defconfig
+@@ -53,4 +53,6 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_USB_STORAGE=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+ CONFIG_OF_LIBFDT=y
+diff --git a/configs/P5020DS_SRIO_PCIE_BOOT_defconfig b/configs/P5020DS_SRIO_PCIE_BOOT_defconfig
+index 7569364252..9b7cb68878 100644
+--- a/configs/P5020DS_SRIO_PCIE_BOOT_defconfig
++++ b/configs/P5020DS_SRIO_PCIE_BOOT_defconfig
+@@ -47,4 +47,6 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_USB_STORAGE=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+ CONFIG_OF_LIBFDT=y
+diff --git a/configs/P5020DS_defconfig b/configs/P5020DS_defconfig
+index a1b410c7b6..77fcf26e55 100644
+--- a/configs/P5020DS_defconfig
++++ b/configs/P5020DS_defconfig
+@@ -51,4 +51,6 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_USB_STORAGE=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+ CONFIG_OF_LIBFDT=y
+diff --git a/configs/P5040DS_NAND_SECURE_BOOT_defconfig b/configs/P5040DS_NAND_SECURE_BOOT_defconfig
+index beab855eae..782b027ef3 100644
+--- a/configs/P5040DS_NAND_SECURE_BOOT_defconfig
++++ b/configs/P5040DS_NAND_SECURE_BOOT_defconfig
+@@ -54,6 +54,8 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_USB_STORAGE=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+ CONFIG_RSA=y
+ CONFIG_SPL_RSA=y
+ CONFIG_RSA_SOFTWARE_EXP=y
+diff --git a/configs/P5040DS_NAND_defconfig b/configs/P5040DS_NAND_defconfig
+index efffb706fb..35584e251e 100644
+--- a/configs/P5040DS_NAND_defconfig
++++ b/configs/P5040DS_NAND_defconfig
+@@ -63,3 +63,5 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_DM_USB=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+diff --git a/configs/P5040DS_SDCARD_defconfig b/configs/P5040DS_SDCARD_defconfig
+index fdd39acbaf..91c02855fb 100644
+--- a/configs/P5040DS_SDCARD_defconfig
++++ b/configs/P5040DS_SDCARD_defconfig
+@@ -61,3 +61,5 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_DM_USB=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+diff --git a/configs/P5040DS_SECURE_BOOT_defconfig b/configs/P5040DS_SECURE_BOOT_defconfig
+index 5d48206dc8..34e024af13 100644
+--- a/configs/P5040DS_SECURE_BOOT_defconfig
++++ b/configs/P5040DS_SECURE_BOOT_defconfig
+@@ -51,6 +51,8 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_USB_STORAGE=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+ CONFIG_RSA=y
+ CONFIG_SPL_RSA=y
+ CONFIG_RSA_SOFTWARE_EXP=y
+diff --git a/configs/P5040DS_SPIFLASH_defconfig b/configs/P5040DS_SPIFLASH_defconfig
+index 3f4642f4e0..49a2b93066 100644
+--- a/configs/P5040DS_SPIFLASH_defconfig
++++ b/configs/P5040DS_SPIFLASH_defconfig
+@@ -62,3 +62,5 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_DM_USB=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+diff --git a/configs/P5040DS_defconfig b/configs/P5040DS_defconfig
+index d2a2e02dcd..a797088d7c 100644
+--- a/configs/P5040DS_defconfig
++++ b/configs/P5040DS_defconfig
+@@ -60,3 +60,5 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_DM_USB=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+diff --git a/configs/T1023RDB_NAND_defconfig b/configs/T1023RDB_NAND_defconfig
+index 385dcb3947..2a544d78cf 100644
+--- a/configs/T1023RDB_NAND_defconfig
++++ b/configs/T1023RDB_NAND_defconfig
+@@ -74,4 +74,6 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_USB_STORAGE=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+ CONFIG_OF_LIBFDT=y
+diff --git a/configs/T1023RDB_SDCARD_defconfig b/configs/T1023RDB_SDCARD_defconfig
+index 825ab47f93..641b3929a3 100644
+--- a/configs/T1023RDB_SDCARD_defconfig
++++ b/configs/T1023RDB_SDCARD_defconfig
+@@ -71,4 +71,6 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_USB_STORAGE=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+ CONFIG_OF_LIBFDT=y
+diff --git a/configs/T1023RDB_SECURE_BOOT_defconfig b/configs/T1023RDB_SECURE_BOOT_defconfig
+index 34fe6e5e52..a9c9794410 100644
+--- a/configs/T1023RDB_SECURE_BOOT_defconfig
++++ b/configs/T1023RDB_SECURE_BOOT_defconfig
+@@ -58,6 +58,8 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_USB_STORAGE=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+ CONFIG_RSA=y
+ CONFIG_SPL_RSA=y
+ CONFIG_RSA_SOFTWARE_EXP=y
+diff --git a/configs/T1023RDB_SPIFLASH_defconfig b/configs/T1023RDB_SPIFLASH_defconfig
+index d537047d60..e30695e027 100644
+--- a/configs/T1023RDB_SPIFLASH_defconfig
++++ b/configs/T1023RDB_SPIFLASH_defconfig
+@@ -74,4 +74,6 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_USB_STORAGE=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+ CONFIG_OF_LIBFDT=y
+diff --git a/configs/T1023RDB_defconfig b/configs/T1023RDB_defconfig
+index 62cc129a31..3366ff0201 100644
+--- a/configs/T1023RDB_defconfig
++++ b/configs/T1023RDB_defconfig
+@@ -58,4 +58,6 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_USB_STORAGE=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+ CONFIG_OF_LIBFDT=y
+diff --git a/configs/T1024RDB_NAND_defconfig b/configs/T1024RDB_NAND_defconfig
+index 0d38d6656f..2c5ae11e58 100644
+--- a/configs/T1024RDB_NAND_defconfig
++++ b/configs/T1024RDB_NAND_defconfig
+@@ -87,3 +87,5 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_DM_USB=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+diff --git a/configs/T1024RDB_SDCARD_defconfig b/configs/T1024RDB_SDCARD_defconfig
+index d091d7c0ad..f9bf5acab1 100644
+--- a/configs/T1024RDB_SDCARD_defconfig
++++ b/configs/T1024RDB_SDCARD_defconfig
+@@ -84,3 +84,5 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_DM_USB=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+diff --git a/configs/T1024RDB_SECURE_BOOT_defconfig b/configs/T1024RDB_SECURE_BOOT_defconfig
+index fe3d28b373..bbcf145a08 100644
+--- a/configs/T1024RDB_SECURE_BOOT_defconfig
++++ b/configs/T1024RDB_SECURE_BOOT_defconfig
+@@ -63,6 +63,8 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_USB_STORAGE=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+ CONFIG_RSA=y
+ CONFIG_SPL_RSA=y
+ CONFIG_RSA_SOFTWARE_EXP=y
+diff --git a/configs/T1024RDB_SPIFLASH_defconfig b/configs/T1024RDB_SPIFLASH_defconfig
+index cab645dfb2..d550959220 100644
+--- a/configs/T1024RDB_SPIFLASH_defconfig
++++ b/configs/T1024RDB_SPIFLASH_defconfig
+@@ -87,3 +87,5 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_DM_USB=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+diff --git a/configs/T1024RDB_defconfig b/configs/T1024RDB_defconfig
+index 46c857d6c5..20e85c12d2 100644
+--- a/configs/T1024RDB_defconfig
++++ b/configs/T1024RDB_defconfig
+@@ -72,3 +72,5 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_DM_USB=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+diff --git a/configs/T1040D4RDB_NAND_defconfig b/configs/T1040D4RDB_NAND_defconfig
+index 21875e6c15..17664daa1b 100644
+--- a/configs/T1040D4RDB_NAND_defconfig
++++ b/configs/T1040D4RDB_NAND_defconfig
+@@ -72,4 +72,6 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_USB_STORAGE=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+ CONFIG_OF_LIBFDT=y
+diff --git a/configs/T1040D4RDB_SDCARD_defconfig b/configs/T1040D4RDB_SDCARD_defconfig
+index 07c4974c96..72440c61ef 100644
+--- a/configs/T1040D4RDB_SDCARD_defconfig
++++ b/configs/T1040D4RDB_SDCARD_defconfig
+@@ -69,4 +69,6 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_USB_STORAGE=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+ CONFIG_OF_LIBFDT=y
+diff --git a/configs/T1040D4RDB_SECURE_BOOT_defconfig b/configs/T1040D4RDB_SECURE_BOOT_defconfig
+index 7adffb73ea..01fa29c1db 100644
+--- a/configs/T1040D4RDB_SECURE_BOOT_defconfig
++++ b/configs/T1040D4RDB_SECURE_BOOT_defconfig
+@@ -55,6 +55,8 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_USB_STORAGE=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+ CONFIG_RSA=y
+ CONFIG_SPL_RSA=y
+ CONFIG_RSA_SOFTWARE_EXP=y
+diff --git a/configs/T1040D4RDB_SPIFLASH_defconfig b/configs/T1040D4RDB_SPIFLASH_defconfig
+index 8979ebf4b4..8abc3f74b7 100644
+--- a/configs/T1040D4RDB_SPIFLASH_defconfig
++++ b/configs/T1040D4RDB_SPIFLASH_defconfig
+@@ -72,4 +72,6 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_USB_STORAGE=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+ CONFIG_OF_LIBFDT=y
+diff --git a/configs/T1040D4RDB_defconfig b/configs/T1040D4RDB_defconfig
+index eb25930ff7..dcf3dce0ee 100644
+--- a/configs/T1040D4RDB_defconfig
++++ b/configs/T1040D4RDB_defconfig
+@@ -56,4 +56,6 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_USB_STORAGE=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+ CONFIG_OF_LIBFDT=y
+diff --git a/configs/T1040RDB_NAND_defconfig b/configs/T1040RDB_NAND_defconfig
+index b2c07d5f67..f08e03f424 100644
+--- a/configs/T1040RDB_NAND_defconfig
++++ b/configs/T1040RDB_NAND_defconfig
+@@ -73,4 +73,6 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_USB_STORAGE=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+ CONFIG_OF_LIBFDT=y
+diff --git a/configs/T1040RDB_SDCARD_defconfig b/configs/T1040RDB_SDCARD_defconfig
+index 2c64794650..047fca3d02 100644
+--- a/configs/T1040RDB_SDCARD_defconfig
++++ b/configs/T1040RDB_SDCARD_defconfig
+@@ -70,4 +70,6 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_USB_STORAGE=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+ CONFIG_OF_LIBFDT=y
+diff --git a/configs/T1040RDB_SECURE_BOOT_defconfig b/configs/T1040RDB_SECURE_BOOT_defconfig
+index 910b984f47..aa22883e54 100644
+--- a/configs/T1040RDB_SECURE_BOOT_defconfig
++++ b/configs/T1040RDB_SECURE_BOOT_defconfig
+@@ -56,6 +56,8 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_USB_STORAGE=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+ CONFIG_RSA=y
+ CONFIG_SPL_RSA=y
+ CONFIG_RSA_SOFTWARE_EXP=y
+diff --git a/configs/T1040RDB_SPIFLASH_defconfig b/configs/T1040RDB_SPIFLASH_defconfig
+index a7f9f7db19..19a0a8f8db 100644
+--- a/configs/T1040RDB_SPIFLASH_defconfig
++++ b/configs/T1040RDB_SPIFLASH_defconfig
+@@ -73,4 +73,6 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_USB_STORAGE=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+ CONFIG_OF_LIBFDT=y
+diff --git a/configs/T1040RDB_defconfig b/configs/T1040RDB_defconfig
+index e8c5393b18..56d61ae93e 100644
+--- a/configs/T1040RDB_defconfig
++++ b/configs/T1040RDB_defconfig
+@@ -57,4 +57,6 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_USB_STORAGE=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+ CONFIG_OF_LIBFDT=y
+diff --git a/configs/T1042D4RDB_NAND_defconfig b/configs/T1042D4RDB_NAND_defconfig
+index f607973fcc..855f9a49d3 100644
+--- a/configs/T1042D4RDB_NAND_defconfig
++++ b/configs/T1042D4RDB_NAND_defconfig
+@@ -84,3 +84,5 @@ CONFIG_USB=y
+ CONFIG_DM_USB=y
+ CONFIG_VIDEO=y
+ CONFIG_CFB_CONSOLE_ANSI=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+diff --git a/configs/T1042D4RDB_SDCARD_defconfig b/configs/T1042D4RDB_SDCARD_defconfig
+index e31d95aed9..81362a8ea9 100644
+--- a/configs/T1042D4RDB_SDCARD_defconfig
++++ b/configs/T1042D4RDB_SDCARD_defconfig
+@@ -81,3 +81,5 @@ CONFIG_USB=y
+ CONFIG_DM_USB=y
+ CONFIG_VIDEO=y
+ CONFIG_CFB_CONSOLE_ANSI=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+diff --git a/configs/T1042D4RDB_SECURE_BOOT_defconfig b/configs/T1042D4RDB_SECURE_BOOT_defconfig
+index f460b17e4d..b9adcc0053 100644
+--- a/configs/T1042D4RDB_SECURE_BOOT_defconfig
++++ b/configs/T1042D4RDB_SECURE_BOOT_defconfig
+@@ -58,6 +58,8 @@ CONFIG_USB=y
+ CONFIG_USB_STORAGE=y
+ CONFIG_VIDEO=y
+ CONFIG_CFB_CONSOLE_ANSI=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+ CONFIG_RSA=y
+ CONFIG_SPL_RSA=y
+ CONFIG_RSA_SOFTWARE_EXP=y
+diff --git a/configs/T1042D4RDB_SPIFLASH_defconfig b/configs/T1042D4RDB_SPIFLASH_defconfig
+index 11bbdb4321..e5e4fea1c5 100644
+--- a/configs/T1042D4RDB_SPIFLASH_defconfig
++++ b/configs/T1042D4RDB_SPIFLASH_defconfig
+@@ -84,3 +84,5 @@ CONFIG_USB=y
+ CONFIG_DM_USB=y
+ CONFIG_VIDEO=y
+ CONFIG_CFB_CONSOLE_ANSI=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+diff --git a/configs/T1042D4RDB_defconfig b/configs/T1042D4RDB_defconfig
+index 70ddffb3a7..2c6e8d00c1 100644
+--- a/configs/T1042D4RDB_defconfig
++++ b/configs/T1042D4RDB_defconfig
+@@ -69,3 +69,5 @@ CONFIG_USB=y
+ CONFIG_DM_USB=y
+ CONFIG_VIDEO=y
+ CONFIG_CFB_CONSOLE_ANSI=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+diff --git a/configs/T1042RDB_PI_NAND_SECURE_BOOT_defconfig b/configs/T1042RDB_PI_NAND_SECURE_BOOT_defconfig
+index a6878f5626..ffb65d2278 100644
+--- a/configs/T1042RDB_PI_NAND_SECURE_BOOT_defconfig
++++ b/configs/T1042RDB_PI_NAND_SECURE_BOOT_defconfig
+@@ -79,6 +79,8 @@ CONFIG_USB=y
+ CONFIG_USB_STORAGE=y
+ CONFIG_VIDEO=y
+ CONFIG_CFB_CONSOLE_ANSI=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+ CONFIG_RSA=y
+ CONFIG_SPL_RSA=y
+ CONFIG_RSA_SOFTWARE_EXP=y
+diff --git a/configs/T1042RDB_PI_NAND_defconfig b/configs/T1042RDB_PI_NAND_defconfig
+index 5585517757..a048862a8d 100644
+--- a/configs/T1042RDB_PI_NAND_defconfig
++++ b/configs/T1042RDB_PI_NAND_defconfig
+@@ -77,4 +77,6 @@ CONFIG_USB=y
+ CONFIG_USB_STORAGE=y
+ CONFIG_VIDEO=y
+ CONFIG_CFB_CONSOLE_ANSI=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+ CONFIG_OF_LIBFDT=y
+diff --git a/configs/T1042RDB_PI_SDCARD_defconfig b/configs/T1042RDB_PI_SDCARD_defconfig
+index 4aadd90c7a..12e96a09ec 100644
+--- a/configs/T1042RDB_PI_SDCARD_defconfig
++++ b/configs/T1042RDB_PI_SDCARD_defconfig
+@@ -74,4 +74,6 @@ CONFIG_USB=y
+ CONFIG_USB_STORAGE=y
+ CONFIG_VIDEO=y
+ CONFIG_CFB_CONSOLE_ANSI=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+ CONFIG_OF_LIBFDT=y
+diff --git a/configs/T1042RDB_PI_SPIFLASH_defconfig b/configs/T1042RDB_PI_SPIFLASH_defconfig
+index b8a96cc173..56173ebaf0 100644
+--- a/configs/T1042RDB_PI_SPIFLASH_defconfig
++++ b/configs/T1042RDB_PI_SPIFLASH_defconfig
+@@ -77,4 +77,6 @@ CONFIG_USB=y
+ CONFIG_USB_STORAGE=y
+ CONFIG_VIDEO=y
+ CONFIG_CFB_CONSOLE_ANSI=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+ CONFIG_OF_LIBFDT=y
+diff --git a/configs/T1042RDB_PI_defconfig b/configs/T1042RDB_PI_defconfig
+index 07ad865b6e..4a9e5348ee 100644
+--- a/configs/T1042RDB_PI_defconfig
++++ b/configs/T1042RDB_PI_defconfig
+@@ -61,4 +61,6 @@ CONFIG_USB=y
+ CONFIG_USB_STORAGE=y
+ CONFIG_VIDEO=y
+ CONFIG_CFB_CONSOLE_ANSI=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+ CONFIG_OF_LIBFDT=y
+diff --git a/configs/T1042RDB_SECURE_BOOT_defconfig b/configs/T1042RDB_SECURE_BOOT_defconfig
+index c5f39e82f6..2633b830ef 100644
+--- a/configs/T1042RDB_SECURE_BOOT_defconfig
++++ b/configs/T1042RDB_SECURE_BOOT_defconfig
+@@ -55,6 +55,8 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_USB_STORAGE=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+ CONFIG_RSA=y
+ CONFIG_SPL_RSA=y
+ CONFIG_RSA_SOFTWARE_EXP=y
+diff --git a/configs/T1042RDB_defconfig b/configs/T1042RDB_defconfig
+index c94730d79b..0755a95d10 100644
+--- a/configs/T1042RDB_defconfig
++++ b/configs/T1042RDB_defconfig
+@@ -56,4 +56,6 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_USB_STORAGE=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+ CONFIG_OF_LIBFDT=y
+diff --git a/configs/T2080QDS_NAND_defconfig b/configs/T2080QDS_NAND_defconfig
+index 1de486f64b..d088e1189a 100644
+--- a/configs/T2080QDS_NAND_defconfig
++++ b/configs/T2080QDS_NAND_defconfig
+@@ -81,3 +81,5 @@ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_DM_USB=y
+ CONFIG_USB_STORAGE=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+diff --git a/configs/T2080QDS_SDCARD_defconfig b/configs/T2080QDS_SDCARD_defconfig
+index 0e2dce224d..c12a651eab 100644
+--- a/configs/T2080QDS_SDCARD_defconfig
++++ b/configs/T2080QDS_SDCARD_defconfig
+@@ -78,3 +78,5 @@ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_DM_USB=y
+ CONFIG_USB_STORAGE=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+diff --git a/configs/T2080QDS_SECURE_BOOT_defconfig b/configs/T2080QDS_SECURE_BOOT_defconfig
+index 9b3f709c87..35891cc01a 100644
+--- a/configs/T2080QDS_SECURE_BOOT_defconfig
++++ b/configs/T2080QDS_SECURE_BOOT_defconfig
+@@ -65,6 +65,8 @@ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_DM_USB=y
+ CONFIG_USB_STORAGE=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+ CONFIG_RSA=y
+ CONFIG_SPL_RSA=y
+ CONFIG_RSA_SOFTWARE_EXP=y
+diff --git a/configs/T2080QDS_SPIFLASH_defconfig b/configs/T2080QDS_SPIFLASH_defconfig
+index 49db2fec7c..901ad2cad0 100644
+--- a/configs/T2080QDS_SPIFLASH_defconfig
++++ b/configs/T2080QDS_SPIFLASH_defconfig
+@@ -81,3 +81,5 @@ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_DM_USB=y
+ CONFIG_USB_STORAGE=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+diff --git a/configs/T2080QDS_SRIO_PCIE_BOOT_defconfig b/configs/T2080QDS_SRIO_PCIE_BOOT_defconfig
+index 4958435ef4..38d947c8c2 100644
+--- a/configs/T2080QDS_SRIO_PCIE_BOOT_defconfig
++++ b/configs/T2080QDS_SRIO_PCIE_BOOT_defconfig
+@@ -58,3 +58,5 @@ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_DM_USB=y
+ CONFIG_USB_STORAGE=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+diff --git a/configs/T2080QDS_defconfig b/configs/T2080QDS_defconfig
+index 602bf577e0..a5bd06c5ac 100644
+--- a/configs/T2080QDS_defconfig
++++ b/configs/T2080QDS_defconfig
+@@ -66,3 +66,5 @@ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_DM_USB=y
+ CONFIG_USB_STORAGE=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+diff --git a/configs/T2080RDB_NAND_defconfig b/configs/T2080RDB_NAND_defconfig
+index 5ec264b9c3..da21b315a5 100644
+--- a/configs/T2080RDB_NAND_defconfig
++++ b/configs/T2080RDB_NAND_defconfig
+@@ -82,3 +82,5 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_DM_USB=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+diff --git a/configs/T2080RDB_SDCARD_defconfig b/configs/T2080RDB_SDCARD_defconfig
+index 05fa2d66c0..6e23c57d13 100644
+--- a/configs/T2080RDB_SDCARD_defconfig
++++ b/configs/T2080RDB_SDCARD_defconfig
+@@ -79,3 +79,5 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_DM_USB=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+diff --git a/configs/T2080RDB_SECURE_BOOT_defconfig b/configs/T2080RDB_SECURE_BOOT_defconfig
+index 7d04a94116..1a89cd8899 100644
+--- a/configs/T2080RDB_SECURE_BOOT_defconfig
++++ b/configs/T2080RDB_SECURE_BOOT_defconfig
+@@ -57,6 +57,8 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_USB_STORAGE=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+ CONFIG_RSA=y
+ CONFIG_SPL_RSA=y
+ CONFIG_RSA_SOFTWARE_EXP=y
+diff --git a/configs/T2080RDB_SPIFLASH_defconfig b/configs/T2080RDB_SPIFLASH_defconfig
+index da562d222d..8af05eefe8 100644
+--- a/configs/T2080RDB_SPIFLASH_defconfig
++++ b/configs/T2080RDB_SPIFLASH_defconfig
+@@ -82,3 +82,5 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_DM_USB=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+diff --git a/configs/T2080RDB_SRIO_PCIE_BOOT_defconfig b/configs/T2080RDB_SRIO_PCIE_BOOT_defconfig
+index a8f0a965c1..729edaa41a 100644
+--- a/configs/T2080RDB_SRIO_PCIE_BOOT_defconfig
++++ b/configs/T2080RDB_SRIO_PCIE_BOOT_defconfig
+@@ -50,4 +50,6 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_USB_STORAGE=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+ CONFIG_OF_LIBFDT=y
+diff --git a/configs/T2080RDB_defconfig b/configs/T2080RDB_defconfig
+index 85e3b64ad3..d957e40cb3 100644
+--- a/configs/T2080RDB_defconfig
++++ b/configs/T2080RDB_defconfig
+@@ -66,3 +66,5 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_DM_USB=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+diff --git a/configs/T2081QDS_NAND_defconfig b/configs/T2081QDS_NAND_defconfig
+index bf2f36f1a4..d40fd6e561 100644
+--- a/configs/T2081QDS_NAND_defconfig
++++ b/configs/T2081QDS_NAND_defconfig
+@@ -72,4 +72,6 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_USB_STORAGE=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+ CONFIG_OF_LIBFDT=y
+diff --git a/configs/T2081QDS_SDCARD_defconfig b/configs/T2081QDS_SDCARD_defconfig
+index f6ebc4814e..bc229284d0 100644
+--- a/configs/T2081QDS_SDCARD_defconfig
++++ b/configs/T2081QDS_SDCARD_defconfig
+@@ -69,4 +69,6 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_USB_STORAGE=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+ CONFIG_OF_LIBFDT=y
+diff --git a/configs/T2081QDS_SPIFLASH_defconfig b/configs/T2081QDS_SPIFLASH_defconfig
+index cd8fa25b74..82bacdbf6d 100644
+--- a/configs/T2081QDS_SPIFLASH_defconfig
++++ b/configs/T2081QDS_SPIFLASH_defconfig
+@@ -72,4 +72,6 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_USB_STORAGE=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+ CONFIG_OF_LIBFDT=y
+diff --git a/configs/T2081QDS_SRIO_PCIE_BOOT_defconfig b/configs/T2081QDS_SRIO_PCIE_BOOT_defconfig
+index a10f39b336..87cfb5f100 100644
+--- a/configs/T2081QDS_SRIO_PCIE_BOOT_defconfig
++++ b/configs/T2081QDS_SRIO_PCIE_BOOT_defconfig
+@@ -48,4 +48,6 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_USB_STORAGE=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+ CONFIG_OF_LIBFDT=y
+diff --git a/configs/T2081QDS_defconfig b/configs/T2081QDS_defconfig
+index 22ca08363c..c7ff58a958 100644
+--- a/configs/T2081QDS_defconfig
++++ b/configs/T2081QDS_defconfig
+@@ -56,4 +56,6 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_USB_STORAGE=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+ CONFIG_OF_LIBFDT=y
+diff --git a/configs/T4160RDB_defconfig b/configs/T4160RDB_defconfig
+index f3c7e1ec57..70e6d92bcd 100644
+--- a/configs/T4160RDB_defconfig
++++ b/configs/T4160RDB_defconfig
+@@ -51,4 +51,6 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_USB_STORAGE=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+ CONFIG_OF_LIBFDT=y
+diff --git a/configs/T4240RDB_SDCARD_defconfig b/configs/T4240RDB_SDCARD_defconfig
+index 85825da8f3..e916fbfcc6 100644
+--- a/configs/T4240RDB_SDCARD_defconfig
++++ b/configs/T4240RDB_SDCARD_defconfig
+@@ -72,3 +72,5 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_DM_USB=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+diff --git a/configs/T4240RDB_defconfig b/configs/T4240RDB_defconfig
+index dfe8953af7..2d8ab6f50a 100644
+--- a/configs/T4240RDB_defconfig
++++ b/configs/T4240RDB_defconfig
+@@ -60,3 +60,5 @@ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
+ CONFIG_USB=y
+ CONFIG_DM_USB=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+diff --git a/configs/controlcenterd_36BIT_SDCARD_DEVELOP_defconfig b/configs/controlcenterd_36BIT_SDCARD_DEVELOP_defconfig
+index 90fe803ac8..41785d09d0 100644
+--- a/configs/controlcenterd_36BIT_SDCARD_DEVELOP_defconfig
++++ b/configs/controlcenterd_36BIT_SDCARD_DEVELOP_defconfig
+@@ -64,5 +64,6 @@ CONFIG_USB=y
+ CONFIG_USB_STORAGE=y
+ CONFIG_VIDEO=y
+ # CONFIG_VIDEO_SW_CURSOR is not set
++CONFIG_ADDR_MAP=y
+ CONFIG_TPM=y
+ CONFIG_OF_LIBFDT=y
+diff --git a/configs/controlcenterd_36BIT_SDCARD_defconfig b/configs/controlcenterd_36BIT_SDCARD_defconfig
+index 55a46c3c29..777f5aee41 100644
+--- a/configs/controlcenterd_36BIT_SDCARD_defconfig
++++ b/configs/controlcenterd_36BIT_SDCARD_defconfig
+@@ -64,5 +64,6 @@ CONFIG_USB=y
+ CONFIG_USB_STORAGE=y
+ CONFIG_VIDEO=y
+ # CONFIG_VIDEO_SW_CURSOR is not set
++CONFIG_ADDR_MAP=y
+ CONFIG_TPM=y
+ CONFIG_OF_LIBFDT=y
+diff --git a/configs/kmcoge4_defconfig b/configs/kmcoge4_defconfig
+index a0d2c1a726..cf54e9fd30 100644
+--- a/configs/kmcoge4_defconfig
++++ b/configs/kmcoge4_defconfig
+@@ -64,5 +64,7 @@ CONFIG_SYS_QE_FMAN_FW_IN_SPIFLASH=y
+ CONFIG_SYS_NS16550=y
+ CONFIG_SPI=y
+ CONFIG_FSL_ESPI=y
++CONFIG_ADDR_MAP=y
++CONFIG_SYS_NUM_ADDR_MAP=64
+ CONFIG_BCH=y
+ CONFIG_OF_LIBFDT=y
+diff --git a/configs/qemu-ppce500_defconfig b/configs/qemu-ppce500_defconfig
+index ab4bc5d327..ba2ee27658 100644
+--- a/configs/qemu-ppce500_defconfig
++++ b/configs/qemu-ppce500_defconfig
+@@ -27,5 +27,6 @@ CONFIG_SYS_RELOC_GD_ENV_ADDR=y
+ # CONFIG_MMC is not set
+ CONFIG_E1000=y
+ CONFIG_SYS_NS16550=y
++CONFIG_ADDR_MAP=y
+ CONFIG_PANIC_HANG=y
+ CONFIG_OF_LIBFDT=y
+diff --git a/include/configs/MPC8548CDS.h b/include/configs/MPC8548CDS.h
+index de2bfd8f2f..7ef8eab79b 100644
+--- a/include/configs/MPC8548CDS.h
++++ b/include/configs/MPC8548CDS.h
+@@ -43,11 +43,6 @@ extern unsigned long get_clock_freq(void);
+  */
+ #define CONFIG_ENABLE_36BIT_PHYS	1
+ 
+-#ifdef CONFIG_PHYS_64BIT
+-#define CONFIG_ADDR_MAP
+-#define CONFIG_SYS_NUM_ADDR_MAP		16	/* number of TLB1 entries */
+-#endif
+-
+ #define CONFIG_SYS_CCSRBAR		0xe0000000
+ #define CONFIG_SYS_CCSRBAR_PHYS_LOW	CONFIG_SYS_CCSRBAR
+ 
+diff --git a/include/configs/MPC8572DS.h b/include/configs/MPC8572DS.h
+index 3243f39df4..f6a1939118 100644
+--- a/include/configs/MPC8572DS.h
++++ b/include/configs/MPC8572DS.h
+@@ -45,11 +45,6 @@
+ 
+ #define CONFIG_ENABLE_36BIT_PHYS	1
+ 
+-#ifdef CONFIG_PHYS_64BIT
+-#define CONFIG_ADDR_MAP			1
+-#define CONFIG_SYS_NUM_ADDR_MAP		16	/* number of TLB1 entries */
+-#endif
+-
+ /*
+  * Config the L2 Cache as L2 SRAM
+  */
+diff --git a/include/configs/MPC8641HPCN.h b/include/configs/MPC8641HPCN.h
+index edbeeefdd4..206f68456b 100644
+--- a/include/configs/MPC8641HPCN.h
++++ b/include/configs/MPC8641HPCN.h
+@@ -19,7 +19,6 @@
+ 
+ /* High Level Configuration Options */
+ #define CONFIG_LINUX_RESET_VEC	0x100	/* Reset vector used by Linux */
+-#define CONFIG_ADDR_MAP		1	/* Use addr map */
+ 
+ /*
+  * default CCSRBAR is at 0xff700000
+@@ -47,7 +46,6 @@
+ #define CONFIG_ENV_OVERWRITE
+ 
+ #define CONFIG_BAT_RW		1	/* Use common BAT rw code */
+-#define CONFIG_SYS_NUM_ADDR_MAP 8	/* Number of addr map slots = 8 dbats */
+ 
+ #define CONFIG_ALTIVEC		1
+ 
+diff --git a/include/configs/P1010RDB.h b/include/configs/P1010RDB.h
+index 8f709a6cac..fc74d57497 100644
+--- a/include/configs/P1010RDB.h
++++ b/include/configs/P1010RDB.h
+@@ -196,11 +196,6 @@
+ 
+ #define CONFIG_ENABLE_36BIT_PHYS
+ 
+-#ifdef CONFIG_PHYS_64BIT
+-#define CONFIG_ADDR_MAP			1
+-#define CONFIG_SYS_NUM_ADDR_MAP		16	/* number of TLB1 entries */
+-#endif
+-
+ /* DDR Setup */
+ #define CONFIG_SYS_DDR_RAW_TIMING
+ #define CONFIG_DDR_SPD
+diff --git a/include/configs/P2041RDB.h b/include/configs/P2041RDB.h
+index 94cbe10dd3..c6a64ee479 100644
+--- a/include/configs/P2041RDB.h
++++ b/include/configs/P2041RDB.h
+@@ -70,11 +70,6 @@ unsigned long get_board_sys_clk(unsigned long dummy);
+ 
+ #define CONFIG_ENABLE_36BIT_PHYS
+ 
+-#ifdef CONFIG_PHYS_64BIT
+-#define CONFIG_ADDR_MAP
+-#define CONFIG_SYS_NUM_ADDR_MAP		64	/* number of TLB1 entries */
+-#endif
+-
+ #define CONFIG_POST CONFIG_SYS_POST_MEMORY	/* test POST memory test */
+ 
+ /*
+diff --git a/include/configs/T102xRDB.h b/include/configs/T102xRDB.h
+index f5d9657444..efd9b6b5e1 100644
+--- a/include/configs/T102xRDB.h
++++ b/include/configs/T102xRDB.h
+@@ -17,11 +17,6 @@
+ #define CONFIG_SYS_BOOK3E_HV		/* Category E.HV supported */
+ #define CONFIG_ENABLE_36BIT_PHYS
+ 
+-#ifdef CONFIG_PHYS_64BIT
+-#define CONFIG_ADDR_MAP		1
+-#define CONFIG_SYS_NUM_ADDR_MAP	64	/* number of TLB1 entries */
+-#endif
+-
+ #define CONFIG_SYS_FSL_CPC		/* Corenet Platform Cache */
+ #define CONFIG_SYS_NUM_CPC		CONFIG_SYS_NUM_DDR_CTLRS
+ 
+diff --git a/include/configs/T104xRDB.h b/include/configs/T104xRDB.h
+index 4237dfcd6c..8f9de56f07 100644
+--- a/include/configs/T104xRDB.h
++++ b/include/configs/T104xRDB.h
+@@ -186,9 +186,6 @@ $(SRCTREE)/board/freescale/t104xrdb/t1042d4_sd_rcw.cfg
+ 
+ #define CONFIG_ENABLE_36BIT_PHYS
+ 
+-#define CONFIG_ADDR_MAP
+-#define CONFIG_SYS_NUM_ADDR_MAP		64	/* number of TLB1 entries */
+-
+ /*
+  *  Config the L3 Cache as L3 SRAM
+  */
+diff --git a/include/configs/T208xQDS.h b/include/configs/T208xQDS.h
+index c54f7f53e5..f32e6680b3 100644
+--- a/include/configs/T208xQDS.h
++++ b/include/configs/T208xQDS.h
+@@ -26,11 +26,6 @@
+ #define CONFIG_SYS_BOOK3E_HV	/* Category E.HV supported */
+ #define CONFIG_ENABLE_36BIT_PHYS
+ 
+-#ifdef CONFIG_PHYS_64BIT
+-#define CONFIG_ADDR_MAP 1
+-#define CONFIG_SYS_NUM_ADDR_MAP 64 /* number of TLB1 entries */
+-#endif
+-
+ #define CONFIG_SYS_FSL_CPC	/* Corenet Platform Cache */
+ #define CONFIG_SYS_NUM_CPC	CONFIG_SYS_NUM_DDR_CTLRS
+ #define CONFIG_ENV_OVERWRITE
+diff --git a/include/configs/T208xRDB.h b/include/configs/T208xRDB.h
+index 70eafc3e28..e666e4f4a4 100644
+--- a/include/configs/T208xRDB.h
++++ b/include/configs/T208xRDB.h
+@@ -20,11 +20,6 @@
+ #define CONFIG_SYS_BOOK3E_HV	/* Category E.HV supported */
+ #define CONFIG_ENABLE_36BIT_PHYS
+ 
+-#ifdef CONFIG_PHYS_64BIT
+-#define CONFIG_ADDR_MAP 1
+-#define CONFIG_SYS_NUM_ADDR_MAP 64 /* number of TLB1 entries */
+-#endif
+-
+ #define CONFIG_SYS_FSL_CPC	/* Corenet Platform Cache */
+ #define CONFIG_SYS_NUM_CPC	CONFIG_SYS_NUM_DDR_CTLRS
+ #define CONFIG_ENV_OVERWRITE
+diff --git a/include/configs/T4240RDB.h b/include/configs/T4240RDB.h
+index 9832f85405..ebe7a9cf92 100644
+--- a/include/configs/T4240RDB.h
++++ b/include/configs/T4240RDB.h
+@@ -80,9 +80,6 @@
+ 
+ #define CONFIG_ENABLE_36BIT_PHYS
+ 
+-#define CONFIG_ADDR_MAP
+-#define CONFIG_SYS_NUM_ADDR_MAP		64	/* number of TLB1 entries */
+-
+ /*
+  *  Config the L3 Cache as L3 SRAM
+  */
+diff --git a/include/configs/controlcenterd.h b/include/configs/controlcenterd.h
+index 823586cc09..512d8e16ee 100644
+--- a/include/configs/controlcenterd.h
++++ b/include/configs/controlcenterd.h
+@@ -41,11 +41,6 @@
+ 
+ #define CONFIG_ENABLE_36BIT_PHYS
+ 
+-#ifdef CONFIG_PHYS_64BIT
+-#define CONFIG_ADDR_MAP
+-#define CONFIG_SYS_NUM_ADDR_MAP		16	/* number of TLB1 entries */
+-#endif
+-
+ #define CONFIG_L2_CACHE
+ #define CONFIG_BTB
+ 
+diff --git a/include/configs/corenet_ds.h b/include/configs/corenet_ds.h
+index a49f9056c5..d7812bd886 100644
+--- a/include/configs/corenet_ds.h
++++ b/include/configs/corenet_ds.h
+@@ -84,11 +84,6 @@
+ 
+ #define CONFIG_ENABLE_36BIT_PHYS
+ 
+-#ifdef CONFIG_PHYS_64BIT
+-#define CONFIG_ADDR_MAP
+-#define CONFIG_SYS_NUM_ADDR_MAP		64	/* number of TLB1 entries */
+-#endif
+-
+ #define CONFIG_POST CONFIG_SYS_POST_MEMORY	/* test POST memory test */
+ 
+ /*
+diff --git a/include/configs/cyrus.h b/include/configs/cyrus.h
+index 052e6018a3..b587cb8d77 100644
+--- a/include/configs/cyrus.h
++++ b/include/configs/cyrus.h
+@@ -70,11 +70,6 @@
+ 
+ #define CONFIG_ENABLE_36BIT_PHYS
+ 
+-#ifdef CONFIG_PHYS_64BIT
+-#define CONFIG_ADDR_MAP
+-#define CONFIG_SYS_NUM_ADDR_MAP		64	/* number of TLB1 entries */
+-#endif
+-
+ /* test POST memory test */
+ #undef CONFIG_POST
+ 
+diff --git a/include/configs/kmp204x.h b/include/configs/kmp204x.h
+index e43b2f7513..6cd77edf70 100644
+--- a/include/configs/kmp204x.h
++++ b/include/configs/kmp204x.h
+@@ -64,9 +64,6 @@ unsigned long get_board_sys_clk(unsigned long dummy);
+ 
+ #define CONFIG_ENABLE_36BIT_PHYS
+ 
+-#define CONFIG_ADDR_MAP
+-#define CONFIG_SYS_NUM_ADDR_MAP		64	/* number of TLB1 entries */
+-
+ #define CONFIG_POST CONFIG_SYS_POST_MEM_REGIONS	/* POST memory regions test */
+ 
+ /*
+diff --git a/include/configs/p1_p2_rdb_pc.h b/include/configs/p1_p2_rdb_pc.h
+index 219e5d216b..1e6c8ae308 100644
+--- a/include/configs/p1_p2_rdb_pc.h
++++ b/include/configs/p1_p2_rdb_pc.h
+@@ -233,11 +233,6 @@
+ 
+ #define CONFIG_ENABLE_36BIT_PHYS
+ 
+-#ifdef CONFIG_PHYS_64BIT
+-#define CONFIG_ADDR_MAP			1
+-#define CONFIG_SYS_NUM_ADDR_MAP		16	/* number of TLB1 entries */
+-#endif
+-
+ #define CONFIG_SYS_CCSRBAR		0xffe00000
+ #define CONFIG_SYS_CCSRBAR_PHYS_LOW	CONFIG_SYS_CCSRBAR
+ 
+diff --git a/include/configs/qemu-ppce500.h b/include/configs/qemu-ppce500.h
+index 03b08968f6..b3ec43073c 100644
+--- a/include/configs/qemu-ppce500.h
++++ b/include/configs/qemu-ppce500.h
+@@ -21,9 +21,6 @@
+ 
+ #define CONFIG_ENABLE_36BIT_PHYS
+ 
+-#define CONFIG_ADDR_MAP
+-#define CONFIG_SYS_NUM_ADDR_MAP		16	/* number of TLB1 entries */
+-
+ /* Needed to fill the ccsrbar pointer */
+ 
+ /* Virtual address to CCSRBAR */
+diff --git a/include/configs/t4qds.h b/include/configs/t4qds.h
+index 3da7ee7b3a..1f6ae462ae 100644
+--- a/include/configs/t4qds.h
++++ b/include/configs/t4qds.h
+@@ -42,9 +42,6 @@
+ 
+ #define CONFIG_ENABLE_36BIT_PHYS
+ 
+-#define CONFIG_ADDR_MAP
+-#define CONFIG_SYS_NUM_ADDR_MAP		64	/* number of TLB1 entries */
+-
+ /*
+  *  Config the L3 Cache as L3 SRAM
+  */
+diff --git a/lib/Kconfig b/lib/Kconfig
+index af5c38afd9..af5e8914b4 100644
+--- a/lib/Kconfig
++++ b/lib/Kconfig
+@@ -1,5 +1,18 @@
+ menu "Library routines"
+ 
++config ADDR_MAP
++	bool "Enable support for non-identity virtual-physical mappings"
++	help
++	  Enables helper code for implementing non-identity virtual-physical
++	  memory mappings for 32bit CPUs.
++
++config SYS_NUM_ADDR_MAP
++	int "Size of the address-map table"
++	depends on ADDR_MAP
++	default 16
++	help
++	  Sets the number of entries in the virtual-physical mapping table.
++
+ config BCH
+ 	bool "Enable Software based BCH ECC"
+ 	help
+diff --git a/scripts/config_whitelist.txt b/scripts/config_whitelist.txt
+index 916768f361..0fb69f4630 100644
+--- a/scripts/config_whitelist.txt
++++ b/scripts/config_whitelist.txt
+@@ -15,7 +15,6 @@ CONFIG_ACX517AKN
+ CONFIG_ACX544AKN
+ CONFIG_ADDRESS
+ CONFIG_ADDR_AUTO_INCR_BIT
+-CONFIG_ADDR_MAP
+ CONFIG_ADNPESC1
+ CONFIG_AEABI
+ CONFIG_AEMIF_CNTRL_BASE
+@@ -3271,7 +3270,6 @@ CONFIG_SYS_NS16550_MEM32
+ CONFIG_SYS_NS16550_PORT_MAPPED
+ CONFIG_SYS_NS16550_REG_SIZE
+ CONFIG_SYS_NS16550_SERIAL
+-CONFIG_SYS_NUM_ADDR_MAP
+ CONFIG_SYS_NUM_CPC
+ CONFIG_SYS_NUM_FM1_10GEC
+ CONFIG_SYS_NUM_FM1_DTSEC
+-- 
+2.27.0
+
