@@ -23,10 +23,7 @@ if load mmc ${devnum}:1 ${ramdisk_addr_r} config.txt; then
 fi
 
 # Board bootargs
-if test "${hdmimode}" = "custombuilt"; then setenv cmode "modeline=${modeline}"; fi
- 
-# Boot Args
-setenv bootargs_odroidn2 "clk_ignore_unused hdmimode=${hdmimode} cvbsmode=576cvbs max_freq_a53=${max_freq_a53} max_freq_a73=${max_freq_a73} maxcpus=${maxcpus} ${cmode} voutmode=${voutmode} disablehpd=${disablehpd} overscan=${overscan}"
+setenv bootargs_odroidn2 ""
 
 # HassOS bootargs
 setenv bootargs_hassos "zram.enabled=1 zram.num_devices=3 apparmor=1 security=apparmor systemd.machine_id=${MACHINE_ID} cgroup_enable=memory"
