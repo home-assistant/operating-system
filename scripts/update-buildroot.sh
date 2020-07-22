@@ -10,7 +10,7 @@ rm -rf /tmp/buildroot-new
 mkdir -p /tmp/buildroot-new
 
 echo "Download new buildroot"
-curl -L https://buildroot.org/downloads/buildroot-${1}.tar.bz2 \
+curl -L "https://buildroot.org/downloads/buildroot-${1}.tar.bz2" \
     | tar xvpjf - --strip 1 -C /tmp/buildroot-new 
 
 echo "Install patches"
