@@ -2,7 +2,7 @@
 
 ## eMMC
 
-The ODROID XU4 has a hidden boot sector that is only visible on the ODROID itself (can't be written by a card reader). There are a couple of possibilities:
+The ODROID XU4 uses the eMMC boot partition to boot from. Typically eMMC readers can't write to this eMMC boot partition. There are a couple of possibilities:
 
 1. **Working** e.g. the eMMC already had a working image before flashing HassOS:
    - It will be booting to uBoot (but no further).
