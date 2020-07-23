@@ -20,7 +20,7 @@ HassOS is uses Linux as a hypervisor for Docker, allowing each component of Home
 - Asus Tinker Board
 - Virtual appliances
 
-See full list and specific models [here]
+See full list and specific models [here](./Documentation/boards/README.md)
 
 ## Getting Started
 
