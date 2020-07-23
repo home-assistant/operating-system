@@ -10,7 +10,7 @@ The ODROID XU4 uses the eMMC boot partition to boot from. Typically eMMC readers
      - If not, flash the HassOS image to an SD card and boot off that temporarily (while the eMMC is also plugged in).
    - Once booted, login at the prompts and then enter `dd if=/dev/mmcblk0 of=/dev/mmcblk0boot0 bs=512 skip=63 seek=62 count=1440` at the linux prompt.
    - Reboot with eMMC (don't forget to flip the boot switch to eMMC)
-2. **Not Working** e.g. a clean/wiped/corruped boot sector:
+2. **Not Working** e.g. a clean/wiped/corruped eMMC boot partition:
    - You'll need to follow [Hardkernel's instructions](https://forum.odroid.com/viewtopic.php?f=53&t=6173) to get a working boot sector. Then flash HassOS and follow instructions above.
    - Alternatively, you can try flash HassOS to both an SD and eMMC, then boot off the SD with the eMMC also plugged in, then run `dd if=/dev/mmcblk1 of=/dev/mmcblk0boot0 bs=512 skip=1 seek=0 count=16381` at the Linux prompt. Note that this is untested, but in theory should work..
 
