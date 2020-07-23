@@ -2,7 +2,7 @@
 
 ## Supported Hardware
 
-This board configuration supports the Intel NUC mini PCs and compatibles. Most recent MUC computers will probably work.
+This board configuration supports the Intel NUC mini PCs and compatibles. It should work for most recent NUC computers and, because this is a UEFI based image, it should in fact work with for any x86-64 based computer with UEFI. Hardware it has been tested with is listed below.
 
 ## Tested Hardware
 
