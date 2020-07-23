@@ -1,6 +1,6 @@
 # Home Assistant Operating System
 
-Home Assistant Operating System (HassOS) is an operating system optimized for hosting [Home Assistant](https://www.home-assistant.io) and its [Add-ons](https://www.home-assistant.io/addons/).
+Home Assistant Operating System (formerly HassOS) is an operating system optimized for hosting [Home Assistant](https://www.home-assistant.io) and its [Add-ons](https://www.home-assistant.io/addons/).
 
 HassOS uses Linux and Docker to run each component of Home Assistant, including add-ons, in separate docker containers. It uses embedded Linux based on [buildroot](https://buildroot.org/) and it is optimized for running Home Assistant, especially on single board compute (SBC) devices like the Pi, ODROID, NUC and Tinker Board (see supported hardware below).
 
