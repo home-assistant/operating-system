@@ -5,7 +5,7 @@
 The ODROID XU4 uses the eMMC boot partition to boot from. Typically eMMC readers can't write to this eMMC boot partition. There are a couple of possibilities:
 
 1. **Working** e.g. the eMMC already had a working image before flashing HassOS:
-   - It will be booting to uBoot (but no further).
+   - It will be booting to U-Boot (but no further).
      - If you have the serial adapter, you should be able to enter `distro_bootcmd` at the uboot prompt to continue booting.
      - If not, flash the HassOS image to an SD card and boot off that temporarily (while the eMMC is also plugged in).
    - Once booted, login at the prompts and then enter `dd if=/dev/mmcblk0 of=/dev/mmcblk0boot0 bs=512 skip=63 seek=62 count=1440` at the linux prompt.
