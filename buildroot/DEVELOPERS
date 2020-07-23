@@ -465,9 +465,6 @@ N:	Biagio Montaruli <biagio.hkr@gmail.com>
 F:	board/acmesystems/
 F:	configs/acmesystems_*
 
-N:	Bimal Jacob <bimal.jacob@rockwellcollins.com>
-F:	package/nginx-upload/
-
 N:	Bogdan Radulescu <bogdan@nimblex.net>
 F:	package/iftop/
 F:	package/ncdu/
@@ -481,27 +478,6 @@ F:	package/pdmenu/
 N:	Carlo Caione <carlo.caione@gmail.com>
 F:	package/jailhouse/
 F:	package/sunxi-boards/
-
-N:	Carlos Santos <unixmania@gmail.com>
-F:	package/busybox/
-F:	package/initscripts/
-F:	package/intel-microcode/
-F:	package/liburiparser/
-F:	package/modem-manager/
-F:	package/pamtester/
-F:	package/pcm-tools/
-F:	package/skeleton-custom/
-F:	package/skeleton-init-common/
-F:	package/skeleton-init-none/
-F:	package/skeleton-init-systemd/
-F:	package/skeleton-init-sysv/
-F:	package/skeleton/
-F:	package/sysvinit/
-F:	package/util-linux/
-F:	package/tpm2-abrmd/
-F:	package/tpm2-tools/
-F:	package/tpm2-totp/
-F:	package/tpm2-tss/
 
 N:	Carsten Schoenert <c.schoenert@gmail.com>
 F:	package/dvbsnoop/
@@ -659,9 +635,6 @@ F:	package/openldap/
 
 N:	David du Colombier <0intro@gmail.com>
 F:	package/x264/
-
-N:	David Graziano <david.graziano@rockwellcollins.com>
-F:	package/libcsv/
 
 N:	David Lechner <david@lechnology.com>
 F:	board/lego/ev3/
@@ -1203,9 +1176,6 @@ F:	package/python-pexpect/
 F:	package/python-ptyprocess/
 F:	package/zynq-boot-bin/
 
-N:	Jared Bents <jared.bents@rockwellcollins.com>
-F:	package/davici/
-
 N:	Jarkko Sakkinen <jarkko.sakkinen@intel.com>
 F:	package/quota/
 
@@ -1610,6 +1580,7 @@ F:	package/cgroupfs-mount/
 F:	package/crda/
 F:	package/cunit/
 F:	package/dacapo/
+F:	package/davici/
 F:	package/dnsmasq/
 F:	package/dosfstools/
 F:	package/eigen/
@@ -1872,9 +1843,6 @@ F:	package/openjpeg/
 
 N:	Olivier Singla <olivier.singla@gmail.com>
 F:	package/shellinabox/
-
-N:	Paresh Chaudhary <paresh.chaudhary@rockwellcollins.com>
-F:	package/checksec/
 
 N:	Parnell Springmeyer <parnell@digitalmentat.com>
 F:	package/scrypt/
@@ -2169,7 +2137,6 @@ N:	Ryan Barnett <ryan.barnett@rockwellcollins.com>
 F:	package/atftp/
 F:	package/miraclecast/
 F:	package/python-pyasn/
-F:	package/python-pycrypto/
 F:	package/python-pysnmp/
 F:	package/python-pysnmp-mibs/
 F:	package/python-tornado/
@@ -2313,11 +2280,9 @@ F:	package/libscrypt/
 N:	Stephan Hoffmann <sho@relinux.de>
 F:	package/cache-calibrator/
 F:	package/gtest/
+F:	package/libhttpserver/
 F:	package/mtdev/
 F:	package/mtdev2tuio/
-
-N:	Stephan Hoffmann <stephan.hoffmann@ext.grandcentrix.net>
-F:	package/libhttpserver/
 
 N:	Steve Calfee <stevecalfee@gmail.com>
 F:	package/python-pymysql/

@@ -143,15 +143,19 @@ III. Developer guide
         21.7. Using the run-tests framework
 
     22. DEVELOPERS file and get-developers
+    23. Release Engineering
+
+        23.1. Releases
+        23.2. Development
 
 IV. Appendix
 
-    23. Makedev syntax documentation
-    24. Makeusers syntax documentation
-    25. Migrating from older Buildroot versions
+    24. Makedev syntax documentation
+    25. Makeusers syntax documentation
+    26. Migrating from older Buildroot versions
 
-        25.1. Migrating to 2016.11
-        25.2. Migrating to 2017.08
+        26.1. Migrating to 2016.11
+        26.2. Migrating to 2017.08
 
 List of Examples
 
@@ -163,13 +167,13 @@ List of Examples
 
 ---------------------------------------------------------------------
 
-Buildroot 2020.02.2 manual generated on 2020-05-12 12:18:45 UTC from
-git revision 2f7183d131
+Buildroot 2020.02.3 manual generated on 2020-06-03 14:56:43 UTC from
+git revision d42f3adaae
 
 The Buildroot manual is written by the Buildroot developers. It is
 licensed under the GNU General Public License, version 2. Refer to
 the COPYING [http://git.buildroot.org/buildroot/tree/COPYING?id=
-2f7183d13133f2ded97fee273bd0cbed10226e4e] file in the Buildroot
+d42f3adaae24a6aa3abc2de4f39fa8023f971d31] file in the Buildroot
 sources for the full text of this license.
 
 Copyright © 2004-2020 The Buildroot developers
@@ -878,7 +882,7 @@ different solutions to handle the /dev directory :
     BR2_ROOTFS_STATIC_DEVICE_TABLE to system/device_table_dev.txt
     board/<yourcompany>/<yourproject>/device_table_dev.txt. For more
     details about the format of the device table file, see
-    Chapter 23, Makedev syntax documentation.
+    Chapter 24, Makedev syntax documentation.
   * The second solution is Dynamic using devtmpfs only. devtmpfs is a
     virtual filesystem inside the Linux kernel that has been
     introduced in kernel 2.6.32 (if you use an older kernel, it is
@@ -2173,7 +2177,7 @@ directory, not to the Buildroot output directory.
 
 Note: If using an br2-external tree from before Buildroot 2016.11,
 you need to convert it before you can use it with Buildroot 2016.11
-onward. See Section 25.1, “Migrating to 2016.11” for help on doing
+onward. See Section 26.1, “Migrating to 2016.11” for help on doing
 so.
 
 Some examples:
@@ -3470,6 +3474,10 @@ Table of Contents
     21.7. Using the run-tests framework
 
 22. DEVELOPERS file and get-developers
+23. Release Engineering
+
+    23.1. Releases
+    23.2. Development
 
 Chapter 14. How Buildroot works
 
@@ -4595,17 +4603,17 @@ information is (assuming the package name is libfoo) :
   * LIBFOO_DEVICES lists the device files to be created by Buildroot
     when using the static device table. The syntax to use is the
     makedevs one. You can find some documentation for this syntax in
-    the Chapter 23, Makedev syntax documentation. This variable is
+    the Chapter 24, Makedev syntax documentation. This variable is
     optional.
   * LIBFOO_PERMISSIONS lists the changes of permissions to be done at
     the end of the build process. The syntax is once again the
     makedevs one. You can find some documentation for this syntax in
-    the Chapter 23, Makedev syntax documentation. This variable is
+    the Chapter 24, Makedev syntax documentation. This variable is
     optional.
   * LIBFOO_USERS lists the users to create for this package, if it
     installs a program you want to run as a specific user (e.g. as a
     daemon, or as a cron-job). The syntax is similar in spirit to the
-    makedevs one, and is described in the Chapter 24, Makeusers
+    makedevs one, and is described in the Chapter 25, Makeusers
     syntax documentation. This variable is optional.
   * LIBFOO_LICENSE defines the license (or licenses) under which the
     package is released. This name will appear in the manifest file
@@ -7814,18 +7822,50 @@ DEVELOPERS file for various tasks:
     the DEVELOPERS file and will note WARNINGS for items that don’t
     match.
 
+Chapter 23. Release Engineering
+
+23.1. Releases
+
+The Buildroot project makes quarterly releases with monthly bugfix
+releases. The first release of each year is a long term support
+release, LTS.
+
+  * Quarterly releases: 2020.02, 2020.05, 2020.08, and 2020.11
+  * Bugfix releases: 2020.02.1, 2020.02.2, …
+  * LTS releases: 2020.02, 2021.02, …
+
+Releases are supported until the first bugfix release of the next
+release, e.g., 2020.05.x is EOL when 2020.08.1 is released.
+
+LTS releases are supported until the first bugfix release of the next
+LTS, e.g., 2020.02.x is supported until 2021.02.1 is released.
+
+23.2. Development
+
+Each release cycle consist of two months of development on the master
+branch and one month stabilization before the release is made. During
+this phase no new features are added to master, only bugfixes.
+
+The stabilization phase starts with tagging -rc1, and every week
+until the release, another release candidate is tagged.
+
+To handle new features and version bumps during the stabilization
+phase, a next branch may be created for these features. Once the
+current release has been made, the next branch is merged into master
+and the development cycle for the next release continues there.
+
 Part IV. Appendix
 
 Table of Contents
 
-23. Makedev syntax documentation
-24. Makeusers syntax documentation
-25. Migrating from older Buildroot versions
+24. Makedev syntax documentation
+25. Makeusers syntax documentation
+26. Migrating from older Buildroot versions
 
-    25.1. Migrating to 2016.11
-    25.2. Migrating to 2017.08
+    26.1. Migrating to 2016.11
+    26.2. Migrating to 2017.08
 
-Chapter 23. Makedev syntax documentation
+Chapter 24. Makedev syntax documentation
 
 The makedev syntax is used in several places in Buildroot to define
 changes to be made for permissions, or which device files to create
@@ -7914,7 +7954,7 @@ cap_net_admin to the binary foo, you will write :
 |xattr cap_sys_admin+eip
 |xattr cap_net_admin+eip
 
-Chapter 24. Makeusers syntax documentation
+Chapter 25. Makeusers syntax documentation
 
 The syntax to create users is inspired by the makedev syntax, above,
 but is specific to Buildroot.
@@ -7999,13 +8039,13 @@ This will create this user:
   * test is not a member of any additional groups
   * comment is: Test user
 
-Chapter 25. Migrating from older Buildroot versions
+Chapter 26. Migrating from older Buildroot versions
 
 Some versions have introduced backward incompatibilities. This
 section explains those incompatibilities, and for each explains what
 to do to complete the migration.
 
-25.1. Migrating to 2016.11
+26.1. Migrating to 2016.11
 
 Before Buildroot 2016.11, it was possible to use only one
 br2-external tree at once. With Buildroot 2016.11 came the
@@ -8038,7 +8078,7 @@ onward.
 Note: This change makes your br2-external tree incompatible with
 Buildroot before 2016.11.
 
-25.2. Migrating to 2017.08
+26.2. Migrating to 2017.08
 
 Before Buildroot 2017.08, host packages were installed in $(HOST_DIR)
 /usr (with e.g. the autotools' --prefix=$(HOST_DIR)/usr). With
