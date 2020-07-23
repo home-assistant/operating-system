@@ -1,0 +1,102 @@
+From 66537b5984af81b5add420df9eb64c508268f581 Mon Sep 17 00:00:00 2001
+Message-Id: <66537b5984af81b5add420df9eb64c508268f581.1595101389.git.stefan@agner.ch>
+In-Reply-To: <040a141f84f2f84bf8be18f85b4cdb34bf066df0.1595101389.git.stefan@agner.ch>
+References: <040a141f84f2f84bf8be18f85b4cdb34bf066df0.1595101389.git.stefan@agner.ch>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Date: Mon, 25 May 2020 13:39:59 +0200
+Subject: [PATCH 10/20] configs: Enable support for the XHCI controller on RPI4
+ board (ARM 64-bit)
+
+This requires enabling BRCMSTB PCIe and XHCI_PCI drivers as well as PCI
+and USB commands. To get it working one has to call the following commands:
+"pci enum; usb start;", thus such commands have been added to the default
+"preboot" environment variable. One has to update their environment if it
+is already configured to get this feature working out of the box.
+
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+---
+ configs/rpi_4_defconfig     | 9 +++++++++
+ configs/rpi_arm64_defconfig | 8 +++++++-
+ 2 files changed, 16 insertions(+), 1 deletion(-)
+
+diff --git a/configs/rpi_4_defconfig b/configs/rpi_4_defconfig
+index f0301dc8bc..b42efe6072 100644
+--- a/configs/rpi_4_defconfig
++++ b/configs/rpi_4_defconfig
+@@ -6,6 +6,8 @@ CONFIG_SYS_MALLOC_F_LEN=0x2000
+ CONFIG_ENV_SIZE=0x4000
+ CONFIG_DISTRO_DEFAULTS=y
+ CONFIG_OF_BOARD_SETUP=y
++CONFIG_USE_PREBOOT=y
++CONFIG_PREBOOT="pci enum; usb start;"
+ CONFIG_MISC_INIT_R=y
+ # CONFIG_DISPLAY_CPUINFO is not set
+ # CONFIG_DISPLAY_BOARDINFO is not set
+@@ -13,6 +15,8 @@ CONFIG_SYS_PROMPT="U-Boot> "
+ CONFIG_CMD_DFU=y
+ CONFIG_CMD_GPIO=y
+ CONFIG_CMD_MMC=y
++CONFIG_CMD_PCI=y
++CONFIG_CMD_USB=y
+ CONFIG_CMD_FS_UUID=y
+ CONFIG_OF_BOARD=y
+ CONFIG_ENV_FAT_DEVICE_AND_PART="0:1"
+@@ -26,12 +30,17 @@ CONFIG_MMC_SDHCI_SDMA=y
+ CONFIG_MMC_SDHCI_BCM2835=y
+ CONFIG_DM_ETH=y
+ CONFIG_BCMGENET=y
++CONFIG_PCI=y
++CONFIG_DM_PCI=y
++CONFIG_PCI_BRCMSTB=y
+ CONFIG_PINCTRL=y
+ # CONFIG_PINCTRL_GENERIC is not set
+ # CONFIG_REQUIRE_SERIAL_CONSOLE is not set
+ CONFIG_USB=y
+ CONFIG_DM_USB=y
+ CONFIG_DM_USB_GADGET=y
++CONFIG_USB_XHCI_HCD=y
++CONFIG_USB_XHCI_PCI=y
+ CONFIG_USB_GADGET=y
+ CONFIG_USB_GADGET_MANUFACTURER="FSL"
+ CONFIG_USB_GADGET_VENDOR_NUM=0x0525
+diff --git a/configs/rpi_arm64_defconfig b/configs/rpi_arm64_defconfig
+index d16c2388af..0feea7f0be 100644
+--- a/configs/rpi_arm64_defconfig
++++ b/configs/rpi_arm64_defconfig
+@@ -7,13 +7,14 @@ CONFIG_ENV_SIZE=0x4000
+ CONFIG_DISTRO_DEFAULTS=y
+ CONFIG_OF_BOARD_SETUP=y
+ CONFIG_USE_PREBOOT=y
+-CONFIG_PREBOOT="usb start"
++CONFIG_PREBOOT="pci enum; usb start;"
+ CONFIG_MISC_INIT_R=y
+ # CONFIG_DISPLAY_CPUINFO is not set
+ # CONFIG_DISPLAY_BOARDINFO is not set
+ CONFIG_SYS_PROMPT="U-Boot> "
+ CONFIG_CMD_GPIO=y
+ CONFIG_CMD_MMC=y
++CONFIG_CMD_PCI=y
+ CONFIG_CMD_USB=y
+ CONFIG_CMD_FS_UUID=y
+ CONFIG_OF_BOARD=y
+@@ -26,11 +27,16 @@ CONFIG_MMC_SDHCI_SDMA=y
+ CONFIG_MMC_SDHCI_BCM2835=y
+ CONFIG_DM_ETH=y
+ CONFIG_BCMGENET=y
++CONFIG_PCI=y
++CONFIG_DM_PCI=y
++CONFIG_PCI_BRCMSTB=y
+ CONFIG_PINCTRL=y
+ # CONFIG_PINCTRL_GENERIC is not set
+ # CONFIG_REQUIRE_SERIAL_CONSOLE is not set
+ CONFIG_USB=y
+ CONFIG_DM_USB=y
++CONFIG_USB_XHCI_HCD=y
++CONFIG_USB_XHCI_PCI=y
+ CONFIG_USB_DWC2=y
+ CONFIG_USB_KEYBOARD=y
+ CONFIG_USB_HOST_ETHER=y
+-- 
+2.27.0
+

@@ -148,6 +148,6 @@ If you now view the default connection `cat /etc/NetworkManager/system-connectio
 
 Doing a `nmcli con reload` does not always work, so restart the virtual machine or the physical system.
 
-[nm-manual]: https://developer.gnome.org/NetworkManager/stable/nm-settings.html
+[nm-manual]: https://developer.gnome.org/NetworkManager/stable/NetworkManager.conf.html
 [configuration-usb]: configuration.md
 [uuid]: https://www.uuidgenerator.net/

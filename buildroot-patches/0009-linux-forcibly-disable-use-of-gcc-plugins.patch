@@ -96,10 +96,10 @@ Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
  linux/linux.mk | 4 ++++
  1 file changed, 4 insertions(+)
 
-diff --git a/buildroot/linux/linux.mk b/buildroot/linux/linux.mk
+diff --git a/linux/linux.mk b/buildroot/linux/linux.mk
 index ae1edbeb..5a1cb42e 100644
---- a/buildroot/linux/linux.mk
-+++ b/buildroot/linux/linux.mk
+--- a/linux/linux.mk
++++ b/linux/linux.mk
 @@ -408,6 +408,7 @@ define LINUX_KCONFIG_FIXUP_CMDS
  		$(call KCONFIG_ENABLE_OPT,CONFIG_FB,$(@D)/.config)
  		$(call KCONFIG_ENABLE_OPT,CONFIG_LOGO,$(@D)/.config)

@@ -31,7 +31,8 @@ The following boards/devices are supported:
   - VDI ?
   - QCOW2 ?
 
-(? are these currently supported? see ova documentation which explains issues with previous OVA distribution)
+Notes:
+  - see ? above: are these currently supported? see ova documentation which explains issues with previous OVA distribution)
 
 ## Board specifics
 
