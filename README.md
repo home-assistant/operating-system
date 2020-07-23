@@ -24,9 +24,9 @@ See full list and specific models [here](./Documentation/boards/README.md)
 
 ## Getting Started
 
-If you just want to use Home Assistant the official [getting started guide](https://www.home-assistant.io/getting-started/) and [installation instructions](https://www.home-assistant.io/hassio/installation/) take you through how to download HassOS and get it running on your machine.
+If you just want to use Home Assistant the official [getting started guide](https://www.home-assistant.io/getting-started/) and [installation instructions](https://www.home-assistant.io/hassio/installation/) take you through how to download Home Assistant Operating System and get it running on your machine.
 
-If you're interested in finding out more about HassOS and how it works read on...
+If you're interested in finding out more about Home Assistant Operating System and how it works read on...
 
 ## HassOS components
 
