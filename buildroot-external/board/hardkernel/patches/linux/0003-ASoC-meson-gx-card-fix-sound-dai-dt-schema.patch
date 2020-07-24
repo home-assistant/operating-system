@@ -1,0 +1,47 @@
+From 60164df03c6314d8f5f3afef56b0bf97962ec9ee Mon Sep 17 00:00:00 2001
+From: Jerome Brunet <jbrunet@baylibre.com>
+Date: Mon, 24 Feb 2020 14:35:17 +0100
+Subject: [PATCH 4/8] ASoC: meson: gx-card: fix sound-dai dt schema
+
+There is a fair amount of warnings when running 'make dtbs_check' with
+amlogic,gx-sound-card.yaml.
+
+Ex:
+arch/arm64/boot/dts/amlogic/meson-gxm-q200.dt.yaml: sound: dai-link-0:sound-dai:0:1: missing phandle tag in 0
+arch/arm64/boot/dts/amlogic/meson-gxm-q200.dt.yaml: sound: dai-link-0:sound-dai:0:2: missing phandle tag in 0
+arch/arm64/boot/dts/amlogic/meson-gxm-q200.dt.yaml: sound: dai-link-0:sound-dai:0: [66, 0, 0] is too long
+
+The reason is that the sound-dai phandle provided has cells, and in such
+case the schema should use 'phandle-array' instead of 'phandle'.
+
+Fixes: fd00366b8e41 ("ASoC: meson: gx: add sound card dt-binding documentation")
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ .../devicetree/bindings/sound/amlogic,gx-sound-card.yaml      | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/sound/amlogic,gx-sound-card.yaml b/Documentation/devicetree/bindings/sound/amlogic,gx-sound-card.yaml
+index fb374c659be1..a48222e8cd08 100644
+--- a/Documentation/devicetree/bindings/sound/amlogic,gx-sound-card.yaml
++++ b/Documentation/devicetree/bindings/sound/amlogic,gx-sound-card.yaml
+@@ -57,7 +57,7 @@ patternProperties:
+           rate
+ 
+       sound-dai:
+-        $ref: /schemas/types.yaml#/definitions/phandle
++        $ref: /schemas/types.yaml#/definitions/phandle-array
+         description: phandle of the CPU DAI
+ 
+     patternProperties:
+@@ -71,7 +71,7 @@ patternProperties:
+ 
+         properties:
+           sound-dai:
+-            $ref: /schemas/types.yaml#/definitions/phandle
++            $ref: /schemas/types.yaml#/definitions/phandle-array
+             description: phandle of the codec DAI
+ 
+         required:
+-- 
+2.17.1
+

@@ -8,7 +8,7 @@ POLKIT_VERSION = 0.116
 POLKIT_SITE = http://www.freedesktop.org/software/polkit/releases
 POLKIT_LICENSE = GPL-2.0
 POLKIT_LICENSE_FILES = COPYING
-
+POLKIT_AUTORECONF = YES
 POLKIT_INSTALL_STAGING = YES
 
 POLKIT_DEPENDENCIES = \
@@ -41,6 +41,12 @@ define POLKIT_PERMISSIONS
 	/etc/polkit-1 r 750 root polkitd - - - - -
 	/usr/share/polkit-1 r 750 root polkitd - - - - -
 	/usr/bin/pkexec f 4755 root root - - - - -
+endef
+
+define POLKIT_INSTALL_INIT_SYSTEMD
+	$(INSTALL) -D -m 644 $(POLKIT_PKGDIR)/polkit.service \
+		$(TARGET_DIR)/usr/lib/systemd/system/polkit.service
+
 endef
 
 $(eval $(autotools-package))

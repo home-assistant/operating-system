@@ -1,0 +1,106 @@
+From a39dcf665d8867875b104661bd6a6325f502c5f2 Mon Sep 17 00:00:00 2001
+Message-Id: <a39dcf665d8867875b104661bd6a6325f502c5f2.1595101389.git.stefan@agner.ch>
+In-Reply-To: <040a141f84f2f84bf8be18f85b4cdb34bf066df0.1595101389.git.stefan@agner.ch>
+References: <040a141f84f2f84bf8be18f85b4cdb34bf066df0.1595101389.git.stefan@agner.ch>
+From: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+Date: Mon, 29 Jun 2020 18:37:25 +0200
+Subject: [PATCH 14/20] usb: xhci: Add reset controller support
+
+Some atypical users of xhci might need to manually reset their xHCI
+controller before starting the HCD setup. Check if a reset controller
+device is available to the PCI bus and trigger a reset.
+
+Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+---
+ drivers/usb/host/xhci-mem.c |  2 ++
+ drivers/usb/host/xhci.c     | 33 +++++++++++++++++++++++++++++++++
+ include/usb/xhci.h          |  2 ++
+ 3 files changed, 37 insertions(+)
+
+diff --git a/drivers/usb/host/xhci-mem.c b/drivers/usb/host/xhci-mem.c
+index f446520528..108f4bd8cf 100644
+--- a/drivers/usb/host/xhci-mem.c
++++ b/drivers/usb/host/xhci-mem.c
+@@ -180,6 +180,8 @@ void xhci_cleanup(struct xhci_ctrl *ctrl)
+ 	xhci_free_virt_devices(ctrl);
+ 	free(ctrl->erst.entries);
+ 	free(ctrl->dcbaa);
++	if (reset_valid(&ctrl->reset))
++		reset_free(&ctrl->reset);
+ 	memset(ctrl, '\0', sizeof(struct xhci_ctrl));
+ }
+ 
+diff --git a/drivers/usb/host/xhci.c b/drivers/usb/host/xhci.c
+index ebd2954571..e252964d0d 100644
+--- a/drivers/usb/host/xhci.c
++++ b/drivers/usb/host/xhci.c
+@@ -190,6 +190,35 @@ static int xhci_start(struct xhci_hcor *hcor)
+ 	return ret;
+ }
+ 
++/**
++ * Resets XHCI Hardware
++ *
++ * @param ctrl	pointer to host controller
++ * @return 0 if OK, or a negative error code.
++ */
++static int xhci_reset_hw(struct xhci_ctrl *ctrl)
++{
++	int ret;
++
++	ret = reset_get_by_index(ctrl->dev, 0, &ctrl->reset);
++	if (ret && ret != -ENOENT && ret != -ENOTSUPP) {
++		dev_err(ctrl->dev, "failed to get reset\n");
++		return ret;
++	}
++
++	if (reset_valid(&ctrl->reset)) {
++		ret = reset_assert(&ctrl->reset);
++		if (ret)
++			return ret;
++
++		ret = reset_deassert(&ctrl->reset);
++		if (ret)
++			return ret;
++	}
++
++	return 0;
++}
++
+ /**
+  * Resets the XHCI Controller
+  *
+@@ -1508,6 +1537,10 @@ int xhci_register(struct udevice *dev, struct xhci_hccr *hccr,
+ 
+ 	ctrl->dev = dev;
+ 
++	ret = xhci_reset_hw(ctrl);
++	if (ret)
++		goto err;
++
+ 	/*
+ 	 * XHCI needs to issue a Address device command to setup
+ 	 * proper device context structures, before it can interact
+diff --git a/include/usb/xhci.h b/include/usb/xhci.h
+index 1170c0ac69..7d34103fd5 100644
+--- a/include/usb/xhci.h
++++ b/include/usb/xhci.h
+@@ -16,6 +16,7 @@
+ #ifndef HOST_XHCI_H_
+ #define HOST_XHCI_H_
+ 
++#include <reset.h>
+ #include <asm/types.h>
+ #include <asm/cache.h>
+ #include <asm/io.h>
+@@ -1209,6 +1210,7 @@ struct xhci_ctrl {
+ #if CONFIG_IS_ENABLED(DM_USB)
+ 	struct udevice *dev;
+ #endif
++	struct reset_ctl reset;
+ 	struct xhci_hccr *hccr;	/* R/O registers, not need for volatile */
+ 	struct xhci_hcor *hcor;
+ 	struct xhci_doorbell_array *dba;
+-- 
+2.27.0
+

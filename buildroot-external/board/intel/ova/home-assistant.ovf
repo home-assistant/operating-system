@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<Envelope ovf:version="1.0" xml:lang="en-US" xmlns="http://schemas.dmtf.org/ovf/envelope/1" xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1" xmlns:rasd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" xmlns:vssd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:vbox="http://www.virtualbox.org/ovf/machine">
+<Envelope ovf:version="1.0" xml:lang="en-US" xmlns="http://schemas.dmtf.org/ovf/envelope/1" xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1" xmlns:rasd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" xmlns:vssd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:vbox="http://www.virtualbox.org/ovf/machine" xmlns:vmw="http://www.vmware.com/schema/ovf">
   <References>
     <File ovf:id="file1" ovf:href="home-assistant.vmdk"/>
   </References>
@@ -20,7 +20,7 @@
       <Product>Operating-System</Product>
       <ProductUrl>https://home-assistant.io</ProductUrl>
     </ProductSection>
-    <OperatingSystemSection ovf:id="102" vmw:osType="otherLinux64Guest" ovf:required="false">
+    <OperatingSystemSection ovf:id="100" vmw:osType="other4xLinux64Guest">
       <Info>The kind of installed guest operating system</Info>
       <Description>Linux</Description>
     </OperatingSystemSection>
@@ -81,8 +81,8 @@
       <Item>
         <rasd:AutomaticAllocation>true</rasd:AutomaticAllocation>
         <rasd:Caption>eth0</rasd:Caption>
-        <rasd:Description>Ethernet adapter</rasd:Description>
         <rasd:Connection>Bridged</rasd:Connection>
+        <rasd:Description>Ethernet adapter</rasd:Description>
         <rasd:ElementName>eth0</rasd:ElementName>
         <rasd:InstanceID>6</rasd:InstanceID>
         <rasd:ResourceSubType>E1000</rasd:ResourceSubType>

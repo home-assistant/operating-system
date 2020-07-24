@@ -21,6 +21,20 @@ OLD_DEVICE_CHILD="$(findfs LABEL="hassos-data")"
 OLD_DEVICE_ROOT="/dev/$(lsblk -no pkname "${OLD_DEVICE_CHILD}")"
 OLD_PART_NUM="${OLD_DEVICE_CHILD: -1}"
 
+# Wait for devices
+timeout 90 \
+    ash -c \
+        "until [ -e \"${NEW_DEVICE_ROOT}\" ]; do sleep 5; done" \
+            > /dev/null 2>&1 || true;
+
+# Check if block device is exists
+if [ ! -b "${NEW_DEVICE_ROOT}" ]; then
+    echo "[ERROR] No block device ${NEW_DEVICE_ROOT}!"
+    exit 1
+fi
+echo "[INFO] Cleanup device ${NEW_DEVICE_ROOT}!"
+sgdisk -Z "${NEW_DEVICE_ROOT}"
+
 # Create new partition
 echo "[INFO] Create new hassos-data partition"
 sgdisk -o "${NEW_DEVICE_ROOT}"
@@ -51,7 +65,7 @@ if sfdisk -dq "${OLD_DEVICE_ROOT}" | grep -q 'label: gpt'; then
     sgdisk -v "${OLD_DEVICE_ROOT}"
 
 else
-    sfdisk --delete "${OLD_PART_NUM}" "${OLD_DEVICE_ROOT}" --force
+    sfdisk --delete "${OLD_DEVICE_ROOT}" "${OLD_PART_NUM}" --force
     sfdisk -V "${OLD_DEVICE_ROOT}"
 fi
 
@@ -63,6 +77,7 @@ resize2fs -f "${NEW_DEVICE_CHILD}"
 
 # Fix partition layout
 partx -d "${OLD_DEVICE_CHILD}"
+partx -u "${OLD_DEVICE_ROOT}"
 partx -u "${NEW_DEVICE_ROOT}"
 
 echo "[INFO] Finish hassos data movement"

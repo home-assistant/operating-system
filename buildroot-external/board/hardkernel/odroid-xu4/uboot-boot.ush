@@ -25,12 +25,7 @@ if load mmc ${devnum}:1 ${ramdisk_addr_r} config.txt; then
 fi
 
 # Board bootargs
-setenv hdmi_phy_control "HPD=${HPD} vout=${vout}"
-if test "${cecenable}" = "false"; then fdt rm /cec@101B0000; fi
-if test "${disable_vu7}" = "false"; then setenv hid_quirks "usbhid.quirks=0x0eef:0x0005:0x0004"; fi
-if test "${external_watchdog}" = "true"; then setenv external_watchdog "external_watchdog=${external_watchdog} external_watchdog_debounce=${external_watchdog_debounce}"; fi
-
-setenv bootargs_odroidxu4 "${videoconfig} ${hdmi_phy_control} ${hid_quirks} smsc95xx.macaddr=${macaddr} ${external_watchdog}"
+setenv bootargs_odroidxu4 ""
 
 # HassOS bootargs
 setenv bootargs_hassos "zram.enabled=1 zram.num_devices=3 apparmor=1 security=apparmor systemd.machine_id=${MACHINE_ID} cgroup_enable=memory"

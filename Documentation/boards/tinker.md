@@ -5,11 +5,13 @@ Supported Hardware:
 | Device | Board | 
 |--------|-----------|
 | Tinker RK3288 | tinker |
-| Tinker S RK3288 | tinker |
+| Tinker S RK3288 |  |
 
+<!--
 ## eMMC
 
 eMMC support is provided transparently. Just flash the image to the eMMC by connecting your Tinker Board S to your PC via Micro-USB.
+-->
 
 ## Serial console
 

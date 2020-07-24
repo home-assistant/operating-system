@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM debian:buster
 
 # Set shell
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
@@ -9,17 +9,35 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         ca-certificates \
         curl \
         gpg-agent \
+        gpg \
+        dirmngr \
         software-properties-common \
-    && curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - \
-    && add-apt-repository "deb https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" \
+    && curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add - \
+    && add-apt-repository "deb https://download.docker.com/linux/debian $(lsb_release -cs) stable" \
     && apt-get update && apt-get install -y --no-install-recommends \
         docker-ce \
     && rm -rf /var/lib/apt/lists/*
 
-# Build Tools
+# Build tools
 RUN apt-get update && apt-get install -y --no-install-recommends \
-        wget patch vim cpio python unzip rsync bc bzip2 ncurses-dev sudo \
-        git make g++ file perl bash binutils locales qemu-utils bison flex \
+        bash \
+        bc \
+        binutils \
+        build-essential \
+        bzip2 \
+        cpio \
+        file \
+        git \
+        make \
+        ncurses-dev \
+        patch \
+        perl \
+        python \
+        rsync \
+        sudo \
+        unzip \
+        wget \
+        qemu-utils \
     && rm -rf /var/lib/apt/lists/*
 
 # Init entry
