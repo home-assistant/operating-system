@@ -11,7 +11,7 @@
 | Raspberry Pi 3 B/B+ |2016/2018      | yes             | [rpi3](../../../buildroot-external/configs/rpi3_defconfig) / [rpi3_64](../../../buildroot-external/configs/rpi3_64_defconfig) |
 | Raspberry Pi 4 B    |2019           | yes*            | [rpi4](../../../buildroot-external/configs/rpi4_defconfig) / [rpi4_64](../../../buildroot-external/configs/rpi4_64_defconfig) |
 
-\*1,2 and 4 GiB versions of the Raspberry Pi 4 B are supported. The 8 GiB version is not yet supported
+\*1,2 and 4 GiB versions of the Raspberry Pi 4 B are supported. Support for the 8 GiB version is coming soon is part of #740.
 
 ## Limitation 64bit
 
