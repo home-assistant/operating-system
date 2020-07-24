@@ -1,0 +1,41 @@
+From e486f026bd53b80e9dec1036f1c1db0c915ffc53 Mon Sep 17 00:00:00 2001
+From: Pascal Vizeli <pvizeli@syshack.ch>
+Date: Fri, 24 Jul 2020 15:27:18 +0000
+Subject: [PATCH 1/1] meson: Add board_rev to env
+
+Signed-off-by: Pascal Vizeli <pvizeli@syshack.ch>
+---
+ arch/arm/mach-meson/board-info.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/arch/arm/mach-meson/board-info.c b/arch/arm/mach-meson/board-info.c
+index 0d3b40a249..7b2bc5bf43 100644
+--- a/arch/arm/mach-meson/board-info.c
++++ b/arch/arm/mach-meson/board-info.c
+@@ -5,6 +5,7 @@
+  */
+ 
+ #include <common.h>
++#include <command.h>
+ #include <asm/io.h>
+ #include <dm.h>
+ #include <linux/bitfield.h>
+@@ -129,6 +130,7 @@ int show_board_info(void)
+ 	int nodeoffset, ret;
+ 	ofnode node;
+ 	unsigned int socinfo;
++	char board_rev[2];
+ 
+ 	/* find the offset of compatible node */
+ 	nodeoffset = fdt_node_offset_by_compatible(gd->fdt_blob, -1,
+@@ -165,5 +167,7 @@ int show_board_info(void)
+ 	       socinfo_to_pack(socinfo),
+ 	       socinfo_to_misc(socinfo));
+ 
++	sprintf(board_rev, "%x", socinfo_to_minor(socinfo));
++	env_set("board_rev", board_rev);
+ 	return 0;
+ }
+-- 
+2.17.1
+
