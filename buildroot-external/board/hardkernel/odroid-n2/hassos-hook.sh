@@ -8,6 +8,7 @@ function hassos_pre_image() {
 
     cp "${BINARIES_DIR}/boot.scr" "${BOOT_DATA}/boot.scr"
     cp "${BINARIES_DIR}/meson-g12b-odroid-n2.dtb" "${BOOT_DATA}/meson-g12b-odroid-n2.dtb"
+    cp "${BINARIES_DIR}/meson-g12b-odroid-n2-plus.dtb" "${BOOT_DATA}/meson-g12b-odroid-n2-plus.dtb"
 
     echo "console=tty0 console=ttyAML0,115200n8" > "${BOOT_DATA}/cmdline.txt"
 
