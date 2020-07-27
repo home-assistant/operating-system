@@ -18,13 +18,6 @@ test -n "${BOOT_ORDER}" || setenv BOOT_ORDER "A B"
 test -n "${BOOT_A_LEFT}" || setenv BOOT_A_LEFT 3
 test -n "${BOOT_B_LEFT}" || setenv BOOT_B_LEFT 3
 
-if load mmc ${devnum}:1 ${ramdisk_addr_r} config.txt; then
-  env import -t ${ramdisk_addr_r} ${filesize};
-fi
-
-# Board bootargs
-setenv bootargs_odroidn2 ""
-
 # HassOS bootargs
 setenv bootargs_hassos "zram.enabled=1 zram.num_devices=3 apparmor=1 security=apparmor systemd.machine_id=${MACHINE_ID} cgroup_enable=memory"
 
@@ -57,14 +50,14 @@ for BOOT_SLOT in "${BOOT_ORDER}"; do
       setexpr BOOT_A_LEFT ${BOOT_A_LEFT} - 1
       echo "Found valid slot A, ${BOOT_A_LEFT} attempts remaining"
       setenv load_kernel "ext4load mmc ${devnum}:5 ${kernel_addr_r} Image"
-      setenv bootargs "${bootargs_hassos} ${bootargs_odroidn2} ${bootargs_a} rauc.slot=A ${cmdline}"
+      setenv bootargs "${bootargs_hassos} ${bootargs_a} rauc.slot=A ${cmdline}"
     fi
   elif test "x${BOOT_SLOT}" = "xB"; then
     if test ${BOOT_B_LEFT} -gt 0; then
       setexpr BOOT_B_LEFT ${BOOT_B_LEFT} - 1
       echo "Found valid slot B, ${BOOT_B_LEFT} attempts remaining"
       setenv load_kernel "ext4load mmc ${devnum}:7 ${kernel_addr_r} Image"
-      setenv bootargs "${bootargs_hassos} ${bootargs_odroidn2} ${bootargs_b} rauc.slot=B ${cmdline}"
+      setenv bootargs "${bootargs_hassos} ${bootargs_b} rauc.slot=B ${cmdline}"
     fi
   fi
 done
