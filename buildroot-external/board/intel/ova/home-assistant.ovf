@@ -13,8 +13,9 @@
       <Description>Logical network used by this appliance.</Description>
     </Network>
   </NetworkSection>
-  <VirtualSystem ovf:id="Home Assistant">
+  <VirtualSystem ovf:id="HomeAssistant">
     <Info>A virtual machine</Info>
+    <Name>Home Assistant</Name>
     <ProductSection>
       <Info>Meta-information about the installed software</Info>
       <Product>Operating-System</Product>
