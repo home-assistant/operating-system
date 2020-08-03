@@ -1,18 +1,52 @@
-# Home Assistant Operating system
+# Home Assistant Operating System
 
-Home Assistant Operating System (HassOS) is based on [buildroot](https://buildroot.org/). It's a hypervisor for Docker and supports various kind of hardware. It is also available as virtual appliance for different virtualization solutions. The whole system is optimized for hosting [Home Assistant](https://www.home-assistant.io) and its features (to be precise, the [Add-ons](https://www.home-assistant.io/addons/)). You can update the system by using OTA updates or offline updates.
+Home Assistant Operating System (formerly HassOS) is an operating system optimized for hosting [Home Assistant](https://www.home-assistant.io) and its [Add-ons](https://www.home-assistant.io/addons/).
 
-This is an embedded Linux which works different than a normal Linux distribution. The system is designed to run with minimal I/O and is optimized for its tasks.
+Home Assistant Operating System uses Docker as Container engine. It by default deploys the Home Assistant Supervisor as a container. Home Assistant Supervisor in turn uses the Docker container engine to control Home Assistant Core and Add-Ons in separate containers. Home Assistant Operating System is **not** based on a regular Linux distribution like Ubuntu. It is built using [buildroot](https://buildroot.org/) and it is optimized for running Home Assistant, especially on single board compute (SBC) devices like the Pi, ODROID, NUC and Tinker Board (see supported hardware below).
 
-If you don't have experience with embedded systems, buildroot or the build process Linux distributions, then please read up on those topics. All provided documentation here is focusing on developers with a background on embedded systems or a strong understanding of the internal workings of operating systems.
+## Features
 
-## Focus
+- Lightweight and memory-efficient
+- Minimized I/O
+- Over The Air (OTA) updates
+- Offline updates
+- Modular using Docker
 
-- Barebox as bootloader on EFI
-- U-Boot as bootloader
-- Linux/Buildroot LTS
-- RAUC for OTA updates
-- SquashFS LZ4 as filesystem
-- Docker-CE
-- AppArmor protected
-- ZRAM LZ4 for `/tmp`, `/var` and swap
+## Supported hardware
+
+- Raspberry Pi
+- Hardkernel ODROID
+- Intel NUC
+- Asus Tinker Board
+- Virtual appliances
+
+See full list and specific models [here](./Documentation/boards/README.md)
+
+## Getting Started
+
+If you just want to use Home Assistant the official [getting started guide](https://www.home-assistant.io/getting-started/) and [installation instructions](https://www.home-assistant.io/hassio/installation/) take you through how to download Home Assistant Operating System and get it running on your machine.
+
+If you're interested in finding out more about Home Assistant Operating System and how it works read on...
+
+## HassOS components
+
+- **Bootloader:**
+  - [Barebox](https://barebox.org/) for devices that support EFI
+  - [U-Boot](https://www.denx.de/wiki/U-Boot) for devices that don't support EFI
+- **Operating System:**
+  - [Buildroot](https://buildroot.org/) LTS Linux
+- **File Systems:**
+  - [SquashFS](https://www.kernel.org/doc/Documentation/filesystems/squashfs.txt) for read-only file systems (using LZ4 compression)
+  - [ZRAM](https://www.kernel.org/doc/Documentation/blockdev/zram.txt) for `/tmp`, `/var` and swap (using LZ4 compression)
+- **Container Platform:**
+  - [Docker Engine](https://docs.docker.com/engine/) for running Home Assistant components in containers
+- **Updates:**
+  - [RAUC](https://rauc.io/) for Over The Air (OTA) and USB updates
+- **Security:**
+  - [AppArmor](https://apparmor.net/) Linux kernel security module
+
+If you don't have experience with these, embedded systems, buildroot or the build process for Linux distributions, then please read up on these topics. The rest of the documentation in this project is for developers and assumes you have experience of embedded systems or a strong understanding of the internal workings of operating systems.
+
+## Developer Documentation
+
+All developer documentation is in the [Documentation](./Documentation) directory.
