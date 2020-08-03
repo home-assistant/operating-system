@@ -79,7 +79,9 @@ if [ -z "${SUPERVISOR_CONTAINER_ID}" ]; then
         -v /var/run/docker.sock:/var/run/docker.sock \
         -v /var/run/dbus:/var/run/dbus \
         -v /etc/machine-id:/etc/machine-id:ro \
-        -v ${SUPERVISOR_DATA}:/data \
+        -v ${SUPERVISOR_DATA}:/data:rw \
+        -v /mnt/overlay:/os/overlay:rw \
+        -v /mnt/boot:/os/boot:rw \
         -e SUPERVISOR_SHARE=${SUPERVISOR_DATA} \
         -e SUPERVISOR_NAME=hassio_supervisor \
         -e SUPERVISOR_MACHINE=${SUPERVISOR_MACHINE} \
