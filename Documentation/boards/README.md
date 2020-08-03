@@ -25,14 +25,14 @@ The following boards/devices are supported:
 - Asus
   - Tinker Board
 - Virtual appliance (x86_64/UEFI):
-  - VMDK
-  - OVA ?
-  - VHDX ?
-  - VDI ?
-  - QCOW2 ?
+  - OVA - Open Virtual Appliance (open format, supports multiple virtual machines)
+  - VMDK - Virtual Machine Disk (open format, supports multiple virtual machines)
+  - VHDX - Virtual Hard Disk  (Microsoft led, open to third parties)
+  - VDI - VirtualBox's own Virtual Disk Image
+  - QCOW2 - QEMU Copy On Write (QEMU disk image)
 
-Notes:
-  - see ? above: are these currently supported? see ova documentation which explains issues with previous OVA distribution)
+Note: All releases can be found at https://github.com/home-assistant/operating-system/releases
+
 
 ## Board specifics
 
