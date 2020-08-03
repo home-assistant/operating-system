@@ -2,8 +2,8 @@
 
 We provide 3 different types of release builds:
 
-- development (beta/dev)
-- staging (rc)
+- development (dev)
+- staging (beta)
 - production (stable)
 
 ## Versioning
