@@ -3,7 +3,7 @@ Description=HassOS supervisor
 Requires=docker.service
 Wants=network-online.target
 After=docker.service rauc.service dbus.socket network-online.target
-RequiresMountsFor=/mnt/data
+RequiresMountsFor=/mnt/data /mnt/boot /mnt/overlay
 StartLimitIntervalSec=60
 StartLimitBurst=5
 
