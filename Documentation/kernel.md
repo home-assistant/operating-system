@@ -12,7 +12,7 @@ Default Kernel tree: 5.4
 | Raspberry Pi 3 | 4.19.127 |
 | Raspberry Pi 4 | 4.19.127 |
 | Tinker Board | 5.4.53 |
-| Odroid-C2 | 5.7.10 |
-| Odroid-N2 | 5.7.10 |
-| Odroid-XU4 | 5.7.10 |
+| Odroid-C2 | 5.7.12 |
+| Odroid-N2 | 5.7.12 |
+| Odroid-XU4 | 5.7.12 |
 | Intel NUC | 5.4.53 |
