@@ -3,7 +3,7 @@
 ## Contents
 
 - [Getting started](./getting_started_development.md) - the place for developers to begin
-- [Development](./getting_started_development.md) - more deatils for developers
+- [Development](./development.md) - more details for developers
 - [Deployment](./deployment.md) - approach to git branching and releases
 - [Configuration](./configuration.md) - how users can configure HassOS
 - [Partition](./partition.md) - partition layout
