@@ -1,39 +1,92 @@
-From e486f026bd53b80e9dec1036f1c1db0c915ffc53 Mon Sep 17 00:00:00 2001
+From f888798dce14056eaea9783abc57f57b651a5491 Mon Sep 17 00:00:00 2001
 From: Pascal Vizeli <pvizeli@syshack.ch>
-Date: Fri, 24 Jul 2020 15:27:18 +0000
+Date: Tue, 4 Aug 2020 13:50:57 +0000
 Subject: [PATCH 1/1] meson: Add board_rev to env
 
 Signed-off-by: Pascal Vizeli <pvizeli@syshack.ch>
 ---
- arch/arm/mach-meson/board-info.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ arch/arm/include/asm/arch-meson/boot.h |  2 ++
+ arch/arm/mach-meson/board-info.c       | 38 ++++++++++++++++++++++++++
+ board/amlogic/w400/w400.c              |  5 ++++
+ 3 files changed, 45 insertions(+)
 
+diff --git a/arch/arm/include/asm/arch-meson/boot.h b/arch/arm/include/asm/arch-meson/boot.h
+index a90fe55081..056aedcd65 100644
+--- a/arch/arm/include/asm/arch-meson/boot.h
++++ b/arch/arm/include/asm/arch-meson/boot.h
+@@ -17,4 +17,6 @@
+ 
+ int meson_get_boot_device(void);
+ 
++int meson_get_soc_rev(const char *buff);
++
+ #endif /* __MESON_BOOT_H__ */
 diff --git a/arch/arm/mach-meson/board-info.c b/arch/arm/mach-meson/board-info.c
-index 0d3b40a249..7b2bc5bf43 100644
+index 0d3b40a249..91fcc5eb33 100644
 --- a/arch/arm/mach-meson/board-info.c
 +++ b/arch/arm/mach-meson/board-info.c
-@@ -5,6 +5,7 @@
-  */
+@@ -167,3 +167,41 @@ int show_board_info(void)
  
- #include <common.h>
-+#include <command.h>
+ 	return 0;
+ }
++
++int meson_get_soc_rev(const char *buff)
++{
++	struct regmap *regmap;
++	int nodeoffset, ret;
++	ofnode node;
++	unsigned int socinfo;
++
++	/* find the offset of compatible node */
++	nodeoffset = fdt_node_offset_by_compatible(gd->fdt_blob, -1,
++						   "amlogic,meson-gx-ao-secure");
++	if (nodeoffset < 0)
++		return 0;
++
++	/* check if chip-id is available */
++	if (!fdt_getprop(gd->fdt_blob, nodeoffset, "amlogic,has-chip-id", NULL))
++		return 0;
++
++	/* get regmap from the syscon node */
++	node = offset_to_ofnode(nodeoffset);
++	regmap = syscon_node_to_regmap(node);
++	if (IS_ERR(regmap)) {
++		printf("%s: failed to get regmap\n", __func__);
++		return 0;
++	}
++
++	/* read soc info */
++	ret = regmap_read(regmap, AO_SEC_SOCINFO_OFFSET, &socinfo);
++	if (ret && !socinfo) {
++		printf("%s: invalid chipid value\n", __func__);
++		return 0;
++	}
++
++	/* Write SoC info */
++	sprintf(buff, "%x", socinfo_to_minor(socinfo));
++
++	return 1;
++}
+diff --git a/board/amlogic/w400/w400.c b/board/amlogic/w400/w400.c
+index d74aab899a..936a9d29e0 100644
+--- a/board/amlogic/w400/w400.c
++++ b/board/amlogic/w400/w400.c
+@@ -10,6 +10,7 @@
  #include <asm/io.h>
- #include <dm.h>
- #include <linux/bitfield.h>
-@@ -129,6 +130,7 @@ int show_board_info(void)
- 	int nodeoffset, ret;
- 	ofnode node;
- 	unsigned int socinfo;
-+	char board_rev[2];
+ #include <asm/arch/sm.h>
+ #include <asm/arch/eth.h>
++#include <asm/arch/boot.h>
  
- 	/* find the offset of compatible node */
- 	nodeoffset = fdt_node_offset_by_compatible(gd->fdt_blob, -1,
-@@ -165,5 +167,7 @@ int show_board_info(void)
- 	       socinfo_to_pack(socinfo),
- 	       socinfo_to_misc(socinfo));
+ #define EFUSE_MAC_OFFSET	20
+ #define EFUSE_MAC_SIZE		12
+@@ -37,5 +38,9 @@ int misc_init_r(void)
+ 			eth_env_set_enetaddr("ethaddr", mac_addr);
+ 	}
  
-+	sprintf(board_rev, "%x", socinfo_to_minor(socinfo));
-+	env_set("board_rev", board_rev);
++	if (meson_get_soc_rev(buff)) {
++		env_set("board_rev", buff);
++	}
++
  	return 0;
  }
 -- 
