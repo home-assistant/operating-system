@@ -16,7 +16,7 @@ if [ "${RAUC_SLOT_CLASS}" = "boot" ]; then
     mount "${RAUC_IMAGE_NAME}" "${BOOT_NEW}"
 
     # Old system
-    if [ -f /usr/lib/rauc/post-install ] then
+    if [ -f /usr/lib/rauc/post-install ]; then
         systemctl start mnt-boot.mount
     fi
 
@@ -30,7 +30,7 @@ if [ "${RAUC_SLOT_CLASS}" = "boot" ]; then
     cp -f "${BOOT_TMP}"/*.txt "${BOOT_MNT}/"
 
     # Old system
-    if [ -f /usr/lib/rauc/pre-install ] then
+    if [ -f /usr/lib/rauc/pre-install ]; then
         systemctl stop mnt-boot.mount
     fi
 
