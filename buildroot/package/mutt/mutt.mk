@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-MUTT_VERSION = 1.13.3
+MUTT_VERSION = 1.13.5
 MUTT_SITE = https://bitbucket.org/mutt/mutt/downloads
 MUTT_LICENSE = GPL-2.0+
 MUTT_LICENSE_FILES = GPL
@@ -12,6 +12,9 @@ MUTT_DEPENDENCIES = ncurses
 MUTT_CONF_OPTS = --disable-doc --disable-smtp
 # We're patching configure.ac
 MUTT_AUTORECONF = YES
+
+# 0003-Prevent-possible-IMAP-MITM-via-PREAUTH-response.patch
+MUTT_IGNORE_CVES += CVE-2020-14093
 
 ifeq ($(BR2_PACKAGE_LIBICONV),y)
 MUTT_DEPENDENCIES += libiconv
