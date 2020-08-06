@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBVNCSERVER_VERSION = 0.9.12
+LIBVNCSERVER_VERSION = 0.9.13
 LIBVNCSERVER_SOURCE = LibVNCServer-$(LIBVNCSERVER_VERSION).tar.gz
 LIBVNCSERVER_SITE = https://github.com/LibVNC/libvncserver/archive
 LIBVNCSERVER_LICENSE = GPL-2.0+
@@ -13,18 +13,10 @@ LIBVNCSERVER_INSTALL_STAGING = YES
 LIBVNCSERVER_DEPENDENCIES = host-pkgconf lzo
 LIBVNCSERVER_CONF_OPTS = -DWITH_LZO=ON
 
-# 0003-Limit-lenght-to-INT_MAX-bytes-in-rfbProcessFileTransferReadBuffer.patch
-LIBVNCSERVER_IGNORE_CVES += CVE-2018-20750
-
-# 0004-rfbserver-don-t-leak-stack-memory-to-the-remote.patch
-LIBVNCSERVER_IGNORE_CVES += CVE-2019-15681
-
-# 0006-libvncclient-cursor-limit-width-height-input-values.patch
-LIBVNCSERVER_IGNORE_CVES += CVE-2019-20788
-
 # only used for examples
 LIBVNCSERVER_CONF_OPTS += \
 	-DWITH_FFMPEG=OFF \
+	-DWITH_GTK=OFF \
 	-DWITH_SDL=OFF
 
 ifneq ($(BR2_TOOLCHAIN_HAS_THREADS),y)
