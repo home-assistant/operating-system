@@ -17,7 +17,6 @@ if [ "${RAUC_SLOT_CLASS}" = "boot" ]; then
 
         # Restore boot config
         cp -f "${BOOT_DATA}"/*.txt "${RAUC_SLOT_MOUNT_POINT}/"
-    
     else
         # Backup boot config
         mcopy -i "${RAUC_SLOT_DEVICE}" -vn ::*.txt "${BOOT_DATA}/"
