@@ -1,7 +1,7 @@
-From 25225612747408e01d6496d41d4388130db2eff9 Mon Sep 17 00:00:00 2001
-Message-Id: <25225612747408e01d6496d41d4388130db2eff9.1595883122.git.stefan@agner.ch>
-In-Reply-To: <d83d79b085486a605462fa91e3c6746e4ff0b263.1595883122.git.stefan@agner.ch>
-References: <d83d79b085486a605462fa91e3c6746e4ff0b263.1595883122.git.stefan@agner.ch>
+From 9443f2cd21a8ebd08f0fb64f5b3a8ccb6cd77d8e Mon Sep 17 00:00:00 2001
+Message-Id: <9443f2cd21a8ebd08f0fb64f5b3a8ccb6cd77d8e.1596660075.git.stefan@agner.ch>
+In-Reply-To: <f72fc1866396fed30036e0f06007c15217e47f22.1596660075.git.stefan@agner.ch>
+References: <f72fc1866396fed30036e0f06007c15217e47f22.1596660075.git.stefan@agner.ch>
 From: Christian Hewitt <christianshewitt@gmail.com>
 Date: Sun, 19 Jul 2020 14:10:32 +0000
 Subject: [PATCH 08/10] arm64: dts: meson: convert ODROID-N2 to dtsi
@@ -10,10 +10,12 @@ Convert the current ODROID-N2 dts into a common dtsi in preparation
 for adding ODROID-N2+ support.
 
 Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
+[rebased ontop of sound patches]
+Signed-off-by: Stefan Agner <stefan@agner.ch>
 ---
- .../boot/dts/amlogic/meson-g12b-odroid-n2.dts | 619 +-----------------
- .../dts/amlogic/meson-g12b-odroid-n2.dtsi     | 500 ++++++++++++++
- 2 files changed, 501 insertions(+), 618 deletions(-)
+ .../boot/dts/amlogic/meson-g12b-odroid-n2.dts | 619 +----------------
+ .../dts/amlogic/meson-g12b-odroid-n2.dtsi     | 626 ++++++++++++++++++
+ 2 files changed, 627 insertions(+), 618 deletions(-)
  create mode 100644 arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi
 
 diff --git a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts
@@ -650,10 +652,10 @@ index 34fffa6d859d..5fd51a87ae9b 100644
  };
 diff --git a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi
 new file mode 100644
-index 000000000000..ce49973678b8
+index 000000000000..e5bc132ce7d5
 --- /dev/null
 +++ b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi
-@@ -0,0 +1,500 @@
+@@ -0,0 +1,626 @@
 +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
 +/*
 + * Copyright (c) 2019 BayLibre, SAS
@@ -663,12 +665,21 @@ index 000000000000..ce49973678b8
 +#include "meson-g12b-s922x.dtsi"
 +#include <dt-bindings/input/input.h>
 +#include <dt-bindings/gpio/meson-g12a-gpio.h>
++#include <dt-bindings/sound/meson-g12a-toacodec.h>
 +#include <dt-bindings/sound/meson-g12a-tohdmitx.h>
 +
 +/ {
 +	aliases {
 +		serial0 = &uart_AO;
 +		ethernet0 = &ethmac;
++	};
++
++	dioo2133: audio-amplifier-0 {
++		compatible = "simple-audio-amplifier";
++		enable-gpios = <&gpio_ao GPIOAO_2 GPIO_ACTIVE_HIGH>;
++		VCC-supply = <&vcc_5v>;
++		sound-name-prefix = "U19";
++		status = "okay";
 +	};
 +
 +	chosen {
@@ -860,11 +871,42 @@ index 000000000000..ce49973678b8
 +	sound {
 +		compatible = "amlogic,axg-sound-card";
 +		model = "G12B-ODROID-N2";
-+		audio-aux-devs = <&tdmout_b>;
++		audio-widgets = "Line", "Lineout";
++		audio-aux-devs = <&tdmout_b>, <&tdmout_c>, <&tdmin_a>,
++				 <&tdmin_b>, <&tdmin_c>, <&tdmin_lb>,
++				 <&dioo2133>;
 +		audio-routing = "TDMOUT_B IN 0", "FRDDR_A OUT 1",
 +				"TDMOUT_B IN 1", "FRDDR_B OUT 1",
 +				"TDMOUT_B IN 2", "FRDDR_C OUT 1",
-+				"TDM_B Playback", "TDMOUT_B OUT";
++				"TDM_B Playback", "TDMOUT_B OUT",
++				"TDMOUT_C IN 0", "FRDDR_A OUT 2",
++				"TDMOUT_C IN 1", "FRDDR_B OUT 2",
++				"TDMOUT_C IN 2", "FRDDR_C OUT 2",
++				"TDM_C Playback", "TDMOUT_C OUT",
++				"TDMIN_A IN 4", "TDM_B Loopback",
++				"TDMIN_B IN 4", "TDM_B Loopback",
++				"TDMIN_C IN 4", "TDM_B Loopback",
++				"TDMIN_LB IN 1", "TDM_B Loopback",
++				"TDMIN_A IN 5", "TDM_C Loopback",
++				"TDMIN_B IN 5", "TDM_C Loopback",
++				"TDMIN_C IN 5", "TDM_C Loopback",
++				"TDMIN_LB IN 2", "TDM_C Loopback",
++				"TODDR_A IN 0", "TDMIN_A OUT",
++				"TODDR_B IN 0", "TDMIN_A OUT",
++				"TODDR_C IN 0", "TDMIN_A OUT",
++				"TODDR_A IN 1", "TDMIN_B OUT",
++				"TODDR_B IN 1", "TDMIN_B OUT",
++				"TODDR_C IN 1", "TDMIN_B OUT",
++				"TODDR_A IN 2", "TDMIN_C OUT",
++				"TODDR_B IN 2", "TDMIN_C OUT",
++				"TODDR_C IN 2", "TDMIN_C OUT",
++				"TODDR_A IN 6", "TDMIN_LB OUT",
++				"TODDR_B IN 6", "TDMIN_LB OUT",
++				"TODDR_C IN 6", "TDMIN_LB OUT",
++				"U19 INL", "ACODEC LOLP",
++				"U19 INR", "ACODEC LORP",
++				"Lineout", "U19 OUTL",
++				"Lineout", "U19 OUTR";
 +
 +		assigned-clocks = <&clkc CLKID_MPLL2>,
 +				  <&clkc CLKID_MPLL0>,
@@ -887,8 +929,20 @@ index 000000000000..ce49973678b8
 +			sound-dai = <&frddr_c>;
 +		};
 +
-+		/* 8ch hdmi interface */
 +		dai-link-3 {
++			sound-dai = <&toddr_a>;
++		};
++
++		dai-link-4 {
++			sound-dai = <&toddr_b>;
++		};
++
++		dai-link-5 {
++			sound-dai = <&toddr_c>;
++		};
++
++		/* 8ch hdmi interface */
++		dai-link-6 {
 +			sound-dai = <&tdmif_b>;
 +			dai-format = "i2s";
 +			dai-tdm-slot-tx-mask-0 = <1 1>;
@@ -897,20 +951,54 @@ index 000000000000..ce49973678b8
 +			dai-tdm-slot-tx-mask-3 = <1 1>;
 +			mclk-fs = <256>;
 +
-+			codec {
++			codec-0 {
 +				sound-dai = <&tohdmitx TOHDMITX_I2S_IN_B>;
++			};
++
++			codec-1 {
++				sound-dai = <&toacodec TOACODEC_IN_B>;
++			};
++		};
++
++		/* i2s jack output interface */
++		dai-link-7 {
++			sound-dai = <&tdmif_c>;
++			dai-format = "i2s";
++			dai-tdm-slot-tx-mask-0 = <1 1>;
++			mclk-fs = <256>;
++
++			codec-0 {
++				sound-dai = <&tohdmitx TOHDMITX_I2S_IN_C>;
++			};
++
++			codec-1 {
++				sound-dai = <&toacodec TOACODEC_IN_C>;
 +			};
 +		};
 +
 +		/* hdmi glue */
-+		dai-link-4 {
++		dai-link-8 {
 +			sound-dai = <&tohdmitx TOHDMITX_I2S_OUT>;
 +
 +			codec {
 +				sound-dai = <&hdmi_tx>;
 +			};
 +		};
++
++		/* acodec glue */
++		dai-link-9 {
++			sound-dai = <&toacodec TOACODEC_OUT>;
++
++			codec {
++				sound-dai = <&acodec>;
++			};
++		};
 +	};
++};
++
++&acodec {
++	AVDD-supply = <&vddao_1v8>;
++	status = "okay";
 +};
 +
 +&arb {
@@ -1127,11 +1215,51 @@ index 000000000000..ce49973678b8
 +	status = "okay";
 +};
 +
++&tdmif_c {
++	status = "okay";
++};
++
++&tdmin_a {
++	status = "okay";
++};
++
++&tdmin_b {
++	status = "okay";
++};
++
++&tdmin_c {
++	status = "okay";
++};
++
++&tdmin_lb {
++	status = "okay";
++};
++
 +&tdmout_b {
 +	status = "okay";
 +};
 +
++&tdmout_c {
++	status = "okay";
++};
++
++&toacodec {
++	status = "okay";
++};
++
 +&tohdmitx {
++	status = "okay";
++};
++
++&toddr_a {
++	status = "okay";
++};
++
++&toddr_b {
++	status = "okay";
++};
++
++&toddr_c {
 +	status = "okay";
 +};
 +
