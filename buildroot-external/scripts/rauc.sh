@@ -4,14 +4,10 @@ set -e
 function _create_rauc_header() {
     (
         echo "[system]"
-	echo "compatible=$(hassos_rauc_compatible)"
+        echo "compatible=$(hassos_rauc_compatible)"
         echo "mountprefix=/run/rauc"
         echo "statusfile=/mnt/data/rauc.db"
         echo "bootloader=${BOOTLOADER}"
-
-        echo "[handlers]"
-        echo "pre-install=/usr/lib/rauc/pre-install"
-        echo "post-install=/usr/lib/rauc/post-install"
 
         echo "[keyring]"
         echo "path=/etc/rauc/keyring.pem"
@@ -24,6 +20,7 @@ function _write_rauc_boot() {
         echo "[slot.boot.0]"
         echo "device=/dev/disk/by-partlabel/hassos-boot"
         echo "type=vfat"
+        echo "allow-mounted=true"
     ) >> "${TARGET_DIR}/etc/rauc/system.conf"
 
     # SPL

@@ -2,29 +2,47 @@
 
 ##
 # Hooks
+env
 
 # Handle boot hocks
 if [ "${RAUC_SLOT_CLASS}" = "boot" ]; then
-    BOOT_DATA=/tmp/boot-data
+    BOOT_TMP=/tmp/boot-tmp
+    BOOT_NEW=/tmp/boot-new
+    BOOT_MNT=/mnt/boot
 
-    mkdir -p ${BOOT_DATA}
-    if [ "${1}" = "slot-pre-install" ]; then
-        cp -f ${RAUC_SLOT_MOUNT_POINT}/*.txt ${BOOT_DATA}/
-    elif [ "${1}" = "slot-post-install" ]; then
-        cp -f ${BOOT_DATA}/*.txt ${RAUC_SLOT_MOUNT_POINT}/
+    mkdir -p "${BOOT_TMP}"
+    mkdir -p "${BOOT_NEW}"
+
+    mount "${RAUC_IMAGE_NAME}" "${BOOT_NEW}"
+
+    # Old systems
+    if ! systemctl -q is-active mnt-boot.mount; then
+        mount "${RAUC_SLOT_DEVICE}" "${BOOT_MNT}"
     fi
+
+    # Backup boot config
+    cp -f "${BOOT_MNT}"/*.txt "${BOOT_TMP}/"
+
+    # Update
+    cp -rf "${BOOT_NEW}"/* "${BOOT_MNT}/"
+
+    # Restore boot config
+    cp -f "${BOOT_TMP}"/*.txt "${BOOT_MNT}/"
+
+    umount "${BOOT_NEW}"
+    rm -rf "${BOOT_TMP}" "${BOOT_NEW}"
 fi
 
 # Handle spl install
 if [ "${RAUC_SLOT_CLASS}" = "spl" ]; then
     DEVICE_CHILD="$(findfs LABEL="hassos-boot")"
-    DEVICE_ROOT="/dev/$(lsblk -no pkname ${DEVICE_CHILD})"
+    DEVICE_ROOT="/dev/$(lsblk -no pkname "${DEVICE_CHILD}")"
 
-    if sfdisk -dq ${DEVICE_ROOT} | grep -q 'label: gpt'; then
-        dd if=${RAUC_IMAGE_NAME} of=${DEVICE_ROOT} conv=notrunc bs=512 seek=2 skip=2
+    if sfdisk -dq "${DEVICE_ROOT}" | grep -q 'label: gpt'; then
+        dd if="${RAUC_IMAGE_NAME}" of="${DEVICE_ROOT}" conv=notrunc bs=512 seek=2 skip=2
     else
-        dd if=${RAUC_IMAGE_NAME} of=${DEVICE_ROOT} conv=notrunc bs=1 count=440
-        dd if=${RAUC_IMAGE_NAME} of=${DEVICE_ROOT} conv=notrunc bs=512 seek=1 skip=1
+        dd if="${RAUC_IMAGE_NAME}" of="${DEVICE_ROOT}" conv=notrunc bs=1 count=440
+        dd if="${RAUC_IMAGE_NAME}" of="${DEVICE_ROOT}" conv=notrunc bs=512 seek=1 skip=1
     fi
 fi
 

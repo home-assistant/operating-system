@@ -46,8 +46,8 @@ jobs:
           scripts/*.sh \
           buildroot-external/scripts/*.sh \
           buildroot-external/board/**/*.sh \
+          buildroot-external/ota/rauc-hook \
           buildroot-external/rootfs-overlay/usr/bin/* \
           buildroot-external/rootfs-overlay/usr/sbin/* \
           buildroot-external/rootfs-overlay/usr/libexec/* \
-          buildroot-external/rootfs-overlay/usr/lib/rauc/*
     displayName: 'Run ShellCheck'
