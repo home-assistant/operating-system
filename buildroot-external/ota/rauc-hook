@@ -8,25 +8,25 @@ if [ "${RAUC_SLOT_CLASS}" = "boot" ]; then
     BOOT_DATA=/tmp/boot-data
     mkdir -p ${BOOT_DATA}
 
-    if [ "${RAUC_SLOT_MOUNT_POINT}" == "/mnt/boot" ]; then
+    if [ "${RAUC_SLOT_MOUNT_POINT}" = "/mnt/boot" ]; then
         # Backup boot config
-        cp -f ${RAUC_SLOT_MOUNT_POINT}/*.txt ${BOOT_DATA}/
+        cp -f "${RAUC_SLOT_MOUNT_POINT}"/*.txt ${BOOT_DATA}/
 
         # Update
-        mcopy -i ${RAUC_IMAGE_NAME} -svn ::* ${RAUC_SLOT_MOUNT_POINT}/
+        mcopy -i "${RAUC_IMAGE_NAME}" -svn ::* "${RAUC_SLOT_MOUNT_POINT}/"
 
         # Restore boot config
-        cp -f ${BOOT_DATA}/*.txt ${RAUC_SLOT_MOUNT_POINT}/
+        cp -f "${BOOT_DATA}"/*.txt "${RAUC_SLOT_MOUNT_POINT}/"
     
     else
         # Backup boot config
-        mcopy -i ${RAUC_SLOT_DEVICE} -vn ::*.txt ${BOOT_DATA}/
+        mcopy -i "${RAUC_SLOT_DEVICE}" -vn ::*.txt "${BOOT_DATA}/"
 
         # Update
-        dd if=${RAUC_IMAGE_NAME} of=${RAUC_SLOT_DEVICE}
+        dd if="${RAUC_IMAGE_NAME}" of="${RAUC_SLOT_DEVICE}"
 
         # Restore boot config
-        mcopy -i ${RAUC_SLOT_DEVICE} -vn ${BOOT_DATA}/*.txt ::
+        mcopy -i "${RAUC_SLOT_DEVICE}" -vn "${BOOT_DATA}"/*.txt ::
     fi
 
     rm -rf ${BOOT_DATA}
@@ -37,11 +37,11 @@ if [ "${RAUC_SLOT_CLASS}" = "spl" ]; then
     DEVICE_CHILD="$(findfs LABEL="hassos-boot")"
     DEVICE_ROOT="/dev/$(lsblk -no pkname ${DEVICE_CHILD})"
 
-    if sfdisk -dq ${DEVICE_ROOT} | grep -q 'label: gpt'; then
-        dd if=${RAUC_IMAGE_NAME} of=${DEVICE_ROOT} conv=notrunc bs=512 seek=2 skip=2
+    if sfdisk -dq "${DEVICE_ROOT}" | grep -q 'label: gpt'; then
+        dd if="${RAUC_IMAGE_NAME}" of="${DEVICE_ROOT}" conv=notrunc bs=512 seek=2 skip=2
     else
-        dd if=${RAUC_IMAGE_NAME} of=${DEVICE_ROOT} conv=notrunc bs=1 count=440
-        dd if=${RAUC_IMAGE_NAME} of=${DEVICE_ROOT} conv=notrunc bs=512 seek=1 skip=1
+        dd if="${RAUC_IMAGE_NAME}" of="${DEVICE_ROOT}" conv=notrunc bs=1 count=440
+        dd if="${RAUC_IMAGE_NAME}" of="${DEVICE_ROOT}" conv=notrunc bs=512 seek=1 skip=1
     fi
 fi
 
