@@ -4,7 +4,7 @@ set -e
 function _create_rauc_header() {
     (
         echo "[system]"
-	    echo "compatible=$(hassos_rauc_compatible)"
+        echo "compatible=$(hassos_rauc_compatible)"
         echo "mountprefix=/run/rauc"
         echo "statusfile=/mnt/data/rauc.db"
         echo "bootloader=${BOOTLOADER}"

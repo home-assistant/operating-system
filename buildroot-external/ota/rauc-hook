@@ -8,14 +8,17 @@ if [ "${RAUC_SLOT_CLASS}" = "boot" ]; then
     BOOT_DATA=/tmp/boot-data
     mkdir -p ${BOOT_DATA}
 
-    # Backup boot config
-    cp -f ${RAUC_SLOT_MOUNT_POINT}/*.txt ${BOOT_DATA}/
+    if [ "${RAUC_SLOT_MOUNT_POINT}" == "/mnt/boot" ]; then
+        # Backup boot config
+        cp -f ${RAUC_SLOT_MOUNT_POINT}/*.txt ${BOOT_DATA}/
 
-    # update
-    mcopy -i ${RAUC_IMAGE_NAME} -sn ::* ${RAUC_SLOT_MOUNT_POINT}/
+        # update
+        mcopy -i ${RAUC_IMAGE_NAME} -sn ::* ${RAUC_SLOT_MOUNT_POINT}/
 
-    # Restore boot config
-    cp -f ${BOOT_DATA}/*.txt ${RAUC_SLOT_MOUNT_POINT}/
+        # Restore boot config
+        cp -f ${BOOT_DATA}/*.txt ${RAUC_SLOT_MOUNT_POINT}/
+    fi
+
     rm -rf ${BOOT_DATA}
 fi
 
