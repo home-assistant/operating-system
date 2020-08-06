@@ -20,13 +20,13 @@ if [ "${RAUC_SLOT_CLASS}" = "boot" ]; then
     
     else
         # Backup boot config
-        mcopy -i ${RAUC_SLOT_DEVICE} -svn ::*.txt ${BOOT_DATA}/
+        mcopy -i ${RAUC_SLOT_DEVICE} -vn ::*.txt ${BOOT_DATA}/
 
         # Update
         dd if=${RAUC_IMAGE_NAME} of=${RAUC_SLOT_DEVICE}
 
         # Restore boot config
-        mcopy -i ${RAUC_SLOT_DEVICE} -svn ${BOOT_DATA}/*.txt ::
+        mcopy -i ${RAUC_SLOT_DEVICE} -vn ${BOOT_DATA}/*.txt ::
     fi
 
     rm -rf ${BOOT_DATA}
