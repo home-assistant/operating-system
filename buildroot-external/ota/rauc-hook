@@ -2,33 +2,35 @@
 
 ##
 # Hooks
+env
 
 # Handle boot hocks
 if [ "${RAUC_SLOT_CLASS}" = "boot" ]; then
-    BOOT_DATA=/tmp/boot-data
-    mkdir -p ${BOOT_DATA}
+    BOOT_TMP=/tmp/boot-data
+    BOOT_MNT=/mnt/boot
 
-    if [ "${RAUC_SLOT_MOUNT_POINT}" = "/mnt/boot" ]; then
+    mkdir -p "${BOOT_TMP}"
+    if mountpoint "${BOOT_MNT}" ]; then
         # Backup boot config
-        cp -f "${RAUC_SLOT_MOUNT_POINT}"/*.txt ${BOOT_DATA}/
+        cp -f "${BOOT_MNT}"/*.txt ${BOOT_TMP}/
 
         # Update
-        mcopy -i "${RAUC_IMAGE_NAME}" -svn ::* "${RAUC_SLOT_MOUNT_POINT}/"
+        mcopy -i "${RAUC_IMAGE_NAME}" -svn ::* "${BOOT_MNT}/"
 
         # Restore boot config
-        cp -f "${BOOT_DATA}"/*.txt "${RAUC_SLOT_MOUNT_POINT}/"
+        cp -f "${BOOT_TMP}"/*.txt "${BOOT_MNT}/"
     else
         # Backup boot config
-        mcopy -i "${RAUC_SLOT_DEVICE}" -vn ::*.txt "${BOOT_DATA}/"
+        mcopy -i "${RAUC_SLOT_DEVICE}" -vn ::* "${BOOT_TMP}/"
 
         # Update
         dd if="${RAUC_IMAGE_NAME}" of="${RAUC_SLOT_DEVICE}"
 
         # Restore boot config
-        mcopy -i "${RAUC_SLOT_DEVICE}" -vn "${BOOT_DATA}"/*.txt ::
+        mcopy -i "${RAUC_SLOT_DEVICE}" -vn "${BOOT_TMP}"/*.txt ::
     fi
 
-    rm -rf ${BOOT_DATA}
+    rm -rf "${BOOT_TMP}"
 fi
 
 # Handle spl install
