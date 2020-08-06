@@ -13,12 +13,11 @@ if [ "${RAUC_SLOT_CLASS}" = "boot" ]; then
     mkdir -p "${BOOT_TMP}"
     mkdir -p "${BOOT_NEW}"
 
-    mount "${RAUC_IMAGE_NAME}" "${BOOT_NEW}"
-
-    # Old systems
+    # Mount boot
     if ! systemctl -q is-active mnt-boot.mount; then
-        mount "${RAUC_SLOT_DEVICE}" "${BOOT_MNT}"
+        systemctl start mnt-boot.mount
     fi
+    mount "${RAUC_IMAGE_NAME}" "${BOOT_NEW}"
 
     # Backup boot config
     cp -f "${BOOT_MNT}"/*.txt "${BOOT_TMP}/"
