@@ -6,31 +6,36 @@ env
 
 # Handle boot hocks
 if [ "${RAUC_SLOT_CLASS}" = "boot" ]; then
-    BOOT_TMP=/tmp/boot-data
+    BOOT_TMP=/tmp/boot-tmp
+    BOOT_NEW=/tmp/boot-new
     BOOT_MNT=/mnt/boot
 
     mkdir -p "${BOOT_TMP}"
-    if mountpoint "${BOOT_MNT}"; then
-        # Backup boot config
-        cp -f "${BOOT_MNT}"/*.txt ${BOOT_TMP}/
+    mkdir -p "${BOOT_NEW}"
 
-        # Update
-        mcopy -i "${RAUC_IMAGE_NAME}" -svn ::* "${BOOT_MNT}/"
+    mount "${RAUC_IMAGE_NAME}" "${BOOT_NEW}"
 
-        # Restore boot config
-        cp -f "${BOOT_TMP}"/*.txt "${BOOT_MNT}/"
-    else
-        # Backup boot config
-        mcopy -i "${RAUC_SLOT_DEVICE}" -vn ::* "${BOOT_TMP}/"
-
-        # Update
-        dd if="${RAUC_IMAGE_NAME}" of="${RAUC_SLOT_DEVICE}"
-
-        # Restore boot config
-        mcopy -i "${RAUC_SLOT_DEVICE}" -vn "${BOOT_TMP}"/*.txt ::
+    # Old system
+    if [ -f /usr/lib/rauc/post-install ] then
+        systemctl start mnt-boot.mount
     fi
 
-    rm -rf "${BOOT_TMP}"
+    # Backup boot config
+    cp -f "${BOOT_MNT}"/*.txt "${BOOT_TMP}/"
+
+    # Update
+    cp -rf "${BOOT_NEW}"/* "${BOOT_MNT}/"
+
+    # Restore boot config
+    cp -f "${BOOT_TMP}"/*.txt "${BOOT_MNT}/"
+
+    # Old system
+    if [ -f /usr/lib/rauc/pre-install ] then
+        systemctl stop mnt-boot.mount
+    fi
+
+    umount "${BOOT_NEW}"
+    rm -rf "${BOOT_TMP}" "${BOOT_NEW}"
 fi
 
 # Handle spl install
