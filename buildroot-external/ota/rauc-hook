@@ -10,7 +10,7 @@ if [ "${RAUC_SLOT_CLASS}" = "boot" ]; then
     BOOT_MNT=/mnt/boot
 
     mkdir -p "${BOOT_TMP}"
-    if mountpoint "${BOOT_MNT}" ]; then
+    if mountpoint "${BOOT_MNT}"; then
         # Backup boot config
         cp -f "${BOOT_MNT}"/*.txt ${BOOT_TMP}/
 
