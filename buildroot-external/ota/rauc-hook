@@ -15,9 +15,9 @@ if [ "${RAUC_SLOT_CLASS}" = "boot" ]; then
 
     mount "${RAUC_IMAGE_NAME}" "${BOOT_NEW}"
 
-    # Old system
-    if [ -f /usr/lib/rauc/post-install ]; then
-        systemctl start mnt-boot.mount
+    # Old systems
+    if ! systemctl -q is-active mnt-boot.mount; then
+        mount "${RAUC_SLOT_DEVICE}" "${BOOT_MNT}"
     fi
 
     # Backup boot config
@@ -28,11 +28,6 @@ if [ "${RAUC_SLOT_CLASS}" = "boot" ]; then
 
     # Restore boot config
     cp -f "${BOOT_TMP}"/*.txt "${BOOT_MNT}/"
-
-    # Old system
-    if [ -f /usr/lib/rauc/pre-install ]; then
-        systemctl stop mnt-boot.mount
-    fi
 
     umount "${BOOT_NEW}"
     rm -rf "${BOOT_TMP}" "${BOOT_NEW}"
