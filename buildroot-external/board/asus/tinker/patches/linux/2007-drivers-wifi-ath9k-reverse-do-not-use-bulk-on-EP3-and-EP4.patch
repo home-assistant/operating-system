@@ -27,9 +27,9 @@ diff --git a/drivers/net/wireless/ath/ath9k/hif_usb.c b/drivers/net/wireless/ath
  
  	usb_anchor_urb(urb, &hif_dev->regout_submitted);
  	ret = usb_submit_urb(urb, GFP_KERNEL);
-@@ -723,11 +723,11 @@
- 			return;
- 		}
+@@ -735,11 +735,11 @@
+ 
+ 		rx_buf->skb = nskb;
  
 +		usb_fill_bulk_urb(urb, hif_dev->udev,
 +				 usb_rcvbulkpipe(hif_dev->udev,
@@ -38,7 +38,7 @@ diff --git a/drivers/net/wireless/ath/ath9k/hif_usb.c b/drivers/net/wireless/ath
  						 USB_REG_IN_PIPE),
  				 nskb->data, MAX_REG_IN_BUF_SIZE,
 +				 ath9k_hif_usb_reg_in_cb, nskb);
--				 ath9k_hif_usb_reg_in_cb, nskb, 1);
+-				 ath9k_hif_usb_reg_in_cb, rx_buf, 1);
  	}
  
  resubmit:
