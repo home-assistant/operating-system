@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-SQUID_VERSION = 4.11
+SQUID_VERSION = 4.12
 SQUID_SOURCE = squid-$(SQUID_VERSION).tar.xz
 SQUID_SITE = http://www.squid-cache.org/Versions/v4
 SQUID_LICENSE = GPL-2.0+
@@ -60,6 +60,13 @@ SQUID_CONF_OPTS += --with-gnutls
 SQUID_DEPENDENCIES += gnutls
 else
 SQUID_CONF_OPTS += --without-gnutls
+endif
+
+ifeq ($(BR2_PACKAGE_SYSTEMD),y)
+SQUID_CONF_OPTS += --with-systemd
+SQUID_DEPENDENCIES += systemd
+else
+SQUID_CONF_OPTS += --without-systemd
 endif
 
 define SQUID_CLEANUP_TARGET

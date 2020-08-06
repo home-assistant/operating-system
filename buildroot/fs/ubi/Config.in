@@ -38,6 +38,11 @@ config BR2_TARGET_ROOTFS_UBI_USE_CUSTOM_CONFIG
 	  So the volume defined for the root filesystem can specify the
 	  image path as:  image=BR2_ROOTFS_UBIFS_PATH
 
+	  Buildroot also replaces the string "BINARIES_DIR" with the
+	  value of $(BINARIES_DIR), so that it is possible to reference
+	  other build artefacts (e.g. to include the kernel in a UBI
+	  volume).
+
 config BR2_TARGET_ROOTFS_UBI_CUSTOM_CONFIG_FILE
 	string "Configuration file path"
 	depends on BR2_TARGET_ROOTFS_UBI_USE_CUSTOM_CONFIG
