@@ -34,7 +34,7 @@ function create_ota_update() {
         echo "filename=hook"
         echo "[image.boot]"
         echo "filename=boot.vfat"
-        echo "hooks=pre-install;post-install"
+        echo "hooks=install"
         echo "[image.kernel]"
         echo "filename=kernel.ext4"
         echo "[image.rootfs]"
