@@ -35,7 +35,7 @@ fi
 # Handle spl install
 if [ "${RAUC_SLOT_CLASS}" = "spl" ]; then
     DEVICE_CHILD="$(findfs LABEL="hassos-boot")"
-    DEVICE_ROOT="/dev/$(lsblk -no pkname ${DEVICE_CHILD})"
+    DEVICE_ROOT="/dev/$(lsblk -no pkname "${DEVICE_CHILD}")"
 
     if sfdisk -dq "${DEVICE_ROOT}" | grep -q 'label: gpt'; then
         dd if="${RAUC_IMAGE_NAME}" of="${DEVICE_ROOT}" conv=notrunc bs=512 seek=2 skip=2
