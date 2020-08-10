@@ -29,10 +29,10 @@ usb start
 
 # Load extraargs
 fileenv mmc ${devnum}:1 ${ramdisk_addr_r} cmdline.txt cmdline
-if test "${board_rev}" = "a"; then
-  fatload mmc ${devnum}:1 ${fdt_addr_r} meson-g12b-odroid-n2.dtb
-else
+if test "${board_rev}" = "c"; then
   fatload mmc ${devnum}:1 ${fdt_addr_r} meson-g12b-odroid-n2-plus.dtb
+else
+  fatload mmc ${devnum}:1 ${fdt_addr_r} meson-g12b-odroid-n2.dtb
 fi
 
 # logical volumes get numbered after physical ones.
