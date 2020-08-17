@@ -1,0 +1,50 @@
+From d6fc5f89ac905cb3efc9c61ce79dbfad5d91883b Mon Sep 17 00:00:00 2001
+Message-Id: <d6fc5f89ac905cb3efc9c61ce79dbfad5d91883b.1597690408.git.stefan@agner.ch>
+From: Chung-Hsien Hsu <stanley.hsu@cypress.com>
+Date: Wed, 15 Aug 2018 05:32:39 -0500
+Subject: [PATCH] brcmfmac: add FT-based AKMs in brcmf_set_key_mgmt() for FT
+ support
+
+Add WLAN_AKM_SUITE_FT_8021X and WLAN_AKM_SUITE_FT_PSK in
+brcmf_set_key_mgmt() for FT support.
+
+Signed-off-by: Chung-Hsien Hsu <stanley.hsu@cypress.com>
+Signed-off-by: Chi-Hsien Lin <chi-hsien.lin@cypress.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+---
+ drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c | 6 ++++++
+ .../net/wireless/broadcom/brcm80211/include/brcmu_wifi.h    | 1 +
+ 2 files changed, 7 insertions(+)
+
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
+index 71b7e5c19434..c312626c0a27 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
+@@ -1649,6 +1649,12 @@ brcmf_set_key_mgmt(struct net_device *ndev, struct cfg80211_connect_params *sme)
+ 		case WLAN_AKM_SUITE_PSK:
+ 			val = WPA2_AUTH_PSK;
+ 			break;
++		case WLAN_AKM_SUITE_FT_8021X:
++			val = WPA2_AUTH_UNSPECIFIED | WPA2_AUTH_FT;
++			break;
++		case WLAN_AKM_SUITE_FT_PSK:
++			val = WPA2_AUTH_PSK | WPA2_AUTH_FT;
++			break;
+ 		default:
+ 			brcmf_err("invalid cipher group (%d)\n",
+ 				  sme->crypto.cipher_group);
+diff --git a/drivers/net/wireless/broadcom/brcm80211/include/brcmu_wifi.h b/drivers/net/wireless/broadcom/brcm80211/include/brcmu_wifi.h
+index 75b2a0438cfa..dddebaa60352 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/include/brcmu_wifi.h
++++ b/drivers/net/wireless/broadcom/brcm80211/include/brcmu_wifi.h
+@@ -239,6 +239,7 @@ static inline bool ac_bitmap_tst(u8 bitmap, int prec)
+ #define WPA2_AUTH_RESERVED4	0x0400
+ #define WPA2_AUTH_RESERVED5	0x0800
+ #define WPA2_AUTH_1X_SHA256	0x1000  /* 1X with SHA256 key derivation */
++#define WPA2_AUTH_FT		0x4000	/* Fast BSS Transition */
+ #define WPA2_AUTH_PSK_SHA256	0x8000	/* PSK with SHA256 key derivation */
+ 
+ #define DOT11_DEFAULT_RTS_LEN		2347
+-- 
+2.28.0
+
