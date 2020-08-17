@@ -13,14 +13,13 @@ function hassos_pre_image() {
 
     # Firmware
     if [[ "${BOARD_ID}" =~ "rpi4" ]]; then
-        cp -t "${BOOT_DATA}" \
-        "${BINARIES_DIR}/rpi-firmware/fixup4.dat" \
-        "${BINARIES_DIR}/rpi-firmware/start4.elf"
+        cp "${BINARIES_DIR}/rpi-firmware/fixup.dat" "${BOOT_DATA}/fixup4.dat" 
+        cp "${BINARIES_DIR}/rpi-firmware/start.elf" "${BOOT_DATA}/start4.elf" 
     else
         cp -t "${BOOT_DATA}" \
-        "${BINARIES_DIR}/rpi-firmware/fixup.dat" \
-        "${BINARIES_DIR}/rpi-firmware/start.elf" \
-        "${BINARIES_DIR}/rpi-firmware/bootcode.bin"
+            "${BINARIES_DIR}/rpi-firmware/fixup.dat" \
+            "${BINARIES_DIR}/rpi-firmware/start.elf" \
+            "${BINARIES_DIR}/rpi-firmware/bootcode.bin"
     fi
 
     # Set cmd options

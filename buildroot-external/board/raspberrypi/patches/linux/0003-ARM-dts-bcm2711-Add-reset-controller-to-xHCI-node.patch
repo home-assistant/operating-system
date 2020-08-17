@@ -1,0 +1,58 @@
+From 08558575c0f3d1437994590ad418d6c2cf18d96b Mon Sep 17 00:00:00 2001
+Message-Id: <08558575c0f3d1437994590ad418d6c2cf18d96b.1595152741.git.stefan@agner.ch>
+In-Reply-To: <a9f92163e6c07e5c6f57f00f4931098e0e1ee826.1595152741.git.stefan@agner.ch>
+References: <a9f92163e6c07e5c6f57f00f4931098e0e1ee826.1595152741.git.stefan@agner.ch>
+From: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+Date: Mon, 29 Jun 2020 18:18:40 +0200
+Subject: [PATCH 3/4] ARM: dts: bcm2711: Add reset controller to xHCI node
+
+The chip is hardwired to the board's PCIe bus and needs to be properly
+setup trough a firmware routine after a PCI fundamental reset. Pass the
+reset controller phandle that takes care of triggering the
+initialization to the relevant PCI device.
+
+Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+[backport for RPi 4.19 kernel]
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+---
+ arch/arm/boot/dts/bcm2711-rpi-4-b.dts | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
+
+diff --git a/arch/arm/boot/dts/bcm2711-rpi-4-b.dts b/arch/arm/boot/dts/bcm2711-rpi-4-b.dts
+index ec0b3bb64de8..2c6aa1933600 100644
+--- a/arch/arm/boot/dts/bcm2711-rpi-4-b.dts
++++ b/arch/arm/boot/dts/bcm2711-rpi-4-b.dts
+@@ -4,6 +4,8 @@
+ #include "bcm2711-rpi.dtsi"
+ #include "bcm283x-rpi-csi1-2lane.dtsi"
+ 
++#include <dt-bindings/reset/raspberrypi,firmware-reset.h>
++
+ / {
+ 	compatible = "raspberrypi,4-model-b", "brcm,bcm2711";
+ 	model = "Raspberry Pi 4 Model B";
+@@ -87,6 +89,21 @@
+ 	};
+ };
+ 
++&pcie_0 {
++	pci@1,0 {
++		#address-cells = <3>;
++		#size-cells = <2>;
++		ranges;
++
++		reg = <0 0 0 0 0>;
++
++		usb@1,0 {
++			reg = <0x10000 0 0 0 0>;
++			resets = <&reset RASPBERRYPI_FIRMWARE_RESET_ID_USB>;
++		};
++	};
++};
++
+ &uart0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&uart0_pins &bt_pins>;
+-- 
+2.27.0
+

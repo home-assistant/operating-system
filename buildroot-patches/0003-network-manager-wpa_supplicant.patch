@@ -1,0 +1,43 @@
+From 297ba4e3286e590bd1c2d2e6ec778a84748b5807 Mon Sep 17 00:00:00 2001
+From: Pascal Vizeli <pvizeli@syshack.ch>
+Date: Thu, 16 Apr 2020 14:32:45 +0000
+Subject: [PATCH 1/1] network-manager: wpa_supplicant
+
+Signed-off-by: Pascal Vizeli <pvizeli@syshack.ch>
+---
+ package/network-manager/Config.in          | 5 +++--
+ package/network-manager/network-manager.mk | 2 +-
+ 2 files changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/package/network-manager/Config.in b/package/network-manager/Config.in
+index e6a3f5f04f..accea923af 100644
+--- a/package/network-manager/Config.in
++++ b/package/network-manager/Config.in
+@@ -15,8 +15,9 @@ config BR2_PACKAGE_NETWORK_MANAGER
+ 	select BR2_PACKAGE_LIBGCRYPT
+ 	select BR2_PACKAGE_UTIL_LINUX
+ 	select BR2_PACKAGE_UTIL_LINUX_LIBUUID
+-	select BR2_PACKAGE_WIRELESS_TOOLS
+-	select BR2_PACKAGE_WIRELESS_TOOLS_LIB
++	select BR2_PACKAGE_WPA_SUPPLICANT
++	select BR2_PACKAGE_WPA_SUPPLICANT_DBUS
++	select BR2_PACKAGE_WPA_SUPPLICANT_DBUS_INTROSPECTION
+ 	select BR2_PACKAGE_READLINE
+ 	select BR2_PACKAGE_LIBNDP
+ 	help
+diff --git a/package/network-manager/network-manager.mk b/package/network-manager/network-manager.mk
+index 56b768cdef..727cfb98a4 100644
+--- a/package/network-manager/network-manager.mk
++++ b/package/network-manager/network-manager.mk
+@@ -10,7 +10,7 @@ NETWORK_MANAGER_SOURCE = NetworkManager-$(NETWORK_MANAGER_VERSION).tar.xz
+ NETWORK_MANAGER_SITE = https://download.gnome.org/sources/NetworkManager/$(NETWORK_MANAGER_VERSION_MAJOR)
+ NETWORK_MANAGER_INSTALL_STAGING = YES
+ NETWORK_MANAGER_DEPENDENCIES = host-pkgconf udev gnutls libglib2 \
+-	libgcrypt wireless_tools util-linux host-intltool readline libndp
++	libgcrypt wpa_supplicant util-linux host-intltool readline libndp
+ # Even though the COPYING file only contains the GPL-2.0 text, many
+ # parts of network-manager are under LGPL-2.0. See the "Legal" section
+ # of the CONTRIBUTING file for details.
+-- 
+2.17.1
+

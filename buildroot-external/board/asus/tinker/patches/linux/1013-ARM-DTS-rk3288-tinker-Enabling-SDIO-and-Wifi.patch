@@ -1,0 +1,98 @@
+From d5d5c53173c484a13cda62a537cbf75a5df4b0e4 Mon Sep 17 00:00:00 2001
+From: "Miouyouyou (Myy)" <myy@miouyouyou.fr>
+Date: Mon, 5 Nov 2018 21:58:56 +0100
+Subject: [PATCH] ARM: DTS: rk3288-tinker: Enabling SDIO and Wifi
+
+Adding the appropriate nodes in order to exploit the WiFi capabilities
+of the board.
+Since these capabilities are provided through SDIO, and the SDIO
+nodes were not defined, these were added too.
+
+These seems to depend on each other so they are added in one big
+patch.
+
+Split if necessary.
+
+Signed-off-by: Miouyouyou (Myy) <myy@miouyouyou.fr>
+---
+ arch/arm/boot/dts/rk3288-tinker.dts | 62 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 62 insertions(+)
+
+diff --git a/arch/arm/boot/dts/rk3288-tinker.dts b/arch/arm/boot/dts/rk3288-tinker.dts
+index 1e43527aa..d4df13bed 100644
+--- a/arch/arm/boot/dts/rk3288-tinker.dts
++++ b/arch/arm/boot/dts/rk3288-tinker.dts
+@@ -6,8 +6,70 @@
+ /dts-v1/;
+ 
+ #include "rk3288-tinker.dtsi"
++#include <dt-bindings/clock/rockchip,rk808.h>
+ 
+ / {
+ 	model = "Rockchip RK3288 Asus Tinker Board";
+ 	compatible = "asus,rk3288-tinker", "rockchip,rk3288";
++
++	/* This is essential to get SDIO devices working.
++	   The Wifi depends on SDIO ! */
++	sdio_pwrseq: sdio-pwrseq {
++		compatible = "mmc-pwrseq-simple";
++		clocks = <&rk808 RK808_CLKOUT1>;
++		clock-names = "ext_clock";
++		pinctrl-names = "default";
++		pinctrl-0 = <&chip_enable_h>, <&wifi_enable_h>;
++
++		/*
++		 * On the module itself this is one of these (depending
++		 * on the actual card populated):
++		 * - SDIO_RESET_L_WL_REG_ON
++		 * - PDN (power down when low)
++		 */
++		reset-gpios = <&gpio4 28 GPIO_ACTIVE_LOW>, <&gpio4 27 GPIO_ACTIVE_LOW>;
++	};
++
++	wireless-wlan {
++		compatible = "wlan-platdata";
++		rockchip,grf = <&grf>;
++		sdio_vref = <1800>;
++		status = "okay";
++		wifi_chip_type = "8723bs";
++		WIFI,host_wake_irq = <&gpio4 30 GPIO_ACTIVE_HIGH>;
++	};
++};
++
++&io_domains {
++	wifi-supply = <&vcc_18>;
++};
++
++&pinctrl {
++	sdio-pwrseq {
++		wifi_enable_h: wifienable-h {
++			rockchip,pins = <4 28 RK_FUNC_GPIO &pcfg_pull_none>;
++		};
++
++		chip_enable_h: chip-enable-h {
++			rockchip,pins = <4 27 RK_FUNC_GPIO &pcfg_pull_none>;
++		};
++	};
++};
++
++&sdio0 {
++	bus-width = <4>;
++	cap-sd-highspeed;
++	cap-sdio-irq;
++	clock-frequency = <50000000>;
++	clock-freq-min-max = <200000 50000000>;
++	disable-wp;
++	keep-power-in-suspend;
++	mmc-pwrseq = <&sdio_pwrseq>;
++	non-removable;
++	num-slots = <1>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&sdio0_bus4 &sdio0_cmd &sdio0_clk>;
++	sd-uhs-sdr104;
++	status = "okay";
++	supports-sdio;
+ };
+-- 
+2.16.4
+

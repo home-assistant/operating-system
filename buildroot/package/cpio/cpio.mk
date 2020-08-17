@@ -18,3 +18,4 @@ CPIO_DEPENDENCIES += argp-standalone
 endif
 
 $(eval $(autotools-package))
+$(eval $(host-autotools-package))

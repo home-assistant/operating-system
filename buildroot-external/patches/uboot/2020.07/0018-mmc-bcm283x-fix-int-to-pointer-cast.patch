@@ -1,0 +1,33 @@
+From 2904bea082a1524b13af6afed08a7f5ee9faf0ae Mon Sep 17 00:00:00 2001
+Message-Id: <2904bea082a1524b13af6afed08a7f5ee9faf0ae.1595101389.git.stefan@agner.ch>
+In-Reply-To: <040a141f84f2f84bf8be18f85b4cdb34bf066df0.1595101389.git.stefan@agner.ch>
+References: <040a141f84f2f84bf8be18f85b4cdb34bf066df0.1595101389.git.stefan@agner.ch>
+From: Seung-Woo Kim <sw0312.kim@samsung.com>
+Date: Wed, 3 Jun 2020 14:43:43 +0200
+Subject: [PATCH 18/20] mmc: bcm283x: fix int to pointer cast
+
+On build with 32 bit, there is a warning for int-to-pointer-cast.
+Fix the int to pointer cast by using uintptr_t.
+
+Signed-off-by: Seung-Woo Kim <sw0312.kim@samsung.com>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/mmc/bcm2835_sdhci.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/mmc/bcm2835_sdhci.c b/drivers/mmc/bcm2835_sdhci.c
+index dc3dffb657..5cdf3c506f 100644
+--- a/drivers/mmc/bcm2835_sdhci.c
++++ b/drivers/mmc/bcm2835_sdhci.c
+@@ -210,7 +210,7 @@ static int bcm2835_sdhci_probe(struct udevice *dev)
+ 	priv->last_write = 0;
+ 
+ 	host->name = dev->name;
+-	host->ioaddr = (void *)base;
++	host->ioaddr = (void *)(uintptr_t)base;
+ 	host->quirks = SDHCI_QUIRK_BROKEN_VOLTAGE | SDHCI_QUIRK_BROKEN_R1B |
+ 		SDHCI_QUIRK_WAIT_SEND_CMD | SDHCI_QUIRK_NO_HISPD_BIT;
+ 	host->max_clk = emmc_freq;
+-- 
+2.27.0
+

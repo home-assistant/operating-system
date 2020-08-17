@@ -15,6 +15,7 @@ BOARD_DIR=${2}
 
 # HassOS tasks
 fix_rootfs
+install_tini_docker
 install_hassos_cli
 
 # Write os-release
@@ -29,6 +30,8 @@ install_hassos_cli
     echo "HOME_URL=https://hass.io/"
     echo "VARIANT=\"${HASSOS_NAME} ${BOARD_NAME}\""
     echo "VARIANT_ID=${BOARD_ID}"
+    echo "SUPERVISOR_MACHINE=${SUPERVISOR_MACHINE}"
+    echo "SUPERVISOR_ARCH=${SUPERVISOR_ARCH}"
 ) > "${TARGET_DIR}/usr/lib/os-release"
 
 # Write machine-info
@@ -42,3 +45,6 @@ install_hassos_cli
 write_rauc_config
 install_rauc_certs
 install_bootloader_config
+
+# Fix overlay presets
+"${HOST_DIR}/bin/systemctl" --root="${TARGET_DIR}" preset-all

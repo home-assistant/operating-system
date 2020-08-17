@@ -4,14 +4,10 @@ set -e
 function _create_rauc_header() {
     (
         echo "[system]"
-	echo "compatible=$(hassos_rauc_compatible)"
+        echo "compatible=$(hassos_rauc_compatible)"
         echo "mountprefix=/run/rauc"
         echo "statusfile=/mnt/data/rauc.db"
         echo "bootloader=${BOOTLOADER}"
-
-        echo "[handlers]"
-        echo "pre-install=/usr/lib/rauc/pre-install"
-        echo "post-install=/usr/lib/rauc/post-install"
 
         echo "[keyring]"
         echo "path=/etc/rauc/keyring.pem"
@@ -24,6 +20,7 @@ function _write_rauc_boot() {
         echo "[slot.boot.0]"
         echo "device=/dev/disk/by-partlabel/hassos-boot"
         echo "type=vfat"
+        echo "allow-mounted=true"
     ) >> "${TARGET_DIR}/etc/rauc/system.conf"
 
     # SPL
@@ -81,12 +78,12 @@ function install_bootloader_config() {
     	# shellcheck disable=SC1117
         echo -e "/dev/disk/by-partlabel/hassos-bootstate\t0x0000\t${BOOT_ENV_SIZE}" > "${TARGET_DIR}/etc/fw_env.config"
     else
-        cp -f "${BR2_EXTERNAL_HASSOS_PATH}/misc/barebox-state-efi.dtb" "${TARGET_DIR}/etc/barebox-state.dtb"
+        cp -f "${BR2_EXTERNAL_HASSOS_PATH}/bootloader/barebox-state-efi.dtb" "${TARGET_DIR}/etc/barebox-state.dtb"
     fi
 
     # Fix MBR
     if [ "${BOOT_SYS}" == "mbr" ]; then
         mkdir -p "${TARGET_DIR}/usr/lib/udev/rules.d"
-	    cp -f "${BR2_EXTERNAL_HASSOS_PATH}/misc/mbr-part.rules" "${TARGET_DIR}/usr/lib/udev/rules.d/"
+	    cp -f "${BR2_EXTERNAL_HASSOS_PATH}/bootloader/mbr-part.rules" "${TARGET_DIR}/usr/lib/udev/rules.d/"
     fi
 }

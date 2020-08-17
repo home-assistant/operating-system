@@ -1,0 +1,13 @@
+[Unit]
+Description=HassOS persists data on bootstate 
+After=sysinit.target
+RefuseManualStart=true
+RefuseManualStop=true
+
+[Service]
+Type=oneshot
+ExecStart=/usr/libexec/hassos-persists
+RemainAfterExit=true
+
+[Install]
+WantedBy=multi-user.target

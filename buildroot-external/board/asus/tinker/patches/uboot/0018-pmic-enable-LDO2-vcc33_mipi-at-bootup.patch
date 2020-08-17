@@ -1,32 +1,28 @@
-From d0d5938a3f8a524a884c460c5870c0c966daf152 Mon Sep 17 00:00:00 2001
-From: jamess_huang <Jamess_Huang@asus.com>
-Date: Fri, 11 Aug 2017 18:10:22 +0800
-Subject: [PATCH 18/50] pmic: enable LDO2 vcc33_mipi at bootup
+From 4147d34a63f74f78a8ff9a3dcf2f4c9cd8d6be3a Mon Sep 17 00:00:00 2001
+From: Pascal Vizeli <pvizeli@syshack.ch>
+Date: Fri, 24 Apr 2020 11:37:55 +0000
+Subject: [PATCH 1/1] pmic: enable LDO2 vcc33_mipi at bootup
 
-power up camera module to prevent i2c-2 SDA pulled low
-
-Change-Id: I199bef9c8aa4385dbda33117e2ca0c64dc7a13d4
+Signed-off-by: Pascal Vizeli <pvizeli@syshack.ch>
 ---
- board/rockchip/tinker_rk3288/tinker-rk3288.c | 38 ++++++++++++++++++++
- 1 file changed, 38 insertions(+)
- mode change 100644 => 100755 board/rockchip/tinker_rk3288/tinker-rk3288.c
+ board/rockchip/tinker_rk3288/tinker-rk3288.c | 37 ++++++++++++++++++++
+ 1 file changed, 37 insertions(+)
 
 diff --git a/board/rockchip/tinker_rk3288/tinker-rk3288.c b/board/rockchip/tinker_rk3288/tinker-rk3288.c
-index c2872e7330..5618bd9923 100644
+index 7af39e10cd..f12409933d 100644
 --- a/board/rockchip/tinker_rk3288/tinker-rk3288.c
 +++ b/board/rockchip/tinker_rk3288/tinker-rk3288.c
-@@ -8,6 +8,8 @@
- #include <dm.h>
- #include <i2c_eeprom.h>
+@@ -12,6 +12,7 @@
  #include <netdev.h>
+ #include <asm/arch-rockchip/bootrom.h>
+ #include <asm/io.h>
 +#include <power/regulator.h>
-+
-
+ 
  static int get_ethaddr_from_eeprom(u8 *addr)
  {
-@@ -33,3 +35,39 @@ int rk_board_late_init(void)
-
- 	return 0;
+@@ -47,3 +48,39 @@ int mmc_get_env_dev(void)
+ 
+ 	return 1;
  }
 +
 +
@@ -64,7 +60,6 @@ index c2872e7330..5618bd9923 100644
 +	return 0;
 +}
 +#endif
-\ No newline at end of file
---
+-- 
 2.17.1
 

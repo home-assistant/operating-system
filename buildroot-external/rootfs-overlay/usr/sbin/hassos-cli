@@ -1,27 +1,20 @@
 #!/bin/sh
+# ==============================================================================
+# Run logging cli
+# ==============================================================================
 
-# Load configs
-CONFIG_FILE=/mnt/data/hassos.json
+# Run CLI container
+if [ "$(docker ps -q -f name=hassio_cli)" ]; then
+    docker container exec \
+        -ti hassio_cli \
+        /usr/bin/cli.sh \
 
-CLI="$(jq --raw-output '.cli' ${CONFIG_FILE})"
-DOCKER_ARGS="$(jq --raw-output '.cli_args // empty' ${CONFIG_FILE})"
-APPARMOR="$(jq --raw-output '.cli_apparmor // "docker-default"' ${CONFIG_FILE})"
-
-CLI_DATA=/mnt/data/cli
-mkdir -p ${CLI_DATA}
-
-# Run CLI
-# shellcheck disable=SC2086
-docker container run \
-    --rm -ti --init \
-    --security-opt apparmor="${APPARMOR}" \
-    -v ${CLI_DATA}:/data \
-    -v /etc/machine-id:/etc/machine-id:ro \
-    $DOCKER_ARGS \
-    "${CLI}"
-
-# Jump to root login shell
-if [ $? -eq 10 ]; then
+    # Jump to root login shell
+    if [ $? -eq 10 ]; then
+        /bin/ash -l
+    fi
+else
+    echo "[ERROR] Somethings going wrong! Jump into emergency console..."
     /bin/ash -l
 fi
 

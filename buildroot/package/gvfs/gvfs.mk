@@ -15,6 +15,22 @@ GVFS_LICENSE = LGPL-2.0+
 GVFS_LICENSE_FILES = COPYING
 GVFS_LIBS = $(TARGET_NLS_LIBS)
 
+# 0001-admin-Prevent-access-if-any-authentication-agent-isn-t-available.patch
+GVFS_IGNORE_CVES += CVE-2019-3827
+
+# package/gvfs/0002-admin-Add-query_info_on_read-write-functionality.patch
+GVFS_IGNORE_CVES += CVE-2019-12448
+
+# 0003-admin-Allow-changing-file-owner.patch
+# 0004-admin-Use-fsuid-to-ensure-correct-file-ownership.patch
+GVFS_IGNORE_CVES += CVE-2019-12447
+
+# 0005-admin-Ensure-correct-ownership-when-moving-to-file-uri.patch
+GVFS_IGNORE_CVES += CVE-2019-12449
+
+# 0006-gvfsdaemon-Check-that-the-connecting-client-is-the-same-user.patch
+GVFS_IGNORE_CVES += CVE-2019-12795
+
 # Export ac_cv_path_LIBGCRYPT_CONFIG unconditionally to prevent
 # build system from searching the host paths.
 GVFS_CONF_ENV = \

@@ -1,0 +1,62 @@
+From 2c2e60256f2cbb2fce50a6317f85b1500efd1a6c Mon Sep 17 00:00:00 2001
+From: "Miouyouyou (Myy)" <myy@miouyouyou.fr>
+Date: Mon, 5 Nov 2018 22:03:26 +0100
+Subject: [PATCH] ARM: DTS: rk3288-tinker: Setup the Bluetooth UART pins
+
+The most essential being the RTS pin, which is clearly needed to
+upload the initial configuration into the Realtek Bluetooth
+chip, and make the Bluetooth chip work.
+
+Now, the Bluetooth chip also needs 3 other GPIOS to be enabled.
+I'll see how I do that through the DTS file in a near future.
+
+The 3 GPIOS being :
+Bluetooth Reset : <&gpio4 29 GPIO_ACTIVE_HIGH>
+Bluetooth Wake  : <&gpio4 26 GPIO_ACTIVE_HIGH>
+Bluetooth Wake_Host_IRQ : <&gpio4 31 GPIO_ACTIVE_HIGH>
+
+These are currently setup manually, through scripts. But it seems that
+GPIO handling through /sys entries might not be possible in the long
+term, the replacement being libgpio.
+Anyway, if you're interesting in enabling the Bluetooth GPIO by hand,
+here are the commands :
+
+cd /sys/class/gpio &&
+echo 146 > export &&
+echo 149 > export &&
+echo 151 > export &&
+echo high > gpio146/direction &&
+echo high > gpio149/direction &&
+echo high > gpio151/direction
+
+Resetting the chip is done like this :
+
+echo "Resetting the Bluetooth chip"
+cd /sys/class/gpio/gpio149 &&
+echo 0 > value &&
+sleep 1 &&
+echo 1 > value &&
+sleep 1
+
+Signed-off-by: Miouyouyou (Myy) <myy@miouyouyou.fr>
+---
+ arch/arm/boot/dts/rk3288-tinker.dts | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/arch/arm/boot/dts/rk3288-tinker.dts b/arch/arm/boot/dts/rk3288-tinker.dts
+index d4df13bed..b92e59c1e 100644
+--- a/arch/arm/boot/dts/rk3288-tinker.dts
++++ b/arch/arm/boot/dts/rk3288-tinker.dts
+@@ -73,3 +73,9 @@
+ 	status = "okay";
+ 	supports-sdio;
+ };
++
++&uart0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&uart0_xfer>, <&uart0_cts>, <&uart0_rts>;
++};
++
+-- 
+2.16.4
+

@@ -4,11 +4,12 @@
 #
 ################################################################################
 
-LIBARCHIVE_VERSION = 3.3.3
-LIBARCHIVE_SITE = http://www.libarchive.org/downloads
+LIBARCHIVE_VERSION = 3.4.2
+LIBARCHIVE_SITE = https://www.libarchive.de/downloads
 LIBARCHIVE_INSTALL_STAGING = YES
-LIBARCHIVE_LICENSE = BSD-2-Clause, BSD-3-Clause
+LIBARCHIVE_LICENSE = BSD-2-Clause, BSD-3-Clause, CC0-1.0, OpenSSL, Apache-2.0
 LIBARCHIVE_LICENSE_FILES = COPYING
+LIBARCHIVE_CONF_OPTS = --without-mbedtls
 
 ifeq ($(BR2_PACKAGE_LIBARCHIVE_BSDTAR),y)
 ifeq ($(BR2_STATIC_LIBS),y)
@@ -78,6 +79,13 @@ else
 LIBARCHIVE_CONF_OPTS += --without-xml2
 endif
 
+ifeq ($(BR2_PACKAGE_LZ4),y)
+LIBARCHIVE_CONF_OPTS += --with-lz4
+LIBARCHIVE_DEPENDENCIES += lz4
+else
+LIBARCHIVE_CONF_OPTS += --without-lz4
+endif
+
 ifeq ($(BR2_PACKAGE_LZO),y)
 LIBARCHIVE_DEPENDENCIES += lzo
 else
@@ -86,6 +94,7 @@ endif
 
 ifeq ($(BR2_PACKAGE_NETTLE),y)
 LIBARCHIVE_DEPENDENCIES += nettle
+LIBARCHIVE_CONF_OPTS += --with-nettle
 else
 LIBARCHIVE_CONF_OPTS += --without-nettle
 endif
@@ -122,10 +131,13 @@ HOST_LIBARCHIVE_CONF_OPTS = \
 	--without-expat \
 	--without-libiconv-prefix \
 	--without-xml2 \
+	--without-lz4 \
 	--without-lzo2 \
+	--without-mbedtls \
 	--without-nettle \
 	--without-openssl \
-	--without-lzma
+	--without-lzma \
+	--without-zstd
 
 $(eval $(autotools-package))
 $(eval $(host-autotools-package))

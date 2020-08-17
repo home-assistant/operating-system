@@ -37,7 +37,7 @@ index e60dc3a622..d4028c6a39 100644
 +		len = meson_sm_read_efuse(EFUSE_MAC_OFFSET,
 +					  efuse_mac_addr, EFUSE_MAC_SIZE);
 +		if (len != EFUSE_MAC_SIZE)
-+			return 0; 
++			return 0;
 +
 +		for (int i = 0; i < 6; i++){
 +			buff[0] = efuse_mac_addr[i * 2];

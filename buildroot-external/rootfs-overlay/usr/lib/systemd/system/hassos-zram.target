@@ -1,3 +1,6 @@
 [Unit]
 Description=HassOS zram targets
 Documentation=man:systemd.target(5)
+
+[Install]
+WantedBy=multi-user.target

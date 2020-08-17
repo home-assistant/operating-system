@@ -2,8 +2,8 @@
 
 We provide 3 different types of release builds:
 
-- development (beta/dev)
-- staging (rc)
+- development (dev)
+- staging (beta)
 - production (stable)
 
 ## Versioning
@@ -15,7 +15,7 @@ The development number they will be bump for the stable release version and the 
 
 The branch `dev` ist the actual development branch and from there we never make a release. The `master` branch contains the development version and from there we build a beta release.
 
-If we create a new staging/productive release, we create a new branch `rel-{MAJOR}`. They will be used for the whole cycle of this release.
+If we create a new productive/staging release, we create a new branch `rel-{MAJOR}`. They will be used for the whole cycle of this release.
 
 ## Upload release files
 

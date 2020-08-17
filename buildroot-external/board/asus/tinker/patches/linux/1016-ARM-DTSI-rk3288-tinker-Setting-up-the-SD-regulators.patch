@@ -1,0 +1,31 @@
+From 3dacea70a8e434008f5b1f119a7f7da9aebc772c Mon Sep 17 00:00:00 2001
+From: "Miouyouyou (Myy)" <myy@miouyouyou.fr>
+Date: Mon, 5 Nov 2018 20:18:58 +0100
+Subject: [PATCH] ARM: DTSI: rk3288-tinker: Setting up the SD regulators
+
+Some are needed and some are not. Playing with these parameters is
+required to get reboot working on these boards.
+
+I still can't believe that these boards can't soft reset correctly.
+
+Signed-off-by: Miouyouyou (Myy) <myy@miouyouyou.fr>
+---
+ arch/arm/boot/dts/rk3288-tinker.dtsi | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/arch/arm/boot/dts/rk3288-tinker.dtsi b/arch/arm/boot/dts/rk3288-tinker.dtsi
+index 3da1c830f..dd1090728 100644
+--- a/arch/arm/boot/dts/rk3288-tinker.dtsi
++++ b/arch/arm/boot/dts/rk3288-tinker.dtsi
+@@ -254,7 +254,8 @@
+ 			};
+ 
+ 			vccio_sd: LDO_REG5 {
++				regulator-always-on;
+ 				regulator-boot-on;
+ 				regulator-min-microvolt = <1800000>;
+ 				regulator-max-microvolt = <3300000>;
+ 				regulator-name = "vccio_sd";
+-- 
+2.16.4
+

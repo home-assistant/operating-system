@@ -11,7 +11,10 @@ LIBSSH2_LICENSE_FILES = COPYING
 LIBSSH2_INSTALL_STAGING = YES
 LIBSSH2_CONF_OPTS = --disable-examples-build
 
-# building from a git clone
+# 0003-packet-c-improve-message-parsing.patch
+LIBSSH2_IGNORE_CVES += CVE-2019-17498
+
+# patch touching configure.ac and acinclude.m4
 LIBSSH2_AUTORECONF = YES
 
 ifeq ($(BR2_PACKAGE_LIBSSH2_MBEDTLS),y)
