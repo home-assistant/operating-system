@@ -1,0 +1,55 @@
+# This file copied from http://deb.debian.org/debian/pool/main/s/systemd/systemd_246.1-1.debian.tar.xz
+# This hook allows for DHCP to define NTP servers for timesyncd
+
+TIMESYNCD_CONF=/run/systemd/timesyncd.conf.d/01-dhclient.conf
+
+timesyncd_servers_setup_remove() {
+        if [ ! -d /run/systemd/system ]; then
+                return
+        fi
+        if [ ! -x /lib/systemd/systemd-timesyncd ]; then
+                return
+        fi
+
+        if [ -e $TIMESYNCD_CONF ]; then
+                rm -f $TIMESYNCD_CONF
+                systemctl try-restart systemd-timesyncd.service || true
+        fi
+}
+
+timesyncd_servers_setup_add() {
+        if [ ! -d /run/systemd/system ]; then
+                return
+        fi
+        if [ ! -x /lib/systemd/systemd-timesyncd ]; then
+                return
+        fi
+
+        if [ -e $TIMESYNCD_CONF ] && [ "$new_ntp_servers" = "$old_ntp_servers" ]; then
+                return
+        fi
+
+        if [ -z "$new_ntp_servers" ]; then
+                timesyncd_servers_setup_remove
+                return
+        fi
+
+        mkdir -p $(dirname $TIMESYNCD_CONF)
+        cat <<EOF > ${TIMESYNCD_CONF}.new
+# NTP server entries received from DHCP server
+[Time]
+NTP=$new_ntp_servers
+EOF
+        mv ${TIMESYNCD_CONF}.new ${TIMESYNCD_CONF}
+        systemctl try-restart systemd-timesyncd.service || true
+}
+
+
+case $reason in
+        BOUND|RENEW|REBIND|REBOOT)
+                timesyncd_servers_setup_add
+                ;;
+        EXPIRE|FAIL|RELEASE|STOP)
+                timesyncd_servers_setup_remove
+                ;;
+esac
