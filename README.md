@@ -28,7 +28,7 @@ If you just want to use Home Assistant the official [getting started guide](http
 
 If you're interested in finding out more about Home Assistant Operating System and how it works read on...
 
-## HassOS components
+## Home Assistant Operating System components
 
 - **Bootloader:**
   - [Barebox](https://barebox.org/) for devices that support EFI
