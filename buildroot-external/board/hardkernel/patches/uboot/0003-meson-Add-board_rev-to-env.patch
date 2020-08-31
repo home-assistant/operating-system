@@ -1,0 +1,82 @@
+From 15ce807d420324bc209772b843d4004619e0cdaf Mon Sep 17 00:00:00 2001
+Message-Id: <15ce807d420324bc209772b843d4004619e0cdaf.1598875349.git.stefan@agner.ch>
+In-Reply-To: <c12338d22649e46aed12ebe60d897112f045fda9.1598875349.git.stefan@agner.ch>
+References: <c12338d22649e46aed12ebe60d897112f045fda9.1598875349.git.stefan@agner.ch>
+From: Pascal Vizeli <pvizeli@syshack.ch>
+Date: Tue, 4 Aug 2020 13:50:57 +0000
+Subject: [PATCH 3/4] meson: Add board_rev to env
+
+Signed-off-by: Pascal Vizeli <pvizeli@syshack.ch>
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+---
+ arch/arm/include/asm/arch-meson/boot.h |  4 ++++
+ arch/arm/mach-meson/board-info.c       | 12 ++++++++++++
+ board/amlogic/w400/w400.c              |  5 +++++
+ 3 files changed, 21 insertions(+)
+
+diff --git a/arch/arm/include/asm/arch-meson/boot.h b/arch/arm/include/asm/arch-meson/boot.h
+index a90fe55081..c67d12d06c 100644
+--- a/arch/arm/include/asm/arch-meson/boot.h
++++ b/arch/arm/include/asm/arch-meson/boot.h
+@@ -7,6 +7,8 @@
+ #ifndef __MESON_BOOT_H__
+ #define __MESON_BOOT_H__
+ 
++#include <linux/types.h>
++
+ /* Boot device */
+ #define BOOT_DEVICE_RESERVED    0
+ #define BOOT_DEVICE_EMMC        1
+@@ -17,4 +19,6 @@
+ 
+ int meson_get_boot_device(void);
+ 
++int meson_get_soc_rev(char *buff, size_t buff_len);
++
+ #endif /* __MESON_BOOT_H__ */
+diff --git a/arch/arm/mach-meson/board-info.c b/arch/arm/mach-meson/board-info.c
+index e305d60dca..3c40d6cd27 100644
+--- a/arch/arm/mach-meson/board-info.c
++++ b/arch/arm/mach-meson/board-info.c
+@@ -183,3 +183,15 @@ int show_board_info(void)
+ 
+ 	return 0;
+ }
++
++int meson_get_soc_rev(char *buff, size_t buff_len)
++{
++	unsigned int socinfo;
++
++	socinfo = get_socinfo();
++	if (!socinfo)
++		return -1;
++
++	/* Write SoC info */
++	return snprintf(buff, buff_len, "%x", socinfo_to_minor(socinfo));
++}
+diff --git a/board/amlogic/w400/w400.c b/board/amlogic/w400/w400.c
+index d74aab899a..cb2e5edf5e 100644
+--- a/board/amlogic/w400/w400.c
++++ b/board/amlogic/w400/w400.c
+@@ -10,6 +10,7 @@
+ #include <asm/io.h>
+ #include <asm/arch/sm.h>
+ #include <asm/arch/eth.h>
++#include <asm/arch/boot.h>
+ 
+ #define EFUSE_MAC_OFFSET	20
+ #define EFUSE_MAC_SIZE		12
+@@ -20,6 +21,10 @@ int misc_init_r(void)
+ 	char efuse_mac_addr[EFUSE_MAC_SIZE], buff[3];
+ 	ssize_t len;
+ 
++	if (meson_get_soc_rev(buff, sizeof(buff))) {
++		env_set("board_rev", buff);
++	}
++
+ 	meson_eth_init(PHY_INTERFACE_MODE_RGMII, 0);
+ 
+ 	if (!eth_env_get_enetaddr("ethaddr", mac_addr)) {
+-- 
+2.28.0
+
