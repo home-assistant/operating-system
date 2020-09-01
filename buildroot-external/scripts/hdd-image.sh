@@ -201,27 +201,27 @@ function _create_disk_mbr() {
     local hdd_img="$(hassos_image_name img)"
     local hdd_count=${DISK_SIZE:-2}
     local disk_layout="${BINARIES_DIR}/disk.layout"
-    local boot_start=16384
+    local boot_start=$(size2sectors "8M")
 
-    local boot_size=$(($(size2sectors "$(get_boot_size)")+2))
-    local kernel0_size=$(($(size2sectors "$KERNEL_SIZE")+2))
-    local system0_size=$(($(size2sectors "$SYSTEM_SIZE")+2))
-    local kernel1_size=$(($(size2sectors "$KERNEL_SIZE")+2))
-    local system1_size=$(($(size2sectors "$SYSTEM_SIZE")+2))
-    local bootstate_size=$(($(size2sectors "$BOOTSTATE_SIZE")+2))
-    local overlay_size=$(($(size2sectors "$OVERLAY_SIZE")+2))
-    local data_size=$(($(size2sectors "$DATA_SIZE")+2))
-    local extended_size=$((kernel0_size+system0_size+kernel1_size+system1_size+bootstate_size+2))
+    local boot_size=$(size2sectors "$(get_boot_size)")
+    local kernel0_size=$(size2sectors "$KERNEL_SIZE")
+    local system0_size=$(size2sectors "$SYSTEM_SIZE")
+    local kernel1_size=$(size2sectors "$KERNEL_SIZE")
+    local system1_size=$(size2sectors "$SYSTEM_SIZE")
+    local bootstate_size=$(size2sectors "$BOOTSTATE_SIZE")
+    local overlay_size=$(size2sectors "$OVERLAY_SIZE")
+    local data_size=$(size2sectors "$DATA_SIZE")
+    local extended_size=$((kernel0_size+system0_size+kernel1_size+system1_size+bootstate_size+5*$(size2sectors "1M")))
 
     # we add one here for the extended header.
-    local extended_start=$((boot_start+boot_size+1))
-    local kernel0_start=$((extended_start+1))
-    local system0_start=$((kernel0_start+kernel0_size+1))
-    local kernel1_start=$((system0_start+system0_size+1))
-    local system1_start=$((kernel1_start+kernel1_size+1))
-    local bootstate_start=$((system1_start+system1_size+1))
-    local overlay_start=$((extended_start+extended_size+1))
-    local data_start=$((overlay_start+overlay_size+1))
+    local extended_start=$((boot_start+boot_size))
+    local kernel0_start=$((extended_start+$(size2sectors "1M")))
+    local system0_start=$((kernel0_start+kernel0_size+$(size2sectors "1M")))
+    local kernel1_start=$((system0_start+system0_size+$(size2sectors "1M")))
+    local system1_start=$((kernel1_start+kernel1_size+$(size2sectors "1M")))
+    local bootstate_start=$((system1_start+system1_size+$(size2sectors "1M")))
+    local overlay_start=$((extended_start+extended_size+$(size2sectors "1M")))
+    local data_start=$((overlay_start+overlay_size+$(size2sectors "1M")))
 
     local boot_offset=${boot_start}
     local kernel_offset=${kernel0_start}
