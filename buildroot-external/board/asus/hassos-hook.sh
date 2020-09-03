@@ -11,16 +11,11 @@ function hassos_pre_image() {
 
     echo "console=tty1" > "${BOOT_DATA}/cmdline.txt"
 
-    # Create boot binary
-    rm -f "${BINARIES_DIR}/idbloader.img"
-    mkimage -n rk3288 -T rksd -d "${BINARIES_DIR}/u-boot-tpl.bin" "${BINARIES_DIR}/idbloader.img"
-    cat "${BINARIES_DIR}/u-boot-spl.bin" >> "${BINARIES_DIR}/idbloader.img"
-
     # SPL
     create_spl_image
 
     dd if="${BINARIES_DIR}/idbloader.img" of="${SPL_IMG}" conv=notrunc bs=512 seek=64
-    dd if="${BINARIES_DIR}/u-boot-dtb.img" of="${SPL_IMG}" conv=notrunc bs=512 seek=12288
+    dd if="${BINARIES_DIR}/u-boot-dtb.img" of="${SPL_IMG}" conv=notrunc bs=512 seek=8192
 }
 
 

@@ -5,16 +5,13 @@
 | Device         | Release Date  | Support | Config   |
 |----------------|---------------|---------|----------|
 | Tinker RK3288  | April 2017    | yes     | [tinker](../../../buildroot-external/configs/tinker_defconfig) |
-| Tinker S RK3288| January 2018  | yes?    | [tinker](../../../buildroot-external/configs/tinker_defconfig)? |
+| Tinker S RK3288| January 2018  | yes     | [tinker](../../../buildroot-external/configs/tinker_defconfig) |
 | Tinker Edge T  | November 2019 | no?     |          |
 | Tinker Edge R  | November 2019 | no?     |          |
 
-(? is the Tinker S supported?)
-<!--
 ## eMMC
 
-eMMC support is provided transparently. Just flash the image to the eMMC by connecting your Tinker Board S to your PC via Micro-USB.
--->
+eMMC support is provided with the same image. Just flash the image to the eMMC by connecting your Tinker Board S to your PC via Micro-USB. Refer to the Tinkerboard documentation how-to flash using Micro-USB and UMS.
 
 ## Serial console
 
