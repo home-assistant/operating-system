@@ -7,7 +7,8 @@ function hassos_pre_image() {
 
     cp -t "${BOOT_DATA}" \
         "${BINARIES_DIR}/boot.scr" \
-        "${BINARIES_DIR}/rk3288-tinker.dtb"
+        "${BINARIES_DIR}/rk3288-tinker.dtb" \
+        "${BINARIES_DIR}/rk3288-tinker-s.dtb"
 
     echo "console=tty1" > "${BOOT_DATA}/cmdline.txt"
 

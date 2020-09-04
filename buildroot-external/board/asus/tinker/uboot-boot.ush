@@ -27,7 +27,11 @@ setenv bootargs_b "root=PARTUUID=a3ec664e-32ce-4665-95ea-7ae90ce9aa20 rootfstype
 fileenv mmc ${devnum}:1 ${ramdisk_addr_r} cmdline.txt cmdline
 
 # Load device tree
-fatload mmc ${devnum}:1 ${fdt_addr_r} rk3288-tinker.dtb
+if test "$devnum" = "0"; then
+  fatload mmc ${devnum}:1 ${fdt_addr_r} rk3288-tinker-s.dtb
+else
+  fatload mmc ${devnum}:1 ${fdt_addr_r} rk3288-tinker.dtb
+fi
 
 setenv bootargs
 for BOOT_SLOT in "${BOOT_ORDER}"; do
