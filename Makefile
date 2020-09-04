@@ -7,6 +7,13 @@ DEFCONFIG_DIR = $(BUILDROOT_EXTERNAL)/configs
 TARGETS := $(notdir $(patsubst %_defconfig,%,$(wildcard $(DEFCONFIG_DIR)/*_defconfig)))
 TARGETS_CONFIG := $(notdir $(patsubst %_defconfig,%-config,$(wildcard $(DEFCONFIG_DIR)/*_defconfig)))
 
+# Set O variable if not already done on the command line
+ifneq ("$(origin O)", "command line")
+O := $(BUILDROOT)/output
+else
+override O := $(BUILDROOT)/$(O)
+endif
+
 .NOTPARALLEL: $(TARGETS) $(TARGETS_CONFIG) all
 
 .PHONY: $(TARGETS) $(TARGETS_CONFIG) all clean help
@@ -23,7 +30,7 @@ $(TARGETS_CONFIG): %-config:
 $(TARGETS): %: $(RELEASE_DIR) %-config
 	@echo "build $@"
 	$(MAKE) -C $(BUILDROOT) BR2_EXTERNAL=$(BUILDROOT_EXTERNAL)
-	cp -f $(BUILDROOT)/output/images/hassos_* $(RELEASE_DIR)/
+	cp -f $(O)/images/hassos_* $(RELEASE_DIR)/
 
 	# Do not clean when building for one target
 ifneq ($(words $(filter $(TARGETS),$(MAKECMDGOALS))), 1)
