@@ -1,7 +1,8 @@
-From 2c2e60256f2cbb2fce50a6317f85b1500efd1a6c Mon Sep 17 00:00:00 2001
+From 2ae3821fd824560ef2db3c87cfbec985177911f6 Mon Sep 17 00:00:00 2001
+Message-Id: <2ae3821fd824560ef2db3c87cfbec985177911f6.1599249626.git.stefan@agner.ch>
 From: "Miouyouyou (Myy)" <myy@miouyouyou.fr>
 Date: Mon, 5 Nov 2018 22:03:26 +0100
-Subject: [PATCH] ARM: DTS: rk3288-tinker: Setup the Bluetooth UART pins
+Subject: [PATCH 1/2] ARM: DTS: rk3288-tinker: Setup the Bluetooth UART pins
 
 The most essential being the RTS pin, which is clearly needed to
 upload the initial configuration into the Realtek Bluetooth
@@ -39,24 +40,25 @@ echo 1 > value &&
 sleep 1
 
 Signed-off-by: Miouyouyou (Myy) <myy@miouyouyou.fr>
+[move change to rk3288-tinker.dtsi]
+Signed-off-by: Stefan Agner <stefan@agner.ch>
 ---
- arch/arm/boot/dts/rk3288-tinker.dts | 6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/arm/boot/dts/rk3288-tinker.dtsi | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm/boot/dts/rk3288-tinker.dts b/arch/arm/boot/dts/rk3288-tinker.dts
-index d4df13bed..b92e59c1e 100644
---- a/arch/arm/boot/dts/rk3288-tinker.dts
-+++ b/arch/arm/boot/dts/rk3288-tinker.dts
-@@ -73,3 +73,9 @@
- 	status = "okay";
- 	supports-sdio;
+diff --git a/arch/arm/boot/dts/rk3288-tinker.dtsi b/arch/arm/boot/dts/rk3288-tinker.dtsi
+index acfaa12ec239..284e7982925d 100644
+--- a/arch/arm/boot/dts/rk3288-tinker.dtsi
++++ b/arch/arm/boot/dts/rk3288-tinker.dtsi
+@@ -492,6 +492,8 @@ &tsadc {
  };
-+
-+&uart0 {
+ 
+ &uart0 {
 +	pinctrl-names = "default";
 +	pinctrl-0 = <&uart0_xfer>, <&uart0_cts>, <&uart0_rts>;
-+};
-+
+ 	status = "okay";
+ };
+ 
 -- 
-2.16.4
+2.28.0
 
