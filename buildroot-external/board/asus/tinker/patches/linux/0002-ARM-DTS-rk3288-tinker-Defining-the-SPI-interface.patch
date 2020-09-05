@@ -1,0 +1,55 @@
+From fc25c993bf2feb6e66d55bf03eb725ec688e47eb Mon Sep 17 00:00:00 2001
+Message-Id: <fc25c993bf2feb6e66d55bf03eb725ec688e47eb.1599250914.git.stefan@agner.ch>
+In-Reply-To: <2ae3821fd824560ef2db3c87cfbec985177911f6.1599250914.git.stefan@agner.ch>
+References: <2ae3821fd824560ef2db3c87cfbec985177911f6.1599250914.git.stefan@agner.ch>
+From: "Miouyouyou (Myy)" <myy@miouyouyou.fr>
+Date: Mon, 5 Nov 2018 22:15:14 +0100
+Subject: [PATCH 2/3] ARM: DTS: rk3288-tinker: Defining the SPI interface
+
+Taken from, and tested by @TonyMac32 .
+
+Well, the original one was tested by him but I had to adapt the
+registers definitions to the new 64-bits LPAE-compliant syntax.
+
+Therefore that *might* break, along with a few other patches.
+
+Signed-off-by: Miouyouyou (Myy) <myy@miouyouyou.fr>
+[move change to rk3288-tinker.dtsi]
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+---
+ arch/arm/boot/dts/rk3288-tinker.dtsi | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
+
+diff --git a/arch/arm/boot/dts/rk3288-tinker.dtsi b/arch/arm/boot/dts/rk3288-tinker.dtsi
+index 284e7982925d..d6cc66ab5bb1 100644
+--- a/arch/arm/boot/dts/rk3288-tinker.dtsi
++++ b/arch/arm/boot/dts/rk3288-tinker.dtsi
+@@ -485,6 +485,25 @@ &sdio0 {
+ 	status = "okay";
+ };
+ 
++&spi2 {
++	max-freq = <50000000>;
++	status = "okay";
++
++	spidev@0 {
++		compatible = "rockchip,spi_tinker";
++		reg = <0x0 0>;
++		spi-max-frequency = <50000000>;
++		spi-cpha = <1>;
++	};
++
++	spidev@1 {
++		compatible = "rockchip,spi_tinker";
++		reg = <0x1>;
++		spi-max-frequency = <50000000>;
++		spi-cpha = <1>;
++	};
++};
++
+ &tsadc {
+ 	rockchip,hw-tshut-mode = <1>; /* tshut mode 0:CRU 1:GPIO */
+ 	rockchip,hw-tshut-polarity = <1>; /* tshut polarity 0:LOW 1:HIGH */
+-- 
+2.28.0
+
