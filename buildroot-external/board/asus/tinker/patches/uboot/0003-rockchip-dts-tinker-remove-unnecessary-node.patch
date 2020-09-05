@@ -1,0 +1,34 @@
+From 2af46619bb66af62bbfd2a880fe57d6dd0ec43fe Mon Sep 17 00:00:00 2001
+Message-Id: <2af46619bb66af62bbfd2a880fe57d6dd0ec43fe.1599227174.git.stefan@agner.ch>
+In-Reply-To: <74e929bc4713b76f58a8df82019d74078b4b8d0c.1599227174.git.stefan@agner.ch>
+References: <74e929bc4713b76f58a8df82019d74078b4b8d0c.1599227174.git.stefan@agner.ch>
+From: Stefan Agner <stefan@agner.ch>
+Date: Fri, 4 Sep 2020 15:44:38 +0200
+Subject: [PATCH 3/3] rockchip: dts: tinker: remove unnecessary node
+
+The property reg-shift with the same value is present in the base
+device tree already. Remove unnecessary node from rk3288-tinker.dts.
+
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+---
+ arch/arm/dts/rk3288-tinker.dts | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/arch/arm/dts/rk3288-tinker.dts b/arch/arm/dts/rk3288-tinker.dts
+index 338670123b..8b1848c310 100644
+--- a/arch/arm/dts/rk3288-tinker.dts
++++ b/arch/arm/dts/rk3288-tinker.dts
+@@ -27,10 +27,6 @@
+ 	status = "okay";
+ };
+ 
+-&uart2 {
+-	reg-shift = <2>;
+-};
+-
+ &usb_host1 {
+ 	vbus-supply = <&vcc5v0_host>;
+ 	status = "okay";
+-- 
+2.28.0
+

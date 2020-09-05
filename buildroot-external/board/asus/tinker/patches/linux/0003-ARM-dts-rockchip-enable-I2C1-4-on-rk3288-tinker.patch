@@ -1,0 +1,41 @@
+From 3a9d71847ae869ffdb2b0818aa86a36d57d96331 Mon Sep 17 00:00:00 2001
+Message-Id: <3a9d71847ae869ffdb2b0818aa86a36d57d96331.1599250914.git.stefan@agner.ch>
+In-Reply-To: <2ae3821fd824560ef2db3c87cfbec985177911f6.1599250914.git.stefan@agner.ch>
+References: <2ae3821fd824560ef2db3c87cfbec985177911f6.1599250914.git.stefan@agner.ch>
+From: Stefan Agner <stefan@agner.ch>
+Date: Fri, 4 Sep 2020 21:57:55 +0200
+Subject: [PATCH 3/3] ARM: dts: rockchip: enable I2C1/4 on rk3288-tinker
+
+Enable I2C devices which are accessible via 40-pin header.
+
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+---
+ arch/arm/boot/dts/rk3288-tinker.dtsi | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/arch/arm/boot/dts/rk3288-tinker.dtsi b/arch/arm/boot/dts/rk3288-tinker.dtsi
+index d6cc66ab5bb1..7af5818ac77c 100644
+--- a/arch/arm/boot/dts/rk3288-tinker.dtsi
++++ b/arch/arm/boot/dts/rk3288-tinker.dtsi
+@@ -344,10 +344,18 @@ regulator-state-mem {
+ 	};
+ };
+ 
++&i2c1 {
++	status = "okay";
++};
++
+ &i2c2 {
+ 	status = "okay";
+ };
+ 
++&i2c4 {
++	status = "okay";
++};
++
+ &i2c5 {
+ 	status = "okay";
+ };
+-- 
+2.28.0
+
