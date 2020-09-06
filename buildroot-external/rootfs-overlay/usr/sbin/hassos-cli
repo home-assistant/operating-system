@@ -14,7 +14,7 @@ if [ "$(docker ps -q -f name=hassio_cli)" ]; then
         /bin/ash -l
     fi
 else
-    echo "[ERROR] Somethings going wrong! Jump into emergency console..."
+    echo "[WARN] Home Assistant CLI is not running! Jump into emergency console..."
     /bin/ash -l
 fi
 
