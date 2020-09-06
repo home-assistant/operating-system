@@ -1,6 +1,6 @@
 # Network
 
-HassOS uses NetworkManager to control the host network.
+Home Assistant Operating System uses NetworkManager to control the host network.
 
 ## Configure network
 

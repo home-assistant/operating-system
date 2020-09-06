@@ -1,0 +1,63 @@
+From fb41bcaf0e61e78bc40addb1312040a2bc6a69b7 Mon Sep 17 00:00:00 2001
+Message-Id: <fb41bcaf0e61e78bc40addb1312040a2bc6a69b7.1598875349.git.stefan@agner.ch>
+In-Reply-To: <c12338d22649e46aed12ebe60d897112f045fda9.1598875349.git.stefan@agner.ch>
+References: <c12338d22649e46aed12ebe60d897112f045fda9.1598875349.git.stefan@agner.ch>
+From: Stefan Agner <stefan@agner.ch>
+Date: Mon, 31 Aug 2020 13:40:18 +0200
+Subject: [PATCH 2/4] ARM: meson: isolate loading of socinfo
+
+Move loading of socinfo into a separate function so the value can be
+reused later.
+
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+---
+ arch/arm/mach-meson/board-info.c | 20 ++++++++++++++++++--
+ 1 file changed, 18 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm/mach-meson/board-info.c b/arch/arm/mach-meson/board-info.c
+index 0d3b40a249..e305d60dca 100644
+--- a/arch/arm/mach-meson/board-info.c
++++ b/arch/arm/mach-meson/board-info.c
+@@ -123,12 +123,16 @@ static void print_board_model(void)
+ 	printf("Model: %s\n", model ? model : "Unknown");
+ }
+ 
+-int show_board_info(void)
++static unsigned int get_socinfo(void)
+ {
+ 	struct regmap *regmap;
+ 	int nodeoffset, ret;
+ 	ofnode node;
+-	unsigned int socinfo;
++	static unsigned int socinfo = 0;
++
++	/* Empty socinfo is invalid, so !socinfo is successfully initialized */
++	if (socinfo)
++		return socinfo;
+ 
+ 	/* find the offset of compatible node */
+ 	nodeoffset = fdt_node_offset_by_compatible(gd->fdt_blob, -1,
+@@ -155,8 +159,20 @@ int show_board_info(void)
+ 		return 0;
+ 	}
+ 
++	return socinfo;
++}
++
++int show_board_info(void)
++{
++	unsigned int socinfo;
++
+ 	/* print board information */
+ 	print_board_model();
++
++	socinfo = get_socinfo();
++	if (!socinfo)
++		return 0;
++
+ 	printf("SoC:   Amlogic Meson %s (%s) Revision %x:%x (%x:%x)\n",
+ 	       socinfo_to_soc_id(socinfo),
+ 	       socinfo_to_package_id(socinfo),
+-- 
+2.28.0
+
