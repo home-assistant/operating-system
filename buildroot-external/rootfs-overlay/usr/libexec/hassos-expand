@@ -11,7 +11,7 @@ PART_NUM="${DEVICE_CHILD: -1}"
 
 # Need resize
 UNUSED=$(sfdisk -Fq "${DEVICE_ROOT}" | cut -d " " -f 3 | tail -1)
-if [ -z "${UNUSED}" ] || [ "${UNUSED}" -le "2048" ]; then
+if [ -z "${UNUSED}" ] || [ "${UNUSED}" -le "16384" ]; then
     echo "[INFO] No resize of data partition needed"
     exit 0
 fi
