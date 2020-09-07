@@ -268,7 +268,7 @@ function _create_disk_mbr() {
 function _fix_disk_hyprid() {
     local hdd_img="$(hassos_image_name img)"
 
-    sgdisk -t 1:"EBD0A0A2-B9E5-4433-87C0-68B6B72699C7" "${hdd_img}"
+    sgdisk -t 1:"E3C9E316-0B5C-4DB8-817D-F92DF00215AE" "${hdd_img}"
     dd if="${BR2_EXTERNAL_HASSOS_PATH}/bootloader/mbr.img" of="${hdd_img}" conv=notrunc bs=512 count=1
 }
 
@@ -277,7 +277,7 @@ function _fix_disk_spl_gpt() {
     local hdd_img="$(hassos_image_name img)"
     local spl_img="$(path_spl_img)"
 
-    sgdisk -t 1:"EBD0A0A2-B9E5-4433-87C0-68B6B72699C7" "${hdd_img}"
+    sgdisk -t 1:"E3C9E316-0B5C-4DB8-817D-F92DF00215AE" "${hdd_img}"
     dd if="${BR2_EXTERNAL_HASSOS_PATH}/bootloader/mbr-spl.img" of="${hdd_img}" conv=notrunc bs=512 count=1
     dd if="${spl_img}" of="${hdd_img}" conv=notrunc bs=512 seek=2 skip=2
 }
