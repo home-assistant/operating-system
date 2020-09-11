@@ -3,6 +3,12 @@
 # Run logging cli
 # ==============================================================================
 
+# Setup terminal size on serial console
+if [ "${TERM}" = "vt220" ] || [ "${TERM}" = "vt102" ] || \
+   [ "${TERM}" = "vt100" ]; then
+	resize
+fi
+
 # Run CLI container
 if [ "$(docker ps -q -f name=hassio_cli)" ]; then
     docker container exec \
