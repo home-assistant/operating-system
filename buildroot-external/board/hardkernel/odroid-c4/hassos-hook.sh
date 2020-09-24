@@ -14,11 +14,11 @@ function hassos_pre_image() {
     # SPL
     create_spl_image
 
-	dd if="${UBOOT_SM1}" of="${SPL_IMG}" conv=notrunc bs=512 seek=1
+	dd if="${UBOOT_SM1}" of="${SPL_IMG}" conv=notrunc bs=512 skip=1 seek=1
+	dd if="${UBOOT_SM1}" of="${SPL_IMG}" conv=notrunc bs=1 count=444
 }
 
 
 function hassos_post_image() {
     convert_disk_image_gz
 }
-
