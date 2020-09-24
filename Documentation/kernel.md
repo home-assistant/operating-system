@@ -5,7 +5,7 @@ Default Kernel tree: 5.4
 
 | Board | Version |
 |-------|---------|
-| Open Virtual Appliance | 5.4.56 |
+| Open Virtual Appliance | 5.4.63 |
 | Raspberry Pi | 4.19.127 |
 | Raspberry Pi 0-W | 4.19.127 |
 | Raspberry Pi 2 | 4.19.127 |
