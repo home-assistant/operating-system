@@ -6,8 +6,6 @@ Odroid-C4 support is based heavily on the Odroid-C2 and N2 configurations. Given
 
 Please also refer to the documentation pages for the [Odroid-C2](./odroid-c2.md) and [Odroid-N2](./odroid-n2.md), as some of that information may apply to the C4 as well.
 
-<<<<<<< Updated upstream
-=======
 ## Known issues
 
 1. Boot hangs in various places
@@ -18,7 +16,6 @@ Please also refer to the documentation pages for the [Odroid-C2](./odroid-c2.md)
 1. Boot from eMMC not working (U-Boot comes up but does not load HassOS)
 1. Serial terminal login is not possible due to `rlwrap: error: My terminal reports width=0 (is it emacs?)  I can't handle this, sorry!` and infinite loop
 
->>>>>>> Stashed changes
 ## GPIO
 
 Refer to [the odroid wiki](https://wiki.odroid.com/odroid-c4/hardware/expansion_connectors).
