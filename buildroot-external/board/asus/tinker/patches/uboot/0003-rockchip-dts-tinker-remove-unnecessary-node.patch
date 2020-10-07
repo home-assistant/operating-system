@@ -1,10 +1,10 @@
-From 2af46619bb66af62bbfd2a880fe57d6dd0ec43fe Mon Sep 17 00:00:00 2001
-Message-Id: <2af46619bb66af62bbfd2a880fe57d6dd0ec43fe.1599227174.git.stefan@agner.ch>
-In-Reply-To: <74e929bc4713b76f58a8df82019d74078b4b8d0c.1599227174.git.stefan@agner.ch>
-References: <74e929bc4713b76f58a8df82019d74078b4b8d0c.1599227174.git.stefan@agner.ch>
+From 07a02625ba95f68ba670b4c1cc98567acb390195 Mon Sep 17 00:00:00 2001
+Message-Id: <07a02625ba95f68ba670b4c1cc98567acb390195.1602103621.git.stefan@agner.ch>
+In-Reply-To: <cd1aac268ff58eea28153bbabfb33abc2df52b1f.1602103621.git.stefan@agner.ch>
+References: <cd1aac268ff58eea28153bbabfb33abc2df52b1f.1602103621.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Fri, 4 Sep 2020 15:44:38 +0200
-Subject: [PATCH 3/3] rockchip: dts: tinker: remove unnecessary node
+Subject: [PATCH 3/4] rockchip: dts: tinker: remove unnecessary node
 
 The property reg-shift with the same value is present in the base
 device tree already. Remove unnecessary node from rk3288-tinker.dts.
