@@ -1,10 +1,10 @@
-From 15ce807d420324bc209772b843d4004619e0cdaf Mon Sep 17 00:00:00 2001
-Message-Id: <15ce807d420324bc209772b843d4004619e0cdaf.1598875349.git.stefan@agner.ch>
-In-Reply-To: <c12338d22649e46aed12ebe60d897112f045fda9.1598875349.git.stefan@agner.ch>
-References: <c12338d22649e46aed12ebe60d897112f045fda9.1598875349.git.stefan@agner.ch>
+From bb86524d84909ffe5d1d6ff3afe41d26396ba561 Mon Sep 17 00:00:00 2001
+Message-Id: <bb86524d84909ffe5d1d6ff3afe41d26396ba561.1602104035.git.stefan@agner.ch>
+In-Reply-To: <f40f83d023b2e1dd82e751aee35c1f0d386b8b4f.1602104035.git.stefan@agner.ch>
+References: <f40f83d023b2e1dd82e751aee35c1f0d386b8b4f.1602104035.git.stefan@agner.ch>
 From: Pascal Vizeli <pvizeli@syshack.ch>
 Date: Tue, 4 Aug 2020 13:50:57 +0000
-Subject: [PATCH 3/4] meson: Add board_rev to env
+Subject: [PATCH 3/3] meson: Add board_rev to env
 
 Signed-off-by: Pascal Vizeli <pvizeli@syshack.ch>
 Signed-off-by: Stefan Agner <stefan@agner.ch>
@@ -35,10 +35,10 @@ index a90fe55081..c67d12d06c 100644
 +
  #endif /* __MESON_BOOT_H__ */
 diff --git a/arch/arm/mach-meson/board-info.c b/arch/arm/mach-meson/board-info.c
-index e305d60dca..3c40d6cd27 100644
+index cfcd5bbd3b..3ea7eb7251 100644
 --- a/arch/arm/mach-meson/board-info.c
 +++ b/arch/arm/mach-meson/board-info.c
-@@ -183,3 +183,15 @@ int show_board_info(void)
+@@ -186,3 +186,15 @@ int show_board_info(void)
  
  	return 0;
  }

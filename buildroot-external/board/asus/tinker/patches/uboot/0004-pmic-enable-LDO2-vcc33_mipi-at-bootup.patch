@@ -1,7 +1,10 @@
-From 4147d34a63f74f78a8ff9a3dcf2f4c9cd8d6be3a Mon Sep 17 00:00:00 2001
+From 549d98c233b2a8b7cd4b0d4eb9652ad60a8a0f75 Mon Sep 17 00:00:00 2001
+Message-Id: <549d98c233b2a8b7cd4b0d4eb9652ad60a8a0f75.1602103621.git.stefan@agner.ch>
+In-Reply-To: <cd1aac268ff58eea28153bbabfb33abc2df52b1f.1602103621.git.stefan@agner.ch>
+References: <cd1aac268ff58eea28153bbabfb33abc2df52b1f.1602103621.git.stefan@agner.ch>
 From: Pascal Vizeli <pvizeli@syshack.ch>
 Date: Fri, 24 Apr 2020 11:37:55 +0000
-Subject: [PATCH 1/1] pmic: enable LDO2 vcc33_mipi at bootup
+Subject: [PATCH 4/4] pmic: enable LDO2 vcc33_mipi at bootup
 
 Signed-off-by: Pascal Vizeli <pvizeli@syshack.ch>
 ---
@@ -9,10 +12,10 @@ Signed-off-by: Pascal Vizeli <pvizeli@syshack.ch>
  1 file changed, 37 insertions(+)
 
 diff --git a/board/rockchip/tinker_rk3288/tinker-rk3288.c b/board/rockchip/tinker_rk3288/tinker-rk3288.c
-index 7af39e10cd..f12409933d 100644
+index f85209c649..6fa1bb0c66 100644
 --- a/board/rockchip/tinker_rk3288/tinker-rk3288.c
 +++ b/board/rockchip/tinker_rk3288/tinker-rk3288.c
-@@ -12,6 +12,7 @@
+@@ -13,6 +13,7 @@
  #include <netdev.h>
  #include <asm/arch-rockchip/bootrom.h>
  #include <asm/io.h>
@@ -20,7 +23,7 @@ index 7af39e10cd..f12409933d 100644
  
  static int get_ethaddr_from_eeprom(u8 *addr)
  {
-@@ -47,3 +48,39 @@ int mmc_get_env_dev(void)
+@@ -48,3 +49,39 @@ int mmc_get_env_dev(void)
  
  	return 1;
  }
@@ -61,5 +64,5 @@ index 7af39e10cd..f12409933d 100644
 +}
 +#endif
 -- 
-2.17.1
+2.28.0
 
