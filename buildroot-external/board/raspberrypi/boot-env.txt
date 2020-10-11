@@ -9,6 +9,9 @@ kernel=u-boot.bin
 # uncomment for aarch64 bit support
 #arm_64bit=1
 
+# uncomment to enable primary UART console
+#enable_uart=1
+
 # uncomment if you get no picture on HDMI for a default "safe" mode
 #hdmi_safe=1
 
@@ -46,8 +49,8 @@ kernel=u-boot.bin
 # uncomment for composite PAL
 #sdtv_mode=2
 
-#uncomment to overclock the arm. 700 MHz is the default.
-#arm_freq=800
+# Uncomment to disable continous SD-card poll (for USB SSD)
+#dtparam=sd_poll_once=on
 
 # Uncomment some or all of these to enable the optional hardware interfaces
 #dtparam=i2c_arm=on

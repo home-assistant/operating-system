@@ -26,12 +26,14 @@ DNS="homeassistant/${ARCH}-hassio-dns"
 AUDIO="homeassistant/${ARCH}-hassio-audio"
 CLI="homeassistant/${ARCH}-hassio-cli"
 MULTICAST="homeassistant/${ARCH}-hassio-multicast"
+OBSERVER="homeassistant/${ARCH}-hassio-observer"
 
 SUPERVISOR_VERSION=$(curl -s ${VERSION_URL} | jq -e -r '.supervisor')
 DNS_VERSION=$(curl -s ${VERSION_URL} | jq -e -r '.dns')
 CLI_VERSION=$(curl -s ${VERSION_URL} | jq -e -r '.cli')
 AUDIO_VERSION=$(curl -s ${VERSION_URL} | jq -e -r '.audio')
 MULTICAST_VERSION=$(curl -s ${VERSION_URL} | jq -e -r '.multicast')
+OBSERVER_VERSION=$(curl -s ${VERSION_URL} | jq -e -r '.observer')
 
 # Make image
 dd if=/dev/zero of=${DATA_IMG} bs=1G count=1
@@ -72,6 +74,7 @@ docker pull "${CLI}:${CLI_VERSION}"
 docker pull "${DNS}:${DNS_VERSION}"
 docker pull "${AUDIO}:${AUDIO_VERSION}"
 docker pull "${MULTICAST}:${MULTICAST_VERSION}"
+docker pull "${OBSERVER}:${OBSERVER_VERSION}"
 
 # Setup AppArmor
 mkdir -p "/mnt/data/supervisor/apparmor"

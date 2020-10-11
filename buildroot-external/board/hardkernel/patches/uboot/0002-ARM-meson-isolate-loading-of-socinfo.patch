@@ -1,10 +1,10 @@
-From fb41bcaf0e61e78bc40addb1312040a2bc6a69b7 Mon Sep 17 00:00:00 2001
-Message-Id: <fb41bcaf0e61e78bc40addb1312040a2bc6a69b7.1598875349.git.stefan@agner.ch>
-In-Reply-To: <c12338d22649e46aed12ebe60d897112f045fda9.1598875349.git.stefan@agner.ch>
-References: <c12338d22649e46aed12ebe60d897112f045fda9.1598875349.git.stefan@agner.ch>
+From c67fb4dbb332ed38bc7fbee13079e5ea11390f4e Mon Sep 17 00:00:00 2001
+Message-Id: <c67fb4dbb332ed38bc7fbee13079e5ea11390f4e.1602104035.git.stefan@agner.ch>
+In-Reply-To: <f40f83d023b2e1dd82e751aee35c1f0d386b8b4f.1602104035.git.stefan@agner.ch>
+References: <f40f83d023b2e1dd82e751aee35c1f0d386b8b4f.1602104035.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Mon, 31 Aug 2020 13:40:18 +0200
-Subject: [PATCH 2/4] ARM: meson: isolate loading of socinfo
+Subject: [PATCH 2/3] ARM: meson: isolate loading of socinfo
 
 Move loading of socinfo into a separate function so the value can be
 reused later.
@@ -15,10 +15,10 @@ Signed-off-by: Stefan Agner <stefan@agner.ch>
  1 file changed, 18 insertions(+), 2 deletions(-)
 
 diff --git a/arch/arm/mach-meson/board-info.c b/arch/arm/mach-meson/board-info.c
-index 0d3b40a249..e305d60dca 100644
+index 3abb27e03b..cfcd5bbd3b 100644
 --- a/arch/arm/mach-meson/board-info.c
 +++ b/arch/arm/mach-meson/board-info.c
-@@ -123,12 +123,16 @@ static void print_board_model(void)
+@@ -126,12 +126,16 @@ static void print_board_model(void)
  	printf("Model: %s\n", model ? model : "Unknown");
  }
  
@@ -37,7 +37,7 @@ index 0d3b40a249..e305d60dca 100644
  
  	/* find the offset of compatible node */
  	nodeoffset = fdt_node_offset_by_compatible(gd->fdt_blob, -1,
-@@ -155,8 +159,20 @@ int show_board_info(void)
+@@ -158,8 +162,20 @@ int show_board_info(void)
  		return 0;
  	}
  

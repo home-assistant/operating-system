@@ -1,7 +1,8 @@
-From 0f45c3f2f46b62f767ef225b258f927ad88ca360 Mon Sep 17 00:00:00 2001
+From a04331a6ba7334282836bbaa76e979c4e6be3900 Mon Sep 17 00:00:00 2001
+Message-Id: <a04331a6ba7334282836bbaa76e979c4e6be3900.1602102849.git.stefan@agner.ch>
 From: Pascal Vizeli <pvizeli@syshack.ch>
 Date: Tue, 10 Dec 2019 09:48:46 +0000
-Subject: [PATCH 1/1] rpi: Use CONFIG_OF_BOARD instead of CONFIG_EMBED
+Subject: [PATCH 1/2] rpi: Use CONFIG_OF_BOARD instead of CONFIG_EMBED
 
 Signed-off-by: Pascal Vizeli <pvizeli@syshack.ch>
 ---
@@ -13,7 +14,7 @@ Signed-off-by: Pascal Vizeli <pvizeli@syshack.ch>
  5 files changed, 5 insertions(+), 5 deletions(-)
 
 diff --git a/configs/rpi_0_w_defconfig b/configs/rpi_0_w_defconfig
-index fe5a7763a6..ed7f9381e9 100644
+index bba5e12b12..0241f4c6d3 100644
 --- a/configs/rpi_0_w_defconfig
 +++ b/configs/rpi_0_w_defconfig
 @@ -17,7 +17,7 @@ CONFIG_CMD_GPIO=y
@@ -22,11 +23,11 @@ index fe5a7763a6..ed7f9381e9 100644
  CONFIG_CMD_FS_UUID=y
 -CONFIG_OF_EMBED=y
 +CONFIG_OF_BOARD=y
- CONFIG_DEFAULT_DEVICE_TREE="bcm2835-rpi-zero-w"
- CONFIG_ENV_FAT_INTERFACE="mmc"
  CONFIG_ENV_FAT_DEVICE_AND_PART="0:1"
+ CONFIG_SYS_RELOC_GD_ENV_ADDR=y
+ CONFIG_ENV_VARS_UBOOT_RUNTIME_CONFIG=y
 diff --git a/configs/rpi_2_defconfig b/configs/rpi_2_defconfig
-index bf331c0ad0..52e3c3b234 100644
+index 1c2bbb29ce..9573e475f4 100644
 --- a/configs/rpi_2_defconfig
 +++ b/configs/rpi_2_defconfig
 @@ -17,7 +17,7 @@ CONFIG_CMD_GPIO=y
@@ -35,11 +36,11 @@ index bf331c0ad0..52e3c3b234 100644
  CONFIG_CMD_FS_UUID=y
 -CONFIG_OF_EMBED=y
 +CONFIG_OF_BOARD=y
- CONFIG_DEFAULT_DEVICE_TREE="bcm2836-rpi-2-b"
- CONFIG_ENV_FAT_INTERFACE="mmc"
  CONFIG_ENV_FAT_DEVICE_AND_PART="0:1"
+ CONFIG_SYS_RELOC_GD_ENV_ADDR=y
+ CONFIG_ENV_VARS_UBOOT_RUNTIME_CONFIG=y
 diff --git a/configs/rpi_3_32b_defconfig b/configs/rpi_3_32b_defconfig
-index c2417a0ec9..191962f0f7 100644
+index b8a3d17f43..252df994e6 100644
 --- a/configs/rpi_3_32b_defconfig
 +++ b/configs/rpi_3_32b_defconfig
 @@ -18,7 +18,7 @@ CONFIG_CMD_GPIO=y
@@ -48,11 +49,11 @@ index c2417a0ec9..191962f0f7 100644
  CONFIG_CMD_FS_UUID=y
 -CONFIG_OF_EMBED=y
 +CONFIG_OF_BOARD=y
- CONFIG_DEFAULT_DEVICE_TREE="bcm2837-rpi-3-b"
- CONFIG_ENV_FAT_INTERFACE="mmc"
  CONFIG_ENV_FAT_DEVICE_AND_PART="0:1"
+ CONFIG_SYS_RELOC_GD_ENV_ADDR=y
+ CONFIG_ENV_VARS_UBOOT_RUNTIME_CONFIG=y
 diff --git a/configs/rpi_3_defconfig b/configs/rpi_3_defconfig
-index 4fa682539c..03a2356d3d 100644
+index 9b281a4f15..1e9ee6122e 100644
 --- a/configs/rpi_3_defconfig
 +++ b/configs/rpi_3_defconfig
 @@ -18,7 +18,7 @@ CONFIG_CMD_GPIO=y
@@ -61,11 +62,11 @@ index 4fa682539c..03a2356d3d 100644
  CONFIG_CMD_FS_UUID=y
 -CONFIG_OF_EMBED=y
 +CONFIG_OF_BOARD=y
- CONFIG_DEFAULT_DEVICE_TREE="bcm2837-rpi-3-b"
- CONFIG_ENV_FAT_INTERFACE="mmc"
  CONFIG_ENV_FAT_DEVICE_AND_PART="0:1"
+ CONFIG_SYS_RELOC_GD_ENV_ADDR=y
+ CONFIG_ENV_VARS_UBOOT_RUNTIME_CONFIG=y
 diff --git a/configs/rpi_defconfig b/configs/rpi_defconfig
-index 2c04b3334e..bf00d8b669 100644
+index b5ad53c37b..223fc03275 100644
 --- a/configs/rpi_defconfig
 +++ b/configs/rpi_defconfig
 @@ -17,7 +17,7 @@ CONFIG_CMD_GPIO=y
@@ -74,8 +75,9 @@ index 2c04b3334e..bf00d8b669 100644
  CONFIG_CMD_FS_UUID=y
 -CONFIG_OF_EMBED=y
 +CONFIG_OF_BOARD=y
- CONFIG_DEFAULT_DEVICE_TREE="bcm2835-rpi-b"
- CONFIG_ENV_FAT_INTERFACE="mmc"
  CONFIG_ENV_FAT_DEVICE_AND_PART="0:1"
+ CONFIG_SYS_RELOC_GD_ENV_ADDR=y
+ CONFIG_ENV_VARS_UBOOT_RUNTIME_CONFIG=y
 -- 
-2.17.1
+2.28.0
+

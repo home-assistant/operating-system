@@ -1,8 +1,8 @@
-From 74e929bc4713b76f58a8df82019d74078b4b8d0c Mon Sep 17 00:00:00 2001
-Message-Id: <74e929bc4713b76f58a8df82019d74078b4b8d0c.1599227174.git.stefan@agner.ch>
+From cd1aac268ff58eea28153bbabfb33abc2df52b1f Mon Sep 17 00:00:00 2001
+Message-Id: <cd1aac268ff58eea28153bbabfb33abc2df52b1f.1602103621.git.stefan@agner.ch>
 From: Pascal Vizeli <pvizeli@syshack.ch>
 Date: Fri, 24 Apr 2020 12:41:50 +0000
-Subject: [PATCH 1/3] SPL: modify load address of U-Boot
+Subject: [PATCH 1/4] SPL: modify load address of U-Boot
 
 Default load address of U-Boot is at sector 16384, which is where HAOS
 has its first partition. Use 0x2000 (8192) instead.
@@ -15,16 +15,16 @@ Signed-off-by: Stefan Agner <stefan@agner.ch>
  2 files changed, 2 insertions(+)
 
 diff --git a/configs/tinker-rk3288_defconfig b/configs/tinker-rk3288_defconfig
-index 83c3450839..574a711a32 100644
+index d459c7f50d..e0682ed479 100644
 --- a/configs/tinker-rk3288_defconfig
 +++ b/configs/tinker-rk3288_defconfig
-@@ -84,3 +84,4 @@ CONFIG_USB_ETHER_ASIX=y
- CONFIG_USB_ETHER_SMSC95XX=y
+@@ -88,3 +88,4 @@ CONFIG_VIDEO_ROCKCHIP=y
+ CONFIG_DISPLAY_ROCKCHIP_HDMI=y
  CONFIG_CMD_DHRYSTONE=y
  CONFIG_ERRNO_STR=y
 +CONFIG_SYS_MMCSD_RAW_MODE_U_BOOT_SECTOR=0x2000
 diff --git a/configs/tinker-s-rk3288_defconfig b/configs/tinker-s-rk3288_defconfig
-index 4925b14821..df047785ea 100644
+index 68411d863b..1a285baf73 100644
 --- a/configs/tinker-s-rk3288_defconfig
 +++ b/configs/tinker-s-rk3288_defconfig
 @@ -90,3 +90,4 @@ CONFIG_DISPLAY_ROCKCHIP_HDMI=y
