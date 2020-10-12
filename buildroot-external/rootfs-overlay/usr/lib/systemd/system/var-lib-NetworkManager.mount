@@ -1,7 +1,7 @@
 [Unit]
 Description=NetworkManager persistent data
-Requires=mnt-data.mount
-After=mnt-data.mount
+Requires=mnt-overlay.mount
+After=mnt-overlay.mount hassos-overlay.service
 Before=NetworkManager.service
 
 [Mount]
