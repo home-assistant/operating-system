@@ -6,7 +6,8 @@ After=docker.service rauc.service dbus.service network-online.target
 RequiresMountsFor=/mnt/data /mnt/boot /mnt/overlay
 StartLimitIntervalSec=60
 StartLimitBurst=5
-ConditionPathExists=/run/dbus/system_bus_socket /run/docker.socket
+ConditionPathExists=/run/dbus/system_bus_socket
+ConditionPathExists=/run/docker.sock
 
 [Service]
 Type=simple

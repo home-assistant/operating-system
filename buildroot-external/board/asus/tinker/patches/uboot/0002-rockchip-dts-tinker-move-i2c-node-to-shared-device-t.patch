@@ -1,10 +1,10 @@
-From 683783c7253981c0d4c3b772aeb1f9bda833e2be Mon Sep 17 00:00:00 2001
-Message-Id: <683783c7253981c0d4c3b772aeb1f9bda833e2be.1599227174.git.stefan@agner.ch>
-In-Reply-To: <74e929bc4713b76f58a8df82019d74078b4b8d0c.1599227174.git.stefan@agner.ch>
-References: <74e929bc4713b76f58a8df82019d74078b4b8d0c.1599227174.git.stefan@agner.ch>
+From d49ad12ee89d0d64f1f594bcad7de0e4f9631add Mon Sep 17 00:00:00 2001
+Message-Id: <d49ad12ee89d0d64f1f594bcad7de0e4f9631add.1602103621.git.stefan@agner.ch>
+In-Reply-To: <cd1aac268ff58eea28153bbabfb33abc2df52b1f.1602103621.git.stefan@agner.ch>
+References: <cd1aac268ff58eea28153bbabfb33abc2df52b1f.1602103621.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Fri, 4 Sep 2020 15:40:55 +0200
-Subject: [PATCH 2/3] rockchip: dts: tinker: move i2c node to shared device
+Subject: [PATCH 2/4] rockchip: dts: tinker: move i2c node to shared device
  tree
 
 The I2C EEPROM is present on Tinker Board S as well. Move the i2c node
