@@ -9,7 +9,6 @@ Please also refer to the documentation pages for the [Odroid-C2](./odroid-c2.md)
 ## Known issues
 
 1. Boot from eMMC not working (U-Boot comes up but does not load HassOS)
-1. Serial terminal login is not possible due to `rlwrap: error: My terminal reports width=0 (is it emacs?)  I can't handle this, sorry!` and infinite loop
 
 ## GPIO
 
