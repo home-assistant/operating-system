@@ -1,10 +1,10 @@
-From 188bc924b34b7d845324eb2e0e7493a9eaeb2cb5 Mon Sep 17 00:00:00 2001
-Message-Id: <188bc924b34b7d845324eb2e0e7493a9eaeb2cb5.1595882680.git.stefan@agner.ch>
-In-Reply-To: <d83d79b085486a605462fa91e3c6746e4ff0b263.1595882680.git.stefan@agner.ch>
-References: <d83d79b085486a605462fa91e3c6746e4ff0b263.1595882680.git.stefan@agner.ch>
+From 81b5af6c3ce3e0f312be0897bec0b3c942e2ce97 Mon Sep 17 00:00:00 2001
+Message-Id: <81b5af6c3ce3e0f312be0897bec0b3c942e2ce97.1602360581.git.stefan@agner.ch>
+In-Reply-To: <d35db3d5f943fea569dde8e83f15565254643385.1602360581.git.stefan@agner.ch>
+References: <d35db3d5f943fea569dde8e83f15565254643385.1602360581.git.stefan@agner.ch>
 From: Christian Hewitt <christianshewitt@gmail.com>
 Date: Sun, 19 Jul 2020 14:10:34 +0000
-Subject: [PATCH 10/10] arm64: dts: meson: add support for the ODROID-N2+
+Subject: [PATCH 3/4] arm64: dts: meson: add support for the ODROID-N2+
 
 HardKernel ODROID-N2+ uses an Amlogic S922X rev. C chip capable of higher
 clock speeds than the original ODROID-N2. Hardkernel supports the big cpu
@@ -22,10 +22,10 @@ Signed-off-by: Stefan Agner <stefan@agner.ch>
  create mode 100644 arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2-plus.dts
 
 diff --git a/arch/arm64/boot/dts/amlogic/Makefile b/arch/arm64/boot/dts/amlogic/Makefile
-index eef0045320f2..7524cf9680f5 100644
+index 4e2239ffcaa5..b0b3d6791499 100644
 --- a/arch/arm64/boot/dts/amlogic/Makefile
 +++ b/arch/arm64/boot/dts/amlogic/Makefile
-@@ -6,6 +6,7 @@ dtb-$(CONFIG_ARCH_MESON) += meson-g12a-x96-max.dtb
+@@ -8,6 +8,7 @@ dtb-$(CONFIG_ARCH_MESON) += meson-g12b-gtking-pro.dtb
  dtb-$(CONFIG_ARCH_MESON) += meson-g12b-a311d-khadas-vim3.dtb
  dtb-$(CONFIG_ARCH_MESON) += meson-g12b-s922x-khadas-vim3.dtb
  dtb-$(CONFIG_ARCH_MESON) += meson-g12b-odroid-n2.dtb
@@ -93,5 +93,5 @@ index 000000000000..4ebb448d233f
 +};
 +
 -- 
-2.27.0
+2.28.0
 

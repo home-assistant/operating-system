@@ -470,10 +470,6 @@ config BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_4
 	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_3
 	select BR2_TOOLCHAIN_HEADERS_LATEST
 
-config BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_7
-	bool
-	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_4
-
 # This should be selected by the latest version, above, to indicate that
 # Buildroot does not know of more recent headers than the ones selected.
 # This allows using toolchains with headers more recent than Buildroot
@@ -485,7 +481,6 @@ config BR2_TOOLCHAIN_HEADERS_LATEST
 # stops affecting a value on the first matching default.
 config BR2_TOOLCHAIN_HEADERS_AT_LEAST
 	string
-	default "5.7"  if BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_7
 	default "5.4"  if BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_4
 	default "5.3"  if BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_3
 	default "5.2"  if BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_2
