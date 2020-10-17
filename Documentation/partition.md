@@ -51,7 +51,7 @@ Log in as `root` to get to the Home Assistant CLI and then enter `login` to cont
 
 Confirm your USB SSD/HD is connected and recognized using `fdisk -l`.
 
-With the drive, use the below command (again, replacing XXX with your drive)
+Make sure the drive has no partition named `hassos-data` (or no partition at all). With the drive, use the below command (again, replacing XXX with your drive)
 
 ```sh
 $ datactl move /dev/xxx
