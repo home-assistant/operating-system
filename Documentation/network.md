@@ -10,6 +10,8 @@ Only a manual configuration using NetworkManager connection files is supported. 
 
 You can read the [NetworkManager manual][nm-manual] or find many configuration examples across the internet. Keep in mind that the system is read-only. If you don't want the IP address to change on every boot, you should modify the UUID property to a generic [UUID4][uuid]. Inside the `\CONFIG\network\` directory on the USB drive or SD card, create a file called `my-network` and add the appropriate contents below:
 
+**NOTE: Please make sure to save this file with UNIX line endings (LF, and not Windows' default CRLF endings). You can do this using Notepad these days!**
+
 ### Default
 
 A preinstalled connection profile is provided by default:

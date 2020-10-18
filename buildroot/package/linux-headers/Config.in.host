@@ -127,10 +127,6 @@ choice
 	  If your kernel headers are more recent than the latest version
 	  in the choice, then select the latest version.
 
-config BR2_PACKAGE_HOST_LINUX_HEADERS_CUSTOM_5_7
-	bool "5.7.x or later"
-	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_7
-
 config BR2_PACKAGE_HOST_LINUX_HEADERS_CUSTOM_5_4
 	bool "5.4.x or later"
 	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_4

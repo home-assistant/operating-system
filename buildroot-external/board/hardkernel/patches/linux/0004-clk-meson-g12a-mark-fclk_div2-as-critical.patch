@@ -1,10 +1,10 @@
-From c33df0ebe8be16b56741ce7f873221ab9087a0a6 Mon Sep 17 00:00:00 2001
-Message-Id: <c33df0ebe8be16b56741ce7f873221ab9087a0a6.1598564789.git.stefan@agner.ch>
-In-Reply-To: <f72fc1866396fed30036e0f06007c15217e47f22.1598564789.git.stefan@agner.ch>
-References: <f72fc1866396fed30036e0f06007c15217e47f22.1598564789.git.stefan@agner.ch>
+From 6a7c42785788faa862aeb7902cb2b3b08f033ca0 Mon Sep 17 00:00:00 2001
+Message-Id: <6a7c42785788faa862aeb7902cb2b3b08f033ca0.1602360581.git.stefan@agner.ch>
+In-Reply-To: <d35db3d5f943fea569dde8e83f15565254643385.1602360581.git.stefan@agner.ch>
+References: <d35db3d5f943fea569dde8e83f15565254643385.1602360581.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Thu, 27 Aug 2020 23:29:57 +0200
-Subject: [PATCH 11/11] clk: meson: g12a: mark fclk_div2 as critical
+Subject: [PATCH 4/4] clk: meson: g12a: mark fclk_div2 as critical
 
 On Amlogic Meson G12b platform, similar to fclk_div3, the fclk_div2
 seems to be necessary for the system to operate correctly as well.
@@ -22,7 +22,7 @@ Signed-off-by: Stefan Agner <stefan@agner.ch>
  1 file changed, 1 insertion(+)
 
 diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
-index fad616cac01e..2214b974f748 100644
+index 9803d44bb157..9a6722a1dc19 100644
 --- a/drivers/clk/meson/g12a.c
 +++ b/drivers/clk/meson/g12a.c
 @@ -298,6 +298,7 @@ static struct clk_regmap g12a_fclk_div2 = {
