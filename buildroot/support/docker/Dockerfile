@@ -36,10 +36,8 @@ RUN apt-get install -y --no-install-recommends \
         libncurses5-dev \
         locales \
         mercurial \
-        python-flake8 \
-        python-nose2 \
-        python-pexpect \
         python3 \
+        python3-flake8 \
         python3-nose2 \
         python3-pexpect \
         qemu-system-arm \

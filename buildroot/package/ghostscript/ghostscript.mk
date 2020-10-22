@@ -4,13 +4,10 @@
 #
 ################################################################################
 
-GHOSTSCRIPT_VERSION = 9.50
+GHOSTSCRIPT_VERSION = 9.53.2
 GHOSTSCRIPT_SITE = https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs$(subst .,,$(GHOSTSCRIPT_VERSION))
-GHOSTSCRIPT_SOURCE = ghostscript-$(GHOSTSCRIPT_VERSION).tar.xz
 GHOSTSCRIPT_LICENSE = AGPL-3.0
 GHOSTSCRIPT_LICENSE_FILES = LICENSE
-# 0001-Fix-cross-compilation-issue.patch
-GHOSTSCRIPT_AUTORECONF = YES
 GHOSTSCRIPT_DEPENDENCIES = \
 	host-lcms2 \
 	host-libjpeg \
@@ -34,7 +31,8 @@ GHOSTSCRIPT_POST_PATCH_HOOKS += GHOSTSCRIPT_REMOVE_LIBS
 
 GHOSTSCRIPT_CONF_ENV = \
 	CCAUX="$(HOSTCC)" \
-	CFLAGSAUX="$(HOST_CFLAGS) $(HOST_LDFLAGS)"
+	CFLAGSAUX="$(HOST_CFLAGS) $(HOST_LDFLAGS)" \
+	PKGCONFIG="$(PKG_CONFIG_HOST_BINARY)"
 
 GHOSTSCRIPT_CONF_OPTS = \
 	--disable-compile-inits \

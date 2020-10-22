@@ -1,0 +1,69 @@
+From 8d3b6f9da468f666e3a7976657f2ab5c52762a21 Mon Sep 17 00:00:00 2001
+From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Date: Tue, 7 Jul 2020 15:12:25 -0400
+Subject: [PATCH] term: Fix overflow on user inputs
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+This requires a very weird input from the serial interface but can cause
+an overflow in input_buf (keys) overwriting the next variable (npending)
+with the user choice:
+
+(pahole output)
+
+struct grub_terminfo_input_state {
+        int                        input_buf[6];         /*     0    24 */
+        int                        npending;             /*    24     4 */ <- CORRUPT
+        ...snip...
+
+The magic string requires causing this is "ESC,O,],0,1,2,q" and we overflow
+npending with "q" (aka increase npending to 161). The simplest fix is to
+just to disallow overwrites input_buf, which exactly what this patch does.
+
+Fixes: CID 292449
+
+Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Reviewed-by: Daniel Kiper <daniel.kiper@oracle.com>
+Signed-off-by: Stefan Sørensen <stefan.sorensen@spectralink.com>
+---
+ grub-core/term/terminfo.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/grub-core/term/terminfo.c b/grub-core/term/terminfo.c
+index d317efa36..5fa94c0c3 100644
+--- a/grub-core/term/terminfo.c
++++ b/grub-core/term/terminfo.c
+@@ -398,7 +398,7 @@ grub_terminfo_getwh (struct grub_term_output *term)
+ }
+ 
+ static void
+-grub_terminfo_readkey (struct grub_term_input *term, int *keys, int *len,
++grub_terminfo_readkey (struct grub_term_input *term, int *keys, int *len, int max_len,
+ 		       int (*readkey) (struct grub_term_input *term))
+ {
+   int c;
+@@ -414,6 +414,9 @@ grub_terminfo_readkey (struct grub_term_input *term, int *keys, int *len,
+     if (c == -1)						\
+       return;							\
+ 								\
++    if (*len >= max_len)                                       \
++      return;                                                   \
++                                                                \
+     keys[*len] = c;						\
+     (*len)++;							\
+   }
+@@ -602,8 +605,8 @@ grub_terminfo_getkey (struct grub_term_input *termi)
+       return ret;
+     }
+ 
+-  grub_terminfo_readkey (termi, data->input_buf,
+-			 &data->npending, data->readkey);
++  grub_terminfo_readkey (termi, data->input_buf, &data->npending,
++			 GRUB_TERMINFO_READKEY_MAX_LEN, data->readkey);
+ 
+ #if defined(__powerpc__) && defined(GRUB_MACHINE_IEEE1275)
+   if (data->npending == 1 && data->input_buf[0] == GRUB_TERM_ESC
+-- 
+2.26.2
+

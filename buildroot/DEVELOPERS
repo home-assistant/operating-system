@@ -186,18 +186,25 @@ F:	package/rauc/
 
 N:	Angelo Compagnucci <angelo.compagnucci@gmail.com>
 F:	package/corkscrew/
+F:	package/cups/
+F:	package/cups-filters/
 F:	package/fail2ban/
+F:	package/grep/
 F:	package/i2c-tools/
+F:	package/jq/
+F:	package/libb64/
 F:	package/mender/
 F:	package/mender-artifact/
 F:	package/mono/
 F:	package/mono-gtksharp3/
 F:	package/monolite/
+F:	package/openjpeg/
 F:	package/python-can/
 F:	package/python-pillow/
 F:	package/python-pydal/
 F:	package/python-spidev/
 F:	package/python-web2py/
+F:	package/sam-ba/
 F:	package/sshguard/
 F:	package/sunwait/
 F:	package/sysdig/
@@ -211,6 +218,8 @@ N:	Anthony Viallard <viallard@syscom-instruments.com>
 F:	package/gnuplot/
 
 N:	Antoine Ténart <antoine.tenart@bootlin.com>
+F:	package/libselinux/
+F:	package/refpolicy/
 F:	package/wf111/
 
 N:	Antony Pavlov <antonynpavlov@gmail.com>
@@ -1035,6 +1044,7 @@ N:	Gwenhael Goavec-Merou <gwenhael.goavec-merou@trabucayre.com>
 F:	package/gnuradio/
 F:	package/gqrx/
 F:	package/gr-osmosdr/
+F:	package/librtlsdr/
 F:	package/libusbgx/
 F:	package/python-cheetah/
 F:	package/python-markdown/
@@ -1713,9 +1723,6 @@ F:	package/systemd-bootchart/
 F:	package/tinyalsa/
 F:	package/tinyxml/
 
-N:	Maxime Ripard <maxime.ripard@bootlin.com>
-F:	package/kmsxx/
-
 N:	Michael Durrant <mdurrant@arcturusnetworks.com>
 F:	board/arcturus/
 F:	configs/arcturus_ucp1020_defconfig
@@ -1810,6 +1817,7 @@ F:	package/tpm-tools/
 F:	package/trousers/
 
 N:	Norbert Lange <nolange79@gmail.com>
+F:	package/systemd/
 F:	package/tcf-agent/
 
 N:	Nylon Chen <nylon7@andestech.com>
@@ -2135,6 +2143,7 @@ F:	package/davfs2/
 
 N:	Ryan Barnett <ryan.barnett@rockwellcollins.com>
 F:	package/atftp/
+F:	package/c-periphery/
 F:	package/miraclecast/
 F:	package/python-pyasn/
 F:	package/python-pysnmp/

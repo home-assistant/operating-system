@@ -13,5 +13,6 @@ BISON_LICENSE_FILES = COPYING
 BISON_MAKE = $(MAKE1)
 HOST_BISON_DEPENDENCIES = host-m4
 HOST_BISON_CONF_OPTS = --enable-relocatable
+HOST_BISON_CONF_ENV = ac_cv_libtextstyle=no
 
 $(eval $(host-autotools-package))

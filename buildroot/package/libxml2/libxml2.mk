@@ -13,6 +13,8 @@ LIBXML2_LICENSE_FILES = COPYING
 LIBXML2_IGNORE_CVES += CVE-2020-7595
 # 0002-Fix-memory-leak-in-xmlSchemaValidateStream.patch
 LIBXML2_IGNORE_CVES += CVE-2019-20388
+# 0003-Fix-out-of-bounds-read-with-xmllint--htmlout.patch
+LIBXML2_IGNORE_CVES += CVE-2020-24977
 LIBXML2_CONFIG_SCRIPTS = xml2-config
 
 # relocation truncated to fit: R_68K_GOT16O

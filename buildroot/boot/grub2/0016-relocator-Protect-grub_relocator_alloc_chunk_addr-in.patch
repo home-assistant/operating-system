@@ -1,0 +1,153 @@
+From 1c7b619c84f229c1602c1958bcd054b6d9937562 Mon Sep 17 00:00:00 2001
+From: Alexey Makhalov <amakhalov@vmware.com>
+Date: Wed, 15 Jul 2020 06:42:37 +0000
+Subject: [PATCH] relocator: Protect grub_relocator_alloc_chunk_addr()
+ input args against integer underflow/overflow
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Use arithmetic macros from safemath.h to accomplish it. In this commit,
+I didn't want to be too paranoid to check every possible math equation
+for overflow/underflow. Only obvious places (with non zero chance of
+overflow/underflow) were refactored.
+
+Signed-off-by: Alexey Makhalov <amakhalov@vmware.com>
+Reviewed-by: Daniel Kiper <daniel.kiper@oracle.com>
+Signed-off-by: Stefan Sørensen <stefan.sorensen@spectralink.com>
+---
+ grub-core/loader/i386/linux.c    |  9 +++++++--
+ grub-core/loader/i386/pc/linux.c |  9 +++++++--
+ grub-core/loader/i386/xen.c      | 12 ++++++++++--
+ grub-core/loader/xnu.c           | 11 +++++++----
+ 4 files changed, 31 insertions(+), 10 deletions(-)
+
+diff --git a/grub-core/loader/i386/linux.c b/grub-core/loader/i386/linux.c
+index d0501e229..02a73463a 100644
+--- a/grub-core/loader/i386/linux.c
++++ b/grub-core/loader/i386/linux.c
+@@ -36,6 +36,7 @@
+ #include <grub/lib/cmdline.h>
+ #include <grub/linux.h>
+ #include <grub/machine/kernel.h>
++#include <grub/safemath.h>
+ 
+ GRUB_MOD_LICENSE ("GPLv3+");
+ 
+@@ -547,9 +548,13 @@ grub_linux_boot (void)
+ 
+   {
+     grub_relocator_chunk_t ch;
++    grub_size_t sz;
++
++    if (grub_add (ctx.real_size, efi_mmap_size, &sz))
++      return GRUB_ERR_OUT_OF_RANGE;
++
+     err = grub_relocator_alloc_chunk_addr (relocator, &ch,
+-					   ctx.real_mode_target,
+-					   (ctx.real_size + efi_mmap_size));
++					   ctx.real_mode_target, sz);
+     if (err)
+      return err;
+     real_mode_mem = get_virtual_current_address (ch);
+diff --git a/grub-core/loader/i386/pc/linux.c b/grub-core/loader/i386/pc/linux.c
+index 47ea2945e..31f09922b 100644
+--- a/grub-core/loader/i386/pc/linux.c
++++ b/grub-core/loader/i386/pc/linux.c
+@@ -35,6 +35,7 @@
+ #include <grub/i386/floppy.h>
+ #include <grub/lib/cmdline.h>
+ #include <grub/linux.h>
++#include <grub/safemath.h>
+ 
+ GRUB_MOD_LICENSE ("GPLv3+");
+ 
+@@ -218,8 +219,12 @@ grub_cmd_linux (grub_command_t cmd __attribute__ ((unused)),
+     setup_sects = GRUB_LINUX_DEFAULT_SETUP_SECTS;
+ 
+   real_size = setup_sects << GRUB_DISK_SECTOR_BITS;
+-  grub_linux16_prot_size = grub_file_size (file)
+-    - real_size - GRUB_DISK_SECTOR_SIZE;
++  if (grub_sub (grub_file_size (file), real_size, &grub_linux16_prot_size) ||
++      grub_sub (grub_linux16_prot_size, GRUB_DISK_SECTOR_SIZE, &grub_linux16_prot_size))
++    {
++      grub_error (GRUB_ERR_OUT_OF_RANGE, N_("overflow is detected"));
++      goto fail;
++    }
+ 
+   if (! grub_linux_is_bzimage
+       && GRUB_LINUX_ZIMAGE_ADDR + grub_linux16_prot_size
+diff --git a/grub-core/loader/i386/xen.c b/grub-core/loader/i386/xen.c
+index 8f662c8ac..cd24874ca 100644
+--- a/grub-core/loader/i386/xen.c
++++ b/grub-core/loader/i386/xen.c
+@@ -41,6 +41,7 @@
+ #include <grub/linux.h>
+ #include <grub/i386/memory.h>
+ #include <grub/verify.h>
++#include <grub/safemath.h>
+ 
+ GRUB_MOD_LICENSE ("GPLv3+");
+ 
+@@ -636,6 +637,7 @@ grub_cmd_xen (grub_command_t cmd __attribute__ ((unused)),
+   grub_relocator_chunk_t ch;
+   grub_addr_t kern_start;
+   grub_addr_t kern_end;
++  grub_size_t sz;
+ 
+   if (argc == 0)
+     return grub_error (GRUB_ERR_BAD_ARGUMENT, N_("filename expected"));
+@@ -703,8 +705,14 @@ grub_cmd_xen (grub_command_t cmd __attribute__ ((unused)),
+ 
+   xen_state.max_addr = ALIGN_UP (kern_end, PAGE_SIZE);
+ 
+-  err = grub_relocator_alloc_chunk_addr (xen_state.relocator, &ch, kern_start,
+-					 kern_end - kern_start);
++
++  if (grub_sub (kern_end, kern_start, &sz))
++    {
++      err = GRUB_ERR_OUT_OF_RANGE;
++      goto fail;
++    }
++
++  err = grub_relocator_alloc_chunk_addr (xen_state.relocator, &ch, kern_start, sz);
+   if (err)
+     goto fail;
+   kern_chunk_src = get_virtual_current_address (ch);
+diff --git a/grub-core/loader/xnu.c b/grub-core/loader/xnu.c
+index 77d7060e1..9ae4ceb35 100644
+--- a/grub-core/loader/xnu.c
++++ b/grub-core/loader/xnu.c
+@@ -34,6 +34,7 @@
+ #include <grub/env.h>
+ #include <grub/i18n.h>
+ #include <grub/verify.h>
++#include <grub/safemath.h>
+ 
+ GRUB_MOD_LICENSE ("GPLv3+");
+ 
+@@ -59,15 +60,17 @@ grub_xnu_heap_malloc (int size, void **src, grub_addr_t *target)
+ {
+   grub_err_t err;
+   grub_relocator_chunk_t ch;
++  grub_addr_t tgt;
++
++  if (grub_add (grub_xnu_heap_target_start, grub_xnu_heap_size, &tgt))
++    return GRUB_ERR_OUT_OF_RANGE;
+   
+-  err = grub_relocator_alloc_chunk_addr (grub_xnu_relocator, &ch,
+-					 grub_xnu_heap_target_start
+-					 + grub_xnu_heap_size, size);
++  err = grub_relocator_alloc_chunk_addr (grub_xnu_relocator, &ch, tgt, size);
+   if (err)
+     return err;
+ 
+   *src = get_virtual_current_address (ch);
+-  *target = grub_xnu_heap_target_start + grub_xnu_heap_size;
++  *target = tgt;
+   grub_xnu_heap_size += size;
+   grub_dprintf ("xnu", "val=%p\n", *src);
+   return GRUB_ERR_NONE;
+-- 
+2.26.2
+

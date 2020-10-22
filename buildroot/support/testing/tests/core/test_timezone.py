@@ -4,10 +4,10 @@ import infra.basetest
 
 
 def boot_armv5_cpio(emulator, builddir):
-        img = os.path.join(builddir, "images", "rootfs.cpio")
-        emulator.boot(arch="armv5", kernel="builtin",
-                      options=["-initrd", img])
-        emulator.login()
+    img = os.path.join(builddir, "images", "rootfs.cpio")
+    emulator.boot(arch="armv5", kernel="builtin",
+                  options=["-initrd", img])
+    emulator.login()
 
 
 class TestNoTimezone(infra.basetest.BRTest):

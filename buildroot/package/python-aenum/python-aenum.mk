@@ -11,4 +11,13 @@ PYTHON_AENUM_SETUP_TYPE = setuptools
 PYTHON_AENUM_LICENSE = BSD-3-Clause
 PYTHON_AENUM_LICENSE_FILES = aenum/LICENSE
 
+ifeq ($(BR2_PACKAGE_PYTHON),y)
+# only needed/valid for python 3.x
+define PYTHON_AENUM_RM_PY3_FILE
+	rm -f $(TARGET_DIR)/usr/lib/python*/site-packages/aenum/test_v3.py
+endef
+
+PYTHON_AENUM_POST_INSTALL_TARGET_HOOKS += PYTHON_AENUM_RM_PY3_FILE
+endif
+
 $(eval $(python-package))

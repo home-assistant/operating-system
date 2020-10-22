@@ -46,24 +46,24 @@ def parse_args():
     return parser.parse_args()
 
 
-CONFIG_IN_FILENAME = re.compile("Config\.\S*$")
-DO_CHECK_INTREE = re.compile("|".join([
-    "Config.in",
-    "arch/",
-    "boot/",
-    "fs/",
-    "linux/",
-    "package/",
-    "system/",
-    "toolchain/",
+CONFIG_IN_FILENAME = re.compile(r"Config\.\S*$")
+DO_CHECK_INTREE = re.compile(r"|".join([
+    r"Config.in",
+    r"arch/",
+    r"boot/",
+    r"fs/",
+    r"linux/",
+    r"package/",
+    r"system/",
+    r"toolchain/",
     ]))
-DO_NOT_CHECK_INTREE = re.compile("|".join([
-    "boot/barebox/barebox\.mk$",
-    "fs/common\.mk$",
-    "package/doc-asciidoc\.mk$",
-    "package/pkg-\S*\.mk$",
-    "toolchain/helpers\.mk$",
-    "toolchain/toolchain-external/pkg-toolchain-external\.mk$",
+DO_NOT_CHECK_INTREE = re.compile(r"|".join([
+    r"boot/barebox/barebox\.mk$",
+    r"fs/common\.mk$",
+    r"package/doc-asciidoc\.mk$",
+    r"package/pkg-\S*\.mk$",
+    r"toolchain/helpers\.mk$",
+    r"toolchain/toolchain-external/pkg-toolchain-external\.mk$",
     ]))
 
 

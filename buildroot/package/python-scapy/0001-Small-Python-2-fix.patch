@@ -1,0 +1,26 @@
+From 0c3d5e417bbd923c4729d15572c3d693d58aff81 Mon Sep 17 00:00:00 2001
+From: Gabriel <gabriel@potter.fr>
+Date: Wed, 21 Aug 2019 18:18:14 +0800
+Subject: [PATCH] Small Python 2 fix
+
+Signed-off-by: Peter Korsgaard <peter@korsgaard.com>
+---
+ scapy/tools/generate_ethertypes.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/scapy/tools/generate_ethertypes.py b/scapy/tools/generate_ethertypes.py
+index 5bc5cdf9..47c38c4f 100644
+--- a/scapy/tools/generate_ethertypes.py
++++ b/scapy/tools/generate_ethertypes.py
+@@ -20,7 +20,7 @@ URL = "https://raw.githubusercontent.com/openbsd/src/master/sys/net/ethertypes.h
+ with urllib.request.urlopen(URL) as stream:
+     DATA = stream.read()
+ 
+-reg = rb".*ETHERTYPE_([^\s]+)\s.0x([0-9A-Fa-f]+).*\/\*(.*)\*\/"
++reg = br".*ETHERTYPE_([^\s]+)\s.0x([0-9A-Fa-f]+).*\/\*(.*)\*\/"
+ COMPILED = b"""#
+ # Ethernet frame types
+ #       This file describes some of the various Ethernet
+-- 
+2.20.1
+

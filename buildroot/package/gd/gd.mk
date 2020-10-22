@@ -14,6 +14,19 @@ GD_CONFIG_SCRIPTS = gdlib-config
 GD_CONF_OPTS = --without-x --disable-rpath --disable-werror
 GD_DEPENDENCIES = host-pkgconf
 
+# 0001-bmp-check-return-value-in-gdImageBmpPtr.patch
+GD_IGNORE_CVES += CVE-2018-1000222
+# 0002-Fix-420-Potential-infinite-loop-in-gdImageCreateFrom.patch
+GD_IGNORE_CVES += CVE-2018-5711
+# 0003-Fix-501-Uninitialized-read-in-gdImageCreateFromXbm-C.patch
+GD_IGNORE_CVES += CVE-2019-11038
+# 0004-Fix-492-Potential-double-free-in-gdImage-Ptr.patch
+GD_IGNORE_CVES += CVE-2019-6978
+# 0005-Fix-potential-NULL-pointer-dereference-in-gdImageClone.patch
+GD_IGNORE_CVES += CVE-2018-14553
+# 0006-Fix-497-gdImageColorMatch-Out-Of-Bounds-Write-on-Heap-CVE-2019-6977.patch
+GD_IGNORE_CVES += CVE-2019-6977
+
 # gd forgets to link utilities with -pthread even though it uses
 # pthreads, causing linking errors with static linking
 ifeq ($(BR2_TOOLCHAIN_HAS_THREADS),y)

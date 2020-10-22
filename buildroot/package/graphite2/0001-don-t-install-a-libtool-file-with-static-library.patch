@@ -1,0 +1,67 @@
+From 3edb88b55c0870989778c670d555aa159a2c3abc Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Mon, 31 Aug 2020 20:56:43 +0200
+Subject: [PATCH] don't install a libtool file with static library
+
+Static library is supported since version 1.3.11 and
+https://github.com/silnrsi/graphite/commit/2f143c04da5caa43ddf4dba437b2f2bc26bf4238
+
+However, graphite2 is still installing libgraphite2.la which contains
+incorrect information (i.e. dlname set to libgraphite2.so and
+old_library set to ''):
+
+dlname='libgraphite2.so'
+
+library_names='libgraphite2.so.3.2.1 libgraphite2.so.3 libgraphite2.so'
+
+old_library=''
+
+dependency_libs=''
+
+This will result in the following build failure with any applications
+using this file such as harfbuzz:
+
+arm-linux-g++.br_real: error: /home/buildroot/autobuild/run/instance-3/output-1/host/arm-buildroot-linux-uclibcgnueabi/sysroot/usr/lib/libgraphite2.so: No such file or directory
+make[5]: *** [main] Error 1
+
+Instead of trying to fix this libtool file, just disable it when
+building a static library as it is not needed
+
+Fixes:
+ - http://autobuild.buildroot.org/results/9ebe1d11e80755d59190ef2aae82bbba5cc45e44
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: https://github.com/silnrsi/graphite/pull/65]
+---
+ src/CMakeLists.txt | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index b6ac26bf..a7ace040 100644
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -131,7 +131,9 @@ if  (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+         nolib_test(stdc++ $<TARGET_SONAME_FILE:graphite2>)
+     endif ()
+     set(CMAKE_CXX_IMPLICIT_LINK_LIBRARIES "")
+-    CREATE_LIBTOOL_FILE(graphite2 "/lib${LIB_SUFFIX}")
++    if (BUILD_SHARED_LIBS)
++        CREATE_LIBTOOL_FILE(graphite2 "/lib${LIB_SUFFIX}")
++    endif()
+ endif()
+ 
+ if  (${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
+@@ -146,7 +148,9 @@ if  (${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
+     include(Graphite)
+     nolib_test(stdc++ $<TARGET_SONAME_FILE:graphite2>)
+     set(CMAKE_CXX_IMPLICIT_LINK_LIBRARIES "")
+-    CREATE_LIBTOOL_FILE(graphite2 "/lib${LIB_SUFFIX}")
++    if (BUILD_SHARED_LIBS)
++        CREATE_LIBTOOL_FILE(graphite2 "/lib${LIB_SUFFIX}")
++    endif()
+ endif()
+ 
+ if  (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+-- 
+2.28.0
+

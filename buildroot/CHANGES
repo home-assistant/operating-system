@@ -1,3 +1,94 @@
+2020.02.7, released October 12th, 2020
+
+	Important / security related fixes.
+
+	meson: Correct SDK cross-compilation.conf file when
+	per-package builds were used to build SDK.
+
+	systemd: Use /run rather than /var/run for PID files in units.
+
+	Toolchain: use Secure-PLT rather than BSS-PLT for PowerPC 32.
+
+	support/script/pycompile: Rework logic to ensure .pyc files
+	contain absolute target paths, fixing code inspection at
+	runtime when executed with cwd != '/'.
+
+	support/scripts/setlocalversion: Correct Mercurial output to
+	match behaviour with Git.
+
+	support/scripts/apply-patches.sh: Use patch
+	--no-backup-if-mismatch, so we no longer blindly have to
+	remove *.orig files after patching, fixing issues with
+	packages containing such files.
+
+	Updated/fixed packages: bandwidthd, barebox, bash, bison,
+	brotli, cifs-utils, cryptsetup, dhcpcd, dhcpdump, docker-cli,
+	docker-engine, ecryptfs-utils, efl, fail2ban, freetype, gcc,
+	gdb, ghostscript, gnutls, go, gst1-plugins-base,
+	gst1-plugins-ugly, ipmitool, libhtp, libraw, libssh, libxml2,
+	libxml-parser-perl, localedef, lua, memcached, mesa3d, meson,
+	minidlna, nginx, nodejs, nss-pam-ldapd, openvmtools, php,
+	postgresql, python, python-aenum, python-autobahn,
+	python-engineio, python-fire, python-pymodbus, python-scapy,
+	python-semver, python-sentry-sdk, python-socketio,
+	python-texttable, python-tinyrpc, python-txtorcon, python3,
+	qt5base, runc, samba4, strace, supertux, suricata, systemd,
+	vlc, wayland-protocols, wireguard-linux-compat, wireshark,
+	xserver_xorg-server, zeromq, zstd
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#12911: usb_modeswitch installation race condition
+	#13251: cryptsetup does not work on branch 2020.02 following..
+
+2020.02.6, released September 5th, 2020
+
+	Important / security related fixes.
+
+	Fix a 2020.02.5 build regression in busybox when systemd (and
+	not less) are enabled because of missing infrastructure.
+
+	Updated/fixed packages: alsa-utils, avahi, busybox, cups,
+	docker-cli, graphite2, imagemagick, libeXosip2, mbedtls,
+	nvidia-driver, paho-mqtt-c, python-django, systemd, uclibc,
+	usb_modeswitch, wolfssl
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#12911: usb_modeswitch installation race condition
+
+2020.02.5, released August 29th, 2020
+
+	Important / security related fixes.
+
+	Infrastructure: Ensure RPATH entries that may be needed for
+	dlopen() are not dropped by patchelf.
+
+	BR_VERSION_FULL/setlocalversion (used by make print-version
+	and /etc/os-release): Properly handle local git tags
+
+	Updated/fixed packages: apache, at91bootstrap3, bind, boost,
+	busybox, capnproto, chrony, collectd, cpio, cryptsetup, cups,
+	cvs, dbus, docker-engine, domoticz, dovecot,
+	dovecot-pigeonhole, dropbear, efl, elixir, f2fs-tools, ffmpeg,
+	gd, gdk-pixbuf, ghostscript, glibc, grub2, gst1-plugins-bad,
+	hostapd, iputils, jasper, json-c, libcurl, libwebsockets,
+	linux, live555, mesa3d, mosquitto, mpv, nodejs, opencv,
+	opencv3, openjpeg, patchelf, perl, php, postgresql,
+	python-django, python-gunicorn, python-matplotlib, ripgrep,
+	rtl8188eu, rtl8821au, ruby, shadowsocks-libev, squid,
+	tpm2-abrmd, tpm2-tools, trousers, uacme, webkitgtk, wireshark,
+	wolfssl, wpa_supplicant, wpewebkit, xen, xlib_libX11,
+	xserver_xorg-server
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#12876: nodejs fails to build when host-icu has been built before
+	#13111: python-gunicorn: missing dependency on python-setuptools
+	#13121: wpa_supplicant fails to build without libopenssl enabled
+	#13141: Target-finalize fail with "depmod: ERROR: Bad version passed"
+	#13156: package live555 new license
+
 2020.02.4, released July 26th, 2020
 
 	Important / security related fixes.
