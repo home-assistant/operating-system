@@ -1,0 +1,239 @@
+From c330aa099a38bc5c4d3066954fe35767cc06adb1 Mon Sep 17 00:00:00 2001
+From: Peter Jones <pjones@redhat.com>
+Date: Sun, 19 Jul 2020 16:53:27 -0400
+Subject: [PATCH] efi: Fix some malformed device path arithmetic errors
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Several places we take the length of a device path and subtract 4 from
+it, without ever checking that it's >= 4. There are also cases where
+this kind of malformation will result in unpredictable iteration,
+including treating the length from one dp node as the type in the next
+node. These are all errors, no matter where the data comes from.
+
+This patch adds a checking macro, GRUB_EFI_DEVICE_PATH_VALID(), which
+can be used in several places, and makes GRUB_EFI_NEXT_DEVICE_PATH()
+return NULL and GRUB_EFI_END_ENTIRE_DEVICE_PATH() evaluate as true when
+the length is too small. Additionally, it makes several places in the
+code check for and return errors in these cases.
+
+Signed-off-by: Peter Jones <pjones@redhat.com>
+Reviewed-by: Daniel Kiper <daniel.kiper@oracle.com>
+Signed-off-by: Stefan Sørensen <stefan.sorensen@spectralink.com>
+---
+ grub-core/kern/efi/efi.c           | 64 +++++++++++++++++++++++++-----
+ grub-core/loader/efi/chainloader.c | 13 +++++-
+ grub-core/loader/i386/xnu.c        |  9 +++--
+ include/grub/efi/api.h             | 14 ++++---
+ 4 files changed, 79 insertions(+), 21 deletions(-)
+
+diff --git a/grub-core/kern/efi/efi.c b/grub-core/kern/efi/efi.c
+index dc31caa21..c97969a65 100644
+--- a/grub-core/kern/efi/efi.c
++++ b/grub-core/kern/efi/efi.c
+@@ -332,7 +332,7 @@ grub_efi_get_filename (grub_efi_device_path_t *dp0)
+ 
+   dp = dp0;
+ 
+-  while (1)
++  while (dp)
+     {
+       grub_efi_uint8_t type = GRUB_EFI_DEVICE_PATH_TYPE (dp);
+       grub_efi_uint8_t subtype = GRUB_EFI_DEVICE_PATH_SUBTYPE (dp);
+@@ -342,9 +342,15 @@ grub_efi_get_filename (grub_efi_device_path_t *dp0)
+       if (type == GRUB_EFI_MEDIA_DEVICE_PATH_TYPE
+ 	       && subtype == GRUB_EFI_FILE_PATH_DEVICE_PATH_SUBTYPE)
+ 	{
+-	  grub_efi_uint16_t len;
+-	  len = ((GRUB_EFI_DEVICE_PATH_LENGTH (dp) - 4)
+-		 / sizeof (grub_efi_char16_t));
++	  grub_efi_uint16_t len = GRUB_EFI_DEVICE_PATH_LENGTH (dp);
++
++	  if (len < 4)
++	    {
++	      grub_error (GRUB_ERR_OUT_OF_RANGE,
++			  "malformed EFI Device Path node has length=%d", len);
++	      return NULL;
++	    }
++	  len = (len - 4) / sizeof (grub_efi_char16_t);
+ 	  filesize += GRUB_MAX_UTF8_PER_UTF16 * len + 2;
+ 	}
+ 
+@@ -360,7 +366,7 @@ grub_efi_get_filename (grub_efi_device_path_t *dp0)
+   if (!name)
+     return NULL;
+ 
+-  while (1)
++  while (dp)
+     {
+       grub_efi_uint8_t type = GRUB_EFI_DEVICE_PATH_TYPE (dp);
+       grub_efi_uint8_t subtype = GRUB_EFI_DEVICE_PATH_SUBTYPE (dp);
+@@ -376,8 +382,15 @@ grub_efi_get_filename (grub_efi_device_path_t *dp0)
+ 
+ 	  *p++ = '/';
+ 
+-	  len = ((GRUB_EFI_DEVICE_PATH_LENGTH (dp) - 4)
+-		 / sizeof (grub_efi_char16_t));
++	  len = GRUB_EFI_DEVICE_PATH_LENGTH (dp);
++	  if (len < 4)
++	    {
++	      grub_error (GRUB_ERR_OUT_OF_RANGE,
++			  "malformed EFI Device Path node has length=%d", len);
++	      return NULL;
++	    }
++
++	  len = (len - 4) / sizeof (grub_efi_char16_t);
+ 	  fp = (grub_efi_file_path_device_path_t *) dp;
+ 	  /* According to EFI spec Path Name is NULL terminated */
+ 	  while (len > 0 && fp->path_name[len - 1] == 0)
+@@ -452,7 +465,26 @@ grub_efi_duplicate_device_path (const grub_efi_device_path_t *dp)
+        ;
+        p = GRUB_EFI_NEXT_DEVICE_PATH (p))
+     {
+-      total_size += GRUB_EFI_DEVICE_PATH_LENGTH (p);
++      grub_size_t len = GRUB_EFI_DEVICE_PATH_LENGTH (p);
++
++      /*
++       * In the event that we find a node that's completely garbage, for
++       * example if we get to 0x7f 0x01 0x02 0x00 ... (EndInstance with a size
++       * of 2), GRUB_EFI_END_ENTIRE_DEVICE_PATH() will be true and
++       * GRUB_EFI_NEXT_DEVICE_PATH() will return NULL, so we won't continue,
++       * and neither should our consumers, but there won't be any error raised
++       * even though the device path is junk.
++       *
++       * This keeps us from passing junk down back to our caller.
++       */
++      if (len < 4)
++	{
++	  grub_error (GRUB_ERR_OUT_OF_RANGE,
++		      "malformed EFI Device Path node has length=%d", len);
++	  return NULL;
++	}
++
++      total_size += len;
+       if (GRUB_EFI_END_ENTIRE_DEVICE_PATH (p))
+ 	break;
+     }
+@@ -497,7 +529,7 @@ dump_vendor_path (const char *type, grub_efi_vendor_device_path_t *vendor)
+ void
+ grub_efi_print_device_path (grub_efi_device_path_t *dp)
+ {
+-  while (1)
++  while (GRUB_EFI_DEVICE_PATH_VALID (dp))
+     {
+       grub_efi_uint8_t type = GRUB_EFI_DEVICE_PATH_TYPE (dp);
+       grub_efi_uint8_t subtype = GRUB_EFI_DEVICE_PATH_SUBTYPE (dp);
+@@ -909,7 +941,10 @@ grub_efi_compare_device_paths (const grub_efi_device_path_t *dp1,
+     /* Return non-zero.  */
+     return 1;
+ 
+-  while (1)
++  if (dp1 == dp2)
++    return 0;
++
++  while (GRUB_EFI_DEVICE_PATH_VALID (dp1) && GRUB_EFI_DEVICE_PATH_VALID (dp2))
+     {
+       grub_efi_uint8_t type1, type2;
+       grub_efi_uint8_t subtype1, subtype2;
+@@ -945,5 +980,14 @@ grub_efi_compare_device_paths (const grub_efi_device_path_t *dp1,
+       dp2 = (grub_efi_device_path_t *) ((char *) dp2 + len2);
+     }
+ 
++  /*
++   * There's no "right" answer here, but we probably don't want to call a valid
++   * dp and an invalid dp equal, so pick one way or the other.
++   */
++  if (GRUB_EFI_DEVICE_PATH_VALID (dp1) && !GRUB_EFI_DEVICE_PATH_VALID (dp2))
++    return 1;
++  else if (!GRUB_EFI_DEVICE_PATH_VALID (dp1) && GRUB_EFI_DEVICE_PATH_VALID (dp2))
++    return -1;
++
+   return 0;
+ }
+diff --git a/grub-core/loader/efi/chainloader.c b/grub-core/loader/efi/chainloader.c
+index daf8c6b54..a8d7b9155 100644
+--- a/grub-core/loader/efi/chainloader.c
++++ b/grub-core/loader/efi/chainloader.c
+@@ -156,9 +156,18 @@ make_file_path (grub_efi_device_path_t *dp, const char *filename)
+ 
+   size = 0;
+   d = dp;
+-  while (1)
++  while (d)
+     {
+-      size += GRUB_EFI_DEVICE_PATH_LENGTH (d);
++      grub_size_t len = GRUB_EFI_DEVICE_PATH_LENGTH (d);
++
++      if (len < 4)
++	{
++	  grub_error (GRUB_ERR_OUT_OF_RANGE,
++		      "malformed EFI Device Path node has length=%d", len);
++	  return NULL;
++	}
++
++      size += len;
+       if ((GRUB_EFI_END_ENTIRE_DEVICE_PATH (d)))
+ 	break;
+       d = GRUB_EFI_NEXT_DEVICE_PATH (d);
+diff --git a/grub-core/loader/i386/xnu.c b/grub-core/loader/i386/xnu.c
+index e9e119259..a70093607 100644
+--- a/grub-core/loader/i386/xnu.c
++++ b/grub-core/loader/i386/xnu.c
+@@ -515,14 +515,15 @@ grub_cmd_devprop_load (grub_command_t cmd __attribute__ ((unused)),
+ 
+       devhead = buf;
+       buf = devhead + 1;
+-      dpstart = buf;
++      dp = dpstart = buf;
+ 
+-      do
++      while (GRUB_EFI_DEVICE_PATH_VALID (dp) && buf < bufend)
+ 	{
+-	  dp = buf;
+ 	  buf = (char *) buf + GRUB_EFI_DEVICE_PATH_LENGTH (dp);
++	  if (GRUB_EFI_END_ENTIRE_DEVICE_PATH (dp))
++	    break;
++	  dp = buf;
+ 	}
+-      while (!GRUB_EFI_END_ENTIRE_DEVICE_PATH (dp) && buf < bufend);
+ 
+       dev = grub_xnu_devprop_add_device (dpstart, (char *) buf
+ 					 - (char *) dpstart);
+diff --git a/include/grub/efi/api.h b/include/grub/efi/api.h
+index addcbfa8f..cf1355a8c 100644
+--- a/include/grub/efi/api.h
++++ b/include/grub/efi/api.h
+@@ -625,6 +625,7 @@ typedef struct grub_efi_device_path grub_efi_device_path_protocol_t;
+ #define GRUB_EFI_DEVICE_PATH_TYPE(dp)		((dp)->type & 0x7f)
+ #define GRUB_EFI_DEVICE_PATH_SUBTYPE(dp)	((dp)->subtype)
+ #define GRUB_EFI_DEVICE_PATH_LENGTH(dp)		((dp)->length)
++#define GRUB_EFI_DEVICE_PATH_VALID(dp)		((dp) != NULL && GRUB_EFI_DEVICE_PATH_LENGTH (dp) >= 4)
+ 
+ /* The End of Device Path nodes.  */
+ #define GRUB_EFI_END_DEVICE_PATH_TYPE			(0xff & 0x7f)
+@@ -633,13 +634,16 @@ typedef struct grub_efi_device_path grub_efi_device_path_protocol_t;
+ #define GRUB_EFI_END_THIS_DEVICE_PATH_SUBTYPE		0x01
+ 
+ #define GRUB_EFI_END_ENTIRE_DEVICE_PATH(dp)	\
+-  (GRUB_EFI_DEVICE_PATH_TYPE (dp) == GRUB_EFI_END_DEVICE_PATH_TYPE \
+-   && (GRUB_EFI_DEVICE_PATH_SUBTYPE (dp) \
+-       == GRUB_EFI_END_ENTIRE_DEVICE_PATH_SUBTYPE))
++  (!GRUB_EFI_DEVICE_PATH_VALID (dp) || \
++   (GRUB_EFI_DEVICE_PATH_TYPE (dp) == GRUB_EFI_END_DEVICE_PATH_TYPE \
++    && (GRUB_EFI_DEVICE_PATH_SUBTYPE (dp) \
++	== GRUB_EFI_END_ENTIRE_DEVICE_PATH_SUBTYPE)))
+ 
+ #define GRUB_EFI_NEXT_DEVICE_PATH(dp)	\
+-  ((grub_efi_device_path_t *) ((char *) (dp) \
+-                               + GRUB_EFI_DEVICE_PATH_LENGTH (dp)))
++  (GRUB_EFI_DEVICE_PATH_VALID (dp) \
++   ? ((grub_efi_device_path_t *) \
++      ((char *) (dp) + GRUB_EFI_DEVICE_PATH_LENGTH (dp))) \
++   : NULL)
+ 
+ /* Hardware Device Path.  */
+ #define GRUB_EFI_HARDWARE_DEVICE_PATH_TYPE		1
+-- 
+2.26.2
+

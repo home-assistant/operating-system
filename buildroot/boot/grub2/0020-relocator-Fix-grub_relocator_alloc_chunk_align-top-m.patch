@@ -1,0 +1,49 @@
+From 06aa91f79f902752cb7e5d22ac0ea8e13bffd056 Mon Sep 17 00:00:00 2001
+From: Alexey Makhalov <amakhalov@vmware.com>
+Date: Fri, 17 Jul 2020 05:17:26 +0000
+Subject: [PATCH] relocator: Fix grub_relocator_alloc_chunk_align() top
+ memory allocation
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Current implementation of grub_relocator_alloc_chunk_align()
+does not allow allocation of the top byte.
+
+Assuming input args are:
+  max_addr = 0xfffff000;
+  size = 0x1000;
+
+And this is valid. But following overflow protection will
+unnecessarily move max_addr one byte down (to 0xffffefff):
+  if (max_addr > ~size)
+    max_addr = ~size;
+
+~size + 1 will fix the situation. In addition, check size
+for non zero to do not zero max_addr.
+
+Signed-off-by: Alexey Makhalov <amakhalov@vmware.com>
+Reviewed-by: Daniel Kiper <daniel.kiper@oracle.com>
+Signed-off-by: Stefan Sørensen <stefan.sorensen@spectralink.com>
+---
+ grub-core/lib/relocator.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/grub-core/lib/relocator.c b/grub-core/lib/relocator.c
+index 5847aac36..f2c1944c2 100644
+--- a/grub-core/lib/relocator.c
++++ b/grub-core/lib/relocator.c
+@@ -1386,8 +1386,8 @@ grub_relocator_alloc_chunk_align (struct grub_relocator *rel,
+   };
+   grub_addr_t min_addr2 = 0, max_addr2;
+ 
+-  if (max_addr > ~size)
+-    max_addr = ~size;
++  if (size && (max_addr > ~size))
++    max_addr = ~size + 1;
+ 
+ #ifdef GRUB_MACHINE_PCBIOS
+   if (min_addr < 0x1000)
+-- 
+2.26.2
+

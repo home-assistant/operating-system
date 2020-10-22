@@ -19,19 +19,14 @@ cd "${1:-.}" || usage
 # Check for git and a git repo.
 if head=`git rev-parse --verify --short HEAD 2>/dev/null`; then
 
-	# If we are at a tagged commit (like "v2.6.30-rc6"), we ignore it,
-	# because this version is defined in the top level Makefile.
-	if [ -z "`git describe --exact-match 2>/dev/null`" ]; then
+	atag="`git describe 2>/dev/null`"
 
-		# If we are past a tagged commit (like "v2.6.30-rc5-302-g72357d5"),
-		# we pretty print it.
-		if atag="`git describe 2>/dev/null`"; then
-			echo "$atag" | awk -F- '{printf("-%05d-%s", $(NF-1),$(NF))}'
-
-		# If we don't have a tag at all we print -g{commitish}.
-		else
-			printf '%s%s' -g $head
-		fi
+	# Show -g<commit> if we have no tag, or just the tag
+	# otherwise.
+	if [ -z "${atag}" ] ; then
+		printf "%s%s" -g ${head}
+	else
+		printf ${atag}
 	fi
 
 	# Is this git on svn?
@@ -53,13 +48,29 @@ if head=`git rev-parse --verify --short HEAD 2>/dev/null`; then
 fi
 
 # Check for mercurial and a mercurial repo.
+# In the git case, 'git describe' will show the latest tag, and unless we are
+# exactly on that tag, the number of commits since then, and last commit id.
+# Mimic something similar in the Mercurial case.
 if hgid=`HGRCPATH= hg id --id --tags 2>/dev/null`; then
 	tag=`printf '%s' "$hgid" | cut -d' ' -f2 --only-delimited`
 
 	# Do we have an untagged version?
 	if [ -z "$tag" -o "$tag" = tip ]; then
+		# current revision is not tagged, determine latest tag
+		latesttag=`HGRCPATH= hg log -r. -T '{latesttag}' 2>/dev/null`
+		# In case there is more than one tag on the latest tagged commit,
+		# 'latesttag' will separate them by colon (:). We'll retain this.
+		# In case there is no tag at all, 'null' will be returned.
+		if [ "$latesttag" = "null" ]; then
+			latesttag=''
+		fi
+
+		# add the commit id
 		id=`printf '%s' "$hgid" | sed 's/[+ ].*//'`
-		printf '%s%s' -hg "$id"
+		printf '%s%s%s' "${latesttag}" -hg "$id"
+	else
+		# current revision is tagged, just print the tag
+		printf ${tag}
 	fi
 
 	# Are there uncommitted changes?

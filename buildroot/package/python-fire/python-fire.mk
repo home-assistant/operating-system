@@ -11,4 +11,13 @@ PYTHON_FIRE_SETUP_TYPE = setuptools
 PYTHON_FIRE_LICENSE = Apache-2.0
 PYTHON_FIRE_LICENSE_FILES = LICENSE
 
+ifeq ($(BR2_PACKAGE_PYTHON),y)
+# only needed/valid for python 3.x
+define PYTHON_FIRE_RM_PY3_FILE
+	rm -f $(TARGET_DIR)/usr/lib/python*/site-packages/fire/test_components_py3.py
+endef
+
+PYTHON_FIRE_POST_INSTALL_TARGET_HOOKS += PYTHON_FIRE_RM_PY3_FILE
+endif
+
 $(eval $(python-package))

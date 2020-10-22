@@ -1,0 +1,3 @@
+# Allow USB printers in the lp group
+# Match rules converted from usblp.c driver's usblp_ids
+ACTION=="add", SUBSYSTEM=="usb", ATTR{bInterfaceClass}=="07", ATTR{bInterfaceSubClass}=="01", GROUP="lp"

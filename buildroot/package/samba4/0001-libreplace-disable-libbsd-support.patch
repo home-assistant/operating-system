@@ -9,7 +9,7 @@ This causes redefinition conflicts for link(2) when both standard
 unistd.h and bsd/unistd.h get included.
 
 Signed-off-by: Gustavo Zacarias <gustavo@zacarias.com.ar>
-[Bernd: rebased for versions 4.7.3, 4.8.0 & 4.8.5]
+[Bernd: rebased for versions 4.7.3, 4.8.0, 4.8.5 & 4.11.13]
 Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
 ---
  lib/replace/wscript | 15 ---------------
@@ -19,7 +19,7 @@ diff --git a/lib/replace/wscript b/lib/replace/wscript
 index 240d730cbee..c6d8df43c74 100644
 --- a/lib/replace/wscript
 +++ b/lib/replace/wscript
-@@ -381,21 +381,6 @@ def configure(conf):
+@@ -406,21 +406,6 @@ def configure(conf):
  
      strlcpy_in_bsd = False
  

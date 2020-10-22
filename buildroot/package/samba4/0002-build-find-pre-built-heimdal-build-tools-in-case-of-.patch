@@ -33,6 +33,7 @@ BUG: https://bugzilla.samba.org/show_bug.cgi?id=14164
 
 Signed-off-by: Uri Simchoni <uri@samba.org>
 Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
+[Bernd: rebased for version 4.11.13]
 ---
  wscript_configure_embedded_heimdal | 11 +++++++++++
  wscript_configure_system_heimdal   | 11 -----------
@@ -59,7 +60,7 @@ diff --git a/wscript_configure_system_heimdal b/wscript_configure_system_heimdal
 index 0ff6dad2f55..f77c177442f 100644
 --- a/wscript_configure_system_heimdal
 +++ b/wscript_configure_system_heimdal
-@@ -36,14 +36,6 @@ def check_system_heimdal_lib(name, functions='', headers='', onlyif=None):
+@@ -37,14 +37,6 @@ def check_system_heimdal_lib(name, functions='', headers='', onlyif=None):
      conf.define('USING_SYSTEM_%s' % name.upper(), 1)
      return True
  
@@ -74,7 +75,7 @@ index 0ff6dad2f55..f77c177442f 100644
  check_system_heimdal_lib("com_err", "com_right_r com_err", "com_err.h")
  
  if check_system_heimdal_lib("roken", "rk_socket_set_reuseaddr", "roken.h"):
-@@ -88,7 +88,4 @@
+@@ -96,7 +96,4 @@
  #if conf.CHECK_BUNDLED_SYSTEM('tommath', checkfunctions='mp_init', headers='tommath.h'):
  #    conf.define('USING_SYSTEM_TOMMATH', 1)
  

@@ -17,12 +17,11 @@ USB_MODESWITCH_BUILD_TARGETS = all
 USB_MODESWITCH_INSTALL_TARGETS = install-script
 else
 USB_MODESWITCH_DEPENDENCIES += jimtcl
+USB_MODESWITCH_INSTALL_TARGETS = install-common
 ifeq ($(BR2_STATIC_LIBS),y)
 USB_MODESWITCH_BUILD_TARGETS = all-with-statlink-dispatcher
-USB_MODESWITCH_INSTALL_TARGETS = install-statlink
 else
 USB_MODESWITCH_BUILD_TARGETS = all-with-dynlink-dispatcher
-USB_MODESWITCH_INSTALL_TARGETS = install-dynlink
 endif
 endif
 

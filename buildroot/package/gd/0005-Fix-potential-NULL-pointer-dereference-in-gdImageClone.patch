@@ -1,0 +1,44 @@
+From a93eac0e843148dc2d631c3ba80af17e9c8c860f Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?F=C3=A1bio=20Cabral=20Pacheco?= <fcabralpacheco@gmail.com>
+Date: Fri, 20 Dec 2019 12:03:33 -0300
+Subject: [PATCH] Fix potential NULL pointer dereference in gdImageClone()
+
+[Retrieved (and updated to remove .gitignore and tests) from:
+https://github.com/libgd/libgd/commit/a93eac0e843148dc2d631c3ba80af17e9c8c860f]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ src/gd.c                          |  9 +--------
+ tests/gdimageclone/.gitignore     |  1 +
+ tests/gdimageclone/CMakeLists.txt |  1 +
+ tests/gdimageclone/Makemodule.am  |  3 ++-
+ tests/gdimageclone/style.c        | 30 ++++++++++++++++++++++++++++++
+ 5 files changed, 35 insertions(+), 9 deletions(-)
+ create mode 100644 tests/gdimageclone/style.c
+
+diff --git a/src/gd.c b/src/gd.c
+index 592a0286..d564d1f9 100644
+--- a/src/gd.c
++++ b/src/gd.c
+@@ -2865,14 +2865,6 @@ BGD_DECLARE(gdImagePtr) gdImageClone (gdImagePtr src) {
+ 		}
+ 	}
+ 
+-	if (src->styleLength > 0) {
+-		dst->styleLength = src->styleLength;
+-		dst->stylePos    = src->stylePos;
+-		for (i = 0; i < src->styleLength; i++) {
+-			dst->style[i] = src->style[i];
+-		}
+-	}
+-
+ 	dst->interlace   = src->interlace;
+ 
+ 	dst->alphaBlendingFlag = src->alphaBlendingFlag;
+@@ -2907,6 +2899,7 @@ BGD_DECLARE(gdImagePtr) gdImageClone (gdImagePtr src) {
+ 
+ 	if (src->style) {
+ 		gdImageSetStyle(dst, src->style, src->styleLength);
++		dst->stylePos = src->stylePos;
+ 	}
+ 
+ 	for (i = 0; i < gdMaxColors; i++) {
