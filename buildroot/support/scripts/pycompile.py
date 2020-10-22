@@ -1,69 +1,85 @@
 #!/usr/bin/env python
 
-'''Wrapper for python2 and python3 around compileall to raise exception
-when a python byte code generation failed.
+"""
+Byte compile all .py files from provided directories. This script is an
+alternative implementation of compileall.compile_dir written with
+cross-compilation in mind.
+"""
 
-Inspired from:
-   http://stackoverflow.com/questions/615632/how-to-detect-errors-from-compileall-compile-dir
-'''
 from __future__ import print_function
-import sys
-import py_compile
-import compileall
+
 import argparse
+import os
+import py_compile
+import re
+import sys
 
 
-def check_for_errors(comparison):
-    '''Wrap comparison operator with code checking for PyCompileError.
-    If PyCompileError was raised, re-raise it again to abort execution,
-    otherwise perform comparison as expected.
-    '''
-    def operator(self, other):
-        exc_type, value, traceback = sys.exc_info()
-        if exc_type is not None and issubclass(exc_type,
-                                               py_compile.PyCompileError):
-            print("Cannot compile %s" % value.file)
-            raise value
+def compile_one(host_path, strip_root=None):
+    """
+    Compile a .py file into a .pyc file located next to it.
 
-        return comparison(self, other)
+    :arg host_path:
+        Absolute path to the file to compile on the host running the build.
+    :arg strip_root:
+        Prefix to remove from the original source paths encoded in compiled
+        files.
+    """
+    if os.path.islink(host_path) or not os.path.isfile(host_path):
+        return  # only compile real files
 
-    return operator
+    if not re.match(r"^[_A-Za-z][_A-Za-z0-9]+\.py$",
+                    os.path.basename(host_path)):
+        return  # only compile "importable" python modules
 
+    if strip_root is not None:
+        # determine the runtime path of the file (i.e.: relative path to root
+        # dir prepended with "/").
+        runtime_path = os.path.join("/", os.path.relpath(host_path, strip_root))
+    else:
+        runtime_path = host_path
 
-class ReportProblem(int):
-    '''Class that pretends to be an int() object but implements all of its
-    comparison operators such that it'd detect being called in
-    PyCompileError handling context and abort execution
-    '''
-    VALUE = 1
-
-    def __new__(cls, *args, **kwargs):
-        return int.__new__(cls, ReportProblem.VALUE, **kwargs)
-
-    @check_for_errors
-    def __lt__(self, other):
-        return ReportProblem.VALUE < other
-
-    @check_for_errors
-    def __eq__(self, other):
-        return ReportProblem.VALUE == other
-
-    def __ge__(self, other):
-        return not self < other
-
-    def __gt__(self, other):
-        return not self < other and not self == other
-
-    def __ne__(self, other):
-        return not self == other
+    # will raise an error if the file cannot be compiled
+    py_compile.compile(host_path, cfile=host_path + "c",
+                       dfile=runtime_path, doraise=True)
 
 
-parser = argparse.ArgumentParser(description='Compile Python source files in a directory tree.')
-parser.add_argument("target", metavar='DIRECTORY',
-                    help='Directory to scan')
-parser.add_argument("--force", action='store_true',
-                    help="Force compilation even if alread compiled")
+def existing_dir_abs(arg):
+    """
+    argparse type callback that checks that argument is a directory and returns
+    its absolute path.
+    """
+    if not os.path.isdir(arg):
+        raise argparse.ArgumentTypeError('no such directory: {!r}'.format(arg))
+    return os.path.abspath(arg)
 
-args = parser.parse_args()
 
-compileall.compile_dir(args.target, force=args.force, quiet=ReportProblem())
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("dirs", metavar="DIR", nargs="+", type=existing_dir_abs,
+                        help="Directory to recursively scan and compile")
+    parser.add_argument("--strip-root", metavar="ROOT", type=existing_dir_abs,
+                        help="""
+                        Prefix to remove from the original source paths encoded
+                        in compiled files
+                        """)
+
+    args = parser.parse_args()
+
+    try:
+        for d in args.dirs:
+            if args.strip_root and ".." in os.path.relpath(d, args.strip_root):
+                parser.error("DIR: not inside ROOT dir: {!r}".format(d))
+            for parent, _, files in os.walk(d):
+                for f in files:
+                    compile_one(os.path.join(parent, f), args.strip_root)
+
+    except Exception as e:
+        print("error: {}".format(e))
+        return 1
+
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

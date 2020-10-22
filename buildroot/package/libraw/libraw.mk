@@ -4,15 +4,13 @@
 #
 ################################################################################
 
-LIBRAW_VERSION = 0.19.5
+LIBRAW_VERSION = 0.20.0
 LIBRAW_SOURCE = LibRaw-$(LIBRAW_VERSION).tar.gz
 LIBRAW_SITE = http://www.libraw.org/data
 LIBRAW_INSTALL_STAGING = YES
 LIBRAW_CONF_OPTS += \
 	--disable-examples \
-	--disable-openmp \
-	--disable-demosaic-pack-gpl2 \
-	--disable-demosaic-pack-gpl3
+	--disable-openmp
 LIBRAW_LICENSE = LGPL-2.1 or CDDL-1.0
 LIBRAW_LICENSE_FILES = LICENSE.LGPL LICENSE.CDDL README.md
 LIBRAW_DEPENDENCIES = host-pkgconf
@@ -41,6 +39,13 @@ LIBRAW_CONF_OPTS += --enable-lcms
 LIBRAW_DEPENDENCIES += lcms2 host-pkgconf
 else
 LIBRAW_CONF_OPTS += --disable-lcms
+endif
+
+ifeq ($(BR2_PACKAGE_ZLIB),y)
+LIBRAW_CONF_OPTS += --enable-zlib
+LIBRAW_DEPENDENCIES += zlib
+else
+LIBRAW_CONF_OPTS += --disable-zlib
 endif
 
 $(eval $(autotools-package))

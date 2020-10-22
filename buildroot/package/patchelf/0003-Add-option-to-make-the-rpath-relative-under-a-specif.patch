@@ -167,7 +167,7 @@ index 1d9a772..35b4a33 100644
      if (op == rpShrink && !rpath) {
          debug("no RPATH to shrink\n");
          return;
-@@ -1120,26 +1196,86 @@ void ElfFile<ElfFileParamNames>::modifyRPath(RPathOp op, string newRPath)
+@@ -1120,26 +1196,80 @@ void ElfFile<ElfFileParamNames>::modifyRPath(RPathOp op, string newRPath)
                  continue;
              }
  
@@ -250,12 +250,6 @@ index 1d9a772..35b4a33 100644
 +                }
 +            }
 +
-+            if (!libFoundInRPath(canonicalPath, neededLibs, neededLibFound)) {
-+                debug("removing directory '%s' from RPATH because it does not contain needed libs\n",
-+                      dirName.c_str());
-+                continue;
-+            }
-+
 +            /* Finally make "canonicalPath" relative to "filedir" in "rootDir" */
 +            if (relativeToFile)
 +                concatToRPath(newRPath, makePathRelative(canonicalPath, fileDir));
@@ -268,7 +262,7 @@ index 1d9a772..35b4a33 100644
      if (op == rpRemove) {
          if (!rpath) {
              debug("no RPATH to delete\n");
-@@ -1413,7 +1549,9 @@ static bool shrinkRPath = false;
+@@ -1413,7 +1543,9 @@ static bool shrinkRPath = false;
  static bool removeRPath = false;
  static bool setRPath = false;
  static bool printRPath = false;
@@ -278,7 +272,7 @@ index 1d9a772..35b4a33 100644
  static set<string> neededLibsToRemove;
  static map<string, string> neededLibsToReplace;
  static set<string> neededLibsToAdd;
-@@ -1438,14 +1576,16 @@ static void patchElf2(ElfFile & elfFile)
+@@ -1438,14 +1570,16 @@ static void patchElf2(ElfFile & elfFile)
          elfFile.setInterpreter(newInterpreter);
  
      if (printRPath)
@@ -299,7 +293,7 @@ index 1d9a772..35b4a33 100644
  
      if (printNeeded) elfFile.printNeededLibs();
  
-@@ -1508,6 +1648,9 @@ void showHelp(const string & progName)
+@@ -1508,6 +1642,9 @@ void showHelp(const string & progName)
    [--set-rpath RPATH]\n\
    [--remove-rpath]\n\
    [--shrink-rpath]\n\
@@ -309,7 +303,7 @@ index 1d9a772..35b4a33 100644
    [--print-rpath]\n\
    [--force-rpath]\n\
    [--add-needed LIBRARY]\n\
-@@ -1564,6 +1707,17 @@ int main(int argc, char * * argv)
+@@ -1564,6 +1701,17 @@ int main(int argc, char * * argv)
              setRPath = true;
              newRPath = argv[i];
          }

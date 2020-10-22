@@ -1,0 +1,1326 @@
+From 4ad7e85adc3803788d65707a9db11fd681aebe4a Mon Sep 17 00:00:00 2001
+From: Peter Jones <pjones@redhat.com>
+Date: Mon, 15 Jun 2020 12:28:27 -0400
+Subject: [PATCH] malloc: Use overflow checking primitives where we do
+ complex allocations
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+This attempts to fix the places where we do the following where
+arithmetic_expr may include unvalidated data:
+
+  X = grub_malloc(arithmetic_expr);
+
+It accomplishes this by doing the arithmetic ahead of time using grub_add(),
+grub_sub(), grub_mul() and testing for overflow before proceeding.
+
+Among other issues, this fixes:
+  - allocation of integer overflow in grub_video_bitmap_create()
+    reported by Chris Coulson,
+  - allocation of integer overflow in grub_png_decode_image_header()
+    reported by Chris Coulson,
+  - allocation of integer overflow in grub_squash_read_symlink()
+    reported by Chris Coulson,
+  - allocation of integer overflow in grub_ext2_read_symlink()
+    reported by Chris Coulson,
+  - allocation of integer overflow in read_section_as_string()
+    reported by Chris Coulson.
+
+Fixes: CVE-2020-14309, CVE-2020-14310, CVE-2020-14311
+
+Signed-off-by: Peter Jones <pjones@redhat.com>
+Reviewed-by: Daniel Kiper <daniel.kiper@oracle.com>
+Signed-off-by: Stefan Sørensen <stefan.sorensen@spectralink.com>
+---
+ grub-core/commands/legacycfg.c | 29 +++++++++++++++----
+ grub-core/commands/wildcard.c  | 36 ++++++++++++++++++++----
+ grub-core/disk/ldm.c           | 32 +++++++++++++++------
+ grub-core/font/font.c          |  7 ++++-
+ grub-core/fs/btrfs.c           | 28 +++++++++++++------
+ grub-core/fs/ext2.c            | 10 ++++++-
+ grub-core/fs/iso9660.c         | 51 ++++++++++++++++++++++++----------
+ grub-core/fs/sfs.c             | 27 ++++++++++++++----
+ grub-core/fs/squash4.c         | 45 ++++++++++++++++++++++--------
+ grub-core/fs/udf.c             | 41 +++++++++++++++++----------
+ grub-core/fs/xfs.c             | 11 +++++---
+ grub-core/fs/zfs/zfs.c         | 22 ++++++++++-----
+ grub-core/fs/zfs/zfscrypt.c    |  7 ++++-
+ grub-core/lib/arg.c            | 20 +++++++++++--
+ grub-core/loader/i386/bsd.c    |  8 +++++-
+ grub-core/net/dns.c            |  9 +++++-
+ grub-core/normal/charset.c     | 10 +++++--
+ grub-core/normal/cmdline.c     | 14 ++++++++--
+ grub-core/normal/menu_entry.c  | 13 +++++++--
+ grub-core/script/argv.c        | 16 +++++++++--
+ grub-core/script/lexer.c       | 21 ++++++++++++--
+ grub-core/video/bitmap.c       | 25 +++++++++++------
+ grub-core/video/readers/png.c  | 13 +++++++--
+ 23 files changed, 382 insertions(+), 113 deletions(-)
+
+diff --git a/grub-core/commands/legacycfg.c b/grub-core/commands/legacycfg.c
+index 5e3ec0d5e..cc5971f4d 100644
+--- a/grub-core/commands/legacycfg.c
++++ b/grub-core/commands/legacycfg.c
+@@ -32,6 +32,7 @@
+ #include <grub/auth.h>
+ #include <grub/disk.h>
+ #include <grub/partition.h>
++#include <grub/safemath.h>
+ 
+ GRUB_MOD_LICENSE ("GPLv3+");
+ 
+@@ -104,13 +105,22 @@ legacy_file (const char *filename)
+ 	if (newsuffix)
+ 	  {
+ 	    char *t;
+-	    
++	    grub_size_t sz;
++
++	    if (grub_add (grub_strlen (suffix), grub_strlen (newsuffix), &sz) ||
++		grub_add (sz, 1, &sz))
++	      {
++		grub_errno = GRUB_ERR_OUT_OF_RANGE;
++		goto fail_0;
++	      }
++
+ 	    t = suffix;
+-	    suffix = grub_realloc (suffix, grub_strlen (suffix)
+-				   + grub_strlen (newsuffix) + 1);
++	    suffix = grub_realloc (suffix, sz);
+ 	    if (!suffix)
+ 	      {
+ 		grub_free (t);
++
++ fail_0:
+ 		grub_free (entrysrc);
+ 		grub_free (parsed);
+ 		grub_free (newsuffix);
+@@ -154,13 +164,22 @@ legacy_file (const char *filename)
+ 	  else
+ 	    {
+ 	      char *t;
++	      grub_size_t sz;
++
++	      if (grub_add (grub_strlen (entrysrc), grub_strlen (parsed), &sz) ||
++		  grub_add (sz, 1, &sz))
++		{
++		  grub_errno = GRUB_ERR_OUT_OF_RANGE;
++		  goto fail_1;
++		}
+ 
+ 	      t = entrysrc;
+-	      entrysrc = grub_realloc (entrysrc, grub_strlen (entrysrc)
+-				       + grub_strlen (parsed) + 1);
++	      entrysrc = grub_realloc (entrysrc, sz);
+ 	      if (!entrysrc)
+ 		{
+ 		  grub_free (t);
++
++ fail_1:
+ 		  grub_free (parsed);
+ 		  grub_free (suffix);
+ 		  return grub_errno;
+diff --git a/grub-core/commands/wildcard.c b/grub-core/commands/wildcard.c
+index 4a106ca04..cc3290311 100644
+--- a/grub-core/commands/wildcard.c
++++ b/grub-core/commands/wildcard.c
+@@ -23,6 +23,7 @@
+ #include <grub/file.h>
+ #include <grub/device.h>
+ #include <grub/script_sh.h>
++#include <grub/safemath.h>
+ 
+ #include <regex.h>
+ 
+@@ -48,6 +49,7 @@ merge (char **dest, char **ps)
+   int i;
+   int j;
+   char **p;
++  grub_size_t sz;
+ 
+   if (! dest)
+     return ps;
+@@ -60,7 +62,12 @@ merge (char **dest, char **ps)
+   for (j = 0; ps[j]; j++)
+     ;
+ 
+-  p = grub_realloc (dest, sizeof (char*) * (i + j + 1));
++  if (grub_add (i, j, &sz) ||
++      grub_add (sz, 1, &sz) ||
++      grub_mul (sz, sizeof (char *), &sz))
++    return dest;
++
++  p = grub_realloc (dest, sz);
+   if (! p)
+     {
+       grub_free (dest);
+@@ -115,8 +122,15 @@ make_regex (const char *start, const char *end, regex_t *regexp)
+   char ch;
+   int i = 0;
+   unsigned len = end - start;
+-  char *buffer = grub_malloc (len * 2 + 2 + 1); /* worst case size. */
++  char *buffer;
++  grub_size_t sz;
+ 
++  /* Worst case size is (len * 2 + 2 + 1). */
++  if (grub_mul (len, 2, &sz) ||
++      grub_add (sz, 3, &sz))
++    return 1;
++
++  buffer = grub_malloc (sz);
+   if (! buffer)
+     return 1;
+ 
+@@ -226,6 +240,7 @@ match_devices_iter (const char *name, void *data)
+   struct match_devices_ctx *ctx = data;
+   char **t;
+   char *buffer;
++  grub_size_t sz;
+ 
+   /* skip partitions if asked to. */
+   if (ctx->noparts && grub_strchr (name, ','))
+@@ -239,11 +254,16 @@ match_devices_iter (const char *name, void *data)
+   if (regexec (ctx->regexp, buffer, 0, 0, 0))
+     {
+       grub_dprintf ("expand", "not matched\n");
++ fail:
+       grub_free (buffer);
+       return 0;
+     }
+ 
+-  t = grub_realloc (ctx->devs, sizeof (char*) * (ctx->ndev + 2));
++  if (grub_add (ctx->ndev, 2, &sz) ||
++      grub_mul (sz, sizeof (char *), &sz))
++    goto fail;
++
++  t = grub_realloc (ctx->devs, sz);
+   if (! t)
+     {
+       grub_free (buffer);
+@@ -300,6 +320,7 @@ match_files_iter (const char *name,
+   struct match_files_ctx *ctx = data;
+   char **t;
+   char *buffer;
++  grub_size_t sz;
+ 
+   /* skip . and .. names */
+   if (grub_strcmp(".", name) == 0 || grub_strcmp("..", name) == 0)
+@@ -315,9 +336,14 @@ match_files_iter (const char *name,
+   if (! buffer)
+     return 1;
+ 
+-  t = grub_realloc (ctx->files, sizeof (char*) * (ctx->nfile + 2));
+-  if (! t)
++  if (grub_add (ctx->nfile, 2, &sz) ||
++      grub_mul (sz, sizeof (char *), &sz))
++    goto fail;
++
++  t = grub_realloc (ctx->files, sz);
++  if (!t)
+     {
++ fail:
+       grub_free (buffer);
+       return 1;
+     }
+diff --git a/grub-core/disk/ldm.c b/grub-core/disk/ldm.c
+index e6323701a..58f8a53e1 100644
+--- a/grub-core/disk/ldm.c
++++ b/grub-core/disk/ldm.c
+@@ -25,6 +25,7 @@
+ #include <grub/msdos_partition.h>
+ #include <grub/gpt_partition.h>
+ #include <grub/i18n.h>
++#include <grub/safemath.h>
+ 
+ #ifdef GRUB_UTIL
+ #include <grub/emu/misc.h>
+@@ -289,6 +290,7 @@ make_vg (grub_disk_t disk,
+       struct grub_ldm_vblk vblk[GRUB_DISK_SECTOR_SIZE
+ 				/ sizeof (struct grub_ldm_vblk)];
+       unsigned i;
++      grub_size_t sz;
+       err = grub_disk_read (disk, cursec, 0,
+ 			    sizeof(vblk), &vblk);
+       if (err)
+@@ -350,7 +352,13 @@ make_vg (grub_disk_t disk,
+ 	      grub_free (lv);
+ 	      goto fail2;
+ 	    }
+-	  lv->name = grub_malloc (*ptr + 1);
++	  if (grub_add (*ptr, 1, &sz))
++	    {
++	      grub_free (lv->internal_id);
++	      grub_free (lv);
++	      goto fail2;
++	    }
++	  lv->name = grub_malloc (sz);
+ 	  if (!lv->name)
+ 	    {
+ 	      grub_free (lv->internal_id);
+@@ -599,10 +607,13 @@ make_vg (grub_disk_t disk,
+ 	  if (lv->segments->node_alloc == lv->segments->node_count)
+ 	    {
+ 	      void *t;
+-	      lv->segments->node_alloc *= 2; 
+-	      t = grub_realloc (lv->segments->nodes,
+-				sizeof (*lv->segments->nodes)
+-				* lv->segments->node_alloc);
++	      grub_size_t sz;
++
++	      if (grub_mul (lv->segments->node_alloc, 2, &lv->segments->node_alloc) ||
++		  grub_mul (lv->segments->node_alloc, sizeof (*lv->segments->nodes), &sz))
++		goto fail2;
++
++	      t = grub_realloc (lv->segments->nodes, sz);
+ 	      if (!t)
+ 		goto fail2;
+ 	      lv->segments->nodes = t;
+@@ -723,10 +734,13 @@ make_vg (grub_disk_t disk,
+ 	      if (comp->segment_alloc == comp->segment_count)
+ 		{
+ 		  void *t;
+-		  comp->segment_alloc *= 2;
+-		  t = grub_realloc (comp->segments,
+-				    comp->segment_alloc
+-				    * sizeof (*comp->segments));
++		  grub_size_t sz;
++
++		  if (grub_mul (comp->segment_alloc, 2, &comp->segment_alloc) ||
++		      grub_mul (comp->segment_alloc, sizeof (*comp->segments), &sz))
++		    goto fail2;
++
++		  t = grub_realloc (comp->segments, sz);
+ 		  if (!t)
+ 		    goto fail2;
+ 		  comp->segments = t;
+diff --git a/grub-core/font/font.c b/grub-core/font/font.c
+index 8e118b315..5edb477ac 100644
+--- a/grub-core/font/font.c
++++ b/grub-core/font/font.c
+@@ -30,6 +30,7 @@
+ #include <grub/unicode.h>
+ #include <grub/fontformat.h>
+ #include <grub/env.h>
++#include <grub/safemath.h>
+ 
+ GRUB_MOD_LICENSE ("GPLv3+");
+ 
+@@ -360,9 +361,13 @@ static char *
+ read_section_as_string (struct font_file_section *section)
+ {
+   char *str;
++  grub_size_t sz;
+   grub_ssize_t ret;
+ 
+-  str = grub_malloc (section->length + 1);
++  if (grub_add (section->length, 1, &sz))
++    return NULL;
++
++  str = grub_malloc (sz);
+   if (!str)
+     return 0;
+ 
+diff --git a/grub-core/fs/btrfs.c b/grub-core/fs/btrfs.c
+index 11272efc1..2b65bd56a 100644
+--- a/grub-core/fs/btrfs.c
++++ b/grub-core/fs/btrfs.c
+@@ -40,6 +40,7 @@
+ #include <grub/btrfs.h>
+ #include <grub/crypto.h>
+ #include <grub/diskfilter.h>
++#include <grub/safemath.h>
+ 
+ GRUB_MOD_LICENSE ("GPLv3+");
+ 
+@@ -329,9 +330,13 @@ save_ref (struct grub_btrfs_leaf_descriptor *desc,
+   if (desc->allocated < desc->depth)
+     {
+       void *newdata;
+-      desc->allocated *= 2;
+-      newdata = grub_realloc (desc->data, sizeof (desc->data[0])
+-			      * desc->allocated);
++      grub_size_t sz;
++
++      if (grub_mul (desc->allocated, 2, &desc->allocated) ||
++	  grub_mul (desc->allocated, sizeof (desc->data[0]), &sz))
++	return GRUB_ERR_OUT_OF_RANGE;
++
++      newdata = grub_realloc (desc->data, sz);
+       if (!newdata)
+ 	return grub_errno;
+       desc->data = newdata;
+@@ -622,16 +627,21 @@ find_device (struct grub_btrfs_data *data, grub_uint64_t id)
+   if (data->n_devices_attached > data->n_devices_allocated)
+     {
+       void *tmp;
+-      data->n_devices_allocated = 2 * data->n_devices_attached + 1;
+-      data->devices_attached
+-	= grub_realloc (tmp = data->devices_attached,
+-			data->n_devices_allocated
+-			* sizeof (data->devices_attached[0]));
++      grub_size_t sz;
++
++      if (grub_mul (data->n_devices_attached, 2, &data->n_devices_allocated) ||
++	  grub_add (data->n_devices_allocated, 1, &data->n_devices_allocated) ||
++	  grub_mul (data->n_devices_allocated, sizeof (data->devices_attached[0]), &sz))
++	goto fail;
++
++      data->devices_attached = grub_realloc (tmp = data->devices_attached, sz);
+       if (!data->devices_attached)
+ 	{
++	  data->devices_attached = tmp;
++
++ fail:
+ 	  if (ctx.dev_found)
+ 	    grub_device_close (ctx.dev_found);
+-	  data->devices_attached = tmp;
+ 	  return NULL;
+ 	}
+     }
+diff --git a/grub-core/fs/ext2.c b/grub-core/fs/ext2.c
+index 9b389802a..ac33bcd68 100644
+--- a/grub-core/fs/ext2.c
++++ b/grub-core/fs/ext2.c
+@@ -46,6 +46,7 @@
+ #include <grub/dl.h>
+ #include <grub/types.h>
+ #include <grub/fshelp.h>
++#include <grub/safemath.h>
+ 
+ GRUB_MOD_LICENSE ("GPLv3+");
+ 
+@@ -703,6 +704,7 @@ grub_ext2_read_symlink (grub_fshelp_node_t node)
+ {
+   char *symlink;
+   struct grub_fshelp_node *diro = node;
++  grub_size_t sz;
+ 
+   if (! diro->inode_read)
+     {
+@@ -717,7 +719,13 @@ grub_ext2_read_symlink (grub_fshelp_node_t node)
+        }
+     }
+ 
+-  symlink = grub_malloc (grub_le_to_cpu32 (diro->inode.size) + 1);
++  if (grub_add (grub_le_to_cpu32 (diro->inode.size), 1, &sz))
++    {
++      grub_error (GRUB_ERR_OUT_OF_RANGE, N_("overflow is detected"));
++      return NULL;
++    }
++
++  symlink = grub_malloc (sz);
+   if (! symlink)
+     return 0;
+ 
+diff --git a/grub-core/fs/iso9660.c b/grub-core/fs/iso9660.c
+index 4f1b52a55..7ba5b300b 100644
+--- a/grub-core/fs/iso9660.c
++++ b/grub-core/fs/iso9660.c
+@@ -28,6 +28,7 @@
+ #include <grub/fshelp.h>
+ #include <grub/charset.h>
+ #include <grub/datetime.h>
++#include <grub/safemath.h>
+ 
+ GRUB_MOD_LICENSE ("GPLv3+");
+ 
+@@ -531,8 +532,13 @@ add_part (struct iterate_dir_ctx *ctx,
+ 	  int len2)
+ {
+   int size = ctx->symlink ? grub_strlen (ctx->symlink) : 0;
++  grub_size_t sz;
+ 
+-  ctx->symlink = grub_realloc (ctx->symlink, size + len2 + 1);
++  if (grub_add (size, len2, &sz) ||
++      grub_add (sz, 1, &sz))
++    return;
++
++  ctx->symlink = grub_realloc (ctx->symlink, sz);
+   if (! ctx->symlink)
+     return;
+ 
+@@ -560,17 +566,24 @@ susp_iterate_dir (struct grub_iso9660_susp_entry *entry,
+ 	{
+ 	  grub_size_t off = 0, csize = 1;
+ 	  char *old;
++	  grub_size_t sz;
++
+ 	  csize = entry->len - 5;
+ 	  old = ctx->filename;
+ 	  if (ctx->filename_alloc)
+ 	    {
+ 	      off = grub_strlen (ctx->filename);
+-	      ctx->filename = grub_realloc (ctx->filename, csize + off + 1);
++	      if (grub_add (csize, off, &sz) ||
++		  grub_add (sz, 1, &sz))
++		return GRUB_ERR_OUT_OF_RANGE;
++	      ctx->filename = grub_realloc (ctx->filename, sz);
+ 	    }
+ 	  else
+ 	    {
+ 	      off = 0;
+-	      ctx->filename = grub_zalloc (csize + 1);
++	      if (grub_add (csize, 1, &sz))
++		return GRUB_ERR_OUT_OF_RANGE;
++	      ctx->filename = grub_zalloc (sz);
+ 	    }
+ 	  if (!ctx->filename)
+ 	    {
+@@ -776,14 +789,18 @@ grub_iso9660_iterate_dir (grub_fshelp_node_t dir,
+ 	    if (node->have_dirents >= node->alloc_dirents)
+ 	      {
+ 		struct grub_fshelp_node *new_node;
+-		node->alloc_dirents *= 2;
+-		new_node = grub_realloc (node, 
+-					 sizeof (struct grub_fshelp_node)
+-					 + ((node->alloc_dirents
+-					     - ARRAY_SIZE (node->dirents))
+-					    * sizeof (node->dirents[0])));
++		grub_size_t sz;
++
++		if (grub_mul (node->alloc_dirents, 2, &node->alloc_dirents) ||
++		    grub_sub (node->alloc_dirents, ARRAY_SIZE (node->dirents), &sz) ||
++		    grub_mul (sz, sizeof (node->dirents[0]), &sz) ||
++		    grub_add (sz, sizeof (struct grub_fshelp_node), &sz))
++		  goto fail_0;
++
++		new_node = grub_realloc (node, sz);
+ 		if (!new_node)
+ 		  {
++ fail_0:
+ 		    if (ctx.filename_alloc)
+ 		      grub_free (ctx.filename);
+ 		    grub_free (node);
+@@ -799,14 +816,18 @@ grub_iso9660_iterate_dir (grub_fshelp_node_t dir,
+ 		* sizeof (node->dirents[0]) < grub_strlen (ctx.symlink) + 1)
+ 	      {
+ 		struct grub_fshelp_node *new_node;
+-		new_node = grub_realloc (node,
+-					 sizeof (struct grub_fshelp_node)
+-					 + ((node->alloc_dirents
+-					     - ARRAY_SIZE (node->dirents))
+-					    * sizeof (node->dirents[0]))
+-					 + grub_strlen (ctx.symlink) + 1);
++		grub_size_t sz;
++
++		if (grub_sub (node->alloc_dirents, ARRAY_SIZE (node->dirents), &sz) ||
++		    grub_mul (sz, sizeof (node->dirents[0]), &sz) ||
++		    grub_add (sz, sizeof (struct grub_fshelp_node) + 1, &sz) ||
++		    grub_add (sz, grub_strlen (ctx.symlink), &sz))
++		  goto fail_1;
++
++		new_node = grub_realloc (node, sz);
+ 		if (!new_node)
+ 		  {
++ fail_1:
+ 		    if (ctx.filename_alloc)
+ 		      grub_free (ctx.filename);
+ 		    grub_free (node);
+diff --git a/grub-core/fs/sfs.c b/grub-core/fs/sfs.c
+index 90f7fb379..de2b107a4 100644
+--- a/grub-core/fs/sfs.c
++++ b/grub-core/fs/sfs.c
+@@ -26,6 +26,7 @@
+ #include <grub/types.h>
+ #include <grub/fshelp.h>
+ #include <grub/charset.h>
++#include <grub/safemath.h>
+ 
+ GRUB_MOD_LICENSE ("GPLv3+");
+ 
+@@ -307,10 +308,15 @@ grub_sfs_read_block (grub_fshelp_node_t node, grub_disk_addr_t fileblock)
+       if (node->cache && node->cache_size >= node->cache_allocated)
+ 	{
+ 	  struct cache_entry *e = node->cache;
+-	  e = grub_realloc (node->cache,node->cache_allocated * 2
+-			    * sizeof (e[0]));
++	  grub_size_t sz;
++
++	  if (grub_mul (node->cache_allocated, 2 * sizeof (e[0]), &sz))
++	    goto fail;
++
++	  e = grub_realloc (node->cache, sz);
+ 	  if (!e)
+ 	    {
++ fail:
+ 	      grub_errno = 0;
+ 	      grub_free (node->cache);
+ 	      node->cache = 0;
+@@ -477,10 +483,16 @@ grub_sfs_create_node (struct grub_fshelp_node **node,
+   grub_size_t len = grub_strlen (name);
+   grub_uint8_t *name_u8;
+   int ret;
++  grub_size_t sz;
++
++  if (grub_mul (len, GRUB_MAX_UTF8_PER_LATIN1, &sz) ||
++      grub_add (sz, 1, &sz))
++    return 1;
++
+   *node = grub_malloc (sizeof (**node));
+   if (!*node)
+     return 1;
+-  name_u8 = grub_malloc (len * GRUB_MAX_UTF8_PER_LATIN1 + 1);
++  name_u8 = grub_malloc (sz);
+   if (!name_u8)
+     {
+       grub_free (*node);
+@@ -724,8 +736,13 @@ grub_sfs_label (grub_device_t device, char **label)
+   data = grub_sfs_mount (disk);
+   if (data)
+     {
+-      grub_size_t len = grub_strlen (data->label);
+-      *label = grub_malloc (len * GRUB_MAX_UTF8_PER_LATIN1 + 1);
++      grub_size_t sz, len = grub_strlen (data->label);
++
++      if (grub_mul (len, GRUB_MAX_UTF8_PER_LATIN1, &sz) ||
++	  grub_add (sz, 1, &sz))
++	return GRUB_ERR_OUT_OF_RANGE;
++
++      *label = grub_malloc (sz);
+       if (*label)
+ 	*grub_latin1_to_utf8 ((grub_uint8_t *) *label,
+ 			      (const grub_uint8_t *) data->label,
+diff --git a/grub-core/fs/squash4.c b/grub-core/fs/squash4.c
+index 95d5c1e1f..785123894 100644
+--- a/grub-core/fs/squash4.c
++++ b/grub-core/fs/squash4.c
+@@ -26,6 +26,7 @@
+ #include <grub/types.h>
+ #include <grub/fshelp.h>
+ #include <grub/deflate.h>
++#include <grub/safemath.h>
+ #include <minilzo.h>
+ 
+ #include "xz.h"
+@@ -459,7 +460,17 @@ grub_squash_read_symlink (grub_fshelp_node_t node)
+ {
+   char *ret;
+   grub_err_t err;
+-  ret = grub_malloc (grub_le_to_cpu32 (node->ino.symlink.namelen) + 1);
++  grub_size_t sz;
++
++  if (grub_add (grub_le_to_cpu32 (node->ino.symlink.namelen), 1, &sz))
++    {
++      grub_error (GRUB_ERR_OUT_OF_RANGE, N_("overflow is detected"));
++      return NULL;
++    }
++
++  ret = grub_malloc (sz);
++  if (!ret)
++    return NULL;
+ 
+   err = read_chunk (node->data, ret,
+ 		    grub_le_to_cpu32 (node->ino.symlink.namelen),
+@@ -506,11 +517,16 @@ grub_squash_iterate_dir (grub_fshelp_node_t dir,
+ 
+   {
+     grub_fshelp_node_t node;
+-    node = grub_malloc (sizeof (*node) + dir->stsize * sizeof (dir->stack[0]));
++    grub_size_t sz;
++
++    if (grub_mul (dir->stsize, sizeof (dir->stack[0]), &sz) ||
++	grub_add (sz, sizeof (*node), &sz))
++      return 0;
++
++    node = grub_malloc (sz);
+     if (!node)
+       return 0;
+-    grub_memcpy (node, dir,
+-		 sizeof (*node) + dir->stsize * sizeof (dir->stack[0]));
++    grub_memcpy (node, dir, sz);
+     if (hook (".", GRUB_FSHELP_DIR, node, hook_data))
+       return 1;
+ 
+@@ -518,12 +534,15 @@ grub_squash_iterate_dir (grub_fshelp_node_t dir,
+       {
+ 	grub_err_t err;
+ 
+-	node = grub_malloc (sizeof (*node) + dir->stsize * sizeof (dir->stack[0]));
++	if (grub_mul (dir->stsize, sizeof (dir->stack[0]), &sz) ||
++	    grub_add (sz, sizeof (*node), &sz))
++	  return 0;
++
++	node = grub_malloc (sz);
+ 	if (!node)
+ 	  return 0;
+ 
+-	grub_memcpy (node, dir,
+-		     sizeof (*node) + dir->stsize * sizeof (dir->stack[0]));
++	grub_memcpy (node, dir, sz);
+ 
+ 	node->stsize--;
+ 	err = read_chunk (dir->data, &node->ino, sizeof (node->ino),
+@@ -557,6 +576,7 @@ grub_squash_iterate_dir (grub_fshelp_node_t dir,
+ 	  enum grub_fshelp_filetype filetype = GRUB_FSHELP_REG;
+ 	  struct grub_squash_dirent di;
+ 	  struct grub_squash_inode ino;
++	  grub_size_t sz;
+ 
+ 	  err = read_chunk (dir->data, &di, sizeof (di),
+ 			    grub_le_to_cpu64 (dir->data->sb.diroffset)
+@@ -589,13 +609,16 @@ grub_squash_iterate_dir (grub_fshelp_node_t dir,
+ 	  if (grub_le_to_cpu16 (di.type) == SQUASH_TYPE_SYMLINK)
+ 	    filetype = GRUB_FSHELP_SYMLINK;
+ 
+-	  node = grub_malloc (sizeof (*node)
+-			      + (dir->stsize + 1) * sizeof (dir->stack[0]));
++	  if (grub_add (dir->stsize, 1, &sz) ||
++	      grub_mul (sz, sizeof (dir->stack[0]), &sz) ||
++	      grub_add (sz, sizeof (*node), &sz))
++	    return 0;
++
++	  node = grub_malloc (sz);
+ 	  if (! node)
+ 	    return 0;
+ 
+-	  grub_memcpy (node, dir,
+-		       sizeof (*node) + dir->stsize * sizeof (dir->stack[0]));
++	  grub_memcpy (node, dir, sz - sizeof(dir->stack[0]));
+ 
+ 	  node->ino = ino;
+ 	  node->stack[node->stsize].ino_chunk = grub_le_to_cpu32 (dh.ino_chunk);
+diff --git a/grub-core/fs/udf.c b/grub-core/fs/udf.c
+index a83761674..21ac7f446 100644
+--- a/grub-core/fs/udf.c
++++ b/grub-core/fs/udf.c
+@@ -28,6 +28,7 @@
+ #include <grub/charset.h>
+ #include <grub/datetime.h>
+ #include <grub/udf.h>
++#include <grub/safemath.h>
+ 
+ GRUB_MOD_LICENSE ("GPLv3+");
+ 
+@@ -890,9 +891,19 @@ read_string (const grub_uint8_t *raw, grub_size_t sz, char *outbuf)
+ 	utf16[i] = (raw[2 * i + 1] << 8) | raw[2*i + 2];
+     }
+   if (!outbuf)
+-    outbuf = grub_malloc (utf16len * GRUB_MAX_UTF8_PER_UTF16 + 1);
++    {
++      grub_size_t size;
++
++      if (grub_mul (utf16len, GRUB_MAX_UTF8_PER_UTF16, &size) ||
++	  grub_add (size, 1, &size))
++	goto fail;
++
++      outbuf = grub_malloc (size);
++    }
+   if (outbuf)
+     *grub_utf16_to_utf8 ((grub_uint8_t *) outbuf, utf16, utf16len) = '\0';
++
++ fail:
+   grub_free (utf16);
+   return outbuf;
+ }
+@@ -1005,7 +1016,7 @@ grub_udf_read_symlink (grub_fshelp_node_t node)
+   grub_size_t sz = U64 (node->block.fe.file_size);
+   grub_uint8_t *raw;
+   const grub_uint8_t *ptr;
+-  char *out, *optr;
++  char *out = NULL, *optr;
+ 
+   if (sz < 4)
+     return NULL;
+@@ -1013,14 +1024,16 @@ grub_udf_read_symlink (grub_fshelp_node_t node)
+   if (!raw)
+     return NULL;
+   if (grub_udf_read_file (node, NULL, NULL, 0, sz, (char *) raw) < 0)
+-    {
+-      grub_free (raw);
+-      return NULL;
+-    }
++    goto fail_1;
+ 
+-  out = grub_malloc (sz * 2 + 1);
++  if (grub_mul (sz, 2, &sz) ||
++      grub_add (sz, 1, &sz))
++    goto fail_0;
++
++  out = grub_malloc (sz);
+   if (!out)
+     {
++ fail_0:
+       grub_free (raw);
+       return NULL;
+     }
+@@ -1031,17 +1044,17 @@ grub_udf_read_symlink (grub_fshelp_node_t node)
+     {
+       grub_size_t s;
+       if ((grub_size_t) (ptr - raw + 4) > sz)
+-	goto fail;
++	goto fail_1;
+       if (!(ptr[2] == 0 && ptr[3] == 0))
+-	goto fail;
++	goto fail_1;
+       s = 4 + ptr[1];
+       if ((grub_size_t) (ptr - raw + s) > sz)
+-	goto fail;
++	goto fail_1;
+       switch (*ptr)
+ 	{
+ 	case 1:
+ 	  if (ptr[1])
+-	    goto fail;
++	    goto fail_1;
+ 	  /* Fallthrough.  */
+ 	case 2:
+ 	  /* in 4 bytes. out: 1 byte.  */
+@@ -1066,11 +1079,11 @@ grub_udf_read_symlink (grub_fshelp_node_t node)
+ 	  if (optr != out)
+ 	    *optr++ = '/';
+ 	  if (!read_string (ptr + 4, s - 4, optr))
+-	    goto fail;
++	    goto fail_1;
+ 	  optr += grub_strlen (optr);
+ 	  break;
+ 	default:
+-	  goto fail;
++	  goto fail_1;
+ 	}
+       ptr += s;
+     }
+@@ -1078,7 +1091,7 @@ grub_udf_read_symlink (grub_fshelp_node_t node)
+   grub_free (raw);
+   return out;
+ 
+- fail:
++ fail_1:
+   grub_free (raw);
+   grub_free (out);
+   grub_error (GRUB_ERR_BAD_FS, "invalid symlink");
+diff --git a/grub-core/fs/xfs.c b/grub-core/fs/xfs.c
+index 96ffecbfc..ea6590290 100644
+--- a/grub-core/fs/xfs.c
++++ b/grub-core/fs/xfs.c
+@@ -25,6 +25,7 @@
+ #include <grub/dl.h>
+ #include <grub/types.h>
+ #include <grub/fshelp.h>
++#include <grub/safemath.h>
+ 
+ GRUB_MOD_LICENSE ("GPLv3+");
+ 
+@@ -899,6 +900,7 @@ static struct grub_xfs_data *
+ grub_xfs_mount (grub_disk_t disk)
+ {
+   struct grub_xfs_data *data = 0;
++  grub_size_t sz;
+ 
+   data = grub_zalloc (sizeof (struct grub_xfs_data));
+   if (!data)
+@@ -913,10 +915,11 @@ grub_xfs_mount (grub_disk_t disk)
+   if (!grub_xfs_sb_valid(data))
+     goto fail;
+ 
+-  data = grub_realloc (data,
+-		       sizeof (struct grub_xfs_data)
+-		       - sizeof (struct grub_xfs_inode)
+-		       + grub_xfs_inode_size(data) + 1);
++  if (grub_add (grub_xfs_inode_size (data),
++      sizeof (struct grub_xfs_data) - sizeof (struct grub_xfs_inode) + 1, &sz))
++    goto fail;
++
++  data = grub_realloc (data, sz);
+ 
+   if (! data)
+     goto fail;
+diff --git a/grub-core/fs/zfs/zfs.c b/grub-core/fs/zfs/zfs.c
+index 381dde556..36d0373a6 100644
+--- a/grub-core/fs/zfs/zfs.c
++++ b/grub-core/fs/zfs/zfs.c
+@@ -55,6 +55,7 @@
+ #include <grub/deflate.h>
+ #include <grub/crypto.h>
+ #include <grub/i18n.h>
++#include <grub/safemath.h>
+ 
+ GRUB_MOD_LICENSE ("GPLv3+");
+ 
+@@ -773,11 +774,14 @@ fill_vdev_info (struct grub_zfs_data *data,
+   if (data->n_devices_attached > data->n_devices_allocated)
+     {
+       void *tmp;
+-      data->n_devices_allocated = 2 * data->n_devices_attached + 1;
+-      data->devices_attached
+-	= grub_realloc (tmp = data->devices_attached,
+-			data->n_devices_allocated
+-			* sizeof (data->devices_attached[0]));
++      grub_size_t sz;
++
++      if (grub_mul (data->n_devices_attached, 2, &data->n_devices_allocated) ||
++	  grub_add (data->n_devices_allocated, 1, &data->n_devices_allocated) ||
++	  grub_mul (data->n_devices_allocated, sizeof (data->devices_attached[0]), &sz))
++	return GRUB_ERR_OUT_OF_RANGE;
++
++      data->devices_attached = grub_realloc (tmp = data->devices_attached, sz);
+       if (!data->devices_attached)
+ 	{
+ 	  data->devices_attached = tmp;
+@@ -3468,14 +3472,18 @@ grub_zfs_nvlist_lookup_nvlist (const char *nvlist, const char *name)
+ {
+   char *nvpair;
+   char *ret;
+-  grub_size_t size;
++  grub_size_t size, sz;
+   int found;
+ 
+   found = nvlist_find_value (nvlist, name, DATA_TYPE_NVLIST, &nvpair,
+ 			     &size, 0);
+   if (!found)
+     return 0;
+-  ret = grub_zalloc (size + 3 * sizeof (grub_uint32_t));
++
++  if (grub_add (size, 3 * sizeof (grub_uint32_t), &sz))
++      return 0;
++
++  ret = grub_zalloc (sz);
+   if (!ret)
+     return 0;
+   grub_memcpy (ret, nvlist, sizeof (grub_uint32_t));
+diff --git a/grub-core/fs/zfs/zfscrypt.c b/grub-core/fs/zfs/zfscrypt.c
+index 1402e0bc2..de3b015f5 100644
+--- a/grub-core/fs/zfs/zfscrypt.c
++++ b/grub-core/fs/zfs/zfscrypt.c
+@@ -22,6 +22,7 @@
+ #include <grub/misc.h>
+ #include <grub/disk.h>
+ #include <grub/partition.h>
++#include <grub/safemath.h>
+ #include <grub/dl.h>
+ #include <grub/types.h>
+ #include <grub/zfs/zfs.h>
+@@ -82,9 +83,13 @@ grub_zfs_add_key (grub_uint8_t *key_in,
+ 		  int passphrase)
+ {
+   struct grub_zfs_wrap_key *key;
++  grub_size_t sz;
++
+   if (!passphrase && keylen > 32)
+     keylen = 32;
+-  key = grub_malloc (sizeof (*key) + keylen);
++  if (grub_add (sizeof (*key), keylen, &sz))
++    return GRUB_ERR_OUT_OF_RANGE;
++  key = grub_malloc (sz);
+   if (!key)
+     return grub_errno;
+   key->is_passphrase = passphrase;
+diff --git a/grub-core/lib/arg.c b/grub-core/lib/arg.c
+index fd7744a6f..3288609a5 100644
+--- a/grub-core/lib/arg.c
++++ b/grub-core/lib/arg.c
+@@ -23,6 +23,7 @@
+ #include <grub/term.h>
+ #include <grub/extcmd.h>
+ #include <grub/i18n.h>
++#include <grub/safemath.h>
+ 
+ /* Built-in parser for default options.  */
+ static const struct grub_arg_option help_options[] =
+@@ -216,7 +217,13 @@ static inline grub_err_t
+ add_arg (char ***argl, int *num, char *s)
+ {
+   char **p = *argl;
+-  *argl = grub_realloc (*argl, (++(*num) + 1) * sizeof (char *));
++  grub_size_t sz;
++
++  if (grub_add (++(*num), 1, &sz) ||
++      grub_mul (sz, sizeof (char *), &sz))
++    return grub_error (GRUB_ERR_OUT_OF_RANGE, N_("overflow is detected"));
++
++  *argl = grub_realloc (*argl, sz);
+   if (! *argl)
+     {
+       grub_free (p);
+@@ -431,6 +438,7 @@ grub_arg_list_alloc(grub_extcmd_t extcmd, int argc,
+   grub_size_t argcnt;
+   struct grub_arg_list *list;
+   const struct grub_arg_option *options;
++  grub_size_t sz0, sz1;
+ 
+   options = extcmd->options;
+   if (! options)
+@@ -443,7 +451,15 @@ grub_arg_list_alloc(grub_extcmd_t extcmd, int argc,
+ 	argcnt += ((grub_size_t) argc + 1) / 2 + 1; /* max possible for any option */
+     }
+ 
+-  list = grub_zalloc (sizeof (*list) * i + sizeof (char*) * argcnt);
++  if (grub_mul (sizeof (*list), i, &sz0) ||
++      grub_mul (sizeof (char *), argcnt, &sz1) ||
++      grub_add (sz0, sz1, &sz0))
++    {
++      grub_error (GRUB_ERR_OUT_OF_RANGE, N_("overflow is detected"));
++      return 0;
++    }
++
++  list = grub_zalloc (sz0);
+   if (! list)
+     return 0;
+ 
+diff --git a/grub-core/loader/i386/bsd.c b/grub-core/loader/i386/bsd.c
+index 3730ed382..b92cbe98d 100644
+--- a/grub-core/loader/i386/bsd.c
++++ b/grub-core/loader/i386/bsd.c
+@@ -35,6 +35,7 @@
+ #include <grub/ns8250.h>
+ #include <grub/bsdlabel.h>
+ #include <grub/crypto.h>
++#include <grub/safemath.h>
+ #include <grub/verify.h>
+ #ifdef GRUB_MACHINE_PCBIOS
+ #include <grub/machine/int.h>
+@@ -1012,11 +1013,16 @@ grub_netbsd_add_modules (void)
+   struct grub_netbsd_btinfo_modules *mods;
+   unsigned i;
+   grub_err_t err;
++  grub_size_t sz;
+ 
+   for (mod = netbsd_mods; mod; mod = mod->next)
+     modcnt++;
+ 
+-  mods = grub_malloc (sizeof (*mods) + sizeof (mods->mods[0]) * modcnt);
++  if (grub_mul (modcnt, sizeof (mods->mods[0]), &sz) ||
++      grub_add (sz, sizeof (*mods), &sz))
++    return GRUB_ERR_OUT_OF_RANGE;
++
++  mods = grub_malloc (sz);
+   if (!mods)
+     return grub_errno;
+ 
+diff --git a/grub-core/net/dns.c b/grub-core/net/dns.c
+index e332d5eb4..906ec7d67 100644
+--- a/grub-core/net/dns.c
++++ b/grub-core/net/dns.c
+@@ -22,6 +22,7 @@
+ #include <grub/i18n.h>
+ #include <grub/err.h>
+ #include <grub/time.h>
++#include <grub/safemath.h>
+ 
+ struct dns_cache_element
+ {
+@@ -51,9 +52,15 @@ grub_net_add_dns_server (const struct grub_net_network_level_address *s)
+     {
+       int na = dns_servers_alloc * 2;
+       struct grub_net_network_level_address *ns;
++      grub_size_t sz;
++
+       if (na < 8)
+ 	na = 8;
+-      ns = grub_realloc (dns_servers, na * sizeof (ns[0]));
++
++      if (grub_mul (na, sizeof (ns[0]), &sz))
++	return GRUB_ERR_OUT_OF_RANGE;
++
++      ns = grub_realloc (dns_servers, sz);
+       if (!ns)
+ 	return grub_errno;
+       dns_servers_alloc = na;
+diff --git a/grub-core/normal/charset.c b/grub-core/normal/charset.c
+index d57fb72fa..4dfcc3107 100644
+--- a/grub-core/normal/charset.c
++++ b/grub-core/normal/charset.c
+@@ -48,6 +48,7 @@
+ #include <grub/unicode.h>
+ #include <grub/term.h>
+ #include <grub/normal.h>
++#include <grub/safemath.h>
+ 
+ #if HAVE_FONT_SOURCE
+ #include "widthspec.h"
+@@ -464,6 +465,7 @@ grub_unicode_aglomerate_comb (const grub_uint32_t *in, grub_size_t inlen,
+ 	{
+ 	  struct grub_unicode_combining *n;
+ 	  unsigned j;
++	  grub_size_t sz;
+ 
+ 	  if (!haveout)
+ 	    continue;
+@@ -477,10 +479,14 @@ grub_unicode_aglomerate_comb (const grub_uint32_t *in, grub_size_t inlen,
+ 	    n = out->combining_inline;
+ 	  else if (out->ncomb > (int) ARRAY_SIZE (out->combining_inline))
+ 	    {
+-	      n = grub_realloc (out->combining_ptr,
+-				sizeof (n[0]) * (out->ncomb + 1));
++	      if (grub_add (out->ncomb, 1, &sz) ||
++		  grub_mul (sz, sizeof (n[0]), &sz))
++		goto fail;
++
++	      n = grub_realloc (out->combining_ptr, sz);
+ 	      if (!n)
+ 		{
++ fail:
+ 		  grub_errno = GRUB_ERR_NONE;
+ 		  continue;
+ 		}
+diff --git a/grub-core/normal/cmdline.c b/grub-core/normal/cmdline.c
+index c57242e2e..de03fe63b 100644
+--- a/grub-core/normal/cmdline.c
++++ b/grub-core/normal/cmdline.c
+@@ -28,6 +28,7 @@
+ #include <grub/env.h>
+ #include <grub/i18n.h>
+ #include <grub/charset.h>
++#include <grub/safemath.h>
+ 
+ static grub_uint32_t *kill_buf;
+ 
+@@ -307,12 +308,21 @@ cl_insert (struct cmdline_term *cl_terms, unsigned nterms,
+   if (len + (*llen) >= (*max_len))
+     {
+       grub_uint32_t *nbuf;
+-      (*max_len) *= 2;
+-      nbuf = grub_realloc ((*buf), sizeof (grub_uint32_t) * (*max_len));
++      grub_size_t sz;
++
++      if (grub_mul (*max_len, 2, max_len) ||
++	  grub_mul (*max_len, sizeof (grub_uint32_t), &sz))
++	{
++	  grub_errno = GRUB_ERR_OUT_OF_RANGE;
++	  goto fail;
++	}
++
++      nbuf = grub_realloc ((*buf), sz);
+       if (nbuf)
+ 	(*buf) = nbuf;
+       else
+ 	{
++ fail:
+ 	  grub_print_error ();
+ 	  grub_errno = GRUB_ERR_NONE;
+ 	  (*max_len) /= 2;
+diff --git a/grub-core/normal/menu_entry.c b/grub-core/normal/menu_entry.c
+index 1993995be..50eef918c 100644
+--- a/grub-core/normal/menu_entry.c
++++ b/grub-core/normal/menu_entry.c
+@@ -27,6 +27,7 @@
+ #include <grub/auth.h>
+ #include <grub/i18n.h>
+ #include <grub/charset.h>
++#include <grub/safemath.h>
+ 
+ enum update_mode
+   {
+@@ -113,10 +114,18 @@ ensure_space (struct line *linep, int extra)
+ {
+   if (linep->max_len < linep->len + extra)
+     {
+-      linep->max_len = 2 * (linep->len + extra);
+-      linep->buf = grub_realloc (linep->buf, (linep->max_len + 1) * sizeof (linep->buf[0]));
++      grub_size_t sz0, sz1;
++
++      if (grub_add (linep->len, extra, &sz0) ||
++	  grub_mul (sz0, 2, &sz0) ||
++	  grub_add (sz0, 1, &sz1) ||
++	  grub_mul (sz1, sizeof (linep->buf[0]), &sz1))
++	return 0;
++
++      linep->buf = grub_realloc (linep->buf, sz1);
+       if (! linep->buf)
+ 	return 0;
++      linep->max_len = sz0;
+     }
+ 
+   return 1;
+diff --git a/grub-core/script/argv.c b/grub-core/script/argv.c
+index 217ec5d1e..5751fdd57 100644
+--- a/grub-core/script/argv.c
++++ b/grub-core/script/argv.c
+@@ -20,6 +20,7 @@
+ #include <grub/mm.h>
+ #include <grub/misc.h>
+ #include <grub/script_sh.h>
++#include <grub/safemath.h>
+ 
+ /* Return nearest power of two that is >= v.  */
+ static unsigned
+@@ -81,11 +82,16 @@ int
+ grub_script_argv_next (struct grub_script_argv *argv)
+ {
+   char **p = argv->args;
++  grub_size_t sz;
+ 
+   if (argv->args && argv->argc && argv->args[argv->argc - 1] == 0)
+     return 0;
+ 
+-  p = grub_realloc (p, round_up_exp ((argv->argc + 2) * sizeof (char *)));
++  if (grub_add (argv->argc, 2, &sz) ||
++      grub_mul (sz, sizeof (char *), &sz))
++    return 1;
++
++  p = grub_realloc (p, round_up_exp (sz));
+   if (! p)
+     return 1;
+ 
+@@ -105,13 +111,19 @@ grub_script_argv_append (struct grub_script_argv *argv, const char *s,
+ {
+   grub_size_t a;
+   char *p = argv->args[argv->argc - 1];
++  grub_size_t sz;
+ 
+   if (! s)
+     return 0;
+ 
+   a = p ? grub_strlen (p) : 0;
+ 
+-  p = grub_realloc (p, round_up_exp ((a + slen + 1) * sizeof (char)));
++  if (grub_add (a, slen, &sz) ||
++      grub_add (sz, 1, &sz) ||
++      grub_mul (sz, sizeof (char), &sz))
++    return 1;
++
++  p = grub_realloc (p, round_up_exp (sz));
+   if (! p)
+     return 1;
+ 
+diff --git a/grub-core/script/lexer.c b/grub-core/script/lexer.c
+index c6bd3172f..5fb0cbd0b 100644
+--- a/grub-core/script/lexer.c
++++ b/grub-core/script/lexer.c
+@@ -24,6 +24,7 @@
+ #include <grub/mm.h>
+ #include <grub/script_sh.h>
+ #include <grub/i18n.h>
++#include <grub/safemath.h>
+ 
+ #define yytext_ptr char *
+ #include "grub_script.tab.h"
+@@ -110,10 +111,14 @@ grub_script_lexer_record (struct grub_parser_param *parser, char *str)
+       old = lexer->recording;
+       if (lexer->recordlen < len)
+ 	lexer->recordlen = len;
+-      lexer->recordlen *= 2;
++
++      if (grub_mul (lexer->recordlen, 2, &lexer->recordlen))
++	goto fail;
++
+       lexer->recording = grub_realloc (lexer->recording, lexer->recordlen);
+       if (!lexer->recording)
+ 	{
++ fail:
+ 	  grub_free (old);
+ 	  lexer->recordpos = 0;
+ 	  lexer->recordlen = 0;
+@@ -130,7 +135,7 @@ int
+ grub_script_lexer_yywrap (struct grub_parser_param *parserstate,
+ 			  const char *input)
+ {
+-  grub_size_t len = 0;
++  grub_size_t len = 0, sz;
+   char *p = 0;
+   char *line = 0;
+   YY_BUFFER_STATE buffer;
+@@ -168,12 +173,22 @@ grub_script_lexer_yywrap (struct grub_parser_param *parserstate,
+     }
+   else if (len && line[len - 1] != '\n')
+     {
+-      p = grub_realloc (line, len + 2);
++      if (grub_add (len, 2, &sz))
++	{
++	  grub_free (line);
++	  grub_script_yyerror (parserstate, N_("overflow is detected"));
++	  return 1;
++	}
++
++      p = grub_realloc (line, sz);
+       if (p)
+ 	{
+ 	  p[len++] = '\n';
+ 	  p[len] = '\0';
+ 	}
++      else
++	grub_free (line);
++
+       line = p;
+     }
+ 
+diff --git a/grub-core/video/bitmap.c b/grub-core/video/bitmap.c
+index b2e031566..6256e209a 100644
+--- a/grub-core/video/bitmap.c
++++ b/grub-core/video/bitmap.c
+@@ -23,6 +23,7 @@
+ #include <grub/mm.h>
+ #include <grub/misc.h>
+ #include <grub/i18n.h>
++#include <grub/safemath.h>
+ 
+ GRUB_MOD_LICENSE ("GPLv3+");
+ 
+@@ -58,7 +59,7 @@ grub_video_bitmap_create (struct grub_video_bitmap **bitmap,
+                           enum grub_video_blit_format blit_format)
+ {
+   struct grub_video_mode_info *mode_info;
+-  unsigned int size;
++  grub_size_t size;
+ 
+   if (!bitmap)
+     return grub_error (GRUB_ERR_BUG, "invalid argument");
+@@ -137,19 +138,25 @@ grub_video_bitmap_create (struct grub_video_bitmap **bitmap,
+ 
+   mode_info->pitch = width * mode_info->bytes_per_pixel;
+ 
+-  /* Calculate size needed for the data.  */
+-  size = (width * mode_info->bytes_per_pixel) * height;
++  /* Calculate size needed for the data. */
++  if (grub_mul (width, mode_info->bytes_per_pixel, &size) ||
++      grub_mul (size, height, &size))
++    {
++      grub_error (GRUB_ERR_OUT_OF_RANGE, N_("overflow is detected"));
++      goto fail;
++    }
+ 
+   (*bitmap)->data = grub_zalloc (size);
+   if (! (*bitmap)->data)
+-    {
+-      grub_free (*bitmap);
+-      *bitmap = 0;
+-
+-      return grub_errno;
+-    }
++    goto fail;
+ 
+   return GRUB_ERR_NONE;
++
++ fail:
++  grub_free (*bitmap);
++  *bitmap = NULL;
++
++  return grub_errno;
+ }
+ 
+ /* Frees all resources allocated by bitmap.  */
+diff --git a/grub-core/video/readers/png.c b/grub-core/video/readers/png.c
+index 61bd64537..0157ff742 100644
+--- a/grub-core/video/readers/png.c
++++ b/grub-core/video/readers/png.c
+@@ -23,6 +23,7 @@
+ #include <grub/mm.h>
+ #include <grub/misc.h>
+ #include <grub/bufio.h>
++#include <grub/safemath.h>
+ 
+ GRUB_MOD_LICENSE ("GPLv3+");
+ 
+@@ -301,9 +302,17 @@ grub_png_decode_image_header (struct grub_png_data *data)
+       data->bpp <<= 1;
+ 
+   data->color_bits = color_bits;
+-  data->row_bytes = data->image_width * data->bpp;
++
++  if (grub_mul (data->image_width, data->bpp, &data->row_bytes))
++    return grub_error (GRUB_ERR_OUT_OF_RANGE, N_("overflow is detected"));
++
+   if (data->color_bits <= 4)
+-    data->row_bytes = (data->image_width * data->color_bits + 7) / 8;
++    {
++      if (grub_mul (data->image_width, data->color_bits + 7, &data->row_bytes))
++	return grub_error (GRUB_ERR_OUT_OF_RANGE, N_("overflow is detected"));
++
++      data->row_bytes >>= 3;
++    }
+ 
+ #ifndef GRUB_CPU_WORDS_BIGENDIAN
+   if (data->is_16bit || data->is_gray || data->is_palette)
+-- 
+2.26.2
+

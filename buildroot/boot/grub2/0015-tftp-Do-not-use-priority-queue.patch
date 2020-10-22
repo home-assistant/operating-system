@@ -1,0 +1,283 @@
+From b6c4a1b204740fe52b32e7f530831a59f4038e20 Mon Sep 17 00:00:00 2001
+From: Alexey Makhalov <amakhalov@vmware.com>
+Date: Thu, 9 Jul 2020 08:10:40 +0000
+Subject: [PATCH] tftp: Do not use priority queue
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+There is not need to reassemble the order of blocks. Per RFC 1350,
+server must wait for the ACK, before sending next block. Data packets
+can be served immediately without putting them to priority queue.
+
+Logic to handle incoming packet is this:
+  - if packet block id equal to expected block id, then
+    process the packet,
+  - if packet block id is less than expected - this is retransmit
+    of old packet, then ACK it and drop the packet,
+  - if packet block id is more than expected - that shouldn't
+    happen, just drop the packet.
+
+It makes the tftp receive path code simpler, smaller and faster.
+As a benefit, this change fixes CID# 73624 and CID# 96690, caused
+by following while loop:
+
+  while (cmp_block (grub_be_to_cpu16 (tftph->u.data.block), data->block + 1) == 0)
+
+where tftph pointer is not moving from one iteration to another, causing
+to serve same packet again. Luckily, double serving didn't happen due to
+data->block++ during the first iteration.
+
+Fixes: CID 73624, CID 96690
+
+Signed-off-by: Alexey Makhalov <amakhalov@vmware.com>
+Reviewed-by: Daniel Kiper <daniel.kiper@oracle.com>
+Signed-off-by: Stefan Sørensen <stefan.sorensen@spectralink.com>
+---
+ grub-core/net/tftp.c | 168 ++++++++++++++-----------------------------
+ 1 file changed, 53 insertions(+), 115 deletions(-)
+
+diff --git a/grub-core/net/tftp.c b/grub-core/net/tftp.c
+index 7d90bf66e..b4297bc8d 100644
+--- a/grub-core/net/tftp.c
++++ b/grub-core/net/tftp.c
+@@ -25,7 +25,6 @@
+ #include <grub/mm.h>
+ #include <grub/dl.h>
+ #include <grub/file.h>
+-#include <grub/priority_queue.h>
+ #include <grub/i18n.h>
+ 
+ GRUB_MOD_LICENSE ("GPLv3+");
+@@ -106,31 +105,8 @@ typedef struct tftp_data
+   int have_oack;
+   struct grub_error_saved save_err;
+   grub_net_udp_socket_t sock;
+-  grub_priority_queue_t pq;
+ } *tftp_data_t;
+ 
+-static int
+-cmp_block (grub_uint16_t a, grub_uint16_t b)
+-{
+-  grub_int16_t i = (grub_int16_t) (a - b);
+-  if (i > 0)
+-    return +1;
+-  if (i < 0)
+-    return -1;
+-  return 0;
+-}
+-
+-static int
+-cmp (const void *a__, const void *b__)
+-{
+-  struct grub_net_buff *a_ = *(struct grub_net_buff **) a__;
+-  struct grub_net_buff *b_ = *(struct grub_net_buff **) b__;
+-  struct tftphdr *a = (struct tftphdr *) a_->data;
+-  struct tftphdr *b = (struct tftphdr *) b_->data;
+-  /* We want the first elements to be on top.  */
+-  return -cmp_block (grub_be_to_cpu16 (a->u.data.block), grub_be_to_cpu16 (b->u.data.block));
+-}
+-
+ static grub_err_t
+ ack (tftp_data_t data, grub_uint64_t block)
+ {
+@@ -207,73 +183,60 @@ tftp_receive (grub_net_udp_socket_t sock __attribute__ ((unused)),
+ 	  return GRUB_ERR_NONE;
+ 	}
+ 
+-      err = grub_priority_queue_push (data->pq, &nb);
+-      if (err)
+-	return err;
+-
+-      {
+-	struct grub_net_buff **nb_top_p, *nb_top;
+-	while (1)
+-	  {
+-	    nb_top_p = grub_priority_queue_top (data->pq);
+-	    if (!nb_top_p)
+-	      return GRUB_ERR_NONE;
+-	    nb_top = *nb_top_p;
+-	    tftph = (struct tftphdr *) nb_top->data;
+-	    if (cmp_block (grub_be_to_cpu16 (tftph->u.data.block), data->block + 1) >= 0)
+-	      break;
+-	    ack (data, grub_be_to_cpu16 (tftph->u.data.block));
+-	    grub_netbuff_free (nb_top);
+-	    grub_priority_queue_pop (data->pq);
+-	  }
+-	while (cmp_block (grub_be_to_cpu16 (tftph->u.data.block), data->block + 1) == 0)
+-	  {
+-	    unsigned size;
+-
+-	    grub_priority_queue_pop (data->pq);
+-
+-	    if (file->device->net->packs.count < 50)
++      /* Ack old/retransmitted block. */
++      if (grub_be_to_cpu16 (tftph->u.data.block) < data->block + 1)
++	ack (data, grub_be_to_cpu16 (tftph->u.data.block));
++      /* Ignore unexpected block. */
++      else if (grub_be_to_cpu16 (tftph->u.data.block) > data->block + 1)
++	grub_dprintf ("tftp", "TFTP unexpected block # %d\n", tftph->u.data.block);
++      else
++	{
++	  unsigned size;
++
++	  if (file->device->net->packs.count < 50)
++	    {
+ 	      err = ack (data, data->block + 1);
+-	    else
+-	      {
+-		file->device->net->stall = 1;
+-		err = 0;
+-	      }
+-	    if (err)
+-	      return err;
+-
+-	    err = grub_netbuff_pull (nb_top, sizeof (tftph->opcode) +
+-				     sizeof (tftph->u.data.block));
+-	    if (err)
+-	      return err;
+-	    size = nb_top->tail - nb_top->data;
+-
+-	    data->block++;
+-	    if (size < data->block_size)
+-	      {
+-		if (data->ack_sent < data->block)
+-		  ack (data, data->block);
+-		file->device->net->eof = 1;
+-		file->device->net->stall = 1;
+-		grub_net_udp_close (data->sock);
+-		data->sock = NULL;
+-	      }
+-	    /* Prevent garbage in broken cards. Is it still necessary
+-	       given that IP implementation has been fixed?
+-	     */
+-	    if (size > data->block_size)
+-	      {
+-		err = grub_netbuff_unput (nb_top, size - data->block_size);
+-		if (err)
+-		  return err;
+-	      }
+-	    /* If there is data, puts packet in socket list. */
+-	    if ((nb_top->tail - nb_top->data) > 0)
+-	      grub_net_put_packet (&file->device->net->packs, nb_top);
+-	    else
+-	      grub_netbuff_free (nb_top);
+-	  }
+-      }
++	      if (err)
++		return err;
++	    }
++	  else
++	    file->device->net->stall = 1;
++
++	  err = grub_netbuff_pull (nb, sizeof (tftph->opcode) +
++				   sizeof (tftph->u.data.block));
++	  if (err)
++	    return err;
++	  size = nb->tail - nb->data;
++
++	  data->block++;
++	  if (size < data->block_size)
++	    {
++	      if (data->ack_sent < data->block)
++		ack (data, data->block);
++	      file->device->net->eof = 1;
++	      file->device->net->stall = 1;
++	      grub_net_udp_close (data->sock);
++	      data->sock = NULL;
++	    }
++	  /*
++	   * Prevent garbage in broken cards. Is it still necessary
++	   * given that IP implementation has been fixed?
++	   */
++	  if (size > data->block_size)
++	    {
++	      err = grub_netbuff_unput (nb, size - data->block_size);
++	      if (err)
++		return err;
++	    }
++	  /* If there is data, puts packet in socket list. */
++	  if ((nb->tail - nb->data) > 0)
++	    {
++	      grub_net_put_packet (&file->device->net->packs, nb);
++	      /* Do not free nb. */
++	      return GRUB_ERR_NONE;
++	    }
++	}
++      grub_netbuff_free (nb);
+       return GRUB_ERR_NONE;
+     case TFTP_ERROR:
+       data->have_oack = 1;
+@@ -287,19 +250,6 @@ tftp_receive (grub_net_udp_socket_t sock __attribute__ ((unused)),
+     }
+ }
+ 
+-static void
+-destroy_pq (tftp_data_t data)
+-{
+-  struct grub_net_buff **nb_p;
+-  while ((nb_p = grub_priority_queue_top (data->pq)))
+-    {
+-      grub_netbuff_free (*nb_p);
+-      grub_priority_queue_pop (data->pq);
+-    }
+-
+-  grub_priority_queue_destroy (data->pq);
+-}
+-
+ static grub_err_t
+ tftp_open (struct grub_file *file, const char *filename)
+ {
+@@ -372,17 +322,9 @@ tftp_open (struct grub_file *file, const char *filename)
+   file->not_easily_seekable = 1;
+   file->data = data;
+ 
+-  data->pq = grub_priority_queue_new (sizeof (struct grub_net_buff *), cmp);
+-  if (!data->pq)
+-    {
+-      grub_free (data);
+-      return grub_errno;
+-    }
+-
+   err = grub_net_resolve_address (file->device->net->server, &addr);
+   if (err)
+     {
+-      destroy_pq (data);
+       grub_free (data);
+       return err;
+     }
+@@ -392,7 +334,6 @@ tftp_open (struct grub_file *file, const char *filename)
+ 				  file);
+   if (!data->sock)
+     {
+-      destroy_pq (data);
+       grub_free (data);
+       return grub_errno;
+     }
+@@ -406,7 +347,6 @@ tftp_open (struct grub_file *file, const char *filename)
+       if (err)
+ 	{
+ 	  grub_net_udp_close (data->sock);
+-	  destroy_pq (data);
+ 	  grub_free (data);
+ 	  return err;
+ 	}
+@@ -423,7 +363,6 @@ tftp_open (struct grub_file *file, const char *filename)
+   if (grub_errno)
+     {
+       grub_net_udp_close (data->sock);
+-      destroy_pq (data);
+       grub_free (data);
+       return grub_errno;
+     }
+@@ -466,7 +405,6 @@ tftp_close (struct grub_file *file)
+ 	grub_print_error ();
+       grub_net_udp_close (data->sock);
+     }
+-  destroy_pq (data);
+   grub_free (data);
+   return GRUB_ERR_NONE;
+ }
+-- 
+2.26.2
+

@@ -1,0 +1,113 @@
+From 26349fcf80982b4d0120b73b2836e88bcf16853c Mon Sep 17 00:00:00 2001
+From: Chris Coulson <chris.coulson@canonical.com>
+Date: Fri, 10 Jul 2020 14:41:45 +0100
+Subject: [PATCH] script: Avoid a use-after-free when redefining a
+ function during execution
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Defining a new function with the same name as a previously defined
+function causes the grub_script and associated resources for the
+previous function to be freed. If the previous function is currently
+executing when a function with the same name is defined, this results
+in use-after-frees when processing subsequent commands in the original
+function.
+
+Instead, reject a new function definition if it has the same name as
+a previously defined function, and that function is currently being
+executed. Although a behavioural change, this should be backwards
+compatible with existing configurations because they can't be
+dependent on the current behaviour without being broken.
+
+Fixes: CVE-2020-15706
+
+Signed-off-by: Chris Coulson <chris.coulson@canonical.com>
+Reviewed-by: Daniel Kiper <daniel.kiper@oracle.com>
+Signed-off-by: Stefan Sørensen <stefan.sorensen@spectralink.com>
+---
+ grub-core/script/execute.c  |  2 ++
+ grub-core/script/function.c | 16 +++++++++++++---
+ grub-core/script/parser.y   |  3 ++-
+ include/grub/script_sh.h    |  2 ++
+ 4 files changed, 19 insertions(+), 4 deletions(-)
+
+diff --git a/grub-core/script/execute.c b/grub-core/script/execute.c
+index c8d6806fe..7e028e135 100644
+--- a/grub-core/script/execute.c
++++ b/grub-core/script/execute.c
+@@ -838,7 +838,9 @@ grub_script_function_call (grub_script_function_t func, int argc, char **args)
+   old_scope = scope;
+   scope = &new_scope;
+ 
++  func->executing++;
+   ret = grub_script_execute (func->func);
++  func->executing--;
+ 
+   function_return = 0;
+   active_loops = loops;
+diff --git a/grub-core/script/function.c b/grub-core/script/function.c
+index d36655e51..3aad04bf9 100644
+--- a/grub-core/script/function.c
++++ b/grub-core/script/function.c
+@@ -34,6 +34,7 @@ grub_script_function_create (struct grub_script_arg *functionname_arg,
+   func = (grub_script_function_t) grub_malloc (sizeof (*func));
+   if (! func)
+     return 0;
++  func->executing = 0;
+ 
+   func->name = grub_strdup (functionname_arg->str);
+   if (! func->name)
+@@ -60,10 +61,19 @@ grub_script_function_create (struct grub_script_arg *functionname_arg,
+       grub_script_function_t q;
+ 
+       q = *p;
+-      grub_script_free (q->func);
+-      q->func = cmd;
+       grub_free (func);
+-      func = q;
++      if (q->executing > 0)
++        {
++          grub_error (GRUB_ERR_BAD_ARGUMENT,
++		      N_("attempt to redefine a function being executed"));
++          func = NULL;
++        }
++      else
++        {
++          grub_script_free (q->func);
++          q->func = cmd;
++          func = q;
++        }
+     }
+   else
+     {
+diff --git a/grub-core/script/parser.y b/grub-core/script/parser.y
+index 4f0ab8319..f80b86b6f 100644
+--- a/grub-core/script/parser.y
++++ b/grub-core/script/parser.y
+@@ -289,7 +289,8 @@ function: "function" "name"
+ 	      grub_script_mem_free (state->func_mem);
+ 	    else {
+ 	      script->children = state->scripts;
+-	      grub_script_function_create ($2, script);
++	      if (!grub_script_function_create ($2, script))
++		grub_script_free (script);
+ 	    }
+ 
+ 	    state->scripts = $<scripts>3;
+diff --git a/include/grub/script_sh.h b/include/grub/script_sh.h
+index b382bcf09..6c48e0751 100644
+--- a/include/grub/script_sh.h
++++ b/include/grub/script_sh.h
+@@ -361,6 +361,8 @@ struct grub_script_function
+ 
+   /* The next element.  */
+   struct grub_script_function *next;
++
++  unsigned executing;
+ };
+ typedef struct grub_script_function *grub_script_function_t;
+ 
+-- 
+2.26.2
+

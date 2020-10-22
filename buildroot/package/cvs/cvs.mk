@@ -12,7 +12,9 @@ CVS_LICENSE = GPL-1.0+, LGPL-2.0+, LGPL-2.1+ (glob)
 CVS_LICENSE_FILES = COPYING COPYING.LIB lib/glob-libc.h
 CVS_DEPENDENCIES = ncurses
 
-CVS_CONF_ENV = cvs_cv_func_printf_ptr=yes
+CVS_CONF_ENV = \
+	ac_cv_func_working_mktime=yes \
+	cvs_cv_func_printf_ptr=yes
 
 CVS_CONFIGURE_ARGS = --disable-old-info-format-support
 ifeq ($(BR2_PACKAGE_CVS_SERVER),y)

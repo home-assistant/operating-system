@@ -1,0 +1,39 @@
+From 9ff609f0e7798bc5fb04f791131c98e7693bdd9b Mon Sep 17 00:00:00 2001
+From: Alexey Makhalov <amakhalov@vmware.com>
+Date: Wed, 8 Jul 2020 20:41:56 +0000
+Subject: [PATCH] gfxmenu: Fix double free in load_image()
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+self->bitmap should be zeroed after free. Otherwise, there is a chance
+to double free (USE_AFTER_FREE) it later in rescale_image().
+
+Fixes: CID 292472
+
+Signed-off-by: Alexey Makhalov <amakhalov@vmware.com>
+Reviewed-by: Daniel Kiper <daniel.kiper@oracle.com>
+Signed-off-by: Stefan Sørensen <stefan.sorensen@spectralink.com>
+---
+ grub-core/gfxmenu/gui_image.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/grub-core/gfxmenu/gui_image.c b/grub-core/gfxmenu/gui_image.c
+index 29784ed2d..6b2e976f1 100644
+--- a/grub-core/gfxmenu/gui_image.c
++++ b/grub-core/gfxmenu/gui_image.c
+@@ -195,7 +195,10 @@ load_image (grub_gui_image_t self, const char *path)
+     return grub_errno;
+ 
+   if (self->bitmap && (self->bitmap != self->raw_bitmap))
+-    grub_video_bitmap_destroy (self->bitmap);
++    {
++      grub_video_bitmap_destroy (self->bitmap);
++      self->bitmap = 0;
++    }
+   if (self->raw_bitmap)
+     grub_video_bitmap_destroy (self->raw_bitmap);
+ 
+-- 
+2.26.2
+

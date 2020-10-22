@@ -1,7 +1,7 @@
 # From https://github.com/zeromq/libzmq/releases
-md5  2047e917c2cc93505e2579bcba67a573 zeromq-4.3.2.tar.gz
-sha1 e5253bff214f77621b3d29443f1aa6e5a106ffe5  zeromq-4.3.2.tar.gz
+md5  78acc277d95e10812d71b2b3c3c3c9a9  zeromq-4.3.3.tar.gz
+sha1  d78bc504194d6908df40a2b9e41849b181b02491  zeromq-4.3.3.tar.gz
 # Locally computed
-sha256 ebd7b5c830d6428956b67a0454a7f8cbed1de74b3b01e5c33c5378e22740f763  zeromq-4.3.2.tar.gz
-sha256 4fd86507c9b486764343065a9e035222869a27b5789efeb4fd93edc85412d7a3  COPYING
-sha256 83f32abe61ee58ffb1b007412c08415168c052501dbf56d7a47aaaac52b03ef6  COPYING.LESSER
+sha256  9d9285db37ae942ed0780c016da87060497877af45094ff9e1a1ca736e3875a2  zeromq-4.3.3.tar.gz
+sha256  4fd86507c9b486764343065a9e035222869a27b5789efeb4fd93edc85412d7a3  COPYING
+sha256  83f32abe61ee58ffb1b007412c08415168c052501dbf56d7a47aaaac52b03ef6  COPYING.LESSER

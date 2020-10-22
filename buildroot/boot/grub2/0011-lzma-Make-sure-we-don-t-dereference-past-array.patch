@@ -1,0 +1,55 @@
+From 78829f0c230680e386fff9f420bb1631bc20f761 Mon Sep 17 00:00:00 2001
+From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Date: Thu, 9 Jul 2020 03:05:23 +0000
+Subject: [PATCH] lzma: Make sure we don't dereference past array
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+The two dimensional array p->posSlotEncoder[4][64] is being dereferenced
+using the GetLenToPosState() macro which checks if len is less than 5,
+and if so subtracts 2 from it. If len = 0, that is 0 - 2 = 4294967294.
+Obviously we don't want to dereference that far out so we check if the
+position found is greater or equal kNumLenToPosStates (4) and bail out.
+
+N.B.: Upstream LZMA 18.05 and later has this function completely rewritten
+without any history.
+
+Fixes: CID 51526
+
+Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Reviewed-by: Daniel Kiper <daniel.kiper@oracle.com>
+Signed-off-by: Stefan Sørensen <stefan.sorensen@spectralink.com>
+---
+ grub-core/lib/LzmaEnc.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/grub-core/lib/LzmaEnc.c b/grub-core/lib/LzmaEnc.c
+index f2ec04a8c..753e56a95 100644
+--- a/grub-core/lib/LzmaEnc.c
++++ b/grub-core/lib/LzmaEnc.c
+@@ -1877,13 +1877,19 @@ static SRes LzmaEnc_CodeOneBlock(CLzmaEnc *p, Bool useLimits, UInt32 maxPackSize
+       }
+       else
+       {
+-        UInt32 posSlot;
++        UInt32 posSlot, lenToPosState;
+         RangeEnc_EncodeBit(&p->rc, &p->isRep[p->state], 0);
+         p->state = kMatchNextStates[p->state];
+         LenEnc_Encode2(&p->lenEnc, &p->rc, len - LZMA_MATCH_LEN_MIN, posState, !p->fastMode, p->ProbPrices);
+         pos -= LZMA_NUM_REPS;
+         GetPosSlot(pos, posSlot);
+-        RcTree_Encode(&p->rc, p->posSlotEncoder[GetLenToPosState(len)], kNumPosSlotBits, posSlot);
++        lenToPosState = GetLenToPosState(len);
++        if (lenToPosState >= kNumLenToPosStates)
++        {
++          p->result = SZ_ERROR_DATA;
++          return CheckErrors(p);
++        }
++        RcTree_Encode(&p->rc, p->posSlotEncoder[lenToPosState], kNumPosSlotBits, posSlot);
+ 
+         if (posSlot >= kStartPosModelIndex)
+         {
+-- 
+2.26.2
+

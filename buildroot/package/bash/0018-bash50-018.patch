@@ -1,0 +1,49 @@
+From https://ftp.gnu.org/gnu/bash/bash-5.0-patches/bash55-018
+
+Signed-off-by: Peter Korsgaard <peter@korsgaard.com>
+
+			     BASH PATCH REPORT
+			     =================
+
+Bash-Release:	5.0
+Patch-ID:	bash50-018
+
+Bug-Reported-by:	oguzismailuysal@gmail.com
+Bug-Reference-ID:
+Bug-Reference-URL:	https://lists.gnu.org/archive/html/bug-bash/2019-10/msg00098.html
+
+Bug-Description:
+
+In certain cases, bash does not perform quoted null removal on patterns
+that are used as part of word expansions such as ${parameter##pattern}, so
+empty patterns are treated as non-empty.
+
+Patch (apply with `patch -p0'):
+
+*** bash-5.0.17/subst.c	2020-04-02 17:14:58.000000000 -0400
+--- b/subst.c	2020-07-09 15:28:19.000000000 -0400
+***************
+*** 5113,5116 ****
+--- b/5113,5118 ----
+  				      (int *)NULL, (int *)NULL)
+  	     : (WORD_LIST *)0;
++   if (l)
++     word_list_remove_quoted_nulls (l);
+    pat = string_list (l);
+    dispose_words (l);
+
+*** bash-5.0/patchlevel.h	2016-06-22 14:51:03.000000000 -0400
+--- b/patchlevel.h	2016-10-01 11:01:28.000000000 -0400
+***************
+*** 26,30 ****
+     looks for to find the patch level (for the sccs version string). */
+  
+! #define PATCHLEVEL 17
+  
+  #endif /* _PATCHLEVEL_H_ */
+--- b/26,30 ----
+     looks for to find the patch level (for the sccs version string). */
+  
+! #define PATCHLEVEL 18
+  
+  #endif /* _PATCHLEVEL_H_ */

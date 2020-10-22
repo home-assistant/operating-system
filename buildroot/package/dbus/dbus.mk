@@ -107,6 +107,7 @@ HOST_DBUS_CONF_OPTS = \
 	--disable-selinux \
 	--disable-xml-docs \
 	--disable-doxygen-docs \
+	--disable-systemd \
 	--without-x \
 	--with-xml=expat
 
