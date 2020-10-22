@@ -6,9 +6,10 @@ Odroid-C4 support is based heavily on the Odroid-C2 and N2 configurations. Given
 
 Please also refer to the documentation pages for the [Odroid-C2](./odroid-c2.md) and [Odroid-N2](./odroid-n2.md), as some of that information may apply to the C4 as well.
 
-## Known issues
-
-1. Boot from eMMC not working (U-Boot comes up but does not load HassOS)
+Common C4 issues that have been specifically tested and appear to be working:
+- boot from SD
+- boot from eMMC
+- MAC address obtained from eFuse
 
 ## GPIO
 
