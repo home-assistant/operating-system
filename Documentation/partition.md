@@ -51,15 +51,7 @@ Log in as `root` to get to the Home Assistant CLI and then enter `login` to cont
 
 Confirm your USB SSD/HD is connected and recognized using `fdisk -l`.
 
-It is recommended to use fdisk to remove the existing partition(s) before proceeding.
-
-- Type `fdisk /dev/XXX` (replacing XXX with your drive)
-- Type `d` to delete a partition.
-- Continue if needed, then write the changes.
-
-Creating a new partition is not necessary.
-
-With the drive now prepared, use the below command (again, replacing XXX with your drive)
+Make sure the drive has no partition named `hassos-data` (or no partition at all). With the drive, use the below command (again, replacing XXX with your drive)
 
 ```sh
 $ datactl move /dev/xxx

@@ -1,0 +1,35 @@
+
+KERNEL=="ttyAMA0", PROGRAM="/bin/sh -c '\
+	ALIASES=/proc/device-tree/aliases; \
+	if cmp -s $ALIASES/uart0 $ALIASES/serial0; then \
+		echo 0;\
+	elif cmp -s $ALIASES/uart0 $ALIASES/serial1; then \
+		echo 1; \
+	else \
+		exit 1; \
+	fi\
+'", SYMLINK+="serial%c"
+
+KERNEL=="ttyAMA1", PROGRAM="/bin/sh -c '\
+	ALIASES=/proc/device-tree/aliases; \
+	if [ -e /dev/ttyAMA0 ]; then \
+		exit 1; \
+	elif cmp -s $ALIASES/uart0 $ALIASES/serial0; then \
+		echo 0;\
+	elif cmp -s $ALIASES/uart0 $ALIASES/serial1; then \
+		echo 1; \
+	else \
+		exit 1; \
+	fi\
+'", SYMLINK+="serial%c"
+
+KERNEL=="ttyS0", PROGRAM="/bin/sh -c '\
+	ALIASES=/proc/device-tree/aliases; \
+	if cmp -s $ALIASES/uart1 $ALIASES/serial0; then \
+		echo 0; \
+	elif cmp -s $ALIASES/uart1 $ALIASES/serial1; then \
+		echo 1; \
+	else \
+		exit 1; \
+	fi \
+'", SYMLINK+="serial%c"

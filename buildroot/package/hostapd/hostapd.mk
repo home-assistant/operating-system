@@ -8,6 +8,10 @@ HOSTAPD_VERSION = 2.9
 HOSTAPD_SITE = http://w1.fi/releases
 HOSTAPD_SUBDIR = hostapd
 HOSTAPD_CONFIG = $(HOSTAPD_DIR)/$(HOSTAPD_SUBDIR)/.config
+HOSTAPD_PATCH = \
+	https://w1.fi/security/2020-1/0001-WPS-UPnP-Do-not-allow-event-subscriptions-with-URLs-.patch \
+	https://w1.fi/security/2020-1/0002-WPS-UPnP-Fix-event-message-generation-using-a-long-U.patch \
+	https://w1.fi/security/2020-1/0003-WPS-UPnP-Handle-HTTP-initiation-failures-for-events-.patch
 HOSTAPD_DEPENDENCIES = host-pkgconf
 HOSTAPD_CFLAGS = $(TARGET_CFLAGS)
 HOSTAPD_LICENSE = BSD-3-Clause
@@ -15,6 +19,9 @@ HOSTAPD_LICENSE_FILES = README
 
 # 0001-AP-Silently-ignore-management-frame-from-unexpected-.patch
 HOSTAPD_IGNORE_CVES += CVE-2019-16275
+
+# 0001-WPS-UPnP-Do-not-allow-event-subscriptions-with-URLs-.patch
+HOSTAPD_IGNORE_CVES += CVE-2020-12695
 
 HOSTAPD_CONFIG_SET =
 

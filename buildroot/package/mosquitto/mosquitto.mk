@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-MOSQUITTO_VERSION = 1.6.9
+MOSQUITTO_VERSION = 1.6.12
 MOSQUITTO_SITE = https://mosquitto.org/files/source
 MOSQUITTO_LICENSE = EPL-1.0 or EDLv1.0
 MOSQUITTO_LICENSE_FILES = LICENSE.txt epl-v10 edl-v10
@@ -41,7 +41,8 @@ else
 MOSQUITTO_MAKE_OPTS += WITH_ADNS=no
 endif
 
-ifeq ($(BR2_TOOLCHAIN_HAS_THREADS),y)
+# threaded API uses pthread_setname_np
+ifeq ($(BR2_TOOLCHAIN_HAS_THREADS_NPTL),y)
 MOSQUITTO_MAKE_OPTS += WITH_THREADING=yes
 else
 MOSQUITTO_MAKE_OPTS += WITH_THREADING=no

@@ -235,4 +235,8 @@ else
 MPV_CONF_OPTS += --disable-x11
 endif
 
+ifeq ($(BR2_TOOLCHAIN_HAS_LIBATOMIC),y)
+MPV_CONF_ENV += LDFLAGS="$(TARGET_LDFLAGS) -latomic"
+endif
+
 $(eval $(waf-package))

@@ -5,8 +5,8 @@ ConditionVirtualization=vmware
 
 [Service]
 Type=forking
-PIDFile=/var/run/vmtoolsd.pid
-ExecStart=/usr/bin/vmtoolsd -b /var/run/vmtoolsd.pid
+PIDFile=/run/vmtoolsd.pid
+ExecStart=/usr/bin/vmtoolsd -b /run/vmtoolsd.pid
 Restart=on-failure
 KillMode=process
 KillSignal=SIGKILL

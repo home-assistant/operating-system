@@ -88,13 +88,6 @@ $(1)_KCONFIG_DEPENDENCIES = \
 	$(BR2_BISON_HOST_DEPENDENCY) \
 	$(BR2_FLEX_HOST_DEPENDENCY)
 
-ifeq ($$(BR2_TARGET_$(1)_BAREBOXENV),y)
-define $(1)_BUILD_BAREBOXENV_CMDS
-	$$(TARGET_CC) $$(TARGET_CFLAGS) $$(TARGET_LDFLAGS) -o $$(@D)/bareboxenv \
-		$$(@D)/scripts/bareboxenv.c
-endef
-endif
-
 ifeq ($$(BR2_TARGET_$(1)_CUSTOM_ENV),y)
 $(1)_ENV_NAME = $$(notdir $$(call qstrip,\
 	$$(BR2_TARGET_$(1)_CUSTOM_ENV_PATH)))
@@ -109,11 +102,22 @@ endef
 endif
 
 ifneq ($$($(1)_CUSTOM_EMBEDDED_ENV_PATH),)
-define $(1)_KCONFIG_FIXUP_CMDS
-	$$(call KCONFIG_ENABLE_OPT,CONFIG_DEFAULT_ENVIRONMENT,$$(@D)/.config)
-	$$(call KCONFIG_SET_OPT,CONFIG_DEFAULT_ENVIRONMENT_PATH,"$$($(1)_CUSTOM_EMBEDDED_ENV_PATH)",$$(@D)/.config)
+define $(1)_KCONFIG_FIXUP_CUSTOM_EMBEDDED_ENV_PATH
+	$$(call KCONFIG_ENABLE_OPT,CONFIG_DEFAULT_ENVIRONMENT)
+	$$(call KCONFIG_SET_OPT,CONFIG_DEFAULT_ENVIRONMENT_PATH,"$$($(1)_CUSTOM_EMBEDDED_ENV_PATH)")
 endef
 endif
+
+define $(1)_KCONFIG_FIXUP_BAREBOXENV
+	$$(if $$(BR2_TARGET_$(1)_BAREBOXENV),\
+		$$(call KCONFIG_ENABLE_OPT,CONFIG_BAREBOXENV_TARGET),\
+		$$(call KCONFIG_DISABLE_OPT,CONFIG_BAREBOXENV_TARGET))
+endef
+
+define $(1)_KCONFIG_FIXUP_CMDS
+	$$($(1)_KCONFIG_FIXUP_CUSTOM_EMBEDDED_ENV_PATH)
+	$$($(1)_KCONFIG_FIXUP_BAREBOXENV)
+endef
 
 define $(1)_BUILD_CMDS
 	$$($(1)_BUILD_BAREBOXENV_CMDS)
@@ -136,7 +140,7 @@ endef
 
 ifeq ($$(BR2_TARGET_$(1)_BAREBOXENV),y)
 define $(1)_INSTALL_TARGET_CMDS
-	cp $$(@D)/bareboxenv $$(TARGET_DIR)/usr/bin
+	cp $$(@D)/scripts/bareboxenv-target $$(TARGET_DIR)/usr/bin/bareboxenv
 endef
 endif
 

@@ -11,7 +11,7 @@ from checkpackagelib.lib import NewlineAtEof           # noqa: F401
 
 
 class ApplyOrder(_CheckFunction):
-    APPLY_ORDER = re.compile("\d{1,4}-[^/]*$")
+    APPLY_ORDER = re.compile(r"\d{1,4}-[^/]*$")
 
     def before(self):
         if not self.APPLY_ORDER.match(os.path.basename(self.filename)):
@@ -21,7 +21,7 @@ class ApplyOrder(_CheckFunction):
 
 
 class NumberedSubject(_CheckFunction):
-    NUMBERED_PATCH = re.compile("Subject:\s*\[PATCH\s*\d+/\d+\]")
+    NUMBERED_PATCH = re.compile(r"Subject:\s*\[PATCH\s*\d+/\d+\]")
 
     def before(self):
         self.git_patch = False
@@ -44,7 +44,7 @@ class NumberedSubject(_CheckFunction):
 
 
 class Sob(_CheckFunction):
-    SOB_ENTRY = re.compile("^Signed-off-by: .*$")
+    SOB_ENTRY = re.compile(r"^Signed-off-by: .*$")
 
     def before(self):
         self.found = False

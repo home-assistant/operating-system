@@ -89,7 +89,7 @@ endif
 
 # Add GPL license if GPL plugins enabled.
 ifeq ($(GST1_PLUGINS_UGLY_HAS_GPL_LICENSE),y)
-GST1_PLUGINS_UGLY_LICENSE += GPL-2.0
+GST1_PLUGINS_UGLY_LICENSE += , GPL-2.0
 endif
 
 # Use the following command to extract license info for plugins.

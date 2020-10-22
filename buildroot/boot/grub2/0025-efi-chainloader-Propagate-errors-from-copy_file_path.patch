@@ -1,0 +1,78 @@
+From fb55bc37dd510911df4eaf649da939f5fafdc7ce Mon Sep 17 00:00:00 2001
+From: Daniel Kiper <daniel.kiper@oracle.com>
+Date: Wed, 29 Jul 2020 13:38:31 +0200
+Subject: [PATCH] efi/chainloader: Propagate errors from copy_file_path()
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Without any error propagated to the caller, make_file_path()
+would then try to advance the invalid device path node with
+GRUB_EFI_NEXT_DEVICE_PATH(), which would fail, returning a NULL
+pointer that would subsequently be dereferenced. Hence, propagate
+errors from copy_file_path().
+
+Signed-off-by: Chris Coulson <chris.coulson@canonical.com>
+Reviewed-by: Daniel Kiper <daniel.kiper@oracle.com>
+Signed-off-by: Stefan Sørensen <stefan.sorensen@spectralink.com>
+---
+ grub-core/loader/efi/chainloader.c | 19 +++++++++++++------
+ 1 file changed, 13 insertions(+), 6 deletions(-)
+
+diff --git a/grub-core/loader/efi/chainloader.c b/grub-core/loader/efi/chainloader.c
+index a8d7b9155..7b31c3fb9 100644
+--- a/grub-core/loader/efi/chainloader.c
++++ b/grub-core/loader/efi/chainloader.c
+@@ -106,7 +106,7 @@ grub_chainloader_boot (void)
+   return grub_errno;
+ }
+ 
+-static void
++static grub_err_t
+ copy_file_path (grub_efi_file_path_device_path_t *fp,
+ 		const char *str, grub_efi_uint16_t len)
+ {
+@@ -118,7 +118,7 @@ copy_file_path (grub_efi_file_path_device_path_t *fp,
+ 
+   path_name = grub_calloc (len, GRUB_MAX_UTF16_PER_UTF8 * sizeof (*path_name));
+   if (!path_name)
+-    return;
++    return grub_error (GRUB_ERR_OUT_OF_MEMORY, "failed to allocate path buffer");
+ 
+   size = grub_utf8_to_utf16 (path_name, len * GRUB_MAX_UTF16_PER_UTF8,
+ 			     (const grub_uint8_t *) str, len, 0);
+@@ -131,6 +131,7 @@ copy_file_path (grub_efi_file_path_device_path_t *fp,
+   fp->path_name[size++] = '\0';
+   fp->header.length = size * sizeof (grub_efi_char16_t) + sizeof (*fp);
+   grub_free (path_name);
++  return GRUB_ERR_NONE;
+ }
+ 
+ static grub_efi_device_path_t *
+@@ -189,13 +190,19 @@ make_file_path (grub_efi_device_path_t *dp, const char *filename)
+   d = (grub_efi_device_path_t *) ((char *) file_path
+ 				  + ((char *) d - (char *) dp));
+   grub_efi_print_device_path (d);
+-  copy_file_path ((grub_efi_file_path_device_path_t *) d,
+-		  dir_start, dir_end - dir_start);
++  if (copy_file_path ((grub_efi_file_path_device_path_t *) d,
++		      dir_start, dir_end - dir_start) != GRUB_ERR_NONE)
++    {
++ fail:
++      grub_free (file_path);
++      return 0;
++    }
+ 
+   /* Fill the file path for the file.  */
+   d = GRUB_EFI_NEXT_DEVICE_PATH (d);
+-  copy_file_path ((grub_efi_file_path_device_path_t *) d,
+-		  dir_end + 1, grub_strlen (dir_end + 1));
++  if (copy_file_path ((grub_efi_file_path_device_path_t *) d,
++		      dir_end + 1, grub_strlen (dir_end + 1)) != GRUB_ERR_NONE)
++    goto fail;
+ 
+   /* Fill the end of device path nodes.  */
+   d = GRUB_EFI_NEXT_DEVICE_PATH (d);
+-- 
+2.26.2
+

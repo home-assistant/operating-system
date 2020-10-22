@@ -20,6 +20,9 @@ OPENJPEG_IGNORE_CVES += CVE-2020-6851
 # 0007-opj_tcd_init_tile-avoid-integer-overflow.patch
 OPENJPEG_IGNORE_CVES += CVE-2020-8112
 
+# 0008-opj_decompress-fix-double-free-on-input-directory-with-mix-of-valid.patch
+OPENJPEG_IGNORE_CVES += CVE-2020-15389
+
 OPENJPEG_DEPENDENCIES += $(if $(BR2_PACKAGE_ZLIB),zlib)
 OPENJPEG_DEPENDENCIES += $(if $(BR2_PACKAGE_LIBPNG),libpng)
 OPENJPEG_DEPENDENCIES += $(if $(BR2_PACKAGE_TIFF),tiff)

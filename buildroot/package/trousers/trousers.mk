@@ -13,6 +13,9 @@ TROUSERS_INSTALL_STAGING = YES
 TROUSERS_AUTORECONF = YES
 TROUSERS_DEPENDENCIES = host-pkgconf openssl
 
+# 0003-Correct-multiple-security-issues-that-are-present-if.patch
+TROUSERS_IGNORE_CVES += CVE-2020-24330 CVE-2020-24331 CVE-2020-24332
+
 ifeq ($(BR2_PACKAGE_LIBICONV),y)
 TROUSERS_DEPENDENCIES += libiconv
 endif

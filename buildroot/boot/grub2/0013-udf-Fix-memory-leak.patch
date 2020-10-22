@@ -1,0 +1,59 @@
+From 748b691761d31bfff7e9d0d210caa606294c2b52 Mon Sep 17 00:00:00 2001
+From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Date: Tue, 7 Jul 2020 22:02:31 -0400
+Subject: [PATCH] udf: Fix memory leak
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Fixes: CID 73796
+
+Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Reviewed-by: Daniel Kiper <daniel.kiper@oracle.com>
+Reviewed-by: Jan Setje-Eilers <jan.setjeeilers@oracle.com>
+Signed-off-by: Stefan Sørensen <stefan.sorensen@spectralink.com>
+---
+ grub-core/fs/udf.c | 17 +++++++++++++----
+ 1 file changed, 13 insertions(+), 4 deletions(-)
+
+diff --git a/grub-core/fs/udf.c b/grub-core/fs/udf.c
+index 21ac7f446..2ac5c1d00 100644
+--- a/grub-core/fs/udf.c
++++ b/grub-core/fs/udf.c
+@@ -965,8 +965,10 @@ grub_udf_iterate_dir (grub_fshelp_node_t dir,
+ 	    return 0;
+ 
+           if (grub_udf_read_icb (dir->data, &dirent.icb, child))
+-	    return 0;
+-
++	    {
++	      grub_free (child);
++	      return 0;
++	    }
+           if (dirent.characteristics & GRUB_UDF_FID_CHAR_PARENT)
+ 	    {
+ 	      /* This is the parent directory.  */
+@@ -988,11 +990,18 @@ grub_udf_iterate_dir (grub_fshelp_node_t dir,
+ 				       dirent.file_ident_length,
+ 				       (char *) raw))
+ 		  != dirent.file_ident_length)
+-		return 0;
++		{
++		  grub_free (child);
++		  return 0;
++		}
+ 
+ 	      filename = read_string (raw, dirent.file_ident_length, 0);
+ 	      if (!filename)
+-		grub_print_error ();
++		{
++		  /* As the hook won't get called. */
++		  grub_free (child);
++		  grub_print_error ();
++		}
+ 
+ 	      if (filename && hook (filename, type, child, hook_data))
+ 		{
+-- 
+2.26.2
+

@@ -7,8 +7,12 @@
 LIVE555_VERSION = 2019.09.30
 LIVE555_SOURCE = live.$(LIVE555_VERSION).tar.gz
 LIVE555_SITE = http://www.live555.com/liveMedia/public
-LIVE555_LICENSE = LGPL-2.1+
-LIVE555_LICENSE_FILES = COPYING
+# There is a COPYING file with the GPL-3.0 license text, but none of
+# the source files appear to be released under GPL-3.0, and the
+# project web site says it's licensed under the LGPL:
+# http://live555.com/liveMedia/faq.html#copyright-and-license
+LIVE555_LICENSE = LGPL-3.0+
+LIVE555_LICENSE_FILES = COPYING.LESSER
 LIVE555_INSTALL_STAGING = YES
 
 LIVE555_CFLAGS = $(TARGET_CFLAGS)

@@ -16,23 +16,25 @@ genstrings call.]
 Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 [Fabrice: updated for 2.3.0]
 Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Michael: updated for 2.3.3]
+Signed-off-by: Michael Trimarchi <michael@amarulasolutions.com>
 ---
  ppdc/Makefile | 2 --
  1 file changed, 2 deletions(-)
 
 diff --git a/ppdc/Makefile b/ppdc/Makefile
-index 68bf6b2..d57a0c9 100644
+index 32e2e0b..7b18879 100644
 --- a/ppdc/Makefile
 +++ b/ppdc/Makefile
-@@ -242,8 +242,6 @@ genstrings:		genstrings.o libcupsppdc.a ../cups/$(LIBCUPSSTATIC) \
-	$(LD_CXX) $(ARCHFLAGS) $(ALL_LDFLAGS) -o genstrings genstrings.o \
-		libcupsppdc.a $(LINKCUPSSTATIC)
-	$(CODE_SIGN) -s "$(CODE_SIGN_IDENTITY)" $@
+@@ -186,8 +186,6 @@ genstrings:		genstrings.o libcupsppdc.a ../cups/$(LIBCUPSSTATIC) \
+ 	$(LD_CXX) $(ARCHFLAGS) $(ALL_LDFLAGS) -o genstrings genstrings.o \
+ 		libcupsppdc.a $(LINKCUPSSTATIC)
+ 	$(CODE_SIGN) -s "$(CODE_SIGN_IDENTITY)" $@
 -	echo Generating localization strings...
 -	./genstrings >sample.c
  
  
  #
 -- 
-2.6.4
+2.17.1
 

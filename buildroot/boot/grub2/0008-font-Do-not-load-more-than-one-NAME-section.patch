@@ -1,0 +1,41 @@
+From 73bc7a964c9496d5b0f00dbd69959dacf5adcebe Mon Sep 17 00:00:00 2001
+From: Daniel Kiper <daniel.kiper@oracle.com>
+Date: Tue, 7 Jul 2020 15:36:26 +0200
+Subject: [PATCH] font: Do not load more than one NAME section
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+The GRUB font file can have one NAME section only. Though if somebody
+crafts a broken font file with many NAME sections and loads it then the
+GRUB leaks memory. So, prevent against that by loading first NAME
+section and failing in controlled way on following one.
+
+Reported-by: Chris Coulson <chris.coulson@canonical.com>
+Signed-off-by: Daniel Kiper <daniel.kiper@oracle.com>
+Reviewed-by: Jan Setje-Eilers <jan.setjeeilers@oracle.com>
+Signed-off-by: Stefan Sørensen <stefan.sorensen@spectralink.com>
+---
+ grub-core/font/font.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/grub-core/font/font.c b/grub-core/font/font.c
+index 5edb477ac..d09bb38d8 100644
+--- a/grub-core/font/font.c
++++ b/grub-core/font/font.c
+@@ -532,6 +532,12 @@ grub_font_load (const char *filename)
+       if (grub_memcmp (section.name, FONT_FORMAT_SECTION_NAMES_FONT_NAME,
+ 		       sizeof (FONT_FORMAT_SECTION_NAMES_FONT_NAME) - 1) == 0)
+ 	{
++	  if (font->name != NULL)
++	    {
++	      grub_error (GRUB_ERR_BAD_FONT, "invalid font file: too many NAME sections");
++	      goto fail;
++	    }
++
+ 	  font->name = read_section_as_string (&section);
+ 	  if (!font->name)
+ 	    goto fail;
+-- 
+2.26.2
+

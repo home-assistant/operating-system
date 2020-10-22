@@ -152,8 +152,8 @@ class CommentsMenusPackagesOrder(_CheckFunction):
 
 
 class HelpText(_CheckFunction):
-    HELP_TEXT_FORMAT = re.compile("^\t  .{,62}$")
-    URL_ONLY = re.compile("^(http|https|git)://\S*$")
+    HELP_TEXT_FORMAT = re.compile(r"^\t  .{,62}$")
+    URL_ONLY = re.compile(r"^(http|https|git)://\S*$")
 
     def before(self):
         self.help_text = False

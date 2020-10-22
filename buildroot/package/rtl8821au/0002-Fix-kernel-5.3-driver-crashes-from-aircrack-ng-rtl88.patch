@@ -1,10 +1,11 @@
-From b7f8f8572d5abca6e1f0163a583628c0207d0be4 Mon Sep 17 00:00:00 2001
+From cde2dbf6e94e00fcf198422b03de01d3090675d9 Mon Sep 17 00:00:00 2001
 From: Jesper Skov <jb1811@jyskebank.dk>
 Date: Fri, 25 Oct 2019 10:10:29 +0200
 Subject: [PATCH] Fix kernel 5.3 driver crashes, from aircrack-ng/rtl8812au#421
 
 [Upstream: https://github.com/abperiasamy/rtl8812AU_8821AU_linux/commit/822b485d36d6f72304a219c3be228f40968b542b.patch]
 Signed-off-by: Peter Seiderer <ps.report@gmx.net>
+Signed-off-by: Christian Stewart <christian@paral.in>
 ---
  os_dep/linux/rtw_cfgvendor.c | 45 ++++++++++++++++++++++++++++++++++++
  1 file changed, 45 insertions(+)
@@ -164,5 +165,5 @@ index e7ba90a..81fc8af 100644
  	}
  };
 -- 
-2.26.0
+2.28.0
 

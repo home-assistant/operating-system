@@ -1,0 +1,37 @@
+From 73aa0776457066ee6ebc93486c3cf0e6b755d1b8 Mon Sep 17 00:00:00 2001
+From: Chris Coulson <chris.coulson@canonical.com>
+Date: Fri, 10 Jul 2020 11:21:14 +0100
+Subject: [PATCH] script: Remove unused fields from grub_script_function
+ struct
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: Chris Coulson <chris.coulson@canonical.com>
+Reviewed-by: Daniel Kiper <daniel.kiper@oracle.com>
+Signed-off-by: Stefan Sørensen <stefan.sorensen@spectralink.com>
+---
+ include/grub/script_sh.h | 5 -----
+ 1 file changed, 5 deletions(-)
+
+diff --git a/include/grub/script_sh.h b/include/grub/script_sh.h
+index 360c2be1f..b382bcf09 100644
+--- a/include/grub/script_sh.h
++++ b/include/grub/script_sh.h
+@@ -359,13 +359,8 @@ struct grub_script_function
+   /* The script function.  */
+   struct grub_script *func;
+ 
+-  /* The flags.  */
+-  unsigned flags;
+-
+   /* The next element.  */
+   struct grub_script_function *next;
+-
+-  int references;
+ };
+ typedef struct grub_script_function *grub_script_function_t;
+ 
+-- 
+2.26.2
+

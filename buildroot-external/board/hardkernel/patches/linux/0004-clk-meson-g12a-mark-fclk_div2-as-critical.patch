@@ -1,0 +1,38 @@
+From 6a7c42785788faa862aeb7902cb2b3b08f033ca0 Mon Sep 17 00:00:00 2001
+Message-Id: <6a7c42785788faa862aeb7902cb2b3b08f033ca0.1602360581.git.stefan@agner.ch>
+In-Reply-To: <d35db3d5f943fea569dde8e83f15565254643385.1602360581.git.stefan@agner.ch>
+References: <d35db3d5f943fea569dde8e83f15565254643385.1602360581.git.stefan@agner.ch>
+From: Stefan Agner <stefan@agner.ch>
+Date: Thu, 27 Aug 2020 23:29:57 +0200
+Subject: [PATCH 4/4] clk: meson: g12a: mark fclk_div2 as critical
+
+On Amlogic Meson G12b platform, similar to fclk_div3, the fclk_div2
+seems to be necessary for the system to operate correctly as well.
+
+Typically, the clock also gets chosen by the eMMC peripheral. This
+probably masked the problem so far. However, when booting from a SD
+card the clock seems to get disabled which leads to a system freeze.
+
+Let's mark this clock as critical, fixing boot from SD card on G12b
+platforms.
+
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+---
+ drivers/clk/meson/g12a.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
+index 9803d44bb157..9a6722a1dc19 100644
+--- a/drivers/clk/meson/g12a.c
++++ b/drivers/clk/meson/g12a.c
+@@ -298,6 +298,7 @@ static struct clk_regmap g12a_fclk_div2 = {
+ 			&g12a_fclk_div2_div.hw
+ 		},
+ 		.num_parents = 1,
++		.flags = CLK_IS_CRITICAL,
+ 	},
+ };
+ 
+-- 
+2.28.0
+

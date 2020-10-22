@@ -1,0 +1,341 @@
+From 0cfbbca3ccd84d36ffb1bcd6644ada7c73b19fc0 Mon Sep 17 00:00:00 2001
+From: Alexey Makhalov <amakhalov@vmware.com>
+Date: Wed, 8 Jul 2020 01:44:38 +0000
+Subject: [PATCH] relocator: Protect grub_relocator_alloc_chunk_align()
+ max_addr against integer underflow
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+This commit introduces integer underflow mitigation in max_addr calculation
+in grub_relocator_alloc_chunk_align() invocation.
+
+It consists of 2 fixes:
+  1. Introduced grub_relocator_alloc_chunk_align_safe() wrapper function to perform
+     sanity check for min/max and size values, and to make safe invocation of
+     grub_relocator_alloc_chunk_align() with validated max_addr value. Replace all
+     invocations such as grub_relocator_alloc_chunk_align(..., min_addr, max_addr - size, size, ...)
+     by grub_relocator_alloc_chunk_align_safe(..., min_addr, max_addr, size, ...).
+  2. Introduced UP_TO_TOP32(s) macro for the cases where max_addr is 32-bit top
+     address (0xffffffff - size + 1) or similar.
+
+Signed-off-by: Alexey Makhalov <amakhalov@vmware.com>
+Reviewed-by: Daniel Kiper <daniel.kiper@oracle.com>
+Signed-off-by: Stefan Sørensen <stefan.sorensen@spectralink.com>
+---
+ grub-core/lib/i386/relocator.c        | 28 ++++++++++----------------
+ grub-core/lib/mips/relocator.c        |  6 ++----
+ grub-core/lib/powerpc/relocator.c     |  6 ++----
+ grub-core/lib/x86_64/efi/relocator.c  |  7 +++----
+ grub-core/loader/i386/linux.c         |  5 ++---
+ grub-core/loader/i386/multiboot_mbi.c |  7 +++----
+ grub-core/loader/i386/pc/linux.c      |  6 ++----
+ grub-core/loader/mips/linux.c         |  9 +++------
+ grub-core/loader/multiboot.c          |  2 +-
+ grub-core/loader/multiboot_elfxx.c    | 10 ++++-----
+ grub-core/loader/multiboot_mbi2.c     | 10 ++++-----
+ grub-core/loader/xnu_resume.c         |  2 +-
+ include/grub/relocator.h              | 29 +++++++++++++++++++++++++++
+ 13 files changed, 69 insertions(+), 58 deletions(-)
+
+diff --git a/grub-core/lib/i386/relocator.c b/grub-core/lib/i386/relocator.c
+index 71dd4f0ab..34cbe834f 100644
+--- a/grub-core/lib/i386/relocator.c
++++ b/grub-core/lib/i386/relocator.c
+@@ -83,11 +83,10 @@ grub_relocator32_boot (struct grub_relocator *rel,
+   /* Specific memory range due to Global Descriptor Table for use by payload
+      that we will store in returned chunk.  The address range and preference
+      are based on "THE LINUX/x86 BOOT PROTOCOL" specification.  */
+-  err = grub_relocator_alloc_chunk_align (rel, &ch, 0x1000,
+-					  0x9a000 - RELOCATOR_SIZEOF (32),
+-					  RELOCATOR_SIZEOF (32), 16,
+-					  GRUB_RELOCATOR_PREFERENCE_LOW,
+-					  avoid_efi_bootservices);
++  err = grub_relocator_alloc_chunk_align_safe (rel, &ch, 0x1000, 0x9a000,
++					       RELOCATOR_SIZEOF (32), 16,
++					       GRUB_RELOCATOR_PREFERENCE_LOW,
++					       avoid_efi_bootservices);
+   if (err)
+     return err;
+ 
+@@ -125,13 +124,10 @@ grub_relocator16_boot (struct grub_relocator *rel,
+   grub_relocator_chunk_t ch;
+ 
+   /* Put it higher than the byte it checks for A20 check.  */
+-  err = grub_relocator_alloc_chunk_align (rel, &ch, 0x8010,
+-					  0xa0000 - RELOCATOR_SIZEOF (16)
+-					  - GRUB_RELOCATOR16_STACK_SIZE,
+-					  RELOCATOR_SIZEOF (16)
+-					  + GRUB_RELOCATOR16_STACK_SIZE, 16,
+-					  GRUB_RELOCATOR_PREFERENCE_NONE,
+-					  0);
++  err = grub_relocator_alloc_chunk_align_safe (rel, &ch, 0x8010, 0xa0000,
++					       RELOCATOR_SIZEOF (16) +
++					       GRUB_RELOCATOR16_STACK_SIZE, 16,
++					       GRUB_RELOCATOR_PREFERENCE_NONE, 0);
+   if (err)
+     return err;
+ 
+@@ -183,11 +179,9 @@ grub_relocator64_boot (struct grub_relocator *rel,
+   void *relst;
+   grub_relocator_chunk_t ch;
+ 
+-  err = grub_relocator_alloc_chunk_align (rel, &ch, min_addr,
+-					  max_addr - RELOCATOR_SIZEOF (64),
+-					  RELOCATOR_SIZEOF (64), 16,
+-					  GRUB_RELOCATOR_PREFERENCE_NONE,
+-					  0);
++  err = grub_relocator_alloc_chunk_align_safe (rel, &ch, min_addr, max_addr,
++					       RELOCATOR_SIZEOF (64), 16,
++					       GRUB_RELOCATOR_PREFERENCE_NONE, 0);
+   if (err)
+     return err;
+ 
+diff --git a/grub-core/lib/mips/relocator.c b/grub-core/lib/mips/relocator.c
+index 9d5f49cb9..743b213e6 100644
+--- a/grub-core/lib/mips/relocator.c
++++ b/grub-core/lib/mips/relocator.c
+@@ -120,10 +120,8 @@ grub_relocator32_boot (struct grub_relocator *rel,
+   unsigned i;
+   grub_addr_t vtarget;
+ 
+-  err = grub_relocator_alloc_chunk_align (rel, &ch, 0,
+-					  (0xffffffff - stateset_size)
+-					  + 1, stateset_size,
+-					  sizeof (grub_uint32_t),
++  err = grub_relocator_alloc_chunk_align (rel, &ch, 0, UP_TO_TOP32 (stateset_size),
++					  stateset_size, sizeof (grub_uint32_t),
+ 					  GRUB_RELOCATOR_PREFERENCE_NONE, 0);
+   if (err)
+     return err;
+diff --git a/grub-core/lib/powerpc/relocator.c b/grub-core/lib/powerpc/relocator.c
+index bdf2b111b..8ffb8b686 100644
+--- a/grub-core/lib/powerpc/relocator.c
++++ b/grub-core/lib/powerpc/relocator.c
+@@ -115,10 +115,8 @@ grub_relocator32_boot (struct grub_relocator *rel,
+   unsigned i;
+   grub_relocator_chunk_t ch;
+ 
+-  err = grub_relocator_alloc_chunk_align (rel, &ch, 0,
+-					  (0xffffffff - stateset_size)
+-					  + 1, stateset_size,
+-					  sizeof (grub_uint32_t),
++  err = grub_relocator_alloc_chunk_align (rel, &ch, 0, UP_TO_TOP32 (stateset_size),
++					  stateset_size, sizeof (grub_uint32_t),
+ 					  GRUB_RELOCATOR_PREFERENCE_NONE, 0);
+   if (err)
+     return err;
+diff --git a/grub-core/lib/x86_64/efi/relocator.c b/grub-core/lib/x86_64/efi/relocator.c
+index 3caef7a40..7d200a125 100644
+--- a/grub-core/lib/x86_64/efi/relocator.c
++++ b/grub-core/lib/x86_64/efi/relocator.c
+@@ -50,10 +50,9 @@ grub_relocator64_efi_boot (struct grub_relocator *rel,
+    * 64-bit relocator code may live above 4 GiB quite well.
+    * However, I do not want ask for problems. Just in case.
+    */
+-  err = grub_relocator_alloc_chunk_align (rel, &ch, 0,
+-					  0x100000000 - RELOCATOR_SIZEOF (64_efi),
+-					  RELOCATOR_SIZEOF (64_efi), 16,
+-					  GRUB_RELOCATOR_PREFERENCE_NONE, 1);
++  err = grub_relocator_alloc_chunk_align_safe (rel, &ch, 0, 0x100000000,
++					       RELOCATOR_SIZEOF (64_efi), 16,
++					       GRUB_RELOCATOR_PREFERENCE_NONE, 1);
+   if (err)
+     return err;
+ 
+diff --git a/grub-core/loader/i386/linux.c b/grub-core/loader/i386/linux.c
+index 02a73463a..efbb99307 100644
+--- a/grub-core/loader/i386/linux.c
++++ b/grub-core/loader/i386/linux.c
+@@ -181,9 +181,8 @@ allocate_pages (grub_size_t prot_size, grub_size_t *align,
+ 	for (; err && *align + 1 > min_align; (*align)--)
+ 	  {
+ 	    grub_errno = GRUB_ERR_NONE;
+-	    err = grub_relocator_alloc_chunk_align (relocator, &ch,
+-						    0x1000000,
+-						    0xffffffff & ~prot_size,
++	    err = grub_relocator_alloc_chunk_align (relocator, &ch, 0x1000000,
++						    UP_TO_TOP32 (prot_size),
+ 						    prot_size, 1 << *align,
+ 						    GRUB_RELOCATOR_PREFERENCE_LOW,
+ 						    1);
+diff --git a/grub-core/loader/i386/multiboot_mbi.c b/grub-core/loader/i386/multiboot_mbi.c
+index ad3cc292f..a67d9d0a8 100644
+--- a/grub-core/loader/i386/multiboot_mbi.c
++++ b/grub-core/loader/i386/multiboot_mbi.c
+@@ -466,10 +466,9 @@ grub_multiboot_make_mbi (grub_uint32_t *target)
+ 
+   bufsize = grub_multiboot_get_mbi_size ();
+ 
+-  err = grub_relocator_alloc_chunk_align (grub_multiboot_relocator, &ch,
+-					  0x10000, 0xa0000 - bufsize,
+-					  bufsize, 4,
+-					  GRUB_RELOCATOR_PREFERENCE_NONE, 0);
++  err = grub_relocator_alloc_chunk_align_safe (grub_multiboot_relocator, &ch,
++					       0x10000, 0xa0000, bufsize, 4,
++					       GRUB_RELOCATOR_PREFERENCE_NONE, 0);
+   if (err)
+     return err;
+   ptrorig = get_virtual_current_address (ch);
+diff --git a/grub-core/loader/i386/pc/linux.c b/grub-core/loader/i386/pc/linux.c
+index 31f09922b..5fed5ffdf 100644
+--- a/grub-core/loader/i386/pc/linux.c
++++ b/grub-core/loader/i386/pc/linux.c
+@@ -453,10 +453,8 @@ grub_cmd_initrd (grub_command_t cmd __attribute__ ((unused)),
+ 
+   {
+     grub_relocator_chunk_t ch;
+-    err = grub_relocator_alloc_chunk_align (relocator, &ch,
+-					    addr_min, addr_max - size,
+-					    size, 0x1000,
+-					    GRUB_RELOCATOR_PREFERENCE_HIGH, 0);
++    err = grub_relocator_alloc_chunk_align_safe (relocator, &ch, addr_min, addr_max, size,
++						 0x1000, GRUB_RELOCATOR_PREFERENCE_HIGH, 0);
+     if (err)
+       return err;
+     initrd_chunk = get_virtual_current_address (ch);
+diff --git a/grub-core/loader/mips/linux.c b/grub-core/loader/mips/linux.c
+index 7b723bf18..e4ed95921 100644
+--- a/grub-core/loader/mips/linux.c
++++ b/grub-core/loader/mips/linux.c
+@@ -442,12 +442,9 @@ grub_cmd_initrd (grub_command_t cmd __attribute__ ((unused)),
+   {
+     grub_relocator_chunk_t ch;
+ 
+-    err = grub_relocator_alloc_chunk_align (relocator, &ch,
+-					    (target_addr & 0x1fffffff)
+-					    + linux_size + 0x10000,
+-					    (0x10000000 - size),
+-					    size, 0x10000,
+-					    GRUB_RELOCATOR_PREFERENCE_NONE, 0);
++    err = grub_relocator_alloc_chunk_align_safe (relocator, &ch, (target_addr & 0x1fffffff) +
++						 linux_size + 0x10000, 0x10000000, size,
++						 0x10000, GRUB_RELOCATOR_PREFERENCE_NONE, 0);
+ 
+     if (err)
+       goto fail;
+diff --git a/grub-core/loader/multiboot.c b/grub-core/loader/multiboot.c
+index 4a98d7082..facb13f3d 100644
+--- a/grub-core/loader/multiboot.c
++++ b/grub-core/loader/multiboot.c
+@@ -403,7 +403,7 @@ grub_cmd_module (grub_command_t cmd __attribute__ ((unused)),
+   {
+     grub_relocator_chunk_t ch;
+     err = grub_relocator_alloc_chunk_align (GRUB_MULTIBOOT (relocator), &ch,
+-					    lowest_addr, (0xffffffff - size) + 1,
++					    lowest_addr, UP_TO_TOP32 (size),
+ 					    size, MULTIBOOT_MOD_ALIGN,
+ 					    GRUB_RELOCATOR_PREFERENCE_NONE, 1);
+     if (err)
+diff --git a/grub-core/loader/multiboot_elfxx.c b/grub-core/loader/multiboot_elfxx.c
+index cc6853692..f2318e0d1 100644
+--- a/grub-core/loader/multiboot_elfxx.c
++++ b/grub-core/loader/multiboot_elfxx.c
+@@ -109,10 +109,10 @@ CONCAT(grub_multiboot_load_elf, XX) (mbi_load_data_t *mld)
+       if (load_size > mld->max_addr || mld->min_addr > mld->max_addr - load_size)
+ 	return grub_error (GRUB_ERR_BAD_OS, "invalid min/max address and/or load size");
+ 
+-      err = grub_relocator_alloc_chunk_align (GRUB_MULTIBOOT (relocator), &ch,
+-					      mld->min_addr, mld->max_addr - load_size,
+-					      load_size, mld->align ? mld->align : 1,
+-					      mld->preference, mld->avoid_efi_boot_services);
++      err = grub_relocator_alloc_chunk_align_safe (GRUB_MULTIBOOT (relocator), &ch,
++						   mld->min_addr, mld->max_addr,
++						   load_size, mld->align ? mld->align : 1,
++						   mld->preference, mld->avoid_efi_boot_services);
+ 
+       if (err)
+         {
+@@ -256,7 +256,7 @@ CONCAT(grub_multiboot_load_elf, XX) (mbi_load_data_t *mld)
+ 	    continue;
+ 
+ 	  err = grub_relocator_alloc_chunk_align (GRUB_MULTIBOOT (relocator), &ch, 0,
+-						  (0xffffffff - sh->sh_size) + 1,
++						  UP_TO_TOP32 (sh->sh_size),
+ 						  sh->sh_size, sh->sh_addralign,
+ 						  GRUB_RELOCATOR_PREFERENCE_NONE,
+ 						  mld->avoid_efi_boot_services);
+diff --git a/grub-core/loader/multiboot_mbi2.c b/grub-core/loader/multiboot_mbi2.c
+index 0efc66062..03967839c 100644
+--- a/grub-core/loader/multiboot_mbi2.c
++++ b/grub-core/loader/multiboot_mbi2.c
+@@ -295,10 +295,10 @@ grub_multiboot2_load (grub_file_t file, const char *filename)
+ 	      return grub_error (GRUB_ERR_BAD_OS, "invalid min/max address and/or load size");
+ 	    }
+ 
+-	  err = grub_relocator_alloc_chunk_align (grub_multiboot2_relocator, &ch,
+-						  mld.min_addr, mld.max_addr - code_size,
+-						  code_size, mld.align ? mld.align : 1,
+-						  mld.preference, keep_bs);
++	  err = grub_relocator_alloc_chunk_align_safe (grub_multiboot2_relocator, &ch,
++						       mld.min_addr, mld.max_addr,
++						       code_size, mld.align ? mld.align : 1,
++						       mld.preference, keep_bs);
+ 	}
+       else
+ 	err = grub_relocator_alloc_chunk_addr (grub_multiboot2_relocator,
+@@ -708,7 +708,7 @@ grub_multiboot2_make_mbi (grub_uint32_t *target)
+   COMPILE_TIME_ASSERT (MULTIBOOT_TAG_ALIGN % sizeof (grub_properly_aligned_t) == 0);
+ 
+   err = grub_relocator_alloc_chunk_align (grub_multiboot2_relocator, &ch,
+-					  0, 0xffffffff - bufsize,
++					  0, UP_TO_TOP32 (bufsize),
+ 					  bufsize, MULTIBOOT_TAG_ALIGN,
+ 					  GRUB_RELOCATOR_PREFERENCE_NONE, 1);
+   if (err)
+diff --git a/grub-core/loader/xnu_resume.c b/grub-core/loader/xnu_resume.c
+index 8089804d4..d648ef0cd 100644
+--- a/grub-core/loader/xnu_resume.c
++++ b/grub-core/loader/xnu_resume.c
+@@ -129,7 +129,7 @@ grub_xnu_resume (char *imagename)
+   {
+     grub_relocator_chunk_t ch;
+     err = grub_relocator_alloc_chunk_align (grub_xnu_relocator, &ch, 0,
+-					    (0xffffffff - hibhead.image_size) + 1,
++					    UP_TO_TOP32 (hibhead.image_size),
+ 					    hibhead.image_size,
+ 					    GRUB_XNU_PAGESIZE,
+ 					    GRUB_RELOCATOR_PREFERENCE_NONE, 0);
+diff --git a/include/grub/relocator.h b/include/grub/relocator.h
+index 24d8672d2..1b3bdd92a 100644
+--- a/include/grub/relocator.h
++++ b/include/grub/relocator.h
+@@ -49,6 +49,35 @@ grub_relocator_alloc_chunk_align (struct grub_relocator *rel,
+ 				  int preference,
+ 				  int avoid_efi_boot_services);
+ 
++/*
++ * Wrapper for grub_relocator_alloc_chunk_align() with purpose of
++ * protecting against integer underflow.
++ *
++ * Compare to its callee, max_addr has different meaning here.
++ * It covers entire chunk and not just start address of the chunk.
++ */
++static inline grub_err_t
++grub_relocator_alloc_chunk_align_safe (struct grub_relocator *rel,
++				       grub_relocator_chunk_t *out,
++				       grub_phys_addr_t min_addr,
++				       grub_phys_addr_t max_addr,
++				       grub_size_t size, grub_size_t align,
++				       int preference,
++				       int avoid_efi_boot_services)
++{
++  /* Sanity check and ensure following equation (max_addr - size) is safe. */
++  if (max_addr < size || (max_addr - size) < min_addr)
++    return GRUB_ERR_OUT_OF_RANGE;
++
++  return grub_relocator_alloc_chunk_align (rel, out, min_addr,
++					   max_addr - size,
++					   size, align, preference,
++					   avoid_efi_boot_services);
++}
++
++/* Top 32-bit address minus s bytes and plus 1 byte. */
++#define UP_TO_TOP32(s)	((~(s) & 0xffffffff) + 1)
++
+ #define GRUB_RELOCATOR_PREFERENCE_NONE 0
+ #define GRUB_RELOCATOR_PREFERENCE_LOW 1
+ #define GRUB_RELOCATOR_PREFERENCE_HIGH 2
+-- 
+2.26.2
+

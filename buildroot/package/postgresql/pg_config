@@ -11,12 +11,18 @@ case "$1" in
   --includedir)
 	echo "$prefix/include"
 	;;
+  --includedir-server)
+	echo "$prefix/include/postgresql/server"
+	;;
   --libdir)
 	echo "$prefix/lib"
 	;;
   --version)
 	echo "PostgreSQL @POSTGRESQL_VERSION@"
 	;;
+  --configure)
+	echo "@POSTGRESQL_CONF_OPTIONS@"
+	;;
   *)
-	echo "Usage: $0 {--includedir|--libdir|--version}"
+	echo "Usage: $0 {--includedir|--includedir-server|--libdir|--version|--configure}"
 esac
