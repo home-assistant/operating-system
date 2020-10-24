@@ -1,10 +1,8 @@
-From c67fb4dbb332ed38bc7fbee13079e5ea11390f4e Mon Sep 17 00:00:00 2001
-Message-Id: <c67fb4dbb332ed38bc7fbee13079e5ea11390f4e.1602104035.git.stefan@agner.ch>
-In-Reply-To: <f40f83d023b2e1dd82e751aee35c1f0d386b8b4f.1602104035.git.stefan@agner.ch>
-References: <f40f83d023b2e1dd82e751aee35c1f0d386b8b4f.1602104035.git.stefan@agner.ch>
+From 698972869afda7095e31892c48051350788aa0a1 Mon Sep 17 00:00:00 2001
+Message-Id: <698972869afda7095e31892c48051350788aa0a1.1603550330.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Mon, 31 Aug 2020 13:40:18 +0200
-Subject: [PATCH 2/3] ARM: meson: isolate loading of socinfo
+Subject: [PATCH 1/2] ARM: meson: isolate loading of socinfo
 
 Move loading of socinfo into a separate function so the value can be
 reused later.
@@ -59,5 +57,5 @@ index 3abb27e03b..cfcd5bbd3b 100644
  	       socinfo_to_soc_id(socinfo),
  	       socinfo_to_package_id(socinfo),
 -- 
-2.28.0
+2.29.1
 
