@@ -1,17 +1,17 @@
-From bb86524d84909ffe5d1d6ff3afe41d26396ba561 Mon Sep 17 00:00:00 2001
-Message-Id: <bb86524d84909ffe5d1d6ff3afe41d26396ba561.1602104035.git.stefan@agner.ch>
-In-Reply-To: <f40f83d023b2e1dd82e751aee35c1f0d386b8b4f.1602104035.git.stefan@agner.ch>
-References: <f40f83d023b2e1dd82e751aee35c1f0d386b8b4f.1602104035.git.stefan@agner.ch>
+From 439e2a240062c4be21ac7879b130ef590106cdd8 Mon Sep 17 00:00:00 2001
+Message-Id: <439e2a240062c4be21ac7879b130ef590106cdd8.1603550497.git.stefan@agner.ch>
+In-Reply-To: <698972869afda7095e31892c48051350788aa0a1.1603550497.git.stefan@agner.ch>
+References: <698972869afda7095e31892c48051350788aa0a1.1603550497.git.stefan@agner.ch>
 From: Pascal Vizeli <pvizeli@syshack.ch>
 Date: Tue, 4 Aug 2020 13:50:57 +0000
-Subject: [PATCH 3/3] meson: Add board_rev to env
+Subject: [PATCH 2/2] meson: Add board_rev to env
 
 Signed-off-by: Pascal Vizeli <pvizeli@syshack.ch>
 Signed-off-by: Stefan Agner <stefan@agner.ch>
 ---
  arch/arm/include/asm/arch-meson/boot.h |  4 ++++
  arch/arm/mach-meson/board-info.c       | 12 ++++++++++++
- board/amlogic/w400/w400.c              |  5 +++++
+ board/amlogic/odroid-n2/odroid-n2.c    |  5 +++++
  3 files changed, 21 insertions(+)
 
 diff --git a/arch/arm/include/asm/arch-meson/boot.h b/arch/arm/include/asm/arch-meson/boot.h
@@ -54,11 +54,11 @@ index cfcd5bbd3b..3ea7eb7251 100644
 +	/* Write SoC info */
 +	return snprintf(buff, buff_len, "%x", socinfo_to_minor(socinfo));
 +}
-diff --git a/board/amlogic/w400/w400.c b/board/amlogic/w400/w400.c
-index d74aab899a..cb2e5edf5e 100644
---- a/board/amlogic/w400/w400.c
-+++ b/board/amlogic/w400/w400.c
-@@ -10,6 +10,7 @@
+diff --git a/board/amlogic/odroid-n2/odroid-n2.c b/board/amlogic/odroid-n2/odroid-n2.c
+index caf7fd6810..c2a191ba6a 100644
+--- a/board/amlogic/odroid-n2/odroid-n2.c
++++ b/board/amlogic/odroid-n2/odroid-n2.c
+@@ -12,6 +12,7 @@
  #include <asm/io.h>
  #include <asm/arch/sm.h>
  #include <asm/arch/eth.h>
@@ -66,17 +66,17 @@ index d74aab899a..cb2e5edf5e 100644
  
  #define EFUSE_MAC_OFFSET	20
  #define EFUSE_MAC_SIZE		12
-@@ -20,6 +21,10 @@ int misc_init_r(void)
- 	char efuse_mac_addr[EFUSE_MAC_SIZE], buff[3];
+@@ -23,6 +24,10 @@ int misc_init_r(void)
+ 	char efuse_mac_addr[EFUSE_MAC_SIZE], tmp[3];
  	ssize_t len;
  
-+	if (meson_get_soc_rev(buff, sizeof(buff))) {
-+		env_set("board_rev", buff);
++	if (meson_get_soc_rev(tmp, sizeof(tmp)) > 0) {
++		env_set("board_rev", tmp);
 +	}
 +
  	meson_eth_init(PHY_INTERFACE_MODE_RGMII, 0);
  
  	if (!eth_env_get_enetaddr("ethaddr", mac_addr)) {
 -- 
-2.28.0
+2.29.1
 

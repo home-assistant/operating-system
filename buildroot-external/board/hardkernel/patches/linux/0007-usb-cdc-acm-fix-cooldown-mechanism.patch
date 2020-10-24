@@ -1,8 +1,10 @@
-From f6fce2e974fe091fd233301bd7c127ca18304039 Mon Sep 17 00:00:00 2001
-Message-Id: <f6fce2e974fe091fd233301bd7c127ca18304039.1603303549.git.stefan@agner.ch>
+From 2c5d0244cbd6727f0e56bd6607b3a1b18ce27a3e Mon Sep 17 00:00:00 2001
+Message-Id: <2c5d0244cbd6727f0e56bd6607b3a1b18ce27a3e.1603528796.git.stefan@agner.ch>
+In-Reply-To: <734f52f38625ce29c964517255538b3b0b546e8d.1603528796.git.stefan@agner.ch>
+References: <734f52f38625ce29c964517255538b3b0b546e8d.1603528796.git.stefan@agner.ch>
 From: Jerome Brunet <jbrunet@baylibre.com>
 Date: Mon, 19 Oct 2020 19:07:02 +0200
-Subject: [PATCH] usb: cdc-acm: fix cooldown mechanism
+Subject: [PATCH 7/7] usb: cdc-acm: fix cooldown mechanism
 
 Commit a4e7279cd1d1 ("cdc-acm: introduce a cool down") is causing
 regression if there is some USB error, such as -EPROTO.
