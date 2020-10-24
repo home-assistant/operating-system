@@ -21,5 +21,12 @@ endif
 # The actual source to be compiled is within a 'c++' subdirectory
 CAPNPROTO_SUBDIR = c++
 
+ifeq ($(BR2_PACKAGE_OPENSSL),y)
+CAPNPROTO_CONF_OPTS += --with-openssl
+CAPNPROTO_DEPENDENCIES += openssl
+else
+CAPNPROTO_CONF_OPTS += --without-openssl
+endif
+
 $(eval $(autotools-package))
 $(eval $(host-autotools-package))

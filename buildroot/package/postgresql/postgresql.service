@@ -15,7 +15,6 @@ Group=postgres
 StandardOutput=syslog
 StandardError=syslog
 SyslogIdentifier=postgres
-PIDFile=/var/lib/pgsql/postmaster.pid
 
 ExecStartPre=/bin/sh -c "if [ ! -f /var/lib/pgsql/PG_VERSION ]; then /usr/bin/pg_ctl initdb -D /var/lib/pgsql; fi"
 ExecStart=/usr/bin/postgres -D /var/lib/pgsql

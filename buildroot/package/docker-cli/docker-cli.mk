@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-DOCKER_CLI_VERSION = 19.03.11
+DOCKER_CLI_VERSION = 19.03.12
 DOCKER_CLI_SITE = $(call github,docker,cli,v$(DOCKER_CLI_VERSION))
 DOCKER_CLI_WORKSPACE = gopath
 
@@ -17,8 +17,8 @@ DOCKER_CLI_TAGS = autogen
 DOCKER_CLI_BUILD_TARGETS = cmd/docker
 
 DOCKER_CLI_LDFLAGS = \
-	-X github.com/docker/cli/cli.GitCommit=$(DOCKER_CLI_VERSION) \
-	-X github.com/docker/cli/cli.Version=$(DOCKER_CLI_VERSION)
+	-X github.com/docker/cli/cli/version.GitCommit=$(DOCKER_CLI_VERSION) \
+	-X github.com/docker/cli/cli/version.Version=$(DOCKER_CLI_VERSION)
 
 ifeq ($(BR2_PACKAGE_DOCKER_CLI_STATIC),y)
 DOCKER_CLI_LDFLAGS += -extldflags '-static'

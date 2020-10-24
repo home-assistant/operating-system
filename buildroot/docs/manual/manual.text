@@ -167,13 +167,13 @@ List of Examples
 
 ---------------------------------------------------------------------
 
-Buildroot 2020.02.4 manual generated on 2020-07-26 08:11:34 UTC from
-git revision dee53013da
+Buildroot 2020.02.7 manual generated on 2020-10-12 21:37:33 UTC from
+git revision d8082db677
 
 The Buildroot manual is written by the Buildroot developers. It is
 licensed under the GNU General Public License, version 2. Refer to
 the COPYING [http://git.buildroot.org/buildroot/tree/COPYING?id=
-dee53013da87dfa4bcb3433bdef79ec43b5a5c24] file in the Buildroot
+d8082db677046e004a6537828b3e4f4b9a818a4f] file in the Buildroot
 sources for the full text of this license.
 
 Copyright © 2004-2020 The Buildroot developers
@@ -3670,7 +3670,7 @@ build a system that is known to work. You are welcome to add support
 for other boards to Buildroot too.
 
 To do so, you need to create a normal Buildroot configuration that
-builds a basic system for the hardware: toolchain, kernel,
+builds a basic system for the hardware: (internal) toolchain, kernel,
 bootloader, filesystem and a simple BusyBox-only userspace. No
 specific package should be selected: the configuration should be as
 minimal as possible, and should only build a working basic BusyBox
@@ -3682,7 +3682,17 @@ This is because package selections are highly application-specific.
 Once you have a known working configuration, run make savedefconfig.
 This will generate a minimal defconfig file at the root of the
 Buildroot source tree. Move this file into the configs/ directory,
-and rename it <boardname>_defconfig.
+and rename it <boardname>_defconfig. If the configuration is a bit
+more complicated, it is nice to manually reformat it and separate it
+into sections, with a comment before each section. Typical sections
+are Architecture, Toolchain options (typically just linux headers
+version), Firmware, Bootloader, Kernel, and Filesystem.
+
+Always use fixed versions or commit hashes for the different
+components, not the "latest" version. For example, set
+BR2_LINUX_KERNEL_CUSTOM_VERSION=y and
+BR2_LINUX_KERNEL_CUSTOM_VERSION_VALUE to the kernel version you
+tested with.
 
 It is recommended to use as much as possible upstream versions of the
 Linux kernel and bootloaders, and to use as much as possible default
@@ -5877,7 +5887,7 @@ will automatically download the tarball from this location.
 
 On line 10, we tell Buildroot what options to enable for libfoo.
 
-On line 11, we tell Buildroot the depednencies of libfoo.
+On line 11, we tell Buildroot the dependencies of libfoo.
 
 Finally, on line line 13, we invoke the waf-package macro that
 generates all the Makefile rules that actually allows the package to
@@ -6080,31 +6090,30 @@ for such a package. Let’s start with an example:
 13: FOO_DEPENDENCIES = host-cargo
 14:
 15: FOO_CARGO_ENV = CARGO_HOME=$(HOST_DIR)/share/cargo
-16: FOO_CARGO_MODE = $(if $(BR2_ENABLE_DEBUG),debug,release)
-17:
-18: FOO_BIN_DIR = target/$(RUSTC_TARGET_NAME)/$(FOO_CARGO_MODE)
-19:
-20: FOO_CARGO_OPTS = \
-21:   --$(FOO_CARGO_MODE) \
-22:     --target=$(RUSTC_TARGET_NAME) \
-23:     --manifest-path=$(@D)/Cargo.toml
-24:
-25: define FOO_BUILD_CMDS
-26:     $(TARGET_MAKE_ENV) $(FOO_CARGO_ENV) \
-27:             cargo build $(FOO_CARGO_OPTS)
-28: endef
-29:
-30: define FOO_INSTALL_TARGET_CMDS
-31:     $(INSTALL) -D -m 0755 $(@D)/$(FOO_BIN_DIR)/foo \
-32:             $(TARGET_DIR)/usr/bin/foo
-33: endef
-34:
-35: $(eval $(generic-package))
+16:
+17: FOO_BIN_DIR = target/$(RUSTC_TARGET_NAME)/$(FOO_CARGO_MODE)
+18:
+19: FOO_CARGO_OPTS = \
+20:     $(if $(BR2_ENABLE_DEBUG),,--release) \
+21:     --target=$(RUSTC_TARGET_NAME) \
+22:     --manifest-path=$(@D)/Cargo.toml
+23:
+24: define FOO_BUILD_CMDS
+25:     $(TARGET_MAKE_ENV) $(FOO_CARGO_ENV) \
+26:             cargo build $(FOO_CARGO_OPTS)
+27: endef
+28:
+29: define FOO_INSTALL_TARGET_CMDS
+30:     $(INSTALL) -D -m 0755 $(@D)/$(FOO_BIN_DIR)/foo \
+31:             $(TARGET_DIR)/usr/bin/foo
+32: endef
+33:
+34: $(eval $(generic-package))
 
 The Makefile starts with the definition of the standard variables for
 package declaration (lines 7 to 11).
 
-As seen in line 35, it is based on the generic-package infrastructure
+As seen in line 34, it is based on the generic-package infrastructure
 . So, it defines the variables required by this particular
 infrastructure, where Cargo is invoked:
 
@@ -7499,7 +7508,35 @@ the following cases:
   * whenever you feel it will help presenting your work, your
     choices, the review process, etc.
 
-21.5.4. Patch revision changelog
+21.5.4. Patches for maintenance branches
+
+When fixing bugs on a maintenance branch, bugs should be fixed on the
+master branch first. The commit log for such a patch may then contain
+a post-commit note specifying what branches are affected:
+
+package/foo: fix stuff
+
+Signed-off-by: Your Real Name <your@email.address>
+---
+Backport to: 2020.02.x, 2020.05.x
+(2020.08.x not affected as the version was bumped)
+
+Those changes will then be backported by a maintainer to the affected
+branches.
+
+However, some bugs may apply only to a specific release, for example
+because it is using an older version of a package. In that case,
+patches should be based off the maintenance branch, and the patch
+subject prefix must include the maintenance branch name (for example
+"[PATCH 2020.02.x]"). This can be done with the git format-patch flag
+--subject-prefix:
+
+$ git format-patch --subject-prefix "PATCH 2020.02.x" \
+    -M -s -o outgoing origin/2020.02.x
+
+Then send the patches with git send-email, as described above.
+
+21.5.5. Patch revision changelog
 
 When improvements are requested, the new revision of each commit
 should include a changelog of the modifications between each

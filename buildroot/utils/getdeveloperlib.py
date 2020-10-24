@@ -10,7 +10,7 @@ import unittest
 # Patch parsing functions
 #
 
-FIND_INFRA_IN_PATCH = re.compile("^\+\$\(eval \$\((host-)?([^-]*)-package\)\)$")
+FIND_INFRA_IN_PATCH = re.compile(r"^\+\$\(eval \$\((host-)?([^-]*)-package\)\)$")
 
 
 def analyze_patch(patch):
@@ -33,7 +33,7 @@ def analyze_patch(patch):
     return (files, infras)
 
 
-FIND_INFRA_IN_MK = re.compile("^\$\(eval \$\((host-)?([^-]*)-package\)\)$")
+FIND_INFRA_IN_MK = re.compile(r"^\$\(eval \$\((host-)?([^-]*)-package\)\)$")
 
 
 def fname_get_package_infra(fname):
@@ -178,7 +178,7 @@ def parse_arches_from_config_in(fname):
                 parsing_arches = True
                 continue
             if parsing_arches:
-                m = re.match("^\s*default \"([^\"]*)\".*", line)
+                m = re.match(r"^\s*default \"([^\"]*)\".*", line)
                 if m:
                     arches.add(m.group(1))
                 else:
@@ -192,7 +192,7 @@ def parse_developer_architectures(fnames):
     developer is working on."""
     arches = set()
     for fname in fnames:
-        if not re.match("^.*/arch/Config\.in\..*$", fname):
+        if not re.match(r"^.*/arch/Config\.in\..*$", fname):
             continue
         arches = arches | parse_arches_from_config_in(fname)
     return arches
@@ -201,7 +201,7 @@ def parse_developer_architectures(fnames):
 def parse_developer_infras(fnames):
     infras = set()
     for fname in fnames:
-        m = re.match("^package/pkg-([^.]*).mk$", fname)
+        m = re.match(r"^package/pkg-([^.]*).mk$", fname)
         if m:
             infras.add(m.group(1))
     return infras

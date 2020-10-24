@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-JASPER_VERSION = 2.0.16
-JASPER_SITE = $(call github,mdadams,jasper,version-$(JASPER_VERSION))
+JASPER_VERSION = 2.0.19
+JASPER_SITE = $(call github,jasper-software,jasper,version-$(JASPER_VERSION))
 JASPER_INSTALL_STAGING = YES
 JASPER_LICENSE = JasPer-2.0
 JASPER_LICENSE_FILES = LICENSE

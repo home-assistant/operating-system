@@ -1,15 +1,20 @@
-From 4b9d9159ed5a79ceac5b831012b3cb44cce2516c Mon Sep 17 00:00:00 2001
-Message-Id: <4b9d9159ed5a79ceac5b831012b3cb44cce2516c.1602360581.git.stefan@agner.ch>
-In-Reply-To: <d35db3d5f943fea569dde8e83f15565254643385.1602360581.git.stefan@agner.ch>
-References: <d35db3d5f943fea569dde8e83f15565254643385.1602360581.git.stefan@agner.ch>
+From 75f1e8330dac46a0bef8a360be0ae4566d9a470c Mon Sep 17 00:00:00 2001
+Message-Id: <75f1e8330dac46a0bef8a360be0ae4566d9a470c.1603528796.git.stefan@agner.ch>
+In-Reply-To: <734f52f38625ce29c964517255538b3b0b546e8d.1603528796.git.stefan@agner.ch>
+References: <734f52f38625ce29c964517255538b3b0b546e8d.1603528796.git.stefan@agner.ch>
 From: Christian Hewitt <christianshewitt@gmail.com>
-Date: Sun, 19 Jul 2020 14:10:33 +0000
-Subject: [PATCH 2/4] dt-bindings: arm: amlogic: add support for the ODROID-N2+
+Date: Tue, 15 Sep 2020 17:24:31 +0200
+Subject: [PATCH 2/7] dt-bindings: arm: amlogic: add support for the ODROID-N2+
 
 HardKernel ODROID-N2+ uses a revised Amlogic S922X v2 chip that supports
 higher cpu clock speeds than the original ODROID-N2.
 
 Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+Acked-by: Rob Herring <robh@kernel.org>
+Acked-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Link: https://lore.kernel.org/r/20200915152432.30616-3-narmstrong@baylibre.com
 ---
  Documentation/devicetree/bindings/arm/amlogic.yaml | 1 +
  1 file changed, 1 insertion(+)

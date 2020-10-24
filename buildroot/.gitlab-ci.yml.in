@@ -4,12 +4,13 @@
 # It needs to be regenerated every time a defconfig is added, using
 # "make .gitlab-ci.yml".
 
-image: buildroot/base:20191027.2027
+image: buildroot/base:20200814.2228
 
 .check_base:
-    except:
-        - /^.*-.*_defconfig$/
-        - /^.*-tests\..*$/
+    rules:
+        - if: '$CI_COMMIT_REF_NAME =~ /^.*-.*_defconfig$/ || $CI_COMMIT_REF_NAME =~ /^.*-tests\..*$/'
+          when: never
+        - when: always
 
 check-DEVELOPERS:
     extends: .check_base
@@ -27,7 +28,7 @@ check-flake8:
         - find * -type f -print0 | xargs -0 file | grep 'Python script' | cut -d':' -f1 >> files.txt
         - sort -u files.txt | tee files.processed
     script:
-        - python -m flake8 --statistics --count --max-line-length=132 $(cat files.processed)
+        - python3 -m flake8 --statistics --count --max-line-length=132 $(cat files.processed)
     after_script:
         - wc -l files.processed
 
@@ -69,17 +70,21 @@ check-package:
     extends: .defconfig_base
     # Running the defconfigs for every push is too much, so limit to
     # explicit triggers through the API.
-    only:
-        - triggers
-        - tags
-        - /-defconfigs$/
+    rules:
+        # For tags, create a pipeline.
+        - if: '$CI_COMMIT_TAG'
+        # For pipeline created by using a trigger token.
+        - if: '$CI_PIPELINE_TRIGGERED'
+        # For the branch or tag name named *-defconfigs, create a pipeline.
+        - if: '$CI_COMMIT_REF_NAME =~ /^.*-defconfigs$/'
     before_script:
         - DEFCONFIG_NAME=${CI_JOB_NAME}
 
 one-defconfig:
     extends: .defconfig_base
-    only:
-        - /^.*-.*_defconfig$/
+    rules:
+        # For the branch or tag name named *-*_defconfigs, create a pipeline.
+        - if: '$CI_COMMIT_REF_NAME =~ /^.*-.*_defconfig$/'
     before_script:
         - DEFCONFIG_NAME=$(echo ${CI_COMMIT_REF_NAME} | sed -e 's,^.*-,,g')
 
@@ -103,16 +108,19 @@ one-defconfig:
     extends: .runtime_test_base
     # Running the runtime tests for every push is too much, so limit to
     # explicit triggers through the API.
-    only:
-        - triggers
-        - tags
-        - /-runtime-tests$/
+    rules:
+        # For tags, create a pipeline.
+        - if: '$CI_COMMIT_TAG'
+        # For pipeline created by using a trigger token.
+        - if: '$CI_PIPELINE_TRIGGERED'
+        # For the branch or tag name named *-runtime-tests, create a pipeline.
+        - if: '$CI_COMMIT_REF_NAME =~ /^.*-runtime-tests$/'
     before_script:
         - TEST_CASE_NAME=${CI_JOB_NAME}
 
 one-runtime_test:
     extends: .runtime_test_base
-    only:
-        - /^.*-tests\..*$/
+    rules:
+        - if: '$CI_COMMIT_REF_NAME =~ /^.*-tests\..*$/'
     before_script:
         - TEST_CASE_NAME=$(echo ${CI_COMMIT_REF_NAME} | sed -e 's,^.*-,,g')

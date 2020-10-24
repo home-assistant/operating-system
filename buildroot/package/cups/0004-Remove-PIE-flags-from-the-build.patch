@@ -13,15 +13,17 @@ Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 Signed-off-by: Olivier Schonken <olivier.schonken@gmail.com>
 [Fabrice: updated for 2.3.0]
 Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Michael: updated for 2.3.3]
+Signed-off-by: Michael Trimarchi <michael@amarulasolutions.com>
 ---
  Makedefs.in | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/Makedefs.in b/Makedefs.in
-index 3afef0a..299b297 100644
+index 5f1d32f..d669ea8 100644
 --- a/Makedefs.in
 +++ b/Makedefs.in
-@@ -148,7 +148,7 @@ IPPFIND_BIN	=	@IPPFIND_BIN@
+@@ -155,7 +155,7 @@ ALL_CXXFLAGS	=	-I.. -D_CUPS_SOURCE $(CXXFLAGS) \
  			$(ONDEMANDFLAGS) $(OPTIONS)
  ALL_DSOFLAGS	=	-L../cups @ARCHFLAGS@ @RELROFLAGS@ $(DSOFLAGS) $(OPTIM)
  ALL_LDFLAGS	=	-L../cups @LDARCHFLAGS@ @RELROFLAGS@ $(LDFLAGS)  \
@@ -31,5 +33,5 @@ index 3afef0a..299b297 100644
  ARFLAGS		=	@ARFLAGS@
  BACKLIBS	=	@BACKLIBS@
 -- 
-2.7.4
+2.17.1
 

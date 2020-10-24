@@ -27,6 +27,13 @@ define FAIL2BAN_FIX_DEFAULT_CONFIG
 endef
 FAIL2BAN_POST_INSTALL_TARGET_HOOKS += FAIL2BAN_FIX_DEFAULT_CONFIG
 
+# fail2ban-python points to host python
+define FAIL2BAN_FIX_FAIL2BAN_PYTHON_SYMLINK
+	ln -snf $(if $(BR2_PACKAGE_PYTHON),python,python3) \
+		$(TARGET_DIR)/usr/bin/fail2ban-python
+endef
+FAIL2BAN_POST_INSTALL_TARGET_HOOKS += FAIL2BAN_FIX_FAIL2BAN_PYTHON_SYMLINK
+
 define FAIL2BAN_INSTALL_INIT_SYSV
 	$(INSTALL) -D -m 755 package/fail2ban/S60fail2ban \
 		$(TARGET_DIR)/etc/init.d/S60fail2ban

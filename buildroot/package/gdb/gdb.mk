@@ -67,7 +67,8 @@ GDB_DISABLE_BINUTILS_CONF_OPTS = \
 	--disable-binutils \
 	--disable-install-libbfd \
 	--disable-ld \
-	--disable-gas
+	--disable-gas \
+	--disable-gprof
 
 GDB_CONF_ENV = \
 	ac_cv_type_uintptr_t=yes \

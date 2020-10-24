@@ -78,7 +78,7 @@ def get_elf_arch_tag(builddir, prefix, fpath, tag):
     cmd = ["host/bin/{}-readelf".format(prefix),
            "-A", os.path.join("target", fpath)]
     out = run_cmd_on_host(builddir, cmd)
-    regexp = re.compile("^  {}: (.*)$".format(tag))
+    regexp = re.compile(r"^  {}: (.*)$".format(tag))
     for line in out.splitlines():
         m = regexp.match(line)
         if not m:
@@ -105,7 +105,7 @@ def get_elf_prog_interpreter(builddir, prefix, fpath):
     cmd = ["host/bin/{}-readelf".format(prefix),
            "-l", os.path.join("target", fpath)]
     out = run_cmd_on_host(builddir, cmd)
-    regexp = re.compile("^ *\[Requesting program interpreter: (.*)\]$")
+    regexp = re.compile(r"^ *\[Requesting program interpreter: (.*)\]$")
     for line in out.splitlines():
         m = regexp.match(line)
         if not m:
