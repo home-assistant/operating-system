@@ -1,0 +1,38 @@
+From f2eead311d9dd9ff7ee0846914147250d7711f98 Mon Sep 17 00:00:00 2001
+Message-Id: <f2eead311d9dd9ff7ee0846914147250d7711f98.1603528796.git.stefan@agner.ch>
+In-Reply-To: <734f52f38625ce29c964517255538b3b0b546e8d.1603528796.git.stefan@agner.ch>
+References: <734f52f38625ce29c964517255538b3b0b546e8d.1603528796.git.stefan@agner.ch>
+From: Scott K Logan <logans@cottsay.net>
+Date: Fri, 25 Sep 2020 01:43:53 -0700
+Subject: [PATCH 4/7] arm64: dts: meson: add missing g12 rng clock
+
+This adds the missing perpheral clock for the RNG for Amlogic G12. As
+stated in amlogic,meson-rng.yaml, this isn't always necessary for the
+RNG to function, but is better to have in case the clock is disabled for
+some reason prior to loading.
+
+Signed-off-by: Scott K Logan <logans@cottsay.net>
+Suggested-by: Neil Armstrong <narmstrong@baylibre.com>
+Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
+Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+Link: https://lore.kernel.org/r/520a1a8ec7a958b3d918d89563ec7e93a4100a45.camel@cottsay.net
+---
+ arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi
+index 1e83ec5b8c91..81f490e404ca 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi
+@@ -282,6 +282,8 @@ apb_efuse: bus@30000 {
+ 				hwrng: rng@218 {
+ 					compatible = "amlogic,meson-rng";
+ 					reg = <0x0 0x218 0x0 0x4>;
++					clocks = <&clkc CLKID_RNG0>;
++					clock-names = "core";
+ 				};
+ 			};
+ 
+-- 
+2.28.0
+
