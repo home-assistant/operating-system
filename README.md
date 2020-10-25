@@ -20,7 +20,7 @@ Home Assistant Operating System uses Docker as Container engine. It by default d
 - Asus Tinker Board
 - Virtual appliances
 
-See full list and specific models [here](./Documentation/boards/README.md)
+See the full list and specific models [here](./Documentation/boards/README.md)
 
 ## Getting Started
 
@@ -45,7 +45,7 @@ If you're interested in finding out more about Home Assistant Operating System a
 - **Security:**
   - [AppArmor](https://apparmor.net/) Linux kernel security module
 
-If you don't have experience with these, embedded systems, buildroot or the build process for Linux distributions, then please read up on these topics. The rest of the documentation in this project is for developers and assumes you have experience of embedded systems or a strong understanding of the internal workings of operating systems.
+If you don't have experience with these, embedded systems, buildroot or the build process for Linux distributions, then please read up on these topics. The rest of the documentation in this project is for developers and assumes you have experience with embedded systems or a strong understanding of the internal workings of operating systems.
 
 ## Developer Documentation
 
