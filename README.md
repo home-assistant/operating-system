@@ -2,7 +2,7 @@
 
 Home Assistant Operating System (formerly HassOS) is an operating system optimized for hosting [Home Assistant](https://www.home-assistant.io) and its [Add-ons](https://www.home-assistant.io/addons/).
 
-Home Assistant Operating System uses Docker as Container engine. It by default deploys the Home Assistant Supervisor as a container. Home Assistant Supervisor in turn uses the Docker container engine to control Home Assistant Core and Add-Ons in separate containers. Home Assistant Operating System is **not** based on a regular Linux distribution like Ubuntu. It is built using [buildroot](https://buildroot.org/) and it is optimized for running Home Assistant, especially on single board compute (SBC) devices like the Pi, ODROID, NUC, and Tinker Board (see supported hardware below).
+Home Assistant Operating System uses Docker as Container engine. It by default deploys the Home Assistant Supervisor as a container. Home Assistant Supervisor in turn uses the Docker container engine to control Home Assistant Core and Add-Ons in separate containers. Home Assistant Operating System is **not** based on a regular Linux distribution like Ubuntu. It is built using [buildroot](https://buildroot.org/) and it is optimized for running Home Assistant, especially on single board compute (SBC) devices like the Pi, ODROID, NUC and Tinker Board (see supported hardware below).
 
 ## Features
 
@@ -45,7 +45,7 @@ If you're interested in finding out more about Home Assistant Operating System a
 - **Security:**
   - [AppArmor](https://apparmor.net/) Linux kernel security module
 
-If you don't have experience with these, embedded systems, buildroot, or the build process for Linux distributions, then please read up on these topics. The rest of the documentation in this project is for developers and assumes you have experience with embedded systems or a strong understanding of the internal workings of operating systems.
+If you don't have experience with these, embedded systems, buildroot or the build process for Linux distributions, then please read up on these topics. The rest of the documentation in this project is for developers and assumes you have experience with embedded systems or a strong understanding of the internal workings of operating systems.
 
 ## Developer Documentation
 
