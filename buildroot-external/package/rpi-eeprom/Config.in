@@ -1,0 +1,4 @@
+config BR2_PACKAGE_RPI_EEPROM
+	bool "rpi-eeprom"
+	help
+	  https://github.com/raspberrypi/rpi-eeprom
