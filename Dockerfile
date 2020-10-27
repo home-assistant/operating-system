@@ -38,6 +38,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         unzip \
         wget \
         qemu-utils \
+        openssh-client \
+        vim \
     && rm -rf /var/lib/apt/lists/*
 
 # Init entry
