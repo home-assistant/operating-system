@@ -4,7 +4,7 @@ DefaultDependencies=no
 Before=umount.target local-fs.target
 Conflicts=umount.target
 After=systemd-fsck@dev-disk-by\x2dlabel-hassos\x2dboot.service
-Requires=systemd-fsck@dev-disk-by\x2dlabel-hassos\x2dboot.service
+Wants=systemd-fsck@dev-disk-by\x2dlabel-hassos\x2dboot.service
 
 [Mount]
 What=/dev/disk/by-label/hassos-boot
