@@ -40,10 +40,9 @@ HARDKERNEL_BOOT_BINS += u-boot.sm1
 define HARDKERNEL_BOOT_BUILD_CMDS
 	# blx_fix_g12a.sh is appropriate for C4 as well as N2
 	curl -L -o $(@D)/fip/blx_fix.sh https://raw.githubusercontent.com/home-assistant/hassos-blobs/d88ec078470f236d694ba1f9e69a44759ddf41ea/odroid-n2/blx_fix_g12a.sh
-  # get these bits from Neil Armstrong's repo; probably will want to host these
-  # in hassos-blobs (or maybe they're the same as the G12B versions?)
-	curl -L -o $(@D)/fip/acs.bin https://gitlab.com/superna9999/amlogic-boot-fip/-/raw/master/odroid-c4/acs.bin
-	curl -L -o $(@D)/fip/bl301.bin https://gitlab.com/superna9999/amlogic-boot-fip/-/raw/master/odroid-c4/bl301.bin
+	# acs.bin and bl301.bin appear to be different than N2 versions
+	curl -L -o $(@D)/fip/acs.bin https://raw.githubusercontent.com/home-assistant/operating-system-blobs/75fa51f44221da614a717673a27bec4fa01ccd6c/hardkernel/odroid-c4/acs.bin
+	curl -L -o $(@D)/fip/bl301.bin https://raw.githubusercontent.com/home-assistant/operating-system-blobs/75fa51f44221da614a717673a27bec4fa01ccd6c/hardkernel/odroid-c4/bl301.bin
 
 	bash $(@D)/fip/blx_fix.sh \
 		$(@D)/fip/g12a/bl30.bin $(@D)/fip/zero_tmp $(@D)/fip/bl30_zero.bin \
