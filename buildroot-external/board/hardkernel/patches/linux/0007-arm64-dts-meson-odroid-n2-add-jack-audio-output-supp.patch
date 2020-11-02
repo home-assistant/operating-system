@@ -1,7 +1,10 @@
-From 978cc250574b7f1ab45f494cc2a094e3c9fd1fa4 Mon Sep 17 00:00:00 2001
+From 26603168f26468ac1872fcbcd703d2cd5a626310 Mon Sep 17 00:00:00 2001
+Message-Id: <26603168f26468ac1872fcbcd703d2cd5a626310.1603880585.git.stefan@agner.ch>
+In-Reply-To: <59bbf3567b02c36edfa4ee013d7e7e8c492756f2.1603880585.git.stefan@agner.ch>
+References: <59bbf3567b02c36edfa4ee013d7e7e8c492756f2.1603880585.git.stefan@agner.ch>
 From: Jerome Brunet <jbrunet@baylibre.com>
 Date: Mon, 15 Jun 2020 16:34:37 +0200
-Subject: [PATCH 8/8] arm64: dts: meson: odroid-n2: add jack audio output
+Subject: [PATCH 07/14] arm64: dts: meson: odroid-n2: add jack audio output
  support
 
 Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
@@ -21,7 +24,7 @@ index d4421ad164bd..34fffa6d859d 100644
  #include <dt-bindings/sound/meson-g12a-tohdmitx.h>
  
  / {
-@@ -20,6 +21,14 @@
+@@ -20,6 +21,14 @@ aliases {
  		ethernet0 = &ethmac;
  	};
  
@@ -36,7 +39,7 @@ index d4421ad164bd..34fffa6d859d 100644
  	chosen {
  		stdout-path = "serial0:115200n8";
  	};
-@@ -209,16 +218,26 @@
+@@ -209,16 +218,26 @@ hdmi_connector_in: endpoint {
  	sound {
  		compatible = "amlogic,axg-sound-card";
  		model = "G12B-ODROID-N2";
@@ -65,7 +68,7 @@ index d4421ad164bd..34fffa6d859d 100644
  				"TODDR_A IN 0", "TDMIN_A OUT",
  				"TODDR_B IN 0", "TDMIN_A OUT",
  				"TODDR_C IN 0", "TDMIN_A OUT",
-@@ -230,7 +249,11 @@
+@@ -230,7 +249,11 @@ sound {
  				"TODDR_C IN 2", "TDMIN_C OUT",
  				"TODDR_A IN 6", "TDMIN_LB OUT",
  				"TODDR_B IN 6", "TDMIN_LB OUT",
@@ -78,7 +81,7 @@ index d4421ad164bd..34fffa6d859d 100644
  
  		assigned-clocks = <&clkc CLKID_MPLL2>,
  				  <&clkc CLKID_MPLL0>,
-@@ -275,22 +298,56 @@
+@@ -275,22 +298,56 @@ dai-link-6 {
  			dai-tdm-slot-tx-mask-3 = <1 1>;
  			mclk-fs = <256>;
  
@@ -137,7 +140,7 @@ index d4421ad164bd..34fffa6d859d 100644
  &arb {
  	status = "okay";
  };
-@@ -505,6 +562,10 @@
+@@ -505,6 +562,10 @@ &tdmif_b {
  	status = "okay";
  };
  
@@ -148,7 +151,7 @@ index d4421ad164bd..34fffa6d859d 100644
  &tdmin_a {
  	status = "okay";
  };
-@@ -525,6 +586,14 @@
+@@ -525,6 +586,14 @@ &tdmout_b {
  	status = "okay";
  };
  
@@ -164,5 +167,5 @@ index d4421ad164bd..34fffa6d859d 100644
  	status = "okay";
  };
 -- 
-2.17.1
+2.29.1
 

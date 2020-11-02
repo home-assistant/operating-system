@@ -1,7 +1,8 @@
-From e2b93751cfd0722801b65b4603b588ab9df4c12b Mon Sep 17 00:00:00 2001
+From 59bbf3567b02c36edfa4ee013d7e7e8c492756f2 Mon Sep 17 00:00:00 2001
+Message-Id: <59bbf3567b02c36edfa4ee013d7e7e8c492756f2.1603880585.git.stefan@agner.ch>
 From: Jerome Brunet <jbrunet@baylibre.com>
 Date: Tue, 21 Apr 2020 18:39:30 +0200
-Subject: [PATCH 2/8] arm64: defconfig: enable meson gx audio as module
+Subject: [PATCH 01/14] arm64: defconfig: enable meson gx audio as module
 
 Enable the module config for the Amlogic GX audio card.
 This module will imply the internal components usually associated
@@ -39,5 +40,5 @@ index 03d0189f7d68..ceb60ee9c340 100644
  CONFIG_SND_SOC_WCD934X=m
  CONFIG_SND_SOC_WSA881X=m
 -- 
-2.17.1
+2.29.1
 

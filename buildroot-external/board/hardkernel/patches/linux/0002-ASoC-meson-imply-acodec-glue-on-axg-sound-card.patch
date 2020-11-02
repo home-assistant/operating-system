@@ -1,7 +1,10 @@
-From 821b8ac21b1675910423ee69d37cb1977b8f271e Mon Sep 17 00:00:00 2001
+From 4684d42cbbbb2d0331eb273229c9856a09b8d687 Mon Sep 17 00:00:00 2001
+Message-Id: <4684d42cbbbb2d0331eb273229c9856a09b8d687.1603880585.git.stefan@agner.ch>
+In-Reply-To: <59bbf3567b02c36edfa4ee013d7e7e8c492756f2.1603880585.git.stefan@agner.ch>
+References: <59bbf3567b02c36edfa4ee013d7e7e8c492756f2.1603880585.git.stefan@agner.ch>
 From: Jerome Brunet <jbrunet@baylibre.com>
 Date: Mon, 30 Mar 2020 17:39:04 +0200
-Subject: [PATCH 3/8] ASoC: meson: imply acodec glue on axg sound card
+Subject: [PATCH 02/14] ASoC: meson: imply acodec glue on axg sound card
 
 When axg card driver support is enabled, lets enable the related
 internal DAC glue by default.
@@ -24,5 +27,5 @@ index 8b6295283989..363dc3b1bbe4 100644
  	help
  	  Select Y or M to add support for the AXG SoC sound card
 -- 
-2.17.1
+2.29.1
 
