@@ -1,7 +1,11 @@
-From 15b3cef2ea75c4d81cb067264be1cf49c49f81b1 Mon Sep 17 00:00:00 2001
+From a778ae244b9e6035ef4c0e4fb36d81f140ed5019 Mon Sep 17 00:00:00 2001
+Message-Id: <a778ae244b9e6035ef4c0e4fb36d81f140ed5019.1603880585.git.stefan@agner.ch>
+In-Reply-To: <59bbf3567b02c36edfa4ee013d7e7e8c492756f2.1603880585.git.stefan@agner.ch>
+References: <59bbf3567b02c36edfa4ee013d7e7e8c492756f2.1603880585.git.stefan@agner.ch>
 From: Jerome Brunet <jbrunet@baylibre.com>
 Date: Mon, 15 Jun 2020 15:38:44 +0200
-Subject: [PATCH 7/8] arm64: dts: meson-g12b: odroid-n2: enable audio loopback
+Subject: [PATCH 06/14] arm64: dts: meson-g12b: odroid-n2: enable audio
+ loopback
 
 Add capture pcm interfaces and loopback routes to the odroid-n2
 
@@ -14,7 +18,7 @@ diff --git a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts b/arch/arm64/b
 index 169ea283d4ee..d4421ad164bd 100644
 --- a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts
 +++ b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts
-@@ -209,11 +209,28 @@
+@@ -209,11 +209,28 @@ hdmi_connector_in: endpoint {
  	sound {
  		compatible = "amlogic,axg-sound-card";
  		model = "G12B-ODROID-N2";
@@ -45,7 +49,7 @@ index 169ea283d4ee..d4421ad164bd 100644
  
  		assigned-clocks = <&clkc CLKID_MPLL2>,
  				  <&clkc CLKID_MPLL0>,
-@@ -236,8 +253,20 @@
+@@ -236,8 +253,20 @@ dai-link-2 {
  			sound-dai = <&frddr_c>;
  		};
  
@@ -67,7 +71,7 @@ index 169ea283d4ee..d4421ad164bd 100644
  			sound-dai = <&tdmif_b>;
  			dai-format = "i2s";
  			dai-tdm-slot-tx-mask-0 = <1 1>;
-@@ -252,7 +281,7 @@
+@@ -252,7 +281,7 @@ codec {
  		};
  
  		/* hdmi glue */
@@ -76,7 +80,7 @@ index 169ea283d4ee..d4421ad164bd 100644
  			sound-dai = <&tohdmitx TOHDMITX_I2S_OUT>;
  
  			codec {
-@@ -476,6 +505,22 @@
+@@ -476,6 +505,22 @@ &tdmif_b {
  	status = "okay";
  };
  
@@ -99,7 +103,7 @@ index 169ea283d4ee..d4421ad164bd 100644
  &tdmout_b {
  	status = "okay";
  };
-@@ -484,6 +529,18 @@
+@@ -484,6 +529,18 @@ &tohdmitx {
  	status = "okay";
  };
  
@@ -119,5 +123,5 @@ index 169ea283d4ee..d4421ad164bd 100644
  	status = "okay";
  	pinctrl-0 = <&uart_ao_a_pins>;
 -- 
-2.17.1
+2.29.1
 

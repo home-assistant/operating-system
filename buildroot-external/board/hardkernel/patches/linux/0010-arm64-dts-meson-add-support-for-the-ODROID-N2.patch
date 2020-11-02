@@ -1,24 +1,27 @@
-From 188bc924b34b7d845324eb2e0e7493a9eaeb2cb5 Mon Sep 17 00:00:00 2001
-Message-Id: <188bc924b34b7d845324eb2e0e7493a9eaeb2cb5.1595882680.git.stefan@agner.ch>
-In-Reply-To: <d83d79b085486a605462fa91e3c6746e4ff0b263.1595882680.git.stefan@agner.ch>
-References: <d83d79b085486a605462fa91e3c6746e4ff0b263.1595882680.git.stefan@agner.ch>
+From 45ac6c04283dce57e0e911d5dc794eeb9446394c Mon Sep 17 00:00:00 2001
+Message-Id: <45ac6c04283dce57e0e911d5dc794eeb9446394c.1603880585.git.stefan@agner.ch>
+In-Reply-To: <59bbf3567b02c36edfa4ee013d7e7e8c492756f2.1603880585.git.stefan@agner.ch>
+References: <59bbf3567b02c36edfa4ee013d7e7e8c492756f2.1603880585.git.stefan@agner.ch>
 From: Christian Hewitt <christianshewitt@gmail.com>
-Date: Sun, 19 Jul 2020 14:10:34 +0000
-Subject: [PATCH 10/10] arm64: dts: meson: add support for the ODROID-N2+
+Date: Tue, 15 Sep 2020 17:24:32 +0200
+Subject: [PATCH 10/14] arm64: dts: meson: add support for the ODROID-N2+
 
 HardKernel ODROID-N2+ uses an Amlogic S922X rev. C chip capable of higher
-clock speeds than the original ODROID-N2. Hardkernel supports the big cpu
-cluster at 2.4GHz and the little cpu cluster at 2.0GHz. Opp points and
-regulator changess are from the HardKernel Linux kernel sources.
+clock speeds than the original ODROID-N2.
+
+The rev. C support a slighly higher VDDCPU_A & VDDCPU_B voltages and supports
+the same OPPs as the Amlogic A311D SoC from the same G12B family.
 
 Suggested-by: Dongjin Kim <tobetter@hardkernel.com>
 Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
-[Integrated Neil Armstrong's feedback from mailing list]
-Signed-off-by: Stefan Agner <stefan@agner.ch>
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+Acked-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Link: https://lore.kernel.org/r/20200915152432.30616-4-narmstrong@baylibre.com
 ---
  arch/arm64/boot/dts/amlogic/Makefile          |  1 +
- .../dts/amlogic/meson-g12b-odroid-n2-plus.dts | 53 +++++++++++++++++++
- 2 files changed, 54 insertions(+)
+ .../dts/amlogic/meson-g12b-odroid-n2-plus.dts | 31 +++++++++++++++++++
+ 2 files changed, 32 insertions(+)
  create mode 100644 arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2-plus.dts
 
 diff --git a/arch/arm64/boot/dts/amlogic/Makefile b/arch/arm64/boot/dts/amlogic/Makefile
@@ -35,10 +38,10 @@ index eef0045320f2..7524cf9680f5 100644
  dtb-$(CONFIG_ARCH_MESON) += meson-gxbb-nanopi-k2.dtb
 diff --git a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2-plus.dts b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2-plus.dts
 new file mode 100644
-index 000000000000..4ebb448d233f
+index 000000000000..5de2815ba99d
 --- /dev/null
 +++ b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2-plus.dts
-@@ -0,0 +1,53 @@
+@@ -0,0 +1,31 @@
 +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
 +/*
 + * Copyright (c) 2019 BayLibre, SAS
@@ -47,18 +50,20 @@ index 000000000000..4ebb448d233f
 +
 +/dts-v1/;
 +
++/* The Amlogic S922X Rev. C supports the same OPPs as the A311D variant */
++#include "meson-g12b-a311d.dtsi"
 +#include "meson-g12b-odroid-n2.dtsi"
 +
 +/ {
 +	compatible = "hardkernel,odroid-n2-plus", "amlogic,s922x", "amlogic,g12b";
-+	model = "Hardkernel ODROID-N2+";
++	model = "Hardkernel ODROID-N2Plus";
 +};
 +
 +&vddcpu_a {
 +	regulator-min-microvolt = <680000>;
 +	regulator-max-microvolt = <1040000>;
 +
-+	pwms = <&pwm_ab 0 1500 0>;
++	pwms = <&pwm_AO_cd 1 1500 0>;
 +};
 +
 +&vddcpu_b {
@@ -68,30 +73,6 @@ index 000000000000..4ebb448d233f
 +	pwms = <&pwm_AO_cd 1 1500 0>;
 +};
 +
-+&cpu_opp_table_0 {
-+	opp-1908000000 {
-+		opp-hz = /bits/ 64 <1908000000>;
-+		opp-microvolt = <1030000>;
-+	};
-+
-+	opp-2016000000 {
-+		opp-hz = /bits/ 64 <2016000000>;
-+		opp-microvolt = <1040000>;
-+	};
-+};
-+
-+&cpub_opp_table_1 {
-+	opp-2304000000 {
-+		opp-hz = /bits/ 64 <2304000000>;
-+		opp-microvolt = <1030000>;
-+	};
-+
-+	opp-2400000000 {
-+		opp-hz = /bits/ 64 <2400000000>;
-+		opp-microvolt = <1040000>;
-+	};
-+};
-+
 -- 
-2.27.0
+2.29.1
 
