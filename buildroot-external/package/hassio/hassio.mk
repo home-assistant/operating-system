@@ -19,7 +19,8 @@ define HASSIO_INSTALL_TARGET_CMDS
 		-e BUILDER_UID="$(shell id -u)" -e BUILDER_GID="$(shell id -g)" \
 		-v $(BINARIES_DIR):/export \
 		hassos-hostapps \
-		--arch $(BR2_PACKAGE_HASSIO_ARCH)
+		--arch $(BR2_PACKAGE_HASSIO_ARCH) \
+		--machine $(BR2_PACKAGE_HASSIO_MACHINE)
 endef
 
 $(eval $(generic-package))
