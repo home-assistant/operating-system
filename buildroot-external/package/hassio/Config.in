@@ -13,4 +13,9 @@ config BR2_PACKAGE_HASSIO_ARCH
 	help
 	  Supervisor architecture which should be pull.
 
+config BR2_PACKAGE_HASSIO_MACHINE
+	string "Supervisor Machine"
+	help
+	  Machine to pull containers for (used for landing page).
+
 endif
