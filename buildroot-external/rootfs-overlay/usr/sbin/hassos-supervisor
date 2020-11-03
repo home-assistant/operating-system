@@ -67,7 +67,7 @@ if [ -z "${SUPERVISOR_CONTAINER_ID}" ]; then
         --privileged --security-opt apparmor="hassio-supervisor" \
         -v /var/run/docker.sock:/var/run/docker.sock \
         -v /var/run/dbus:/var/run/dbus \
-        -v /run/supervisor:/run/supervisor \
+        -v /run/supervisor:/run/os:rw \
         -v /etc/machine-id:/etc/machine-id:ro \
         -v ${SUPERVISOR_DATA}:/data:rw \
         -v /mnt/overlay:/os/overlay:rw \
