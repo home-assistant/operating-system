@@ -9,32 +9,21 @@ set -e
 . /etc/os-release
 
 # Init supervisor
-SUPERVISOR_MIN_RUNTIME=15
+SUPERVISOR_STARTUP_MARKER="/run/supervisor/startup-marker"
 SUPERVISOR_IMAGE="homeassistant/${SUPERVISOR_ARCH}-hassio-supervisor"
 SUPERVISOR_DATA=/mnt/data/supervisor
 SUPERVISOR_IMAGE_ID=$(docker inspect --format='{{.Id}}' "${SUPERVISOR_IMAGE}" || echo "")
 SUPERVISOR_CONTAINER_ID=$(docker inspect --format='{{.Image}}' hassio_supervisor || echo "")
 
-# Check if previous runtime of the container meets the minimal runtime
-# If not, we might be in trouble. Image or container corruption, bad release?
+# Check if previous run left the startup-marker in place. If so, we assume the
+# Container image or container is somehow corrupted.
 # Delete the container, delete the image, pull a fresh one
-if [ -n "${SUPERVISOR_CONTAINER_ID}" ] && [ "${SUPERVISOR_IMAGE_ID}" = "${SUPERVISOR_CONTAINER_ID}" ]; then
-    SUPERVISOR_START=$(docker inspect --format='{{.State.StartedAt}}' hassio_supervisor | sed -re "s/([-0-9]+)T([0-9\:]+).*/\1 \2/g")
-    SUPERVISOR_STOP=$(docker inspect --format='{{.State.FinishedAt}}' hassio_supervisor | sed -re "s/([-0-9]+)T([0-9\:]+).*/\1 \2/g")
-
-    if [ -n "${SUPERVISOR_START}" ] && [ -n "${SUPERVISOR_STOP}" ]; then
-        START=$(date --date="${SUPERVISOR_START}" +%s)
-        STOP=$(date --date="${SUPERVISOR_STOP}" +%s)
-        SUPERVISOR_RUNTIME=$((STOP-START))
-        # Minimial runtime not met, remove container and image
-        if [ "${SUPERVISOR_RUNTIME}" -lt "${SUPERVISOR_MIN_RUNTIME}" ]; then
-            echo "[WARNING] Supervisor container exited too quickly, forcing a fresh image and container..."
-            docker container rm --force hassio_supervisor || true
-            SUPERVISOR_CONTAINER_ID=""
-            docker rmi --force "${SUPERVISOR_IMAGE_ID}" || true
-            SUPERVISOR_IMAGE_ID=""
-        fi
-    fi
+if [ -f "${SUPERVISOR_STARTUP_MARKER}" ]; then
+    echo "[WARNING] Supervisor container did not remove the startup marker file. Assuming container image or container corruption."
+    docker container rm --force hassio_supervisor || true
+    SUPERVISOR_CONTAINER_ID=""
+    docker rmi --force "${SUPERVISOR_IMAGE_ID}" || true
+    SUPERVISOR_IMAGE_ID=""
 fi
 
 # If Supervisor image is missing, pull it
@@ -78,6 +67,7 @@ if [ -z "${SUPERVISOR_CONTAINER_ID}" ]; then
         --privileged --security-opt apparmor="hassio-supervisor" \
         -v /var/run/docker.sock:/var/run/docker.sock \
         -v /var/run/dbus:/var/run/dbus \
+        -v /run/supervisor:/run/os:rw \
         -v /etc/machine-id:/etc/machine-id:ro \
         -v ${SUPERVISOR_DATA}:/data:rw \
         -v /mnt/overlay:/os/overlay:rw \
@@ -90,5 +80,6 @@ fi
 
 # Run supervisor
 mkdir -p ${SUPERVISOR_DATA}
+touch ${SUPERVISOR_STARTUP_MARKER}
 echo "[INFO] Starting the Supervisor..."
 exec docker container start --attach hassio_supervisor
