@@ -1,0 +1,39 @@
+From fecb02cc3664de0d1c43ce566ff95c1b68fca51e Mon Sep 17 00:00:00 2001
+Message-Id: <fecb02cc3664de0d1c43ce566ff95c1b68fca51e.1604762912.git.stefan@agner.ch>
+In-Reply-To: <3651b4af52d63d4e37f40c7a6d0809b0a6c9dd73.1604762912.git.stefan@agner.ch>
+References: <3651b4af52d63d4e37f40c7a6d0809b0a6c9dd73.1604762912.git.stefan@agner.ch>
+From: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+Date: Mon, 29 Jun 2020 18:18:39 +0200
+Subject: [PATCH 5/8] ARM: dts: bcm2711: Add firmware usb reset node
+
+Now that the reset driver exposing Raspberry Pi 4's firmware based USB
+reset routine is available, let's add the device tree node exposing it.
+
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+Link: https://lore.kernel.org/r/20200629161845.6021-4-nsaenzjulienne@suse.de
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+(cherry picked from commit b03300db06bed1997a1eecc4c26f3a2895c57726)
+---
+ arch/arm/boot/dts/bcm2711-rpi-4-b.dts | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/arch/arm/boot/dts/bcm2711-rpi-4-b.dts b/arch/arm/boot/dts/bcm2711-rpi-4-b.dts
+index 21b20e334b1a..d77d61d41bbc 100644
+--- a/arch/arm/boot/dts/bcm2711-rpi-4-b.dts
++++ b/arch/arm/boot/dts/bcm2711-rpi-4-b.dts
+@@ -72,6 +72,11 @@
+ 				  "SD_OC_N";
+ 		status = "okay";
+ 	};
++
++	reset: reset {
++		compatible = "raspberrypi,firmware-reset";
++		#reset-cells = <1>;
++	};
+ };
+ 
+ &gpio {
+-- 
+2.29.1
+
