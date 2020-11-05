@@ -1,5 +1,4 @@
-# needs to match something in https://version.home-assistant.io/stable.json
-BOARD_ID=odroid-n2
+BOARD_ID=odroid-c4
 BOARD_NAME="Hardkernel Odroid-C4"
 CHASSIS=embedded
 BOOTLOADER=uboot
@@ -7,6 +6,5 @@ KERNEL_FILE=Image
 BOOT_SYS=mbr
 BOOT_SPL=true
 BOOT_ENV_SIZE=0x2000
-# needs to match something in https://version.home-assistant.io/stable.json
-SUPERVISOR_MACHINE=odroid-n2
+SUPERVISOR_MACHINE=odroid-c4
 SUPERVISOR_ARCH=aarch64
