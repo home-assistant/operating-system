@@ -36,6 +36,7 @@ Default 2. That is the size of end image in GB.
 
 - intel-nuc
 - odroid-c2
+- odroid-c4
 - odroid-n2
 - odroid-xu
 - qemuarm

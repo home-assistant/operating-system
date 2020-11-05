@@ -14,6 +14,7 @@ The following boards/devices are supported:
   - Pi (not recommended)
 - Hardkernel
   - Odroid-C2
+  - Odroid-C4 (_experimental_)
   - Odroid-N2
   - Odroid-XU4
 - Intel NUC
@@ -46,6 +47,7 @@ Notes:
 |Pi Zero     |`make rpi0_w`    |[rpi0_w](../../buildroot-external/configs/rpi0_w_defconfig)|[raspberrypi](./raspberrypi/)|
 |Pi          |`make rpi`       |[rpi](../../buildroot-external/configs/rpi_defconfig)|[raspberrypi](./raspberrypi/)|
 |Odroid-C2   |`make odroid_c2` |[odroid_c2](../../buildroot-external/configs/odroid_c2_defconfig)|[hardkernel](./hardkernel/)|
+|Odroid-C4   |`make odroid_c4` |[odroid_c4](../../buildroot-external/configs/odroid_c4_defconfig)|[hardkernel](./hardkernel/)|
 |Odroid-N2   |`make odroid_n2` |[odroid_n2](../../buildroot-external/configs/odroid_n2_defconfig)|[hardkernel](./hardkernel/)|
 |Odroid-XU4  |`make odroid_xu4`|[odroid_xu4](../../buildroot-external/configs/odroid_xu4_defconfig)|[hardkernel](./hardkernel/)|
 |NUC         |`make intel_nuc` |[intel_nuc](../../buildroot-external/configs/intel_nuc_defconfig)|[intel](./intel/)|

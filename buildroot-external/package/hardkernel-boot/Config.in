@@ -14,6 +14,11 @@ config BR2_PACKAGE_HARDKERNEL_BOOT_ODROID_C2
 	help
 	  For the Odroid-C2
 
+config BR2_PACKAGE_HARDKERNEL_BOOT_ODROID_C4
+	bool "Odroid-C4"
+	help
+	  For the Odroid-C4
+
 config BR2_PACKAGE_HARDKERNEL_BOOT_ODROID_XU4
 	bool "Odroid-XU4"
 	help
