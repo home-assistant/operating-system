@@ -53,4 +53,4 @@ For more information see [RaspberryPi](https://www.raspberrypi.org/documentation
 
 If you don't need bluetooth, disabled it with add `dtoverlay=pi3-disable-bt` into `config.txt`.
 
-[config]: ../configuration.md#automatic
+[config]: ../../configuration.md#automatic
