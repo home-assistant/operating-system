@@ -38,9 +38,7 @@ HARDKERNEL_BOOT_VERSION = 2a4e31e3fde9bced8a150d338aa397a0362df191
 
 HARDKERNEL_BOOT_BINS += u-boot.sm1
 define HARDKERNEL_BOOT_BUILD_CMDS
-	# blx_fix_g12a.sh is appropriate for C4 as well as N2
-	curl -L -o $(@D)/fip/blx_fix.sh https://raw.githubusercontent.com/home-assistant/hassos-blobs/d88ec078470f236d694ba1f9e69a44759ddf41ea/odroid-n2/blx_fix_g12a.sh
-	# acs.bin and bl301.bin appear to be different than N2 versions
+	curl -L -o $(@D)/fip/blx_fix.sh https://raw.githubusercontent.com/home-assistant/operating-system-blobs/75fa51f44221da614a717673a27bec4fa01ccd6c/hardkernel/blx_fix_g12a.sh
 	curl -L -o $(@D)/fip/acs.bin https://raw.githubusercontent.com/home-assistant/operating-system-blobs/75fa51f44221da614a717673a27bec4fa01ccd6c/hardkernel/odroid-c4/acs.bin
 	curl -L -o $(@D)/fip/bl301.bin https://raw.githubusercontent.com/home-assistant/operating-system-blobs/75fa51f44221da614a717673a27bec4fa01ccd6c/hardkernel/odroid-c4/bl301.bin
 
