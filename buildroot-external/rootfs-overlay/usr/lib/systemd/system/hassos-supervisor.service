@@ -13,7 +13,6 @@ ConditionPathExists=/run/docker.sock
 Type=simple
 Restart=always
 RestartSec=5s
-RuntimeDirectory=supervisor
 ExecStartPre=-/usr/bin/docker stop hassio_supervisor
 ExecStart=/usr/sbin/hassos-supervisor
 ExecStop=-/usr/bin/docker stop hassio_supervisor
