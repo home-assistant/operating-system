@@ -1,0 +1,71 @@
+From 3ad7fb9329eabd1d7f692f612742ca5ac38854a5 Mon Sep 17 00:00:00 2001
+Message-Id: <3ad7fb9329eabd1d7f692f612742ca5ac38854a5.1604762912.git.stefan@agner.ch>
+In-Reply-To: <3651b4af52d63d4e37f40c7a6d0809b0a6c9dd73.1604762912.git.stefan@agner.ch>
+References: <3651b4af52d63d4e37f40c7a6d0809b0a6c9dd73.1604762912.git.stefan@agner.ch>
+From: Maxime Ripard <maxime@cerno.tech>
+Date: Mon, 15 Jun 2020 10:40:42 +0200
+Subject: [PATCH 2/8] dt-bindings: clock: Add a binding for the RPi Firmware
+ clocks
+
+The firmware running on the RPi VideoCore can be used to discover and
+change the various clocks running in the BCM2711. Since devices will
+need to use them through the DT, let's add a pretty simple binding.
+
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: linux-clk@vger.kernel.org
+Cc: devicetree@vger.kernel.org
+Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+Reviewed-by: Rob Herring <robh+dt@kernel.org>
+Tested-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+Link: https://lore.kernel.org/r/f6105207e7ef5a5ea8d7a1774faf989d341a25f5.1592210452.git-series.maxime@cerno.tech
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+(cherry picked from commit 74a0caa5ef1c25905c4409b350ed9a8e0d9a3b74)
+---
+ .../arm/bcm/raspberrypi,bcm2835-firmware.yaml | 24 +++++++++++++++++++
+ 1 file changed, 24 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware.yaml b/Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware.yaml
+index cec540c052b6..b48ed875eb8e 100644
+--- a/Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware.yaml
++++ b/Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware.yaml
+@@ -22,6 +22,25 @@ properties:
+       Phandle to the firmware device's Mailbox.
+       (See: ../mailbox/mailbox.txt for more information)
+ 
++  clocks:
++    type: object
++
++    properties:
++      compatible:
++        const: raspberrypi,firmware-clocks
++
++      "#clock-cells":
++        const: 1
++        description: >
++          The argument is the ID of the clocks contained by the
++          firmware messages.
++
++    required:
++      - compatible
++      - "#clock-cells"
++
++    additionalProperties: false
++
+ required:
+   - compatible
+   - mboxes
+@@ -31,5 +50,10 @@ examples:
+     firmware {
+         compatible = "raspberrypi,bcm2835-firmware", "simple-bus";
+         mboxes = <&mailbox>;
++
++        firmware_clocks: clocks {
++            compatible = "raspberrypi,firmware-clocks";
++            #clock-cells = <1>;
++        };
+     };
+ ...
+-- 
+2.29.1
+

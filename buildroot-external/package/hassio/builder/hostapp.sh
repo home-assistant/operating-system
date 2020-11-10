@@ -2,6 +2,7 @@
 set -e
 
 ARCH=
+MACHINE=
 DATA_IMG="/export/data.ext4"
 VERSION_URL="https://version.home-assistant.io/stable.json"
 APPARMOR_URL="https://version.home-assistant.io/apparmor.txt"
@@ -12,6 +13,10 @@ while [[ $# -gt 0 ]]; do
     case $key in 
         --arch)
             ARCH=$2
+            shift
+            ;;
+        --machine)
+            MACHINE=$2
             shift
             ;;
         *)
@@ -27,6 +32,7 @@ AUDIO="homeassistant/${ARCH}-hassio-audio"
 CLI="homeassistant/${ARCH}-hassio-cli"
 MULTICAST="homeassistant/${ARCH}-hassio-multicast"
 OBSERVER="homeassistant/${ARCH}-hassio-observer"
+LANDINGPAGE="homeassistant/${MACHINE}-homeassistant:landingpage"
 
 SUPERVISOR_VERSION=$(curl -s ${VERSION_URL} | jq -e -r '.supervisor')
 DNS_VERSION=$(curl -s ${VERSION_URL} | jq -e -r '.dns')
@@ -75,6 +81,9 @@ docker pull "${DNS}:${DNS_VERSION}"
 docker pull "${AUDIO}:${AUDIO_VERSION}"
 docker pull "${MULTICAST}:${MULTICAST_VERSION}"
 docker pull "${OBSERVER}:${OBSERVER_VERSION}"
+
+# Install landing page
+docker pull "${LANDINGPAGE}"
 
 # Setup AppArmor
 mkdir -p "/mnt/data/supervisor/apparmor"

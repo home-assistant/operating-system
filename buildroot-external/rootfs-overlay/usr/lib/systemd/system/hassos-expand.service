@@ -5,7 +5,7 @@ Before=mnt-data.mount
 RefuseManualStart=true
 RefuseManualStop=true
 Requires=dev-disk-by\x2dlabel-hassos\x2ddata.device
-After=dev-disk-by\x2dlabel-hassos\x2ddata.device
+After=dev-disk-by\x2dlabel-hassos\x2ddata.device systemd-fsck@dev-disk-by\x2dlabel-hassos\x2ddata.service
 
 [Service]
 Type=oneshot
