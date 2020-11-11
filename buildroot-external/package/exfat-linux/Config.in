@@ -1,0 +1,4 @@
+menuconfig BR2_PACKAGE_EXFAT_LINUX
+	bool "exFAT linux kernel module"
+	help
+	  https://github.com/arter97/exfat-linux
