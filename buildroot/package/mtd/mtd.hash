@@ -1,4 +1,4 @@
 # Locally calculated after checking pgp signature
-# ftp://ftp.infradead.org/pub/mtd-utils/mtd-utils-2.1.1.tar.bz2.asc
-sha256	8d15e8b70f036d6af1a66011f8ca0e048e9675fa7983d33bea92c24313a232d2	mtd-utils-2.1.1.tar.bz2
-sha256	dcc100d4161cc0b7177545ab6e47216f84857cda3843847c792a25289852dcaa	COPYING
+# ftp://ftp.infradead.org/pub/mtd-utils/mtd-utils-2.1.2.tar.bz2.asc
+sha256  8ad4c5f34716d40646aa28724a2f5616d325a6f119254f914e26976f1f76e9d6  mtd-utils-2.1.2.tar.bz2
+sha256  dcc100d4161cc0b7177545ab6e47216f84857cda3843847c792a25289852dcaa  COPYING

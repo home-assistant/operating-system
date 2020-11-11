@@ -1,0 +1,33 @@
+From 8cc165a2f7f945db36a18e462138553a000292cd Mon Sep 17 00:00:00 2001
+From: Boris Kolpackov <boris@codesynthesis.com>
+Date: Tue, 7 Nov 2017 16:57:35 +0200
+Subject: [PATCH] Fix GCC 8 adaptation to be compatible with previous
+ versions
+
+[Upstream: 006bbc5748a8197d7874550cc9186545f1c55ad8]
+Signed-off-by: Kamel Bouhara <kamel.bouhara@bootlin.com>
+---
+ odb/validator.cxx | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/odb/validator.cxx b/odb/validator.cxx
+index 196386c..f0edaaf 100644
+--- a/odb/validator.cxx
++++ b/odb/validator.cxx
+@@ -1231,7 +1231,13 @@ namespace
+             compiler, get_identifier ("has_lt_operator"), false, false);
+ 
+           if (has_lt_operator_ != error_mark_node)
++          {
++#if BUILDING_GCC_MAJOR >= 8
+             has_lt_operator_ = OVL_FIRST (has_lt_operator_);
++#else
++            has_lt_operator_ = OVL_CURRENT (has_lt_operator_);
++#endif
++          }
+           else
+           {
+             os << unit.file () << ": error: unable to resolve has_lt_operator "
+-- 
+2.25.0
+

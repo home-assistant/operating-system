@@ -5,7 +5,7 @@ config BR2_PACKAGE_GST_OMX
 	help
 	  GStreamer plug-in to use OpenMAX API.
 
-	  http://cgit.freedesktop.org/gstreamer/gst-omx
+	  https://cgit.freedesktop.org/gstreamer/gst-omx
 
 comment "gst-omx requires a OpenMAX implementation"
 	depends on !BR2_PACKAGE_HAS_LIBOPENMAX

@@ -1,0 +1,14 @@
+For some reason, version 1.25 and up is missing all localized doc,
+and thus fails on the install stage.
+
+Skip the directories.
+
+Signed-off-by: Norbert Lange <nolange79@gmail.com>
+--- fakeroot-1.25.1.org/doc/Makefile.am	2020-09-22 23:52:20.000000000 +0200
++++ fakeroot-1.25.1/doc/Makefile.am	2020-09-24 11:05:27.611298673 +0200
+@@ -1,5 +1,4 @@
+ AUTOMAKE_OPTIONS=foreign
+-SUBDIRS = de es fr nl pt sv
+
+ man_MANS = faked.1 fakeroot.1
+

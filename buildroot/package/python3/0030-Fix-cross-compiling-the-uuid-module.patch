@@ -1,4 +1,4 @@
-From 28008e1e4f0349241d22aace3c54f7e9425c6c1f Mon Sep 17 00:00:00 2001
+From d7b90b157eddefbd0ed59e35c90b083c0c03b644 Mon Sep 17 00:00:00 2001
 From: Adam Duskett <aduskett@gmail.com>
 Date: Fri, 20 Jul 2018 10:17:39 -0400
 Subject: [PATCH] Fix cross compiling the uuid module
@@ -20,10 +20,10 @@ Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
  1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/setup.py b/setup.py
-index a7f2e23d87..b0274a3f67 100644
+index 3d0c74bb7f..c7be85f352 100644
 --- a/setup.py
 +++ b/setup.py
-@@ -1674,7 +1674,8 @@ class PyBuildExt(build_ext):
+@@ -1779,7 +1779,8 @@ class PyBuildExt(build_ext):
  
      def detect_uuid(self):
          # Build the _uuid module if possible
@@ -34,5 +34,5 @@ index a7f2e23d87..b0274a3f67 100644
              if self.compiler.find_library_file(self.lib_dirs, 'uuid'):
                  uuid_libs = ['uuid']
 -- 
-2.20.1
+2.25.1
 

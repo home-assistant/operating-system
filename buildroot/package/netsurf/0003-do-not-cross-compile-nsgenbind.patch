@@ -16,7 +16,7 @@ diff --git a/Makefile b/Makefile
 index f279f01..5698c87 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -109,7 +109,7 @@ endef
+@@ -110,7 +110,7 @@ endef
  
  # prefixed install macro for each host sub target
  define do_build_prefix_install

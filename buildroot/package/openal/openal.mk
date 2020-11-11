@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-OPENAL_VERSION = 1.19.1
+OPENAL_VERSION = 1.20.1
 OPENAL_SITE = $(call github,kcat,openal-soft,openal-soft-$(OPENAL_VERSION))
 OPENAL_LICENSE = LGPL-2.0+
 OPENAL_LICENSE_FILES = COPYING

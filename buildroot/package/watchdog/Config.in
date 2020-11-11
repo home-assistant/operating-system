@@ -1,0 +1,10 @@
+config BR2_PACKAGE_WATCHDOG
+	bool "watchdog"
+	depends on BR2_USE_MMU
+	help
+	  Watchdog is a daemon that periodically pets a watchdog device
+	  if the configured system status checks pass. If they do not,
+	  the daemon may execute repair commands, shutdown the system or
+	  reboot it.
+
+	  https://sourceforge.net/projects/watchdog/

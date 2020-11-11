@@ -1,4 +1,4 @@
-From c54cb57b3bd80fa2819f6409d5d2b98d82fbfcb2 Mon Sep 17 00:00:00 2001
+From ad6b66b34f71ff6b60b3be5f6fd3e781cdeecd59 Mon Sep 17 00:00:00 2001
 From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 Date: Wed, 22 Feb 2017 17:23:42 -0800
 Subject: [PATCH] Add an option to disable the tk module
@@ -13,10 +13,10 @@ Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
  2 files changed, 17 insertions(+), 3 deletions(-)
 
 diff --git a/Makefile.pre.in b/Makefile.pre.in
-index cf9add0bc7..5d78419fd4 100644
+index d826d8ac4b..dc84384680 100644
 --- a/Makefile.pre.in
 +++ b/Makefile.pre.in
-@@ -1322,7 +1322,7 @@ maninstall:	altmaninstall
+@@ -1390,7 +1390,7 @@ maninstall:	altmaninstall
  # Install the library
  XMLLIBSUBDIRS=  xml xml/dom xml/etree xml/parsers xml/sax
  
@@ -25,9 +25,9 @@ index cf9add0bc7..5d78419fd4 100644
  		asyncio \
  		collections concurrent concurrent/futures encodings \
  		email email/mime \
-@@ -1339,8 +1339,7 @@ LIBSUBDIRS=	tkinter site-packages \
- 		venv venv/scripts venv/scripts/common venv/scripts/posix \
- 		curses
+@@ -1408,8 +1408,7 @@ LIBSUBDIRS=	tkinter site-packages \
+ 		curses \
+ 		zoneinfo
  
 -TESTSUBDIRS=	tkinter/test tkinter/test/test_tkinter \
 -		tkinter/test/test_ttk test \
@@ -35,7 +35,7 @@ index cf9add0bc7..5d78419fd4 100644
  		test/audiodata \
  		test/capath test/data \
  		test/cjkencodings test/decimaltestdata \
-@@ -1408,6 +1407,12 @@ TESTSUBDIRS=	tkinter/test tkinter/test/test_tkinter \
+@@ -1480,6 +1479,12 @@ TESTSUBDIRS=	tkinter/test tkinter/test/test_tkinter \
  		test/test_tools test/test_warnings test/test_warnings/data \
  		unittest/test unittest/test/testmock
  
@@ -49,10 +49,10 @@ index cf9add0bc7..5d78419fd4 100644
  LIBSUBDIRS += lib2to3 lib2to3/fixes lib2to3/pgen2
  TESTSUBDIRS += lib2to3/tests			\
 diff --git a/configure.ac b/configure.ac
-index 79a8255f44..b5922451cc 100644
+index 8b5c65974c..4c72dae960 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -3243,6 +3243,15 @@ if test "$SQLITE3" = "no" ; then
+@@ -3338,6 +3338,15 @@ if test "$SQLITE3" = "no" ; then
     DISABLED_EXTENSIONS="${DISABLED_EXTENSIONS} _sqlite3"
  fi
  
@@ -69,5 +69,5 @@ index 79a8255f44..b5922451cc 100644
  
  AC_ARG_ENABLE(pydoc,
 -- 
-2.20.1
+2.25.1
 

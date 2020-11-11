@@ -4,12 +4,10 @@
 #
 ################################################################################
 
-XVKBD_VERSION = 4.0
+XVKBD_VERSION = 4.1
 XVKBD_SITE = http://t-sato.in.coocan.jp/xvkbd
 XVKBD_LICENSE = GPL-2.0+
 XVKBD_LICENSE_FILES = COPYING README
-# We're patching Makefile.am
-XVKBD_AUTORECONF = YES
 
 XVKBD_DEPENDENCIES = \
 	xlib_libICE \

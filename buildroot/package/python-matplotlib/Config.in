@@ -23,6 +23,17 @@ config BR2_PACKAGE_PYTHON_MATPLOTLIB
 
 	  https://matplotlib.org/
 
+if BR2_PACKAGE_PYTHON_MATPLOTLIB
+
+config BR2_PACKAGE_PYTHON_MATPLOTLIB_QT
+	bool "qt display"
+	depends on BR2_PACKAGE_QT5 # python-pyqt5
+	select BR2_PACKAGE_PYTHON_PYQT5
+	select BR2_PACKAGE_QT5BASE_FONTCONFIG
+	select BR2_PACKAGE_QT5BASE_WIDGETS
+
+endif
+
 comment "python-matplotlib needs a toolchain w/ C++"
 	depends on !BR2_INSTALL_LIBSTDCPP
 

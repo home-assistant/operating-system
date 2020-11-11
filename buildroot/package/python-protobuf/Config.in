@@ -10,4 +10,4 @@ config BR2_PACKAGE_PYTHON_PROTOBUF
 	  platform-neutral, extensible mechanism for serializing
 	  structured data.
 
-	  https://github.com/protobuf-c/protobuf-c
+	  https://developers.google.com/protocol-buffers

@@ -1,0 +1,31 @@
+From 48f537b9fef4f9db761466b8951fb63243f06602 Mon Sep 17 00:00:00 2001
+From: Christian Hesse <mail@eworm.de>
+Date: Wed, 6 May 2020 09:35:47 +0200
+Subject: [PATCH] libmpathpersist: depend on libmultipath
+
+Without this the build fails with:
+
+/usr/bin/ld: cannot find -lmultipath
+
+Signed-off-by: Christian Hesse <mail@eworm.de>
+Signed-off-by: Alexander Egorenkov <egorenar-dev@posteo.net>
+---
+ Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+index 1dee3680..ba1d73ba 100644
+--- a/Makefile
++++ b/Makefile
+@@ -28,7 +28,7 @@ all:	$(BUILDDIRS)
+ $(BUILDDIRS):
+ 	$(MAKE) -C $@
+ 
+-multipath multipathd mpathpersist: libmultipath
++libmpathpersist multipath multipathd mpathpersist: libmultipath
+ mpathpersist:  libmpathpersist
+ 
+ $(BUILDDIRS.clean):
+-- 
+2.28.0
+

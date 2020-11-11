@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-XXHASH_VERSION = 0.7.2
+XXHASH_VERSION = 0.8.0
 XXHASH_SITE = $(call github,Cyan4973,xxHash,v$(XXHASH_VERSION))
 XXHASH_LICENSE = BSD-2-Clause (library), GPL-2.0+ (xxhsum)
 XXHASH_LICENSE_FILES = LICENSE

@@ -1,4 +1,4 @@
 # From http://www.xiph.org/downloads/
-sha256 af00bb5a784e7c9e69f56823de4637c350643deedaf333d0fa86ecdba6fcb415 libvorbis-1.3.6.tar.xz
+sha256  b33cc4934322bcbf6efcbacf49e3ca01aadbea4114ec9589d1b1e9d20f72954b  libvorbis-1.3.7.tar.xz
 # License files, locally calculated
-sha256 29e9914e6173b7061b7d48c25e6159fc1438326738bc047cc7248abc01b271f6  COPYING
+sha256  ec1815db59fcd302846df949d7424876cb2e2dc5ed1606c5fb0b36787b1cf43a  COPYING

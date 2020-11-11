@@ -1,0 +1,18 @@
+config BR2_PACKAGE_CUKINIA
+	bool "cukinia"
+	depends on BR2_PACKAGE_BUSYBOX || BR2_PACKAGE_GAWK
+	help
+	  Cukinia is designed to help Linux-based embedded firmware
+	  developers run system-level validation tests on their product.
+	  It provides a simple POSIX shell overlay, and primitives to
+	  make sure system integrations and features keep behaving the
+	  way they should.
+
+	  By default, cukinia reports colorized test results on stdout,
+	  but can also report them as CSV and JUnit-XML for easy
+	  integration with CI systems such as Jenkins.
+
+	  https://github.com/savoirfairelinux/cukinia
+
+comment "cukinia needs busybox or gawk"
+	depends on !(BR2_PACKAGE_BUSYBOX || BR2_PACKAGE_GAWK)

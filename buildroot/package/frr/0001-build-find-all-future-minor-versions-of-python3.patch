@@ -1,0 +1,30 @@
+From 838cb35e08eb98acbc27637808162105ae2c4549 Mon Sep 17 00:00:00 2001
+From: Michal Ruprich <michalruprich@gmail.com>
+Date: Wed, 17 Jun 2020 13:47:30 +0200
+Subject: [PATCH] build: find all future minor versions of python3
+
+This way we can find every python from 3.8 further
+
+Signed-off-by: Michal Ruprich <michalruprich@gmail.com>
+
+[Retrieved from:
+https://github.com/FRRouting/frr/commit/838cb35e08eb98acbc27637808162105ae2c4549]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ m4/ax_python.m4 | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/m4/ax_python.m4 b/m4/ax_python.m4
+index 9f43ea0ab12..91d12b99b43 100644
+--- a/m4/ax_python.m4
++++ b/m4/ax_python.m4
+@@ -186,7 +186,8 @@ AC_REQUIRE([PKG_PROG_PKG_CONFIG])dnl
+       AC_MSG_RESULT([yes])
+ 
+       PYTHON_CFLAGS="`\"$pycfg\" --includes`"
+-      if test x"${py_ver}" = x"3.8" || test x"{py_ver}" = x"3.9"; then
++      minor_ver=${py_ver#*\.}
++      if test $((minor_ver)) -gt 7; then
+         PYTHON_LIBS="`\"$pycfg\" --ldflags --embed`"
+       else
+         PYTHON_LIBS="`\"$pycfg\" --ldflags`"

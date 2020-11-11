@@ -1,7 +1,7 @@
 config BR2_PACKAGE_RIPGREP
 	bool "ripgrep"
 	depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS
-	select BR2_PACKAGE_HOST_CARGO
+	select BR2_PACKAGE_HOST_RUSTC
 	help
 	  ripgrep is a line-oriented search tool that
 	  recursively searches your current directory

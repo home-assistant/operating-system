@@ -1,0 +1,41 @@
+From c6dd9abd8d7a5332d0c1078196528926054791ae Mon Sep 17 00:00:00 2001
+From: Tobias Klauser <tklauser@distanz.ch>
+Date: Mon, 15 Jun 2020 18:05:09 +0200
+Subject: [PATCH] mausezahn: remove unused MZ_SIZE_LONG_INT
+
+Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
+[Retrieved from:
+https://github.com/netsniff-ng/netsniff-ng/commit/c6dd9abd8d7a5332d0c1078196528926054791ae]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ staging/mausezahn.c | 3 ---
+ staging/mz.h        | 2 --
+ 2 files changed, 5 deletions(-)
+
+diff --git a/staging/mausezahn.c b/staging/mausezahn.c
+index 6c36166e..19d2937a 100644
+--- a/staging/mausezahn.c
++++ b/staging/mausezahn.c
+@@ -192,9 +192,6 @@ int reset(void)
+    int i;
+    time_t t;
+ 
+-   // Determine platform type sizes:
+-   MZ_SIZE_LONG_INT = sizeof(long int);	     
+-
+    mz_default_config_path[0] = 0x00;
+    mz_default_log_path[0] = 0x00;
+ 
+diff --git a/staging/mz.h b/staging/mz.h
+index 5afe57d1..c7a131d8 100644
+--- a/staging/mz.h
++++ b/staging/mz.h
+@@ -108,8 +108,6 @@ static inline void verbose_l2(const char *format, ...)
+ #define IPADDRSIZE 46
+ 
+ 
+-int MZ_SIZE_LONG_INT;
+-
+ char mz_default_config_path[256];
+ char mz_default_log_path[256];
+ 

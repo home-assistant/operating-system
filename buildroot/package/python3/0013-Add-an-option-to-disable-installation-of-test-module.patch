@@ -1,4 +1,4 @@
-From 5ee3e5ad62919c431b1f7b5ff91ddf606582df0e Mon Sep 17 00:00:00 2001
+From 0337342d413d13f437fd089de91faee70a8bf3f9 Mon Sep 17 00:00:00 2001
 From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 Date: Wed, 22 Feb 2017 17:01:18 -0800
 Subject: [PATCH] Add an option to disable installation of test modules
@@ -10,16 +10,18 @@ Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 Signed-off-by: Samuel Martin <s.martin49@gmail.com>
 [ Andrey Smirnov: ported to Python 3.6 ]
 Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+[james.hilliard1@gmail.com: adapt to python 3.9]
+Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
 ---
- Makefile.pre.in | 54 ++++++++++++++++++++++++++++++++-----------------
+ Makefile.pre.in | 56 ++++++++++++++++++++++++++++++++-----------------
  configure.ac    |  5 +++++
- 2 files changed, 41 insertions(+), 18 deletions(-)
+ 2 files changed, 42 insertions(+), 19 deletions(-)
 
 diff --git a/Makefile.pre.in b/Makefile.pre.in
-index e8a6bd5c03..3abee36f49 100644
+index 7c3dde8dd4..204f293d53 100644
 --- a/Makefile.pre.in
 +++ b/Makefile.pre.in
-@@ -1317,8 +1317,28 @@ maninstall:	altmaninstall
+@@ -1385,8 +1385,29 @@ maninstall:	altmaninstall
  
  # Install the library
  XMLLIBSUBDIRS=  xml xml/dom xml/etree xml/parsers xml/sax
@@ -43,16 +45,17 @@ index e8a6bd5c03..3abee36f49 100644
 +		multiprocessing multiprocessing/dummy \
 +		unittest \
 +		venv venv/scripts venv/scripts/common venv/scripts/posix \
-+		curses pydoc_data
++		curses pydoc_data \
++		zoneinfo
 +
 +TESTSUBDIRS=	tkinter/test tkinter/test/test_tkinter \
 +		tkinter/test/test_ttk test \
  		test/audiodata \
  		test/capath test/data \
  		test/cjkencodings test/decimaltestdata \
-@@ -1376,26 +1396,24 @@ LIBSUBDIRS=	tkinter tkinter/test tkinter/test/test_tkinter \
- 		test/test_importlib/zipdata01 \
+@@ -1446,28 +1467,25 @@ LIBSUBDIRS=	tkinter tkinter/test tkinter/test/test_tkinter \
  		test/test_importlib/zipdata02 \
+ 		test/test_zoneinfo test/test_zoneinfo/data \
  		test/ziptestdata \
 -		asyncio \
  		test/test_asyncio \
@@ -75,13 +78,15 @@ index e8a6bd5c03..3abee36f49 100644
 +		ctypes/test \
 +		idlelib/idle_test \
 +		distutils/tests \
+ 		test/test_peg_generator \
 +		test/test_importlib test/test_importlib/builtin \
  		test/test_tools test/test_warnings test/test_warnings/data \
 -		turtledemo \
 -		multiprocessing multiprocessing/dummy \
 -		unittest unittest/test unittest/test/testmock \
 -		venv venv/scripts venv/scripts/common venv/scripts/posix \
--		curses pydoc_data
+-		curses pydoc_data \
+-		zoneinfo
 +		unittest/test unittest/test/testmock
 +
 +ifeq (@TEST_MODULES@,yes)
@@ -92,10 +97,10 @@ index e8a6bd5c03..3abee36f49 100644
  	@for i in $(SCRIPTDIR) $(LIBDEST); \
  	do \
 diff --git a/configure.ac b/configure.ac
-index 7872b4dfee..b820d18c7c 100644
+index 73d66167de..92e28d02ee 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -3234,6 +3234,11 @@ if test "$posix_threads" = "yes"; then
+@@ -3329,6 +3329,11 @@ if test "$posix_threads" = "yes"; then
        AC_CHECK_FUNCS(pthread_getcpuclockid)
  fi
  
@@ -108,5 +113,5 @@ index 7872b4dfee..b820d18c7c 100644
  # Check for enable-ipv6
  AH_TEMPLATE(ENABLE_IPV6, [Define if --enable-ipv6 is specified])
 -- 
-2.20.1
+2.25.1
 

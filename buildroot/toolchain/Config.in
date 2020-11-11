@@ -468,6 +468,26 @@ config BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_3
 config BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_4
 	bool
 	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_3
+
+config BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_5
+	bool
+	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_4
+
+config BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_6
+	bool
+	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_5
+
+config BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_7
+	bool
+	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_6
+
+config BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_8
+	bool
+	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_7
+
+config BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_9
+	bool
+	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_8
 	select BR2_TOOLCHAIN_HEADERS_LATEST
 
 # This should be selected by the latest version, above, to indicate that
@@ -481,6 +501,11 @@ config BR2_TOOLCHAIN_HEADERS_LATEST
 # stops affecting a value on the first matching default.
 config BR2_TOOLCHAIN_HEADERS_AT_LEAST
 	string
+	default "5.9"  if BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_9
+	default "5.8"  if BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_8
+	default "5.7"  if BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_7
+	default "5.6"  if BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_6
+	default "5.5"  if BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_5
 	default "5.4"  if BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_4
 	default "5.3"  if BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_3
 	default "5.2"  if BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_2
@@ -576,10 +601,15 @@ config BR2_TOOLCHAIN_GCC_AT_LEAST_9
 	bool
 	select BR2_TOOLCHAIN_GCC_AT_LEAST_8
 
+config BR2_TOOLCHAIN_GCC_AT_LEAST_10
+	bool
+	select BR2_TOOLCHAIN_GCC_AT_LEAST_9
+
 # This order guarantees that the highest version is set, as kconfig
 # stops affecting a value on the first matching default.
 config BR2_TOOLCHAIN_GCC_AT_LEAST
 	string
+	default "10"	if BR2_TOOLCHAIN_GCC_AT_LEAST_10
 	default "9"	if BR2_TOOLCHAIN_GCC_AT_LEAST_9
 	default "8"	if BR2_TOOLCHAIN_GCC_AT_LEAST_8
 	default "7"	if BR2_TOOLCHAIN_GCC_AT_LEAST_7

@@ -1,0 +1,38 @@
+From d66a2e55daf223737c07c59b1be45a2d91212ef6 Mon Sep 17 00:00:00 2001
+From: Bernd Kuhls <bernd.kuhls@t-online.de>
+Date: Sun, 26 Jul 2020 13:47:16 +0200
+Subject: [PATCH] [sofia-sip] fix s2tcase.c
+
+Fixes build error with recent libcheck:
+https://github.com/freeswitch/sofia-sip/issues/22
+
+Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
+---
+ s2check/s2tcase.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/libs/sofia-sip/s2check/s2tcase.c b/libs/sofia-sip/s2check/s2tcase.c
+index 382aaa3ad7..d67694c2ce 100644
+--- a/s2check/s2tcase.c
++++ b/s2check/s2tcase.c
+@@ -57,7 +57,7 @@ void s2_tcase_add_test(TCase *tc, TFun tf, char const *name,
+       if (strcmp(*patterns, "*")) {
+ 	printf("%s: selected\n", name);
+       }
+-      _tcase_add_test(tc, tf, name, signo, 0, start, end);
++      _tcase_add_test(tc, tf, name, signo, start, end);
+       return;
+     }
+   }
+@@ -67,7 +67,7 @@ void s2_tcase_add_test(TCase *tc, TFun tf, char const *name,
+       if (strcmp(*patterns, "*")) {
+ 	printf("%s: selected\n", name);
+       }
+-      _tcase_add_test(tc, tf, name, signo, 0, start, end);
++      _tcase_add_test(tc, tf, name, signo, start, end);
+       return;
+     }
+   }
+-- 
+2.27.0
+

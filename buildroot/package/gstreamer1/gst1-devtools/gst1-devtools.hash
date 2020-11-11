@@ -1,0 +1,3 @@
+# From https://gstreamer.freedesktop.org/src/gst-devtools/gst-devtools-1.18.1.tar.xz.sha256sum
+sha256  712212babd2238233d55beecfc0fe1ea8db18e8807ac6ab05a64505b2c7ab0df  gst-devtools-1.18.1.tar.xz
+sha256  6095e9ffa777dd22839f7801aa845b31c9ed07f3d6bf8a26dc5d2dec8ccc0ef3  validate/COPYING

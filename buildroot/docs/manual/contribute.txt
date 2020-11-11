@@ -602,11 +602,8 @@ The basic test case definition involves
 * Implementing a +def test_run(self):+ function to optionally startup the
 emulator and provide test case conditions.
 
-Beyond creating the test script, there are a couple of additional steps that
-should be taken once you have your initial test case script. The first is
-to add yourself to the +DEVELOPERS+ file to be the maintainer of that test
-case. The second is to update the Gitlab CI yml by executing
-+make .gitlab-ci.yml+.
+After creating the test script, add yourself to the +DEVELOPERS+ file to
+be the maintainer of that test case.
 
 ==== Debugging a test case
 

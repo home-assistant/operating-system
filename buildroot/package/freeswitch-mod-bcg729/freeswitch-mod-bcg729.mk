@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-FREESWITCH_MOD_BCG729_VERSION = 1.0.4
+FREESWITCH_MOD_BCG729_VERSION = 1.0.5
 FREESWITCH_MOD_BCG729_SITE = $(call github,xadhoom,mod_bcg729,v$(FREESWITCH_MOD_BCG729_VERSION))
 FREESWITCH_MOD_BCG729_LICENSE = MPL-1.1
 FREESWITCH_MOD_BCG729_LICENSE_FILES = LICENSE

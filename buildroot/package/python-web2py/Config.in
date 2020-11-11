@@ -1,12 +1,13 @@
 config BR2_PACKAGE_PYTHON_WEB2PY
 	bool "python-web2py"
-	select BR2_PACKAGE_PYTHON_PYDAL
+	select BR2_PACKAGE_PYTHON_PYDAL # runtime
 	select BR2_PACKAGE_PYTHON_ZLIB if BR2_PACKAGE_PYTHON # runtime
 	select BR2_PACKAGE_PYTHON3_ZLIB if BR2_PACKAGE_PYTHON3 # runtime
 	select BR2_PACKAGE_PYTHON_PYEXPAT if BR2_PACKAGE_PYTHON # runtime
 	select BR2_PACKAGE_PYTHON3_PYEXPAT if BR2_PACKAGE_PYTHON3 # runtime
 	select BR2_PACKAGE_PYTHON_SQLITE if BR2_PACKAGE_PYTHON # runtime
 	select BR2_PACKAGE_PYTHON3_SQLITE if BR2_PACKAGE_PYTHON3 # runtime
+	select BR2_PACKAGE_PYTHON_YATL # runtime
 	help
 	  web2py is a free open source full-stack framework for rapid
 	  development of fast, scalable, secure and portable

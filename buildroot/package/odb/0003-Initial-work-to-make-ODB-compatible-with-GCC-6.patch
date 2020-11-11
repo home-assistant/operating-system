@@ -1,0 +1,312 @@
+From bf389fd5185143847b1d91aed423e79c322dba51 Mon Sep 17 00:00:00 2001
+From: Boris Kolpackov <boris@codesynthesis.com>
+Date: Fri, 5 Feb 2016 16:01:42 +0200
+Subject: [PATCH] Initial work to make ODB compatible with GCC 6
+
+[Upstream: 511dcf67322ad87fb32f97d1cf7725c129e83898]
+Signed-off-by: Kamel Bouhara <kamel.bouhara@bootlin.com>
+---
+ odb/cxx-lexer.cxx          |  4 ++++
+ odb/gcc-fwd.hxx            | 23 ++++++++++++++++++++++-
+ odb/gcc.hxx                | 10 ++++++++++
+ odb/include.cxx            | 31 +++++++++++++++++++++----------
+ odb/parser.cxx             |  8 ++++----
+ odb/plugin.cxx             | 29 +++++++++++++++++++++++++++--
+ odb/semantics/elements.cxx |  4 ++--
+ 7 files changed, 90 insertions(+), 19 deletions(-)
+
+diff --git a/odb/cxx-lexer.cxx b/odb/cxx-lexer.cxx
+index 7029c7e..64df296 100644
+--- a/odb/cxx-lexer.cxx
++++ b/odb/cxx-lexer.cxx
+@@ -135,8 +135,12 @@ cpp_error_callback (
+ #if BUILDING_GCC_MAJOR > 4 || BUILDING_GCC_MAJOR == 4 && BUILDING_GCC_MINOR > 5
+   int /*reason*/, // Added in GCC 4.6.0.
+ #endif
++#if BUILDING_GCC_MAJOR <= 5
+   location_t,
+   unsigned int,
++#else
++  rich_location*,
++#endif
+   char const* msg,
+   va_list *ap)
+ {
+diff --git a/odb/gcc-fwd.hxx b/odb/gcc-fwd.hxx
+index a120f05..618b106 100644
+--- a/odb/gcc-fwd.hxx
++++ b/odb/gcc-fwd.hxx
+@@ -7,6 +7,24 @@
+ 
+ #include <bversion.h>
+ 
++#if BUILDING_GCC_MAJOR >= 6
++
++// If we include <system.h> here, it pulls in all kinds of GCC trouble that
++// "poisons" standard C/C++ declarations; see safe-ctype.h. So instead we
++// are going to "exclude" safe-ctype.h. To compensate, however, we will
++// include it first thing in gcc.hxx.
++//
++#  include <config.h>
++#  define SAFE_CTYPE_H
++#  include <system.h>
++#  undef SAFE_CTYPE_H
++#  include <coretypes.h>
++
++typedef unsigned int source_location; // <line-map.h>
++typedef source_location location_t;   // <input.h>
++
++#else // GCC < 6
++
+ #if BUILDING_GCC_MAJOR > 4 || BUILDING_GCC_MAJOR == 4 && BUILDING_GCC_MINOR > 8
+ #  include <limits.h> // CHAR_BIT
+ #  include <config.h>
+@@ -33,6 +51,9 @@ extern "C"
+ 
+ typedef unsigned int source_location; // <line-map.h>
+ typedef source_location location_t;   // <input.h>
+-}
++
++} // extern "C"
++
++#endif
+ 
+ #endif // ODB_GCC_FWD_HXX
+diff --git a/odb/gcc.hxx b/odb/gcc.hxx
+index c953047..858d685 100644
+--- a/odb/gcc.hxx
++++ b/odb/gcc.hxx
+@@ -7,6 +7,10 @@
+ 
+ #include <odb/gcc-fwd.hxx>
+ 
++#if BUILDING_GCC_MAJOR >= 6
++#  include <safe-ctype.h> // See gcc-fwd.hxx.
++#endif
++
+ // GCC header includes to get the plugin and parse tree declarations.
+ // The order is important and doesn't follow any kind of logic.
+ //
+@@ -145,4 +149,10 @@ gcc_tree_code_name (gcc_tree_code_type tc) {return tree_code_name[tc];}
+ #define DECL_CHAIN(x) TREE_CHAIN(x)
+ #endif
+ 
++// In GCC 6, ANON_AGGRNAME_P became anon_aggrname_p().
++//
++#if BUILDING_GCC_MAJOR < 6
++#  define anon_aggrname_p(X) ANON_AGGRNAME_P(X)
++#endif
++
+ #endif // ODB_GCC_HXX
+diff --git a/odb/include.cxx b/odb/include.cxx
+index c397993..08c93ce 100644
+--- a/odb/include.cxx
++++ b/odb/include.cxx
+@@ -30,9 +30,18 @@ namespace
+     path path_;
+   };
+ 
++#if BUILDING_GCC_MAJOR >= 6
++  typedef line_map_ordinary line_map_type;
++#else
++  typedef line_map line_map_type;
++# ifndef linemap_check_ordinary
++#   define linemap_check_ordinary(X) (X)
++# endif
++#endif
++
+   struct includes
+   {
+-    typedef std::map<line_map const*, include_directive> map_type;
++    typedef std::map<line_map_type const*, include_directive> map_type;
+     bool trailing; // Included at the beginning or at the end of the main file.
+     map_type map;
+   };
+@@ -144,7 +153,9 @@ namespace
+       //
+       if (l > BUILTINS_LOCATION)
+       {
+-        line_map const* lm (linemap_lookup (line_table, l));
++        line_map_type const* lm (
++          linemap_check_ordinary (
++            linemap_lookup (line_table, l)));
+ 
+         if (lm != 0 && !MAIN_FILE_P (lm))
+         {
+@@ -537,20 +548,20 @@ namespace
+     //
+ #if BUILDING_GCC_MAJOR == 4 && BUILDING_GCC_MINOR <= 6
+     size_t used (line_table->used);
+-    line_map const* maps (line_table->maps);
++    line_map_type const* maps (line_table->maps);
+ #else
+     size_t used (line_table->info_ordinary.used);
+-    line_map const* maps (line_table->info_ordinary.maps);
++    line_map_type const* maps (line_table->info_ordinary.maps);
+ #endif
+ 
+     for (size_t i (0); i < used; ++i)
+     {
+-      line_map const* m (maps + i);
++      line_map_type const* m (maps + i);
+ 
+       if (MAIN_FILE_P (m) || m->reason != LC_ENTER)
+         continue;
+ 
+-      line_map const* ifm (INCLUDED_FROM (line_table, m));
++      line_map_type const* ifm (INCLUDED_FROM (line_table, m));
+ 
+ #if BUILDING_GCC_MAJOR == 4 && BUILDING_GCC_MINOR <= 6
+       path f (m->to_file);
+@@ -580,7 +591,7 @@ namespace
+       for (includes::iterator j (i->second.begin ());
+            j != i->second.end (); ++j)
+       {
+-        line_map const* lm (j->first);
++        line_map_type const* lm (j->first);
+         cerr << '\t' << lm->to_file << ":" << LAST_SOURCE_LINE (lm) << endl;
+       }
+       */
+@@ -589,13 +600,13 @@ namespace
+       // it is preferred over all others. Use the first one if there are
+       // several.
+       //
+-      line_map const* main_lm (0);
++      line_map_type const* main_lm (0);
+       include_directive* main_inc (0);
+ 
+       for (includes::map_type::iterator j (i->second.map.begin ());
+            j != i->second.map.end (); ++j)
+       {
+-        line_map const* lm (j->first);
++        line_map_type const* lm (j->first);
+ 
+         if (MAIN_FILE_P (lm))
+         {
+@@ -636,7 +647,7 @@ namespace
+       for (includes::map_type::iterator j (i->second.map.begin ());
+            j != i->second.map.end (); ++j)
+       {
+-        line_map const* lm (j->first);
++        line_map_type const* lm (j->first);
+ 
+ #if BUILDING_GCC_MAJOR == 4 && BUILDING_GCC_MINOR <= 6
+         string f (lm->to_file);
+diff --git a/odb/parser.cxx b/odb/parser.cxx
+index a8e6a6a..feda9d4 100644
+--- a/odb/parser.cxx
++++ b/odb/parser.cxx
+@@ -1044,14 +1044,14 @@ emit_type_decl (tree decl)
+     // says that in typedef struct {} S; S becomes struct's
+     // name.
+     //
+-    if (ANON_AGGRNAME_P (decl_name))
++    if (anon_aggrname_p (decl_name))
+     {
+       tree d (TYPE_NAME (t));
+ 
+       if (d != NULL_TREE &&
+           !DECL_ARTIFICIAL (d) &&
+           DECL_NAME (d) != NULL_TREE &&
+-          !ANON_AGGRNAME_P (DECL_NAME (d)))
++          !anon_aggrname_p (DECL_NAME (d)))
+       {
+         decl = d;
+         decl_name = DECL_NAME (decl);
+@@ -1668,7 +1668,7 @@ create_type (tree t,
+             ts << "start anon/stub " << gcc_tree_code_name(tc) << " at "
+                << file << ":" << line << endl;
+ 
+-          if (d == NULL_TREE || ANON_AGGRNAME_P (DECL_NAME (d)))
++          if (d == NULL_TREE || anon_aggrname_p (DECL_NAME (d)))
+           {
+             if (tc == RECORD_TYPE)
+               r = &emit_class<class_> (t, file, line, clmn);
+@@ -1765,7 +1765,7 @@ create_type (tree t,
+         ts << "start anon/stub " << gcc_tree_code_name(tc) << " at "
+            << file << ":" << line << endl;
+ 
+-      if (d == NULL_TREE || ANON_AGGRNAME_P (DECL_NAME (d)))
++      if (d == NULL_TREE || anon_aggrname_p (DECL_NAME (d)))
+       {
+         r = &emit_enum (t, access, file, line, clmn);
+       }
+diff --git a/odb/plugin.cxx b/odb/plugin.cxx
+index 51f0cb1..779faed 100644
+--- a/odb/plugin.cxx
++++ b/odb/plugin.cxx
+@@ -45,14 +45,28 @@ path file_;    // File being compiled.
+ paths inputs_; // List of input files in at-once mode or just file_.
+ 
+ bool (*cpp_error_prev) (
+-  cpp_reader*, int, int, location_t, unsigned int, const char*, va_list*);
++  cpp_reader*,
++  int,
++  int,
++#if BUILDING_GCC_MAJOR >= 6
++  rich_location*,
++#else
++  location_t,
++  unsigned int,
++#endif
++  const char*,
++  va_list*);
+ 
+ static bool
+ cpp_error_filter (cpp_reader* r,
+                   int level,
+                   int reason,
++#if BUILDING_GCC_MAJOR >= 6
++                  rich_location* l,
++#else
+                   location_t l,
+                   unsigned int column_override,
++#endif
+                   const char* msg,
+                   va_list* ap)
+ {
+@@ -66,7 +80,18 @@ cpp_error_filter (cpp_reader* r,
+   if (strstr (msg, "#pragma once") != 0)
+     return true;
+ 
+-  return cpp_error_prev (r, level, reason, l, column_override, msg, ap);
++  return cpp_error_prev (
++    r,
++    level,
++    reason,
++#if BUILDING_GCC_MAJOR >= 6
++    l,
++#else
++    l,
++    column_override,
++#endif
++    msg,
++    ap);
+ }
+ 
+ // A prefix of the _cpp_file struct. This struct is not part of the
+diff --git a/odb/semantics/elements.cxx b/odb/semantics/elements.cxx
+index 21e3260..399d5e9 100644
+--- a/odb/semantics/elements.cxx
++++ b/odb/semantics/elements.cxx
+@@ -59,7 +59,7 @@ namespace semantics
+       if (tree decl = TYPE_NAME (n))
+         name = DECL_NAME (decl);
+ 
+-      return name != 0 && ANON_AGGRNAME_P (name);
++      return name != 0 && anon_aggrname_p (name);
+     }
+ 
+     return true;
+@@ -108,7 +108,7 @@ namespace semantics
+       if (tree decl = TYPE_NAME (type))
+       {
+         name = DECL_NAME (decl);
+-        if (name != 0 && ANON_AGGRNAME_P (name))
++        if (name != 0 && anon_aggrname_p (name))
+           return true;
+ 
+         tree s (CP_DECL_CONTEXT (decl));
+-- 
+2.25.0
+

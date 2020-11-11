@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBQRENCODE_VERSION = 4.0.2
+LIBQRENCODE_VERSION = 4.1.1
 LIBQRENCODE_SOURCE = qrencode-$(LIBQRENCODE_VERSION).tar.gz
 LIBQRENCODE_SITE = http://fukuchi.org/works/qrencode
 LIBQRENCODE_DEPENDENCIES = host-pkgconf

@@ -1,0 +1,93 @@
+From 4a950257fa353e27ef1bd753bca4d0279f41bc77 Mon Sep 17 00:00:00 2001
+From: Michal Vasko <mvasko@cesnet.cz>
+Date: Mon, 24 Aug 2020 13:47:40 +0200
+Subject: [PATCH] scripts FEATURE support using current user for SR modules
+
+Mostly for special cases user/group configuration
+when the user/group cannot be retrieved normally.
+
+Fixes #701
+---
+ CMakeLists.txt   | 10 +++++-----
+ scripts/setup.sh | 23 +++++++++++++++++++----
+ 2 files changed, 24 insertions(+), 9 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 77aea1f..8fd6b43 100755
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -68,19 +68,19 @@ if(NOT MODULES_OWNER)
+     OUTPUT_VARIABLE MODULES_OWNER OUTPUT_STRIP_TRAILING_WHITESPACE
+     ERROR_VARIABLE ERROR_STR OUTPUT_STRIP_TRAILING_WHITESPACE)
+     if(RET)
+-        message(FATAL_ERROR "Learning server module user failed: ${ERROR_STR}")
++        message(WARNING "Learning server module user failed (${ERROR_STR}), the current user will be used.")
+     endif()
+ endif()
+-set(MODULES_OWNER "${MODULES_OWNER}" CACHE STRING "System user that will become the owner of server modules")
+-if(NOT MODULES_GROUP)
++set(MODULES_OWNER "${MODULES_OWNER}" CACHE STRING "System user that will become the owner of server modules, empty means the current user")
++if(NOT MODULES_GROUP AND MODULES_OWNER)
+     execute_process(COMMAND id -gn ${MODULES_OWNER} RESULT_VARIABLE RET
+     OUTPUT_VARIABLE MODULES_GROUP OUTPUT_STRIP_TRAILING_WHITESPACE
+     ERROR_VARIABLE ERROR_STR OUTPUT_STRIP_TRAILING_WHITESPACE)
+     if(RET)
+-        message(FATAL_ERROR "Learning server module group failed: ${ERROR_STR}")
++        message(WARNING "Learning server module group failed (${ERROR_STR}), the current user group will be used.")
+     endif()
+ endif()
+-set(MODULES_GROUP "${MODULES_GROUP}" CACHE STRING "System group that the server modules will belong to")
++set(MODULES_GROUP "${MODULES_GROUP}" CACHE STRING "System group that the server modules will belong to, empty means the current user group")
+ 
+ # set prefix for the PID file
+ if(NOT PIDFILE_PREFIX)
+diff --git a/scripts/setup.sh b/scripts/setup.sh
+index 9591a49..b7c7ba4 100755
+--- a/scripts/setup.sh
++++ b/scripts/setup.sh
+@@ -1,7 +1,8 @@
+ #!/bin/bash
+ 
+-# env variables NP2_MODULE_DIR, NP2_MODULE_PERMS, NP2_MODULE_OWNER, NP2_MODULE_GROUP must be defined when executing this script!
+-if [ -z "$NP2_MODULE_DIR" -o -z "$NP2_MODULE_PERMS" -o -z "$NP2_MODULE_OWNER" -o -z "$NP2_MODULE_GROUP" ]; then
++# env variables NP2_MODULE_DIR, NP2_MODULE_PERMS must be defined and NP2_MODULE_OWNER, NP2_MODULE_GROUP will be used if
++# defined when executing this script!
++if [ -z "$NP2_MODULE_DIR" -o -z "$NP2_MODULE_PERMS" ]; then
+     echo "Required environment variables not defined!"
+     exit 1
+ fi
+@@ -37,7 +38,14 @@ MODULES=(
+ 
+ # functions
+ INSTALL_MODULE() {
+-    "$SYSREPOCTL" -a -i $MODDIR/$1 -s "$MODDIR" -p "$PERMS" -o "$OWNER" -g "$GROUP" -v2
++    CMD="'$SYSREPOCTL' -a -i $MODDIR/$1 -s '$MODDIR' -p '$PERMS' -v2"
++    if [ ! -z ${OWNER} ]; then
++        CMD="$CMD -o '$OWNER'"
++    fi
++    if [ ! -z ${GROUP} ]; then
++        CMD="$CMD -g '$GROUP'"
++    fi
++    eval $CMD
+     local rc=$?
+     if [ $rc -ne 0 ]; then
+         exit $rc
+@@ -45,7 +53,14 @@ INSTALL_MODULE() {
+ }
+ 
+ UPDATE_MODULE() {
+-    "$SYSREPOCTL" -a -U $MODDIR/$1 -s "$MODDIR" -p "$PERMS" -o "$OWNER" -g "$GROUP" -v2
++    CMD="'$SYSREPOCTL' -a -U $MODDIR/$1 -s '$MODDIR' -p '$PERMS' -v2"
++    if [ ! -z ${OWNER} ]; then
++        CMD="$CMD -o '$OWNER'"
++    fi
++    if [ ! -z ${GROUP} ]; then
++        CMD="$CMD -g '$GROUP'"
++    fi
++    eval $CMD
+     local rc=$?
+     if [ $rc -ne 0 ]; then
+         exit $rc
+-- 
+2.20.1
+

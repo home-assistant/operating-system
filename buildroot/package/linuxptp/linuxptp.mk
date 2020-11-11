@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LINUXPTP_VERSION = 2.0
+LINUXPTP_VERSION = 3.1
 LINUXPTP_SOURCE = linuxptp-$(LINUXPTP_VERSION).tgz
 LINUXPTP_SITE = http://downloads.sourceforge.net/linuxptp
 LINUXPTP_LICENSE = GPL-2.0+
@@ -33,15 +33,17 @@ define LINUXPTP_INSTALL_TARGET_CMDS
 endef
 
 define LINUXPTP_INSTALL_INIT_SYSV
-	$(INSTALL) -m 755 -D $(LINUXPTP_PKGDIR)/S65linuxptp \
-		$(TARGET_DIR)/etc/init.d/S65linuxptp
+	$(INSTALL) -m 755 -D $(LINUXPTP_PKGDIR)/S65ptp4l \
+		$(TARGET_DIR)/etc/init.d/S65ptp4l
+	$(INSTALL) -m 755 -D $(LINUXPTP_PKGDIR)/S66phc2sys \
+		$(TARGET_DIR)/etc/init.d/S66phc2sys
 endef
 
 define LINUXPTP_INSTALL_INIT_SYSTEMD
-	$(INSTALL) -D -m 644 $(LINUXPTP_PKGDIR)/linuxptp.service \
-		$(TARGET_DIR)/usr/lib/systemd/system/linuxptp.service
-	$(INSTALL) -D -m 644 $(LINUXPTP_PKGDIR)/linuxptp-system-clock.service \
-		$(TARGET_DIR)/usr/lib/systemd/system/linuxptp-system-clock.service
+	$(INSTALL) -D -m 644 $(LINUXPTP_PKGDIR)/ptp4l.service \
+		$(TARGET_DIR)/usr/lib/systemd/system/ptp4l.service
+	$(INSTALL) -D -m 644 $(LINUXPTP_PKGDIR)/phc2sys.service \
+		$(TARGET_DIR)/usr/lib/systemd/system/phc2sys.service
 endef
 
 $(eval $(generic-package))

@@ -1,0 +1,97 @@
+From 060bb7eb4d008fbd4a9fa8ef7c5e33c9e483eb52 Mon Sep 17 00:00:00 2001
+From: Boris Kolpackov <boris@codesynthesis.com>
+Date: Wed, 17 Jun 2020 11:22:11 +0200
+Subject: [PATCH] Adjust to changes in GCC 10
+
+[Upstream: 060bb7eb4d008fbd4a9fa8ef7c5e33c9e483eb52]
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ odb/gcc.hxx                | 7 +++++--
+ odb/parser.cxx             | 8 ++++----
+ odb/semantics/elements.cxx | 4 ++--
+ 3 files changed, 11 insertions(+), 8 deletions(-)
+
+diff --git a/odb/gcc.hxx b/odb/gcc.hxx
+index 9b644d7..af0e2a0 100644
+--- a/odb/gcc.hxx
++++ b/odb/gcc.hxx
+@@ -151,10 +151,13 @@ gcc_tree_code_name (gcc_tree_code_type tc) {return tree_code_name[tc];}
+ #define DECL_CHAIN(x) TREE_CHAIN(x)
+ #endif
+ 
+-// In GCC 6, ANON_AGGRNAME_P became anon_aggrname_p().
++// In GCC 6  ANON_AGGRNAME_P became anon_aggrname_p().
++// In GCC 10 anon_aggrname_p() became IDENTIFIER_ANON_P.
+ //
+ #if BUILDING_GCC_MAJOR < 6
+-#  define anon_aggrname_p(X) ANON_AGGRNAME_P(X)
++#  define IDENTIFIER_ANON_P(X) ANON_AGGRNAME_P(X)
++#elif BUILDING_GCC_MAJOR < 10
++#  define IDENTIFIER_ANON_P(X) anon_aggrname_p(X)
+ #endif
+ 
+ // In GCC 9:
+diff --git a/odb/parser.cxx b/odb/parser.cxx
+index 69d9b28..58388c9 100644
+--- a/odb/parser.cxx
++++ b/odb/parser.cxx
+@@ -1103,14 +1103,14 @@ emit_type_decl (tree decl)
+     // says that in typedef struct {} S; S becomes struct's
+     // name.
+     //
+-    if (anon_aggrname_p (decl_name))
++    if (IDENTIFIER_ANON_P (decl_name))
+     {
+       tree d (TYPE_NAME (t));
+ 
+       if (d != NULL_TREE &&
+           !DECL_ARTIFICIAL (d) &&
+           DECL_NAME (d) != NULL_TREE &&
+-          !anon_aggrname_p (DECL_NAME (d)))
++          !IDENTIFIER_ANON_P (DECL_NAME (d)))
+       {
+         decl = d;
+         decl_name = DECL_NAME (decl);
+@@ -1727,7 +1727,7 @@ create_type (tree t,
+             ts << "start anon/stub " << gcc_tree_code_name(tc) << " at "
+                << file << ":" << line << endl;
+ 
+-          if (d == NULL_TREE || anon_aggrname_p (DECL_NAME (d)))
++          if (d == NULL_TREE || IDENTIFIER_ANON_P (DECL_NAME (d)))
+           {
+             if (tc == RECORD_TYPE)
+               r = &emit_class<class_> (t, file, line, clmn);
+@@ -1824,7 +1824,7 @@ create_type (tree t,
+         ts << "start anon/stub " << gcc_tree_code_name(tc) << " at "
+            << file << ":" << line << endl;
+ 
+-      if (d == NULL_TREE || anon_aggrname_p (DECL_NAME (d)))
++      if (d == NULL_TREE || IDENTIFIER_ANON_P (DECL_NAME (d)))
+       {
+         r = &emit_enum (t, access, file, line, clmn);
+       }
+diff --git a/odb/semantics/elements.cxx b/odb/semantics/elements.cxx
+index f937f54..2d266cf 100644
+--- a/odb/semantics/elements.cxx
++++ b/odb/semantics/elements.cxx
+@@ -75,7 +75,7 @@ namespace semantics
+       if (tree decl = TYPE_NAME (n))
+         name = DECL_NAME (decl);
+ 
+-      return name != 0 && anon_aggrname_p (name);
++      return name != 0 && IDENTIFIER_ANON_P (name);
+     }
+ 
+     return true;
+@@ -124,7 +124,7 @@ namespace semantics
+       if (tree decl = TYPE_NAME (type))
+       {
+         name = DECL_NAME (decl);
+-        if (name != 0 && anon_aggrname_p (name))
++        if (name != 0 && IDENTIFIER_ANON_P (name))
+           return true;
+ 
+         tree s (CP_DECL_CONTEXT (decl));
+-- 
+2.26.2
+

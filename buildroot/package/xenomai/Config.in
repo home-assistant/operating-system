@@ -41,17 +41,41 @@ config BR2_PACKAGE_XENOMAI
 
 if BR2_PACKAGE_XENOMAI
 
-config BR2_PACKAGE_XENOMAI_VERSION
-	string "Custom Xenomai version"
+choice
+	bool "Xenomai version"
 	help
-	  Manually select Xenomai version. If left empty, the default
-	  version will be used.
-
 	  Make sure that the selected version has a patch for your
-	  selected Linux kernel. If it does not, download and select
-	  a patch manually with
-	  BR2_LINUX_KERNEL_EXT_XENOMAI_ADEOS_PATCH, in the Linux
-	  Kernel -> Linux Kernel Extensions menu.
+	  selected Linux kernel. If it does not, download and select a
+	  patch manually with BR2_LINUX_KERNEL_EXT_XENOMAI_ADEOS_PATCH,
+	  in the Linux Kernel -> Linux Kernel Extensions menu.
+
+config BR2_PACKAGE_XENOMAI_LATEST_VERSION
+	bool "Latest version (3.0.10)"
+
+config BR2_PACKAGE_XENOMAI_CUSTOM_VERSION
+	bool "Custom version"
+
+config BR2_PACKAGE_XENOMAI_CUSTOM_TARBALL
+	bool "Custom tarball"
+
+config BR2_PACKAGE_XENOMAI_CUSTOM_GIT
+	bool "Custom Git repository"
+
+endchoice
+
+config BR2_PACKAGE_XENOMAI_REPOSITORY
+	string "URL of custom repository"
+	default "https://gitlab.denx.de/Xenomai/xenomai.git"
+	depends on BR2_PACKAGE_XENOMAI_CUSTOM_GIT
+
+config BR2_PACKAGE_XENOMAI_VERSION
+	string "Custom Xenomai version" if !BR2_PACKAGE_XENOMAI_LATEST_VERSION
+	default "3.0.10" if BR2_PACKAGE_XENOMAI_LATEST_VERSION
+	depends on !BR2_PACKAGE_XENOMAI_CUSTOM_TARBALL
+
+config BR2_PACKAGE_XENOMAI_CUSTOM_TARBALL_URL
+	string "URL of custom tarball"
+	depends on BR2_PACKAGE_XENOMAI_CUSTOM_TARBALL
 
 choice
 	prompt "Xenomai core"

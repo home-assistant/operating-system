@@ -5,11 +5,11 @@
 ################################################################################
 
 # When updating the version, please also update mesa3d-headers
-MESA3D_VERSION = 19.3.4
+MESA3D_VERSION = 20.2.1
 MESA3D_SOURCE = mesa-$(MESA3D_VERSION).tar.xz
 MESA3D_SITE = https://mesa.freedesktop.org/archive
 MESA3D_LICENSE = MIT, SGI, Khronos
-MESA3D_LICENSE_FILES = docs/license.html
+MESA3D_LICENSE_FILES = docs/license.rst
 
 MESA3D_INSTALL_STAGING = YES
 
@@ -25,8 +25,7 @@ MESA3D_DEPENDENCIES = \
 
 MESA3D_CONF_OPTS = \
 	-Dgallium-omx=disabled \
-	-Dpower8=false \
-	-Dvalgrind=false
+	-Dpower8=disabled
 
 # Codesourcery ARM 2014.05 fail to link libmesa_dri_drivers.so with --as-needed linker
 # flag due to a linker bug between binutils 2.24 and 2.25 (2.24.51.20140217).
@@ -37,10 +36,10 @@ endif
 ifeq ($(BR2_PACKAGE_MESA3D_LLVM),y)
 MESA3D_DEPENDENCIES += host-llvm llvm
 MESA3D_MESON_EXTRA_BINARIES += llvm-config='$(STAGING_DIR)/usr/bin/llvm-config'
-MESA3D_CONF_OPTS += -Dllvm=true
+MESA3D_CONF_OPTS += -Dllvm=enabled
 else
 # Avoid automatic search of llvm-config
-MESA3D_CONF_OPTS += -Dllvm=false
+MESA3D_CONF_OPTS += -Dllvm=disabled
 endif
 
 # Disable opencl-icd: OpenCL lib will be named libOpenCL instead of
@@ -65,9 +64,9 @@ ifeq ($(BR2_PACKAGE_MESA3D_OPENGL_GLX),y)
 #  gallium-xlib : Gallium-xlib based GLX requires at least one gallium driver || Gallium-xlib based GLX requires softpipe or llvmpipe || gallium-xlib conflicts with any dri driver.
 MESA3D_CONF_OPTS += -Dglx=dri
 ifeq ($(BR2_PACKAGE_MESA3D_NEEDS_XA),y)
-MESA3D_CONF_OPTS += -Dgallium-xa=true
+MESA3D_CONF_OPTS += -Dgallium-xa=enabled
 else
-MESA3D_CONF_OPTS += -Dgallium-xa=false
+MESA3D_CONF_OPTS += -Dgallium-xa=disabled
 endif
 else
 MESA3D_CONF_OPTS += \
@@ -116,23 +115,23 @@ MESA3D_CONF_OPTS += \
 	-Dgallium-extra-hud=false
 else
 MESA3D_CONF_OPTS += \
-	-Dshared-glapi=true \
+	-Dshared-glapi=enabled \
 	-Dgallium-drivers=$(subst $(space),$(comma),$(MESA3D_GALLIUM_DRIVERS-y)) \
 	-Dgallium-extra-hud=true
 endif
 
 ifeq ($(BR2_PACKAGE_MESA3D_DRI_DRIVER),)
 MESA3D_CONF_OPTS += \
-	-Ddri-drivers= -Ddri3=false
+	-Ddri-drivers= -Ddri3=disabled
 else
 ifeq ($(BR2_PACKAGE_XLIB_LIBXSHMFENCE),y)
 MESA3D_DEPENDENCIES += xlib_libxshmfence
-MESA3D_CONF_OPTS += -Ddri3=true
+MESA3D_CONF_OPTS += -Ddri3=enabled
 else
-MESA3D_CONF_OPTS += -Ddri3=false
+MESA3D_CONF_OPTS += -Ddri3=disabled
 endif
 MESA3D_CONF_OPTS += \
-	-Dshared-glapi=true \
+	-Dshared-glapi=enabled \
 	-Dglx-direct=true \
 	-Ddri-drivers=$(subst $(space),$(comma),$(MESA3D_DRI_DRIVERS-y))
 endif
@@ -143,7 +142,7 @@ MESA3D_CONF_OPTS += \
 else
 MESA3D_DEPENDENCIES += xlib_libxshmfence
 MESA3D_CONF_OPTS += \
-	-Ddri3=true \
+	-Ddri3=enabled \
 	-Dvulkan-drivers=$(subst $(space),$(comma),$(MESA3D_VULKAN_DRIVERS-y))
 endif
 
@@ -161,7 +160,7 @@ MESA3D_CONF_OPTS += -Dopengl=true
 
 # libva and mesa3d have a circular dependency
 # we do not need libva support in mesa3d, therefore disable this option
-MESA3D_CONF_OPTS += -Dgallium-va=false
+MESA3D_CONF_OPTS += -Dgallium-va=disabled
 
 # libGL is only provided for a full xorg stack
 ifeq ($(BR2_PACKAGE_MESA3D_OPENGL_GLX),y)
@@ -189,84 +188,75 @@ endif
 ifeq ($(BR2_PACKAGE_WAYLAND),y)
 MESA3D_DEPENDENCIES += wayland wayland-protocols
 MESA3D_PLATFORMS += wayland
-MESA3D_CONF_OPTS += -Dwayland-scanner-path=$(HOST_DIR)/bin/wayland-scanner
 endif
-ifeq ($(BR2_PACKAGE_MESA3D_DRI_DRIVER),y)
-MESA3D_PLATFORMS += drm
-else ifeq ($(BR2_PACKAGE_MESA3D_GALLIUM_DRIVER_V3D),y)
-MESA3D_PLATFORMS += drm
-else ifeq ($(BR2_PACKAGE_MESA3D_GALLIUM_DRIVER_VC4),y)
-MESA3D_PLATFORMS += drm
-else ifeq ($(BR2_PACKAGE_MESA3D_GALLIUM_DRIVER_ETNAVIV),y)
-MESA3D_PLATFORMS += drm
-else ifeq ($(BR2_PACKAGE_MESA3D_GALLIUM_DRIVER_FREEDRENO),y)
-MESA3D_PLATFORMS += drm
-else ifeq ($(BR2_PACKAGE_MESA3D_GALLIUM_DRIVER_IRIS),y)
-MESA3D_PLATFORMS += drm
-else ifeq ($(BR2_PACKAGE_MESA3D_GALLIUM_DRIVER_LIMA),y)
-MESA3D_PLATFORMS += drm
-else ifeq ($(BR2_PACKAGE_MESA3D_GALLIUM_DRIVER_PANFROST),y)
-MESA3D_PLATFORMS += drm
-else ifeq ($(BR2_PACKAGE_MESA3D_GALLIUM_DRIVER_VIRGL),y)
-MESA3D_PLATFORMS += drm
-else ifeq ($(BR2_PACKAGE_MESA3D_GALLIUM_DRIVER_RADEONSI),y)
-MESA3D_PLATFORMS += drm
-endif
-MESA3D_PLATFORMS += surfaceless
 
 MESA3D_CONF_OPTS += \
 	-Dplatforms=$(subst $(space),$(comma),$(MESA3D_PLATFORMS))
 
 ifeq ($(BR2_PACKAGE_MESA3D_GBM),y)
 MESA3D_CONF_OPTS += \
-	-Dgbm=true
+	-Dgbm=enabled
 else
 MESA3D_CONF_OPTS += \
-	-Dgbm=false
+	-Dgbm=disabled
 endif
 
 ifeq ($(BR2_PACKAGE_MESA3D_OPENGL_EGL),y)
 MESA3D_PROVIDES += libegl
 MESA3D_CONF_OPTS += \
-	-Degl=true
+	-Degl=enabled
 else
 MESA3D_CONF_OPTS += \
-	-Degl=false
+	-Degl=disabled
 endif
 
 ifeq ($(BR2_PACKAGE_MESA3D_OPENGL_ES),y)
 MESA3D_PROVIDES += libgles
-MESA3D_CONF_OPTS += -Dgles1=true -Dgles2=true
+MESA3D_CONF_OPTS += -Dgles1=enabled -Dgles2=enabled
 else
-MESA3D_CONF_OPTS += -Dgles1=false -Dgles2=false
+MESA3D_CONF_OPTS += -Dgles1=disabled -Dgles2=disabled
 endif
 
 ifeq ($(BR2_PACKAGE_MESA3D_XVMC),y)
 MESA3D_DEPENDENCIES += xlib_libXv xlib_libXvMC
-MESA3D_CONF_OPTS += -Dgallium-xvmc=true
+MESA3D_CONF_OPTS += -Dgallium-xvmc=enabled
 else
-MESA3D_CONF_OPTS += -Dgallium-xvmc=false
+MESA3D_CONF_OPTS += -Dgallium-xvmc=disabled
+endif
+
+ifeq ($(BR2_PACKAGE_VALGRIND),y)
+MESA3D_CONF_OPTS += -Dvalgrind=enabled
+MESA3D_DEPENDENCIES += valgrind
+else
+MESA3D_CONF_OPTS += -Dvalgrind=disabled
 endif
 
 ifeq ($(BR2_PACKAGE_LIBUNWIND),y)
-MESA3D_CONF_OPTS += -Dlibunwind=true
+MESA3D_CONF_OPTS += -Dlibunwind=enabled
 MESA3D_DEPENDENCIES += libunwind
 else
-MESA3D_CONF_OPTS += -Dlibunwind=false
+MESA3D_CONF_OPTS += -Dlibunwind=disabled
 endif
 
 ifeq ($(BR2_PACKAGE_MESA3D_VDPAU),y)
 MESA3D_DEPENDENCIES += libvdpau
-MESA3D_CONF_OPTS += -Dgallium-vdpau=true
+MESA3D_CONF_OPTS += -Dgallium-vdpau=enabled
 else
-MESA3D_CONF_OPTS += -Dgallium-vdpau=false
+MESA3D_CONF_OPTS += -Dgallium-vdpau=disabled
 endif
 
 ifeq ($(BR2_PACKAGE_LM_SENSORS),y)
-MESA3D_CONF_OPTS += -Dlmsensors=true
+MESA3D_CONF_OPTS += -Dlmsensors=enabled
 MESA3D_DEPENDENCIES += lm-sensors
 else
-MESA3D_CONF_OPTS += -Dlmsensors=false
+MESA3D_CONF_OPTS += -Dlmsensors=disabled
+endif
+
+ifeq ($(BR2_PACKAGE_ZSTD),y)
+MESA3D_CONF_OPTS += -Dzstd=enabled
+MESA3D_DEPENDENCIES += zstd
+else
+MESA3D_CONF_OPTS += -Dzstd=disabled
 endif
 
 $(eval $(meson-package))

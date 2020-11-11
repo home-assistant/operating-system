@@ -1,0 +1,14 @@
+config BR2_PACKAGE_PYTHON_OPCUA_ASYNCIO
+	bool "python-opcua-asyncio"
+	depends on BR2_PACKAGE_PYTHON3
+	select BR2_PACKAGE_PYTHON_AIOFILES # runtime
+	select BR2_PACKAGE_PYTHON_CRYPTOGRAPHY # runtime
+	select BR2_PACKAGE_PYTHON_DATEUTIL # runtime
+	select BR2_PACKAGE_PYTHON_LXML # runtime
+	select BR2_PACKAGE_PYTHON_PYTZ # runtime
+	help
+	  opcua-asyncio is an asyncio-based asynchronous
+	  OPC UA client based on python-opcua, removing
+	  hacks for support of python < 3.6.
+
+	  https://github.com/FreeOpcUa/opcua-asyncio

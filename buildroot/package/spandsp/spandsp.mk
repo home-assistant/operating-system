@@ -4,9 +4,8 @@
 #
 ################################################################################
 
-SPANDSP_VERSION = 20180108
-SPANDSP_SITE = https://www.soft-switch.org/downloads/spandsp/snapshots
-
+SPANDSP_VERSION = 3.0.0-6ec23e5a7e
+SPANDSP_SITE = https://files.freeswitch.org/downloads/libs
 SPANDSP_LICENSE = LGPL-2.1 (library), GPL-2.0 (test suite)
 SPANDSP_LICENSE_FILES = COPYING
 

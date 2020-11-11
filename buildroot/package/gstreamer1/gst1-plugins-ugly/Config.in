@@ -5,7 +5,7 @@ menuconfig BR2_PACKAGE_GST1_PLUGINS_UGLY
 	  A set of well-supported plug-ins for GStreamer, but might pose
 	  problems for distributors.
 
-	  http://gstreamer.freedesktop.org/
+	  https://gstreamer.freedesktop.org/
 
 if BR2_PACKAGE_GST1_PLUGINS_UGLY
 

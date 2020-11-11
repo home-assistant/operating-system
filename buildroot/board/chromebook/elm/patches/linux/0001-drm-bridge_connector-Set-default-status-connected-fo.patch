@@ -1,0 +1,35 @@
+From 510d0ad0ce1b51c072309ba12dfb024fc2c3dbac Mon Sep 17 00:00:00 2001
+From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Date: Wed, 26 Aug 2020 10:15:22 +0200
+Subject: [PATCH 1/5] drm/bridge_connector: Set default status connected for
+ eDP connectors
+
+In an eDP application, HPD is not required and on most bridge chips
+useless. If HPD is not used, we need to set initial status as connected,
+otherwise the connector created by the drm_bridge_connector API remains
+in an unknown state.
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Acked-by: Sam Ravnborg <sam@ravnborg.org>
+Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Reviewed-by: Bilal Wasim <bwasim.lkml@gmail.com>
+Tested-by: Bilal Wasim <bwasim.lkml@gmail.com>
+---
+ drivers/gpu/drm/drm_bridge_connector.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/gpu/drm/drm_bridge_connector.c b/drivers/gpu/drm/drm_bridge_connector.c
+index c6994fe673f3..a58cbde59c34 100644
+--- a/drivers/gpu/drm/drm_bridge_connector.c
++++ b/drivers/gpu/drm/drm_bridge_connector.c
+@@ -187,6 +187,7 @@ drm_bridge_connector_detect(struct drm_connector *connector, bool force)
+ 		case DRM_MODE_CONNECTOR_DPI:
+ 		case DRM_MODE_CONNECTOR_LVDS:
+ 		case DRM_MODE_CONNECTOR_DSI:
++		case DRM_MODE_CONNECTOR_eDP:
+ 			status = connector_status_connected;
+ 			break;
+ 		default:
+-- 
+2.25.1
+

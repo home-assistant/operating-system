@@ -1,0 +1,46 @@
+From 5448f328ff63a6ca4a64519c2f1dfc63a33df4b7 Mon Sep 17 00:00:00 2001
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date: Thu, 10 Sep 2020 11:37:33 +0200
+Subject: [PATCH] Pass -fno-builtin to fix build with gcc 10
+
+gcc 10, if it recognizes some hand-written code that looks like
+memcpy, will generate a call to memcpy().
+
+For example:
+
+        while (dst < &_end_data) {
+                *dst++ = *src++;
+        }
+
+gets recognized as such. However, in the context of bare-metal code,
+having a call to memcpy() in the C library doesn't work. So we fix
+that by disabling builtins.
+
+Fixes:
+
+/home/thomas/projets/buildroot/output/host/opt/ext-toolchain/bin/../arm-buildroot-uclinux-uclibcgnueabi/bin/ld.real: stm32f429i-disco.o: in function `reset':
+stm32f429i-disco.c:(.text.reset+0x1a): undefined reference to `memcpy'
+/home/thomas/projets/buildroot/output/host/opt/ext-toolchain/bin/../arm-buildroot-uclinux-uclibcgnueabi/bin/ld.real: stm32f429i-disco.c:(.text.reset+0x34): undefined reference to `memset'
+make[1]: *** [Makefile:26: stm32f429i-disco] Error 1
+
+Upstream: https://github.com/mcoquelin-stm32/afboot-stm32/pull/9
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ Makefile | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Makefile b/Makefile
+index f699176..1e8557d 100644
+--- a/Makefile
++++ b/Makefile
+@@ -13,6 +13,7 @@ DTB_ADDR?=0x08004000
+ CFLAGS := -mthumb -mcpu=cortex-m4
+ CFLAGS += -ffunction-sections -fdata-sections
+ CFLAGS += -Os -std=gnu99 -Wall
++CFLAGS += -fno-builtin
+ LINKERFLAGS := -nostartfiles --gc-sections
+ 
+ obj-y += gpio.o mpu.o qspi.o start_kernel.o
+-- 
+2.26.2
+

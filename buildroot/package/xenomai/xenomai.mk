@@ -5,14 +5,23 @@
 ################################################################################
 
 XENOMAI_VERSION = $(call qstrip,$(BR2_PACKAGE_XENOMAI_VERSION))
-ifeq ($(XENOMAI_VERSION),)
-XENOMAI_VERSION = 3.0.10
+ifeq ($(BR2_PACKAGE_XENOMAI_CUSTOM_TARBALL),y)
+XENOMAI_TARBALL = $(call qstrip,$(BR2_PACKAGE_XENOMAI_CUSTOM_TARBALL_URL))
+XENOMAI_SOURCE = $(notdir $(XENOMAI_TARBALL))
+XENOMAI_SITE = $(patsubst %/,%,$(dir $(XENOMAI_TARBALL)))
+else ifeq ($(BR2_PACKAGE_XENOMAI_CUSTOM_GIT),y)
+XENOMAI_SITE = $(call qstrip,$(BR2_PACKAGE_XENOMAI_REPOSITORY))
+XENOMAI_SITE_METHOD = git
 else
+XENOMAI_SOURCE = xenomai-$(XENOMAI_VERSION).tar.bz2
+XENOMAI_SITE = http://xenomai.org/downloads/xenomai/stable
+endif
+
+# Exclude all from the hash check, but the latest version.
+ifeq ($(BR2_PACKAGE_XENOMAI)$(BR2_PACKAGE_XENOMAI_LATEST_VERSION),y)
 BR_NO_CHECK_HASH_FOR += $(XENOMAI_SOURCE)
 endif
 
-XENOMAI_SITE = http://xenomai.org/downloads/xenomai/stable
-XENOMAI_SOURCE = xenomai-$(XENOMAI_VERSION).tar.bz2
 XENOMAI_LICENSE = GPL-2.0+ with exception (headers), LGPL-2.1+ (libraries), GPL-2.0+ (kernel), GFDL-1.2+ (docs), GPL-2.0 (ipipe patch, can driver)
 # GFDL is not included but refers to gnu.org
 XENOMAI_LICENSE_FILES = debian/copyright include/COPYING kernel/cobalt/COPYING \

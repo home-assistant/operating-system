@@ -1,4 +1,4 @@
-From c50b8e7fb9b2e61d4d195a055cd1bbf993cc455f Mon Sep 17 00:00:00 2001
+From e2ea659eac1849db471d3c01a0d0af9d6fca2e9a Mon Sep 17 00:00:00 2001
 From: Christophe Vu-Brugier <cvubrugier@fastmail.fm>
 Date: Wed, 22 Feb 2017 16:48:49 -0800
 Subject: [PATCH] Add importlib fix for PEP 3147 issue
@@ -25,10 +25,10 @@ Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
  1 file changed, 5 insertions(+), 39 deletions(-)
 
 diff --git a/Lib/importlib/_bootstrap_external.py b/Lib/importlib/_bootstrap_external.py
-index b8ac482994..db034f605a 100644
+index 25a3f8c0e0..2cb9a9aa52 100644
 --- a/Lib/importlib/_bootstrap_external.py
 +++ b/Lib/importlib/_bootstrap_external.py
-@@ -306,8 +306,6 @@ def cache_from_source(path, debug_override=None, *, optimization=None):
+@@ -313,8 +313,6 @@ def cache_from_source(path, debug_override=None, *, optimization=None):
      a True value is the same as setting 'optimization' to the empty string
      while a False value is equivalent to setting 'optimization' to '1'.
  
@@ -37,7 +37,7 @@ index b8ac482994..db034f605a 100644
      """
      if debug_override is not None:
          _warnings.warn('the debug_override parameter is deprecated; use '
-@@ -319,10 +317,7 @@ def cache_from_source(path, debug_override=None, *, optimization=None):
+@@ -326,10 +324,7 @@ def cache_from_source(path, debug_override=None, *, optimization=None):
      path = _os.fspath(path)
      head, tail = _path_split(path)
      base, sep, rest = tail.rpartition('.')
@@ -49,7 +49,7 @@ index b8ac482994..db034f605a 100644
      if optimization is None:
          if sys.flags.optimize == 0:
              optimization = ''
-@@ -359,46 +354,17 @@ def cache_from_source(path, debug_override=None, *, optimization=None):
+@@ -366,46 +361,17 @@ def cache_from_source(path, debug_override=None, *, optimization=None):
              head.lstrip(path_separators),
              filename,
          )
@@ -101,5 +101,5 @@ index b8ac482994..db034f605a 100644
  
  
 -- 
-2.20.1
+2.25.1
 

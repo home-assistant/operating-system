@@ -1,16 +1,11 @@
 config BR2_PACKAGE_STRESS_NG
 	bool "stress-ng"
 	depends on BR2_USE_MMU # fork()
-	# disabled on musl: stress-malloc.c needs mallopt() and M_MMAP_THRESHOLD
-	depends on !BR2_TOOLCHAIN_USES_MUSL
 	# perf.c needs PERF_COUNT_HW_REF_CPU_CYCLES
 	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_3
 	# fenv.h lacks FE_INVALID, FE_OVERFLOW & FE_UNDERFLOW on nios2 and ARC
 	depends on !BR2_nios2
 	depends on !BR2_arc
-	depends on !BR2_STATIC_LIBS # keyutils
-	select BR2_PACKAGE_KEYUTILS # stress-key.c needs keyutils.h
-	select BR2_PACKAGE_ATTR # stress-xattr.c needs xattr.h
 	help
 	  stress-ng will stress test a computer system in various
 	  selectable ways. It was designed to exercise various physical
@@ -19,8 +14,7 @@ config BR2_PACKAGE_STRESS_NG
 
 	  http://kernel.ubuntu.com/~cking/stress-ng/
 
-comment "stress-ng needs a glibc or uClibc toolchain w/ dynamic library, headers >= 3.3"
+comment "stress-ng needs a toolchain w/ headers >= 3.3"
 	depends on !BR2_nios2 && !BR2_arc
 	depends on BR2_USE_MMU
-	depends on BR2_STATIC_LIBS || !BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_3 \
-		|| BR2_TOOLCHAIN_USES_MUSL
+	depends on !BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_3

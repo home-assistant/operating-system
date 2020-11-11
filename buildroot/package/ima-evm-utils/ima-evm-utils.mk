@@ -4,11 +4,11 @@
 #
 ################################################################################
 
-IMA_EVM_UTILS_VERSION = 1.2.1
+IMA_EVM_UTILS_VERSION = 1.3.2
 IMA_EVM_UTILS_SITE = http://downloads.sourceforge.net/project/linux-ima/ima-evm-utils
 IMA_EVM_UTILS_LICENSE = GPL-2.0
 IMA_EVM_UTILS_LICENSE_FILES = COPYING
-IMA_EVM_UTILS_DEPENDENCIES = host-pkgconf keyutils openssl
+IMA_EVM_UTILS_DEPENDENCIES = host-pkgconf keyutils openssl tpm2-tss
 
 # Tarball doesn't contain configure
 IMA_EVM_UTILS_AUTORECONF = YES

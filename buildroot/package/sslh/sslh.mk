@@ -4,21 +4,33 @@
 #
 ################################################################################
 
-SSLH_VERSION = 1.20
+SSLH_VERSION = 1.21c
 SSLH_SOURCE = sslh-v$(SSLH_VERSION).tar.gz
 SSLH_SITE = http://www.rutschle.net/tech/sslh
 SSLH_LICENSE = GPL-2.0+
 SSLH_LICENSE_FILES = COPYING
 
-SSLH_DEPENDENCIES = libconfig
-
 SSLH_MAKE_OPTS = $(TARGET_CONFIGURE_OPTS)
+
+ifeq ($(BR2_PACKAGE_LIBBSD),y)
+SSLH_DEPENDENCIES += libbsd
+SSLH_MAKE_OPTS += USELIBBSD=1
+else
+SSLH_MAKE_OPTS += USELIBBSD=
+endif
 
 ifeq ($(BR2_PACKAGE_LIBCAP),y)
 SSLH_DEPENDENCIES += libcap
 SSLH_MAKE_OPTS += USELIBCAP=1
 else
 SSLH_MAKE_OPTS += USELIBCAP=
+endif
+
+ifeq ($(BR2_PACKAGE_LIBCONFIG),y)
+SSLH_DEPENDENCIES += libconfig
+SSLH_MAKE_OPTS += USELIBCONFIG=1
+else
+SSLH_MAKE_OPTS += USELIBCONFIG=
 endif
 
 ifeq ($(BR2_PACKAGE_PCRE),y)

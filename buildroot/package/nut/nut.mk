@@ -9,6 +9,7 @@ NUT_VERSION = $(NUT_VERSION_MAJOR).4
 NUT_SITE = http://www.networkupstools.org/source/$(NUT_VERSION_MAJOR)
 NUT_LICENSE = GPL-2.0+, GPL-3.0+ (python scripts), GPL/Artistic (perl client)
 NUT_LICENSE_FILES = COPYING LICENSE-GPL2 LICENSE-GPL3
+NUT_INSTALL_STAGING = YES
 NUT_DEPENDENCIES = host-pkgconf
 
 # Our patch changes m4 macros, so we need to autoreconf
@@ -21,6 +22,7 @@ NUT_MAKE = $(MAKE1)
 # since the default location (/var/state/ups) maybe readonly.
 NUT_CONF_OPTS = \
 	--with-altpidpath=/var/run/upsd \
+	--with-dev \
 	--without-hal
 
 # For uClibc-based toolchains, nut forgets to link with -lm
@@ -44,9 +46,7 @@ endif
 # gd with support for png is required for the CGI
 ifeq ($(BR2_PACKAGE_GD)$(BR2_PACKAGE_LIBPNG),yy)
 NUT_DEPENDENCIES += gd libpng
-NUT_CONF_OPTS += \
-	--with-cgi \
-	--with-gdlib-config=$(STAGING_DIR)/usr/bin/gdlib-config
+NUT_CONF_OPTS += --with-cgi
 else
 NUT_CONF_OPTS += --without-cgi
 endif

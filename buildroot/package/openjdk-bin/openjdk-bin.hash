@@ -1,6 +1,9 @@
-# From https://github.com/AdoptOpenJDK/openjdk12-binaries/releases
-sha256  9ccc063569f19899fd08e41466f8c4cd4e05058abdb5178fa374cb365dcf5998	OpenJDK13U-jdk_x64_linux_hotspot_13.0.2_8.tar.gz
+# From https://github.com/AdoptOpenJDK/openjdk14-binaries/releases
+sha256  7d5ee7e06909b8a99c0d029f512f67b092597aa5b0e78c109bd59405bbfa74fe  OpenJDK14U-jdk_x64_linux_hotspot_14.0.2_12.tar.gz
+
+# From https://github.com/AdoptOpenJDK/openjdk11-binaries/releases
+sha256  6e4cead158037cb7747ca47416474d4f408c9126be5b96f9befd532e0a762b47  OpenJDK11U-jdk_x64_linux_hotspot_11.0.8_10.tar.gz
 
 # Locally calculated
-sha256	4b9abebc4338048a7c2dc184e9f800deb349366bdf28eb23c2677a77b4c87726	legal/java.prefs/LICENSE
-sha256	a44eb7b5caf5534c6ef536b21edb40b4d6babf91bf97d9d45596868618b2c6fb	legal/java.prefs/ASSEMBLY_EXCEPTION
+sha256  4b9abebc4338048a7c2dc184e9f800deb349366bdf28eb23c2677a77b4c87726  legal/java.prefs/LICENSE
+sha256  a44eb7b5caf5534c6ef536b21edb40b4d6babf91bf97d9d45596868618b2c6fb  legal/java.prefs/ASSEMBLY_EXCEPTION

@@ -11,7 +11,7 @@ Signed-off-by: Baruch Siach <baruch@tkos.co.il>
 
 --- keyutils-1.5.9/Makefile.orig	2014-09-22 16:13:41.593562765 +0100
 +++ keyutils-1.5.9/Makefile	2014-09-22 16:14:05.377963952 +0100
-@@ -184,7 +184,7 @@ ifeq ($(NO_SOLIB),0)
+@@ -200,7 +200,7 @@ ifeq ($(NO_SOLIB),0)
  	$(INSTALL) -D $(LIBNAME) $(DESTDIR)$(LIBDIR)/$(LIBNAME)
  	$(LNS) $(LIBNAME) $(DESTDIR)$(LIBDIR)/$(SONAME)
  	mkdir -p $(DESTDIR)$(USRLIBDIR)

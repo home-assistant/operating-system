@@ -1,0 +1,38 @@
+From d170b19e500d85381369e379771be8d7816bcc92 Mon Sep 17 00:00:00 2001
+From: Adam Duskett <Aduskett@gmail.com>
+Date: Tue, 21 Jul 2020 13:08:50 -0700
+Subject: [PATCH] force position independent code
+
+Without this option, programs building for arm64 or x86-64 will fail when
+attempting to link to the built libraries with the following (abbreviated)
+error:
+
+"relocation against `.rodata' can not be used when making a shared object;
+recompile with -fPIC."
+
+Because libabseil-cpp builds static libraries, it is better to set the
+POSITION_INDEPENDENT_CODE to ON instead of forcing fPIC, as forcing fPIC may
+cause relocation errors when shared libraries link against the built static
+libraries.
+
+Signed-off-by: Adam Duskett <Aduskett@gmail.com>
+---
+ CMake/AbseilHelpers.cmake | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/CMake/AbseilHelpers.cmake b/CMake/AbseilHelpers.cmake
+index 86ff9eb..bdb7a89 100644
+--- a/CMake/AbseilHelpers.cmake
++++ b/CMake/AbseilHelpers.cmake
+@@ -209,6 +209,8 @@ function(absl_cc_library)
+     set_property(TARGET ${_NAME} PROPERTY CXX_STANDARD ${ABSL_CXX_STANDARD})
+     set_property(TARGET ${_NAME} PROPERTY CXX_STANDARD_REQUIRED ON)
+ 
++    # Without this setting, other programs such as GRPC will fail when linking.
++    set_property(TARGET ${_NAME} PROPERTY POSITION_INDEPENDENT_CODE ON)
+     # When being installed, we lose the absl_ prefix.  We want to put it back
+     # to have properly named lib files.  This is a no-op when we are not being
+     # installed.
+-- 
+2.26.2
+

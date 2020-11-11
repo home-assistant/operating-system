@@ -1,0 +1,36 @@
+From 13e475d9847bf7d6a6af62397f67eb269e27613e Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Mon, 13 Jul 2020 10:43:51 +0200
+Subject: [PATCH] src/dhcpcd.c: fix build without fork
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: https://github.com/rsmarples/dhcpcd/pull/17]
+---
+ src/dhcpcd.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/dhcpcd.c b/src/dhcpcd.c
+index ee585aa4..b597a5c0 100644
+--- a/src/dhcpcd.c
++++ b/src/dhcpcd.c
+@@ -336,7 +336,7 @@ dhcpcd_daemonise(struct dhcpcd_ctx *ctx)
+ #ifdef THERE_IS_NO_FORK
+ 	eloop_timeout_delete(ctx->eloop, handle_exit_timeout, ctx);
+ 	errno = ENOSYS;
+-	return 0;
++	return;
+ #else
+ 	int i;
+ 	unsigned int logopts = loggetopts();
+@@ -2211,7 +2211,7 @@ printpidfile:
+ 	ps_init(&ctx);
+ #endif
+ 
+-#ifdef USE_SIGNALS
++#if defined(USE_SIGNALS) && !defined(THERE_IS_NO_FORK)
+ 	if (pipe(sigpipe) == -1) {
+ 		logerr("pipe");
+ 		goto exit_failure;
+-- 
+2.27.0
+

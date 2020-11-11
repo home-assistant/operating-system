@@ -26,12 +26,12 @@ Signed-off-by: Adam Duskett <Aduskett@gmail.com>
  create mode 100644 m4/ax_check_compile_flag.m4
 
 diff --git a/Makefile.am b/Makefile.am
-index c6e9ad2..42d256b 100644
+index f961fdb..3ddbe59 100644
 --- a/Makefile.am
 +++ b/Makefile.am
-@@ -140,6 +140,7 @@ janus_CFLAGS = \
- 	-DTRANSPORTDIR=\"$(transportdir)\" \
+@@ -151,6 +151,7 @@ janus_CFLAGS = \
  	-DEVENTDIR=\"$(eventdir)\" \
+ 	-DLOGGERDIR=\"$(loggerdir)\" \
  	-DCONFDIR=\"$(confdir)\" \
 +	@GCC_WARN_UNUSED_BUT_SET@ \
  	$(BORINGSSL_CFLAGS) \
@@ -60,7 +60,7 @@ index ca17a29..beef91a 100644
 +		-Wunsafe-loop-optimizations"
  esac
  
- JANUS_VERSION=63
+ JANUS_VERSION=103
 diff --git a/m4/ax_check_compile_flag.m4 b/m4/ax_check_compile_flag.m4
 new file mode 100644
 index 0000000..51df0c0

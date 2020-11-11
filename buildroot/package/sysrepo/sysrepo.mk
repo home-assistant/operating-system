@@ -4,13 +4,13 @@
 #
 ################################################################################
 
-SYSREPO_VERSION = 1.3.21
+SYSREPO_VERSION = 1.4.70
 SYSREPO_SITE = $(call github,sysrepo,sysrepo,v$(SYSREPO_VERSION))
 SYSREPO_INSTALL_STAGING = YES
 SYSREPO_LICENSE = Apache-2.0
 SYSREPO_LICENSE_FILES = LICENSE
-SYSREPO_DEPENDENCIES = libev libavl libyang pcre protobuf-c host-sysrepo
-HOST_SYSREPO_DEPENDENCIES = host-libev host-libavl host-libyang host-pcre host-protobuf-c
+SYSREPO_DEPENDENCIES = libyang pcre host-sysrepo
+HOST_SYSREPO_DEPENDENCIES = host-libyang host-pcre
 
 SYSREPO_CONF_OPTS = \
 	-DCMAKE_BUILD_TYPE=Release \

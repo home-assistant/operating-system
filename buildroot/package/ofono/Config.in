@@ -5,6 +5,7 @@ config BR2_PACKAGE_OFONO
 	depends on BR2_USE_MMU # dbus, libglib2
 	depends on !BR2_STATIC_LIBS # dlopen(), ell
 	depends on BR2_TOOLCHAIN_HAS_SYNC_4
+	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_12 # ell
 	select BR2_PACKAGE_DBUS
 	select BR2_PACKAGE_ELL
 	select BR2_PACKAGE_LIBCAP_NG
@@ -17,7 +18,9 @@ config BR2_PACKAGE_OFONO
 
 	  http://ofono.org/
 
-comment "ofono needs a toolchain w/ dynamic library, wchar, threads"
+comment "ofono needs a toolchain w/ dynamic library, wchar, threads, headers >= 4.12"
 	depends on BR2_USE_MMU
 	depends on BR2_TOOLCHAIN_HAS_SYNC_4
-	depends on BR2_STATIC_LIBS || !BR2_USE_WCHAR || !BR2_TOOLCHAIN_HAS_THREADS
+	depends on BR2_STATIC_LIBS || !BR2_USE_WCHAR || \
+		!BR2_TOOLCHAIN_HAS_THREADS || \
+		!BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_12

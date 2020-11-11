@@ -1,0 +1,5 @@
+# md5, sha256 from https://pypi.org/pypi/jmespath/json
+md5  5c3380a84c565d7438e4766fd4b7a775  jmespath-0.9.4.tar.gz
+sha256  bde2aef6f44302dfb30320115b17d030798de8c4110e28d5cf6cf91a7a31074c  jmespath-0.9.4.tar.gz
+# Locally computed sha256 checksums
+sha256  66b313cce80ed0623fc7db3f24863a0c80fd83eb341a46b57864158ae74faa56  LICENSE.txt

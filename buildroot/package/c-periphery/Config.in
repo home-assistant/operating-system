@@ -1,6 +1,5 @@
 config BR2_PACKAGE_C_PERIPHERY
 	bool "c-periphery"
-	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_8
 	help
 	  c-periphery is a set of C wrapper functions for GPIO, SPI,
 	  I2C, MMIO, and Serial peripheral I/O interface access in
@@ -15,6 +14,3 @@ config BR2_PACKAGE_C_PERIPHERY
 	  integration with other projects, and is MIT licensed.
 
 	  https://github.com/vsergeev/c-periphery
-
-comment "c-periphery needs a toolchain w/ kernel headers >= 4.8"
-	depends on !BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_8

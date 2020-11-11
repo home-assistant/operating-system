@@ -1,0 +1,46 @@
+From 75d2b1787b3253784a94c66016829acf1f442526 Mon Sep 17 00:00:00 2001
+Message-Id: <75d2b1787b3253784a94c66016829acf1f442526.1603688719.git.baruch@tkos.co.il>
+From: Baruch Siach <baruch@tkos.co.il>
+Date: Mon, 26 Oct 2020 06:56:49 +0200
+Subject: [PATCH] libssh2: fix build with disabled proxy support
+
+Build breaks because the http_proxy field is missing:
+
+vssh/libssh2.c: In function 'ssh_connect':
+vssh/libssh2.c:3119:10: error: 'struct connectdata' has no member named 'http_proxy'
+   if(conn->http_proxy.proxytype == CURLPROXY_HTTPS) {
+		  ^
+
+Signed-off-by: Baruch Siach <baruch@tkos.co.il>
+---
+Upstream status: https://github.com/curl/curl/pull/6125
+
+ lib/vssh/libssh2.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/lib/vssh/libssh2.c b/lib/vssh/libssh2.c
+index 6c6db049bf5a..74cd5d887549 100644
+--- a/lib/vssh/libssh2.c
++++ b/lib/vssh/libssh2.c
+@@ -3094,6 +3094,7 @@ static CURLcode ssh_connect(struct connectdata *conn, bool *done)
+     return CURLE_FAILED_INIT;
+   }
+ 
++#ifndef CURL_DISABLE_PROXY
+   if(conn->http_proxy.proxytype == CURLPROXY_HTTPS) {
+     /*
+      * This crazy union dance is here to avoid assigning a void pointer a
+@@ -3132,7 +3133,9 @@ static CURLcode ssh_connect(struct connectdata *conn, bool *done)
+     libssh2_session_callback_set(ssh->ssh_session,
+                                  LIBSSH2_CALLBACK_SEND, sshsend.sendp);
+   }
+-  else if(conn->handler->protocol & CURLPROTO_SCP) {
++  else
++#endif /* CURL_DISABLE_PROXY */
++  if(conn->handler->protocol & CURLPROTO_SCP) {
+     conn->recv[FIRSTSOCKET] = scp_recv;
+     conn->send[FIRSTSOCKET] = scp_send;
+   }
+-- 
+2.28.0
+

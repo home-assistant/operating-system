@@ -6,6 +6,8 @@ config BR2_PACKAGE_C_CAPNPROTO
 	depends on BR2_INSTALL_LIBSTDCPP # capnproto
 	depends on BR2_TOOLCHAIN_HAS_THREADS # capnproto
 	depends on BR2_TOOLCHAIN_HAS_ATOMIC # capnproto
+	depends on !BR2_TOOLCHAIN_HAS_GCC_BUG_64735 # capnproto
+	depends on BR2_TOOLCHAIN_HAS_UCONTEXT # capnproto
 	select BR2_PACKAGE_CAPNPROTO
 	help
 	  A C plugin for Cap'n Proto. Generates the code generator
@@ -14,10 +16,12 @@ config BR2_PACKAGE_C_CAPNPROTO
 
 	  https://github.com/opensourcerouting/c-capnproto
 
-comment "c-capnproto needs host and target gcc >= 5 w/ C++14, threads, atomic"
+comment "c-capnproto needs host and target gcc >= 5 w/ C++14, threads, atomic, ucontext and not gcc bug 64735"
 	depends on BR2_USE_MMU
 	depends on!BR2_HOST_GCC_AT_LEAST_5 || \
 		!BR2_TOOLCHAIN_GCC_AT_LEAST_5 || \
 		!BR2_INSTALL_LIBSTDCPP || \
 		!BR2_TOOLCHAIN_HAS_THREADS || \
-		!BR2_TOOLCHAIN_HAS_ATOMIC
+		!BR2_TOOLCHAIN_HAS_ATOMIC || \
+		BR2_TOOLCHAIN_HAS_GCC_BUG_64735 || \
+		!BR2_TOOLCHAIN_HAS_UCONTEXT

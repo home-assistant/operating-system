@@ -1,0 +1,35 @@
+From 7ab4d5eb55e1d3900390b76e5f46e80e22d4e80e Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sat, 10 Oct 2020 21:34:21 +0200
+Subject: [PATCH] configure.ac: allow the user to override RUST_TARGET
+
+When cross-compiling, RUST_TARGET is not always equal to host_triplet
+(e.g. buildroot) so allow the user to override this default value
+through RUST_TARGET environment variable
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ configure.ac | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/configure.ac b/configure.ac
+index 32c230209..7d7c9373f 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -2489,7 +2489,12 @@ fi
+     have_rust_vendor="no"
+ 
+     if test "x$cross_compiling" = "xyes"; then
+-      RUST_SURICATA_LIB_XC_DIR="${host_alias}/"
++      if test "x$RUST_TARGET" != "x"; then
++        RUST_SURICATA_LIB_XC_DIR="$RUST_TARGET/"
++        AC_SUBST([RUST_TARGET],["--target $RUST_TARGET"])
++      else
++        RUST_SURICATA_LIB_XC_DIR="${host_alias}/"
++      fi
+     else
+       if test "x$CARGO_BUILD_TARGET" = "x"; then
+         RUST_SURICATA_LIB_XC_DIR=
+-- 
+2.28.0
+

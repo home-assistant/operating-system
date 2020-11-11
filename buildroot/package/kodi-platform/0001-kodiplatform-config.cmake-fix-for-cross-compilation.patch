@@ -6,6 +6,8 @@ Subject: [PATCH] kodiplatform-config.cmake: fix for cross-compilation
 Use CMAKE_FIND_ROOT_PATH in kodiplatform-config.cmake in order to make
 it cross-compilation friendly.
 
+Patch sent upstream: https://github.com/xbmc/kodi-platform/pull/30
+
 Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 ---
  CMakeLists.txt               | 2 +-

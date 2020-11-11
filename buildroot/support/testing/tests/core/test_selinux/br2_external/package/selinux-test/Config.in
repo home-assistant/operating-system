@@ -1,0 +1,4 @@
+config BR2_PACKAGE_SELINUX_TEST
+	bool "SELinux test package"
+	help
+	  Test package for SELinux Buildroot helpers.

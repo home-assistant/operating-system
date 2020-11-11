@@ -18,6 +18,7 @@ config BR2_PACKAGE_MONGREL2
 	depends on BR2_TOOLCHAIN_HAS_THREADS # zeromq
 	depends on !BR2_STATIC_LIBS # uses dlopen()
 	depends on BR2_PACKAGE_MONGREL2_LIBC_SUPPORTS
+	select BR2_PACKAGE_MBEDTLS
 	select BR2_PACKAGE_SQLITE
 	select BR2_PACKAGE_ZEROMQ
 	help

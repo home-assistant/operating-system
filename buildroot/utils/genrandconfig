@@ -301,6 +301,22 @@ def fixup_config(sysinfo, configfile):
        'BR2_PACKAGE_FLANN=y\n' in configlines:
         return False
 
+    if 'BR2_PACKAGE_HOST_UBOOT_TOOLS_ENVIMAGE=y\n' in configlines:
+        bootenv = os.path.join(args.outputdir, "boot_env.txt")
+        with open(bootenv, "w+") as bootenvf:
+            bootenvf.write("prop=value")
+        configlines.remove('BR2_PACKAGE_HOST_UBOOT_TOOLS_ENVIMAGE_SOURCE=""\n')
+        configlines.append('BR2_PACKAGE_HOST_UBOOT_TOOLS_ENVIMAGE_SOURCE="%s"\n' % bootenv)
+        configlines.remove('BR2_PACKAGE_HOST_UBOOT_TOOLS_ENVIMAGE_SIZE=""\n')
+        configlines.append('BR2_PACKAGE_HOST_UBOOT_TOOLS_ENVIMAGE_SIZE="0x1000"\n')
+
+    if 'BR2_PACKAGE_HOST_UBOOT_TOOLS_BOOT_SCRIPT=y\n' in configlines:
+        bootscr = os.path.join(args.outputdir, "boot_script.txt")
+        with open(bootscr, "w+") as bootscrf:
+            bootscrf.write("prop=value")
+        configlines.remove('BR2_PACKAGE_HOST_UBOOT_TOOLS_BOOT_SCRIPT_SOURCE=""\n')
+        configlines.append('BR2_PACKAGE_HOST_UBOOT_TOOLS_BOOT_SCRIPT_SOURCE="%s"\n' % bootscr)
+
     with open(configfile, "w+") as configf:
         configf.writelines(configlines)
 

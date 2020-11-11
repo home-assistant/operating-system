@@ -29,6 +29,41 @@ config BR2_PACKAGE_REFPOLICY
 if BR2_PACKAGE_REFPOLICY
 
 choice
+	prompt "Refpolicy version"
+	default BR2_PACKAGE_REFPOLICY_UPSTREAM_VERSION
+
+config BR2_PACKAGE_REFPOLICY_UPSTREAM_VERSION
+	bool "Upstream version"
+	help
+	  Use the refpolicy as provided by Buildroot.
+
+config BR2_PACKAGE_REFPOLICY_CUSTOM_GIT
+	bool "Custom git repository"
+	help
+	  Allows to get the refpolicy from a custom git repository.
+
+	  The custom refpolicy must define the full policy explicitly,
+	  and must be a fork of the original refpolicy, to have the
+	  same build system.  When this is selected, only the custom
+	  policy definition are taken into account and all the modules
+	  of the policy are built into the binary policy.
+
+endchoice
+
+if BR2_PACKAGE_REFPOLICY_CUSTOM_GIT
+
+config BR2_PACKAGE_REFPOLICY_CUSTOM_REPO_URL
+	string "URL of custom repository"
+
+config BR2_PACKAGE_REFPOLICY_CUSTOM_REPO_VERSION
+	string "Custom repository version"
+	help
+	  Revision to use in the typical format used by Git.
+	  E.g. a sha id, tag, branch...
+
+endif
+
+choice
 	prompt "SELinux default state"
 	default BR2_PACKAGE_REFPOLICY_POLICY_STATE_PERMISSIVE
 
@@ -53,6 +88,28 @@ config BR2_PACKAGE_REFPOLICY_POLICY_STATE
 	default "permissive" if BR2_PACKAGE_REFPOLICY_POLICY_STATE_PERMISSIVE
 	default "enforcing" if BR2_PACKAGE_REFPOLICY_POLICY_STATE_ENFORCING
 	default "disabled" if BR2_PACKAGE_REFPOLICY_POLICY_STATE_DISABLED
+
+if BR2_PACKAGE_REFPOLICY_UPSTREAM_VERSION
+
+config BR2_REFPOLICY_EXTRA_MODULES_DIRS
+	string "Extra modules directories"
+	help
+	  Specify a space-separated list of directories containing
+	  SELinux modules that will be built into the SELinux
+	  policy. The modules will be automatically enabled in the
+	  policy.
+
+	  Each of those directories must contain the SELinux policy
+	  .fc, .if and .te files directly at the top-level, with no
+	  sub-directories. Also, you cannot have several modules with
+	  the same name in different directories.
+
+config BR2_REFPOLICY_EXTRA_MODULES
+	string "Extra modules to enable"
+	help
+	  List of extra SELinux modules to enable in the refpolicy.
+
+endif
 
 endif
 

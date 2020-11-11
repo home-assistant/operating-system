@@ -44,6 +44,10 @@ config BR2_PACKAGE_STRONGSWAN_GMP
 	bool "GNU MP (libgmp)"
 	select BR2_PACKAGE_GMP
 
+config BR2_PACKAGE_STRONGSWAN_WOLFSSL
+	bool "wolfssl"
+	select BR2_PACKAGE_WOLFSSL
+
 endchoice
 
 config BR2_PACKAGE_STRONGSWAN_AF_ALG

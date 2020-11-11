@@ -1,0 +1,8 @@
+config BR2_PACKAGE_PYTHON_CRAYONS
+	bool "python-crayons"
+	depends on BR2_PACKAGE_PYTHON3
+	help
+	  This module is really simple, it gives you
+	  colored strings for terminal usage.
+
+	  https://pypi.org/project/crayons

@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-NETSURF_VERSION = 3.9
+NETSURF_VERSION = 3.10
 NETSURF_SOURCE = netsurf-all-$(NETSURF_VERSION).tar.gz
 NETSURF_SITE = http://download.netsurf-browser.org/netsurf/releases/source-full
 NETSURF_LICENSE = GPL-2.0
@@ -15,7 +15,7 @@ NETSURF_DEPENDENCIES = expat jpeg libpng \
 
 ifeq ($(BR2_PACKAGE_NETSURF_GTK),y)
 NETSURF_DEPENDENCIES += libgtk2
-NETSURF_FRONTEND = gtk
+NETSURF_FRONTEND = gtk2
 endif
 
 ifeq ($(BR2_PACKAGE_NETSURF_GTK3),y)

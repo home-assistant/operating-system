@@ -5,9 +5,9 @@
 ################################################################################
 
 ifeq ($(BR2_aarch64),y)
-IMX_GPU_VIV_VERSION = 6.4.0.p1.0-aarch64
+IMX_GPU_VIV_VERSION = 6.4.0.p2.4-aarch64
 else
-IMX_GPU_VIV_VERSION = 6.4.0.p1.0-aarch32
+IMX_GPU_VIV_VERSION = 6.4.0.p2.4-aarch32
 endif
 IMX_GPU_VIV_SITE = $(FREESCALE_IMX_SITE)
 IMX_GPU_VIV_SOURCE = imx-gpu-viv-$(IMX_GPU_VIV_VERSION).bin
@@ -59,15 +59,6 @@ define IMX_GPU_VIV_BUILD_CMDS
 endef
 
 ifeq ($(IMX_GPU_VIV_LIB_TARGET),fb)
-define IMX_GPU_VIV_FIXUP_FB_HEADERS
-	$(SED) '39i\
-		#if !defined(EGL_API_X11) && !defined(EGL_API_DFB) && !defined(EGL_API_FB) \n\
-		#define EGL_API_FB \n\
-		#endif' $(STAGING_DIR)/usr/include/EGL/eglplatform.h
-endef
-endif
-
-ifeq ($(IMX_GPU_VIV_LIB_TARGET),fb)
 define IMX_GPU_VIV_FIXUP_PKGCONFIG
 	ln -sf egl_linuxfb.pc $(@D)/gpu-core/usr/lib/pkgconfig/egl.pc
 endef
@@ -89,7 +80,6 @@ endif
 
 define IMX_GPU_VIV_INSTALL_STAGING_CMDS
 	cp -r $(@D)/gpu-core/usr/* $(STAGING_DIR)/usr
-	$(IMX_GPU_VIV_FIXUP_FB_HEADERS)
 	$(IMX_GPU_VIV_FIXUP_PKGCONFIG)
 	for lib in egl gbm glesv1_cm glesv2 vg; do \
 		$(INSTALL) -m 0644 -D \

@@ -4,15 +4,11 @@
 #
 ################################################################################
 
-LTRACE_VERSION = c22d359433b333937ee3d803450dc41998115685
-#LTRACE_SITE = git://anonscm.debian.org/collab-maint/ltrace.git
-
-# Upstream is dead: the git reporistory for ltrace did not follow during the
-# migration from alioth to gitlab, and there is no longer any official
-# upstream repository with the expected sha1, except for the tarball cached on
-# s.b.o., so we go fetch it there.
-LTRACE_SITE = http://sources.buildroot.org/ltrace
-
+# This github version has some extra fixes on top of https://ltrace.org/
+# in particular the following commit to avoid a crash:
+#   192e0a6 void struct members are now ignored
+LTRACE_VERSION = 82c66409c7a93ca6ad2e4563ef030dfb7e6df4d4
+LTRACE_SITE = $(call github,dkogan,ltrace,$(LTRACE_VERSION))
 LTRACE_DEPENDENCIES = elfutils
 LTRACE_CONF_OPTS = --disable-werror
 LTRACE_LICENSE = GPL-2.0

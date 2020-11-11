@@ -1,0 +1,38 @@
+From cb8326de54ad7a56658b0dc8efb7da5e71684a7c Mon Sep 17 00:00:00 2001
+From: Pablo Galindo <pablogsal@gmail.com>
+Date: Tue, 22 Sep 2020 01:33:47 +0100
+Subject: [PATCH] Use sh_offset instead of sh_addr when checking already
+ replaced libs
+
+When checking for already replaced libs, the check against the size must
+be done using the section header offset, not the section file address.
+This was not crashing in many situations because normally sh_address and
+sh_offset have the same value but these two may differ and using the
+sh_address value instead can cause library corruption in these
+situations.
+
+Fetch from: https://github.com/NixOS/patchelf/commit/83aa89addf8757e2d63aa73222f2fa9bc6d7321a
+
+Backported to v0.9
+
+Signed-off-by: Conrad Ratschan <conrad.ratschan@rockwellcollins.com>
+---
+ src/patchelf.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/patchelf.cc b/src/patchelf.cc
+index 4676157..c025ae2 100644
+--- a/src/patchelf.cc
++++ b/src/patchelf.cc
+@@ -666,7 +666,7 @@ void ElfFile<ElfFileParamNames>::rewriteSectionsLibrary()
+     /* Some sections may already be replaced so account for that */
+     unsigned int i = 1;
+     Elf_Addr pht_size = sizeof(Elf_Ehdr) + (phdrs.size() + 1)*sizeof(Elf_Phdr);
+-    while( shdrs[i].sh_addr <= pht_size && i < rdi(hdr->e_shnum) ) {
++    while( shdrs[i].sh_offset <= pht_size && i < rdi(hdr->e_shnum) ) {
+         if (not haveReplacedSection(getSectionName(shdrs[i])))
+             replaceSection(getSectionName(shdrs[i]), shdrs[i].sh_size);
+         i++;
+-- 
+2.17.1
+

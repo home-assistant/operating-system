@@ -4,6 +4,10 @@ Date: Thu, 24 Mar 2011 14:45:21 +0200
 Subject: [PATCH] soa_tag.h: reintroduce soatag_local_sdp_str_ref
 
 Thanks to Erik Habicht <e.habicht at thiesen.com> for spotting it
+
+Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
+[rebased for sofia-sip 1.13.1-d10a3d268c, patch sent upstream
+ https://github.com/freeswitch/sofia-sip/pull/23]
 ---
  libsofia-sip-ua/soa/sofia-sip/soa_tag.h |    2 +-
  1 files changed, 1 insertions(+), 1 deletions(-)
@@ -12,7 +16,7 @@ diff --git a/libsofia-sip-ua/soa/sofia-sip/soa_tag.h b/libsofia-sip-ua/soa/sofia
 index 723ca02..d9448d6 100644
 --- a/libsofia-sip-ua/soa/sofia-sip/soa_tag.h
 +++ b/libsofia-sip-ua/soa/sofia-sip/soa_tag.h
-@@ -118,7 +118,7 @@ SOFIAPUBVAR tag_typedef_t soatag_local_sdp_ref;
+@@ -130,7 +130,7 @@ SOFIAPUBVAR tag_typedef_t soatag_local_sdp_ref;
  SOFIAPUBVAR tag_typedef_t soatag_local_sdp_str;
  #define SOATAG_LOCAL_SDP_STR_REF(x) \
    soatag_local_sdp_str_ref, tag_str_vr(&(x))

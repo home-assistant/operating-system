@@ -8,7 +8,6 @@ config BR2_PACKAGE_CONNMAN
 	depends on !BR2_TOOLCHAIN_USES_MUSL # missing res_ninit()
 	select BR2_PACKAGE_DBUS
 	select BR2_PACKAGE_LIBGLIB2
-	select BR2_PACKAGE_IPTABLES
 	help
 	  The Connection Manager (ConnMan) project provides a daemon
 	  for managing internet connections within embedded devices
@@ -17,6 +16,28 @@ config BR2_PACKAGE_CONNMAN
 	  https://01.org/connman
 
 if BR2_PACKAGE_CONNMAN
+
+choice
+	prompt "Firewall type"
+	default BR2_PACKAGE_CONNMAN_IPTABLES
+	help
+	  Select which firewall type is used.
+
+config BR2_PACKAGE_CONNMAN_IPTABLES
+	bool "iptables"
+	select BR2_PACKAGE_IPTABLES
+	help
+	  Use iptables as firewall.
+
+config BR2_PACKAGE_CONNMAN_NFTABLES
+	bool "nftables"
+	depends on BR2_USE_WCHAR
+	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_12
+	select BR2_PACKAGE_LIBMNL
+	select BR2_PACKAGE_NFTABLES
+	help
+	  Use nftables as firewall.
+endchoice
 
 config BR2_PACKAGE_CONNMAN_ETHERNET
 	bool "enable Ethernet support"
@@ -30,6 +51,10 @@ config BR2_PACKAGE_CONNMAN_WIFI
 	  Enable WiFi support (scan and static/dhcp interface
 	  setup). ConnMan detects the start of wpa_supplicant
 	  automatically.
+
+config BR2_PACKAGE_CONNMAN_WIREGUARD
+	bool "enable wireguard support"
+	select BR2_PACKAGE_LIBMNL
 
 config BR2_PACKAGE_CONNMAN_WISPR
 	bool "enable WISPr support"
@@ -60,7 +85,11 @@ config BR2_PACKAGE_CONNMAN_NEARD
 config BR2_PACKAGE_CONNMAN_OFONO
 	bool "enable ofono support"
 	depends on BR2_TOOLCHAIN_HAS_SYNC_4 # ofono
+	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_12 # ofono
 	select BR2_PACKAGE_OFONO
+
+comment "ofono support needs a toolchain w/ headers >= 4.12"
+	depends on !BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_12
 
 config BR2_PACKAGE_CONNMAN_DEBUG
 	bool "enable compiling with debugging information"

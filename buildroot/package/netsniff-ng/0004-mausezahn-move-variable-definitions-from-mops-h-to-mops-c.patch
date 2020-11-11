@@ -1,0 +1,69 @@
+From 3178ceb8c7e0a94ed29bbd1e277f03bb0d5a3d44 Mon Sep 17 00:00:00 2001
+From: Tobias Klauser <tklauser@distanz.ch>
+Date: Wed, 19 Aug 2020 12:58:51 +0200
+Subject: [PATCH] mausezahn: move variable definitions from mops.h to mops.c
+
+Move variable definitions to avoid "multiple definition of symbol"
+linker errors with gcc-10.
+
+Updates #216
+
+Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
+[Retrieved from:
+https://github.com/netsniff-ng/netsniff-ng/commit/3178ceb8c7e0a94ed29bbd1e277f03bb0d5a3d44]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ staging/mops.c | 5 ++++-
+ staging/mops.h | 8 ++++----
+ 2 files changed, 8 insertions(+), 5 deletions(-)
+
+diff --git a/staging/mops.c b/staging/mops.c
+index 599d317f..fc00e29a 100644
+--- a/staging/mops.c
++++ b/staging/mops.c
+@@ -46,8 +46,11 @@
+ #include "mz.h"
+ #include "mops.h"
+ 
++unsigned int min_frame_s;
++unsigned int max_frame_s;
+ 
+-
++struct automops * amp_head;
++struct mops *mp_head; // This global will point to the head of the mops list
+ 
+ // Creates first element, aka "head" element
+ // This element can also be used! See mops_alloc_packet!
+diff --git a/staging/mops.h b/staging/mops.h
+index 96953e66..cf19f098 100644
+--- a/staging/mops.h
++++ b/staging/mops.h
+@@ -114,8 +114,8 @@
+ // These are initialized with the definitions MIN_MOPS_FRAME_SIZE and 
+ // MAX_MOPS_FRAME_SIZE above but can be overridden by the user (without
+ // extending these limits)
+-unsigned int min_frame_s;
+-unsigned int max_frame_s;
++extern unsigned int min_frame_s;
++extern unsigned int max_frame_s;
+ 
+ struct mops_counter
+ {
+@@ -246,7 +246,7 @@ struct automops {
+ };
+ 
+ 
+-struct automops * amp_head;
++extern struct automops * amp_head;
+ 
+ 
+ struct mops
+@@ -688,7 +688,7 @@ struct mops_ext_syslog //TODO
+    
+ /////////////////////////////////////////////////////////////////
+ 
+-struct mops *mp_head; // This global will point to the head of the mops list
++extern struct mops *mp_head; // This global will point to the head of the mops list
+ 
+ /////////////////////////////////////////////////////////////////
+ // MOPS Prototypes:

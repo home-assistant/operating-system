@@ -1,0 +1,35 @@
+From 62afc499fc46c8018f40733c31a675b28f0717d8 Mon Sep 17 00:00:00 2001
+From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Date: Wed, 26 Aug 2020 10:15:24 +0200
+Subject: [PATCH 3/5] drm/bridge: ps8640: Return an error for incorrect attach
+ flags
+
+Bridge drivers that implement the new model only shall return an error
+from their attach() handler when the DRM_BRIDGE_ATTACH_NO_CONNECTOR flag
+is not set. So make sure we return an error because only the new
+drm_bridge model is supported.
+
+Reviewed-by: Sam Ravnborg <sam@ravnborg.org>
+Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+---
+ drivers/gpu/drm/bridge/parade-ps8640.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/drivers/gpu/drm/bridge/parade-ps8640.c b/drivers/gpu/drm/bridge/parade-ps8640.c
+index 13755d278db6..ce3e8b2da8c9 100644
+--- a/drivers/gpu/drm/bridge/parade-ps8640.c
++++ b/drivers/gpu/drm/bridge/parade-ps8640.c
+@@ -200,6 +200,10 @@ static int ps8640_bridge_attach(struct drm_bridge *bridge,
+ 						   .channel = 0,
+ 						   .node = NULL,
+ 						 };
++
++	if (!(flags & DRM_BRIDGE_ATTACH_NO_CONNECTOR))
++		return -EINVAL;
++
+ 	/* port@0 is ps8640 dsi input port */
+ 	in_ep = of_graph_get_endpoint_by_regs(dev->of_node, 0, -1);
+ 	if (!in_ep)
+-- 
+2.25.1
+

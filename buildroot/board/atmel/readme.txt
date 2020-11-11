@@ -1,6 +1,6 @@
-This document explains how to set up a basic Buildroot system on various
-Atmel boards. Additional details can also be found on the Linux4SAM website:
-http://www.at91.com/linux4sam/bin/view/Linux4SAM/
+This document explains how to set up a basic Buildroot system on
+various Atmel/Microchip boards. Additional details can also be found
+on the Linux4SAM website: http://www.linux4sam.org
 
 This guide covers the following configurations:
  - at91sam9g45m10ek_defconfig
@@ -19,6 +19,8 @@ This guide covers the following configurations:
  - atmel_sama5d4_xplained_mmc_dev_defconfig
  - atmel_sama5d2_xplained_mmc_defconfig
  - atmel_sama5d2_xplained_mmc_dev_defconfig
+ - microchip_sama5d27_wlsom1_ek_mmc_defconfig
+ - microchip_sama5d27_wlsom1_ek_mmc_dev_defconfig
 
 These configurations will use AT91Bootstrap, u-boot and a linux kernel from
 the git trees maintained by Atmel.
@@ -29,22 +31,22 @@ tests the features of the SoC:
 - FFMPEG to record video from the ISI/ISC
 - I2C, SPI, CAN, etc. tools
 - modetest for LCD screens, HDMI
-- Wilc1000 firmware for the Atmel Wireless sdio module
+- Wilc1000/Wilc3000 firmware for the Atmel Wireless sdio module
 - SSH for convenience
 - GDB/GDB server for debug
 
 Configuring and building Buildroot
 ==================================
 
-For most configurations listed above, the Buildroot configuration
-assumes the system will be flashed on NAND. In this case, after
-building Buildroot, follow the instructions in the "Flashing the NAND
-using SAM-BA" section below.
-
-For the Xplained boards, an alternative Buildroot configuration is
+For the Xplained/Evaluation Kit boards, the Buildroot configuration is
 provided to boot from an SD card. Those configurations are labeled as
 'mmc'. In this case, after building Buildroot, follow the instructions
 in the "Preparing the SD card" section.
+
+For the other configurations listed above, the Buildroot configuration
+assumes the system will be flashed on NAND. In this case, after
+building Buildroot, follow the instructions in the "Flashing the NAND
+using SAM-BA" section below.
 
 To configure and build Buildroot, run:
 
@@ -144,10 +146,10 @@ lost. To copy the image on the SD card:
 
 dd if=output/images/sdcard.img of=/dev/mmcblk0
 
-Insert your SD card in your Xplained board, and enjoy. The default
-U-Boot environment will load properly the kernel and Device Tree blob
-from the first partition of the SD card, so everything works
-automatically.
+Insert your SD card in your Xplained/Evaluation Kit board, and
+enjoy. The default U-Boot environment will load properly the kernel
+and Device Tree blob from the first partition of the SD card, so
+everything works automatically.
 
 By default a 16MB FAT partition is created. It contains at91bootstrap,
 u-boot, the kernel image and all dtb variants for your board. The dtb

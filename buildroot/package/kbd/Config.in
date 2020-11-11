@@ -2,7 +2,12 @@ config BR2_PACKAGE_KBD
 	bool "kbd"
 	# Uses fork()
 	depends on BR2_USE_MMU
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # _Generic
 	help
 	  Keytable files and keyboard utilities.
 
 	  http://kernel.org/pub/linux/utils/kbd/
+
+comment "kbd needs a toolchain w/ gcc >= 4.9"
+	depends on BR2_USE_MMU
+	depends on !BR2_TOOLCHAIN_GCC_AT_LEAST_4_9

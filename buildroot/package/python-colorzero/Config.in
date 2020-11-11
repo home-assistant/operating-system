@@ -1,0 +1,6 @@
+config BR2_PACKAGE_PYTHON_COLORZERO
+	bool "python-colorzero"
+	help
+	  A color manipulation library for Python.
+
+	  https://github.com/waveform80/colorzero

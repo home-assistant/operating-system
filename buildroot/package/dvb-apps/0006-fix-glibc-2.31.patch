@@ -1,0 +1,21 @@
+dvbdate: fix compilation error with glibc 2.31
+
+as stime func doesn't exists anymore in newer versions of glibc >= 2.31 due
+to obseletion, a replacment with clock_settime is inorder to fix the issue.
+
+Signed-off-by: Dagg Stompler <daggs@gmx.com>
+
+--- a/util/dvbdate/dvbdate.c
++++ b/util/dvbdate/dvbdate.c
+@@ -309,7 +309,10 @@
+  */
+ int set_time(time_t * new_time)
+ {
+-	if (stime(new_time)) {
++	struct timespec s = {0};
++	s.tv_sec = new_time;
++
++	if (clock_settime(CLOCK_REALTIME, &s)) {
+ 		perror("Unable to set time");
+ 		return -1;
+ 	}

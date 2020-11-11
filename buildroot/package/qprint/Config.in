@@ -1,0 +1,18 @@
+config BR2_PACKAGE_QPRINT
+	bool "qprint"
+	help
+	  qprint is a program that encodes and decodes binary data in
+	  the Quoted-Printable encoding, defined as a part of the MIME
+	  specification in RFC 1521. This encoding allows for efficient
+	  transfer of mostly ASCII data over transports that are only
+	  7-bit clean, like SMTP without 8BITMIME or BINARYMIME
+	  extensions. It also allows the transfer of long lines of text
+	  by wrapping them every 76 characters.
+
+	  Usually, a sophisticated MUA will take care of automatically
+	  choosing the best encodings for an e-mail. Nevertheless, this
+	  utility may be useful when a MTA (e.g. msmtp) is used without
+	  a MUA, or if using this encoding for other purposes is
+	  desired.
+
+	  https://www.fourmilab.ch/webtools/qprint/

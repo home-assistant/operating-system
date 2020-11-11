@@ -1,0 +1,6 @@
+config BR2_PACKAGE_PYTHON_ANSICOLORS
+	bool "python-ansicolors"
+	help
+	  ANSI colors for Python.
+
+	  http://github.com/jonathaneunice/colors/

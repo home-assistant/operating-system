@@ -41,7 +41,7 @@ choice
 	  Select the specific U-Boot version you want to use
 
 config BR2_TARGET_UBOOT_LATEST_VERSION
-	bool "2020.01"
+	bool "2020.10"
 
 config BR2_TARGET_UBOOT_CUSTOM_VERSION
 	bool "Custom version"
@@ -74,13 +74,9 @@ if BR2_TARGET_UBOOT_CUSTOM_GIT || BR2_TARGET_UBOOT_CUSTOM_HG || BR2_TARGET_UBOOT
 
 config BR2_TARGET_UBOOT_CUSTOM_REPO_URL
 	string "URL of custom repository"
-	default BR2_TARGET_UBOOT_CUSTOM_GIT_REPO_URL \
-		if BR2_TARGET_UBOOT_CUSTOM_GIT_REPO_URL != ""  # legacy
 
 config BR2_TARGET_UBOOT_CUSTOM_REPO_VERSION
 	string "Custom repository version"
-	default BR2_TARGET_UBOOT_CUSTOM_GIT_VERSION \
-		if BR2_TARGET_UBOOT_CUSTOM_GIT_VERSION != ""  # legacy
 	help
 	  Revision to use in the typical format used by
 	  Git/Mercurial/Subversion E.G. a sha id, a tag, branch, ..
@@ -89,7 +85,7 @@ endif
 
 config BR2_TARGET_UBOOT_VERSION
 	string
-	default "2020.01"	if BR2_TARGET_UBOOT_LATEST_VERSION
+	default "2020.10"	if BR2_TARGET_UBOOT_LATEST_VERSION
 	default BR2_TARGET_UBOOT_CUSTOM_VERSION_VALUE \
 		if BR2_TARGET_UBOOT_CUSTOM_VERSION
 	default "custom"	if BR2_TARGET_UBOOT_CUSTOM_TARBALL
@@ -147,14 +143,45 @@ config BR2_TARGET_UBOOT_NEEDS_DTC
 	  Select this option if your U-Boot board configuration
 	  requires the Device Tree compiler to be available.
 
+config BR2_TARGET_UBOOT_NEEDS_PYTHON
+	bool
+
+choice
+	bool "U-Boot needs host Python"
+
+config BR2_TARGET_UBOOT_NEEDS_PYTHON_NONE
+	bool "no"
+	depends on !BR2_TARGET_UBOOT_NEEDS_PYTHON
+	help
+	  Select this option if U-Boot does not need any
+	  host python to build.
+
+config BR2_TARGET_UBOOT_NEEDS_PYTHON2
+	bool "python 2.x"
+	help
+	  Select this option if U-Boot needs a host Python 2.x
+	  interpreter. This is the case for some U-Boot
+	  configurations, prior to U-Boot 2020.01.
+
+config BR2_TARGET_UBOOT_NEEDS_PYTHON3
+	bool "python 3.x"
+	help
+	  Select this option if U-Boot needs a host Python 3.x
+	  interpreter. This is the case for some U-Boot
+	  configurations, after U-Boot 2020.01.
+
+endchoice
+
 config BR2_TARGET_UBOOT_NEEDS_PYLIBFDT
 	bool "U-Boot needs pylibfdt"
+	select BR2_TARGET_UBOOT_NEEDS_PYTHON
 	help
 	  Select this option if your U-Boot board configuration
 	  requires the Python libfdt library to be available.
 
 config BR2_TARGET_UBOOT_NEEDS_PYELFTOOLS
 	bool "U-Boot needs pyelftools"
+	select BR2_TARGET_UBOOT_NEEDS_PYTHON
 	help
 	  Select this option if your U-Boot board configuration
 	  requires the Python pyelftools library to be available.
@@ -218,46 +245,30 @@ config BR2_TARGET_UBOOT_FORMAT_BIN
 config BR2_TARGET_UBOOT_FORMAT_DTB_BIN
 	bool "u-boot-dtb.bin"
 
-config BR2_TARGET_UBOOT_FORMAT_DTB_IMG
-	bool "u-boot-dtb.img"
-
-config BR2_TARGET_UBOOT_FORMAT_DTB_IMX
-	bool "u-boot-dtb.imx"
-
-config BR2_TARGET_UBOOT_FORMAT_IMG
-	bool "u-boot.img"
-
-config BR2_TARGET_UBOOT_FORMAT_ITB
-	bool "u-boot.itb"
-
-config BR2_TARGET_UBOOT_FORMAT_IMX
-	bool "u-boot.imx"
-
 config BR2_TARGET_UBOOT_FORMAT_NAND_BIN
 	bool "u-boot-nand.bin"
-
-config BR2_TARGET_UBOOT_FORMAT_KWB
-	bool "u-boot.kwb (Marvell)"
-	depends on BR2_arm
 
 config BR2_TARGET_UBOOT_FORMAT_ELF
 	bool "u-boot.elf"
 
-config BR2_TARGET_UBOOT_FORMAT_SB
-	bool "u-boot.sb (Freescale i.MX28)"
+config BR2_TARGET_UBOOT_FORMAT_IMG
+	bool "u-boot.img"
+
+config BR2_TARGET_UBOOT_FORMAT_DTB_IMG
+	bool "u-boot-dtb.img"
+
+config BR2_TARGET_UBOOT_FORMAT_IMX
+	bool "u-boot.imx"
+
+config BR2_TARGET_UBOOT_FORMAT_DTB_IMX
+	bool "u-boot-dtb.imx"
+
+config BR2_TARGET_UBOOT_FORMAT_ITB
+	bool "u-boot.itb"
+
+config BR2_TARGET_UBOOT_FORMAT_KWB
+	bool "u-boot.kwb (Marvell)"
 	depends on BR2_arm
-
-config BR2_TARGET_UBOOT_FORMAT_SD
-	bool "u-boot.sd (Freescale i.MX28)"
-	depends on BR2_arm
-	help
-	  This is Freescale i.MX28 SB format, with a header for booting
-	  from an SD card.
-
-	  U-Boot includes an mxsboot tool to generate this format,
-	  starting from 2011.12.
-
-	  See doc/README.mxs (or doc/README.mx28_common before 2013.07)
 
 config BR2_TARGET_UBOOT_FORMAT_NAND
 	bool "u-boot.nand (Freescale i.MX28)"
@@ -315,6 +326,26 @@ config BR2_TARGET_UBOOT_FORMAT_NAND_ERASE_SIZE
 	  The value provided here is passed to the -e option of mxsboot.
 
 endif
+
+config BR2_TARGET_UBOOT_FORMAT_SB
+	bool "u-boot.sb (Freescale i.MX28)"
+	depends on BR2_arm
+
+config BR2_TARGET_UBOOT_FORMAT_SD
+	bool "u-boot.sd (Freescale i.MX28)"
+	depends on BR2_arm
+	help
+	  This is Freescale i.MX28 SB format, with a header for booting
+	  from an SD card.
+
+	  U-Boot includes an mxsboot tool to generate this format,
+	  starting from 2011.12.
+
+	  See doc/README.mxs (or doc/README.mx28_common before 2013.07)
+
+config BR2_TARGET_UBOOT_FORMAT_STM32
+	bool "u-boot.stm32"
+	depends on BR2_arm
 
 config BR2_TARGET_UBOOT_FORMAT_CUSTOM
 	bool "Custom (specify below)"
@@ -431,6 +462,28 @@ config BR2_TARGET_UBOOT_ZYNQMP_PMUFW
 
 	  This feature requires U-Boot >= 2018.07.
 
+config BR2_TARGET_UBOOT_ZYNQMP_PM_CFG
+	string "PMU configuration location"
+	depends on BR2_TARGET_UBOOT_BUILD_SYSTEM_KCONFIG
+	help
+	  Location of a PMU configuration file.
+
+	  If not empty, Buildroot will convert the PMU configuration
+	  file into a loadable blob and pass it to U-Boot. The blob gets
+	  embedded into the U-Boot SPL and is used to configure the PMU
+	  during board initialization.
+
+	  Unlike the PMU firmware, the PMU configuration file is unique
+	  to each board configuration. A PMU configuration file can be
+	  generated by building your Xilinx SDK BSP. It can be found in
+	  the BSP source, for example at
+	    ./psu_cortexa53_0/libsrc/xilpm_v2_4/src/pm_cfg_obj.c
+
+	  Leave this option empty if your PMU firmware has a hard-coded
+	  configuration object or you are loading it by any other means.
+
+	  This feature requires U-Boot >= v2019.10.
+
 config BR2_TARGET_UBOOT_ZYNQMP_PSU_INIT_FILE
 	string "Custom psu_init_gpl file"
 	depends on BR2_TARGET_UBOOT_BUILD_SYSTEM_KCONFIG
@@ -483,65 +536,6 @@ config BR2_TARGET_UBOOT_ALTERA_SOCFPGA_IMAGE_CRC
 
 	  In either case the resulting file will be given a .crc
 	  extension.
-
-menuconfig BR2_TARGET_UBOOT_ENVIMAGE
-	bool "Environment image"
-	help
-	  Generate a valid binary environment image from a text file
-	  describing the key=value pairs of the environment.
-
-	  The environment image will be called uboot-env.bin.
-
-if BR2_TARGET_UBOOT_ENVIMAGE
-
-config BR2_TARGET_UBOOT_ENVIMAGE_SOURCE
-	string "Source files for environment"
-	help
-	  Text files describing the environment. Files should have
-	  lines of the form var=value, one per line. Blank lines and
-	  lines starting with a # are ignored.
-
-	  Multiple source files are concatenated in the order listed.
-
-	  Leave empty to generate image from compiled-in env.
-
-config BR2_TARGET_UBOOT_ENVIMAGE_SIZE
-	string "Size of environment"
-	help
-	  Size of envronment, can be prefixed with 0x for hexadecimal
-	  values.
-
-config BR2_TARGET_UBOOT_ENVIMAGE_REDUNDANT
-	bool "Environment has two copies"
-	help
-	  Some platforms define in their U-Boot configuration that the
-	  U-Boot environment should be duplicated in two locations (for
-	  extra safety). Check your U-Boot configuration for the
-	  CONFIG_ENV_ADDR_REDUND and CONFIG_ENV_SIZE_REDUND settings to
-	  see if this is the case for your platform.
-
-	  If it is the case, then you should enable this option to
-	  ensure that the U-Boot environment image generated by
-	  Buildroot is compatible with the "redundant environment"
-	  mechanism of U-Boot.
-
-endif # BR2_TARGET_UBOOT_ENVIMAGE
-
-config BR2_TARGET_UBOOT_BOOT_SCRIPT
-	bool "Generate a U-Boot boot script"
-	help
-	  Generate a U-Boot boot script, given a file listing U-Boot
-	  commands to be executed at boot time. The generated boot
-	  script will be called 'boot.scr'.
-
-if BR2_TARGET_UBOOT_BOOT_SCRIPT
-
-config BR2_TARGET_UBOOT_BOOT_SCRIPT_SOURCE
-	string "U-Boot boot script source"
-	help
-	  Source file to generate the U-Boot boot script.
-
-endif
 
 if BR2_TARGET_UBOOT_BUILD_SYSTEM_KCONFIG
 

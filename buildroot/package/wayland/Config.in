@@ -10,7 +10,7 @@ config BR2_PACKAGE_WAYLAND
 	  to talk to its clients as well as a library implementation
 	  of the protocol.
 
-	  http://wayland.freedesktop.org/
+	  https://wayland.freedesktop.org/
 
 comment "wayland needs a toolchain w/ threads, dynamic library"
 	depends on !BR2_TOOLCHAIN_HAS_THREADS || BR2_STATIC_LIBS

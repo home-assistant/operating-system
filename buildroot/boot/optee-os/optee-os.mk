@@ -21,7 +21,7 @@ else
 OPTEE_OS_SITE = $(call github,OP-TEE,optee_os,$(OPTEE_OS_VERSION))
 endif
 
-OPTEE_OS_DEPENDENCIES = host-openssl host-python-pycrypto host-python-pyelftools
+OPTEE_OS_DEPENDENCIES = host-openssl host-python3 host-python3-pycryptodomex host-python3-pyelftools
 
 # On 64bit targets, OP-TEE OS can be built in 32bit mode, or
 # can be built in 64bit mode and support 32bit and 64bit
@@ -32,7 +32,8 @@ OPTEE_OS_MAKE_OPTS = \
 	CROSS_COMPILE="$(TARGET_CROSS)" \
 	CROSS_COMPILE_core="$(TARGET_CROSS)" \
 	CROSS_COMPILE_ta_arm64="$(TARGET_CROSS)" \
-	CROSS_COMPILE_ta_arm32="$(TARGET_CROSS)"
+	CROSS_COMPILE_ta_arm32="$(TARGET_CROSS)" \
+	PYTHON3="$(HOST_DIR)/bin/python3"
 
 ifeq ($(BR2_aarch64),y)
 OPTEE_OS_MAKE_OPTS += \

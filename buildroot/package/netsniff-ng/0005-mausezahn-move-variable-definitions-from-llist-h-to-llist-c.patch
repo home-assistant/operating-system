@@ -1,0 +1,47 @@
+From 6f20cd366ea73b8b9cf49568e9b95cd79922daed Mon Sep 17 00:00:00 2001
+From: Tobias Klauser <tklauser@distanz.ch>
+Date: Wed, 19 Aug 2020 13:13:34 +0200
+Subject: [PATCH] mausezahn: move variable definitions from llist.h to llist.c
+
+Move variable definitions to avoid "multiple definition of symbol"
+linker errors with gcc-10.
+
+Updates #216
+
+Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
+[Retrieved from:
+https://github.com/netsniff-ng/netsniff-ng/commit/6f20cd366ea73b8b9cf49568e9b95cd79922daed]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ staging/llist.c | 2 ++
+ staging/llist.h | 4 ++--
+ 2 files changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/staging/llist.c b/staging/llist.c
+index d729e465..9ef2d1a2 100644
+--- a/staging/llist.c
++++ b/staging/llist.c
+@@ -40,6 +40,8 @@
+  * 
+  */ 
+ 
++struct mz_ll *packet_sequences;
++struct mz_ll *cli_seq; // currently edited packet sequence used by CLI
+ 
+ // Create new list element - may be the first one (list==NULL)
+ //
+diff --git a/staging/llist.h b/staging/llist.h
+index 49a87c7d..d9e59b86 100644
+--- a/staging/llist.h
++++ b/staging/llist.h
+@@ -49,8 +49,8 @@ struct mz_ll {
+ 	void *data; // points to your data
+ };
+ 
+-struct mz_ll *packet_sequences;
+-struct mz_ll *cli_seq; // currently edited packet sequence used by CLI
++extern struct mz_ll *packet_sequences;
++extern struct mz_ll *cli_seq; // currently edited packet sequence used by CLI
+ 
+ // prototypes
+ struct mz_ll * mz_ll_create_new_element(struct mz_ll *list);

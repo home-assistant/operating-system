@@ -1,4 +1,4 @@
 # Locally computed after checking pgp signature
-# https://download.flashrom.org/releases/flashrom-v1.1.tar.bz2.asc
-sha256 aeada9c70c22421217c669356180c0deddd0b60876e63d2224e3260b90c14e19  flashrom-v1.1.tar.bz2
-sha256 ab15fd526bd8dd18a9e77ebc139656bf4d33e97fc7238cd11bf60e2b9b8666c6  COPYING
+# https://download.flashrom.org/releases/flashrom-v1.2.tar.bz2.asc
+sha256  e1f8d95881f5a4365dfe58776ce821dfcee0f138f75d0f44f8a3cd032d9ea42b  flashrom-v1.2.tar.bz2
+sha256  ab15fd526bd8dd18a9e77ebc139656bf4d33e97fc7238cd11bf60e2b9b8666c6  COPYING

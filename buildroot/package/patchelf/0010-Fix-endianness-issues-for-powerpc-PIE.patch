@@ -1,0 +1,80 @@
+From c61c2960d782c67566790b210163ff9c799f018a Mon Sep 17 00:00:00 2001
+From: Conrad Ratschan <ratschance@gmail.com>
+Date: Sat, 3 Oct 2020 20:17:24 -0500
+Subject: [PATCH] Fix endianness issues for powerpc PIE
+
+Previously when running `patchelf --set-rpath "/usr/sbin" my_bin` on a
+PIE ppc32 binary that had no RPATH a few issues were encountered.
+
+This commit fixes:
+
+1. The PT_PHDR being sorted improperly due to the type being read in
+   incorrect endianness
+
+3. The interpreter being clobbered due to the replace sections routine
+   reading sh_offset and sh_size in incorrect endianness
+
+4. The PHDR segment having an incorrect virt and phys address due to
+   reading the e_phoff in the incorrect endianness
+
+This also fixes a read of the shdr.sh_type in writeReplacedSections but
+this was not encountered during testing.
+
+Fetch from: https://github.com/NixOS/patchelf/commit/884eccc4f061a3dbdbe63a4c73f1cc9bbf77fa7d
+
+Backported to v0.9. Removed item 2 from the fix list as it is not
+applicable to v0.9.
+
+Signed-off-by: Conrad Ratschan <conrad.ratschan@rockwellcollins.com>
+---
+ src/patchelf.cc | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/src/patchelf.cc b/src/patchelf.cc
+index fa2945e..e60b17c 100644
+--- a/src/patchelf.cc
++++ b/src/patchelf.cc
+@@ -173,8 +173,8 @@ private:
+         ElfFile * elfFile;
+         bool operator ()(const Elf_Phdr & x, const Elf_Phdr & y)
+         {
+-            if (x.p_type == PT_PHDR) return true;
+-            if (y.p_type == PT_PHDR) return false;
++            if (elfFile->rdi(x.p_type) == PT_PHDR) return true;
++            if (elfFile->rdi(y.p_type) == PT_PHDR) return false;
+             return elfFile->rdi(x.p_paddr) < elfFile->rdi(y.p_paddr);
+         }
+     };
+@@ -586,7 +586,7 @@ void ElfFile<ElfFileParamNames>::writeReplacedSections(Elf_Off & curOff,
+     {
+         string sectionName = i->first;
+         Elf_Shdr & shdr = findSection(sectionName);
+-        if (shdr.sh_type != SHT_NOBITS)
++        if (rdi(shdr.sh_type) != SHT_NOBITS)
+             memset(contents + rdi(shdr.sh_offset), 'X', rdi(shdr.sh_size));
+     }
+ 
+@@ -667,9 +667,9 @@ void ElfFile<ElfFileParamNames>::rewriteSectionsLibrary()
+     /* Some sections may already be replaced so account for that */
+     unsigned int i = 1;
+     Elf_Addr pht_size = sizeof(Elf_Ehdr) + (phdrs.size() + 1)*sizeof(Elf_Phdr);
+-    while( shdrs[i].sh_offset <= pht_size && i < rdi(hdr->e_shnum) ) {
++    while( rdi(shdrs[i].sh_offset) <= pht_size && i < rdi(hdr->e_shnum) ) {
+         if (not haveReplacedSection(getSectionName(shdrs[i])))
+-            replaceSection(getSectionName(shdrs[i]), shdrs[i].sh_size);
++            replaceSection(getSectionName(shdrs[i]), rdi(shdrs[i].sh_size));
+         i++;
+     }
+ 
+@@ -723,7 +723,7 @@ void ElfFile<ElfFileParamNames>::rewriteSectionsLibrary()
+     assert(curOff == startOffset + neededSpace);
+ 
+     /* Write out the updated program and section headers */
+-    rewriteHeaders(hdr->e_phoff);
++    rewriteHeaders(rdi(hdr->e_phoff));
+ }
+ 
+ 
+-- 
+2.17.1
+

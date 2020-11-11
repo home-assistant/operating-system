@@ -4,12 +4,11 @@
 #
 ################################################################################
 
-LIBARCHIVE_VERSION = 3.4.2
+LIBARCHIVE_VERSION = 3.4.3
 LIBARCHIVE_SITE = https://www.libarchive.de/downloads
 LIBARCHIVE_INSTALL_STAGING = YES
 LIBARCHIVE_LICENSE = BSD-2-Clause, BSD-3-Clause, CC0-1.0, OpenSSL, Apache-2.0
 LIBARCHIVE_LICENSE_FILES = COPYING
-LIBARCHIVE_CONF_OPTS = --without-mbedtls
 
 ifeq ($(BR2_PACKAGE_LIBARCHIVE_BSDTAR),y)
 ifeq ($(BR2_STATIC_LIBS),y)
@@ -92,6 +91,13 @@ else
 LIBARCHIVE_CONF_OPTS += --without-lzo2
 endif
 
+ifeq ($(BR2_PACKAGE_MBEDTLS),y)
+LIBARCHIVE_DEPENDENCIES += mbedtls
+LIBARCHIVE_CONF_OPTS += --with-mbedtls
+else
+LIBARCHIVE_CONF_OPTS += --without-mbedtls
+endif
+
 ifeq ($(BR2_PACKAGE_NETTLE),y)
 LIBARCHIVE_DEPENDENCIES += nettle
 LIBARCHIVE_CONF_OPTS += --with-nettle
@@ -117,6 +123,13 @@ LIBARCHIVE_DEPENDENCIES += xz
 LIBARCHIVE_CONF_OPTS += --with-lzma
 else
 LIBARCHIVE_CONF_OPTS += --without-lzma
+endif
+
+ifeq ($(BR2_PACKAGE_ZSTD),y)
+LIBARCHIVE_DEPENDENCIES += zstd
+LIBARCHIVE_CONF_OPTS += --with-zstd
+else
+LIBARCHIVE_CONF_OPTS += --without-zstd
 endif
 
 # The only user of host-libarchive needs zlib support

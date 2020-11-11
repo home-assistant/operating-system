@@ -26,11 +26,15 @@ class TestExternalToolchain(infra.basetest.BRTest):
             path = os.path.join(self.builddir, "target", d)
             self.assertFalse(has_broken_links(path))
 
-        interp = infra.get_elf_prog_interpreter(self.builddir,
-                                                self.toolchain_prefix,
-                                                "bin/busybox")
-        interp_path = os.path.join(self.builddir, "target", interp[1:])
-        self.assertTrue(os.path.exists(interp_path))
+        with open(os.path.join(self.builddir, ".config"), 'r') as configf:
+            configlines = [l.strip() for l in configf.readlines()]
+
+        if "BR2_BINFMT_ELF=y" in configlines:
+            interp = infra.get_elf_prog_interpreter(self.builddir,
+                                                    self.toolchain_prefix,
+                                                    "bin/busybox")
+            interp_path = os.path.join(self.builddir, "target", interp[1:])
+            self.assertTrue(os.path.exists(interp_path))
 
 
 class TestExternalToolchainSourceryArmv4(TestExternalToolchain):

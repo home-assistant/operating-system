@@ -3,7 +3,7 @@ From: Christos Tsantilas <christos@chtsanti.net>
 Date: Fri, 25 Jan 2019 06:42:22 -0800
 Subject: [PATCH] Required fixes to compile and run under cygwin
 
-[Retrieved from:
+[Retrieved (and backported) from:
 https://github.com/c-icap/c-icap-server/commit/1631a6c1f50e152b8a45d8279c96086e5636795b,
 which has the side effect of fixing the build with the musl C library]
 Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
@@ -189,14 +189,14 @@ index e6e9270..2d43a60 100644
 +endif
 +
 +sys_logger_la_LIBADD = $(MODS_LIB_ADD)
- sys_logger_la_CFLAGS=  @MODULES_CFLAGS@
+ sys_logger_la_CFLAGS=  @MODULES_CFLAGS@ @OPENSSL_ADD_FLAG@
 -sys_logger_la_LDFLAGS= -module -avoid-version
 +sys_logger_la_LDFLAGS= -module -avoid-version @LIBS_LDFLAGS@
  sys_logger_la_SOURCES = sys_logger.c
  
 -dnsbl_tables_la_LIBADD = @MODULES_LIBADD@
 +dnsbl_tables_la_LIBADD = $(MODS_LIB_ADD)
- dnsbl_tables_la_CFLAGS=  @MODULES_CFLAGS@
+ dnsbl_tables_la_CFLAGS=  @MODULES_CFLAGS@ @OPENSSL_ADD_FLAG@
 -dnsbl_tables_la_LDFLAGS= -module -avoid-version
 +dnsbl_tables_la_LDFLAGS= -module -avoid-version @LIBS_LDFLAGS@
  dnsbl_tables_la_SOURCES = dnsbl_tables.c
@@ -232,7 +232,7 @@ index e6e9270..2d43a60 100644
  
 -shared_cache_la_LIBADD= @MODULES_LIBADD@
 +shared_cache_la_LIBADD= $(MODS_LIB_ADD)
- shared_cache_la_CFLAGS=
+ shared_cache_la_CFLAGS= @OPENSSL_ADD_FLAG@
 -shared_cache_la_LDFLAGS= -module -avoid-version
 +shared_cache_la_LDFLAGS= -module -avoid-version @LIBS_LDFLAGS@
  shared_cache_la_SOURCES= shared_cache.c
@@ -329,7 +329,7 @@ index 402c8f9..7d701b1 100644
 +endif
 +
 +srv_echo_la_LIBADD = $(MODS_LIB_ADD)
- srv_echo_la_CFLAGS=  @MODULES_CFLAGS@
+ srv_echo_la_CFLAGS=  @MODULES_CFLAGS@ @OPENSSL_ADD_FLAG@
 -srv_echo_la_LDFLAGS= -module -avoid-version
 +srv_echo_la_LDFLAGS= -module -avoid-version @LIBS_LDFLAGS@
  srv_echo_la_SOURCES = srv_echo.c
@@ -351,7 +351,7 @@ index 44bbf21..ff73399 100644
 +endif
 +
 +srv_ex206_la_LIBADD = $(MODS_LIB_ADD)
- srv_ex206_la_CFLAGS=  @MODULES_CFLAGS@
+ srv_ex206_la_CFLAGS=  @MODULES_CFLAGS@ @OPENSSL_ADD_FLAG@
 -srv_ex206_la_LDFLAGS= -module -avoid-version
 +srv_ex206_la_LDFLAGS= -module -avoid-version @LIBS_LDFLAGS@
  srv_ex206_la_SOURCES = srv_ex206.c

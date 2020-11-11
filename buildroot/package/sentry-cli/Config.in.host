@@ -1,0 +1,10 @@
+config BR2_PACKAGE_HOST_SENTRY_CLI
+	bool "host sentry-cli"
+	depends on BR2_PACKAGE_HOST_RUSTC_ARCH_SUPPORTS
+	select BR2_PACKAGE_HOST_RUSTC
+	help
+	  Official Sentry command line interface
+
+	  For managing debug information files and source maps.
+
+	  https://docs.sentry.io/cli/

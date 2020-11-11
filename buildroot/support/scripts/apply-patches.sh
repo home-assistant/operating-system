@@ -113,8 +113,8 @@ function apply_patch {
         echo "  to be applied  : ${path}/${patch}"
         exit 1
     fi
-    if grep -q "^rename from" ${path}/${patch} && \
-       grep -q "^rename to" ${path}/${patch} ; then
+    if ${uncomp} "${path}/$patch" | grep -q "^rename from" && \
+       ${uncomp} "${path}/$patch" | grep -q "^rename to" ; then
         echo "Error: patch contains some renames, not supported by old patch versions"
         exit 1
     fi

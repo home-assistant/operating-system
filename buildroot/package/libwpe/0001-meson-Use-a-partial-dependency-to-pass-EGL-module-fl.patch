@@ -1,0 +1,45 @@
+From 81bfedfa02fd864f3e4b295091d49c3eb20bb372 Mon Sep 17 00:00:00 2001
+From: Adrian Perez de Castro <aperez@igalia.com>
+Date: Wed, 16 Sep 2020 00:01:37 +0300
+Subject: [PATCH] meson: Use a partial dependency to pass EGL module flags
+
+Make Meson try to always find an "egl" dependency, if found extract
+the include directories and compiler flags from ir using a partial
+dependency, otherwise check that at least EGL/eglplatform.h is
+available when the pkg-config module is not found.
+
+Fixes #70
+
+Signed-off-by: Adrian Perez de Castro <aperez@igalia.com>
+[Upstrem status: https://github.com/WebPlatformForEmbedded/libwpe/pull/71]
+
+---
+ meson.build | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
+
+diff --git a/meson.build b/meson.build
+index 5c88aed..a05f4ab 100644
+--- a/meson.build
++++ b/meson.build
+@@ -57,8 +57,16 @@ dependencies = [
+ ]
+ 
+ cc = meson.get_compiler('c')
+-if not cc.has_header('EGL/eglplatform.h')
+-	dependencies += dependency('egl')
++egl_dep = dependency('egl', required: false)
++if egl_dep.found()
++	dependencies += egl_dep.partial_dependency(
++		compile_args: true,
++		includes: true,
++	)
++else
++	assert(cc.has_header('EGL/eglplatform.h'),
++		'Required heaer <EGL/eglplatform.h> not found'
++	)
+ endif
+ 
+ if not cc.has_function('dlopen')
+-- 
+2.28.0
+

@@ -219,6 +219,15 @@ config BR2_riscv
 	  https://riscv.org/
 	  https://en.wikipedia.org/wiki/RISC-V
 
+config BR2_s390x
+	bool "s390x"
+	select BR2_ARCH_IS_64
+	select BR2_ARCH_HAS_MMU_MANDATORY
+	help
+	  s390x is a big-endian architecture made by IBM.
+	  http://www.ibm.com/
+	  http://en.wikipedia.org/wiki/IBM_System/390
+
 config BR2_sh
 	bool "SuperH"
 	select BR2_ARCH_HAS_MMU_OPTIONAL
@@ -307,6 +316,10 @@ config BR2_ARCH_NEEDS_GCC_AT_LEAST_8
 config BR2_ARCH_NEEDS_GCC_AT_LEAST_9
 	bool
 	select BR2_ARCH_NEEDS_GCC_AT_LEAST_8
+
+config BR2_ARCH_NEEDS_GCC_AT_LEAST_10
+	bool
+	select BR2_ARCH_NEEDS_GCC_AT_LEAST_9
 
 # The following string values are defined by the individual
 # Config.in.$ARCH files
@@ -451,6 +464,10 @@ endif
 
 if BR2_riscv
 source "arch/Config.in.riscv"
+endif
+
+if BR2_s390x
+source "arch/Config.in.s390x"
 endif
 
 if BR2_sh

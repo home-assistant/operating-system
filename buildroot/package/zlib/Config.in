@@ -3,6 +3,8 @@ config BR2_PACKAGE_ZLIB_NG_ARCH_SUPPORTS
 	default y if BR2_arm
 	default y if BR2_aarch64
 	default y if BR2_i386
+	default y if BR2_powerpc || BR2_powerpc64 || BR2_powerpc64le
+	default y if BR2_s390x
 	default y if BR2_x86_64
 
 config BR2_PACKAGE_ZLIB
@@ -35,7 +37,7 @@ config BR2_PACKAGE_ZLIB_NG
 	  Zlib replacement with optimizations for
 	  "next generation" systems.
 
-	  https://github.com/mtl1979/zlib-ng/tree/renamelib
+	  https://github.com/zlib-ng/zlib-ng
 
 endchoice
 

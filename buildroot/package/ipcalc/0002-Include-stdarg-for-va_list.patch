@@ -1,0 +1,29 @@
+From 7795c02fb1e0f5fdbdf949007e52684c590235d4 Mon Sep 17 00:00:00 2001
+From: Derrick Lyndon Pallas <derrick@meter.com>
+Date: Wed, 14 Oct 2020 18:40:38 +0000
+Subject: [PATCH] Include stdarg for va_list
+
+While several function signatures use va_list, stdarg was never included.
+This fixes that.
+
+Signed-off-by: Derrick Lyndon Pallas <derrick@meter.com>
+---
+ ipcalc.h | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/ipcalc.h b/ipcalc.h
+index 0e81320..a220dc5 100644
+--- a/ipcalc.h
++++ b/ipcalc.h
+@@ -20,6 +20,8 @@
+ #ifndef _IPCALC_H
+ #define _IPCALC_H
+ 
++#include <stdarg.h> /* for va_list */
++
+ #if defined(USE_GEOIP)
+   void geo_ip_lookup(const char *ip, char **country, char **ccode, char **city, char  **coord);
+   int geo_setup(void);
+-- 
+2.28.0
+

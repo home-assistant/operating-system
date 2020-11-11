@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-SNMPPP_VERSION = 3.3.11a
+SNMPPP_VERSION = 3.4.2
 SNMPPP_SOURCE = snmp++-$(SNMPPP_VERSION).tar.gz
 SNMPPP_SITE = http://www.agentpp.com/download
 SNMPPP_DEPENDENCIES = host-pkgconf
@@ -14,6 +14,7 @@ SNMPPP_LICENSE = SNMP++
 SNMPPP_LICENSE_FILES = src/v3.cpp
 
 ifeq ($(BR2_PACKAGE_SNMPPP_SNMPV3),y)
+SNMPPP_CONF_ENV += CXXFLAGS="$(TARGET_CXXFLAGS) -std=c++11"
 SNMPPP_CONF_OPTS += --enable-snmpv3
 SNMPPP_DEPENDENCIES += openssl
 else

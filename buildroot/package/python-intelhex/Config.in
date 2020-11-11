@@ -1,0 +1,6 @@
+config BR2_PACKAGE_PYTHON_INTELHEX
+	bool "python-intelhex"
+	help
+	  Python library for Intel HEX files manipulations.
+
+	  https://github.com/python-intelhex/intelhex

@@ -8,7 +8,7 @@ config BR2_PACKAGE_SOFIA_SIP
 	  client software for uses such as VoIP, IM, and many other
 	  real-time and person-to-person communication services.
 
-	  http://sofia-sip.sourceforge.net/
+	  https://github.com/freeswitch/sofia-sip
 
 comment "sofia-sip needs a toolchain w/ threads"
 	depends on !BR2_TOOLCHAIN_HAS_THREADS

@@ -4,12 +4,18 @@
 #
 ################################################################################
 
-WIRESHARK_VERSION = 3.2.7
+WIRESHARK_VERSION = 3.4.0
 WIRESHARK_SOURCE = wireshark-$(WIRESHARK_VERSION).tar.xz
 WIRESHARK_SITE = https://www.wireshark.org/download/src/all-versions
 WIRESHARK_LICENSE = wireshark license
 WIRESHARK_LICENSE_FILES = COPYING
-WIRESHARK_DEPENDENCIES = host-pkgconf host-python3 libgcrypt libpcap libglib2 \
+WIRESHARK_DEPENDENCIES = \
+	c-ares \
+	host-pkgconf \
+	host-python3 \
+	libgcrypt \
+	libglib2 \
+	libpcap \
 	speexdsp
 
 WIRESHARK_MAKE_ENV = \
@@ -18,6 +24,7 @@ WIRESHARK_MAKE_ENV = \
 
 WIRESHARK_CONF_OPTS = \
 	-DDISABLE_WERROR=ON \
+	-DENABLE_ILBC=OFF \
 	-DENABLE_PCAP=ON \
 	-DENABLE_SMI=OFF
 
@@ -34,6 +41,12 @@ define WIRESHARK_BUILD_LEMON_TOOL
 endef
 
 WIRESHARK_PRE_BUILD_HOOKS += WIRESHARK_BUILD_LEMON_TOOL
+
+ifeq ($(BR2_GCC_ENABLE_LTO),y)
+WIRESHARK_CONF_OPTS += -DENABLE_LTO=ON
+else
+WIRESHARK_CONF_OPTS += -DENABLE_LTO=OFF
+endif
 
 ifeq ($(BR2_PACKAGE_WIRESHARK_GUI),y)
 WIRESHARK_CONF_OPTS += -DBUILD_wireshark=ON
@@ -54,13 +67,6 @@ WIRESHARK_CONF_OPTS += -DENABLE_BROTLI=ON
 WIRESHARK_DEPENDENCIES += brotli
 else
 WIRESHARK_CONF_OPTS += -DENABLE_BROTLI=OFF
-endif
-
-ifeq ($(BR2_PACKAGE_C_ARES),y)
-WIRESHARK_CONF_OPTS += -DENABLE_CARES=ON
-WIRESHARK_DEPENDENCIES += c-ares
-else
-WIRESHARK_CONF_OPTS += -DENABLE_CARES=OFF
 endif
 
 ifeq ($(BR2_PACKAGE_GNUTLS),y)
@@ -127,6 +133,13 @@ else
 WIRESHARK_CONF_OPTS += -DENABLE_NGHTTP2=OFF
 endif
 
+ifeq ($(BR2_PACKAGE_OPUS),y)
+WIRESHARK_CONF_OPTS += -DENABLE_OPUS=ON
+WIRESHARK_DEPENDENCIES += opus
+else
+WIRESHARK_CONF_OPTS += -DENABLE_OPUS=OFF
+endif
+
 ifeq ($(BR2_PACKAGE_SBC),y)
 WIRESHARK_CONF_OPTS += -DENABLE_SBC=ON
 WIRESHARK_DEPENDENCIES += sbc
@@ -153,6 +166,13 @@ WIRESHARK_CONF_OPTS += -DBUILD_sdjournal=ON
 WIRESHARK_DEPENDENCIES += systemd
 else
 WIRESHARK_CONF_OPTS += -DBUILD_sdjournal=OFF
+endif
+
+ifeq ($(BR2_PACKAGE_ZSTD),y)
+WIRESHARK_CONF_OPTS += -DENABLE_ZSTD=ON
+WIRESHARK_DEPENDENCIES += zstd
+else
+WIRESHARK_CONF_OPTS += -DENABLE_ZSTD=OFF
 endif
 
 # Disable plugins as some of them (like l16mono) can't be built

@@ -1,0 +1,5 @@
+# md5, sha256 from https://pypi.org/pypi/bsdiff4/json
+md5	a0d047e91429ce67a3b0231facf41169  bsdiff4-1.2.0.tar.gz
+sha256	3c2f7f5504f41a54d238b54b00b4544d0eb4276179edabf02b9d00415a03cc9d  bsdiff4-1.2.0.tar.gz
+# Locally computed sha256
+sha256	c6c921c90383f1c43beb53c49a652d28309a410a7c394c729fd8870271451cf0  LICENSE

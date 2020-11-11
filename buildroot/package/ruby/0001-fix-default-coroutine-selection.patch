@@ -1,0 +1,35 @@
+fixed default coroutine selection for musl/uclibc
+
+https://github.com/ruby/ruby/pull/3567/commits/b570e7de87aaad8c903176d835e8124127f627b3
+
+Signed-off-by: Waldemar Brodkorb <wbx@opennadk.org>
+
+diff -Nur ruby-2.7.1.orig/configure.ac ruby-2.7.1/configure.ac
+--- ruby-2.7.1.orig/configure.ac	2020-03-31 12:44:55.000000000 +0200
++++ ruby-2.7.1/configure.ac	2020-10-01 00:03:53.130462286 +0200
+@@ -2344,8 +2344,12 @@
+             rb_cv_coroutine=copy
+         ],
+         [*], [
+-            rb_cv_coroutine=ucontext
++            AC_CHECK_FUNCS([getcontext swapcontext makecontext],
++               [rb_cv_coroutine=ucontext],
++               [rb_cv_coroutine=copy; break]
++            )
+         ]
++
+     )
+     AC_MSG_RESULT(${rb_cv_coroutine})
+ ])
+diff -Nur ruby-2.7.1.orig/coroutine/copy/Context.c ruby-2.7.1/coroutine/copy/Context.c
+--- ruby-2.7.1.orig/coroutine/copy/Context.c	2020-03-31 12:44:55.000000000 +0200
++++ ruby-2.7.1/coroutine/copy/Context.c	2020-10-01 00:04:59.414670705 +0200
+@@ -5,6 +5,8 @@
+  *  Copyright, 2019, by Samuel Williams. All rights reserved.
+ */
+ 
++#include <sys/types.h>
++
+ #include "Context.h"
+ 
+ // http://gcc.gnu.org/onlinedocs/gcc/Alternate-Keywords.html

@@ -12,16 +12,16 @@ UDISKS_LICENSE_FILES = COPYING
 UDISKS_AUTORECONF = YES
 
 UDISKS_DEPENDENCIES = \
-	sg3_utils \
 	host-pkgconf \
-	udev \
 	dbus \
 	dbus-glib \
-	polkit \
-	parted \
-	lvm2 \
 	libatasmart \
-	libgudev
+	libgudev \
+	lvm2 \
+	parted \
+	polkit \
+	sg3_utils \
+	udev
 
 UDISKS_CONF_OPTS = --disable-remote-access --disable-man-pages
 

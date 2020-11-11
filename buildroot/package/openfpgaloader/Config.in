@@ -1,0 +1,12 @@
+config BR2_PACKAGE_OPENFPGALOADER
+	bool "openfpgaloader"
+	depends on BR2_TOOLCHAIN_HAS_THREADS # libftdi1
+	depends on BR2_INSTALL_LIBSTDCPP
+	select BR2_PACKAGE_LIBFTDI1
+	help
+	  Universal utility for programming FPGA
+
+	  https://github.com/trabucayre/openFPGALoader/
+
+comment "openfpgaloader needs a toolchain w/ threads, C++"
+	depends on !BR2_TOOLCHAIN_HAS_THREADS || !BR2_INSTALL_LIBSTDCPP
