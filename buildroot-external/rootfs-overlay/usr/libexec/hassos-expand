@@ -1,23 +1,44 @@
 #!/bin/sh
-# shellcheck disable=SC2039
 # ==============================================================================
 # HassOS partition expander
 # ==============================================================================
 set -e
 
 DEVICE_CHILD="$(findfs LABEL="hassos-data")"
-DEVICE_ROOT="/dev/$(lsblk -no pkname "${DEVICE_CHILD}")"
-PART_NUM="${DEVICE_CHILD: -1}"
+DEVICE_CHILD_NAME="$(basename "${DEVICE_CHILD}")"
+DEVICE_ROOT_NAME="$(lsblk -no pkname "${DEVICE_CHILD}")"
+DEVICE_ROOT="/dev/${DEVICE_ROOT_NAME}"
+PART_NUM="$(cat "/sys/class/block/${DEVICE_CHILD_NAME}/partition")"
 
-# Need resize
-UNUSED=$(sfdisk -Fq "${DEVICE_ROOT}" | cut -d " " -f 3 | tail -1)
-if [ -z "${UNUSED}" ] || [ "${UNUSED}" -le "16384" ]; then
+# Get partition label type
+PART_TABLE="$(sfdisk -lqJ "${DEVICE_ROOT}")"
+PART_LABEL="$(echo "${PART_TABLE}" | jq -r '.partitiontable.label')"
+
+if [ "${PART_LABEL}" = "gpt" ]; then
+    echo "[INFO] Detected GPT partition label"
+    # We cannot use .partitiontable.lastlba from the json output as we might
+    # still have the backup GPT not at the end of the disk. Calculate last
+    # usable LBA using disk size
+    LAST_USABLE_LBA=$(( $(cat "/sys/class/block/${DEVICE_ROOT_NAME}/size") - 34 ))
+else
+    echo "[INFO] Detected MBR partition label"
+    LAST_USABLE_LBA=$(cat "/sys/class/block/${DEVICE_ROOT_NAME}/size")
+fi
+
+# Calculate end of data partition
+JQ_FILTER=".partitiontable.partitions[] | select ( .node == \"${DEVICE_CHILD}\" ) | .start + .size"
+DATA_PARTITION_END="$(echo "${PART_TABLE}" | jq "${JQ_FILTER}")"
+
+# Need resize? Ignore everything less than 8MB since that could be partition
+# alignment rounding...
+UNUSED_BLOCKS=$(( LAST_USABLE_LBA - DATA_PARTITION_END ))
+if [ "${UNUSED_BLOCKS}" -le "16384" ]; then
     echo "[INFO] No resize of data partition needed"
     exit 0
 fi
 
 echo "[INFO] Update hassos-data partition ${PART_NUM}"
-if sfdisk -dq "${DEVICE_ROOT}" | grep -q 'label: gpt'; then
+if [ "${PART_LABEL}" = "gpt" ]; then
     sgdisk -e "${DEVICE_ROOT}"
     sgdisk -d "${PART_NUM}" \
         -n "${PART_NUM}:0:0" \
