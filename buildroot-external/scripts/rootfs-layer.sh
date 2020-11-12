@@ -16,6 +16,9 @@ function fix_rootfs() {
     # Cleanup miscs
     rm -rf "${TARGET_DIR}/usr/lib/modules-load.d"
 
+    # systemd-update-done.service relies on writeable /var and /etc
+    rm -f "${TARGET_DIR}/usr/lib/systemd/system/sysinit.target.wants/systemd-update-done.service"
+
     # Fix: permission for system connection files
     chmod 600 "${TARGET_DIR}/etc/NetworkManager/system-connections"/*
 
