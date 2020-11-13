@@ -16,9 +16,6 @@ function fix_rootfs() {
     # Cleanup miscs
     rm -rf "${TARGET_DIR}/usr/lib/modules-load.d"
 
-    # Don't announce services we don't offer
-    rm -rf "${TARGET_DIR}/etc/avahi/services/sftp-ssh.service" "${TARGET_DIR}/etc/avahi/services/ssh.service"
-
     # Fix: permission for system connection files
     chmod 600 "${TARGET_DIR}/etc/NetworkManager/system-connections"/*
 
@@ -27,6 +24,9 @@ function fix_rootfs() {
 
     # Fix: Could not generate persistent MAC address
     sed -i "s/MACAddressPolicy=persistent/MACAddressPolicy=none/g" "${TARGET_DIR}/usr/lib/systemd/network/99-default.link"
+
+    # Use systemd-resolved for Host OS resolve
+    sed -i '/^hosts:/ {s/dns/resolve [!UNAVAIL=return] dns/}' "${TARGET_DIR}/etc/nsswitch.conf"
 }
 
 
