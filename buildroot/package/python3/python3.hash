@@ -1,5 +1,5 @@
-# From https://www.python.org/downloads/release/python-386/
-md5  69e73c49eeb1a853cefd26d18c9d069d  Python-3.8.6.tar.xz
+# From https://www.python.org/downloads/release/python-390/
+md5  6ebfe157f6e88d9eabfbaf3fa92129f6  Python-3.9.0.tar.xz
 # Locally computed
-sha256  a9e0b79d27aa056eb9cce8d63a427b5f9bab1465dee3f942dcfdb25a82f4ab8a  Python-3.8.6.tar.xz
+sha256  9c73e63c99855709b9be0b3cc9e5b072cb60f37311e8c4e50f15576a0bf82854  Python-3.9.0.tar.xz
 sha256  1dceef1677a39befa8bf0285ab2db441ba117520bb2de839547ace006a17750d  LICENSE

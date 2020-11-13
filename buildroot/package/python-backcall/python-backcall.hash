@@ -1,3 +1,5 @@
 # md5, sha256 from https://pypi.org/pypi/backcall/json
-md5	87ce0c7839808e6a3427d57df6a792e7  backcall-0.1.0.tar.gz
-sha256	38ecd85be2c1e78f77fd91700c76e14667dc21e2713b63876c0eb901196e01e4  backcall-0.1.0.tar.gz
+md5  1f4c9a370c78743406296f48e56e8821  backcall-0.2.0.tar.gz
+sha256  5cbdbf27be5e7cfadb448baf0aa95508f91f2bbc6c6437cd9cd06e2a4c215e1e  backcall-0.2.0.tar.gz
+# Locally computed sha256 checksums
+sha256  d422f8ce77312733c07f5fec8ccbe61d58d539774f7a66f37e4bc54740d86020  LICENSE

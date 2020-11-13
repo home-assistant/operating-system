@@ -9,6 +9,7 @@ TINYDTLS_SITE = $(call github,eclipse,tinydtls,v$(TINYDTLS_VERSION))
 TINYDTLS_LICENSE = EPL-1.0 or EDL-1.0
 TINYDTLS_LICENSE_FILES = LICENSE
 TINYDTLS_INSTALL_STAGING = YES
+TINYDTLS_DEPENDENCIES = host-pkgconf
 # From git
 TINYDTLS_AUTORECONF = YES
 # use inttypes.h data types instead of u_intXX_t for musl compatibility

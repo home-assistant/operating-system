@@ -1,0 +1,18 @@
+config BR2_PACKAGE_EROFS_UTILS
+	bool "erofs-utils"
+	select BR2_PACKAGE_UTIL_LINUX
+	select BR2_PACKAGE_UTIL_LINUX_LIBUUID
+	help
+	  Userspace utilities for EROFS filesystem
+
+	  https://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs-utils.git
+
+if BR2_PACKAGE_EROFS_UTILS
+
+config BR2_PACKAGE_EROFS_UTILS_LZ4
+	bool "lz4 support"
+	select BR2_PACKAGE_LZ4
+	help
+	  Support LZ4 compression algorithm
+
+endif

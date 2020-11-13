@@ -1,7 +1,10 @@
-From aec12d6fc55c1c444ff9d226ec4748d27673c8a2 Mon Sep 17 00:00:00 2001
+From 14cd8a7e9eec46e0cdd243db17827335de2803c5 Mon Sep 17 00:00:00 2001
+Message-Id: <14cd8a7e9eec46e0cdd243db17827335de2803c5.1605131156.git.stefan@agner.ch>
+In-Reply-To: <8aa12f1835721959d0d1999fceee632404f28366.1605131156.git.stefan@agner.ch>
+References: <8aa12f1835721959d0d1999fceee632404f28366.1605131156.git.stefan@agner.ch>
 From: Pascal Vizeli <pvizeli@syshack.ch>
 Date: Thu, 7 May 2020 09:02:05 +0000
-Subject: [PATCH 1/1] docker-proxy: Bump version
+Subject: [PATCH 7/7] docker-proxy: Bump version
 
 Signed-off-by: Pascal Vizeli <pvizeli@syshack.ch>
 ---
@@ -19,7 +22,7 @@ index 58de697929..1416db4042 100644
 +sha256	2e1fdcc401a22d53103be6cfb5475c40af9f9a82a996ec6d508e0994dc2c5e4a	docker-proxy-1ea375d2b54d2e914e41970a04553ad55ef39b62.tar.gz
  sha256  cb5e8e7e5f4a3988e1063c142c60dc2df75605f4c46515e776e3aca6df976e14	LICENSE
 diff --git a/package/docker-proxy/docker-proxy.mk b/package/docker-proxy/docker-proxy.mk
-index 8843266c30..1ab84159d1 100644
+index 6600b24ed9..d0e940db93 100644
 --- a/package/docker-proxy/docker-proxy.mk
 +++ b/package/docker-proxy/docker-proxy.mk
 @@ -4,8 +4,8 @@
@@ -34,5 +37,5 @@ index 8843266c30..1ab84159d1 100644
  DOCKER_PROXY_LICENSE = Apache-2.0
  DOCKER_PROXY_LICENSE_FILES = LICENSE
 -- 
-2.17.1
+2.29.2
 

@@ -1,0 +1,30 @@
+From f0bbc17aeed1b636782a4b92e8191d90f310d0a2 Mon Sep 17 00:00:00 2001
+From: Boris Kolpackov <boris@codesynthesis.com>
+Date: Mon, 1 Jun 2015 19:08:33 +0200
+Subject: [PATCH] <tm.h> include in gcc.hxx appears to be no longer necessary
+
+On MIPS this file pulls in enum processor which conflicts with
+our class processor.
+
+[Upstream: f0bbc17aeed1b636782a4b92e8191d90f310d0a2]
+Signed-off-by: Kamel Bouhara <kamel.bouhara@bootlin.com>
+---
+ odb/gcc.hxx | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/odb/gcc.hxx b/odb/gcc.hxx
+index 504b59b..c953047 100644
+--- a/odb/gcc.hxx
++++ b/odb/gcc.hxx
+@@ -46,8 +46,6 @@ extern "C"
+ #include <tree.h>
+ #include <real.h>
+ 
+-#include <tm.h>
+-
+ #include <cpplib.h>
+ #include <cp/cp-tree.h>
+ 
+-- 
+2.26.2
+

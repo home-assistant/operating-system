@@ -1,0 +1,13 @@
+[Unit]
+Description=htpdate daemon
+After=network.target
+
+[Service]
+Type=forking
+PIDFile=/run/htpdate.pid
+Environment=HTPDATE_ARGS="-a -s -t https://www.google.com"
+EnvironmentFile=-/etc/default/htpdate
+ExecStart=/usr/bin/htpdate -D -i /run/htpdate.pid $HTPDATE_ARGS
+
+[Install]
+WantedBy=multi-user.target

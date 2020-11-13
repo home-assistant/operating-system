@@ -1,7 +1,5 @@
-# From https://lists.x.org/archives/xorg-announce/2018-March/002857.html
-md5 e322c08eeb635f924ede5b8eba3db54e  twm-1.0.10.tar.bz2
-sha1 f632a47620dfe6d75b003839d269b14fa22b262e  twm-1.0.10.tar.bz2
-sha256 6449eadca16ce0f0d900605b0cc020b95f40619261b7beccfb46bcc1836445d7  twm-1.0.10.tar.bz2
-sha512 1280683fce7ebbf5670239cb1f3cee2b40612bd9850d98827e793cf8bf298bdb58e48387cab943ea6befc6f7b34da2567353c22b8eaeb8bcf1b9e303cd7e6a9e  twm-1.0.10.tar.bz2
+# From https://lists.x.org/archives/xorg-announce/2020-June/003047.html
+sha256  f4e8a842dec410e79741f25ed4dfac09df080835d0bba2e3983b5914569b68c7  twm-1.0.11.tar.xz
+sha512  948034bba23e6b6c4412fcd2e46bb11a9980297601218a54a5055165ab0229a44dde0d50f338b24e82d76f390597e2fa09d11ff7f3fe1b1d736b10083c7da20d  twm-1.0.11.tar.xz
 # Locally computed
-sha256 4809ffc9656bc9a704e19ab467d1cedc97c48c9d1f9a4018e6d99d2e61f75945  COPYING
+sha256  4809ffc9656bc9a704e19ab467d1cedc97c48c9d1f9a4018e6d99d2e61f75945  COPYING

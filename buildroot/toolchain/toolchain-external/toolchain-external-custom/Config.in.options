@@ -31,6 +31,10 @@ choice
 	  Set to the gcc version that is used by your external
 	  toolchain.
 
+config BR2_TOOLCHAIN_EXTERNAL_GCC_10
+	bool "10.x"
+	select BR2_TOOLCHAIN_GCC_AT_LEAST_10
+
 config BR2_TOOLCHAIN_EXTERNAL_GCC_9
 	bool "9.x"
 	select BR2_TOOLCHAIN_GCC_AT_LEAST_9
@@ -115,8 +119,28 @@ choice
 	  If your toolchain uses headers newer than the latest version
 	  in the choice, then select the latest version.
 
+config BR2_TOOLCHAIN_EXTERNAL_HEADERS_5_9
+	bool "5.9.x or later"
+	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_9
+
+config BR2_TOOLCHAIN_EXTERNAL_HEADERS_5_8
+	bool "5.8.x"
+	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_8
+
+config BR2_TOOLCHAIN_EXTERNAL_HEADERS_5_7
+	bool "5.7.x"
+	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_7
+
+config BR2_TOOLCHAIN_EXTERNAL_HEADERS_5_6
+	bool "5.6.x"
+	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_6
+
+config BR2_TOOLCHAIN_EXTERNAL_HEADERS_5_5
+	bool "5.5.x"
+	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_5
+
 config BR2_TOOLCHAIN_EXTERNAL_HEADERS_5_4
-	bool "5.4.x or later"
+	bool "5.4.x"
 	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_4
 
 config BR2_TOOLCHAIN_EXTERNAL_HEADERS_5_3

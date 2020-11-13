@@ -1,5 +1,5 @@
-# md5 from https://pypi.python.org/pypi?:action=show_md5&digest=07a60f5f7a6028e83725f759a1b9490a
-md5     07a60f5f7a6028e83725f759a1b9490a  pyudev-0.18.tar.gz
-# Locally computed
-sha256  83b315f74e29c3a4aa6ea38b6cf73b0bb7e37066d7a5d70972ac418a80aed62a  pyudev-0.18.tar.gz
+# md5, sha256 from https://pypi.org/pypi/pyudev/json
+md5  377eda61186c91e9440f01d76dbb4206  pyudev-0.22.0.tar.gz
+sha256  69bb1beb7ac52855b6d1b9fe909eefb0017f38d917cba9939602c6880035b276  pyudev-0.22.0.tar.gz
+# Locally computed sha256 checksums
 sha256  6095e9ffa777dd22839f7801aa845b31c9ed07f3d6bf8a26dc5d2dec8ccc0ef3  COPYING

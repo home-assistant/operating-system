@@ -4,7 +4,9 @@
 #
 ################################################################################
 
-LIBGPIOD_VERSION = 1.4.1
+# be careful when bumping versions, newer branches (e.g. >= 1.6)
+# depend on pretty recent kernel headers
+LIBGPIOD_VERSION = 1.4.5
 LIBGPIOD_SOURCE = libgpiod-$(LIBGPIOD_VERSION).tar.xz
 LIBGPIOD_SITE = https://www.kernel.org/pub/software/libs/libgpiod
 LIBGPIOD_LICENSE = LGPL-2.1+

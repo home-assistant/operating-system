@@ -12,6 +12,9 @@ AUMIX_GETTEXTIZE = YES
 AUMIX_LICENSE = GPL-2.0+
 AUMIX_LICENSE_FILES = COPYING
 
+AUMIX_PATCH = \
+	https://sources.debian.org/data/main/a/aumix/2.9.1-7/debian/patches/19_no-common.patch
+
 AUMIX_CONF_OPTS = \
 	--without-gtk \
 	--without-gtk1 \

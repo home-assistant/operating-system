@@ -33,5 +33,26 @@ config BR2_PACKAGE_TPM2_TSS
 
 	  https://github.com/tpm2-software/tpm2-tss
 
+if BR2_PACKAGE_TPM2_TSS
+
+config BR2_PACKAGE_TPM2_TSS_FAPI
+	bool "fapi support"
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4 # json-c
+	select BR2_PACKAGE_JSON_C
+	select BR2_PACKAGE_LIBCURL
+	help
+	  This option allows to enable Feature API (FAPI).  Feature
+	  API (FAPI) as described in the "TSS 2.0 Feature API
+	  Specification" along with "TSS 2.0 JSON Data Types and
+	  Policy Language Specification" This API is designed to be
+	  very high-level API, intended to make programming with the
+	  TPM as simple as possible. The API functions are exposed
+	  through a single library: libtss2-fapi.
+
+	  https://trustedcomputinggroup.org/wp-content/uploads/TSS_FAPI_v0.94_r04_pubrev.pdf
+	  https://trustedcomputinggroup.org/wp-content/uploads/TSS_JSON_Policy_v0.7_r04_pubrev.pdf
+
+endif
+
 comment "tpm2-tss needs a toolchain w/ dynamic library"
 	depends on BR2_STATIC_LIBS

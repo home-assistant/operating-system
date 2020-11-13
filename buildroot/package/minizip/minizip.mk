@@ -4,11 +4,10 @@
 #
 ################################################################################
 
-MINIZIP_VERSION = 2.9.1
+MINIZIP_VERSION = 2.10.0
 MINIZIP_SITE = $(call github,nmoinvaz,minizip,$(MINIZIP_VERSION))
 MINIZIP_DEPENDENCIES = \
 	host-pkgconf \
-	$(if $(BR2_PACKAGE_LIBBSD),libbsd) \
 	$(if $(BR2_PACKAGE_LIBICONV),libiconv)
 MINIZIP_INSTALL_STAGING = YES
 MINIZIP_CONF_OPTS = \
@@ -24,6 +23,13 @@ else
 MINIZIP_CONF_OPTS += -DMZ_BZIP2=OFF
 endif
 
+ifeq ($(BR2_PACKAGE_LIBBSD),y)
+MINIZIP_DEPENDENCIES += libbsd
+MINIZIP_CONF_OPTS += -DMZ_LIBBSD=ON
+else
+MINIZIP_CONF_OPTS += -DMZ_LIBBSD=OFF
+endif
+
 ifeq ($(BR2_PACKAGE_OPENSSL),y)
 MINIZIP_DEPENDENCIES += openssl
 MINIZIP_CONF_OPTS += -DMZ_OPENSSL=ON
@@ -36,6 +42,13 @@ MINIZIP_DEPENDENCIES += zlib
 MINIZIP_CONF_OPTS += -DMZ_ZLIB=ON
 else
 MINIZIP_CONF_OPTS += -DMZ_ZLIB=OFF
+endif
+
+ifeq ($(BR2_PACKAGE_ZSTD),y)
+MINIZIP_DEPENDENCIES += zstd
+MINIZIP_CONF_OPTS += -DMZ_ZSTD=ON
+else
+MINIZIP_CONF_OPTS += -DMZ_ZSTD=OFF
 endif
 
 $(eval $(cmake-package))

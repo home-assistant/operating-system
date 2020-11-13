@@ -4,9 +4,8 @@
 #
 ################################################################################
 
-MPV_VERSION = 0.29.1
-MPV_SITE = https://github.com/mpv-player/mpv/archive
-MPV_SOURCE = v$(MPV_VERSION).tar.gz
+MPV_VERSION = 0.32.0
+MPV_SITE = $(call github,mpv-player,mpv,v$(MPV_VERSION))
 MPV_DEPENDENCIES = \
 	host-pkgconf ffmpeg zlib \
 	$(if $(BR2_PACKAGE_LIBICONV),libiconv)
@@ -27,9 +26,7 @@ MPV_CONF_OPTS = \
 	--disable-rsound \
 	--disable-rubberband \
 	--disable-uchardet \
-	--disable-vapoursynth \
-	--disable-vapoursynth-lazy \
-	--disable-mali-fbdev
+	--disable-vapoursynth
 
 # ALSA support requires pcm+mixer
 ifeq ($(BR2_PACKAGE_ALSA_LIB_MIXER)$(BR2_PACKAGE_ALSA_LIB_PCM),yy)
@@ -112,30 +109,12 @@ else
 MPV_CONF_OPTS += --disable-dvdnav
 endif
 
-# libdvdread
-ifeq ($(BR2_PACKAGE_LIBDVDREAD),y)
-MPV_CONF_OPTS += --enable-dvdread
-MPV_DEPENDENCIES += libdvdread
-else
-MPV_CONF_OPTS += --disable-dvdread
-endif
-
 # libdrm
 ifeq ($(BR2_PACKAGE_LIBDRM),y)
 MPV_CONF_OPTS += --enable-drm
 MPV_DEPENDENCIES += libdrm
 else
 MPV_CONF_OPTS += --disable-drm
-endif
-
-# libv4l
-ifeq ($(BR2_PACKAGE_LIBV4L),y)
-MPV_CONF_OPTS += \
-	--enable-libv4l2 \
-	--enable-tv
-MPV_DEPENDENCIES += libv4l
-else
-MPV_CONF_OPTS += --disable-libv4l2
 endif
 
 # libvdpau

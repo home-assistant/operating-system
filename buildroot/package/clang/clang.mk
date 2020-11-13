@@ -33,6 +33,7 @@ CLANG_CONF_OPTS += -DLLVM_TEMPORARILY_ALLOW_OLD_TOOLCHAIN=ON
 # By setting BUILD_SHARED_LIBS to OFF, we generate multiple static
 # libraries (the same way as host's clang build) and finally
 # libclang.so to be installed on the target.
+HOST_CLANG_CONF_OPTS += -DBUILD_SHARED_LIBS=OFF
 CLANG_CONF_OPTS += -DBUILD_SHARED_LIBS=OFF
 
 # Default is Debug build, which requires considerably more disk space

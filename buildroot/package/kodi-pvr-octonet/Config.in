@@ -1,0 +1,13 @@
+config BR2_PACKAGE_KODI_PVR_OCTONET
+	bool "kodi-pvr-octonet"
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # json-for-modern-cpp
+	select BR2_PACKAGE_JSON_FOR_MODERN_CPP
+	select BR2_PACKAGE_KODI_PLATFORM
+	select BR2_PACKAGE_LIBPLATFORM
+	help
+	  DigitalDevices Octonet PVR client addon for Kodi
+
+	  https://github.com/DigitalDevices/pvr.octonet
+
+comment "kodi-pvr-octonet needs a toolchain w/ gcc >= 4.9"
+	depends on !BR2_TOOLCHAIN_GCC_AT_LEAST_4_9

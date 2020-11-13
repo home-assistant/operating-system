@@ -1,4 +1,4 @@
 # md5, sha256 from https://pypi.org/pypi/circus/json
-md5	ed9082b5ac6ac5786721254b06315183  circus-0.15.0.tar.gz
-sha256	d1603cf4c4f620ce6593d3d2a67fad25bf0242183ea24110d8bb1c8079c55d1b  circus-0.15.0.tar.gz
+md5  9887ddafebef7475c08ff2c8e5cc2fad  circus-0.16.1.tar.gz
+sha256  dd7c011eb67785a1c96a4db94a56a22810c6ed608cebf301152dabc771654c5d  circus-0.16.1.tar.gz
 sha256  3df739c05a4eed7efdf4987142658d2a4f1243e5f08e72a5ecedac5749c92a49  LICENSE

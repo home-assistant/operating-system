@@ -1,6 +1,6 @@
 # From https://sourceforge.net/projects/acsccid/files/acsccid/1.1.7/
-sha1 f4db3c2393f392191291df128008832e245d821b acsccid-1.1.7.tar.bz2
-md5 0b34146571d9492ecfff066582dd9356 acsccid-1.1.7.tar.bz2
+sha1  c0062401e5fedf3ec12c8c2d375d6e1561a8a8ed  acsccid-1.1.8.tar.bz2
+md5  3eba7b2527aa0b14c73b1a620a1d72d2  acsccid-1.1.8.tar.bz2
 # Locally computed
-sha256 3778548ff9b639dd46d1570922e425698e16c5a0a0840ed1fad235052e291ee3  acsccid-1.1.7.tar.bz2
-sha256 a9bdde5616ecdd1e980b44f360600ee8783b1f99b8cc83a2beb163a0a390e861  COPYING
+sha256  f86fd846bc88594a569ea27040cb441d933b7eca8d51d2a90bacf161e7740051  acsccid-1.1.8.tar.bz2
+sha256  a9bdde5616ecdd1e980b44f360600ee8783b1f99b8cc83a2beb163a0a390e861  COPYING

@@ -1,0 +1,52 @@
+From 165b597e3003c6870f5980e8902014d9344e6cf3 Mon Sep 17 00:00:00 2001
+From: Peter Xu <peterx@redhat.com>
+Date: Thu, 1 Oct 2020 14:47:26 -0400
+Subject: [PATCH] rt-tests: oslat: Allow build for not supported archs
+
+Now rt-tests won't build for archs other than x86/i386/ppc64 after oslat is
+merged.  Instead of failing the build, let's make it pass.  However, whenever
+oslat is executed, instead of running the real program, dump an error message,
+so that people can try to implement the frc() function for it when there's a
+real need for the new arch.
+
+Signed-off-by: Peter Xu <peterx@redhat.com>
+Signed-off-by: John Kacur <jkacur@redhat.com>
+
+[Taken from:
+https://git.kernel.org/pub/scm/utils/rt-tests/rt-tests.git/commit/src/oslat/oslat.c?h=unstable/devel/latest&id=165b597e3003c6870f5980e8902014d9344e6cf3]
+Signed-off-by: Heiko Thiery <heiko.thiery@gmail.com>
+---
+ src/oslat/oslat.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
+
+diff --git a/src/oslat/oslat.c b/src/oslat/oslat.c
+index f1a82f2..a8b6155 100644
+--- a/src/oslat/oslat.c
++++ b/src/oslat/oslat.c
+@@ -69,7 +69,9 @@ static inline void frc(uint64_t *pval)
+ 	__asm__ __volatile__("mfspr %0, 268\n" : "=r" (*pval));
+ }
+ # else
+-#  error Need frc() for this platform.
++#  define relax()          do { } while (0)
++#  define frc(x)
++#  define FRC_MISSING
+ # endif
+ #else
+ # error Need to add support for this compiler.
+@@ -810,6 +812,12 @@ int main(int argc, char *argv[])
+ 	int i, n_cores;
+ 	cpu_set_t cpu_set;
+ 
++#ifdef FRC_MISSING
++	printf("This architecture is not yet supported. "
++	       "Please implement frc() function first for %s.\n", argv[0]);
++	return 0;
++#endif
++
+ 	CPU_ZERO(&cpu_set);
+ 
+ 	g.app_name = argv[0];
+-- 
+2.20.1
+

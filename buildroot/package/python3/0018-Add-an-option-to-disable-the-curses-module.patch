@@ -1,4 +1,4 @@
-From 332373ca25f2dbe5473330666ec49143506a4dc0 Mon Sep 17 00:00:00 2001
+From 962deb43f5f340a8472d432ae8e6d61186f9040e Mon Sep 17 00:00:00 2001
 From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 Date: Wed, 22 Feb 2017 17:31:51 -0800
 Subject: [PATCH] Add an option to disable the curses module
@@ -8,25 +8,23 @@ Signed-off-by: Samuel Martin <s.martin49@gmail.com>
 [ Andrey Smirnov: ported to Python 3.6 ]
 Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 ---
- Makefile.pre.in | 7 +++++--
+ Makefile.pre.in | 5 ++++-
  configure.ac    | 9 +++++++++
- 2 files changed, 14 insertions(+), 2 deletions(-)
+ 2 files changed, 13 insertions(+), 1 deletion(-)
 
 diff --git a/Makefile.pre.in b/Makefile.pre.in
-index 5d78419fd4..660c292765 100644
+index dc84384680..2a82f3308f 100644
 --- a/Makefile.pre.in
 +++ b/Makefile.pre.in
-@@ -1336,8 +1336,7 @@ LIBSUBDIRS=	site-packages \
- 		turtledemo \
+@@ -1405,7 +1405,6 @@ LIBSUBDIRS=	site-packages \
  		multiprocessing multiprocessing/dummy \
  		unittest \
--		venv venv/scripts venv/scripts/common venv/scripts/posix \
--		curses
-+		venv venv/scripts venv/scripts/common venv/scripts/posix
+ 		venv venv/scripts venv/scripts/common venv/scripts/posix \
+-		curses \
+ 		zoneinfo
  
  TESTSUBDIRS=	test \
- 		test/audiodata \
-@@ -1413,6 +1412,10 @@ TESTSUBDIRS += tkinter/test tkinter/test/test_tkinter \
+@@ -1485,6 +1484,10 @@ TESTSUBDIRS += tkinter/test tkinter/test/test_tkinter \
  	tkinter/test/test_ttk
  endif
  
@@ -38,10 +36,10 @@ index 5d78419fd4..660c292765 100644
  LIBSUBDIRS += lib2to3 lib2to3/fixes lib2to3/pgen2
  TESTSUBDIRS += lib2to3/tests			\
 diff --git a/configure.ac b/configure.ac
-index b5922451cc..ea422a86a9 100644
+index 4c72dae960..acd98381a3 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -3252,6 +3252,15 @@ if test "$TK" = "no"; then
+@@ -3347,6 +3347,15 @@ if test "$TK" = "no"; then
     DISABLED_EXTENSIONS="${DISABLED_EXTENSIONS} _tkinter"
  fi
  
@@ -58,5 +56,5 @@ index b5922451cc..ea422a86a9 100644
  
  AC_ARG_ENABLE(pydoc,
 -- 
-2.20.1
+2.25.1
 

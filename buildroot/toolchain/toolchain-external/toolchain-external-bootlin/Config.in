@@ -1,0 +1,9 @@
+config BR2_TOOLCHAIN_EXTERNAL_BOOTLIN
+	bool "Bootlin toolchains"
+	depends on BR2_TOOLCHAIN_EXTERNAL_BOOTLIN_ARCH_SUPPORTS
+	depends on BR2_HOSTARCH = "x86_64"
+	help
+	  Bootlin toolchains are built using Buildroot for a large
+	  number of architectures and C libraries configurations.
+
+	  https://toolchains.bootlin.com

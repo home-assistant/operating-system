@@ -1,5 +1,7 @@
+# From https://www.snort.org/downloads/snort/md5s
+md5  ea796f001d1b00302e4e69e337ab2460  daq-2.0.7.tar.gz
 # Locally computed:
-sha256 d41da5f7793e66044e6927dd868c0525e7ee4ec1a3515bf74ef9a30cd9273af0  daq-2.0.6.tar.gz
+sha256  bdc4e5a24d1ea492c39ee213a63c55466a2e8114b6a9abed609927ae13a7705e  daq-2.0.7.tar.gz
 
 # Hash for license files:
-sha256 07f28289c09fd9eb5a6ff7bc710ff40363601b1bbc6f3637d8ed412150e90819  COPYING
+sha256  07f28289c09fd9eb5a6ff7bc710ff40363601b1bbc6f3637d8ed412150e90819  COPYING

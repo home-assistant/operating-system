@@ -21,6 +21,7 @@ LIBGTK3_CONF_ENV = \
 LIBGTK3_CONF_OPTS = \
 	--disable-glibtest \
 	--enable-explicit-deps=no
+HOST_LIBGTK3_CONF_OPTS = --disable-introspection
 
 # Override pkg-config pkgdatadir variable, it needs the prefix
 LIBGTK3_MAKE_OPTS = \
@@ -39,6 +40,13 @@ LIBGTK3_CONF_OPTS += \
 	--x-libraries=$(STAGING_DIR)/usr/lib
 else
 LIBGTK3_CONF_OPTS += --disable-x11-backend
+endif
+
+ifeq ($(BR2_PACKAGE_GOBJECT_INTROSPECTION),y)
+LIBGTK3_CONF_OPTS += --enable-introspection
+LIBGTK3_DEPENDENCIES += gobject-introspection
+else
+LIBGTK3_CONF_OPTS += --disable-introspection
 endif
 
 ifeq ($(BR2_PACKAGE_LIBGTK3_WAYLAND),y)

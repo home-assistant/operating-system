@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-SWUPDATE_VERSION = 2019.11
+SWUPDATE_VERSION = 2020.04
 SWUPDATE_SITE = $(call github,sbabic,swupdate,$(SWUPDATE_VERSION))
 SWUPDATE_LICENSE = GPL-2.0+ with OpenSSL exception, LGPL-2.1+, MIT
 SWUPDATE_LICENSE_FILES = Licenses/Exceptions Licenses/gpl-2.0.txt \
@@ -15,7 +15,7 @@ SWUPDATE_LICENSE_FILES = Licenses/Exceptions Licenses/gpl-2.0.txt \
 # TARGET_CC is used for both.
 SWUPDATE_MAKE_ENV = CC="$(TARGET_CC)" LD="$(TARGET_CC)"
 
-# swupdate bundles its own version of mongoose (version 6.11)
+# swupdate bundles its own version of mongoose (version 6.16)
 
 ifeq ($(BR2_PACKAGE_EFIBOOTMGR),y)
 SWUPDATE_DEPENDENCIES += efibootmgr
@@ -77,7 +77,7 @@ ifeq ($(BR2_PACKAGE_HAS_LUAINTERPRETER):$(BR2_STATIC_LIBS),y:)
 SWUPDATE_DEPENDENCIES += luainterpreter host-pkgconf
 # defines the base name for the pkg-config file ("lua" or "luajit")
 define SWUPDATE_SET_LUA_VERSION
-	$(call KCONFIG_SET_OPT,CONFIG_LUAPKG,$(BR2_PACKAGE_PROVIDES_LUAINTERPRETER),$(SWUPDATE_BUILD_CONFIG))
+	$(call KCONFIG_SET_OPT,CONFIG_LUAPKG,$(BR2_PACKAGE_PROVIDES_LUAINTERPRETER))
 endef
 SWUPDATE_MAKE_ENV += HAVE_LUA=y
 else
@@ -114,10 +114,7 @@ ifeq ($(BR2_PACKAGE_SYSTEMD),y)
 SWUPDATE_DEPENDENCIES += systemd
 endif
 
-ifeq ($(BR2_PACKAGE_UBOOT_TOOLS),y)
-SWUPDATE_DEPENDENCIES += uboot-tools
-SWUPDATE_MAKE_ENV += HAVE_LIBUBOOTENV=y
-else ifeq ($(BR2_PACKAGE_LIBUBOOTENV),y)
+ifeq ($(BR2_PACKAGE_LIBUBOOTENV),y)
 SWUPDATE_DEPENDENCIES += libubootenv
 SWUPDATE_MAKE_ENV += HAVE_LIBUBOOTENV=y
 else
@@ -156,7 +153,7 @@ SWUPDATE_KCONFIG_EDITORS = menuconfig xconfig gconfig nconfig
 
 ifeq ($(BR2_STATIC_LIBS),y)
 define SWUPDATE_PREFER_STATIC
-	$(call KCONFIG_ENABLE_OPT,CONFIG_STATIC,$(SWUPDATE_BUILD_CONFIG))
+	$(call KCONFIG_ENABLE_OPT,CONFIG_STATIC)
 endef
 endif
 
@@ -187,6 +184,25 @@ ifeq ($(BR2_PACKAGE_SWUPDATE)$(BR_BUILDING),yy)
 ifeq ($(call qstrip,$(BR2_PACKAGE_SWUPDATE_CONFIG)),)
 $(error No Swupdate configuration file specified, check your BR2_PACKAGE_SWUPDATE_CONFIG setting)
 endif
+endif
+
+ifeq ($(BR2_PACKAGE_SWUPDATE_INSTALL_WEBSITE),y)
+define SWUPDATE_INSTALL_COMMON
+	mkdir -p $(TARGET_DIR)/etc/swupdate/conf.d \
+		$(TARGET_DIR)/usr/lib/swupdate/conf.d
+	$(INSTALL) -D -m 755 package/swupdate/swupdate.sh \
+		$(TARGET_DIR)/usr/lib/swupdate/swupdate.sh
+endef
+define SWUPDATE_INSTALL_INIT_SYSTEMD
+	$(SWUPDATE_INSTALL_COMMON)
+	$(INSTALL) -D -m 644 package/swupdate/swupdate.service \
+		$(TARGET_DIR)/usr/lib/systemd/system/swupdate.service
+endef
+define SWUPDATE_INSTALL_INIT_SYSV
+	$(SWUPDATE_INSTALL_COMMON)
+	$(INSTALL) -D -m 755 package/swupdate/S80swupdate \
+		$(TARGET_DIR)/etc/init.d/S80swupdate
+endef
 endif
 
 $(eval $(kconfig-package))

@@ -4,13 +4,14 @@
 #
 ################################################################################
 
-MOTION_VERSION = 4.2.2
+MOTION_VERSION = 4.3.2
 MOTION_SITE = $(call github,Motion-Project,motion,release-$(MOTION_VERSION))
 MOTION_LICENSE = GPL-2.0
-MOTION_LICENSE_FILES = COPYING
+MOTION_LICENSE_FILES = doc/COPYING
 MOTION_DEPENDENCIES = host-pkgconf jpeg libmicrohttpd $(TARGET_NLS_DEPENDENCIES)
 # From git
 MOTION_AUTORECONF = YES
+MOTION_GETTEXTIZE = YES
 
 MOTION_CONF_OPTS += --without-optimizecpu
 
@@ -23,20 +24,14 @@ endif
 
 ifeq ($(BR2_PACKAGE_MYSQL),y)
 MOTION_DEPENDENCIES += mysql
-MOTION_CONF_OPTS += \
-	--with-mysql \
-	--with-mysql-include=$(STAGING_DIR)/usr/include/mysql \
-	--with-mysql-lib=$(STAGING_DIR)/usr/lib
+MOTION_CONF_OPTS += --with-mysql
 else
 MOTION_CONF_OPTS += --without-mysql
 endif
 
 ifeq ($(BR2_PACKAGE_POSTGRESQL),y)
 MOTION_DEPENDENCIES += postgresql
-MOTION_CONF_OPTS += \
-	--with-pgsql \
-	--with-pgsql-include=$(STAGING_DIR)/usr/include \
-	--with-pgsql-lib=$(STAGING_DIR)/usr/lib
+MOTION_CONF_OPTS += --with-pgsql
 else
 MOTION_CONF_OPTS += --without-pgsql
 endif
@@ -58,9 +53,9 @@ endif
 # Do not use default install target as it installs many unneeded files and
 # directories: docs, examples and init scripts
 define MOTION_INSTALL_TARGET_CMDS
-	$(INSTALL) -D -m 0644 $(@D)/motion-dist.conf \
+	$(INSTALL) -D -m 0644 $(@D)/data/motion-dist.conf \
 		$(TARGET_DIR)/etc/motion/motion.conf
-	$(INSTALL) -D -m 0755 $(@D)/motion $(TARGET_DIR)/usr/bin/motion
+	$(INSTALL) -D -m 0755 $(@D)/src/motion $(TARGET_DIR)/usr/bin/motion
 endef
 
 define MOTION_INSTALL_INIT_SYSV

@@ -4,16 +4,18 @@
 #
 ################################################################################
 
-SURICATA_VERSION = 4.1.9
+SURICATA_VERSION = 6.0.0
 SURICATA_SITE = https://www.openinfosecfoundation.org/download
 SURICATA_LICENSE = GPL-2.0
 SURICATA_LICENSE_FILES = COPYING LICENSE
-# We're patching python/Makefile.am
+# 0001-python-ensure-proper-shabang-on-python-scripts.patch
+# 0002-configure.ac-allow-the-user-to-override-RUST_TARGET.patch
 SURICATA_AUTORECONF = YES
 
 SURICATA_DEPENDENCIES = \
 	host-pkgconf \
-	$(if $(BR2_PACKAGE_JANSSON),jansson) \
+	host-rustc \
+	jansson \
 	$(if $(BR2_PACKAGE_LIBCAP_NG),libcap-ng) \
 	$(if $(BR2_PACKAGE_LIBEVENT),libevent) \
 	libhtp \
@@ -24,12 +26,14 @@ SURICATA_DEPENDENCIES = \
 	pcre \
 	$(if $(BR2_PACKAGE_XZ),xz)
 
-SURICATA_CONF_ENV = ac_cv_path_HAVE_SPHINXBUILD=no
+SURICATA_CONF_ENV = \
+	ac_cv_path_HAVE_SPHINXBUILD=no \
+	CARGO_HOME=$(HOST_DIR)/share/cargo \
+	RUST_TARGET=$(RUSTC_TARGET_NAME)
 
 SURICATA_CONF_OPTS = \
 	--disable-gccprotect \
 	--disable-pie \
-	--disable-rust \
 	--disable-suricata-update \
 	--enable-non-bundled-htp
 
@@ -46,19 +50,9 @@ else
 SURICATA_CONF_OPTS += --disable-libmagic
 endif
 
-# --disable-libgeoip disables libgeoip when --enable-geoip is requested.
-# This allows libmaxminddb to be picked up instead of libgeoip when both are
-# installed on the system.
 ifeq ($(BR2_PACKAGE_LIBMAXMINDDB),y)
 SURICATA_DEPENDENCIES += libmaxminddb
-SURICATA_CONF_OPTS += \
-	--enable-geoip \
-	--disable-libgeoip
-else ifeq ($(BR2_PACKAGE_GEOIP),y)
-SURICATA_DEPENDENCIES += geoip
-SURICATA_CONF_OPTS += \
-	--enable-geoip \
-	--enable-libgeoip
+SURICATA_CONF_OPTS += --enable-geoip
 else
 SURICATA_CONF_OPTS += --disable-geoip
 endif

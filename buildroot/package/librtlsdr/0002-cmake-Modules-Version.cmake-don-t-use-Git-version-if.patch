@@ -1,0 +1,47 @@
+From feb5d9c6b7bcec788f9b01781c205e31fff260e7 Mon Sep 17 00:00:00 2001
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date: Tue, 11 Aug 2020 23:07:08 +0200
+Subject: [PATCH] cmake/Modules/Version.cmake: don't use Git version if not in
+ a Git repo
+
+If the librtlsdr code comes from a tarball, it doesn't have any .git/
+metadata, and therefore even if Git (as a tool) is found, the logic in
+cmake/Modules/Version.cmake fails finding a version through Git:
+
+-- Extracting version information from git describe...
+fatal: Not a git repository (or any of the parent directories): .git
+
+As a consequence, the VERSION variable is empty, which later causes
+cmake to bail out with:
+
+CMake Error at /home/test/autobuild/run/instance-1/output-1/host/share/cmake-3.15/Modules/WriteBasicConfigVersionFile.cmake:43 (message):
+  No VERSION specified for WRITE_BASIC_CONFIG_VERSION_FILE()
+Call Stack (most recent call first):
+  /home/test/autobuild/run/instance-1/output-1/host/share/cmake-3.15/Modules/CMakePackageConfigHelpers.cmake:225 (write_basic_config_version_file)
+  CMakeLists.txt:173 (write_basic_package_version_file)
+
+To avoid this, we only use Git to determine the version if the cmake
+project top-level source directory has a .git/ folder.
+
+Upstream: https://github.com/librtlsdr/librtlsdr/pull/75
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ cmake/Modules/Version.cmake | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/cmake/Modules/Version.cmake b/cmake/Modules/Version.cmake
+index 2d4e76d..6f67fa4 100644
+--- a/cmake/Modules/Version.cmake
++++ b/cmake/Modules/Version.cmake
+@@ -32,7 +32,7 @@ set(PATCH_VERSION ${VERSION_INFO_PATCH_VERSION})
+ ########################################################################
+ find_package(Git QUIET)
+ 
+-if(GIT_FOUND)
++if(GIT_FOUND AND EXISTS ${CMAKE_SOURCE_DIR}/.git)
+     message(STATUS "Extracting version information from git describe...")
+     execute_process(
+         COMMAND ${GIT_EXECUTABLE} describe --always --abbrev=4 --long
+-- 
+2.26.2
+

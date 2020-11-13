@@ -1,0 +1,4 @@
+# Locally calculated:
+sha256  eed4a77d75faafff56be78985950039f8d9d1eb9fcbd58b8862e481dd49825cd  uhd-3.15.0.0.tar.gz
+sha256  8fc99820c2419d0de6bbbd319ff935d54960b37b716d0b4bb1c75de493f3e1fd  LICENSE.md
+sha256  70bf7e79c8cd73a81f97ce81745ea0719a617eebe299a61868165daeae71fff2  host/LICENSE

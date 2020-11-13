@@ -1,7 +1,7 @@
-# From https://sourceforge.net/projects/qwt/files/qwt/6.1.4/
-sha1 a1028cb0a33322920266fb183869023b8ed30394  qwt-6.1.4.tar.bz2
-md5  4fb1852f694420e3ab9c583526edecc5          qwt-6.1.4.tar.bz2
+# From https://sourceforge.net/projects/qwt/files/qwt/6.1.5/
+sha1  07c71427f1f4bbd0354b3a98965943ce2f220766  qwt-6.1.5.tar.bz2
+md5  d65582f99312796ed42c3be3208ed3db  qwt-6.1.5.tar.bz2
 
 # Locally computed
-sha256 1529215329e51fc562e0009505a838f427919a18b362afff441f035b2d9b5bd9  qwt-6.1.4.tar.bz2
-sha256 d8737db330e1eeb439962e11654ab7f1aece3561d9415454a8c538643824ede6  COPYING
+sha256  4076de63ec2b5e84379ddfebf27c7b29b8dc9074f3db7e2ca61d11a1d8adc041  qwt-6.1.5.tar.bz2
+sha256  d8737db330e1eeb439962e11654ab7f1aece3561d9415454a8c538643824ede6  COPYING

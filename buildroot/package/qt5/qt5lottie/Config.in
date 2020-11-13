@@ -1,0 +1,12 @@
+config BR2_PACKAGE_QT5LOTTIE
+	bool "qt5lottie"
+	depends on BR2_PACKAGE_QT5_JSCORE_AVAILABLE
+	select BR2_PACKAGE_QT5DECLARATIVE
+	select BR2_PACKAGE_QT5DECLARATIVE_QUICK
+	help
+	  Qt is a cross-platform application and UI framework for
+	  developers using C++.
+
+	  This package corresponds to the qt5lottie module.
+
+	  https://doc.qt.io/qt-5/qtlottieanimation-index.html

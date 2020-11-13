@@ -5,10 +5,7 @@
 ################################################################################
 
 BOINC_VERSION_MAJOR = 7.16
-BOINC_VERSION = $(BOINC_VERSION_MAJOR).3
-# client_release can be used to build the Client and Manager but not the Server
-# part. The Server currently has no versioning (see
-# https://github.com/BOINC/boinc/pull/1798).
+BOINC_VERSION = $(BOINC_VERSION_MAJOR).6
 BOINC_SITE = \
 	$(call github,BOINC,boinc,client_release/$(BOINC_VERSION_MAJOR)/$(BOINC_VERSION))
 BOINC_LICENSE = LGPL-3.0+

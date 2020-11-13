@@ -1,0 +1,29 @@
+config BR2_PACKAGE_BABELTRACE2
+	bool "babeltrace2"
+	depends on BR2_USE_WCHAR # libglib2
+	depends on BR2_TOOLCHAIN_HAS_THREADS # libglib2
+	depends on BR2_USE_MMU # libglib2
+	select BR2_PACKAGE_LIBGLIB2
+	help
+	  Babeltrace 2 is an open-source trace manipulation toolkit.
+
+	  The Babeltrace 2 project offers a library with a C API,
+	  Python 3 bindings, and a command-line tool which makes it
+	  very easy for mere mortals to view, convert, transform, and
+	  analyze traces.
+
+	  Babeltrace 2 is also the reference parser implementation of
+	  the Common Trace Format (CTF), a very versatile trace format
+	  followed by various tracers and tools such as LTTng and
+	  barectf. The Babeltrace 2 library and its Python bindings
+	  can read and write CTF traces.
+
+	  To get support for the debugging information filter
+	  component class, enable the elfutils package
+	  (BR2_PACKAGE_ELFUTILS).
+
+	  https://babeltrace.org/
+
+comment "babeltrace2 needs a toolchain w/ wchar, threads"
+	depends on BR2_USE_MMU
+	depends on !BR2_USE_WCHAR || !BR2_TOOLCHAIN_HAS_THREADS

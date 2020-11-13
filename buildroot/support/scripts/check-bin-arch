@@ -25,6 +25,9 @@ declare -a IGNORES=(
 	# it for a different architecture (e.g. i386 grub on x86_64).
 	"/lib/grub"
 	"/usr/lib/grub"
+
+	# Guile modules are ELF files, with a "None" machine
+	"/usr/lib/guile"
 )
 
 while getopts p:l:r:a:i: OPT ; do

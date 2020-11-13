@@ -1,0 +1,8 @@
+config BR2_PACKAGE_PYTHON_BSDIFF4
+	bool "python-bsdiff4"
+	select BR2_PACKAGE_PYTHON_BZIP2 if BR2_PACKAGE_PYTHON # runtime
+	select BR2_PACKAGE_PYTHON3_BZIP2 if BR2_PACKAGE_PYTHON3 # runtime
+	help
+	  binary diff and patch using the BSDIFF4-format.
+
+	  https://github.com/ilanschnell/bsdiff4

@@ -1,0 +1,50 @@
+From 7c5475187d1bdf861360ffd8bc1aaea84a341db3 Mon Sep 17 00:00:00 2001
+From: Dagg Stompler <daggs@gmx.com>
+Date: Fri, 11 Sep 2020 12:28:52 +0300
+Subject: [PATCH] amlbootenc-gxl: remove non std C convention in for
+
+not all compilers have c99 or gnu99 enabled, so try not to use a
+non std C convention in for call loops
+
+Signed-off-by: Dagg Stompler <daggs@gmx.com>
+---
+ amlbootenc-gxl.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/amlbootenc-gxl.c b/amlbootenc-gxl.c
+index 3695e13..233563d 100644
+--- a/amlbootenc-gxl.c
++++ b/amlbootenc-gxl.c
+@@ -51,6 +51,7 @@ static int boot_enc(const char *input, const char *output)
+ 		._unknown3 = 0x02000000,
+ 		.sig2 = AMLOGIC_C_SIGNATURE,
+ 	};
++	int i;
+
+ 	assert(sizeof(hdr) == 0x100);
+
+@@ -130,10 +131,10 @@ static int boot_enc(const char *input, const char *output)
+ 	memcpy(hdr.iv, (uint8_t[]){ 0x14, 0x82, 0x5b, 0x1b, 0x10, 0xc1, 0x49, 0x0d, 0x8f, 0x13, 0x0a, 0x99, 0x15, 0x50, 0x1d, 0x37 }, 16);
+ 	}
+ #else
+-	for (int i = 0; i < sizeof(hdr.key); i++) {
++	for (i = 0; i < sizeof(hdr.key); i++) {
+ 		hdr.key[i] = rand();
+ 	}
+-	for (int i = 0; i < sizeof(hdr.iv); i++) {
++	for (i = 0; i < sizeof(hdr.iv); i++) {
+ 		hdr.iv[i] = rand();
+ 	}
+ #endif
+@@ -151,7 +152,7 @@ static int boot_enc(const char *input, const char *output)
+ 	AES_cbc_encrypt(src_buf, buf + hdr.first_offset, hdr.block_size, &aes_key, iv, AES_ENCRYPT);
+ 	SHA256_Update(&sha256_ctx, buf + hdr.first_offset, hdr.block_size);
+
+-	for (int i = 1; i < hdr.payload_size / hdr.block_size; i++) {
++	for (i = 1; i < hdr.payload_size / hdr.block_size; i++) {
+ 		memset(src_buf, 0, hdr.block_size);
+ 		fread(src_buf, 1, hdr.block_size, fin);
+ 		AES_cbc_encrypt(src_buf, buf + hdr.data_offset + (i - 1) * hdr.block_size, hdr.block_size, &aes_key, iv, AES_ENCRYPT);
+--
+2.28.0
+

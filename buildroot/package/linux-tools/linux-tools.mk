@@ -42,6 +42,13 @@ LINUX_TOOLS_POST_INSTALL_TARGET_HOOKS += $(foreach tool,$(LINUX_TOOLS),\
 	$(if $(BR2_PACKAGE_LINUX_TOOLS_$(call UPPERCASE,$(tool))),\
 		$(call UPPERCASE,$(tool))_INSTALL_TARGET_CMDS))
 
+define LINUX_TOOLS_LINUX_CONFIG_FIXUPS
+	$(foreach tool,$(LINUX_TOOLS),\
+		$(if $(BR2_PACKAGE_LINUX_TOOLS_$(call UPPERCASE,$(tool))),\
+			$($(call UPPERCASE,$(tool))_LINUX_CONFIG_FIXUPS))
+	)
+endef
+
 define LINUX_TOOLS_INSTALL_INIT_SYSTEMD
 	$(foreach tool,$(LINUX_TOOLS),\
 		$(if $(BR2_PACKAGE_LINUX_TOOLS_$(call UPPERCASE,$(tool))),\

@@ -1,0 +1,12 @@
+config BR2_PACKAGE_PYTHON_M2CRYPTO
+	bool "python-m2crypto"
+	select BR2_PACKAGE_OPENSSL
+	select BR2_PACKAGE_PYTHON_PYEXPAT if BR2_PACKAGE_PYTHON # runtime
+	select BR2_PACKAGE_PYTHON3_PYEXPAT if BR2_PACKAGE_PYTHON3 # runtime
+	select BR2_PACKAGE_PYTHON_SSL if BR2_PACKAGE_PYTHON # runtime
+	select BR2_PACKAGE_PYTHON3_SSL if BR2_PACKAGE_PYTHON3 # runtime
+	select BR2_PACKAGE_PYTHON_TYPING if BR2_PACKAGE_PYTHON # runtime
+	help
+	  M2Crypto: A Python crypto and SSL toolkit.
+
+	  https://gitlab.com/m2crypto/m2crypto

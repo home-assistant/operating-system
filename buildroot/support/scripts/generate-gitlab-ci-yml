@@ -2,16 +2,105 @@
 set -e
 set -o pipefail
 
-input="${1}"
+main() {
+    local template="${1}"
 
-cat "${input}"
+    preamble "${template}"
+    gen_tests
+}
 
-(
-    cd configs
-    LC_ALL=C ls -1 *_defconfig
-) \
-    | sed 's/$/: { extends: .defconfig }/'
+preamble() {
+    local template="${1}"
 
-./support/testing/run-tests -l 2>&1 \
-    | sed -r -e '/^test_run \((.*)\).*/!d; s//\1: { extends: .runtime_test }/' \
-    | LC_ALL=C sort
+    cat - "${template}" <<-_EOF_
+	# This file is generated; do not edit!
+	# Builds appear on https://gitlab.com/buildroot.org/buildroot/pipelines
+
+	image: ${CI_JOB_IMAGE}
+
+_EOF_
+}
+
+gen_tests() {
+    local -a basics defconfigs runtimes
+    local do_basics do_defconfigs do_runtime
+    local defconfigs_ext cfg tst
+
+    basics=( DEVELOPERS flake8 package )
+
+    defconfigs=( $(cd configs; LC_ALL=C ls -1 *_defconfig) )
+
+    runtimes=( $(./support/testing/run-tests -l 2>&1 \
+                 | sed -r -e '/^test_run \((.*)\).*/!d; s//\1/' \
+                 | LC_ALL=C sort)
+             )
+
+    if [ -n "${CI_COMMIT_TAG}" ]; then
+        do_basics=true
+        do_defconfigs=base
+        do_runtime=true
+    elif [ "${CI_PIPELINE_SOURCE}" = "trigger" ]; then
+        case "${BR_SCHEDULE_JOBS}" in
+          (basic)
+            do_basics=true
+            do_defconfigs=check
+            defconfigs_ext=_check
+            ;;
+          (defconfig)
+            do_defconfigs=base
+            ;;
+          (runtime)
+            do_runtime=true
+            ;;
+        esac
+    else
+        case "${CI_COMMIT_REF_NAME}" in
+          (*-basics)
+            do_basics=true
+            do_defconfigs=check
+            defconfigs_ext=_check
+            ;;
+          (*-defconfigs)
+            do_defconfigs=base
+            ;;
+          (*-*_defconfig)
+            defconfigs=( "${CI_COMMIT_REF_NAME##*-}" )
+            do_defconfigs=base
+            ;;
+          (*-runtime-tests)
+            do_runtime=true
+            ;;
+          (*-tests.*)
+            runtimes=( "${CI_COMMIT_REF_NAME##*-}" )
+            do_runtime=true
+            ;;
+        esac
+    fi
+
+    # If nothing else, at least do the basics to generate a valid pipeline
+    if [    -z "${do_defconfigs}" \
+         -a -z "${do_runtime}" \
+       ]
+    then
+        do_basics=true
+    fi
+
+    if ${do_basics:-false}; then
+        for tst in "${basics[@]}"; do
+            printf 'check-%s: { extends: .check-%s_base }\n' "${tst}" "${tst}"
+        done
+    fi
+
+    if [ -n "${do_defconfigs}" ]; then
+        for cfg in "${defconfigs[@]}"; do
+            printf '%s%s: { extends: .defconfig_%s }\n' \
+                   "${cfg}" "${defconfigs_ext}" "${do_defconfigs}"
+        done
+    fi
+
+    if ${do_runtime:-false}; then
+        printf '%s: { extends: .runtime_test_base }\n' "${runtimes[@]}"
+    fi
+}
+
+main "${@}"

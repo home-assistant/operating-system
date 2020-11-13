@@ -1,0 +1,10 @@
+config BR2_PACKAGE_PYTHON_BOTOCORE
+	bool "python-botocore"
+	select BR2_PACKAGE_PYTHON_JMESPATH # runtime
+	select BR2_PACKAGE_PYTHON_DOCUTILS # runtime
+	select BR2_PACKAGE_PYTHON_DATEUTIL # runtime
+	select BR2_PACKAGE_PYTHON_URLLIB3 # runtime
+	help
+	  Low-level, data-driven core of boto 3.
+
+	  https://github.com/boto/botocore

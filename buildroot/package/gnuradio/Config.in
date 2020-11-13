@@ -54,6 +54,14 @@ config BR2_PACKAGE_GNURADIO_CTRLPORT
 	help
 	  GNU Radio ctrlport block
 
+config BR2_PACKAGE_GNURADIO_DTV
+	bool "gr-dtv support"
+	select BR2_PACKAGE_GNURADIO_ANALOG
+	select BR2_PACKAGE_GNURADIO_FEC
+	select BR2_PACKAGE_GNURADIO_FILTER
+	help
+	  various digital television standards blocks
+
 config BR2_PACKAGE_GNURADIO_FEC
 	bool "gr-fec support"
 	select BR2_PACKAGE_GNURADIO_BLOCKS
@@ -63,7 +71,7 @@ config BR2_PACKAGE_GNURADIO_FEC
 
 config BR2_PACKAGE_GNURADIO_PYTHON
 	bool "python support"
-	depends on BR2_PACKAGE_PYTHON || BR2_PACKAGE_PYTHON3
+	depends on BR2_PACKAGE_PYTHON3
 	depends on BR2_PACKAGE_PYTHON_NUMPY_ARCH_SUPPORTS
 	depends on BR2_TOOLCHAIN_USES_GLIBC || BR2_TOOLCHAIN_USES_MUSL # python-numpy
 	select BR2_PACKAGE_BOOST_PYTHON
@@ -125,6 +133,20 @@ config BR2_PACKAGE_GNURADIO_PAGER
 	select BR2_PACKAGE_GNURADIO_ANALOG
 	help
 	  FLEX pager decoder implementation blocks
+
+config BR2_PACKAGE_GNURADIO_QTGUI
+	bool "gr-qtgui"
+	depends on BR2_PACKAGE_GNURADIO_PYTHON
+	depends on BR2_PACKAGE_QT5
+	select BR2_PACKAGE_GNURADIO_FFT
+	select BR2_PACKAGE_GNURADIO_FILTER
+	select BR2_PACKAGE_PYTHON_PYQT5
+	select BR2_PACKAGE_QT5BASE_FONTCONFIG # runtime
+	select BR2_PACKAGE_QT5BASE_GUI # runtime
+	select BR2_PACKAGE_QT5BASE_WIDGETS # runtime
+	select BR2_PACKAGE_QWT
+	help
+	  GNU Radio Qt scopes
 
 config BR2_PACKAGE_GNURADIO_TRELLIS
 	bool "gr-trellis support"

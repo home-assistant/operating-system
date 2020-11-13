@@ -1,0 +1,76 @@
+From 5aeb25abf13de43b9e497f6509209911dd1386b8 Mon Sep 17 00:00:00 2001
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date: Sun, 26 Apr 2020 15:33:39 +0200
+Subject: [PATCH] Use LONG_BIT to define RADIX_BITS
+
+This allows to avoid having to support each CPU architecture
+individually.
+
+Also, add the necessary defines in the makefile to expose
+LONG_BIT. Adding those defines end up requiring using <sys/select.h>
+as we're now using >= POSIX.1-2001 definitions of fd_set and friends.
+
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Signed-off-by: Vincent Fazio <vfazio@gmail.com>
+---
+ src/LibSupport.h     | 17 +++--------------
+ src/TcpServerPosix.c |  1 +
+ src/makefile         |  2 ++
+ 3 files changed, 6 insertions(+), 14 deletions(-)
+
+diff --git a/src/LibSupport.h b/src/LibSupport.h
+index b2e6a51..0b59d18 100644
+--- a/src/LibSupport.h
++++ b/src/LibSupport.h
+@@ -64,20 +64,9 @@
+ #ifndef _LIB_SUPPORT_H_
+ #define _LIB_SUPPORT_H_
+ 
+-#ifndef RADIX_BITS
+-#   if defined(__x86_64__) || defined(__x86_64)				\
+-    || defined(__amd64__) || defined(__amd64) || defined(_WIN64) || defined(_M_X64) \
+-    || defined(_M_ARM64) || defined(__aarch64__) \
+-    || defined(__powerpc64__) || defined(__ppc64__)
+-#       define RADIX_BITS                      64
+-#   elif defined(__i386__) || defined(__i386) || defined(i386)		\
+-    || defined(_WIN32) || defined(_M_IX86)				\
+-    || defined(_M_ARM) || defined(__arm__) || defined(__thumb__)
+-#       define RADIX_BITS                      32
+-#   else
+-#       error Unable to determine RADIX_BITS from compiler environment
+-#   endif
+-#endif // RADIX_BITS
++#include <limits.h>
++
++#define RADIX_BITS LONG_BIT
+ 
+ // These macros use the selected libraries to the proper include files.
+ #define LIB_QUOTE(_STRING_) #_STRING_
+diff --git a/src/TcpServerPosix.c b/src/TcpServerPosix.c
+index 20fcb29..bdac7aa 100644
+--- a/src/TcpServerPosix.c
++++ b/src/TcpServerPosix.c
+@@ -66,6 +66,7 @@
+ 
+ #include <stdio.h>
+ /* FIXME need Posix TCP socket code */
++#include <sys/select.h>
+ #include <unistd.h>
+ #include <sys/types.h>
+ #include <sys/socket.h>
+diff --git a/src/makefile b/src/makefile
+index f124e78..6ee128e 100644
+--- a/src/makefile
++++ b/src/makefile
+@@ -46,6 +46,8 @@ CCFLAGS = -Wall  			\
+ 	 -c -ggdb -O0 			\
+ 	-DTPM_POSIX			\
+ 	-D_POSIX_			\
++	-D_DEFAULT_SOURCE		\
++	-D_XOPEN_SOURCE=500		\
+ 	-DTPM_NUVOTON
+ 
+ # add this line for big endian platforms
+-- 
+2.26.2
+

@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-PERL_FILE_SHAREDIR_VERSION = 1.116
+PERL_FILE_SHAREDIR_VERSION = 1.118
 PERL_FILE_SHAREDIR_SOURCE = File-ShareDir-$(PERL_FILE_SHAREDIR_VERSION).tar.gz
 PERL_FILE_SHAREDIR_SITE = $(BR2_CPAN_MIRROR)/authors/id/R/RE/REHSACK
 PERL_FILE_SHAREDIR_DEPENDENCIES = host-perl-file-sharedir-install

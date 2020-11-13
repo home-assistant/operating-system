@@ -4,14 +4,13 @@
 #
 ################################################################################
 
-CC_TOOL_VERSION = 0.26
-CC_TOOL_SITE = http://downloads.sourceforge.net/project/cctool
-CC_TOOL_SOURCE = cc-tool-$(CC_TOOL_VERSION)-src.tgz
+CC_TOOL_VERSION = 0.27
+CC_TOOL_SITE = $(call github,dashesy,cc-tool,v$(CC_TOOL_VERSION))
 CC_TOOL_LICENSE = GPL-2.0
 CC_TOOL_LICENSE_FILES = COPYING
 CC_TOOL_DEPENDENCIES = boost libusb
 
-# we're patching boost.m4
+# From git
 CC_TOOL_AUTORECONF = YES
 
 # Configure script "discovers" boost in /usr/local if not given explicitly

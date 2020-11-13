@@ -1,0 +1,5 @@
+# md5, sha256 from https://pypi.org/pypi/crayons/json
+md5  88a79c854ce54bcbb8376d18a448d627  crayons-0.4.0.tar.gz
+sha256  bd33b7547800f2cfbd26b38431f9e64b487a7de74a947b0fafc89b45a601813f  crayons-0.4.0.tar.gz
+# Locally computed sha256 checksums
+sha256  7deeb137f78337fd1e2e3966a7896821c6ebff244200d009d3f4157246b5a457  LICENSE

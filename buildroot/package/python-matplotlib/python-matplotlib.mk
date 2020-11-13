@@ -13,4 +13,8 @@ PYTHON_MATPLOTLIB_DEPENDENCIES = host-pkgconf freetype host-python-numpy \
 	libpng python-cycler
 PYTHON_MATPLOTLIB_SETUP_TYPE = setuptools
 
+ifeq ($(BR2_PACKAGE_PYTHON_MATPLOTLIB_QT),y)
+PYTHON_MATPLOTLIB_DEPENDENCIES += python-pyqt5
+endif
+
 $(eval $(python-package))

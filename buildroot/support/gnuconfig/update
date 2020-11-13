@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+set -e
+
+cd "${0%/*}"
+
+git clone https://git.savannah.gnu.org/git/config.git
+sha="$(cd config; git log -1 --pretty=tformat:%H)"
+sed -r -i -e "\$s/.*/${sha}/" README.buildroot
+cp config/config.* .
+for p in $(ls patches/*.patch 2>/dev/null); do
+    patch -p1 < "${p}"
+done
+rm -rf config

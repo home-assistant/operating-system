@@ -1,0 +1,41 @@
+From 0d9e004d324cc030c173de04c40db51a0f22bb5c Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Thu, 15 Oct 2020 07:58:05 +0200
+Subject: [PATCH] Makefile: fix static linking with pcre
+
+Static build with pcre is broken since version 1.19b and
+https://github.com/yrutschle/sslh/commit/cb90cc97ae64a445242e517847c6e44b7003eda4
+because -lpcre has been replaced by -lpcreposix which will result in
+the following static build failure:
+
+/srv/storage/autobuild/run/instance-1/output-1/host/bin/mipsel-linux-gcc -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64  -Os   -static -static -o echosrv echosrv.o probe.o common.o tls.o  -lpcreposix -lconfig -lcap
+/srv/storage/autobuild/run/instance-1/output-1/host/opt/ext-toolchain/bin/../lib/gcc/mipsel-buildroot-linux-uclibc/8.3.0/../../../../mipsel-buildroot-linux-uclibc/bin/ld: /srv/storage/autobuild/run/instance-1/output-1/host/mipsel-buildroot-linux-uclibc/sysroot/usr/lib/libpcreposix.a(libpcreposix_la-pcreposix.o): in function `regfree':
+pcreposix.c:(.text+0x120): undefined reference to `pcre_free'
+
+So append -lpcre after -lpcreposix
+
+Fixes:
+ - http://autobuild.buildroot.org/results/a601824fc0c205a6a940e0f9f079ce2c39840605
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: https://github.com/yrutschle/sslh/pull/280]
+---
+ Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+index 986cf1c..ecadc22 100644
+--- a/Makefile
++++ b/Makefile
+@@ -43,7 +43,7 @@ endif
+ 
+ ifneq ($(strip $(USELIBPCRE)),)
+ 	CPPFLAGS+=-DLIBPCRE
+-	LIBS:=$(LIBS) -lpcreposix
++	LIBS:=$(LIBS) -lpcreposix -lpcre
+ endif
+ 
+ ifneq ($(strip $(USELIBCONFIG)),)
+-- 
+2.28.0
+

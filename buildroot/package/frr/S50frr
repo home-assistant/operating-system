@@ -1,0 +1,46 @@
+#!/bin/sh
+
+DAEMON="frr"
+
+[ -r "/etc/default/$DAEMON" ] && . "/etc/default/$DAEMON"
+
+start() {
+	install -m 755 -o frr -g frr -d /var/run/frr
+	install -m 755 -o frr -g frr -d /var/log/frr
+
+	printf 'Starting %s: ' "$DAEMON"
+	/usr/sbin/frrinit.sh start
+	status=$?
+	if [ "$status" -eq 0 ]; then
+		echo "OK"
+	else
+		echo "FAIL"
+	fi
+	return "$status"
+}
+
+stop() {
+	printf 'Stopping %s: ' "$DAEMON"
+	/usr/sbin/frrinit.sh stop
+	status=$?
+	if [ "$status" -eq 0 ]; then
+		echo "OK"
+	else
+		echo "FAIL"
+	fi
+	return "$status"
+}
+
+restart() {
+	stop
+	sleep 1
+	start
+}
+
+case "$1" in
+	start|stop|restart)
+		"$1";;
+	*)
+		echo "Usage: $0 {start|stop|restart}"
+		exit 1
+esac

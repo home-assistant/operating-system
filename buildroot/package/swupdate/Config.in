@@ -32,14 +32,12 @@ config BR2_PACKAGE_SWUPDATE
 	    compressed archives.
 	  * Select BR2_PACKAGE_ZSTD if you want to deal with zstd
 	    compressed archives.
-	  * Select BR2_PACKAGE_UBOOT_TOOLS and BR2_PACKAGE_ZLIB to add
-	    support for setting the U-Boot environment.
 	  * Select BR2_PACKAGE_ZEROMQ to add support for using a
 	    remote handler.
 	  * Select BR2_PACKAGE_LIBRSYNC to add support for using
 	    rdiff handler.
 	  * Select BR2_PACKAGE_LIBUBOOTENV to add support for setting
-	    the U-Boot environment with the new API.
+	    the U-Boot environment.
 	  * Select BR2_PACKAGE_LIBGPIOD to add support for
 	    microcontroller firmware update.
 	  * Select BR2_PACKAGE_EFIBOOTMGR to add support for EFI Boot

@@ -1,8 +1,8 @@
-# From https://www.barebox.org/download/barebox-2020.01.0.tar.bz2.md5
-md5  05038e0b61b68ce40e038295b809c548  barebox-2020.01.0.tar.bz2
+# From https://www.barebox.org/download/barebox-2020.09.0.tar.bz2.md5
+md5  907dc813298fcded06fa9c788d3fb6c8  barebox-2020.09.0.tar.bz2
 
 # Locally calculated
-sha256  8968e6b0d72d79eba636917b067b925e3bbb54d38c6c2acfc4e1e49909b42f33  barebox-2020.01.0.tar.bz2
+sha256  aad3b0736aa8d368d185736260d81fb3785251f376897be3cec745182fd51869  barebox-2020.09.0.tar.bz2
 
 # License files, locally computed
 sha256  ab1122aa9f9073ad1ec824edcd970b16a6a7881a34a18fd56c080debb2dca5d4  COPYING

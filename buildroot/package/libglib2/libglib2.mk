@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-LIBGLIB2_VERSION_MAJOR = 2.62
-LIBGLIB2_VERSION = $(LIBGLIB2_VERSION_MAJOR).5
+LIBGLIB2_VERSION_MAJOR = 2.64
+LIBGLIB2_VERSION = $(LIBGLIB2_VERSION_MAJOR).4
 LIBGLIB2_SOURCE = glib-$(LIBGLIB2_VERSION).tar.xz
 LIBGLIB2_SITE = http://ftp.gnome.org/pub/gnome/sources/glib/$(LIBGLIB2_VERSION_MAJOR)
 LIBGLIB2_LICENSE = LGPL-2.1+
@@ -85,10 +85,14 @@ endef
 endif
 
 ifeq ($(BR2_PACKAGE_UTIL_LINUX_LIBMOUNT),y)
-LIBGLIB2_CONF_OPTS += -Dlibmount=true
-LIBGLIB2_DEPENDENCIES += util-linux
+LIBGLIB2_CONF_OPTS += -Dlibmount=enabled
+ifeq ($(BR2_PACKAGE_UTIL_LINUX_LIBS),y)
+LIBGLIB2_DEPENDENCIES += util-linux-libs
 else
-LIBGLIB2_CONF_OPTS += -Dlibmount=false
+LIBGLIB2_DEPENDENCIES += util-linux
+endif
+else
+LIBGLIB2_CONF_OPTS += -Dlibmount=disabled
 endif
 
 # Purge useless binaries from target

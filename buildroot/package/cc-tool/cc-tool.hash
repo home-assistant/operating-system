@@ -1,6 +1,5 @@
-# From http://sourceforge.net/projects/cctool/files/
-sha1 f313e55f019ea5338438633f5b5e689b699343e1  cc-tool-0.26-src.tgz
-md5 26960676f3e6264e612c299fbf8ec5ea  cc-tool-0.26-src.tgz
+# Locally computed
+sha256  1d26be4446c68413a02bf3156e6434d7fe9ce76aa0a169464ca5d7b2a731610d  cc-tool-0.27.tar.gz
 
 # Hash for license file
-sha256 231f7edcc7352d7734a96eef0b8030f77982678c516876fcb81e25b32d68564c  COPYING
+sha256  231f7edcc7352d7734a96eef0b8030f77982678c516876fcb81e25b32d68564c  COPYING

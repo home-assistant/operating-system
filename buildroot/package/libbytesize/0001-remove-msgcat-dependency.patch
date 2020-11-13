@@ -1,0 +1,36 @@
+From ac16b1a905dbdb06ac7bba6ac105686aa7958093 Mon Sep 17 00:00:00 2001
+From: Adam Duskett <Aduskett@gmail.com>
+Date: Fri, 24 Jul 2020 11:49:14 -0700
+Subject: [PATCH] remove msgcat dependency
+
+Gettext-tiny does not include the msgcat utility, which causes issues when
+building libbytesize for embedded systems, as many embedded systems do not
+build the full gettext, but instead use the gettext-tiny library.
+
+Because msgcat is not needed to build libbytesize, it's safe to remove the
+dependency.
+
+Upstream-status: pending
+https://github.com/storaged-project/libbytesize/pull/76
+Signed-off-by: Adam Duskett <Aduskett@gmail.com>
+---
+ configure.ac | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index 2ec4062..7d7f218 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -13,8 +13,7 @@ AC_CONFIG_MACRO_DIR([m4])
+ AC_PATH_PROG([XGETTEXT], [xgettext])
+ AC_PATH_PROG([MSGFMT], [msgfmt])
+ AC_PATH_PROG([MSGMERGE], [msgmerge])
+-AC_PATH_PROG([MSGCAT], [msgcat])
+-AS_IF([test -z "$XGETTEXT" -o -z "$MSGFMT" -o -z "$MSGMERGE" -o -z "$MSGCAT"],
++AS_IF([test -z "$XGETTEXT" -o -z "$MSGFMT" -o -z "$MSGMERGE"],
+       [AC_MSG_FAILURE([gettext not found])])
+ 
+ # Define this so gettext.h works without requiring the whole gettext macro
+-- 
+2.26.2
+

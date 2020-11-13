@@ -73,7 +73,6 @@ class TestRustBin(TestRustBase):
         BR2_LINUX_KERNEL_INTREE_DTS_NAME="vexpress-v2p-ca9"
         BR2_TARGET_ROOTFS_CPIO=y
         # BR2_TARGET_ROOTFS_TAR is not set
-        BR2_PACKAGE_HOST_CARGO=y
         BR2_PACKAGE_HOST_RUSTC=y
         """
 
@@ -102,7 +101,6 @@ class TestRust(TestRustBase):
         BR2_LINUX_KERNEL_INTREE_DTS_NAME="vexpress-v2p-ca9"
         BR2_TARGET_ROOTFS_CPIO=y
         # BR2_TARGET_ROOTFS_TAR is not set
-        BR2_PACKAGE_HOST_CARGO=y
         BR2_PACKAGE_HOST_RUSTC=y
         BR2_PACKAGE_HOST_RUST=y
         """

@@ -19,6 +19,7 @@ config BR2_PACKAGE_LUAJIT
 	# binaries, so check if that option is supported. See
 	# luajit.mk for details.
 	select BR2_PACKAGE_HAS_LUAINTERPRETER
+	select BR2_PACKAGE_LUAINTERPRETER_ABI_VERSION_5_1
 	select BR2_HOSTARCH_NEEDS_IA32_COMPILER if !BR2_ARCH_IS_64
 	help
 	  LuaJIT implements the full set of language features defined
@@ -32,9 +33,6 @@ if BR2_PACKAGE_LUAJIT
 
 config BR2_PACKAGE_PROVIDES_LUAINTERPRETER
 	default "luajit"
-
-config BR2_PACKAGE_LUAINTERPRETER_ABI_VERSION
-	default "5.1"
 
 config BR2_PACKAGE_LUAJIT_COMPAT52
 	bool "Lua 5.2 compatibility"

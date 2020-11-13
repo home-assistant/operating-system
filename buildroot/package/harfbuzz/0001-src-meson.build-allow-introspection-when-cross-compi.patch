@@ -1,0 +1,33 @@
+From 432dfd0a1d8fe0a8df89e7ce828c520c7758f10c Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Thu, 24 Sep 2020 21:00:34 +0200
+Subject: [PATCH] src/meson.build: allow introspection when cross-compiling
+
+introspection can be enabled when cross-compiling on certains conditions
+(for example it is supported by buildroot)
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: https://github.com/harfbuzz/harfbuzz/pull/2692]
+---
+ src/meson.build | 5 -----
+ 1 file changed, 5 deletions(-)
+
+diff --git a/src/meson.build b/src/meson.build
+index 19290245..7db43508 100644
+--- a/src/meson.build
++++ b/src/meson.build
+@@ -637,11 +637,6 @@ if have_gobject
+   gir = find_program('g-ir-scanner', required: get_option('introspection'))
+   build_gir = gir.found()
+ 
+-  build_gir = build_gir and not meson.is_cross_build()
+-  if not build_gir and get_option('introspection').enabled()
+-    error('Introspection support is requested but it isn\'t available in cross builds')
+-  endif
+-
+   build_gir = build_gir and get_option('default_library') != 'static'
+   if not build_gir and get_option('introspection').enabled()
+     error('Introspection support is requested but the default library option should be shared or both')
+-- 
+2.28.0
+

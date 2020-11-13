@@ -1,0 +1,10 @@
+[Unit]
+Description=Pigpio daemon
+After=network.target
+
+[Service]
+EnvironmentFile=-/etc/default/pigpio
+ExecStart=/usr/bin/pigpiod -g $PIGPIOD_ARGS
+
+[Install]
+WantedBy=multi-user.target

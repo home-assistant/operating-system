@@ -15,7 +15,7 @@ import re
 import sys
 
 
-def compile_one(host_path, strip_root=None):
+def compile_one(host_path, strip_root=None, verbose=False):
     """
     Compile a .py file into a .pyc file located next to it.
 
@@ -24,6 +24,8 @@ def compile_one(host_path, strip_root=None):
     :arg strip_root:
         Prefix to remove from the original source paths encoded in compiled
         files.
+    :arg verbose:
+        Print compiled file paths.
     """
     if os.path.islink(host_path) or not os.path.isfile(host_path):
         return  # only compile real files
@@ -38,6 +40,9 @@ def compile_one(host_path, strip_root=None):
         runtime_path = os.path.join("/", os.path.relpath(host_path, strip_root))
     else:
         runtime_path = host_path
+
+    if verbose:
+        print("  PYC  {}".format(runtime_path))
 
     # will raise an error if the file cannot be compiled
     py_compile.compile(host_path, cfile=host_path + "c",
@@ -63,6 +68,8 @@ def main():
                         Prefix to remove from the original source paths encoded
                         in compiled files
                         """)
+    parser.add_argument("--verbose", action="store_true",
+                        help="Print compiled files")
 
     args = parser.parse_args()
 
@@ -72,7 +79,8 @@ def main():
                 parser.error("DIR: not inside ROOT dir: {!r}".format(d))
             for parent, _, files in os.walk(d):
                 for f in files:
-                    compile_one(os.path.join(parent, f), args.strip_root)
+                    compile_one(os.path.join(parent, f), args.strip_root,
+                                args.verbose)
 
     except Exception as e:
         print("error: {}".format(e))

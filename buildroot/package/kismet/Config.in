@@ -1,42 +1,75 @@
-comment "kismet needs a toolchain w/ threads, C++, dynamic library"
+comment "kismet needs a toolchain w/ threads, C++"
 	depends on BR2_USE_MMU
-	depends on !BR2_INSTALL_LIBSTDCPP || !BR2_TOOLCHAIN_HAS_THREADS || \
-		BR2_STATIC_LIBS
+	depends on !BR2_INSTALL_LIBSTDCPP || !BR2_TOOLCHAIN_HAS_THREADS
+	depends on BR2_HOSTARCH = "x86_64" || BR2_HOSTARCH = "x86"
 
 config BR2_PACKAGE_KISMET
 	bool "kismet"
 	depends on BR2_INSTALL_LIBSTDCPP
-	depends on BR2_TOOLCHAIN_HAS_THREADS # libnl
+	depends on BR2_TOOLCHAIN_HAS_THREADS
 	depends on BR2_USE_MMU # fork()
-	depends on !BR2_STATIC_LIBS # dlfcn.h
-	select BR2_PACKAGE_NCURSES
+	depends on BR2_HOSTARCH = "x86_64" || BR2_HOSTARCH = "x86" # protobuf-c
 	select BR2_PACKAGE_LIBPCAP
-	select BR2_PACKAGE_LIBNL
+	select BR2_PACKAGE_PROTOBUF_C
+	select BR2_PACKAGE_SQLITE
+	select BR2_PACKAGE_ZLIB
 	help
-	  Kismet - 802.11 layer2 wireless network detector, sniffer,
-	  and intrusion detection system.
+	  Kismet is a wireless network and device detector, sniffer,
+	  wardriving tool, and WIDS (wireless intrusion detection)
+	  framework.
 
-	  Kismet will work with any wireless card which supports raw
-	  monitoring (rfmon) mode, and can sniff 802.11b, 802.11a, and
-	  802.11g traffic.
-
-	  Kismet identifies networks by passively collecting packets
-	  and detecting standard named networks, detecting (and given
-	  time, decloaking) hidden networks, and infering the presence
-	  of nonbeaconing networks via data traffic.
+	  Kismet works with Wi-Fi interfaces, Bluetooth interfaces, some
+	  SDR (software defined radio) hardware like the RTLSDR, and
+	  other specialized capture hardware.
 
 	  http://www.kismetwireless.net
 
 if BR2_PACKAGE_KISMET
 
-config BR2_PACKAGE_KISMET_CLIENT
-	bool "Install client"
+config BR2_PACKAGE_KISMET_PYTHON_TOOLS
+	bool "Install python tools"
+	depends on BR2_PACKAGE_PROTOBUF_ARCH_SUPPORTS # protobuf
+	depends on BR2_PACKAGE_PYTHON_NUMPY_ARCH_SUPPORTS # python-numpy
+	depends on BR2_PACKAGE_PYTHON3
+	depends on !BR2_STATIC_LIBS # protobuf
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_8 # protobuf
+	depends on BR2_TOOLCHAIN_USES_GLIBC || BR2_TOOLCHAIN_USES_MUSL # python-numpy
+	select BR2_PACKAGE_PROTOBUF
+	select BR2_PACKAGE_PYTHON_NUMPY # runtime for RTLAMR and RTLADSB
+	select BR2_PACKAGE_PYTHON_PROTOBUF # runtime
+	select BR2_PACKAGE_PYTHON_SERIAL # runtime for Freaklabs Zigbee
+	select BR2_PACKAGE_PYTHON_SETUPTOOLS
+	help
+	  Enable Python and Python-related tools (RTL_433, RTLAMR,
+	  RTLADSB and Freaklabs Zigbee)
 
-config BR2_PACKAGE_KISMET_DRONE
-	bool "Install drone"
+comment "python tools needs python3"
+	depends on !BR2_PACKAGE_PYTHON3
+	depends on BR2_PACKAGE_PROTOBUF_ARCH_SUPPORTS
+	depends on BR2_PACKAGE_PYTHON_NUMPY_ARCH_SUPPORTS
+
+comment "python tools needs a glibc or musl toolchain w/ dynamic library, gcc >= 4.8"
+	depends on BR2_STATIC_LIBS || !BR2_TOOLCHAIN_GCC_AT_LEAST_4_8
+	depends on BR2_PACKAGE_PROTOBUF_ARCH_SUPPORTS
+	depends on BR2_PACKAGE_PYTHON_NUMPY_ARCH_SUPPORTS
+	depends on !(BR2_TOOLCHAIN_USES_GLIBC || BR2_TOOLCHAIN_USES_MUSL)
 
 config BR2_PACKAGE_KISMET_SERVER
 	bool "Install server"
 	default y
+	depends on BR2_PACKAGE_PROTOBUF_ARCH_SUPPORTS # protobuf
+	depends on !BR2_STATIC_LIBS # dlfcn.h
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_8 # protobuf
+	depends on !BR2_TOOLCHAIN_HAS_GCC_BUG_64735 # std::future
+	select BR2_PACKAGE_LIBMICROHTTPD
+	select BR2_PACKAGE_PROTOBUF
+
+comment "server needs a toolchain w/ dynamic library, gcc >= 4.8"
+	depends on BR2_PACKAGE_PROTOBUF_ARCH_SUPPORTS
+	depends on !BR2_TOOLCHAIN_HAS_GCC_BUG_64735
+	depends on BR2_STATIC_LIBS || !BR2_TOOLCHAIN_GCC_AT_LEAST_4_8
+
+comment "server needs a toolchain not affected by GCC bug 64735"
+	depends on BR2_TOOLCHAIN_HAS_GCC_BUG_64735
 
 endif

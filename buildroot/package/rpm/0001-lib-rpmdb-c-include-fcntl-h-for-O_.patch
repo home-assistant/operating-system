@@ -1,0 +1,29 @@
+From 9395bdc64459357631111842e7a28304b4d76301 Mon Sep 17 00:00:00 2001
+From: Leo <thinkabit.ukim@gmail.com>
+Date: Wed, 30 Sep 2020 08:36:03 -0300
+Subject: [PATCH] lib/rpmdb.c: include fcntl.h for O_*
+
+Fixes compilation on musl, otherwise it fails with undefined references
+to various O_* symbols as mentioned here:
+
+https://www.man7.org/linux/man-pages/man0/fcntl.h.0p.html
+
+[Retrieved from:
+https://github.com/rpm-software-management/rpm/commit/9395bdc64459357631111842e7a28304b4d76301]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ lib/rpmdb.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/lib/rpmdb.c b/lib/rpmdb.c
+index 4c101569f..73187630b 100644
+--- a/lib/rpmdb.c
++++ b/lib/rpmdb.c
+@@ -8,6 +8,7 @@
+ #include <utime.h>
+ #include <errno.h>
+ #include <dirent.h>
++#include <fcntl.h>
+ 
+ #ifndef	DYING	/* XXX already in "system.h" */
+ #include <fnmatch.h>

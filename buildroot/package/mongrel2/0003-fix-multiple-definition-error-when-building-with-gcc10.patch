@@ -1,0 +1,25 @@
+From c51815b10c39c6e802bd1b56549f1d479b480fcc Mon Sep 17 00:00:00 2001
+From: Andrew Sun <adsun701@gmail.com>
+Date: Sat, 18 Jul 2020 09:11:11 -0400
+Subject: [PATCH] fix multiple definition error when building with gcc10
+
+[Retrieved from:
+https://github.com/mongrel2/mongrel2/pull/343/commits/c51815b10c39c6e802bd1b56549f1d479b480fcc]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ src/unixy.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/unixy.h b/src/unixy.h
+index 045e7c28..4225220c 100644
+--- a/src/unixy.h
++++ b/src/unixy.h
+@@ -38,7 +38,7 @@
+ #include <bstring.h>
+ #include <unistd.h>
+ 
+-char *m2program;
++extern char *m2program;
+ 
+ int Unixy_chroot(bstring path);
+ 

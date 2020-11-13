@@ -1,0 +1,11 @@
+config BR2_PACKAGE_ODROIDC2_FIRMWARE
+	bool "odroidc2-firmware"
+	help
+	  This package extracts from
+	  https://github.com/hardkernel/u-boot/tree/odroidc2-v2015.01
+	  the pre-built firmware files, as well as the host tool
+	  fip_create that are needed to create bootable images for the
+	  Odroid C2 platform. See doc/board/amlogic/odroid-c2.rst in
+	  upstream U-Boot for more details.
+
+	  https://github.com/hardkernel/u-boot/tree/odroidc2-v2015.01

@@ -3,6 +3,7 @@ config BR2_PACKAGE_KEXEC_LITE
 	depends on BR2_powerpc || BR2_powerpc64 || BR2_powerpc64le
 	depends on !BR2_STATIC_LIBS # dtc, elfutils
 	depends on BR2_USE_WCHAR # elfutils
+	depends on BR2_TOOLCHAIN_HAS_THREADS # elfutils
 	depends on BR2_TOOLCHAIN_USES_UCLIBC || BR2_TOOLCHAIN_USES_GLIBC # elfutils
 	select BR2_PACKAGE_ELFUTILS
 	select BR2_PACKAGE_DTC
@@ -17,7 +18,8 @@ config BR2_PACKAGE_KEXEC_LITE
 
 	  https://github.com/antonblanchard/kexec-lite
 
-comment "kexec-lite needs a uClibc or glibc toolchain w/ wchar, dynamic library"
+comment "kexec-lite needs a uClibc or glibc toolchain w/ wchar, dynamic library, threads"
 	depends on BR2_powerpc || BR2_powerpc64
 	depends on BR2_STATIC_LIBS || !BR2_USE_WCHAR \
+		|| !BR2_TOOLCHAIN_HAS_THREADS \
 		|| !(BR2_TOOLCHAIN_USES_UCLIBC || BR2_TOOLCHAIN_USES_GLIBC)

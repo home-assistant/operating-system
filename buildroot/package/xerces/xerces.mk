@@ -31,11 +31,15 @@ XERCES_CONF_ENV += LIBS=-liconv
 XERCES_DEPENDENCIES += libiconv
 endif
 
+ifeq ($(BR2_PACKAGE_XERCES_ENABLE_NETWORK),y)
 ifeq ($(BR2_PACKAGE_LIBCURL),y)
 XERCES_CONF_OPTS += -Dnetwork-accessor=curl
 XERCES_DEPENDENCIES += libcurl
 else
 XERCES_CONF_OPTS += -Dnetwork-accessor=socket
+endif
+else
+XERCES_CONF_OPTS += -Dnetwork=OFF
 endif
 
 ifeq ($(BR2_TOOLCHAIN_HAS_THREADS),y)

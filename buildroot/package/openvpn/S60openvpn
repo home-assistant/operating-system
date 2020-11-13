@@ -11,13 +11,15 @@ CONFIG_DIR=/etc/openvpn
 test -d $CONFIG_DIR || exit 0
 
 start_vpn () {
-    /usr/sbin/openvpn --daemon --writepid /var/run/openvpn.$NAME.pid \
-            --config $CONFIG_DIR/$NAME.conf --cd $CONFIG_DIR || printf " FAILED->"
-    printf " $NAME"
+    printf " $NAME "
+    start-stop-daemon -S -p /var/run/openvpn.$NAME.pid -x /usr/sbin/openvpn -- \
+	      --daemon --writepid /var/run/openvpn.$NAME.pid \
+	      --config $CONFIG_DIR/$NAME.conf --cd $CONFIG_DIR
+    [ $? = 0 ] && echo "OK" || echo "FAIL"
 }
 stop_vpn () {
-   kill `cat $PIDFILE` || true
-  rm $PIDFILE
+    printf " $NAME "
+    start-stop-daemon -K -p /var/run/openvpn.$NAME.pid -x /usr/sbin/openvpn
 }
 
 case "$1" in
@@ -48,7 +50,6 @@ stop)
       NAME=`echo $PIDFILE | cut -c18-`
       NAME=${NAME%%.pid}
       stop_vpn
-      printf " $NAME"
     done
   else
     if test -e /var/run/openvpn.$2.pid ; then
@@ -56,7 +57,6 @@ stop)
       NAME=`echo $PIDFILE | cut -c18-`
       NAME=${NAME%%.pid}
       stop_vpn
-      printf " $NAME"
     else
       printf " No such VPN: $2"
     fi

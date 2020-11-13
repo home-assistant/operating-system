@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-AZURE_IOT_SDK_C_VERSION = 2018-12-13
+AZURE_IOT_SDK_C_VERSION = LTS_07_2020_Ref01
 AZURE_IOT_SDK_C_SITE = https://github.com/Azure/azure-iot-sdk-c
 AZURE_IOT_SDK_C_SITE_METHOD = git
 AZURE_IOT_SDK_C_GIT_SUBMODULES = YES
@@ -29,6 +29,8 @@ AZURE_IOT_SDK_C_LIBS += \
 	iothub_service_client/libiothub_service_client.a \
 	serializer/libserializer.a \
 	umqtt/libumqtt.a \
+	deps/uhttp/libuhttp.a \
+	deps/umock-c/libumock_c.a \
 	libparson.a
 else
 AZURE_IOT_SDK_C_LIBS += \
@@ -42,12 +44,14 @@ AZURE_IOT_SDK_C_LIBS += \
 	iothub_client/libiothub_client_mqtt_transport.so \
 	iothub_service_client/libiothub_service_client.so \
 	serializer/libserializer.so \
-	umqtt/libumqtt.so.1.1.11 \
+	umqtt/libumqtt.so.1.1.12 \
+	deps/uhttp/libuhttp.so \
+	deps/umock-c/libumock_c.so \
 	libparson.so
 
 define AZURE_IOT_SDK_C_CREATE_SYMLINKS
-	ln -sf libumqtt.so.1.1.11 $(1)/usr/lib/libumqtt.so.1
-	ln -sf libumqtt.so.1.1.11 $(1)/usr/lib/libumqtt.so
+	ln -sf libumqtt.so.1.1.12 $(1)/usr/lib/libumqtt.so.1
+	ln -sf libumqtt.so.1.1.12 $(1)/usr/lib/libumqtt.so
 endef
 endif
 

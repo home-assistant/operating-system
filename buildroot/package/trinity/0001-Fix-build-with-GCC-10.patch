@@ -1,0 +1,38 @@
+From e53e25cc8dd5bdb5f7d9b4247de9e9921eec81d8 Mon Sep 17 00:00:00 2001
+From: Vinson Lee <vlee@freedesktop.org>
+Date: Thu, 30 Jan 2020 22:09:45 -0800
+Subject: [PATCH] Fix build with GCC 10.
+
+  CC	trinity
+/usr/bin/ld: debug.o:include/logfile.h:8: multiple definition of `mainlogfile'; child.o:include/logfile.h:8: first defined here
+/usr/bin/ld: log-files.o:include/logfile.h:8: multiple definition of `mainlogfile'; child.o:include/logfile.h:8: first defined here
+/usr/bin/ld: log.o:include/logfile.h:8: multiple definition of `mainlogfile'; child.o:include/logfile.h:8: first defined here
+/usr/bin/ld: main.o:include/logfile.h:8: multiple definition of `mainlogfile'; child.o:include/logfile.h:8: first defined here
+/usr/bin/ld: output.o:include/logfile.h:8: multiple definition of `mainlogfile'; child.o:include/logfile.h:8: first defined here
+/usr/bin/ld: params.o:include/logfile.h:8: multiple definition of `mainlogfile'; child.o:include/logfile.h:8: first defined here
+/usr/bin/ld: shm.o:include/logfile.h:8: multiple definition of `mainlogfile'; child.o:include/logfile.h:8: first defined here
+/usr/bin/ld: trinity.o:include/logfile.h:8: multiple definition of `mainlogfile'; child.o:include/logfile.h:8: first defined here
+
+Fixes: 13856316c259 ("reinstate the log-to-file code for now.")
+Signed-off-by: Vinson Lee <vlee@freedesktop.org>
+
+[Retrieved from:
+https://github.com/kernelslacker/trinity/commit/e53e25cc8dd5bdb5f7d9b4247de9e9921eec81d8]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ include/logfile.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/logfile.h b/include/logfile.h
+index 90ea8b23..2305ac15 100644
+--- a/include/logfile.h
++++ b/include/logfile.h
+@@ -5,7 +5,7 @@
+ FILE *find_logfile_handle(void);
+ void synclogs(void);
+ 
+-FILE *mainlogfile;
++extern FILE *mainlogfile;
+ void open_main_logfile(void);
+ void close_logfile(FILE **handle);
+ 

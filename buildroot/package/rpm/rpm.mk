@@ -4,13 +4,12 @@
 #
 ################################################################################
 
-RPM_VERSION_MAJOR = 4.15
-RPM_VERSION = $(RPM_VERSION_MAJOR).1
+RPM_VERSION_MAJOR = 4.16
+RPM_VERSION = $(RPM_VERSION_MAJOR).0
 RPM_SOURCE = rpm-$(RPM_VERSION).tar.bz2
 RPM_SITE = http://ftp.rpm.org/releases/rpm-$(RPM_VERSION_MAJOR).x
 RPM_DEPENDENCIES = \
 	host-pkgconf \
-	berkeleydb \
 	$(if $(BR2_PACKAGE_BZIP2),bzip2) \
 	$(if $(BR2_PACKAGE_ELFUTILS),elfutils) \
 	file \
@@ -20,8 +19,6 @@ RPM_DEPENDENCIES = \
 	$(TARGET_NLS_DEPENDENCIES)
 RPM_LICENSE = GPL-2.0 or LGPL-2.0 (library only)
 RPM_LICENSE_FILES = COPYING
-# We're patching configure.ac
-RPM_AUTORECONF = YES
 
 RPM_CONF_OPTS = \
 	--disable-python \
@@ -36,6 +33,13 @@ RPM_DEPENDENCIES += acl
 RPM_CONF_OPTS += --with-acl
 else
 RPM_CONF_OPTS += --without-acl
+endif
+
+ifeq ($(BR2_PACKAGE_BERKELEYDB),y)
+RPM_DEPENDENCIES += berkeleydb
+RPM_CONF_OPTS += --enable-bdb
+else
+RPM_CONF_OPTS += --disable-bdb
 endif
 
 ifeq ($(BR2_PACKAGE_DBUS),y)
@@ -86,6 +90,13 @@ RPM_DEPENDENCIES += libselinux
 RPM_CONF_OPTS += --with-selinux
 else
 RPM_CONF_OPTS += --without-selinux
+endif
+
+ifeq ($(BR2_PACKAGE_SQLITE),y)
+RPM_DEPENDENCIES += sqlite
+RPM_CONF_OPTS += --enable-sqlite
+else
+RPM_CONF_OPTS += --disable-sqlite
 endif
 
 ifeq ($(BR2_PACKAGE_ZSTD),y)

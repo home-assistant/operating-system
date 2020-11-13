@@ -1,0 +1,59 @@
+From f55b1a37e2c43b67e7fd7f6a39afe2b2316b7cf9 Mon Sep 17 00:00:00 2001
+From: Alexander Egorenkov <egorenar-dev@posteo.net>
+Date: Mon, 31 Aug 2020 19:05:46 +0200
+Subject: [PATCH] kpartx, libmultipath: use pkg-config to get path to
+ headers
+
+Use pkg-config in Makefile to find path to devmapper and udev headers
+to enable cross-compilation.
+
+Signed-off-by: Alexander Egorenkov <egorenar-dev@posteo.net>
+---
+ kpartx/Makefile       | 2 +-
+ libmultipath/Makefile | 8 ++++----
+ 2 files changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/kpartx/Makefile b/kpartx/Makefile
+index 2906a984..29573890 100644
+--- a/kpartx/Makefile
++++ b/kpartx/Makefile
+@@ -8,7 +8,7 @@ LDFLAGS += $(BIN_LDFLAGS)
+ 
+ LIBDEPS += -ldevmapper
+ 
+-ifneq ($(call check_func,dm_task_set_cookie,/usr/include/libdevmapper.h),0)
++ifneq ($(call check_func,dm_task_set_cookie,$(shell $(PKG_CONFIG) --variable=includedir devmapper)/libdevmapper.h),0)
+ 	CFLAGS += -DLIBDM_API_COOKIE
+ endif
+ 
+diff --git a/libmultipath/Makefile b/libmultipath/Makefile
+index e5651e49..51ad0193 100644
+--- a/libmultipath/Makefile
++++ b/libmultipath/Makefile
+@@ -20,19 +20,19 @@ ifdef SYSTEMD
+ 	endif
+ endif
+ 
+-ifneq ($(call check_func,dm_task_no_flush,/usr/include/libdevmapper.h),0)
++ifneq ($(call check_func,dm_task_no_flush,$(shell $(PKG_CONFIG) --variable=includedir devmapper)/libdevmapper.h),0)
+ 	CFLAGS += -DLIBDM_API_FLUSH -D_GNU_SOURCE
+ endif
+ 
+-ifneq ($(call check_func,dm_task_set_cookie,/usr/include/libdevmapper.h),0)
++ifneq ($(call check_func,dm_task_set_cookie,$(shell $(PKG_CONFIG) --variable=includedir devmapper)/libdevmapper.h),0)
+ 	CFLAGS += -DLIBDM_API_COOKIE
+ endif
+ 
+-ifneq ($(call check_func,udev_monitor_set_receive_buffer_size,/usr/include/libudev.h),0)
++ifneq ($(call check_func,udev_monitor_set_receive_buffer_size,$(shell $(PKG_CONFIG) --variable=includedir libudev)/libudev.h),0)
+ 	CFLAGS += -DLIBUDEV_API_RECVBUF
+ endif
+ 
+-ifneq ($(call check_func,dm_task_deferred_remove,/usr/include/libdevmapper.h),0)
++ifneq ($(call check_func,dm_task_deferred_remove,$(shell $(PKG_CONFIG) --variable=includedir devmapper)/libdevmapper.h),0)
+ 	CFLAGS += -DLIBDM_API_DEFERRED
+ endif
+ 
+-- 
+2.28.0
+

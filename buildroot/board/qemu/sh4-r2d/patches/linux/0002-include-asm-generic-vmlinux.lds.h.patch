@@ -1,0 +1,32 @@
+From 7f92adbba385a4e512abfd6633ac0f9f0cdf91f8 Mon Sep 17 00:00:00 2001
+From: Romain Naour <romain.naour@gmail.com>
+Date: Sat, 21 Dec 2019 11:54:07 +0100
+Subject: [PATCH] include/asm-generic: vmlinux.lds.h
+
+Building the kernel using a toolchain built with Binutils 2.33.1 prevent
+booting a sh4 system under Qemu.
+Apply the patch provided by Alan Modra [2] that fix alignment of rodata.
+
+[1] https://sourceware.org/git/gitweb.cgi?p=binutils-gdb.git;h=ebd2263ba9a9124d93bbc0ece63d7e0fae89b40e
+[2] https://www.sourceware.org/ml/binutils/2019-12/msg00112.html
+
+Signed-off-by: Romain Naour <romain.naour@gmail.com>
+---
+ include/asm-generic/vmlinux.lds.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
+index d7701d466b60..1aa33597e91e 100644
+--- a/include/asm-generic/vmlinux.lds.h
++++ b/include/asm-generic/vmlinux.lds.h
+@@ -306,6 +306,7 @@
+  */
+ #ifndef RO_AFTER_INIT_DATA
+ #define RO_AFTER_INIT_DATA						\
++	. = ALIGN(8);							\
+ 	__start_ro_after_init = .;					\
+ 	*(.data..ro_after_init)						\
+ 	__end_ro_after_init = .;
+-- 
+2.24.1
+

@@ -9,6 +9,8 @@ dependencies.
 Signed-off-by: Martin Bark <martin@barkynet.com>
 [Peter: updated for 1.15.6]
 Signed-off-by: Peter Korsgaard <peter@korsgaard.com>
+[Fabrice: use pkg-config instead of gdlib-config]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
 ---
  auto/lib/libgd/conf | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
@@ -17,14 +19,15 @@ diff --git a/auto/lib/libgd/conf b/auto/lib/libgd/conf
 index 67863976..1a4379a5 100644
 --- a/auto/lib/libgd/conf
 +++ b/auto/lib/libgd/conf
-@@ -7,8 +7,8 @@
+@@ -7,8 +7,9 @@
      ngx_feature_name=
      ngx_feature_run=no
      ngx_feature_incs="#include <gd.h>"
 -    ngx_feature_path=
 -    ngx_feature_libs="-lgd"
-+    ngx_feature_path="$(${GDLIB_CONFIG:=gdlib-config} --includedir)"
-+    ngx_feature_libs="$(${GDLIB_CONFIG:=gdlib-config} --libs)"
++    ngx_feature_path="$(${PKG_CONFIG:=pkg-config} --cflags-only-I gdlib|
++			 sed -re 's/(^|\s)-I\s*(\S+)/\1\2/g')"
++    ngx_feature_libs="$(${PKG_CONFIG:=pkg-config} --libs gdlib)"
      ngx_feature_test="gdImagePtr img = gdImageCreateFromGifPtr(1, NULL);
                        (void) img"
      . auto/feature

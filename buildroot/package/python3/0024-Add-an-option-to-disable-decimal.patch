@@ -1,4 +1,4 @@
-From c82efeabd2f9b89ff2ecd5261eceeeb3af022ae8 Mon Sep 17 00:00:00 2001
+From d5fe81cbd51da2a84ed89d1e4c80d921d4efce26 Mon Sep 17 00:00:00 2001
 From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 Date: Wed, 23 Dec 2015 11:51:31 +0100
 Subject: [PATCH] Add an option to disable decimal
@@ -11,22 +11,24 @@ the libmpdec builtin the Python sources, or no libmpdec at all.
 Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 [aduskett@gmail.com: Update for python 3.7.0]
 Signed-off-by: Adam Duskett <aduskett@gmail.com>
+[james.hilliard1@gmail.com: adapt to python 3.9]
+Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
 ---
  configure.ac | 17 ++++++++++++-----
  setup.py     |  2 +-
  2 files changed, 13 insertions(+), 6 deletions(-)
 
 diff --git a/configure.ac b/configure.ac
-index 8c9706582e..e6255babb6 100644
+index 7bd4623ccd..e513ef6a20 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -3012,13 +3012,20 @@ fi
+@@ -3106,13 +3106,20 @@ fi
  AC_SUBST(LIBFFI_INCLUDEDIR)
  
  # Check for use of the system libmpdec library
 -AC_MSG_CHECKING(for --with-system-libmpdec)
 -AC_ARG_WITH(system_libmpdec,
--            AS_HELP_STRING([--with-system-libmpdec], [build _decimal module using an installed libmpdec library]),
+-            AS_HELP_STRING([--with-system-libmpdec], [build _decimal module using an installed libmpdec library, see Doc/library/decimal.rst (default is no)]),
 +AC_MSG_CHECKING(for --with-libmpdec)
 +AC_ARG_WITH(libmpdec,
 +            AS_HELP_STRING([--with-libmpdec], [select which libmpdec version to use: system, builtin, none]),
@@ -47,10 +49,10 @@ index 8c9706582e..e6255babb6 100644
  # Check whether _decimal should use a coroutine-local or thread-local context
  AC_MSG_CHECKING(for --with-decimal-contextvar)
 diff --git a/setup.py b/setup.py
-index 9f09b3d985..a7f2e23d87 100644
+index c4ee989ba3..3d0c74bb7f 100644
 --- a/setup.py
 +++ b/setup.py
-@@ -2076,7 +2076,7 @@ class PyBuildExt(build_ext):
+@@ -2221,7 +2221,7 @@ class PyBuildExt(build_ext):
          # Stefan Krah's _decimal module
          extra_compile_args = []
          undef_macros = []
@@ -60,5 +62,5 @@ index 9f09b3d985..a7f2e23d87 100644
              libraries = [':libmpdec.so.2']
              sources = ['_decimal/_decimal.c']
 -- 
-2.20.1
+2.25.1
 

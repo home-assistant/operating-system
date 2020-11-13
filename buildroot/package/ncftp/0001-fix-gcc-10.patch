@@ -1,0 +1,24 @@
+Fix build with gcc 10
+
+Add missing extern to gBm to fix the following build failure with
+-fno-common which is enabled by default with gcc 10:
+
+/usr/lfs/hdd_v1/rc-buildroot-test/scripts/instance-0/output-1/host/lib/gcc/arm-buildroot-linux-gnueabihf/10.2.0/../../../../arm-buildroot-linux-gnueabihf/bin/ld: bookmark.o:(.bss+0x10): multiple definition of `gBm'; gpshare.o:(.bss+0x24): first defined here
+
+Fixes:
+ - http://autobuild.buildroot.org/results/78822bc0e0039e8f8949011a256cac022863276f
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+
+diff -Nura ncftp-3.2.6-orig/sh_util/gpshare.c ncftp-3.2.6/sh_util/gpshare.c
+--- ncftp-3.2.6-orig/sh_util/gpshare.c	2020-08-21 10:46:34.173816750 +0200
++++ ncftp-3.2.6/sh_util/gpshare.c	2020-08-21 10:52:25.407976319 +0200
+@@ -28,7 +28,7 @@
+ 
+ static int gIsAtty1 = 1, gIsAtty2 = 1;
+ extern int gLoadedBm, gBookmarkMatchMode;
+-Bookmark gBm;
++extern Bookmark gBm;
+ 
+ double
+ FileSize(double size, const char **uStr0, double *uMult0)

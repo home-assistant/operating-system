@@ -5,7 +5,7 @@ config BR2_PACKAGE_LIBGPIOD
 	  This is a C library that abstracts the GPIO character
 	  device operations on linux.
 
-	  https://github.com/brgl/libgpiod
+	  https://git.kernel.org/pub/scm/libs/libgpiod/libgpiod.git/
 
 if BR2_PACKAGE_LIBGPIOD
 

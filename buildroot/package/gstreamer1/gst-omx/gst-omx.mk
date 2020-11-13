@@ -4,33 +4,27 @@
 #
 ################################################################################
 
-GST_OMX_VERSION = 1.16.2
+GST_OMX_VERSION = 1.18.1
 GST_OMX_SOURCE = gst-omx-$(GST_OMX_VERSION).tar.xz
 GST_OMX_SITE = https://gstreamer.freedesktop.org/src/gst-omx
 
 GST_OMX_LICENSE = LGPL-2.1
 GST_OMX_LICENSE_FILES = COPYING
 
+GST_OMX_CONF_OPTS = \
+	-Dexamples=disabled \
+	-Dtests=disabled \
+	-Dtools=disabled \
+	-Ddoc=disabled
+
 ifeq ($(BR2_PACKAGE_RPI_USERLAND),y)
 GST_OMX_VARIANT = rpi
-GST_OMX_CONF_ENV = \
-	CFLAGS="$(TARGET_CFLAGS) \
-		-I$(STAGING_DIR)/usr/include/IL \
-		-I$(STAGING_DIR)/usr/include/interface/vcos/pthreads \
-		-I$(STAGING_DIR)/usr/include/interface/vmcs_host/linux"
-else ifeq ($(BR2_PACKAGE_BELLAGIO),y)
-GST_OMX_VARIANT = bellagio
-GST_OMX_CONF_ENV = \
-	CFLAGS="$(TARGET_CFLAGS) \
-		-DOMX_VERSION_MAJOR=1 \
-		-DOMX_VERSION_MINOR=1 \
-		-DOMX_VERSION_REVISION=2 \
-		-DOMX_VERSION_STEP=0"
+GST_OMX_CONF_OPTS += -Dheader_path=$(STAGING_DIR)/usr/include/IL
 else
 GST_OMX_VARIANT = generic
 endif
 
-GST_OMX_CONF_OPTS += --with-omx-target=$(GST_OMX_VARIANT)
+GST_OMX_CONF_OPTS += -Dtarget=$(GST_OMX_VARIANT)
 
 GST_OMX_DEPENDENCIES = gstreamer1 gst1-plugins-base libopenmax
 
@@ -42,4 +36,4 @@ endef
 
 GST_OMX_POST_PATCH_HOOKS += GST_OMX_FIXUP_CONFIG_PATHS
 
-$(eval $(autotools-package))
+$(eval $(meson-package))

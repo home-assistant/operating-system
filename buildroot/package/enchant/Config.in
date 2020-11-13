@@ -9,7 +9,7 @@ config BR2_PACKAGE_ENCHANT
 	  Enchant is a spell-checking library that provides a consistent
 	  API across a number of spell-checking system backends.
 
-	  http://www.abisource.com/projects/enchant/
+	  https://abiword.github.io/enchant/
 
 comment "enchant needs a toolchain w/ C++, threads, wchar"
 	depends on BR2_USE_MMU

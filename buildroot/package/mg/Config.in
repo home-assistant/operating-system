@@ -1,0 +1,18 @@
+config BR2_PACKAGE_MG
+	bool "mg"
+	depends on BR2_USE_MMU # fork()
+	help
+	  Emacs-like text editor (130 kiB)
+
+	  Mg is a MicroEMACS clone with the goal of being compatible
+	  with GNU Emacs, because there should never be any reason to
+	  learn more than one Emacs flavor.
+
+	  Unlike many other editors it does not require ncurses, only a
+	  standard C library, making it suitable for really small and
+	  embedded systems.
+
+	  This version is based on mg2a from OpenBSD, with more features
+	  and, in particular, no requirement on ncurses or termcap.
+
+	  https://github.com/troglobit/mg/

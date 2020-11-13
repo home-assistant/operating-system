@@ -1,25 +1,26 @@
-From 525b60af3320de3cc1f1145fe31a2de07b61faf6 Mon Sep 17 00:00:00 2001
+From ba87c495c416b65eca1d683ac980c2c8a673fcac Mon Sep 17 00:00:00 2001
+Message-Id: <ba87c495c416b65eca1d683ac980c2c8a673fcac.1605133890.git.stefan@agner.ch>
 From: Pascal Vizeli <pvizeli@syshack.ch>
 Date: Sat, 28 Apr 2018 00:20:08 +0200
-Subject: [PATCH 1/1] Allow hostname on ro
+Subject: [PATCH 1/2] Allow hostname on ro
 
 ---
  src/hostname/hostnamed.c | 11 ++++++++++-
  1 file changed, 10 insertions(+), 1 deletion(-)
 
 diff --git a/src/hostname/hostnamed.c b/src/hostname/hostnamed.c
-index d9ad2fb..87fae35 100644
+index 7f6607a527..4baccf0b06 100644
 --- a/src/hostname/hostnamed.c
 +++ b/src/hostname/hostnamed.c
-@@ -289,6 +289,7 @@ static int context_update_kernel_hostname(Context *c) {
- static int context_write_data_static_hostname(Context *c) {
+@@ -344,6 +344,7 @@ static int context_update_kernel_hostname(
  
+ static int context_write_data_static_hostname(Context *c) {
          assert(c);
 +        FILE *f = NULL;
  
          if (isempty(c->data[PROP_STATIC_HOSTNAME])) {
  
-@@ -297,7 +298,15 @@ static int context_write_data_static_hostname(Context *c) {
+@@ -352,7 +353,15 @@ static int context_write_data_static_hostname(Context *c) {
  
                  return 0;
          }
@@ -32,10 +33,10 @@ index d9ad2fb..87fae35 100644
 +        fputs(c->data[PROP_STATIC_HOSTNAME], f);
 +        fclose(f);
 +
-+	return 0;
++        return 0;
  }
  
  static int context_write_data_machine_info(Context *c) {
 -- 
-2.7.4
+2.29.2
 

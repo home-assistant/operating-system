@@ -1,0 +1,7 @@
+config BR2_PACKAGE_LIBBACKTRACE
+	bool "libbacktrace"
+	help
+	  A C library that may be linked into a C/C++ program to
+	  produce symbolic backtraces
+
+	  https://github.com/ianlancetaylor/libbacktrace

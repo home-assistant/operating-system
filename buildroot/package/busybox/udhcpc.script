@@ -61,7 +61,23 @@ case "$1" in
 			wait_for_ipv6_default_route
 		fi
 
-		if [ -n "$router" ] ; then
+		# RFC3442: If the DHCP server returns both a Classless
+		# Static Routes option and a Router option, the DHCP
+		# client MUST ignore the Router option.
+		if [ -n "$staticroutes" ]; then
+			echo "deleting routers"
+			route -n | while read dest gw mask flags metric ref use iface; do
+				[ "$iface" != "$interface" -o "$gw" = "0.0.0.0" ] || \
+					route del -net "$dest" netmask "$mask" gw "$gw" dev "$interface"
+			done
+
+			# format: dest1/mask gw1 ... destn/mask gwn
+			set -- $staticroutes
+			while [ -n "$1" -a -n "$2" ]; do
+				route add -net "$1" gw "$2" dev "$interface"
+				shift 2
+			done
+		elif [ -n "$router" ] ; then
 			echo "deleting routers"
 			while route del default gw 0.0.0.0 dev $interface 2> /dev/null; do
 				:

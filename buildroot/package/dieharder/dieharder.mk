@@ -36,4 +36,9 @@ endif
 # parallel build fail, disable it
 DIEHARDER_MAKE = $(MAKE1)
 
+# Too many fixes needed to build with -fno-common which is default since gcc 10
+ifeq ($(BR2_TOOLCHAIN_GCC_AT_LEAST_10),y)
+DIEHARDER_CONF_ENV += CFLAGS="$(TARGET_CFLAGS) -fcommon"
+endif
+
 $(eval $(autotools-package))

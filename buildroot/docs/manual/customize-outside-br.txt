@@ -191,9 +191,9 @@ tree.
 
 For some packages, Buildroot provides a choice between two (or more)
 implementations of API-compatible such packages. For example, there is
-a choice to choose either libjpeg ot jpeg-turbo, and another choice
-between openssl or libressl. Finally, there is a choice to select one
-of the known, pre-configured toolchains.
+a choice to choose either libjpeg ot jpeg-turbo; there is one between
+openssl or libressl; there is one to select one of the known,
+pre-configured toolchains...
 
 It is possible for a br2-external to extend those choices, by providing
 a set of files that define those alternatives:
@@ -201,7 +201,10 @@ a set of files that define those alternatives:
 * +provides/toolchains.in+ defines the pre-configured toolchains, which
   will then be listed in the toolchain selection;
 * +provides/jpeg.in+ defines the alternative libjpeg implementations;
-* +provides/openssl.in+ defines the alternative openssl implementations.
+* +provides/openssl.in+ defines the alternative openssl implementations;
+* +provides/skeleton.in+ defines the alternative skeleton implementations;
+* +provides/init.in+ defines the alternative init system implementations, this
+  can be used to select a default skeleton for your init.
 
 ===== Free-form content
 
@@ -299,6 +302,34 @@ illustration, of course):
   |     |MY_JPEG_SITE = https://example.net/some/place
   |     |MY_JPEG_PROVIDES = jpeg
   |     |$(eval $(autotools-package))
+  |     `----
+  |
+  |- provides/init.in
+  |     |config BR2_INIT_MINE
+  |     |    bool "my custom init"
+  |     |    select BR2_PACKAGE_MY_INIT
+  |     |    select BR2_PACKAGE_SKELETON_INIT_MINE if BR2_ROOTFS_SKELETON_DEFAULT
+  |     `----
+  |
+  |- provides/skeleton.in
+  |     |config BR2_ROOTFS_SKELETON_MINE
+  |     |    bool "my custom skeleton"
+  |     |    select BR2_PACKAGE_SKELETON_MINE
+  |     `----
+  |- package/skeleton-mine/Config.in
+  |     |config BR2_PACKAGE_SKELETON_MINE
+  |     |    bool
+  |     |    select BR2_PACKAGE_HAS_SKELETON
+  |     |
+  |     |config BR2_PACKAGE_PROVIDES_SKELETON
+  |     |    default "skeleton-mine" if BR2_PACKAGE_SKELETON_MINE
+  |     `----
+  |- package/skeleton-mine/skeleton-mine.mk
+  |     |SKELETON_MINE_ADD_TOOLCHAIN_DEPENDENCY = NO
+  |     |SKELETON_MINE_ADD_SKELETON_DEPENDENCY = NO
+  |     |SKELETON_MINE_PROVIDES = skeleton
+  |     |SKELETON_MINE_INSTALL_STAGING = YES
+  |     |$(eval $(generic-package))
   |     `----
   |
   |- provides/toolchains.in

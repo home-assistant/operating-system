@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-SNGREP_VERSION = 1.4.6
+SNGREP_VERSION = 1.4.7
 SNGREP_SITE = $(call github,irontec,sngrep,v$(SNGREP_VERSION))
 SNGREP_LICENSE = GPL-3.0+
 SNGREP_LICENSE_FILES = LICENSE

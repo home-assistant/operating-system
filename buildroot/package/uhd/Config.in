@@ -1,0 +1,79 @@
+comment "uhd needs a toolchain w/ C++, NPTL, wchar, dynamic library"
+	depends on BR2_USE_MMU
+	depends on !BR2_INSTALL_LIBSTDCPP || !BR2_USE_WCHAR || \
+		!BR2_TOOLCHAIN_HAS_THREADS_NPTL || BR2_STATIC_LIBS
+
+comment "uhd needs a toolchain not affected by GCC bug 64735"
+	depends on BR2_TOOLCHAIN_HAS_GCC_BUG_64735
+
+config BR2_PACKAGE_UHD
+	bool "uhd"
+	depends on BR2_INSTALL_LIBSTDCPP
+	depends on !BR2_STATIC_LIBS
+	depends on !BR2_TOOLCHAIN_HAS_GCC_BUG_64735 # boost-thread
+	depends on BR2_TOOLCHAIN_HAS_THREADS_NPTL
+	depends on BR2_USE_MMU # use fork()
+	depends on BR2_USE_WCHAR # boost
+	select BR2_PACKAGE_BOOST
+	select BR2_PACKAGE_BOOST_ATOMIC
+	select BR2_PACKAGE_BOOST_CHRONO
+	select BR2_PACKAGE_BOOST_DATE_TIME
+	select BR2_PACKAGE_BOOST_FILESYSTEM
+	select BR2_PACKAGE_BOOST_PROGRAM_OPTIONS
+	select BR2_PACKAGE_BOOST_REGEX
+	select BR2_PACKAGE_BOOST_SERIALIZATION
+	select BR2_PACKAGE_BOOST_SYSTEM
+	select BR2_PACKAGE_BOOST_THREAD
+	help
+	  Universal Software Radio Peripheral (USRP) Hardware Driver
+
+	  https://kb.etthus.com
+
+if BR2_PACKAGE_UHD
+
+config BR2_PACKAGE_UHD_B100
+	bool "b100 support"
+	select BR2_PACKAGE_UHD_USB
+	help
+	  enable B100 support
+
+config BR2_PACKAGE_UHD_B200
+	bool "b200 support"
+	select BR2_PACKAGE_UHD_USB
+	help
+	  enable B200 support
+
+config BR2_PACKAGE_UHD_E300
+	bool "E300 support"
+	select BR2_PACKAGE_UHD_MPMD
+	help
+	  enable E300 support
+
+config BR2_PACKAGE_UHD_E320
+	bool "E320 support"
+	select BR2_PACKAGE_UHD_MPMD
+	help
+	  enable E320 support
+
+config BR2_PACKAGE_UHD_EXAMPLES
+	bool "uhd-examples"
+	help
+	  Examples
+
+config BR2_PACKAGE_UHD_MPMD
+	bool "MPMD support"
+	help
+	  enable MPMD support
+
+config BR2_PACKAGE_UHD_RFNOC
+	bool "RFNoC support"
+	help
+	  enable RFNoC support
+
+config BR2_PACKAGE_UHD_USB
+	bool "USB support"
+	select BR2_PACKAGE_LIBUSB
+	help
+	  enable UHD USB support
+
+endif

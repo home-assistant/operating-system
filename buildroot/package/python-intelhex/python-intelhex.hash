@@ -1,0 +1,5 @@
+# md5, sha256 from https://pypi.org/pypi/intelhex/json
+md5  9de0e92c1b66f75322581c8b22c020c2  intelhex-2.3.0.tar.gz
+sha256  892b7361a719f4945237da8ccf754e9513db32f5628852785aea108dcd250093  intelhex-2.3.0.tar.gz
+# Locally computed sha256 checksums
+sha256  1b2eb032ab8a1b0266f7995c76e44509f89ca9c0e90ec507763b5e735aca7de4  LICENSE.txt

@@ -1,0 +1,133 @@
+From caacc9bc622238ca48674ea6f40d07466e4b97a5 Mon Sep 17 00:00:00 2001
+From: Valentin Ochs <a@0au.de>
+Date: Sat, 20 Jun 2020 16:01:27 +0200
+Subject: [PATCH] Replace obsolete/deprecated Qt methods
+
+[Thomas: Backport from upstream commit
+ae726b70a7ada9a4be5808e00f0c951318479684, one conflict manually
+resolved in pv/util.cpp.]
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ pv/util.cpp                     | 21 +++++++++++++++++++--
+ pv/util.hpp                     | 10 ++++++++++
+ pv/views/trace/decodetrace.cpp  |  3 ++-
+ pv/views/trace/ruler.cpp        |  2 +-
+ pv/widgets/timestampspinbox.cpp |  2 +-
+ 5 files changed, 33 insertions(+), 5 deletions(-)
+
+diff --git a/pv/util.cpp b/pv/util.cpp
+index 49b9467c..2a63038d 100644
+--- a/pv/util.cpp
++++ b/pv/util.cpp
+@@ -137,7 +137,7 @@ QString format_time_si(const Timestamp& v, SIPrefix prefix,
+ 	QString s;
+ 	QTextStream ts(&s);
+ 	if (sign && !v.is_zero())
+-		ts << forcesign;
++		ts.setNumberFlags(ts.numberFlags() | QTextStream::ForceSign);
+ 	ts << qSetRealNumberPrecision(precision) << (v * multiplier) << ' '
+ 		<< prefix << unit;
+ 
+@@ -171,7 +171,7 @@ QString format_value_si(double v, SIPrefix prefix, unsigned precision,
+ 	QString s;
+ 	QTextStream ts(&s);
+ 	if (sign && (v != 0))
+-		ts << forcesign;
++		ts.setNumberFlags(ts.numberFlags() | QTextStream::ForceSign);
+ 	ts.setRealNumberNotation(QTextStream::FixedNotation);
+ 	ts.setRealNumberPrecision(precision);
+ 	ts << (v * multiplier) << ' ' << prefix << unit;
+@@ -281,5 +281,22 @@ vector<string> split_string(string text, string separator)
+ 	return result;
+ }
+ 
++/**
++ * Return the width of a string in a given font.
++ *
++ * @param[in] metric metrics of the font
++ * @param[in] string the string whose width should be determined
++ *
++ * @return width of the string in pixels
++ */
++std::streamsize text_width(const QFontMetrics &metric, const QString &string)
++{
++#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
++	return metric.horizontalAdvance(string);
++#else
++	return metric.width(string);
++#endif
++}
++
+ } // namespace util
+ } // namespace pv
+diff --git a/pv/util.hpp b/pv/util.hpp
+index dd7be222..ad904f85 100644
+--- a/pv/util.hpp
++++ b/pv/util.hpp
+@@ -30,6 +30,7 @@
+ 
+ #include <QMetaType>
+ #include <QString>
++#include <QFontMetrics>
+ 
+ using std::string;
+ using std::vector;
+@@ -137,6 +138,15 @@ QString format_time_minutes(const Timestamp& t, signed precision = 0,
+ 
+ vector<string> split_string(string text, string separator);
+ 
++/**
++ * Return the width of a string in a given font.
++ * @param[in] metric metrics of the font
++ * @param[in] string the string whose width should be determined
++ *
++ * @return width of the string in pixels
++ */
++std::streamsize text_width(const QFontMetrics &metric, const QString &string);
++
+ } // namespace util
+ } // namespace pv
+ 
+diff --git a/pv/views/trace/decodetrace.cpp b/pv/views/trace/decodetrace.cpp
+index 9c7196bf..1ee7ae9f 100644
+--- a/pv/views/trace/decodetrace.cpp
++++ b/pv/views/trace/decodetrace.cpp
+@@ -103,7 +103,8 @@ DecodeTrace::DecodeTrace(pv::Session &session,
+ 
+ 	// Determine shortest string we want to see displayed in full
+ 	QFontMetrics m(QApplication::font());
+-	min_useful_label_width_ = m.width("XX"); // e.g. two hex characters
++	// e.g. two hex characters
++	min_useful_label_width_ = util::text_width(m, "XX");
+ 
+ 	// For the base color, we want to start at a very different color for
+ 	// every decoder stack, so multiply the index with a number that is
+diff --git a/pv/views/trace/ruler.cpp b/pv/views/trace/ruler.cpp
+index acea8a36..68134966 100644
+--- a/pv/views/trace/ruler.cpp
++++ b/pv/views/trace/ruler.cpp
+@@ -218,7 +218,7 @@ void Ruler::paintEvent(QPaintEvent*)
+ 		const int rightedge = width();
+ 		const int x_tick = tick.first;
+ 		if ((x_tick > leftedge) && (x_tick < rightedge)) {
+-			const int x_left_bound = QFontMetrics(font()).width(tick.second) / 2;
++			const int x_left_bound = util::text_width(QFontMetrics(font()), tick.second) / 2;
+ 			const int x_right_bound = rightedge - x_left_bound;
+ 			const int x_legend = min(max(x_tick, x_left_bound), x_right_bound);
+ 			p.drawText(x_legend, ValueMargin, 0, text_height,
+diff --git a/pv/widgets/timestampspinbox.cpp b/pv/widgets/timestampspinbox.cpp
+index 21b3d0d7..383aed1f 100644
+--- a/pv/widgets/timestampspinbox.cpp
++++ b/pv/widgets/timestampspinbox.cpp
+@@ -75,7 +75,7 @@ QSize TimestampSpinBox::minimumSizeHint() const
+ {
+ 	const QFontMetrics fm(fontMetrics());
+ 	const int l = round(value_).str().size() + precision_ + 10;
+-	const int w = fm.width(QString(l, '0'));
++	const int w = util::text_width(fm, QString(l, '0'));
+ 	const int h = lineEdit()->minimumSizeHint().height();
+ 	return QSize(w, h);
+ }
+-- 
+2.26.2
+

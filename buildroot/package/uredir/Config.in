@@ -1,0 +1,9 @@
+config BR2_PACKAGE_UREDIR
+	bool "uredir"
+	select BR2_PACKAGE_LIBUEV
+	help
+	  A small Linux daemon to redirect UDP connections. It can be
+	  used to forward connections on small and embedded systems that
+	  do not have (or want to use) iptables.
+
+	  https://github.com/troglobit/uredir

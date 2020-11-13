@@ -45,6 +45,7 @@ config BR2_PACKAGE_DOCKER_ENGINE_DRIVER_VFS
 	depends on BR2_USE_WCHAR # gvfs
 	depends on BR2_USE_MMU # gvfs
 	depends on BR2_TOOLCHAIN_HAS_THREADS # gvfs
+	depends on !BR2_STATIC_LIBS # gvfs
 	select BR2_PACKAGE_GVFS
 	help
 	  Build the vfs filesystem driver for Docker.

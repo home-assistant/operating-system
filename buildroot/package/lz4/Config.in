@@ -8,3 +8,12 @@ config BR2_PACKAGE_LZ4
 	  speed limits on multi-core systems.
 
 	  http://www.lz4.org/
+
+if BR2_PACKAGE_LZ4
+
+config BR2_PACKAGE_LZ4_PROGS
+	bool "install programs"
+	help
+	  lz4, lz4c, unlz4 and lz4cat binaries
+
+endif

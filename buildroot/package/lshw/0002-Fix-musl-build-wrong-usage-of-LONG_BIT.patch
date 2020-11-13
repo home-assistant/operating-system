@@ -1,0 +1,38 @@
+From 246b9e07f22d551fae0718315273760c087b79ca Mon Sep 17 00:00:00 2001
+From: Sergio Prado <sergio.prado@e-labworks.com>
+Date: Sat, 4 Jul 2020 20:28:26 -0300
+Subject: [PATCH] Fix musl build: wrong usage of LONG_BIT
+
+LONG_BIT is not a sysconf value, it is either 32 or 64. Using it as
+a sysconf value will give weird results.
+
+Originally it was sysconf(_SC_LONG_BIT) (before it was "fixed" by the
+gentoo guys). But this is useless: it will always return a value
+equal to LONG_BIT: it's either compiled 32-bit or 64-bit so a runtime
+lookup doesn't make sense. For this reason, musl has removed the
+definition of _SC_LONG_BIT.
+
+Signed-off-by: Sergio Prado <sergio.prado@e-labworks.com>
+Signed-off-by: Arnout Vandecappelle (Essensium/Mind) <arnout@mind.be>
+---
+ src/core/abi.cc | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/src/core/abi.cc b/src/core/abi.cc
+index adff7b55acfa..76c664c03ce7 100644
+--- a/src/core/abi.cc
++++ b/src/core/abi.cc
+@@ -20,9 +20,7 @@ __ID("@(#) $Id: mem.cc 1352 2006-05-27 23:54:13Z ezix $");
+ bool scan_abi(hwNode & system)
+ {
+   // are we compiled as 32- or 64-bit process ?
+-  long sc = sysconf(LONG_BIT);
+-  if(sc==-1) sc = sysconf(_SC_LONG_BIT);
+-  if(sc!=-1) system.setWidth(sc);
++  system.setWidth(LONG_BIT);
+ 
+   pushd(PROC_SYS);
+ 
+-- 
+2.17.1
+

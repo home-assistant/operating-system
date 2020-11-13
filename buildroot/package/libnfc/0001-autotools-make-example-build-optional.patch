@@ -1,0 +1,69 @@
+From 874d9605aa9cd028aed149c2dd1bb410856477fb Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sun, 21 Jun 2020 23:28:37 +0200
+Subject: [PATCH] autotools: make example build optional
+
+This patch makes example build optional for autotools build system.
+
+In order to keep the former behavior, example build is enabled by default.
+
+Signed-off-by: Samuel Martin <s.martin49@gmail.com>
+[Retrieved (and slightly updated to remove CMakeLists.txt) from:
+https://git.buildroot.net/buildroot/tree/package/libnfc/0001-build-systems-make-example-build-optional.patch]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Retrieved from:
+https://github.com/nfc-tools/libnfc/commit/874d9605aa9cd028aed149c2dd1bb410856477fb]
+---
+ Makefile.am  |  8 +++++++-
+ configure.ac | 11 +++++++++++
+ 2 files changed, 18 insertions(+), 1 deletion(-)
+
+diff --git a/Makefile.am b/Makefile.am
+index d2f6fc8e..516ebee2 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -2,7 +2,13 @@ ACLOCAL_AMFLAGS = -I m4
+ 
+ AM_CFLAGS = $(LIBNFC_CFLAGS)
+ 
+-SUBDIRS = libnfc utils examples include contrib cmake test
++SUBDIRS = libnfc utils
++
++if EXAMPLE_ENABLED
++SUBDIRS += examples
++endif
++
++SUBDIRS += include contrib cmake test
+ 
+ pkgconfigdir = $(libdir)/pkgconfig
+ pkgconfig_DATA = libnfc.pc
+diff --git a/configure.ac b/configure.ac
+index 280a6d08..46b65d33 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -157,6 +157,14 @@ then
+ fi
+ AM_CONDITIONAL(DOC_ENABLED, [test x"$enable_doc" = xyes])
+ 
++# Example build (default: yes)
++AC_ARG_ENABLE([example],AS_HELP_STRING([--enable-example],[Enable example build.]),[enable_example=$enableval],[enable_example="yes"])
++
++AC_MSG_CHECKING(for example build)
++AC_MSG_RESULT($enable_example)
++
++AM_CONDITIONAL(EXAMPLE_ENABLED, [test x"$enable_example" = xyes])
++
+ # Dependencies
+ PKG_CONFIG_REQUIRES=""
+ 
+@@ -175,7 +183,10 @@ if test x$ac_cv_with_cutter = xyes -a x$ac_cv_use_cutter = xno; then
+ fi
+ AM_CONDITIONAL([WITH_CUTTER], [test "$ac_cv_use_cutter" != "no"])
+ 
++if test x"$enable_example" = "xyes"
++then
+ AC_CHECK_READLINE
++fi
+ 
+ # Help us to write great code ;-)
+ CFLAGS="$CFLAGS -Wall -pedantic -Wextra"

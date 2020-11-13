@@ -1,27 +1,26 @@
 menu "System configuration"
 
-# Note: usually, it is not possible to select a provider of a virtual
-# package. But here we have an exception: there are only four providers
-# and they only get selected by separate entries in this choice and
-# under different, exclusive conditions. So this is a safe situation.
+# Note on package/skeleton: usually, it is not safe to 'select' a
+# provider of a virtual package. But below we have an exception: each
+# init system may select one of the virtual skeleton-init-* packages.
+# As only one init system may be enabled, only one skeleton-init-* may
+# be selected. So this is a safe situation.
 choice
 	prompt "Root FS skeleton"
 
 config BR2_ROOTFS_SKELETON_DEFAULT
 	bool "default target skeleton"
-	select BR2_PACKAGE_SKELETON_INIT_SYSV if BR2_INIT_SYSV
-	select BR2_PACKAGE_SKELETON_INIT_SYSV if BR2_INIT_BUSYBOX
-	select BR2_PACKAGE_SKELETON_INIT_OPENRC if BR2_INIT_OPENRC
-	select BR2_PACKAGE_SKELETON_INIT_SYSTEMD if BR2_INIT_SYSTEMD
-	select BR2_PACKAGE_SKELETON_INIT_NONE if BR2_INIT_NONE
 	help
-	  Use default target skeleton
+	  Use default target skeleton for selected init system.
 
 config BR2_ROOTFS_SKELETON_CUSTOM
 	bool "custom target skeleton"
 	select BR2_PACKAGE_SKELETON_CUSTOM
 	help
 	  Use custom target skeleton.
+
+# skeleton from br2-external trees, if any
+source "$BR2_BASE_DIR/.br2-external.in.skeleton"
 
 endchoice
 
@@ -83,6 +82,8 @@ config BR2_TARGET_GENERIC_PASSWD_METHOD
 	default "sha-256"   if BR2_TARGET_GENERIC_PASSWD_SHA256
 	default "sha-512"   if BR2_TARGET_GENERIC_PASSWD_SHA512
 
+# See comment at the top of the file, about selecting individual
+# skeletons, which are providers of the virtual skeleton package.
 choice
 	prompt "Init system"
 	default BR2_INIT_BUSYBOX
@@ -91,6 +92,7 @@ config BR2_INIT_BUSYBOX
 	bool "BusyBox"
 	select BR2_PACKAGE_BUSYBOX
 	select BR2_PACKAGE_INITSCRIPTS
+	select BR2_PACKAGE_SKELETON_INIT_SYSV if BR2_ROOTFS_SKELETON_DEFAULT
 
 config BR2_INIT_SYSV
 	bool "systemV"
@@ -98,12 +100,14 @@ config BR2_INIT_SYSV
 	select BR2_PACKAGE_BUSYBOX_SHOW_OTHERS # sysvinit
 	select BR2_PACKAGE_INITSCRIPTS
 	select BR2_PACKAGE_SYSVINIT
+	select BR2_PACKAGE_SKELETON_INIT_SYSV if BR2_ROOTFS_SKELETON_DEFAULT
 
 config BR2_INIT_OPENRC
 	bool "OpenRC"
 	depends on BR2_USE_MMU
 	depends on !BR2_STATIC_LIBS
 	select BR2_PACKAGE_OPENRC
+	select BR2_PACKAGE_SKELETON_INIT_OPENRC if BR2_ROOTFS_SKELETON_DEFAULT
 
 comment "openrc needs a toolchain w/ dynamic library"
 	depends on BR2_USE_MMU
@@ -116,27 +120,37 @@ comment "openrc needs a toolchain w/ dynamic library"
 config BR2_INIT_SYSTEMD
 	bool "systemd"
 	depends on BR2_PACKAGE_SYSTEMD_ARCH_SUPPORTS
-	depends on BR2_TOOLCHAIN_USES_GLIBC
-	depends on BR2_TOOLCHAIN_HAS_SSP
 	depends on BR2_USE_MMU
 	depends on !BR2_STATIC_LIBS
+	depends on BR2_TOOLCHAIN_USES_GLIBC
+	depends on BR2_TOOLCHAIN_HAS_SSP
+	depends on BR2_TOOLCHAIN_HAS_THREADS
 	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_10
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_5
+	depends on BR2_HOST_GCC_AT_LEAST_5
 	select BR2_ROOTFS_MERGED_USR
 	select BR2_PACKAGE_SYSTEMD
+	select BR2_PACKAGE_SKELETON_INIT_SYSTEMD if BR2_ROOTFS_SKELETON_DEFAULT
 
-comment "systemd needs a glibc toolchain w/ SSP, headers >= 3.10"
+comment "systemd needs a glibc toolchain w/ SSP, headers >= 3.10, host and target gcc >= 5"
 	depends on BR2_PACKAGE_SYSTEMD_ARCH_SUPPORTS
 	depends on BR2_USE_MMU
 	depends on !BR2_TOOLCHAIN_USES_GLIBC || \
 		!BR2_TOOLCHAIN_HAS_SSP || \
-		!BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_10
+		!BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_10 || \
+		!BR2_TOOLCHAIN_GCC_AT_LEAST_5 || \
+		!BR2_HOST_GCC_AT_LEAST_5
 
 config BR2_INIT_NONE
 	bool "None"
+	select BR2_PACKAGE_SKELETON_INIT_NONE if BR2_ROOTFS_SKELETON_DEFAULT
 	help
 	  Buildroot will not install any init system. You will
 	  have to provide your own, either with a new package
 	  or with a rootfs-overlay.
+
+# Init systems from br2-external trees, if any
+source "$BR2_BASE_DIR/.br2-external.in.init"
 
 endchoice
 
@@ -397,7 +411,8 @@ endif # BR2_ROOTFS_SKELETON_DEFAULT
 
 config BR2_SYSTEM_DEFAULT_PATH
 	string "Set the system's default PATH"
-	default "/bin:/sbin:/usr/bin:/usr/sbin"
+	default "/usr/bin:/usr/sbin" if BR2_ROOTFS_MERGED_USR
+	default "/bin:/sbin:/usr/bin:/usr/sbin" if !BR2_ROOTFS_MERGED_USR
 	help
 	  Sets the system's default PATH. It is being used in
 	  /etc/profile in the skeleton-init-common package and by some

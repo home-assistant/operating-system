@@ -10,6 +10,8 @@ Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
 [Jörg: update patch for 1.1.6]
 Signed-off-by: Jörg Krause <joerg.krause@embedded.rocks>
 Upstream: http://mailman.alsa-project.org/pipermail/alsa-devel/2018-November/141376.html
+[Bernd: update patch for 1.2.4]
+Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
 ---
  configure.ac         |  2 ++
  src/pcm/pcm_direct.c | 10 +++++++++-
@@ -32,7 +34,7 @@ diff --git a/src/pcm/pcm_direct.c b/src/pcm/pcm_direct.c
 index 2b07eff9..4dc3ea26 100644
 --- a/src/pcm/pcm_direct.c
 +++ b/src/pcm/pcm_direct.c
-@@ -431,13 +431,21 @@ int snd_pcm_direct_server_create(snd_pcm_direct_t *dmix)
+@@ -437,13 +437,21 @@ int snd_pcm_direct_server_create(snd_pcm_direct_t *dmix)
  		close(dmix->server_fd);
  		return ret;
  	}

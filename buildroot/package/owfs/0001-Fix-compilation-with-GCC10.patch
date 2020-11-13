@@ -1,0 +1,41 @@
+From 43a4bc6b750c37f585d03b14941f3633ed5348d8 Mon Sep 17 00:00:00 2001
+From: "Azamat H. Hackimov" <azamat.hackimov@gmail.com>
+Date: Tue, 9 Jun 2020 11:30:38 +0300
+Subject: [PATCH] Fix compilation with GCC10
+
+Fixed compilation with -fno-common, which enabled in GCC 10 by default.
+See https://bugs.gentoo.org/707438.
+[Retrieved from:
+https://github.com/owfs/owfs/commit/43a4bc6b750c37f585d03b14941f3633ed5348d8]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ module/owserver/src/c/owserver.c       | 2 ++
+ module/owserver/src/include/owserver.h | 2 +-
+ 2 files changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/module/owserver/src/c/owserver.c b/module/owserver/src/c/owserver.c
+index db29988e..2ed29161 100644
+--- a/module/owserver/src/c/owserver.c
++++ b/module/owserver/src/c/owserver.c
+@@ -36,6 +36,8 @@
+ 
+ #include "owserver.h"
+ 
++pthread_mutex_t persistence_mutex ;
++
+ /* --- Prototypes ------------ */
+ static void SetupAntiloop(int argc, char **argv);
+ 
+diff --git a/module/owserver/src/include/owserver.h b/module/owserver/src/include/owserver.h
+index 8be582f0..a257ed02 100644
+--- a/module/owserver/src/include/owserver.h
++++ b/module/owserver/src/include/owserver.h
+@@ -18,7 +18,7 @@
+ #include "ow.h"
+ #include "ow_connection.h"
+ 
+-pthread_mutex_t persistence_mutex ;
++extern pthread_mutex_t persistence_mutex ;
+ #define PERSISTENCELOCK    _MUTEX_LOCK(   persistence_mutex ) ;
+ #define PERSISTENCEUNLOCK  _MUTEX_UNLOCK( persistence_mutex ) ;
+ 

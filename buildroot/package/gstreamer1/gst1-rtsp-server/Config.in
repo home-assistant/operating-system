@@ -9,4 +9,4 @@ config BR2_PACKAGE_GST1_RTSP_SERVER
 	help
 	  RTSP server library based on GStreamer.
 
-	  http://gstreamer.freedesktop.org/
+	  https://gstreamer.freedesktop.org/
