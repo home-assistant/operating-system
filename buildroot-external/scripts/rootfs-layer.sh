@@ -16,6 +16,9 @@ function fix_rootfs() {
     # Cleanup miscs
     rm -rf "${TARGET_DIR}/usr/lib/modules-load.d"
 
+    # Don't announce services we don't offer
+    rm -rf "${TARGET_DIR}/etc/avahi/services/sftp-ssh.service" "${TARGET_DIR}/etc/avahi/services/ssh.service"
+
     # Fix: permission for system connection files
     chmod 600 "${TARGET_DIR}/etc/NetworkManager/system-connections"/*
 
