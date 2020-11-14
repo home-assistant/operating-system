@@ -1,0 +1,37 @@
+From 9aefa8a8644de14f7dd4d028df5ab8de1e848321 Mon Sep 17 00:00:00 2001
+Message-Id: <9aefa8a8644de14f7dd4d028df5ab8de1e848321.1605378562.git.stefan@agner.ch>
+From: Stefan Agner <stefan@agner.ch>
+Date: Sat, 14 Nov 2020 19:29:12 +0100
+Subject: [PATCH] Bump wireguard-linux-compat to work with latest kernels
+
+---
+ package/wireguard-linux-compat/wireguard-linux-compat.hash | 2 +-
+ package/wireguard-linux-compat/wireguard-linux-compat.mk   | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/package/wireguard-linux-compat/wireguard-linux-compat.hash b/package/wireguard-linux-compat/wireguard-linux-compat.hash
+index 833e1af2fc..b04e89392e 100644
+--- a/package/wireguard-linux-compat/wireguard-linux-compat.hash
++++ b/package/wireguard-linux-compat/wireguard-linux-compat.hash
+@@ -1,4 +1,4 @@
+ # https://lists.zx2c4.com/pipermail/wireguard/2020-September/005817.html
+-sha256  ad33b2d2267a37e0f65c97e65e7d4d926d5aef7d530c251b63fbf919048eead9  wireguard-linux-compat-1.0.20200908.tar.xz
++sha256  89eae7f0c0bd6c8df3ba2e090984974ff68741a9f26aa0922890f8ca727897e1  wireguard-linux-compat-1.0.20201112.tar.xz
+ # Locally calculated
+ sha256  8177f97513213526df2cf6184d8ff986c675afb514d4e68a404010521b880643  COPYING
+diff --git a/package/wireguard-linux-compat/wireguard-linux-compat.mk b/package/wireguard-linux-compat/wireguard-linux-compat.mk
+index 7239da6d87..7d6ebf0f7e 100644
+--- a/package/wireguard-linux-compat/wireguard-linux-compat.mk
++++ b/package/wireguard-linux-compat/wireguard-linux-compat.mk
+@@ -4,7 +4,7 @@
+ #
+ ################################################################################
+ 
+-WIREGUARD_LINUX_COMPAT_VERSION = 1.0.20200908
++WIREGUARD_LINUX_COMPAT_VERSION = 1.0.20201112
+ WIREGUARD_LINUX_COMPAT_SITE = https://git.zx2c4.com/wireguard-linux-compat/snapshot
+ WIREGUARD_LINUX_COMPAT_SOURCE = wireguard-linux-compat-$(WIREGUARD_LINUX_COMPAT_VERSION).tar.xz
+ WIREGUARD_LINUX_COMPAT_LICENSE = GPL-2.0
+-- 
+2.29.2
+
