@@ -1,12 +1,13 @@
-comment "Arm toolchains available for Cortex-A + EABIhf"
+comment "Arm toolchains available for Cortex-A with NEON + EABIhf"
 	depends on BR2_arm
-	depends on !BR2_ARM_CPU_ARMV7A || !BR2_ARM_EABIHF
+	depends on !BR2_ARM_CPU_ARMV7A || !BR2_ARM_EABIHF || !BR2_ARM_CPU_HAS_NEON
 	depends on !BR2_STATIC_LIBS
 
 config BR2_TOOLCHAIN_EXTERNAL_ARM_ARM
 	bool "Arm ARM 2019.12"
 	depends on BR2_arm
 	depends on BR2_ARM_CPU_ARMV7A || BR2_ARM_CPU_ARMV8A
+	depends on BR2_ARM_CPU_HAS_NEON
 	depends on BR2_HOSTARCH = "x86_64"
 	depends on BR2_ARM_EABIHF
 	depends on !BR2_STATIC_LIBS
@@ -20,10 +21,10 @@ config BR2_TOOLCHAIN_EXTERNAL_ARM_ARM
 	select BR2_TOOLCHAIN_HAS_OPENMP
 	help
 	  Arm toolchain for the ARM architecture. It uses GCC 9.2.1,
-	  GDB 8.3.0, glibc 2.30, Binutils 2.33.1. It generates code that
-	  runs on all Cortex-A profile devices, but tuned for the
-	  Cortex-A9. The code generated uses the hard floating point
-	  calling convention, and uses the VFPv3-D16 FPU instructions.
+	  GDB 8.3.0, glibc 2.30, Binutils 2.33.1. It generates code
+	  that runs on all Cortex-A profile devices. The code
+	  generated uses the hard floating point calling convention,
+	  and uses the NEON FPU instructions.
 
 	  This is the same toolchain that was previously distributed by
 	  Linaro.

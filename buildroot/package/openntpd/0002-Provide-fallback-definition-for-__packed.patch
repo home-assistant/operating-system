@@ -1,0 +1,43 @@
+From bc2cd89715155fe1fead19338dac5f4059917dfe Mon Sep 17 00:00:00 2001
+From: Michael Forney <mforney@mforney.org>
+Date: Thu, 20 Jun 2019 13:52:22 -0700
+Subject: [PATCH] Provide fallback definition for __packed
+
+Otherwise, systems that don't support it will treat it as a name for a
+global `struct ntp_msg` variable.
+
+[Retrieved from:
+https://github.com/openntpd-portable/openntpd-portable/commit/bc2cd89715155fe1fead19338dac5f4059917dfe]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ include/sys/types.h    | 4 ++++
+ m4/check-os-options.m4 | 1 +
+ 2 files changed, 5 insertions(+)
+
+diff --git a/include/sys/types.h b/include/sys/types.h
+index 86821c7..5492e20 100644
+--- a/include/sys/types.h
++++ b/include/sys/types.h
+@@ -22,6 +22,10 @@
+ # define __bounded__(x, y, z)
+ #endif
+ 
++#if !defined(HAVE_ATTRIBUTE__PACKED) && !defined(__packed)
++# define __packed	__attribute__((__packed__))
++#endif
++
+ /*
+  * Define BSD-style unsigned bits types for systems that do not have them.
+  */
+diff --git a/m4/check-os-options.m4 b/m4/check-os-options.m4
+index d4d02d9..4883d1f 100644
+--- a/m4/check-os-options.m4
++++ b/m4/check-os-options.m4
+@@ -69,6 +69,7 @@ case $host_os in
+ 		HOST_ABI=elf
+ 		AC_DEFINE([HAVE_ATTRIBUTE__BOUNDED__], [1], [OpenBSD gcc has bounded])
+ 		AC_DEFINE([HAVE_ATTRIBUTE__DEAD], [1], [OpenBSD gcc has __dead])
++		AC_DEFINE([HAVE_ATTRIBUTE__PACKED], [1], [OpenBSD gcc has __packed])
+ 		;;
+ 	*solaris*)
+ 		HOST_OS=solaris

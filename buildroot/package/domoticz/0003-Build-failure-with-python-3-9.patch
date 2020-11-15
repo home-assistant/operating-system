@@ -1,0 +1,36 @@
+From b3525e2a970ae3e783665040b1e0db5fc3391327 Mon Sep 17 00:00:00 2001
+From: Jose Zapater <jzapater@gmail.com>
+Date: Mon, 2 Nov 2020 09:46:17 +0100
+Subject: [PATCH] Build failure with python 3.9
+
+Signed-off-by: Jose Zapater <jzapater@gmail.com>
+
+[Retrieved from:
+https://github.com/domoticz/domoticz/commit/b3525e2a970ae3e783665040b1e0db5fc3391327]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ hardware/plugins/DelayedLink.h | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+diff --git a/hardware/plugins/DelayedLink.h b/hardware/plugins/DelayedLink.h
+index c90a7d8e69..cb71478685 100644
+--- a/hardware/plugins/DelayedLink.h
++++ b/hardware/plugins/DelayedLink.h
+@@ -14,6 +14,17 @@
+ #include <frameobject.h>
+ #include "../../main/Helper.h"
+ 
++#ifndef _Py_DEC_REFTOTAL
++  /* _Py_DEC_REFTOTAL macro has been removed from Python 3.9 by:
++    https://github.com/python/cpython/commit/49932fec62c616ec88da52642339d83ae719e924 */
++#  ifdef Py_REF_DEBUG
++#    define _Py_DEC_REFTOTAL _Py_RefTotal--
++#  else
++#    define _Py_DEC_REFTOTAL
++#    define _Py_Dealloc
++#  endif
++#endif
++
+ #if PY_VERSION_HEX >= 0x030800f0
+ static inline void
+ py3__Py_DECREF(const char *filename, int lineno, PyObject *op)

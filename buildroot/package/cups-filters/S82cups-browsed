@@ -6,7 +6,7 @@ PIDFILE="/var/run/$DAEMON.pid"
 start() {
 	printf 'Starting %s: ' "$DAEMON"
 	# shellcheck disable=SC2086 # we need the word splitting
-	start-stop-daemon -b -m -S -q -p "$PIDFILE" -x "/sbin/$DAEMON" \
+	start-stop-daemon -b -m -S -q -p "$PIDFILE" -x "/usr/sbin/$DAEMON" \
 		-- -c /etc/cups/cups-browsed.conf
 	status=$?
 	if [ "$status" -eq 0 ]; then

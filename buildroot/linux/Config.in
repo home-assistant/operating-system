@@ -31,7 +31,7 @@ config BR2_LINUX_KERNEL_LATEST_VERSION
 	bool "Latest version (5.9)"
 
 config BR2_LINUX_KERNEL_LATEST_CIP_VERSION
-	bool "Latest CIP SLTS version (4.19.132-cip30)"
+	bool "Latest CIP SLTS version (4.19.152-cip37)"
 	help
 	  CIP launched in the spring of 2016 to address the needs of
 	  organizations in industries such as power generation and
@@ -44,13 +44,13 @@ config BR2_LINUX_KERNEL_LATEST_CIP_VERSION
 	  implementation of software building blocks that meet
 	  these requirements.
 
-	  The CIP community plans to maintain 4.4 for security and
+	  The CIP community plans to maintain 4.19 for security and
 	  bug fixes for more than 10 years.
 
 	  https://www.cip-project.org
 
 config BR2_LINUX_KERNEL_LATEST_CIP_RT_VERSION
-	bool "Latest CIP RT SLTS version (4.19.132-cip30-rt12)"
+	bool "Latest CIP RT SLTS version (4.19.152-cip37-rt16)"
 	help
 	  Same as the CIP version, but this is the PREEMPT_RT realtime
 	  variant.
@@ -125,9 +125,9 @@ endif
 
 config BR2_LINUX_KERNEL_VERSION
 	string
-	default "5.9" if BR2_LINUX_KERNEL_LATEST_VERSION
-	default "4.19.132-cip30" if BR2_LINUX_KERNEL_LATEST_CIP_VERSION
-	default "4.19.132-cip30-rt12" if BR2_LINUX_KERNEL_LATEST_CIP_RT_VERSION
+	default "5.9.8" if BR2_LINUX_KERNEL_LATEST_VERSION
+	default "4.19.152-cip37" if BR2_LINUX_KERNEL_LATEST_CIP_VERSION
+	default "4.19.152-cip37-rt16" if BR2_LINUX_KERNEL_LATEST_CIP_RT_VERSION
 	default BR2_LINUX_KERNEL_CUSTOM_VERSION_VALUE \
 		if BR2_LINUX_KERNEL_CUSTOM_VERSION
 	default "custom" if BR2_LINUX_KERNEL_CUSTOM_TARBALL

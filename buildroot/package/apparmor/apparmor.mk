@@ -88,7 +88,7 @@ endef
 define APPARMOR_INSTALL_INIT_SYSTEMD
 	$(INSTALL) -D -m 0755 $(@D)/parser/apparmor.systemd \
 		$(TARGET_DIR)/lib/apparmor/apparmor.systemd
-	$(INSTALL) -D -m 0755 $(@D)/parser/apparmor.service \
+	$(INSTALL) -D -m 0644 $(@D)/parser/apparmor.service \
 		$(TARGET_DIR)/usr/lib/systemd/system/apparmor.service
 endef
 

@@ -157,6 +157,29 @@ your filesystem, those parts may not be all-zeroes when read back). You
 should only use sparse files when handling files on the build machine, not
 when transferring them to an actual device that will be used on the target.
 
+=== Details about packages
+
+[[package-details]]
+
+Buildroot can produce a JSON blurb that describes the set of enabled
+packages in the current configuration, together with their
+dependencies, licenses and other metadata. This JSON blurb is produced
+by using the +show-info+ make target:
+
+------------------------
+make show-info
+------------------------
+
+Buildroot can also produce details about packages as HTML and JSON
+output using the +pkg-stats+ make target. Amongst other things, these
+details include whether known CVEs (security vulnerabilities) affect
+the packages in your current configuration. It also shows if there is
+a newer upstream version for those packages.
+
+------------------------
+make pkg-stats
+------------------------
+
 === Graphing the dependencies between packages
 
 [[graph-depends]]

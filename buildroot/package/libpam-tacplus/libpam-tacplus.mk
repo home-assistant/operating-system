@@ -14,7 +14,10 @@ LIBPAM_TACPLUS_DEPENDENCIES = \
 # Fetching from github, we need to generate the configure script
 LIBPAM_TACPLUS_AUTORECONF = YES
 LIBPAM_TACPLUS_INSTALL_STAGING = YES
+# We're patching configure.ac
+LIBPAM_TACPLUS_AUTORECONF = YES
 LIBPAM_TACPLUS_CONF_ENV = \
 	ax_cv_check_cflags___fstack_protector_all=$(if $(BR2_TOOLCHAIN_HAS_SSP),yes,no)
+LIBPAM_TACPLUS_CONF_OPTS = --disable-werror
 
 $(eval $(autotools-package))

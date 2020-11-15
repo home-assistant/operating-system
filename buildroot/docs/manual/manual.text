@@ -39,12 +39,13 @@ II. User guide
         8.5. Building out-of-tree
         8.6. Environment variables
         8.7. Dealing efficiently with filesystem images
-        8.8. Graphing the dependencies between packages
-        8.9. Graphing the build duration
-        8.10. Graphing the filesystem size contribution of packages
-        8.11. Top-level parallel build
-        8.12. Integration with Eclipse
-        8.13. Advanced usage
+        8.8. Details about packages
+        8.9. Graphing the dependencies between packages
+        8.10. Graphing the build duration
+        8.11. Graphing the filesystem size contribution of packages
+        8.12. Top-level parallel build
+        8.13. Integration with Eclipse
+        8.14. Advanced usage
 
     9. Project-specific customization
 
@@ -173,13 +174,13 @@ List of Examples
 
 ---------------------------------------------------------------------
 
-Buildroot 2020.11-rc1 manual generated on 2020-11-04 22:31:20 UTC
-from git revision 5b79a9cc47
+Buildroot 2020.11-rc2 manual generated on 2020-11-14 13:52:52 UTC
+from git revision 6a33ea03b4
 
 The Buildroot manual is written by the Buildroot developers. It is
 licensed under the GNU General Public License, version 2. Refer to
 the COPYING [http://git.buildroot.org/buildroot/tree/COPYING?id=
-5b79a9cc47ff22e18c901d02d94f1e3c3cfdfae1] file in the Buildroot
+6a33ea03b469a35f0dddcabd6e378819dc731024] file in the Buildroot
 sources for the full text of this license.
 
 Copyright © 2004-2020 The Buildroot developers
@@ -399,7 +400,7 @@ To start the build process, simply run:
 
 By default, Buildroot does not support top-level parallel build, so
 running make -jN is not necessary. There is however experimental
-support for top-level parallel build, see Section 8.11, “Top-level
+support for top-level parallel build, see Section 8.12, “Top-level
 parallel build”.
 
 The make command will generally perform the following steps:
@@ -550,12 +551,13 @@ Table of Contents
     8.5. Building out-of-tree
     8.6. Environment variables
     8.7. Dealing efficiently with filesystem images
-    8.8. Graphing the dependencies between packages
-    8.9. Graphing the build duration
-    8.10. Graphing the filesystem size contribution of packages
-    8.11. Top-level parallel build
-    8.12. Integration with Eclipse
-    8.13. Advanced usage
+    8.8. Details about packages
+    8.9. Graphing the dependencies between packages
+    8.10. Graphing the build duration
+    8.11. Graphing the filesystem size contribution of packages
+    8.12. Top-level parallel build
+    8.13. Integration with Eclipse
+    8.14. Advanced usage
 
 9. Project-specific customization
 
@@ -1117,7 +1119,7 @@ well as the configuration:
 
 Notes. If ccache is enabled, running make clean or distclean does not
 empty the compiler cache used by Buildroot. To delete it, refer to
-Section 8.13.3, “Using ccache in Buildroot”.
+Section 8.14.3, “Using ccache in Buildroot”.
 
 Dumping the internal make variables: One can dump the variables known
 to make, along with their values:
@@ -1290,7 +1292,7 @@ above simply manipulate these stamp files to force Buildroot to
 restart a specific set of steps of a package build process.
 
 Further details about package special make targets are explained in
-Section 8.13.5, “Package-specific make targets”.
+Section 8.14.5, “Package-specific make targets”.
 
 8.4. Offline builds
 
@@ -1360,7 +1362,7 @@ passed to make or set in the environment:
   * BR2_DL_DIR to override the directory in which Buildroot stores/
     retrieves downloaded files. Note that the Buildroot download
     directory can also be set from the configuration interface, so
-    through the Buildroot .config file. See Section 8.13.4, “Location
+    through the Buildroot .config file. See Section 8.14.4, “Location
     of downloaded packages” for more details on how you can set the
     download directory.
   * BR2_GRAPH_ALT, if set and non-empty, to use an alternate
@@ -1368,12 +1370,12 @@ passed to make or set in the environment:
   * BR2_GRAPH_OUT to set the filetype of generated graphs, either pdf
     (the default), or png.
   * BR2_GRAPH_DEPS_OPTS to pass extra options to the dependency
-    graph; see Section 8.8, “Graphing the dependencies between
+    graph; see Section 8.9, “Graphing the dependencies between
     packages” for the accepted options
   * BR2_GRAPH_DOT_OPTS is passed verbatim as options to the dot
     utility to draw the dependency graph.
   * BR2_GRAPH_SIZE_OPTS to pass extra options to the size graph; see
-    Section 8.10, “Graphing the filesystem size contribution of
+    Section 8.11, “Graphing the filesystem size contribution of
     packages” for the acepted options
 
 An example that uses config files located in the toplevel directory
@@ -1426,7 +1428,24 @@ when read back). You should only use sparse files when handling files
 on the build machine, not when transferring them to an actual device
 that will be used on the target.
 
-8.8. Graphing the dependencies between packages
+8.8. Details about packages
+
+Buildroot can produce a JSON blurb that describes the set of enabled
+packages in the current configuration, together with their
+dependencies, licenses and other metadata. This JSON blurb is
+produced by using the show-info make target:
+
+make show-info
+
+Buildroot can also produce details about packages as HTML and JSON
+output using the pkg-stats make target. Amongst other things, these
+details include whether known CVEs (security vulnerabilities) affect
+the packages in your current configuration. It also shows if there is
+a newer upstream version for those packages.
+
+make pkg-stats
+
+8.9. Graphing the dependencies between packages
 
 One of Buildroot’s jobs is to know the dependencies between packages,
 and make sure they are built in the right order. These dependencies
@@ -1488,7 +1507,7 @@ are:
 
 BR2_GRAPH_DEPS_OPTS='-d 3 --no-transitive --colors=red,green,blue' make graph-depends
 
-8.9. Graphing the build duration
+8.10. Graphing the build duration
 
 When the build of a system takes a long time, it is sometimes useful
 to be able to understand which packages are the longest to build, to
@@ -1523,7 +1542,7 @@ The only other format supported is PNG:
 
 BR2_GRAPH_OUT=png make graph-build
 
-8.10. Graphing the filesystem size contribution of packages
+8.11. Graphing the filesystem size contribution of packages
 
 When your target system grows, it is sometimes useful to understand
 how much each Buildroot package is contributing to the overall root
@@ -1553,7 +1572,7 @@ argparse module if you’re using a Python version older than 2.7
 
 Just like for the duration graph, a BR2_GRAPH_OUT environment
 variable is supported to adjust the output file format. See
-Section 8.8, “Graphing the dependencies between packages” for details
+Section 8.9, “Graphing the dependencies between packages” for details
 about this environment variable.
 
 Additionally, one may set the environment variable
@@ -1583,7 +1602,7 @@ details:
 
 utils/size-stats-compare -h
 
-8.11. Top-level parallel build
+8.12. Top-level parallel build
 
 Note. This section deals with a very experimental feature, which is
 known to break even in some non-unusual situations. Use at your own
@@ -1628,7 +1647,7 @@ effects:
     will be empty and it’s only at the very end of the build that
     they will be populated.
 
-8.12. Integration with Eclipse
+8.13. Integration with Eclipse
 
 While a part of the embedded Linux developers like classical text
 editors like Vim or Emacs, and command-line based interfaces, a
@@ -1656,9 +1675,9 @@ The Buildroot Eclipse integration installation process and usage is
 described in detail at https://github.com/mbats/
 eclipse-buildroot-bundle/wiki.
 
-8.13. Advanced usage
+8.14. Advanced usage
 
-8.13.1. Using the generated toolchain outside Buildroot
+8.14.1. Using the generated toolchain outside Buildroot
 
 You may want to compile, for your target, your own programs or other
 software that are not packaged in Buildroot. In order to do this you
@@ -1703,7 +1722,7 @@ provides some useful commands. Note however that once this script is
 sourced, the environment is setup only for cross-compilation, and no
 longer for native compilation.
 
-8.13.2. Using gdb in Buildroot
+8.14.2. Using gdb in Buildroot
 
 Buildroot allows to do cross-debugging, where the debugger runs on
 the build machine and communicates with gdbserver on the target to
@@ -1748,7 +1767,7 @@ Finally, to connect to the target from the cross gdb:
 
 (gdb) target remote <target ip address>:2345
 
-8.13.3. Using ccache in Buildroot
+8.14.3. Using ccache in Buildroot
 
 ccache [http://ccache.samba.org] is a compiler cache. It stores the
 object files resulting from each compilation process, and is able to
@@ -1799,7 +1818,7 @@ directories" [https://ccache.samba.org/manual.html#
 _compiling_in_different_directories] for more details about this
 rewriting of absolute paths.
 
-8.13.4. Location of downloaded packages
+8.14.4. Location of downloaded packages
 
 The various tarballs that are downloaded by Buildroot are all stored
 in BR2_DL_DIR, which by default is the dl directory. If you want to
@@ -1820,7 +1839,7 @@ The download location can also be set in the .config file, with the
 BR2_DL_DIR option. Unlike most options in the .config file, this
 value is overridden by the BR2_DL_DIR environment variable.
 
-8.13.5. Package-specific make targets
+8.14.5. Package-specific make targets
 
 Running make <package> builds and installs that particular package
 and its dependencies.
@@ -1918,7 +1937,7 @@ Additionally, there are some other useful make targets:
 |                       |the build directory                 |
 +------------------------------------------------------------+
 
-8.13.6. Using Buildroot during development
+8.14.6. Using Buildroot during development
 
 The normal operation of Buildroot is to download a tarball, extract
 it, configure, compile and install the software component found
@@ -3338,7 +3357,7 @@ help reduce the build time:
     not prevent you to switch back to an internal toolchain (that may
     provide a higher level of customization) once the rest of your
     system is working;
-  * Use the ccache compiler cache (see: Section 8.13.3, “Using ccache
+  * Use the ccache compiler cache (see: Section 8.14.3, “Using ccache
     in Buildroot”);
   * Learn about rebuilding only the few packages you actually care
     about (see Section 8.3, “Understanding how to rebuild packages”),
@@ -3354,7 +3373,7 @@ help reduce the build time:
     a bit.
   * Buy new hardware. SSDs and lots of RAM are key to speeding up the
     builds.
-  * Experiment with top-level parallel build, see Section 8.11,
+  * Experiment with top-level parallel build, see Section 8.12,
     “Top-level parallel build”.
 
 Chapter 12. Known issues
@@ -4935,7 +4954,7 @@ In the action definitions, you can use the following variables:
     to the current package host, staging and target directories. In
     both cases, it doesn’t make any difference from the package point
     of view: it should simply use HOST_DIR, STAGING_DIR and
-    TARGET_DIR. See Section 8.11, “Top-level parallel build” for more
+    TARGET_DIR. See Section 8.12, “Top-level parallel build” for more
     details about per-package directory support.
 
 Finally, you can also use hooks. See Section 18.22, “Hooks available

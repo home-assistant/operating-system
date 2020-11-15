@@ -18,6 +18,7 @@ XEN_ARCH = arm32
 endif
 
 XEN_CONF_OPTS = \
+	--disable-golang \
 	--disable-ocamltools \
 	--with-initddir=/etc/init.d
 
@@ -40,7 +41,8 @@ XEN_CONF_OPTS += --disable-xen
 endif
 
 ifeq ($(BR2_PACKAGE_XEN_TOOLS),y)
-XEN_DEPENDENCIES += dtc libaio libglib2 ncurses openssl pixman util-linux yajl
+XEN_DEPENDENCIES += \
+	dtc libaio libglib2 ncurses openssl pixman slirp util-linux yajl
 ifeq ($(BR2_PACKAGE_ARGP_STANDALONE),y)
 XEN_DEPENDENCIES += argp-standalone
 endif

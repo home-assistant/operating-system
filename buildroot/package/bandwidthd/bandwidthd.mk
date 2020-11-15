@@ -10,6 +10,7 @@ BANDWIDTHD_SITE = $(call github,nroach44,bandwidthd,v$(BANDWIDTHD_VERSION))
 # Specified as "any version of the GPL that is current as of your
 # download" by upstream.
 BANDWIDTHD_LICENSE = GPL
+BANDWIDTHD_LICENSE_FILES = README
 
 BANDWIDTHD_DEPENDENCIES = gd libpng libpcap host-pkgconf
 

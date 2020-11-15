@@ -1,0 +1,54 @@
+From 956b4239d919d6922b9ba6ef39be0d1753f8ff34 Mon Sep 17 00:00:00 2001
+From: otto <>
+Date: Sat, 11 Apr 2020 07:49:48 +0000
+Subject: [PATCH] Zap double definition of conf and make ibuf_dns static to
+ avoid double definition; from Michael Forney
+
+[Retrieved (and backported by updating paths and dropping date and
+version updates) from:
+https://github.com/openntpd-portable/openntpd-openbsd/commit/956b4239d919d6922b9ba6ef39be0d1753f8ff34]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ src/usr.sbin/ntpd/ntp.c     | 4 ++--
+ src/usr.sbin/ntpd/ntp_dns.c | 4 ++--
+ src/usr.sbin/ntpd/parse.y   | 3 +--
+ 3 files changed, 5 insertions(+), 6 deletions(-)
+
+diff --git a/src/ntp.c b/src/ntp.c
+index ea9a4e922..ec3d6bc43 100644
+--- a/src/ntp.c
++++ b/src/ntp.c
+@@ -42,7 +42,7 @@
+ 
+ volatile sig_atomic_t	 ntp_quit = 0;
+ struct imsgbuf		*ibuf_main;
+-struct imsgbuf		*ibuf_dns;
++static struct imsgbuf	*ibuf_dns;
+ struct ntpd_conf	*conf;
+ struct ctl_conns	 ctl_conns;
+ u_int			 peer_cnt;
+diff --git a/src/ntp_dns.c b/src/ntp_dns.c
+index 2e1a97833..88391801c 100644
+--- a/src/ntp_dns.c
++++ b/src/ntp_dns.c
+@@ -39,7 +39,7 @@
+ #include "ntpd.h"
+ 
+ volatile sig_atomic_t	 quit_dns = 0;
+-struct imsgbuf		*ibuf_dns;
++static struct imsgbuf	*ibuf_dns;
+ 
+ void	sighdlr_dns(int);
+ int	dns_dispatch_imsg(struct ntpd_conf *);
+diff --git a/src/parse.y b/src/uparse.y
+index 8d7ab09de..81d19bbff 100644
+--- a/src/parse.y
++++ b/src/parse.y
+@@ -57,7 +57,6 @@ int		 lgetc(int);
+ int		 lungetc(int);
+ int		 findeol(void);
+ 
+-struct ntpd_conf		*conf;
+ struct sockaddr_in		 query_addr4;
+ struct sockaddr_in6		 query_addr6;
+ int				 poolseqnum;

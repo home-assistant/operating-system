@@ -43,6 +43,10 @@ SURICATA_CONF_OPTS = \
 #               download through wget/curl)
 SURICATA_INSTALL_TARGET_OPTS = DESTDIR=$(TARGET_DIR) install install-conf
 
+ifeq ($(BR2_TOOLCHAIN_HAS_LIBATOMIC),y)
+SURICATA_CONF_ENV += LIBS=-latomic
+endif
+
 ifeq ($(BR2_PACKAGE_FILE),y)
 SURICATA_DEPENDENCIES += file
 SURICATA_CONF_OPTS += --enable-libmagic

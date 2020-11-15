@@ -3,6 +3,7 @@ BR2_powerpc=y
 BR2_powerpc_8548=y
 
 # System
+BR2_GLOBAL_PATCH_DIR="board/qemu/ppc-mpc8544ds/patches"
 BR2_SYSTEM_DHCP="eth0"
 
 # Filesystem
