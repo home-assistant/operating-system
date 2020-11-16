@@ -1,3 +1,29 @@
+2020.11-rc2, released November 14th, 2020
+
+	Fixes all over the tree.
+
+	cve-checker script dropped. Instead the pkg-stats logic has
+	been extended to be able to only generate stats for the
+	configured packages using 'make pkg-stats'
+
+	Removed defconfigs: rock64
+
+	Updated/fixed packages: apparmor, asterisk, bitcoin, busybox,
+	cups-filters, cryptsetup, davfs2, domoticz, elf2flt, freetype,
+	ghostscript, glmark2, go, gst1-plugins-bad, guile, jsoncpp,
+	libcap, libexif, libnetfilter_conntrack, libpam-tacplus,
+	libsigrokdecode, linux-backports, linux-firmware, mesa3d,
+	modem-manager, mp4v2, oniguruma, openntpd, python3,
+	python-lmdb, python-m2crypto, rauc, s390-tools, slirp,
+	stress-ng, suricata, systemd, tcpdump, tmux, tor, webkitgtk,
+	wireguard-linux-compat, wpewebkit, xen
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#13281: Raspberry Pi 2: overlays folder missing in genimage-ra..
+	#13291: BR2_DL_DIR is ignored when creating defconfig
+	#13306: wpewebkit build problem in 2020-11-rc1
+
 2020.11-rc1, released November 4th, 2020
 
 	Fixes all over the tree and new features.

@@ -10,6 +10,9 @@ TMUX_LICENSE = ISC
 TMUX_LICENSE_FILES = COPYING
 TMUX_DEPENDENCIES = libevent ncurses host-pkgconf
 
+# 0001-Do-not-write-after-the-end-of-the-array-and-overwrit.patch
+TMUX_IGNORE_CVES += CVE-2020-27347
+
 # Add /usr/bin/tmux to /etc/shells otherwise some login tools like dropbear
 # can reject the user connection. See man shells.
 define TMUX_ADD_TMUX_TO_SHELLS

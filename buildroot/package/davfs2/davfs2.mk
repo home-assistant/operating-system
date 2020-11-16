@@ -18,4 +18,8 @@ DAVFS2_CONF_ENV += \
 	ac_cv_path_NEON_CONFIG=$(STAGING_DIR)/usr/bin/neon-config \
 	LIBS=$(TARGET_NLS_LIBS)
 
+define DAVFS2_USERS
+	davfs2 -1 davfs2 -1 * - - - davfs user
+endef
+
 $(eval $(autotools-package))

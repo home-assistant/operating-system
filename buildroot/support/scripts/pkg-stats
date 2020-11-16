@@ -28,7 +28,9 @@ import subprocess
 import json
 import sys
 
-sys.path.append('utils/')
+brpath = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", ".."))
+
+sys.path.append(os.path.join(brpath, "utils"))
 from getdeveloperlib import parse_developers  # noqa: E402
 import cve as cvecheck  # noqa: E402
 
@@ -66,7 +68,7 @@ def get_defconfig_list():
     """
     return [
         Defconfig(name[:-len('_defconfig')], os.path.join('configs', name))
-        for name in os.listdir('configs')
+        for name in os.listdir(os.path.join(brpath, 'configs'))
         if name.endswith('_defconfig')
     ]
 
@@ -108,9 +110,10 @@ class Package:
         Fills in the .url field
         """
         self.status['url'] = ("warning", "no Config.in")
-        for filename in os.listdir(os.path.dirname(self.path)):
+        pkgdir = os.path.dirname(os.path.join(brpath, self.path))
+        for filename in os.listdir(pkgdir):
             if fnmatch.fnmatch(filename, 'Config.*'):
-                fp = open(os.path.join(os.path.dirname(self.path), filename), "r")
+                fp = open(os.path.join(pkgdir, filename), "r")
                 for config_line in fp:
                     if URL_RE.match(config_line):
                         self.url = config_line.strip()
@@ -138,7 +141,7 @@ class Package:
         Fills in the .infras field
         """
         self.infras = list()
-        with open(self.path, 'r') as f:
+        with open(os.path.join(brpath, self.path), 'r') as f:
             lines = f.readlines()
             for l in lines:
                 match = INFRA_RE.match(l)
@@ -178,7 +181,7 @@ class Package:
             return
 
         hashpath = self.path.replace(".mk", ".hash")
-        if os.path.exists(hashpath):
+        if os.path.exists(os.path.join(brpath, hashpath)):
             self.status['hash'] = ("ok", "found")
         else:
             self.status['hash'] = ("error", "missing")
@@ -191,7 +194,7 @@ class Package:
             self.status['patches'] = ("na", "no valid package infra")
             return
 
-        pkgdir = os.path.dirname(self.path)
+        pkgdir = os.path.dirname(os.path.join(brpath, self.path))
         for subdir, _, _ in os.walk(pkgdir):
             self.patch_files = fnmatch.filter(os.listdir(subdir), '*.patch')
 
@@ -214,8 +217,8 @@ class Package:
         """
         Fills in the .warnings and .status['pkg-check'] fields
         """
-        cmd = ["./utils/check-package"]
-        pkgdir = os.path.dirname(self.path)
+        cmd = [os.path.join(brpath, "utils/check-package")]
+        pkgdir = os.path.dirname(os.path.join(brpath, self.path))
         self.status['pkg-check'] = ("error", "Missing")
         for root, dirs, files in os.walk(pkgdir):
             for f in files:
@@ -300,11 +303,12 @@ def get_pkglist(npackages, package_list):
                      "toolchain/toolchain-wrapper.mk"]
     packages = list()
     count = 0
-    for root, dirs, files in os.walk("."):
+    for root, dirs, files in os.walk(brpath):
+        root = os.path.relpath(root, brpath)
         rootdir = root.split("/")
-        if len(rootdir) < 2:
+        if len(rootdir) < 1:
             continue
-        if rootdir[1] not in WALK_USEFUL_SUBDIRS:
+        if rootdir[0] not in WALK_USEFUL_SUBDIRS:
             continue
         for f in files:
             if not f.endswith(".mk"):
@@ -316,8 +320,7 @@ def get_pkglist(npackages, package_list):
             pkgpath = os.path.join(root, f)
             skip = False
             for exclude in WALK_EXCLUDES:
-                # pkgpath[2:] strips the initial './'
-                if re.match(exclude, pkgpath[2:]):
+                if re.match(exclude, pkgpath):
                     skip = True
                     continue
             if skip:
@@ -328,6 +331,12 @@ def get_pkglist(npackages, package_list):
             if npackages and count == npackages:
                 return packages
     return packages
+
+
+def get_config_packages():
+    cmd = ["make", "--no-print-directory", "show-info"]
+    js = json.loads(subprocess.check_output(cmd))
+    return js.keys()
 
 
 def package_init_make_info():
@@ -678,7 +687,7 @@ def boolean_str(b):
 
 def dump_html_pkg(f, pkg):
     f.write(" <tr>\n")
-    f.write("  <td>%s</td>\n" % pkg.path[2:])
+    f.write("  <td>%s</td>\n" % pkg.path)
 
     # Patch count
     td_class = ["centered"]
@@ -926,6 +935,8 @@ def parse_args():
     output.add_argument('--json', dest='json', type=resolvepath,
                         help='JSON output file')
     packages = parser.add_mutually_exclusive_group()
+    packages.add_argument('-c', dest='configpackages', action='store_true',
+                          help='Apply to packages enabled in current configuration')
     packages.add_argument('-n', dest='npackages', type=int, action='store',
                           help='Number of packages')
     packages.add_argument('-p', dest='packages', action='store',
@@ -942,15 +953,18 @@ def __main__():
     args = parse_args()
     if args.packages:
         package_list = args.packages.split(",")
+    elif args.configpackages:
+        package_list = get_config_packages()
     else:
         package_list = None
     date = datetime.datetime.utcnow()
-    commit = subprocess.check_output(['git', 'rev-parse',
+    commit = subprocess.check_output(['git', '-C', brpath,
+                                      'rev-parse',
                                       'HEAD']).splitlines()[0].decode()
     print("Build package list ...")
     packages = get_pkglist(args.npackages, package_list)
     print("Getting developers ...")
-    developers = parse_developers()
+    developers = parse_developers(brpath)
     print("Build defconfig list ...")
     defconfigs = get_defconfig_list()
     for d in defconfigs:

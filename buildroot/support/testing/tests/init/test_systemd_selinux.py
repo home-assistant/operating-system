@@ -50,6 +50,7 @@ class TestSELinuxSystemd(infra.basetest.BRTest):
         self.assertEqual(ret, 0)
         self.assertEqual(out[0], "system_u:system_r:init_t\0")
 
+
 class TestSELinuxSystemdExt4(TestSELinuxSystemd):
     config = TestSELinuxSystemd.config + \
         """
@@ -60,6 +61,7 @@ class TestSELinuxSystemdExt4(TestSELinuxSystemd):
 
     def test_run(self):
         self.run_tests("ext4")
+
 
 class TestSELinuxSystemdSquashfs(TestSELinuxSystemd):
     config = TestSELinuxSystemd.config + \

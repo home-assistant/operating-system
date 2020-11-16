@@ -31,12 +31,12 @@ GLMARK2_FLAVORS += x11-gl
 endif
 
 ifeq ($(BR2_PACKAGE_GLMARK2_FLAVOR_WAYLAND_GLESV2),y)
-GLMARK2_DEPENDENCIES += libgles wayland
+GLMARK2_DEPENDENCIES += libgles wayland wayland-protocols
 GLMARK2_FLAVORS += wayland-glesv2
 endif
 
 ifeq ($(BR2_PACKAGE_GLMARK2_FLAVOR_WAYLAND_GL),y)
-GLMARK2_DEPENDENCIES += libgl wayland
+GLMARK2_DEPENDENCIES += libgl wayland wayland-protocols
 GLMARK2_FLAVORS += wayland-gl
 endif
 
