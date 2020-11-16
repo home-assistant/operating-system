@@ -1,7 +1,7 @@
-From df50ba2a4538ce9a43d28c2a9ef56377b7bad59f Mon Sep 17 00:00:00 2001
-Message-Id: <df50ba2a4538ce9a43d28c2a9ef56377b7bad59f.1605026982.git.stefan@agner.ch>
-In-Reply-To: <3651b4af52d63d4e37f40c7a6d0809b0a6c9dd73.1605026982.git.stefan@agner.ch>
-References: <3651b4af52d63d4e37f40c7a6d0809b0a6c9dd73.1605026982.git.stefan@agner.ch>
+From c18ca341da823bd2ec5aa04ea5970d3867eaae73 Mon Sep 17 00:00:00 2001
+Message-Id: <c18ca341da823bd2ec5aa04ea5970d3867eaae73.1605346684.git.stefan@agner.ch>
+In-Reply-To: <3651b4af52d63d4e37f40c7a6d0809b0a6c9dd73.1605346684.git.stefan@agner.ch>
+References: <3651b4af52d63d4e37f40c7a6d0809b0a6c9dd73.1605346684.git.stefan@agner.ch>
 From: Pascal Vizeli <pvizeli@syshack.ch>
 Date: Tue, 2 Jun 2020 21:20:08 +0000
 Subject: [PATCH 8/8] ARM: dts: bcm283x: add compatible picked up by U-Boot
@@ -72,5 +72,5 @@ index 4426f9e6ba92..abcf677fe416 100644
  			interrupts = <2 25>;
  			clocks = <&clocks BCM2835_CLOCK_UART>,
 -- 
-2.29.1
+2.29.2
 

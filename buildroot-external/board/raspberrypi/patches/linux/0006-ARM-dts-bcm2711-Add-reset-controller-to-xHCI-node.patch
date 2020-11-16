@@ -1,7 +1,7 @@
 From e0231cd65d8c13be1cebae1e6b5fbef61be6be0d Mon Sep 17 00:00:00 2001
-Message-Id: <e0231cd65d8c13be1cebae1e6b5fbef61be6be0d.1604762912.git.stefan@agner.ch>
-In-Reply-To: <3651b4af52d63d4e37f40c7a6d0809b0a6c9dd73.1604762912.git.stefan@agner.ch>
-References: <3651b4af52d63d4e37f40c7a6d0809b0a6c9dd73.1604762912.git.stefan@agner.ch>
+Message-Id: <e0231cd65d8c13be1cebae1e6b5fbef61be6be0d.1605346684.git.stefan@agner.ch>
+In-Reply-To: <3651b4af52d63d4e37f40c7a6d0809b0a6c9dd73.1605346684.git.stefan@agner.ch>
+References: <3651b4af52d63d4e37f40c7a6d0809b0a6c9dd73.1605346684.git.stefan@agner.ch>
 From: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 Date: Mon, 29 Jun 2020 18:18:40 +0200
 Subject: [PATCH 6/8] ARM: dts: bcm2711: Add reset controller to xHCI node
@@ -56,5 +56,5 @@ index d77d61d41bbc..513cae21e64c 100644
  &uart0 {
  	pinctrl-names = "default";
 -- 
-2.29.1
+2.29.2
 
