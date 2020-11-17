@@ -29,7 +29,7 @@ function fix_rootfs() {
     sed -i "s/MACAddressPolicy=persistent/MACAddressPolicy=none/g" "${TARGET_DIR}/usr/lib/systemd/network/99-default.link"
 
     # Use systemd-resolved for Host OS resolve
-    sed -i '/^hosts:/ {s/dns/resolve [!UNAVAIL=return] dns/}' "${TARGET_DIR}/etc/nsswitch.conf"
+    sed -i '/^hosts:/ {/resolve/! s/files/resolve [!UNAVAIL=return] files/}' "${TARGET_DIR}/etc/nsswitch.conf"
 }
 
 
