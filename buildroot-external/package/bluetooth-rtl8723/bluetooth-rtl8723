@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 echo "Setup the Bluetooth chip"
 echo 146 > /sys/class/gpio/export
