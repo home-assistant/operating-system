@@ -31,9 +31,9 @@ function hassos_post_image() {
     mkdir -p "${OVA_DATA}"
     rm -f "${HDD_OVA}"
 
-    cp -a ${BOARD_DIR}/home-assistant.ovf "${OVA_DATA}/home-assistant.ovf"
+    cp -a "${BOARD_DIR}/home-assistant.ovf" "${OVA_DATA}/home-assistant.ovf"
     qemu-img convert -O vmdk -o subformat=streamOptimized "${HDD_IMG}" "${OVA_DATA}/home-assistant.vmdk"
-    (cd "${OVA_DATA}"; sha256sum --tag home-assistant.* >home-assistant.mf)
+    (cd "${OVA_DATA}" || exit 1; sha256sum --tag home-assistant.* >home-assistant.mf)
     tar -C "${OVA_DATA}" --owner=root --group=root -cf "${HDD_OVA}" home-assistant.ovf home-assistant.vmdk home-assistant.mf
 
     # Cleanup
