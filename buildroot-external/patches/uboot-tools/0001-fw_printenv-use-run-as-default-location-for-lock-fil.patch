@@ -1,0 +1,49 @@
+From 63d929a7c6523ca5fcaed4a4d2a2e6643aa4ae44 Mon Sep 17 00:00:00 2001
+Message-Id: <63d929a7c6523ca5fcaed4a4d2a2e6643aa4ae44.1605605643.git.stefan@agner.ch>
+From: Stefan Agner <stefan@agner.ch>
+Date: Tue, 17 Nov 2020 10:33:05 +0100
+Subject: [PATCH] fw_printenv: use /run as default location for lock files
+
+Use /run as location for lock files. This is the recommended location
+for lock files. The current location /var/lock is considered legacy by
+systemd.
+
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+---
+ tools/env/fw_env_main.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/tools/env/fw_env_main.c b/tools/env/fw_env_main.c
+index 1d193bd437..0b201b9e62 100644
+--- a/tools/env/fw_env_main.c
++++ b/tools/env/fw_env_main.c
+@@ -73,7 +73,7 @@ void usage_printenv(void)
+ 		" -c, --config         configuration file, default:" CONFIG_FILE "\n"
+ #endif
+ 		" -n, --noheader       do not repeat variable name in output\n"
+-		" -l, --lock           lock node, default:/var/lock\n"
++		" -l, --lock           lock node, default:/run\n"
+ 		"\n");
+ }
+ 
+@@ -88,7 +88,7 @@ void usage_env_set(void)
+ #ifdef CONFIG_FILE
+ 		" -c, --config         configuration file, default:" CONFIG_FILE "\n"
+ #endif
+-		" -l, --lock           lock node, default:/var/lock\n"
++		" -l, --lock           lock node, default:/run\n"
+ 		" -s, --script         batch mode to minimize writes\n"
+ 		"\n"
+ 		"Examples:\n"
+@@ -206,7 +206,7 @@ int parse_setenv_args(int argc, char *argv[])
+ 
+ int main(int argc, char *argv[])
+ {
+-	char *lockname = "/var/lock/" CMD_PRINTENV ".lock";
++	char *lockname = "/run/" CMD_PRINTENV ".lock";
+ 	int lockfd = -1;
+ 	int retval = EXIT_SUCCESS;
+ 	char *_cmdname;
+-- 
+2.29.2
+
