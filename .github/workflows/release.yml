@@ -13,6 +13,7 @@ jobs:
     outputs:
       version: ${{ steps.version_check.outputs.version }}
     steps:
+      - uses: actions/checkout@v2
       - name: Validate version
         id: version_check
         run: |
