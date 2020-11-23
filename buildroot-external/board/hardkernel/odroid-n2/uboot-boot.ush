@@ -25,8 +25,6 @@ setenv bootargs_hassos "zram.enabled=1 zram.num_devices=3 apparmor=1 security=ap
 setenv bootargs_a "root=PARTUUID=48617373-06 rootfstype=squashfs ro rootwait"
 setenv bootargs_b "root=PARTUUID=48617373-08 rootfstype=squashfs ro rootwait"
 
-usb start
-
 # Load extraargs
 fileenv mmc ${devnum}:1 ${ramdisk_addr_r} cmdline.txt cmdline
 if test "${board_rev}" = "c"; then
