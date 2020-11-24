@@ -9,7 +9,7 @@ function hassos_rauc_compatible() {
 }
 
 function hassos_version() {
-    if [ -z ${VERSION_DEV} ]; then
+    if [ -z "${VERSION_DEV}" ]; then
         echo "${VERSION_MAJOR}.${VERSION_BUILD}"
     else
         echo "${VERSION_MAJOR}.${VERSION_BUILD}.${VERSION_DEV}"
