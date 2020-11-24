@@ -22,10 +22,10 @@ function hassos_post_image() {
     # Virtual Disk images
     convert_disk_image_virtual
 
-    convert_disk_image_gz vmdk
-    convert_disk_image_gz vhdx
-    convert_disk_image_gz vdi
-    convert_disk_image_gz qcow2
+    convert_disk_image_xz vmdk
+    convert_disk_image_xz vhdx
+    convert_disk_image_xz vdi
+    convert_disk_image_xz qcow2
 
     # OVA
     mkdir -p "${OVA_DATA}"

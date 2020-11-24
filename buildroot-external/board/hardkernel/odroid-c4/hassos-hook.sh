@@ -19,5 +19,5 @@ function hassos_pre_image() {
 
 
 function hassos_post_image() {
-    convert_disk_image_gz
+    convert_disk_image_xz
 }
