@@ -3,6 +3,8 @@ RELEASE_DIR = /build/release
 BUILDROOT=/build/buildroot
 BUILDROOT_EXTERNAL=/build/buildroot-external
 DEFCONFIG_DIR = $(BUILDROOT_EXTERNAL)/configs
+VERSION_DATE := $(shell date --utc +'%Y%m%d')
+VERSION_DEV := "dev$(VERSION_DATE)"
 
 TARGETS := $(notdir $(patsubst %_defconfig,%,$(wildcard $(DEFCONFIG_DIR)/*_defconfig)))
 TARGETS_CONFIG := $(notdir $(patsubst %_defconfig,%-config,$(wildcard $(DEFCONFIG_DIR)/*_defconfig)))
@@ -29,7 +31,7 @@ $(TARGETS_CONFIG): %-config:
 
 $(TARGETS): %: $(RELEASE_DIR) %-config
 	@echo "build $@"
-	$(MAKE) -C $(BUILDROOT) BR2_EXTERNAL=$(BUILDROOT_EXTERNAL)
+	$(MAKE) -C $(BUILDROOT) BR2_EXTERNAL=$(BUILDROOT_EXTERNAL) VERSION_DEV=$(VERSION_DEV)
 	cp -f $(O)/images/hassos_* $(RELEASE_DIR)/
 
 	# Do not clean when building for one target
