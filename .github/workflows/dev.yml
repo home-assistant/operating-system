@@ -25,6 +25,7 @@ jobs:
     name: Release build for ${{ matrix.board.name }}
     needs: version
     strategy:
+      fail-fast: false
       matrix:
         board:
           - {"name": "ova", "output": "ova", "runner": "x86-64-runner"}
@@ -75,6 +76,6 @@ jobs:
           port: ${{ secrets.DEV_PORT }}
           key: ${{ secrets.DEV_SCP_KEY }}
           source: "release/*"
-          target: ${{ secrets.DEV_TARGET_PATH }}
+          target: ${{ secrets.DEV_TARGET_PATH }}/${{ needs.version.outputs.version_dev }}/
           strip_components: 1
 
