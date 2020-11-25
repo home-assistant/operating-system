@@ -22,11 +22,11 @@ install_hassos_cli
 # shellcheck disable=SC2153
 (
     echo "NAME=${HASSOS_NAME}"
-    echo "VERSION=\"${VERSION_MAJOR}.${VERSION_BUILD} (${BOARD_NAME})\""
+    echo "VERSION=\"$(hassos_version) (${BOARD_NAME})\""
     echo "ID=${HASSOS_ID}"
-    echo "VERSION_ID=${VERSION_MAJOR}.${VERSION_BUILD}"
-    echo "PRETTY_NAME=\"${HASSOS_NAME} ${VERSION_MAJOR}.${VERSION_BUILD}\""
-    echo "CPE_NAME=cpe:2.3:o:home_assistant:${HASSOS_ID}:${VERSION_MAJOR}.${VERSION_BUILD}:*:${DEPLOYMENT}:*:*:*:${BOARD_ID}:*"
+    echo "VERSION_ID=$(hassos_version)"
+    echo "PRETTY_NAME=\"${HASSOS_NAME} $(hassos_version)\""
+    echo "CPE_NAME=cpe:2.3:o:home_assistant:${HASSOS_ID}:$(hassos_version):*:${DEPLOYMENT}:*:*:*:${BOARD_ID}:*"
     echo "HOME_URL=https://hass.io/"
     echo "VARIANT=\"${HASSOS_NAME} ${BOARD_NAME}\""
     echo "VARIANT_ID=${BOARD_ID}"
