@@ -50,3 +50,9 @@ If you don't have experience with these, embedded systems, buildroot or the buil
 ## Developer Documentation
 
 All developer documentation is in the [Documentation](./Documentation) directory.
+
+### Development builds
+
+The Development build GitHub Action Workflow is a manually triggered workflow
+which creates Home Assistant OS development builds. The development builds are
+available at [os-builds.home-assistant.io](https://os-builds.home-assistant.io/).
