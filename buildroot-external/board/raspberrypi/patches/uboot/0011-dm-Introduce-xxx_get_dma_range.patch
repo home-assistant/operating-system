@@ -1,0 +1,327 @@
+From a2052b8361818ec5acb04e5d0c1d229083dfbeb6 Mon Sep 17 00:00:00 2001
+Message-Id: <a2052b8361818ec5acb04e5d0c1d229083dfbeb6.1606428503.git.stefan@agner.ch>
+In-Reply-To: <a04331a6ba7334282836bbaa76e979c4e6be3900.1606428503.git.stefan@agner.ch>
+References: <a04331a6ba7334282836bbaa76e979c4e6be3900.1606428503.git.stefan@agner.ch>
+From: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+Date: Thu, 19 Nov 2020 18:48:18 +0100
+Subject: [PATCH 11/15] dm: Introduce xxx_get_dma_range()
+
+Add the follwing functions to get a specific device's DMA ranges:
+ - dev_get_dma_range()
+ - ofnode_get_dma_range()
+ - of_get_dma_range()
+ - fdt_get_dma_range()
+They are specially useful in oder to be able validate a physical address
+space range into a bus's and to convert addresses from and to address
+spaces.
+
+Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+---
+ common/fdt_support.c   | 72 ++++++++++++++++++++++++++++++++++++++++++
+ drivers/core/of_addr.c | 68 +++++++++++++++++++++++++++++++++++++++
+ drivers/core/ofnode.c  |  9 ++++++
+ drivers/core/read.c    |  5 +++
+ include/dm/of_addr.h   | 17 ++++++++++
+ include/dm/ofnode.h    | 16 ++++++++++
+ include/dm/read.h      |  6 ++++
+ include/fdt_support.h  | 14 ++++++++
+ 8 files changed, 207 insertions(+)
+
+diff --git a/common/fdt_support.c b/common/fdt_support.c
+index a565b470f8..ffc8f8b6b5 100644
+--- a/common/fdt_support.c
++++ b/common/fdt_support.c
+@@ -1347,6 +1347,78 @@ u64 fdt_translate_dma_address(const void *blob, int node_offset,
+ 	return __of_translate_address(blob, node_offset, in_addr, "dma-ranges");
+ }
+ 
++int fdt_get_dma_range(const void *blob, int node, phys_addr_t *cpu,
++		      dma_addr_t *bus, u64 *size)
++{
++	bool found_dma_ranges = false;
++	const fdt32_t *ranges;
++	int na, ns, pna, pns;
++	int parent = node;
++	u64 cpu_addr;
++	int ret = 0;
++	int len;
++
++	/* Find the closest dma-ranges property */
++	while (parent >= 0) {
++		ranges = fdt_getprop(blob, parent, "dma-ranges", &len);
++
++		/* Ignore empty ranges, they imply no translation required */
++		if (ranges && len > 0)
++			break;
++
++		/* Once we find 'dma-ranges', then a missing one is an error */
++		if (found_dma_ranges && !ranges) {
++			ret = -ENODEV;
++			goto out;
++		}
++
++		if (ranges)
++			found_dma_ranges = true;
++
++		parent = fdt_parent_offset(blob, parent);
++	}
++
++	if (!ranges || parent < 0) {
++		debug("no dma-ranges found for node %s\n",
++		      fdt_get_name(blob, node, NULL));
++		ret = -ENODEV;
++		goto out;
++	}
++
++	/* switch to that node */
++	node = parent;
++	parent = fdt_parent_offset(blob, node);
++	if (parent < 0) {
++		printf("Found dma-ranges in root node, shoudln't happen\n");
++		ret = -EINVAL;
++		goto out;
++	}
++
++	/* Get the address sizes both for the bus and its parent */
++	of_match_bus(blob, node)->count_cells(blob, node, &na, &ns);
++	if (!OF_CHECK_COUNTS(na, ns)) {
++		printf("%s: Bad cell count for %s\n", __FUNCTION__,
++		       fdt_get_name(blob, node, NULL));
++		return -EINVAL;
++		goto out;
++	}
++
++	of_match_bus(blob, parent)->count_cells(blob, parent, &pna, &pns);
++	if (!OF_CHECK_COUNTS(pna, pns)) {
++		printf("%s: Bad cell count for %s\n", __FUNCTION__,
++		       fdt_get_name(blob, parent, NULL));
++		return -EINVAL;
++		goto out;
++	}
++
++	*bus = fdt_read_number(ranges, na);
++	cpu_addr = fdt_read_number(ranges + na, pna);
++	*cpu = fdt_translate_dma_address(blob, node, (const fdt32_t*)&cpu_addr);
++	*size = fdt_read_number(ranges + na + pna, ns);
++out:
++	return ret;
++}
++
+ /**
+  * fdt_node_offset_by_compat_reg: Find a node that matches compatiable and
+  * who's reg property matches a physical cpu address
+diff --git a/drivers/core/of_addr.c b/drivers/core/of_addr.c
+index ca34d84922..8457e04a25 100644
+--- a/drivers/core/of_addr.c
++++ b/drivers/core/of_addr.c
+@@ -325,6 +325,74 @@ u64 of_translate_dma_address(const struct device_node *dev, const __be32 *in_add
+ 	return __of_translate_address(dev, in_addr, "dma-ranges");
+ }
+ 
++int of_get_dma_range(const struct device_node *dev, phys_addr_t *cpu,
++		     dma_addr_t *bus, u64 *size)
++{
++	bool found_dma_ranges = false;
++	struct device_node parent;
++	int na, ns, pna, pns;
++	const __be32 *ranges;
++	int ret = 0;
++	int len;
++
++	/* Find the closest dma-ranges property */
++	while (dev) {
++		ranges = of_get_property(dev, "dma-ranges", &len);
++
++		/* Ignore empty ranges, they imply no translation required */
++		if (ranges && len > 0)
++			break;
++
++		/* Once we find 'dma-ranges', then a missing one is an error */
++		if (found_dma_ranges && !ranges) {
++			ret = -ENODEV;
++			goto out;
++		}
++
++		if (ranges)
++			found_dma_ranges = true;
++
++		dev = of_get_parent(dev);
++	}
++
++	if (!dev || !ranges) {
++		debug("no dma-ranges found for node %s\n",
++		      of_node_full_name(dev));
++		ret = -ENODEV
++		goto out;
++	}
++
++	/* switch to that node */
++	parent = of_get_parent(dev);
++	if (!parent) {
++		printf("Found dma-ranges in root node, shoudln't happen\n");
++		ret = -EINVAL;
++		goto out;
++	}
++
++	/* Get the address sizes both for the bus and its parent */
++	of_match_bus(dev)->count_cells(dev, &na, &ns);
++	if (!OF_CHECK_COUNTS(na, ns)) {
++		printf("Bad cell count for %s\n", of_node_full_name(dev));
++		return -EINVAL;
++		goto out;
++	}
++
++	of_match_bus(parent)->count_cells(parent, &pna, &pns);
++	if (!OF_CHECK_COUNTS(pna, pns)) {
++		printf("Bad cell count for %s\n", of_node_full_name(parent));
++		return -EINVAL;
++		goto out;
++	}
++
++	*bus = of_read_number(ranges, na);
++	*cpu = of_translate_dma_address(dev, of_read_number(ranges + na, pna));
++	*size = of_read_number(ranges + na + pna, ns);
++out:
++	return ret;
++}
++
++
+ static int __of_address_to_resource(const struct device_node *dev,
+ 		const __be32 *addrp, u64 size, unsigned int flags,
+ 		const char *name, struct resource *r)
+diff --git a/drivers/core/ofnode.c b/drivers/core/ofnode.c
+index d02d8d33fe..d4e69b0074 100644
+--- a/drivers/core/ofnode.c
++++ b/drivers/core/ofnode.c
+@@ -888,6 +888,15 @@ u64 ofnode_translate_dma_address(ofnode node, const fdt32_t *in_addr)
+ 		return fdt_translate_dma_address(gd->fdt_blob, ofnode_to_offset(node), in_addr);
+ }
+ 
++int ofnode_get_dma_range(ofnode node, phys_addr_t *cpu, dma_addr_t *bus, u64 *size)
++{
++	if (ofnode_is_np(node))
++		return of_get_dma_range(ofnode_to_np(node), cpu, bus, size);
++	else
++		return fdt_get_dma_range(gd->fdt_blob, ofnode_to_offset(node),
++					 cpu, bus, size);
++}
++
+ int ofnode_device_is_compatible(ofnode node, const char *compat)
+ {
+ 	if (ofnode_is_np(node))
+diff --git a/drivers/core/read.c b/drivers/core/read.c
+index 86f3f88170..09b58a40db 100644
+--- a/drivers/core/read.c
++++ b/drivers/core/read.c
+@@ -337,6 +337,11 @@ u64 dev_translate_dma_address(const struct udevice *dev, const fdt32_t *in_addr)
+ 	return ofnode_translate_dma_address(dev_ofnode(dev), in_addr);
+ }
+ 
++u64 dev_translate_cpu_address(const struct udevice *dev, const fdt32_t *in_addr)
++{
++	return ofnode_translate_cpu_address(dev_ofnode(dev), in_addr);
++}
++
+ int dev_read_alias_highest_id(const char *stem)
+ {
+ 	if (of_live_active())
+diff --git a/include/dm/of_addr.h b/include/dm/of_addr.h
+index 3fa1ffce81..ee21d5cf4f 100644
+--- a/include/dm/of_addr.h
++++ b/include/dm/of_addr.h
+@@ -44,6 +44,23 @@ u64 of_translate_address(const struct device_node *no, const __be32 *in_addr);
+  */
+ u64 of_translate_dma_address(const struct device_node *no, const __be32 *in_addr);
+ 
++
++/**
++ * of_get_dma_range() - get dma-ranges for a specific DT node
++ *
++ * Get DMA ranges for a specifc node, this is useful to perform bus->cpu and
++ * cpu->bus address translations
++ *
++ * @param blob		Pointer to device tree blob
++ * @param node_offset	Node DT offset
++ * @param cpu		Pointer to variable storing the range's cpu address
++ * @param bus		Pointer to variable storing the range's bus address
++ * @param size		Pointer to variable storing the range's size
++ * @return translated DMA address or OF_BAD_ADDR on error
++ */
++int of_get_dma_range(const struct device_node *dev, phys_addr_t *cpu,
++		     dma_addr_t *bus, u64 *size);
++
+ /**
+  * of_get_address() - obtain an address from a node
+  *
+diff --git a/include/dm/ofnode.h b/include/dm/ofnode.h
+index 8df2facf99..d1be553b37 100644
+--- a/include/dm/ofnode.h
++++ b/include/dm/ofnode.h
+@@ -915,6 +915,22 @@ u64 ofnode_translate_address(ofnode node, const fdt32_t *in_addr);
+  */
+ u64 ofnode_translate_dma_address(ofnode node, const fdt32_t *in_addr);
+ 
++/**
++ * ofnode_get_dma_range() - get dma-ranges for a specific DT node
++ *
++ * Get DMA ranges for a specifc node, this is useful to perform bus->cpu and
++ * cpu->bus address translations
++ *
++ * @param blob		Pointer to device tree blob
++ * @param node_offset	Node DT offset
++ * @param cpu		Pointer to variable storing the range's cpu address
++ * @param bus		Pointer to variable storing the range's bus address
++ * @param size		Pointer to variable storing the range's size
++ * @return translated DMA address or OF_BAD_ADDR on error
++ */
++int ofnode_get_dma_range(ofnode node, phys_addr_t *cpu, dma_addr_t *bus,
++			 u64 *size);
++
+ /**
+  * ofnode_device_is_compatible() - check if the node is compatible with compat
+  *
+diff --git a/include/dm/read.h b/include/dm/read.h
+index 67db94adfc..f4b17bf026 100644
+--- a/include/dm/read.h
++++ b/include/dm/read.h
+@@ -1002,6 +1002,12 @@ static inline u64 dev_translate_dma_address(const struct udevice *dev,
+ 	return ofnode_translate_dma_address(dev_ofnode(dev), in_addr);
+ }
+ 
++static inline u64 dev_get_dma_range(const struct udevice *dev, phys_addr_t *cpu,
++				    dma_addr_t *bus, u64 *size)
++{
++	return ofnode_get_dma_range(dev_ofnode(dev), cpu, bus, size);
++}
++
+ static inline int dev_read_alias_highest_id(const char *stem)
+ {
+ 	if (!CONFIG_IS_ENABLED(OF_LIBFDT))
+diff --git a/include/fdt_support.h b/include/fdt_support.h
+index 9684cffe80..963c917445 100644
+--- a/include/fdt_support.h
++++ b/include/fdt_support.h
+@@ -260,6 +260,20 @@ u64 fdt_translate_address(const void *blob, int node_offset,
+ u64 fdt_translate_dma_address(const void *blob, int node_offset,
+ 			      const __be32 *in_addr);
+ 
++/**
++ * Get DMA ranges for a specifc node, this is useful to perform bus->cpu and
++ * cpu->bus address translations
++ *
++ * @param blob		Pointer to device tree blob
++ * @param node_offset	Node DT offset
++ * @param cpu		Pointer to variable storing the range's cpu address
++ * @param bus		Pointer to variable storing the range's bus address
++ * @param size		Pointer to variable storing the range's size
++ * @return translated DMA address or OF_BAD_ADDR on error
++ */
++int fdt_get_dma_range(const void *blob, int node_offset, phys_addr_t *cpu,
++		      dma_addr_t *bus, u64 *size);
++
+ int fdt_node_offset_by_compat_reg(void *blob, const char *compat,
+ 					phys_addr_t compat_off);
+ int fdt_alloc_phandle(void *blob);
+-- 
+2.29.2
+
