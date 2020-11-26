@@ -137,7 +137,7 @@ jobs:
           asset_content_type: application/gzip
 
   bump_version:
-    name: Bump beta version to ${{ needs.validate_release.outputs.version }}
+    name: Bump dev version to ${{ needs.validate_release.outputs.version }}
     needs: [ build, validate_release ]
     runs-on: [ "ubuntu-20.04" ]
 
