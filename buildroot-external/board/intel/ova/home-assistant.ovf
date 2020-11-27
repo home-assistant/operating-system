@@ -18,8 +18,8 @@
     <Name>Home Assistant</Name>
     <ProductSection>
       <Info>Meta-information about the installed software</Info>
-      <Product>Operating-System</Product>
-      <ProductUrl>https://home-assistant.io</ProductUrl>
+      <Product>Home Assistant Operating System</Product>
+      <ProductUrl>https://www.home-assistant.io</ProductUrl>
     </ProductSection>
     <OperatingSystemSection ovf:id="100" vmw:osType="other4xLinux64Guest">
       <Info>The kind of installed guest operating system</Info>
