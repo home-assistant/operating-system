@@ -18,8 +18,8 @@
     <Name>Home Assistant</Name>
     <ProductSection>
       <Info>Meta-information about the installed software</Info>
-      <Product>Operating-System</Product>
-      <ProductUrl>https://home-assistant.io</ProductUrl>
+      <Product>Home Assistant Operating System</Product>
+      <ProductUrl>https://www.home-assistant.io</ProductUrl>
     </ProductSection>
     <OperatingSystemSection ovf:id="100" vmw:osType="other4xLinux64Guest">
       <Info>The kind of installed guest operating system</Info>
@@ -89,6 +89,13 @@
         <rasd:ResourceSubType>E1000</rasd:ResourceSubType>
         <rasd:ResourceType>10</rasd:ResourceType>
       </Item>
+      <Item ovf:required="false">
+        <rasd:AutomaticAllocation>true</rasd:AutomaticAllocation>
+        <rasd:ElementName>Audio</rasd:ElementName>
+        <rasd:InstanceID>11</rasd:InstanceID>
+        <rasd:ResourceSubType>vmware.soundcard.hdaudio</rasd:ResourceSubType>
+        <rasd:ResourceType>1</rasd:ResourceType>
+      </Item>
       <vmw:Config ovf:required="false" vmw:key="firmware" vmw:value="efi"/>
       <vmw:ExtraConfig ovf:required="false" vmw:key="cpuid.coresPerSocket" vmw:value="2"/>
       <vmw:ExtraConfig ovf:required="false" vmw:key="svga.present" vmw:value="TRUE"/>
@@ -121,11 +128,11 @@
           </Controllers>
         </USB>
         <Network>
-          <Adapter slot="0" enabled="true" type="82540EM">
+          <Adapter slot="0" enabled="true" type="virtio">
             <BridgedInterface />
           </Adapter>
         </Network>
-        <AudioAdapter driver="Null" enabled="false"/>
+        <AudioAdapter controller="HDA" enabled="true"/>
         <RTC localOrUTC="UTC"/>
       </Hardware>
       <StorageControllers>
