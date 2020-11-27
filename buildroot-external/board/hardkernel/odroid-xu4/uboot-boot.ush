@@ -78,7 +78,7 @@ fi
 
 printenv bootargs
 echo "Starting kernel"
-booti ${kernel_addr_r} - ${fdt_addr_r}
+bootz ${kernel_addr_r} - ${fdt_addr_r}
 
 echo "Boot failed, resetting..."
 reset
