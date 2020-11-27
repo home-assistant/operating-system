@@ -103,6 +103,11 @@
       <vmw:ExtraConfig ovf:required="false" vmw:key="usb:0.deviceType" vmw:value="hid"/>
       <vmw:ExtraConfig ovf:required="false" vmw:key="usb:0.port" vmw:value="0"/>
       <vmw:ExtraConfig ovf:required="false" vmw:key="usb:0.parent" vmw:value="-1"/>
+      <vmw:ExtraConfig ovf:required="false" vmw:key="sound.present" vmw:value="TRUE"/>
+      <vmw:ExtraConfig ovf:required="false" vmw:key="sound.allowGuestConnectionControl" vmw:value="FALSE"/>
+      <vmw:ExtraConfig ovf:required="false" vmw:key="sound.virtualDev" vmw:value="hdaudio"/>
+      <vmw:ExtraConfig ovf:required="false" vmw:key="sound.fileName" vmw:value="-1"/>
+      <vmw:ExtraConfig ovf:required="false" vmw:key="sound.autodetect" vmw:value="TRUE"/>
     </VirtualHardwareSection>
     <vbox:Machine ovf:required="false" version="1.16-windows" uuid="{cab1600e-df75-47c2-a237-cfb10215b42b}" name="Home Assistant" OSType="Linux_64">
       <ovf:Info>Complete VirtualBox machine configuration in VirtualBox format</ovf:Info>
