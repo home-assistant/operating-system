@@ -128,7 +128,7 @@
           </Controllers>
         </USB>
         <Network>
-          <Adapter slot="0" enabled="true" type="82540EM">
+          <Adapter slot="0" enabled="true" type="virtio">
             <BridgedInterface />
           </Adapter>
         </Network>
