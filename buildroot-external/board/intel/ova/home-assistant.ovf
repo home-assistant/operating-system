@@ -89,6 +89,13 @@
         <rasd:ResourceSubType>E1000</rasd:ResourceSubType>
         <rasd:ResourceType>10</rasd:ResourceType>
       </Item>
+      <Item ovf:required="false">
+        <rasd:AutomaticAllocation>true</rasd:AutomaticAllocation>
+        <rasd:ElementName>Audio</rasd:ElementName>
+        <rasd:InstanceID>11</rasd:InstanceID>
+        <rasd:ResourceSubType>vmware.soundcard.hdaudio</rasd:ResourceSubType>
+        <rasd:ResourceType>1</rasd:ResourceType>
+      </Item>
       <vmw:Config ovf:required="false" vmw:key="firmware" vmw:value="efi"/>
       <vmw:ExtraConfig ovf:required="false" vmw:key="cpuid.coresPerSocket" vmw:value="2"/>
       <vmw:ExtraConfig ovf:required="false" vmw:key="svga.present" vmw:value="TRUE"/>
@@ -125,7 +132,7 @@
             <BridgedInterface />
           </Adapter>
         </Network>
-        <AudioAdapter driver="Null" enabled="false"/>
+        <AudioAdapter controller="HDA" enabled="true"/>
         <RTC localOrUTC="UTC"/>
       </Hardware>
       <StorageControllers>
