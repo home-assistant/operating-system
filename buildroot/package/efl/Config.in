@@ -256,6 +256,7 @@ config BR2_PACKAGE_EFL_TIFF
 config BR2_PACKAGE_EFL_WEBP
 	bool "libevas webp image loader"
 	select BR2_PACKAGE_WEBP
+	select BR2_PACKAGE_WEBP_DEMUX
 	help
 	  This enables the loader code that loads images using WebP.
 

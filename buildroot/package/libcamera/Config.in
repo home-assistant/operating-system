@@ -2,7 +2,7 @@ config BR2_PACKAGE_LIBCAMERA_ARCH_SUPPORTS
 	bool
 	default y
 	# Invalid packing size of ControlValue struct on m68k
-	depends on BR2_m68k
+	depends on !BR2_m68k
 
 menuconfig BR2_PACKAGE_LIBCAMERA
 	bool "libcamera"

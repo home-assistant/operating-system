@@ -2127,7 +2127,7 @@ F:	package/kf5/
 N:	Pierre Floury <pierre.floury@gmail.com>
 F:	package/trace-cmd/
 
-N:	Pierre-Jean Texier <pjtexier@koncepto.io>
+N:	Pierre-Jean Texier <texier.pj2@gmail.com>
 F:	package/fping/
 F:	package/genimage/
 F:	package/haveged/
@@ -2605,9 +2605,6 @@ F:	package/redis/
 F:	package/waf/
 F:	support/testing/tests/package/test_crudini.py
 F:	support/testing/tests/package/test_redis.py
-
-N:	Trent Piepho <trent.piepho@synapse.com>
-F:	package/libp11/
 
 N:	Tudor Holton <buildroot@tudorholton.com>
 F:	package/openjdk/

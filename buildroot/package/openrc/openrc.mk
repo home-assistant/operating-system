@@ -9,6 +9,9 @@ OPENRC_SITE = $(call github,OpenRC,openrc,$(OPENRC_VERSION))
 OPENRC_LICENSE = BSD-2-Clause
 OPENRC_LICENSE_FILES = LICENSE
 
+# 0007-checkpath-fix-CVE-2018-21269.patch
+OPENRC_IGNORE_CVES += CVE-2018-21269
+
 OPENRC_DEPENDENCIES = ncurses
 
 # set LIBNAME so openrc puts files in proper directories and sets proper

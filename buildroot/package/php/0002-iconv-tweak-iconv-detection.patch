@@ -16,7 +16,7 @@ Signed-off-by: Gustavo Zacarias <gustavo@zacarias.com.ar>
 Signed-off-by: Adam Duskett <aduskett@gmail.com>
 [aduskett@gmail.com: Update for 7.3.0]
 Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
-[Bernd: rebased for 7.4.10]
+[Bernd: rebased for 7.4.10 & 7.4.13]
 ---
  build/php.m4        |  2 +-
  ext/iconv/config.m4 | 22 ----------------------
@@ -26,7 +26,7 @@ diff --git a/build/php.m4 b/build/php.m4
 index 9586c490..8b3d47ed 100644
 --- a/build/php.m4
 +++ b/build/php.m4
-@@ -1965,7 +1965,7 @@ AC_DEFUN([PHP_SETUP_ICONV], [
+@@ -1967,7 +1967,7 @@ AC_DEFUN([PHP_SETUP_ICONV], [
    dnl Check external libs for iconv funcs.
    if test "$found_iconv" = "no"; then
  

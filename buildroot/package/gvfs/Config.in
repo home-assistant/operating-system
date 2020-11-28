@@ -20,4 +20,4 @@ config BR2_PACKAGE_GVFS
 comment "gvfs needs a toolchain w/ wchar, threads, dynamic library"
 	depends on BR2_USE_MMU
 	depends on !BR2_USE_WCHAR || !BR2_TOOLCHAIN_HAS_THREADS || \
-		!BR2_STATIC_LIBS
+		BR2_STATIC_LIBS
