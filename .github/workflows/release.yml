@@ -69,7 +69,7 @@ jobs:
           docker run --rm --privileged -v "${GITHUB_WORKSPACE}:/build" \
             -e BUILDER_UID="${BUILDER_UID}" -e BUILDER_GID="${BUILDER_GID}" \
             -v "${{ matrix.board.runner }}-build-cache:/cache" \
-            haos-builder make ${{ matrix.board.name }}
+            haos-builder make VERSION_DEV="" ${{ matrix.board.name }}
 
       - name: Upload disk image
         if: ${{ matrix.board.name != 'ova' }}
