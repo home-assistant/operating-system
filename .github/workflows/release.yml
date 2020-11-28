@@ -78,9 +78,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ${{ github.workspace }}/release/hassos_${{ matrix.board.output }}-${{ needs.validate_release.outputs.version }}.img.gz
-          asset_name: hassos_${{ matrix.board.output }}-${{ needs.validate_release.outputs.version }}.img.gz
-          asset_content_type: application/gzip
+          asset_path: ${{ github.workspace }}/release/hassos_${{ matrix.board.output }}-${{ needs.validate_release.outputs.version }}.img.xz
+          asset_name: hassos_${{ matrix.board.output }}-${{ needs.validate_release.outputs.version }}.img.xz
+          asset_content_type: application/x-xz
 
       - name: Upload rauc update
         uses: actions/upload-release-asset@v1
@@ -99,9 +99,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ${{ github.workspace }}/release/hassos_${{ matrix.board.output }}-${{ needs.validate_release.outputs.version }}.qcow2.gz
-          asset_name: hassos_${{ matrix.board.output }}-${{ needs.validate_release.outputs.version }}.qcow2.gz
-          asset_content_type: application/gzip
+          asset_path: ${{ github.workspace }}/release/hassos_${{ matrix.board.output }}-${{ needs.validate_release.outputs.version }}.qcow2.xz
+          asset_name: hassos_${{ matrix.board.output }}-${{ needs.validate_release.outputs.version }}.qcow2.xz
+          asset_content_type: application/x-xz
 
       - name: Upload vdi image
         if: ${{ matrix.board.name == 'ova' }}
@@ -110,9 +110,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ${{ github.workspace }}/release/hassos_${{ matrix.board.output }}-${{ needs.validate_release.outputs.version }}.vdi.gz
-          asset_name: hassos_${{ matrix.board.output }}-${{ needs.validate_release.outputs.version }}.vdi.gz
-          asset_content_type: application/gzip
+          asset_path: ${{ github.workspace }}/release/hassos_${{ matrix.board.output }}-${{ needs.validate_release.outputs.version }}.vdi.xz
+          asset_name: hassos_${{ matrix.board.output }}-${{ needs.validate_release.outputs.version }}.vdi.xz
+          asset_content_type: application/x-xz
 
       - name: Upload vhdx image
         if: ${{ matrix.board.name == 'ova' }}
@@ -121,9 +121,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ${{ github.workspace }}/release/hassos_${{ matrix.board.output }}-${{ needs.validate_release.outputs.version }}.vhdx.gz
-          asset_name: hassos_${{ matrix.board.output }}-${{ needs.validate_release.outputs.version }}.vhdx.gz
-          asset_content_type: application/gzip
+          asset_path: ${{ github.workspace }}/release/hassos_${{ matrix.board.output }}-${{ needs.validate_release.outputs.version }}.vhdx.xz
+          asset_name: hassos_${{ matrix.board.output }}-${{ needs.validate_release.outputs.version }}.vhdx.xz
+          asset_content_type: application/x-xz
 
       - name: Upload vmdk image
         if: ${{ matrix.board.name == 'ova' }}
@@ -132,9 +132,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ${{ github.workspace }}/release/hassos_${{ matrix.board.output }}-${{ needs.validate_release.outputs.version }}.vmdk.gz
-          asset_name: hassos_${{ matrix.board.output }}-${{ needs.validate_release.outputs.version }}.vmdk.gz
-          asset_content_type: application/gzip
+          asset_path: ${{ github.workspace }}/release/hassos_${{ matrix.board.output }}-${{ needs.validate_release.outputs.version }}.vmdk.xz
+          asset_name: hassos_${{ matrix.board.output }}-${{ needs.validate_release.outputs.version }}.vmdk.xz
+          asset_content_type: application/x-xz
 
   bump_version:
     name: Bump dev version to ${{ needs.validate_release.outputs.version }}
