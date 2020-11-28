@@ -1,6 +1,6 @@
-# From https://downloads.open-mesh.org/batman/releases/batman-adv-2019.3/batctl-2019.3.tar.gz.sha1
-sha1 3a1357d51e9338e79e9953b7d8b33ace9f904b30  batctl-2019.3.tar.gz
+# From https://downloads.open-mesh.org/batman/releases/batman-adv-2020.2/batctl-2020.2.tar.gz.sha1
+sha1  e347fb126e2a8f6d21516296325afc043062e3bd  batctl-2020.2.tar.gz
 # Locally calculated
-sha256 2bd93fa14925a8dc63a67e64266c8ccd2fa3ac44b10253d93e6f8a630350070c  batctl-2019.3.tar.gz
-sha256 cecbf53d1148e13256ac29f8b900655b7fc8dc12d59939a95bc2323ea1747025  LICENSES/preferred/GPL-2.0
-sha256 323c587d0ccf10e376f8bf9a7f31fb4ca6078105194b42e0b1e0ee2bc9bde71f  LICENSES/preferred/MIT
+sha256  d29cdb53ee68abd5027eae07d9fd645b3f154e0d577efa2666c1334bb6d60efd  batctl-2020.2.tar.gz
+sha256  cecbf53d1148e13256ac29f8b900655b7fc8dc12d59939a95bc2323ea1747025  LICENSES/preferred/GPL-2.0
+sha256  323c587d0ccf10e376f8bf9a7f31fb4ca6078105194b42e0b1e0ee2bc9bde71f  LICENSES/preferred/MIT

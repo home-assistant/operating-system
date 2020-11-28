@@ -21,7 +21,6 @@ LIBVIPS_CONF_ENV += CXXFLAGS="$(TARGET_CXXFLAGS) $(LIBVIPS_CXXFLAGS)" \
 	LIBS=$(TARGET_NLS_LIBS)
 
 LIBVIPS_CONF_OPTS = \
-	--disable-introspection \
 	--without-dmalloc \
 	--without-gsf \
 	--without-magick \
@@ -40,6 +39,13 @@ LIBVIPS_INSTALL_STAGING = YES
 LIBVIPS_DEPENDENCIES = \
 	host-pkgconf expat libglib2 \
 	$(TARGET_NLS_DEPENDENCIES)
+
+ifeq ($(BR2_PACKAGE_GOBJECT_INTROSPECTION),y)
+LIBVIPS_CONF_OPTS += --enable-introspection
+LIBVIPS_DEPENDENCIES += gobject-introspection
+else
+LIBVIPS_CONF_OPTS += --disable-introspection
+endif
 
 ifeq ($(BR2_PACKAGE_JPEG),y)
 LIBVIPS_CONF_OPTS += --with-jpeg

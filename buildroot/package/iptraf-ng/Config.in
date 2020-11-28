@@ -1,13 +1,17 @@
 config BR2_PACKAGE_IPTRAF_NG
 	bool "iptraf-ng"
 	depends on BR2_USE_MMU # fork()
+	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_14
 	select BR2_PACKAGE_NCURSES
 	help
-	  IPTraf-ng is a ncurses-based network monitoring utility. It
-	  gathers data like TCP connection packet and byte counts,
-	  interface statistics and activity indicators.
+	  IPTraf-ng is a console-based network monitoring program for
+	  Linux that gathers displays information about IP traffic.
 
-	  https://fedorahosted.org/iptraf-ng/
+	  https://github.com/iptraf-ng/iptraf-ng
 
 	  IPTraf-ng is a fork of original IPTraf v3.0.0
 	  (http://iptraf.seul.org).
+
+comment "iptraf-ng needs a toolchain w/ kernel headers >= 3.14"
+	depends on BR2_USE_MMU
+	depends on !BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_14

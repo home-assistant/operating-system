@@ -1,0 +1,148 @@
+From 727c37ef78f2229998ac51942f5d11c754d0c6b9 Mon Sep 17 00:00:00 2001
+From: Robert Hancock <hancock@sedsystems.ca>
+Date: Mon, 13 Jul 2020 17:33:48 -0600
+Subject: [PATCH] Fix errors during gpsd 3.20 cross-compilation
+
+Adapt some post-3.20 changes to the gpsd SConstruct file from the
+gpsd master branch to fix issues when cross-compiling. Original
+commits did not cherry-pick cleanly onto 3.20 due to other
+upstream changes.
+
+Signed-off-by: Robert Hancock <hancock@sedsystems.ca>
+---
+ SConstruct | 81 ++++++++++++++++++++++--------------------------------
+ 1 file changed, 33 insertions(+), 48 deletions(-)
+
+diff --git a/SConstruct b/SConstruct
+index 33e0ff326..93e8fcfea 100644
+--- a/SConstruct
++++ b/SConstruct
+@@ -386,13 +386,16 @@ env['SC_PYTHON'] = sys.executable  # Path to SCons Python
+ # So we rely on MergeFlags/ParseFlags to do the right thing for us.
+ env['STRIP'] = "strip"
+ env['PKG_CONFIG'] = "pkg-config"
+-for i in ["AR", "CC", "CXX", "LD",
+-          "PKG_CONFIG", "STRIP", "TAR"]:
++for i in ["AR",      # linker for static libs, usually "ar"
++          "CC",
++          "CXX",
++          # "LD",    # scons does not use LD, usually "ld"
++          "PKG_CONFIG",
++          "SHLINK",  # linker for shared libs, usually "gcc" or "g++", NOT "ld"
++          "STRIP",
++          "TAR"]:
+     if i in os.environ:
+-        j = i
+-        if i == "LD":
+-            i = "SHLINK"
+-        env[i] = os.getenv(j)
++        env[i] = os.getenv(i)
+ for i in ["ARFLAGS", "CFLAGS", "CXXFLAGS", "LDFLAGS", "SHLINKFLAGS",
+           "CPPFLAGS", "CCFLAGS", "LINKFLAGS"]:
+     if i in os.environ:
+@@ -483,7 +486,7 @@ devenv = (("ADDR2LINE", "addr2line"),
+           ("GCCBUG", "gccbug"),
+           ("GCOV", "gcov"),
+           ("GPROF", "gprof"),
+-          ("LD", "ld"),
++          # ("LD", "ld"),     # scons does not use LD
+           ("NM", "nm"),
+           ("OBJCOPY", "objcopy"),
+           ("OBJDUMP", "objdump"),
+@@ -565,6 +568,22 @@ def CheckXsltproc(context):
+     return ret
+ 
+ 
++def CheckTime_t(context):
++    context.Message('Checking if sizeof(time_t) is 64 bits... ')
++    ret = context.TryLink("""
++        #include <time.h>
++
++        int main(int argc, char **argv) {
++            static int test_array[1 - 2 * ((long int) sizeof(time_t) < 8 )];
++            test_array[0] = 0;
++            (void) argc; (void) argv;
++            return 0;
++        }
++    """, '.c')
++    context.Result(ret)
++    return ret
++
++
+ def CheckCompilerOption(context, option):
+     context.Message('Checking if compiler accepts %s... ' % (option,))
+     old_CFLAGS = context.env['CFLAGS'][:]  # Get a *copy* of the old list
+@@ -597,42 +616,6 @@ def CheckHeaderDefines(context, file, define):
+     return ret
+ 
+ 
+-def CheckSizeOf(context, type):
+-    """Check sizeof 'type'"""
+-    context.Message('Checking size of ' + type + '... ')
+-
+-    program = """
+-#include <stdlib.h>
+-#include <stdio.h>
+-
+-/*
+- * The CheckSizeOf function does not have a way for the caller to
+- * specify header files to be included to provide the type being
+- * checked.  As a workaround until that is remedied, include the
+- * header required for time_t, which is the sole current use of this
+- * function.
+- */
+-#include <time.h>
+-
+-int main() {
+-    printf("%d", (int)sizeof(""" + type + """));
+-    return 0;
+-}
+-"""
+-
+-    # compile it
+-    ret = context.TryCompile(program, '.c')
+-    if 0 == ret:
+-        announce('ERROR: TryCompile failed\n')
+-        # fall back to sizeof(time_t) is 8
+-        return '8'
+-
+-    # run it
+-    ret = context.TryRun(program, '.c')
+-    context.Result(ret[0])
+-    return ret[1]
+-
+-
+ def CheckCompilerDefines(context, define):
+     context.Message('Checking if compiler supplies %s... ' % (define,))
+     ret = context.TryLink("""
+@@ -708,8 +691,8 @@ config = Configure(env, custom_tests={
+     'CheckCompilerOption': CheckCompilerOption,
+     'CheckHeaderDefines': CheckHeaderDefines,
+     'CheckPKG': CheckPKG,
+-    'CheckSizeOf': CheckSizeOf,
+     'CheckXsltproc': CheckXsltproc,
++    'CheckTime_t': CheckTime_t,
+     'GetPythonValue': GetPythonValue,
+     })
+ 
+@@ -1043,11 +1026,13 @@ else:
+             confdefs.append("/* #undef HAVE_%s_H */\n"
+                             % hdr.replace("/", "_").upper())
+ 
+-    sizeof_time_t = config.CheckSizeOf("time_t")
+-    confdefs.append("#define SIZEOF_TIME_T %s\n" % sizeof_time_t)
+-    announce("sizeof(time_t) is %s" % sizeof_time_t)
+-    if 4 >= int(sizeof_time_t):
++    if 0 == config.CheckTime_t():
+         announce("WARNING: time_t is too small.  It will fail in 2038")
++        sizeof_time_t = 4
++    else:
++        sizeof_time_t = 8
++
++    confdefs.append("#define SIZEOF_TIME_T %s\n" % sizeof_time_t)
+ 
+     # check function after libraries, because some function require libraries
+     # for example clock_gettime() require librt on Linux glibc < 2.17
+-- 
+2.18.4
+

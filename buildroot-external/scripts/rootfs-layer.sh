@@ -16,6 +16,9 @@ function fix_rootfs() {
     # Cleanup miscs
     rm -rf "${TARGET_DIR}/usr/lib/modules-load.d"
 
+    # systemd-update-done.service relies on writeable /var and /etc
+    rm -f "${TARGET_DIR}/usr/lib/systemd/system/sysinit.target.wants/systemd-update-done.service"
+
     # Fix: permission for system connection files
     chmod 600 "${TARGET_DIR}/etc/NetworkManager/system-connections"/*
 
@@ -24,6 +27,9 @@ function fix_rootfs() {
 
     # Fix: Could not generate persistent MAC address
     sed -i "s/MACAddressPolicy=persistent/MACAddressPolicy=none/g" "${TARGET_DIR}/usr/lib/systemd/network/99-default.link"
+
+    # Use systemd-resolved for Host OS resolve
+    sed -i '/^hosts:/ {/resolve/! s/files/resolve [!UNAVAIL=return] files/}' "${TARGET_DIR}/etc/nsswitch.conf"
 }
 
 

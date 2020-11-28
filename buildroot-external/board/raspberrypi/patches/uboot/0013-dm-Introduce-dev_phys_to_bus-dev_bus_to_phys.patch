@@ -1,0 +1,45 @@
+From 3f75e2303ddb7fa6eed6dc288880f613329ce3bb Mon Sep 17 00:00:00 2001
+Message-Id: <3f75e2303ddb7fa6eed6dc288880f613329ce3bb.1606428503.git.stefan@agner.ch>
+In-Reply-To: <a04331a6ba7334282836bbaa76e979c4e6be3900.1606428503.git.stefan@agner.ch>
+References: <a04331a6ba7334282836bbaa76e979c4e6be3900.1606428503.git.stefan@agner.ch>
+From: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+Date: Thu, 19 Nov 2020 18:48:20 +0100
+Subject: [PATCH 13/15] dm: Introduce dev_phys_to_bus()/dev_bus_to_phys()
+
+These functions, instead of relying on hard-coded platform-specific
+address translations, make use of the DMA constraints provided by the DM
+core. This allows for per-device translations.
+
+Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+---
+ include/phys2bus.h | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
+
+diff --git a/include/phys2bus.h b/include/phys2bus.h
+index dc9b8e5a25..a380063af4 100644
+--- a/include/phys2bus.h
++++ b/include/phys2bus.h
+@@ -21,4 +21,20 @@ static inline unsigned long bus_to_phys(unsigned long bus)
+ }
+ #endif
+ 
++#if CONFIG_IS_ENABLED(DM)
++#include <dm/device.h>
++
++static inline dma_addr_t dev_phys_to_bus(struct udevice *dev,
++					 phys_addr_t phys)
++{
++	return phys - dev->dma_offset;
++}
++
++static inline phys_addr_t dev_bus_to_phys(struct udevice *dev,
++					  dma_addr_t bus)
++{
++	return bus + dev->dma_offset;
++}
++#endif
++
+ #endif
+-- 
+2.29.2
+

@@ -6,12 +6,12 @@ config BR2_PACKAGE_HARFBUZZ
 	help
 	  HarfBuzz is an OpenType text shaping engine
 
-	  http://www.freedesktop.org/wiki/Software/HarfBuzz/
+	  https://harfbuzz.github.io/
 
 	  Harfbuzz can make optional use of cairo, freetype,
 	  glib2 and icu packages if they are selected.
 
-comment "harfbuzz needs a toolchain w/ C++, gcc => 4.8"
+comment "harfbuzz needs a toolchain w/ C++, gcc >= 4.8"
 	depends on BR2_TOOLCHAIN_HAS_SYNC_4
 	depends on !BR2_INSTALL_LIBSTDCPP || \
 		!BR2_TOOLCHAIN_GCC_AT_LEAST_4_8

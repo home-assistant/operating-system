@@ -6,7 +6,7 @@ config BR2_PACKAGE_KEYUTILS
 	  These tools are used to control the key management system
 	  built into the Linux kernel.
 
-	  http://people.redhat.com/~dhowells/keyutils/
+	  https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/keyutils.git/
 
 comment "keyutils needs a toolchain w/ dynamic library"
 	depends on BR2_USE_MMU

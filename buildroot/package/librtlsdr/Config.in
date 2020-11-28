@@ -18,6 +18,14 @@ config BR2_PACKAGE_LIBRTLSDR_DETACH_DRIVER
 	  automatically detach any kernel driver associated to the
 	  RTL2832U USB device on startup if one is loaded.
 
+config BR2_PACKAGE_LIBRTLSDR_ZEROCOPY
+	bool "Enable usbfs zero-copy support"
+	default y
+	help
+	  This option allows to use kernel usbfs mmap instead
+	  of buffers in userspace. If you experiment crash with
+	  kernel < 5.6, disable this option.
+
 endif
 
 comment "librtlsdr needs a toolchain w/ threads"

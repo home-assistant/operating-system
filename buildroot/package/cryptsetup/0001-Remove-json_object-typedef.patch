@@ -12,6 +12,8 @@ In file included from lib/luks2/luks2_internal.h:32,
 lib/luks2/luks2.h:86: error: redefinition of typedef 'json_object'
 
 Signed-off-by: Baruch Siach <baruch@tkos.co.il>
+[Upstream status:
+https://gitlab.com/cryptsetup/cryptsetup/-/merge_requests/91]
 ---
  lib/luks2/luks2.h | 1 -
  lib/setup.c       | 1 +

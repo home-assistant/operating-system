@@ -7,6 +7,8 @@
 FONTCONFIG_VERSION = 2.13.1
 FONTCONFIG_SITE = http://fontconfig.org/release
 FONTCONFIG_SOURCE = fontconfig-$(FONTCONFIG_VERSION).tar.bz2
+# 0002-add-pthread-as-a-dependency-of-a-static-lib.patch
+FONTCONFIG_AUTORECONF = YES
 FONTCONFIG_INSTALL_STAGING = YES
 FONTCONFIG_DEPENDENCIES = freetype expat host-pkgconf host-gperf util-linux
 HOST_FONTCONFIG_DEPENDENCIES = \

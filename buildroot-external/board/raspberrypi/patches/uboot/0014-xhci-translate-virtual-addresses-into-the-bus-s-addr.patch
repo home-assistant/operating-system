@@ -1,0 +1,308 @@
+From e3c96fd50787aa9ea2e5136593166cc49696d7ea Mon Sep 17 00:00:00 2001
+Message-Id: <e3c96fd50787aa9ea2e5136593166cc49696d7ea.1606428503.git.stefan@agner.ch>
+In-Reply-To: <a04331a6ba7334282836bbaa76e979c4e6be3900.1606428503.git.stefan@agner.ch>
+References: <a04331a6ba7334282836bbaa76e979c4e6be3900.1606428503.git.stefan@agner.ch>
+From: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+Date: Thu, 19 Nov 2020 18:48:21 +0100
+Subject: [PATCH 14/15] xhci: translate virtual addresses into the bus's
+ address space
+
+So far we've been content with passing physical addresses when
+configuring memory addresses into XHCI controllers, but not all
+platforms have buses with transparent mappings. Specifically the
+Raspberry Pi 4 might introduce an offset to memory accesses incoming
+from its PCIe port.
+
+Introduce xhci_virt_to_bus() and xhci_bus_to_virt() to cater with these
+limitations and make sure we don't break non DM users.
+
+Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+---
+ drivers/usb/host/xhci-mem.c  | 45 +++++++++++++++++++-----------------
+ drivers/usb/host/xhci-ring.c | 11 +++++----
+ drivers/usb/host/xhci.c      |  4 ++--
+ include/usb/xhci.h           | 22 +++++++++++++++++-
+ 4 files changed, 54 insertions(+), 28 deletions(-)
+
+diff --git a/drivers/usb/host/xhci-mem.c b/drivers/usb/host/xhci-mem.c
+index b002d6f166..e8d435d644 100644
+--- a/drivers/usb/host/xhci-mem.c
++++ b/drivers/usb/host/xhci-mem.c
+@@ -110,7 +110,7 @@ static void xhci_scratchpad_free(struct xhci_ctrl *ctrl)
+ 
+ 	ctrl->dcbaa->dev_context_ptrs[0] = 0;
+ 
+-	free((void *)(uintptr_t)le64_to_cpu(ctrl->scratchpad->sp_array[0]));
++	free(xhci_bus_to_virt(ctrl, le64_to_cpu(ctrl->scratchpad->sp_array[0])));
+ 	free(ctrl->scratchpad->sp_array);
+ 	free(ctrl->scratchpad);
+ 	ctrl->scratchpad = NULL;
+@@ -216,8 +216,8 @@ static void *xhci_malloc(unsigned int size)
+  * @param link_trbs	flag to indicate whether to link the trbs or NOT
+  * @return none
+  */
+-static void xhci_link_segments(struct xhci_segment *prev,
+-				struct xhci_segment *next, bool link_trbs)
++static void xhci_link_segments(struct xhci_ctrl *ctrl, struct xhci_segment *prev,
++			       struct xhci_segment *next, bool link_trbs)
+ {
+ 	u32 val;
+ 	u64 val_64 = 0;
+@@ -226,7 +226,7 @@ static void xhci_link_segments(struct xhci_segment *prev,
+ 		return;
+ 	prev->next = next;
+ 	if (link_trbs) {
+-		val_64 = virt_to_phys(next->trbs);
++		val_64 = xhci_virt_to_bus(ctrl, next->trbs);
+ 		prev->trbs[TRBS_PER_SEGMENT-1].link.segment_ptr =
+ 			cpu_to_le64(val_64);
+ 
+@@ -304,7 +304,8 @@ static struct xhci_segment *xhci_segment_alloc(void)
+  * @param link_trbs	flag to indicate whether to link the trbs or NOT
+  * @return pointer to the newly created RING
+  */
+-struct xhci_ring *xhci_ring_alloc(unsigned int num_segs, bool link_trbs)
++struct xhci_ring *xhci_ring_alloc(struct xhci_ctrl *ctrl, unsigned int num_segs,
++				  bool link_trbs)
+ {
+ 	struct xhci_ring *ring;
+ 	struct xhci_segment *prev;
+@@ -327,12 +328,12 @@ struct xhci_ring *xhci_ring_alloc(unsigned int num_segs, bool link_trbs)
+ 		next = xhci_segment_alloc();
+ 		BUG_ON(!next);
+ 
+-		xhci_link_segments(prev, next, link_trbs);
++		xhci_link_segments(ctrl, prev, next, link_trbs);
+ 
+ 		prev = next;
+ 		num_segs--;
+ 	}
+-	xhci_link_segments(prev, ring->first_seg, link_trbs);
++	xhci_link_segments(ctrl, prev, ring->first_seg, link_trbs);
+ 	if (link_trbs) {
+ 		/* See section 4.9.2.1 and 6.4.4.1 */
+ 		prev->trbs[TRBS_PER_SEGMENT-1].link.control |=
+@@ -354,6 +355,7 @@ static int xhci_scratchpad_alloc(struct xhci_ctrl *ctrl)
+ 	struct xhci_hccr *hccr = ctrl->hccr;
+ 	struct xhci_hcor *hcor = ctrl->hcor;
+ 	struct xhci_scratchpad *scratchpad;
++	uint64_t val_64;
+ 	int num_sp;
+ 	uint32_t page_size;
+ 	void *buf;
+@@ -371,8 +373,9 @@ static int xhci_scratchpad_alloc(struct xhci_ctrl *ctrl)
+ 	scratchpad->sp_array = xhci_malloc(num_sp * sizeof(u64));
+ 	if (!scratchpad->sp_array)
+ 		goto fail_sp2;
+-	ctrl->dcbaa->dev_context_ptrs[0] =
+-		cpu_to_le64((uintptr_t)scratchpad->sp_array);
++
++	val_64 = xhci_virt_to_bus(ctrl, scratchpad->sp_array);
++	ctrl->dcbaa->dev_context_ptrs[0] = cpu_to_le64((uintptr_t)val_64);
+ 
+ 	xhci_flush_cache((uintptr_t)&ctrl->dcbaa->dev_context_ptrs[0],
+ 		sizeof(ctrl->dcbaa->dev_context_ptrs[0]));
+@@ -393,8 +396,8 @@ static int xhci_scratchpad_alloc(struct xhci_ctrl *ctrl)
+ 	xhci_flush_cache((uintptr_t)buf, num_sp * page_size);
+ 
+ 	for (i = 0; i < num_sp; i++) {
+-		uintptr_t ptr = (uintptr_t)buf + i * page_size;
+-		scratchpad->sp_array[i] = cpu_to_le64(ptr);
++		val_64 = xhci_virt_to_bus(ctrl, buf + i * page_size);
++		scratchpad->sp_array[i] = cpu_to_le64(val_64);
+ 	}
+ 
+ 	xhci_flush_cache((uintptr_t)scratchpad->sp_array,
+@@ -484,9 +487,9 @@ int xhci_alloc_virt_device(struct xhci_ctrl *ctrl, unsigned int slot_id)
+ 	}
+ 
+ 	/* Allocate endpoint 0 ring */
+-	virt_dev->eps[0].ring = xhci_ring_alloc(1, true);
++	virt_dev->eps[0].ring = xhci_ring_alloc(ctrl, 1, true);
+ 
+-	byte_64 = virt_to_phys(virt_dev->out_ctx->bytes);
++	byte_64 = xhci_virt_to_bus(ctrl, virt_dev->out_ctx->bytes);
+ 
+ 	/* Point to output device context in dcbaa. */
+ 	ctrl->dcbaa->dev_context_ptrs[slot_id] = cpu_to_le64(byte_64);
+@@ -522,15 +525,15 @@ int xhci_mem_init(struct xhci_ctrl *ctrl, struct xhci_hccr *hccr,
+ 		return -ENOMEM;
+ 	}
+ 
+-	val_64 = virt_to_phys(ctrl->dcbaa);
++	val_64 = xhci_virt_to_bus(ctrl, ctrl->dcbaa);
+ 	/* Set the pointer in DCBAA register */
+ 	xhci_writeq(&hcor->or_dcbaap, val_64);
+ 
+ 	/* Command ring control pointer register initialization */
+-	ctrl->cmd_ring = xhci_ring_alloc(1, true);
++	ctrl->cmd_ring = xhci_ring_alloc(ctrl, 1, true);
+ 
+ 	/* Set the address in the Command Ring Control register */
+-	trb_64 = virt_to_phys(ctrl->cmd_ring->first_seg->trbs);
++	trb_64 = xhci_virt_to_bus(ctrl, ctrl->cmd_ring->first_seg->trbs);
+ 	val_64 = xhci_readq(&hcor->or_crcr);
+ 	val_64 = (val_64 & (u64) CMD_RING_RSVD_BITS) |
+ 		(trb_64 & (u64) ~CMD_RING_RSVD_BITS) |
+@@ -551,7 +554,7 @@ int xhci_mem_init(struct xhci_ctrl *ctrl, struct xhci_hccr *hccr,
+ 	ctrl->ir_set = &ctrl->run_regs->ir_set[0];
+ 
+ 	/* Event ring does not maintain link TRB */
+-	ctrl->event_ring = xhci_ring_alloc(ERST_NUM_SEGS, false);
++	ctrl->event_ring = xhci_ring_alloc(ctrl, ERST_NUM_SEGS, false);
+ 	ctrl->erst.entries = xhci_malloc(sizeof(struct xhci_erst_entry) *
+ 					 ERST_NUM_SEGS);
+ 
+@@ -560,8 +563,8 @@ int xhci_mem_init(struct xhci_ctrl *ctrl, struct xhci_hccr *hccr,
+ 	for (val = 0, seg = ctrl->event_ring->first_seg;
+ 			val < ERST_NUM_SEGS;
+ 			val++) {
+-		trb_64 = virt_to_phys(seg->trbs);
+ 		struct xhci_erst_entry *entry = &ctrl->erst.entries[val];
++		trb_64 = xhci_virt_to_bus(ctrl, seg->trbs);
+ 		entry->seg_addr = cpu_to_le64(trb_64);
+ 		entry->seg_size = cpu_to_le32(TRBS_PER_SEGMENT);
+ 		entry->rsvd = 0;
+@@ -570,7 +573,7 @@ int xhci_mem_init(struct xhci_ctrl *ctrl, struct xhci_hccr *hccr,
+ 	xhci_flush_cache((uintptr_t)ctrl->erst.entries,
+ 			 ERST_NUM_SEGS * sizeof(struct xhci_erst_entry));
+ 
+-	deq = virt_to_phys(ctrl->event_ring->dequeue);
++	deq = xhci_virt_to_bus(ctrl, ctrl->event_ring->dequeue);
+ 
+ 	/* Update HC event ring dequeue pointer */
+ 	xhci_writeq(&ctrl->ir_set->erst_dequeue,
+@@ -585,7 +588,7 @@ int xhci_mem_init(struct xhci_ctrl *ctrl, struct xhci_hccr *hccr,
+ 	/* this is the event ring segment table pointer */
+ 	val_64 = xhci_readq(&ctrl->ir_set->erst_base);
+ 	val_64 &= ERST_PTR_MASK;
+-	val_64 |= virt_to_phys(ctrl->erst.entries) & ~ERST_PTR_MASK;
++	val_64 |= xhci_virt_to_bus(ctrl, ctrl->erst.entries) & ~ERST_PTR_MASK;
+ 
+ 	xhci_writeq(&ctrl->ir_set->erst_base, val_64);
+ 
+@@ -848,7 +851,7 @@ void xhci_setup_addressable_virt_dev(struct xhci_ctrl *ctrl,
+ 	/* EP 0 can handle "burst" sizes of 1, so Max Burst Size field is 0 */
+ 	ep0_ctx->ep_info2 |= cpu_to_le32(MAX_BURST(0) | ERROR_COUNT(3));
+ 
+-	trb_64 = virt_to_phys(virt_dev->eps[0].ring->first_seg->trbs);
++	trb_64 = xhci_virt_to_bus(ctrl, virt_dev->eps[0].ring->first_seg->trbs);
+ 	ep0_ctx->deq = cpu_to_le64(trb_64 | virt_dev->eps[0].ring->cycle_state);
+ 
+ 	/*
+diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.c
+index a893277c75..74deaabb9b 100644
+--- a/drivers/usb/host/xhci-ring.c
++++ b/drivers/usb/host/xhci-ring.c
+@@ -275,10 +275,13 @@ void xhci_queue_command(struct xhci_ctrl *ctrl, u8 *ptr, u32 slot_id,
+ 			u32 ep_index, trb_type cmd)
+ {
+ 	u32 fields[4];
+-	u64 val_64 = virt_to_phys(ptr);
++	u64 val_64 = 0;
+ 
+ 	BUG_ON(prepare_ring(ctrl, ctrl->cmd_ring, EP_STATE_RUNNING));
+ 
++	if (ptr)
++		val_64 = xhci_virt_to_bus(ctrl, ptr);
++
+ 	fields[0] = lower_32_bits(val_64);
+ 	fields[1] = upper_32_bits(val_64);
+ 	fields[2] = 0;
+@@ -399,7 +402,7 @@ void xhci_acknowledge_event(struct xhci_ctrl *ctrl)
+ 
+ 	/* Inform the hardware */
+ 	xhci_writeq(&ctrl->ir_set->erst_dequeue,
+-		    virt_to_phys(ctrl->event_ring->dequeue) | ERST_EHB);
++		    xhci_virt_to_bus(ctrl, ctrl->event_ring->dequeue) | ERST_EHB);
+ }
+ 
+ /**
+@@ -577,7 +580,7 @@ int xhci_bulk_tx(struct usb_device *udev, unsigned long pipe,
+ 	u64 addr;
+ 	int ret;
+ 	u32 trb_fields[4];
+-	u64 val_64 = virt_to_phys(buffer);
++	u64 val_64 = xhci_virt_to_bus(ctrl, buffer);
+ 
+ 	debug("dev=%p, pipe=%lx, buffer=%p, length=%d\n",
+ 		udev, pipe, buffer, length);
+@@ -876,7 +879,7 @@ int xhci_ctrl_tx(struct usb_device *udev, unsigned long pipe,
+ 	if (length > 0) {
+ 		if (req->requesttype & USB_DIR_IN)
+ 			field |= TRB_DIR_IN;
+-		buf_64 = virt_to_phys(buffer);
++		buf_64 = xhci_virt_to_bus(ctrl, buffer);
+ 
+ 		trb_fields[0] = lower_32_bits(buf_64);
+ 		trb_fields[1] = upper_32_bits(buf_64);
+diff --git a/drivers/usb/host/xhci.c b/drivers/usb/host/xhci.c
+index 999ef79173..de2c83c64f 100644
+--- a/drivers/usb/host/xhci.c
++++ b/drivers/usb/host/xhci.c
+@@ -606,7 +606,7 @@ static int xhci_set_configuration(struct usb_device *udev)
+ 		ep_ctx[ep_index] = xhci_get_ep_ctx(ctrl, in_ctx, ep_index);
+ 
+ 		/* Allocate the ep rings */
+-		virt_dev->eps[ep_index].ring = xhci_ring_alloc(1, true);
++		virt_dev->eps[ep_index].ring = xhci_ring_alloc(ctrl, 1, true);
+ 		if (!virt_dev->eps[ep_index].ring)
+ 			return -ENOMEM;
+ 
+@@ -630,7 +630,7 @@ static int xhci_set_configuration(struct usb_device *udev)
+ 			cpu_to_le32(MAX_BURST(max_burst) |
+ 			ERROR_COUNT(err_count));
+ 
+-		trb_64 = virt_to_phys(virt_dev->eps[ep_index].ring->enqueue);
++		trb_64 = xhci_virt_to_bus(ctrl, virt_dev->eps[ep_index].ring->enqueue);
+ 		ep_ctx[ep_index]->deq = cpu_to_le64(trb_64 |
+ 				virt_dev->eps[ep_index].ring->cycle_state);
+ 
+diff --git a/include/usb/xhci.h b/include/usb/xhci.h
+index 2e201bcbfa..12e2b3ba80 100644
+--- a/include/usb/xhci.h
++++ b/include/usb/xhci.h
+@@ -16,6 +16,7 @@
+ #ifndef HOST_XHCI_H_
+ #define HOST_XHCI_H_
+ 
++#include <phys2bus.h>
+ #include <reset.h>
+ #include <asm/types.h>
+ #include <asm/cache.h>
+@@ -1251,7 +1252,8 @@ int xhci_check_maxpacket(struct usb_device *udev);
+ void xhci_flush_cache(uintptr_t addr, u32 type_len);
+ void xhci_inval_cache(uintptr_t addr, u32 type_len);
+ void xhci_cleanup(struct xhci_ctrl *ctrl);
+-struct xhci_ring *xhci_ring_alloc(unsigned int num_segs, bool link_trbs);
++struct xhci_ring *xhci_ring_alloc(struct xhci_ctrl *ctrl, unsigned int num_segs,
++				  bool link_trbs);
+ int xhci_alloc_virt_device(struct xhci_ctrl *ctrl, unsigned int slot_id);
+ int xhci_mem_init(struct xhci_ctrl *ctrl, struct xhci_hccr *hccr,
+ 		  struct xhci_hcor *hcor);
+@@ -1279,4 +1281,22 @@ extern struct dm_usb_ops xhci_usb_ops;
+ 
+ struct xhci_ctrl *xhci_get_ctrl(struct usb_device *udev);
+ 
++static inline dma_addr_t xhci_virt_to_bus(struct xhci_ctrl *ctrl, void *addr)
++{
++#if CONFIG_IS_ENABLED(DM_USB)
++	return dev_phys_to_bus(ctrl->dev, virt_to_phys(addr));
++#else
++	return phys_to_bus(virt_to_phys(addr));
++#endif
++}
++
++static inline void *xhci_bus_to_virt(struct xhci_ctrl *ctrl, dma_addr_t addr)
++{
++#if CONFIG_IS_ENABLED(DM_USB)
++	return phys_to_virt(dev_bus_to_phys(ctrl->dev, addr));
++#else
++	return phys_to_virt(bus_to_phys(addr));
++#endif
++}
++
+ #endif /* HOST_XHCI_H_ */
+-- 
+2.29.2
+

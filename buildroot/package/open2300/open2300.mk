@@ -4,9 +4,8 @@
 #
 ################################################################################
 
-OPEN2300_SITE = http://www.lavrsen.dk/svn/open2300/trunk
-OPEN2300_SITE_METHOD = svn
-OPEN2300_VERSION = 12
+OPEN2300_VERSION = f21982e0b1f8321561e5ad1668307fde97700e1b
+OPEN2300_SITE = $(call github,wezm,open2300,$(OPEN2300_VERSION))
 OPEN2300_LICENSE = GPL-2.0
 OPEN2300_LICENSE_FILES = COPYING
 

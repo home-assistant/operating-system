@@ -1,0 +1,6 @@
+# From: https://gitlab.com/apparmor/apparmor/-/wikis/home#userspace
+sha256  66fd751fe51eb427d2aa864ee035b12d01d212fd595579275219b0148c43755e  apparmor-3.0.0.tar.gz
+
+# locally computed
+sha256  a7e0cdcbea5c14927cedfc600d46526bdcbb1eb0a4d951e2ea53c2a6de159cb4  LICENSE
+sha256  6095e9ffa777dd22839f7801aa845b31c9ed07f3d6bf8a26dc5d2dec8ccc0ef3  libraries/libapparmor/COPYING.LGPL

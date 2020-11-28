@@ -1,0 +1,56 @@
+From a44d2f3aa6075fb6e63da75f84a257294d21d161 Mon Sep 17 00:00:00 2001
+From: Pierre Lamot <pierre@videolabs.io>
+Date: Wed, 27 May 2020 11:05:53 +0200
+Subject: [PATCH] qt: fix missing header when compiling with Qt 5.15
+
+Upstream bug report: https://trac.videolan.org/vlc/ticket/24882
+
+Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
+[backported upstream commit for modules/gui/qt/dialogs/plugins.cpp
+ http://git.videolan.org/?p=vlc.git;a=patch;h=0e88143ed2fe8eedfa4d3afdafcd0df901644c1d
+ the other two patches were proposed on the upstream bugtracker]
+---
+ modules/gui/qt/components/playlist/views.cpp | 1 +
+ modules/gui/qt/dialogs/plugins.cpp           | 1 +
+ modules/gui/qt/util/timetooltip.hpp          | 1 +
+ 3 files changed, 3 insertions(+)
+
+diff --git a/modules/gui/qt/components/playlist/views.cpp b/modules/gui/qt/components/playlist/views.cpp
+index ecc6b9918d..d3fd76da1a 100644
+--- a/modules/gui/qt/components/playlist/views.cpp
++++ b/modules/gui/qt/components/playlist/views.cpp
+@@ -35,6 +35,7 @@
+ #include <QMetaType>
+ #include <QHeaderView>
+ #include <QSvgRenderer>
++#include <QPainterPath>
+ 
+ #include <assert.h>
+ 
+diff --git a/modules/gui/qt/dialogs/plugins.cpp b/modules/gui/qt/dialogs/plugins.cpp
+index 93c92b9fa6..e05ec0594a 100644
+--- a/modules/gui/qt/dialogs/plugins.cpp
++++ b/modules/gui/qt/dialogs/plugins.cpp
+@@ -66,6 +66,7 @@
+ #include <QSplitter>
+ #include <QToolButton>
+ #include <QStackedWidget>
++#include <QPainterPath>
+ 
+ //match the image source (width/height)
+ #define SCORE_ICON_WIDTH_SCALE 4
+diff --git a/modules/gui/qt/util/timetooltip.hpp b/modules/gui/qt/util/timetooltip.hpp
+index b6d7c646c9..f213eac459 100644
+--- a/modules/gui/qt/util/timetooltip.hpp
++++ b/modules/gui/qt/util/timetooltip.hpp
+@@ -25,6 +25,7 @@
+ #include "qt.hpp"
+ 
+ #include <QWidget>
++#include <QPainterPath>
+ 
+ class TimeTooltip : public QWidget
+ {
+-- 
+2.27.0
+

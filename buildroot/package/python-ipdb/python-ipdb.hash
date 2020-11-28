@@ -1,0 +1,5 @@
+# md5, sha256 from https://pypi.org/pypi/ipdb/json
+md5  7db72771b279924ac4e5905d7eee184e  ipdb-0.13.2.tar.gz
+sha256  77fb1c2a6fccdfee0136078c9ed6fe547ab00db00bebff181f1e8c9e13418d49  ipdb-0.13.2.tar.gz
+# Locally computed sha256 checksums
+sha256  4eeb49de04f4894f8ea1f69a04f500799041b750b3d554c06de5ca877258e734  COPYING.txt

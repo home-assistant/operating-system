@@ -1,0 +1,101 @@
+From 6bc5abf99ef01e5aeea4f5bce5f5bff7f1b8ddd9 Mon Sep 17 00:00:00 2001
+From: Sergio Prado <sergio.prado@e-labworks.com>
+Date: Sat, 4 Jul 2020 20:02:53 -0300
+Subject: [PATCH] Fix musl build: basename() is in libgen.h.
+
+Also, its argument is not const, so add const_cast.
+
+Signed-off-by: Arnout Vandecappelle (Essensium/Mind) <arnout@mind.be>
+Signed-off-by: Sergio Prado <sergio.prado@e-labworks.com>
+---
+ src/core/sysfs.cc | 19 ++++++++++---------
+ 1 file changed, 10 insertions(+), 9 deletions(-)
+
+diff --git a/src/core/sysfs.cc b/src/core/sysfs.cc
+index 32d65642f157..c2fa84fe8d0f 100644
+--- a/src/core/sysfs.cc
++++ b/src/core/sysfs.cc
+@@ -16,6 +16,7 @@
+ #include <sys/stat.h>
+ #include <sys/types.h>
+ #include <sys/mount.h>
++#include <libgen.h>
+ 
+ 
+ __ID("@(#) $Id$");
+@@ -100,7 +101,7 @@ static string sysfs_getbustype(const string & path)
+   {
+     devname =
+       string(fs.path + "/bus/") + string(namelist[i]->d_name) +
+-      "/devices/" + basename(path.c_str());
++      "/devices/" + basename(const_cast<char*>(path.c_str()));
+ 
+     if (samefile(devname, path))
+       return string(namelist[i]->d_name);
+@@ -140,7 +141,7 @@ static string sysfstobusinfo(const string & path)
+ 
+   if (bustype == "usb")
+   {
+-    string name = basename(path.c_str());
++    string name = basename(const_cast<char*>(path.c_str()));
+     if (matches(name, "^[0-9]+-[0-9]+(\\.[0-9]+)*:[0-9]+\\.[0-9]+$"))
+     {
+       size_t colon = name.rfind(":");
+@@ -151,7 +152,7 @@ static string sysfstobusinfo(const string & path)
+ 
+   if (bustype == "virtio")
+   {
+-    string name = basename(path.c_str());
++    string name = basename(const_cast<char*>(path.c_str()));
+     if (name.compare(0, 6, "virtio") == 0)
+       return "virtio@" + name.substr(6);
+     else
+@@ -159,10 +160,10 @@ static string sysfstobusinfo(const string & path)
+   }
+ 
+   if (bustype == "vio")
+-    return string("vio@") + basename(path.c_str());
++    return string("vio@") + basename(const_cast<char*>(path.c_str()));
+ 
+   if (bustype == "ccw")
+-    return string("ccw@") + basename(path.c_str());
++    return string("ccw@") + basename(const_cast<char*>(path.c_str()));
+ 
+   if (bustype == "ccwgroup")
+   {
+@@ -240,7 +241,7 @@ string entry::driver() const
+   string driverlink = This->devpath + "/driver";
+   if (!exists(driverlink))
+     return "";
+-  return basename(readlink(driverlink).c_str());
++  return basename(const_cast<char*>(readlink(driverlink).c_str()));
+ }
+ 
+ 
+@@ -328,7 +329,7 @@ string entry::name_in_class(const string & classname) const
+ 
+ string entry::name() const
+ {
+-  return basename(This->devpath.c_str());
++  return basename(const_cast<char*>(This->devpath.c_str()));
+ }
+ 
+ 
+@@ -340,12 +341,12 @@ entry entry::parent() const
+ 
+ string entry::classname() const
+ {
+-  return basename(dirname(This->devpath).c_str());
++  return basename(const_cast<char*>(dirname(This->devpath).c_str()));
+ }
+ 
+ bool entry::isvirtual() const
+ {
+-  return string(basename(dirname(dirname(This->devpath)).c_str())) == "virtual";
++  return string(basename(const_cast<char*>(dirname(dirname(This->devpath)).c_str()))) == "virtual";
+ }
+ 
+ string entry::string_attr(const string & name, const string & def) const
+-- 
+2.17.1
+

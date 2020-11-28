@@ -5,7 +5,6 @@ menuconfig BR2_PACKAGE_OPENCV3
 	depends on BR2_INSTALL_LIBSTDCPP
 	depends on BR2_USE_WCHAR
 	depends on !BR2_STATIC_LIBS # include dlfcn.h
-	depends on !BR2_PACKAGE_OPENCV
 	select BR2_PACKAGE_ZLIB
 	help
 	  OpenCV (Open Source Computer Vision) is a library of
@@ -85,7 +84,6 @@ comment "gtk3 support needs libgtk3"
 config BR2_PACKAGE_OPENCV3_WITH_QT5
 	bool "qt5"
 	depends on BR2_PACKAGE_QT5
-	select BR2_PACKAGE_QT5BASE
 	select BR2_PACKAGE_QT5BASE_CONCURRENT
 	select BR2_PACKAGE_QT5BASE_GUI
 	select BR2_PACKAGE_QT5BASE_WIDGETS
@@ -156,7 +154,7 @@ config BR2_PACKAGE_OPENCV3_LIB_PHOTO
 
 config BR2_PACKAGE_OPENCV3_LIB_PYTHON
 	bool "python"
-	depends on BR2_PACKAGE_PYTHON || BR2_PACKAGE_PYTHON3
+	depends on BR2_PACKAGE_PYTHON3
 	depends on BR2_PACKAGE_PYTHON_NUMPY_ARCH_SUPPORTS
 	depends on BR2_TOOLCHAIN_USES_GLIBC || BR2_TOOLCHAIN_USES_MUSL # python-numpy
 	select BR2_PACKAGE_PYTHON_NUMPY
@@ -165,6 +163,8 @@ config BR2_PACKAGE_OPENCV3_LIB_PYTHON
 	  python example is installed.
 
 comment "python support needs glibc or musl"
+	depends on BR2_PACKAGE_PYTHON3
+	depends on BR2_PACKAGE_PYTHON_NUMPY_ARCH_SUPPORTS
 	depends on !(BR2_TOOLCHAIN_USES_GLIBC || BR2_TOOLCHAIN_USES_MUSL)
 
 config BR2_PACKAGE_OPENCV3_LIB_SHAPE
@@ -311,6 +311,14 @@ config BR2_PACKAGE_OPENCV3_WITH_V4L
 
 	  If the package libv4l is enabled, its support is
 	  automatically enabled.
+
+config BR2_PACKAGE_OPENCV3_WITH_WEBP
+	bool "webp support"
+	select BR2_PACKAGE_WEBP
+	help
+	  Enable WebP support.
+
+	  Use shared libwebp from the target system.
 
 comment "Install options"
 

@@ -22,25 +22,33 @@ EXTRA_OECMAKE = "-DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON"
 Signed-off-by: Pierre-Jean Texier <pjtexier@koncepto.io>
 [Upstream status: http://patchwork.ozlabs.org/patch/1103437/]
 ---
- src/CMakeLists.txt | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ src/CMakeLists.txt | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
 diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
-index 051732b..c5f6dcb 100644
+index a04dd11..3a2115d 100644
 --- a/src/CMakeLists.txt
 +++ b/src/CMakeLists.txt
-@@ -10,10 +10,9 @@ SET(include_HEADERS
-   libuboot.h
- )
+@@ -12,17 +12,15 @@ SET(include_HEADERS
+ 
+ include(GNUInstallDirs) # for the CMAKE_INSTALL_LIBDIR variable
  
 -add_library(ubootenv SHARED ${libubootenv_SOURCES} ${include_HEADERS})
 +add_library(ubootenv ${libubootenv_SOURCES} ${include_HEADERS})
- SET_TARGET_PROPERTIES(ubootenv PROPERTIES SOVERSION ${SOVERSION})
+ SET_TARGET_PROPERTIES(ubootenv PROPERTIES VERSION ${VERSION} SOVERSION ${SOVERSION})
  
 -ADD_LIBRARY(ubootenv_static STATIC ${libubootenv_SOURCES} ${include_HEADERS})
+-SET_TARGET_PROPERTIES(ubootenv_static PROPERTIES OUTPUT_NAME ubootenv)
  add_executable(fw_printenv fw_printenv.c)
  add_executable(fw_setenv fw_setenv.c)
  target_link_libraries(fw_printenv ubootenv z)
+ target_link_libraries(fw_setenv ubootenv z)
+ 
+-install (TARGETS ubootenv ubootenv_static DESTINATION ${CMAKE_INSTALL_LIBDIR})
++install (TARGETS ubootenv DESTINATION ${CMAKE_INSTALL_LIBDIR})
+ install (FILES libuboot.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+ install (TARGETS fw_printenv DESTINATION ${CMAKE_INSTALL_BINDIR})
+ install (TARGETS fw_setenv DESTINATION ${CMAKE_INSTALL_BINDIR})
 -- 
-2.7.4
+2.25.1
 

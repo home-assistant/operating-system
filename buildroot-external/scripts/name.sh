@@ -1,7 +1,7 @@
 #!/bin/bash
 
 function hassos_image_name() {
-    echo "${BINARIES_DIR}/${HASSOS_ID}_${BOARD_ID}-${VERSION_MAJOR}.${VERSION_BUILD}.${1}"
+    echo "${BINARIES_DIR}/${HASSOS_ID}_${BOARD_ID}-$(hassos_version).${1}"
 }
 
 function hassos_rauc_compatible() {
@@ -9,7 +9,11 @@ function hassos_rauc_compatible() {
 }
 
 function hassos_version() {
-    echo "${VERSION_MAJOR}.${VERSION_BUILD}"
+    if [ -z "${VERSION_DEV}" ]; then
+        echo "${VERSION_MAJOR}.${VERSION_BUILD}"
+    else
+        echo "${VERSION_MAJOR}.${VERSION_BUILD}.${VERSION_DEV}"
+    fi
 }
 
 function path_spl_img() {

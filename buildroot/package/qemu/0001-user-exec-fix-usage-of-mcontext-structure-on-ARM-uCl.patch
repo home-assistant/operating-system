@@ -1,4 +1,4 @@
-From d3f1e7e9ff9aae3f770b0bcb9aa3c2f787f76a1b Mon Sep 17 00:00:00 2001
+From 923d25365fbdff17fa4c8c2883960be07c3dad56 Mon Sep 17 00:00:00 2001
 From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 Date: Fri, 5 May 2017 09:07:15 +0200
 Subject: [PATCH] user-exec: fix usage of mcontext structure on ARM/uClibc
@@ -14,14 +14,14 @@ uClibc.
 
 Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 ---
- user-exec.c | 2 +-
+ accel/tcg/user-exec.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/accel/tcg/user-exec.c b/accel/tcg/user-exec.c
-index 6db0758..2b3d116 100644
+index 4be78eb9b3..0a690bec55 100644
 --- a/accel/tcg/user-exec.c
 +++ b/accel/tcg/user-exec.c
-@@ -506,7 +506,7 @@ int cpu_signal_handler(int host_signum, void *pinfo,
+@@ -508,7 +508,7 @@ int cpu_signal_handler(int host_signum, void *pinfo,
  
  #if defined(__NetBSD__)
      pc = uc->uc_mcontext.__gregs[_REG_R15];
@@ -31,5 +31,5 @@ index 6db0758..2b3d116 100644
  #else
      pc = uc->uc_mcontext.arm_pc;
 -- 
-2.7.4
+2.25.3
 

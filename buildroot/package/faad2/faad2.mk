@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-FAAD2_VERSION = 2.9.1
+FAAD2_VERSION = 2.9.2
 FAAD2_SITE = $(call github,knik0,faad2,$(subst .,_,$(FAAD2_VERSION)))
 FAAD2_LICENSE = GPL-2.0
 FAAD2_LICENSE_FILES = COPYING

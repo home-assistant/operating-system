@@ -1,6 +1,10 @@
-# From https://lttng.org/files/lttng-tools/lttng-tools-2.11.0.tar.bz2.sha256
-sha256 dce493c82db673c96049b5fad155a760fa449fab3d92467a69fcb0ddaf3f0fbc  lttng-tools-2.11.0.tar.bz2
+# From https://lttng.org/files/lttng-tools/lttng-tools-2.12.1.tar.bz2.sha256
+sha256  0de7afc1f40a5acbede933cdfd6cf47b32ff84d02e170a1321f7fc86141585b8  lttng-tools-2.12.1.tar.bz2
+
 # Locally computed
-sha256 8177f97513213526df2cf6184d8ff986c675afb514d4e68a404010521b880643  gpl-2.0.txt
-sha256 051be1f11b508ef7bb839994f6b58be19a827c56bd9bddfe36d77d3d4be55abe  lgpl-2.1.txt
-sha256 f07515677547da5f3ee2396bdf491affc1accd5e4765a5378b6e1e98392fd5e7  LICENSE
+sha256  068e55c7dbe597400199aee75ac5e71bdb2ca88c4c9a4cfa8e1fbc61f933eda5  LICENSE
+sha256  6313108c23efffa36948f8b2cff1560a5935373b527b0e1a837cc77e6ed1bacd  LICENSES/BSD-2-Clause
+sha256  7a83b1aeb460458db9a4bd521d7f237c45b1650f6e60ea5ffc71e49472454de3  LICENSES/BSD-3-Clause
+sha256  6841c85b94f9dab319356e3aaf9e969fcedad51d3aaadf665bf86f34f4186b62  LICENSES/GPL-2.0
+sha256  d72921266bc8452a8789f8a04a82755373990d00b7e0b0f1a8edb8f854e94d1c  LICENSES/LGPL-2.1
+sha256  323c587d0ccf10e376f8bf9a7f31fb4ca6078105194b42e0b1e0ee2bc9bde71f  LICENSES/MIT

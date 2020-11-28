@@ -1,0 +1,36 @@
+From 1fb08a352afada589f0b93af7a07c6fcd6da9bb8 Mon Sep 17 00:00:00 2001
+From: Bernd Kuhls <bernd.kuhls@t-online.de>
+Date: Mon, 21 Sep 2020 20:19:38 +0200
+Subject: [PATCH] read_file.h: include sys/types.h
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Fixes build error with uClibc and gcc-8.3.0:
+
+In file included from src/devtools/uk_dump.c:28:
+src/devtools/read_file.h:24:44: error: unknown type name ‘off_t’
+ static size_t _read_file(const char *name, off_t min_size, off_t max_size, uint8_t **pdata)
+
+Upstream status: pending
+
+Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
+---
+ src/devtools/read_file.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/devtools/read_file.h b/src/devtools/read_file.h
+index 953b2ef..a5d185c 100644
+--- a/src/devtools/read_file.h
++++ b/src/devtools/read_file.h
+@@ -19,6 +19,7 @@
+ 
+ #include <stdio.h>
+ #include <stdlib.h>
++#include <sys/types.h>
+ #include <errno.h>
+ 
+ static size_t _read_file(const char *name, off_t min_size, off_t max_size, uint8_t **pdata)
+-- 
+2.27.0
+

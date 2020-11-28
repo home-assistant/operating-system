@@ -1,4 +1,4 @@
-From a3cb6e42fc2cfa0620ba737148fcbea0cf96a984 Mon Sep 17 00:00:00 2001
+From a53f3fd64a0f36ec9bc1307d7e66cdc2dee4aeaa Mon Sep 17 00:00:00 2001
 From: Baruch Siach <baruch@tkos.co.il>
 Date: Tue, 4 Aug 2015 10:14:00 +0200
 Subject: [PATCH] poco: add the staging path to search path
@@ -14,19 +14,21 @@ must be set from the make command line.
 Signed-off-by: Baruch Siach <baruch@tkos.co.il>
 [Jörg: Update to version 1.6.1 from github]
 Signed-off-by: Jörg Krause <joerg.krause@embedded.rocks>
+[Julien: Rebased on version 1.10.1]
+Signed-off-by: Julien Olivain <juju@cotds.org>
 ---
  Data/MySQL/Makefile | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/Data/MySQL/Makefile b/Data/MySQL/Makefile
-index c6fc2ac1c..955fee2d4 100644
+index 64a7d3f82..955fee2d4 100644
 --- a/Data/MySQL/Makefile
 +++ b/Data/MySQL/Makefile
 @@ -6,8 +6,8 @@
  
  include $(POCO_BASE)/build/rules/global
  
--SYSLIBS += -L/usr/local/lib$(LIB64SUFFIX)/mysql -L/usr/lib$(LIB64SUFFIX)/mysql -L/usr/mysql/lib$(LIB64SUFFIX) -L/usr/mysql/lib$(LIB64SUFFIX)/mysql -L/usr/local/mysql/lib$(LIB64SUFFIX) -lmysqlclient
+-SYSLIBS += -L/usr/local/lib -L/usr/local/lib$(LIB64SUFFIX)/mysql -L/usr/lib$(LIB64SUFFIX)/mysql -L/usr/mysql/lib$(LIB64SUFFIX) -L/usr/mysql/lib$(LIB64SUFFIX)/mysql -L/usr/local/mysql/lib$(LIB64SUFFIX) -lmysqlclient
 -INCLUDE += -I/usr/local/include/mysql/ -I/usr/include/mysql/ -I/usr/mysql/include/mysql -I/usr/local/mysql/include
 +SYSLIBS += -L$(MYSQL_LIBDIR) -lmysqlclient
 +INCLUDE += -I$(MYSQL_INCDIR)
@@ -34,5 +36,5 @@ index c6fc2ac1c..955fee2d4 100644
  
  objects = Binder Extractor SessionImpl Connector \
 -- 
-2.14.4
+2.26.2
 

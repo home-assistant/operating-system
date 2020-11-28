@@ -1,0 +1,17 @@
+config BR2_PACKAGE_PARPROUTED
+	bool "parprouted"
+	depends on BR2_USE_MMU # fork()
+	depends on BR2_TOOLCHAIN_HAS_THREADS
+	help
+	  parprouted is a daemon for transparent IP (Layer 3) proxy ARP
+	  bridging. This is useful for creation of transparent firewalls
+	  and bridging networks with different MAC protocols. Also,
+	  unlike standard bridging, proxy ARP bridging allows to bridge
+	  Ethernet networks behind wireless nodes without using WDS or
+	  layer 2 bridging.
+
+	  https://www.hazard.maks.net/parprouted
+
+comment "parprouted needs a toolchain w/ threads"
+	depends on BR2_USE_MMU
+	depends on !BR2_TOOLCHAIN_HAS_THREADS

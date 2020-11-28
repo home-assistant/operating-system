@@ -80,6 +80,11 @@ config BR2_HOSTARCH_NEEDS_IA32_COMPILER
 config BR2_NEEDS_HOST_UTF8_LOCALE
 	bool
 
+# Hidden boolean selected by packages that need the host to have
+# support for building gcc plugins
+config BR2_NEEDS_HOST_GCC_PLUGIN_SUPPORT
+	bool
+
 source "arch/Config.in"
 
 menu "Build options"

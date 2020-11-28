@@ -1,9 +1,0 @@
-config BR2_PACKAGE_APPARMOR
-	bool "apparmor"
-	select BR2_PACKAGE_LIBAPPARMOR
-	help
-	  AppArmor gives you network application security via mandatory 
-	  access control for programs, protecting against the exploitation 
-	  of software flaws and compromised systems.
-
-	  http://apparmor.net

@@ -15,4 +15,4 @@ config BR2_PACKAGE_GSTREAMER1_EDITING_SERVICES
 	  GStreamer Editing Services is a high-level library for
 	  facilitating the creation of audio/video non-linear editors.
 
-	  http://gstreamer.freedesktop.org
+	  https://gstreamer.freedesktop.org

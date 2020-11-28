@@ -1,0 +1,377 @@
+From 26165906f85d82f0a4456f34b5c60fcaaef48535 Mon Sep 17 00:00:00 2001
+From: Romain Naour <romain.naour@smile.fr>
+Date: Wed, 5 Feb 2020 10:31:32 +0100
+Subject: [PATCH] elf2flt: handle binutils >= 2.34
+
+The latest Binutils release (2.34) is not compatible with elf2flt due
+to a change in bfd_section_* macros [1]. The issue has been reported
+to the Binutils mailing list but Alan Modra recommend to bundle
+libbfd library sources into each projects using it [2]. That's
+because the API is not stable over the time without any backward
+compatibility guaranties.
+
+On the other hand, the elf2flt tools needs to support modified
+version of binutils for specific arch/target [3].
+
+Add two tests in the configure script to detect this API change
+in order to support binutils < 2.34 and binutils >= 2.34.
+
+Upstream status: [4]
+
+[1] https://sourceware.org/git/?p=binutils-gdb.git;a=commitdiff;h=fd3619828e94a24a92cddec42cbc0ab33352eeb4
+[2] https://sourceware.org/ml/binutils/2020-02/msg00044.html
+[3] https://github.com/uclinux-dev/elf2flt/issues/14
+[4] https://github.com/uclinux-dev/elf2flt/pull/15
+
+Signed-off-by: Romain Naour <romain.naour@smile.fr>
+---
+ configure.ac | 16 +++++++++++
+ elf2flt.c    | 81 +++++++++++++++++++++++++++++-----------------------
+ 2 files changed, 61 insertions(+), 36 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index e82eb1d..cf7dea8 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -229,6 +229,22 @@ AC_CHECK_FUNCS([ \
+ 	strsignal \
+ ])
+ 
++dnl Various bfd section macros and functions like bfd_section_size() have been
++dnl modified starting with binutils >= 2.34.
++dnl Check if the prototypes take a bfd argument.
++if test "$binutils_build_dir" != "NONE"; then
++    CFLAGS="-I$binutils_include_dir -I$bfd_include_dir $CFLAGS"
++fi
++
++AC_TRY_COMPILE([#include <bfd.h>],
++ [const asection *sec; bfd_section_size(sec);],
++ bfd_section_api_takes_bfd=no,
++ bfd_section_api_takes_bfd=yes)
++if test "$bfd_section_api_takes_bfd" = "yes" ; then
++  AC_DEFINE(HAVE_BFD_SECTION_API_TAKES_BFD, 1,
++   [define to 1 for binutils < 2.34])
++fi
++
+ if test "$GCC" = yes ; then
+ 	CFLAGS="-Wall $CFLAGS"
+ 	if test "$werror" = 1 ; then
+diff --git a/elf2flt.c b/elf2flt.c
+index b93aecd..3bcf4fe 100644
+--- a/elf2flt.c
++++ b/elf2flt.c
+@@ -149,6 +149,17 @@ const char *elf2flt_progname;
+ #define O_BINARY 0
+ #endif
+ 
++/*
++ * The bfd parameter isn't actually used by any of the bfd_section funcs and
++ * have been removed since binutils 2.34.
++ */
++#ifdef HAVE_BFD_SECTION_API_TAKES_BFD
++#define elf2flt_bfd_section_size(s) bfd_section_size(NULL, s)
++#define elf2flt_bfd_section_vma(s)  bfd_section_vma(NULL, s)
++#else
++#define elf2flt_bfd_section_size(s) bfd_section_size(s)
++#define elf2flt_bfd_section_vma(s)  bfd_section_vma(s)
++#endif
+ 
+ /* Extra output when running.  */
+ static int verbose = 0;
+@@ -323,10 +334,8 @@ compare_relocs (const void *pa, const void *pb)
+ 	else if (!rb->sym_ptr_ptr || !*rb->sym_ptr_ptr)
+ 		return 1;
+ 
+-	a_vma = bfd_section_vma(compare_relocs_bfd,
+-				(*(ra->sym_ptr_ptr))->section);
+-	b_vma = bfd_section_vma(compare_relocs_bfd,
+-				(*(rb->sym_ptr_ptr))->section);
++	a_vma = elf2flt_bfd_section_vma((*(ra->sym_ptr_ptr))->section);
++	b_vma = elf2flt_bfd_section_vma((*(rb->sym_ptr_ptr))->section);
+ 	va = (*(ra->sym_ptr_ptr))->value + a_vma + ra->addend;
+ 	vb = (*(rb->sym_ptr_ptr))->value + b_vma + rb->addend;
+ 	return va - vb;
+@@ -403,7 +412,7 @@ output_relocs (
+   }
+ 
+   for (a = abs_bfd->sections; (a != (asection *) NULL); a = a->next) {
+-  	section_vma = bfd_section_vma(abs_bfd, a);
++	section_vma = elf2flt_bfd_section_vma(a);
+ 
+ 	if (verbose)
+ 		printf("SECTION: %s [%p]: flags=0x%x vma=0x%"PRIx32"\n",
+@@ -442,7 +451,7 @@ output_relocs (
+ 	  continue;
+ 	if (verbose)
+ 	  printf(" RELOCS: %s [%p]: flags=0x%x vma=0x%"BFD_VMA_FMT"x\n",
+-			r->name, r, r->flags, bfd_section_vma(abs_bfd, r));
++			r->name, r, r->flags, elf2flt_bfd_section_vma(r));
+   	if ((r->flags & SEC_RELOC) == 0)
+   	  continue;
+ 	relsize = bfd_get_reloc_upper_bound(rel_bfd, r);
+@@ -694,7 +703,7 @@ output_relocs (
+ 				case R_BFIN_RIMM16:
+ 				case R_BFIN_LUIMM16:
+ 				case R_BFIN_HUIMM16:
+-				    sym_vma = bfd_section_vma(abs_bfd, sym_section);
++				    sym_vma = elf2flt_bfd_section_vma(sym_section);
+ 				    sym_addr += sym_vma + q->addend;
+ 
+ 				    if (weak_und_symbol(sym_section->name, (*(q->sym_ptr_ptr))))
+@@ -727,7 +736,7 @@ output_relocs (
+ 				    break;
+ 
+ 				case R_BFIN_BYTE4_DATA:
+-				    sym_vma = bfd_section_vma(abs_bfd, sym_section);
++				    sym_vma = elf2flt_bfd_section_vma(sym_section);
+ 				    sym_addr += sym_vma + q->addend;
+ 
+ 				    if (weak_und_symbol (sym_section->name, (*(q->sym_ptr_ptr))))
+@@ -885,7 +894,7 @@ output_relocs (
+ #if defined(TARGET_m68k)
+ 				case R_68K_32:
+ 					relocation_needed = 1;
+-					sym_vma = bfd_section_vma(abs_bfd, sym_section);
++					sym_vma = elf2flt_bfd_section_vma(sym_section);
+ 					sym_addr += sym_vma + q->addend;
+ 					break;
+ 				case R_68K_PC16:
+@@ -910,7 +919,7 @@ output_relocs (
+ 							q->address, sym_addr,
+ 							(*p)->howto->rightshift,
+ 							*(uint32_t *)r_mem);
+-					sym_vma = bfd_section_vma(abs_bfd, sym_section);
++					sym_vma = elf2flt_bfd_section_vma(sym_section);
+ 					sym_addr += sym_vma + q->addend;
+ 					break;
+ 				case R_ARM_GOT32:
+@@ -938,7 +947,7 @@ output_relocs (
+ #ifdef TARGET_v850
+ 				case R_V850_ABS32:
+ 					relocation_needed = 1;
+-					sym_vma = bfd_section_vma(abs_bfd, sym_section);
++					sym_vma = elf2flt_bfd_section_vma(sym_section);
+ 					sym_addr += sym_vma + q->addend;
+ 					break;
+ 				case R_V850_ZDA_16_16_OFFSET:
+@@ -960,7 +969,7 @@ output_relocs (
+ 					sym_addr = (*(q->sym_ptr_ptr))->value;
+ 					q->address -= 1;
+ 					r_mem -= 1; /* tracks q->address */
+-					sym_vma = bfd_section_vma(abs_bfd, sym_section);
++					sym_vma = elf2flt_bfd_section_vma(sym_section);
+ 					sym_addr += sym_vma + q->addend;
+ 					sym_addr |= (*(unsigned char *)r_mem<<24);
+ 					break;
+@@ -973,7 +982,7 @@ output_relocs (
+ 					/* Absolute symbol done not relocation */
+ 					relocation_needed = !bfd_is_abs_section(sym_section);
+ 					sym_addr = (*(q->sym_ptr_ptr))->value;
+-					sym_vma = bfd_section_vma(abs_bfd, sym_section);
++					sym_vma = elf2flt_bfd_section_vma(sym_section);
+ 					sym_addr += sym_vma + q->addend;
+ 					break;
+ 				case R_H8_DIR32:
+@@ -986,7 +995,7 @@ output_relocs (
+ 					}
+ 					relocation_needed = 1;
+ 					sym_addr = (*(q->sym_ptr_ptr))->value;
+-					sym_vma = bfd_section_vma(abs_bfd, sym_section);
++					sym_vma = elf2flt_bfd_section_vma(sym_section);
+ 					sym_addr += sym_vma + q->addend;
+ 					break;
+ 				case R_H8_PCREL16:
+@@ -1012,7 +1021,7 @@ output_relocs (
+ #ifdef TARGET_microblaze
+ 				case R_MICROBLAZE_64:
+ 					/* work out the relocation */
+-					sym_vma = bfd_section_vma(abs_bfd, sym_section);
++					sym_vma = elf2flt_bfd_section_vma(sym_section);
+ 					sym_addr += sym_vma + q->addend;
+ 					/* Write relocated pointer back */
+ 					r_mem[2] = (sym_addr >> 24) & 0xff;
+@@ -1026,7 +1035,7 @@ output_relocs (
+ 					pflags = 0x80000000;
+ 					break;
+ 				case R_MICROBLAZE_32:
+-					sym_vma = bfd_section_vma(abs_bfd, sym_section);
++					sym_vma = elf2flt_bfd_section_vma(sym_section);
+ 					sym_addr += sym_vma + q->addend;
+ 					relocation_needed = 1;
+ 					break;
+@@ -1058,7 +1067,7 @@ output_relocs (
+ 				case R_NIOS2_BFD_RELOC_32:
+ 					relocation_needed = 1;
+ 					pflags = (FLAT_NIOS2_R_32 << 28);
+-					sym_vma = bfd_section_vma(abs_bfd, sym_section);
++					sym_vma = elf2flt_bfd_section_vma(sym_section);
+ 					sym_addr += sym_vma + q->addend;
+ 					/* modify target, in target order */
+ 					*(unsigned long *)r_mem = htoniosl(sym_addr);
+@@ -1068,7 +1077,7 @@ output_relocs (
+ 					unsigned long exist_val;
+ 					relocation_needed = 1;
+ 					pflags = (FLAT_NIOS2_R_CALL26 << 28);
+-					sym_vma = bfd_section_vma(abs_bfd, sym_section);
++					sym_vma = elf2flt_bfd_section_vma(sym_section);
+ 					sym_addr += sym_vma + q->addend;
+ 					
+ 					/* modify target, in target order */
+@@ -1099,7 +1108,7 @@ output_relocs (
+ 								? FLAT_NIOS2_R_HIADJ_LO : FLAT_NIOS2_R_HI_LO;
+ 							pflags <<= 28;
+ 						
+-							sym_vma = bfd_section_vma(abs_bfd, sym_section);
++							sym_vma = elf2flt_bfd_section_vma(sym_section);
+ 							sym_addr += sym_vma + q->addend;
+ 
+ 							/* modify high 16 bits, in target order */
+@@ -1132,7 +1141,7 @@ output_relocs (
+ 						goto NIOS2_RELOC_ERR;
+ 					}
+ 					/* _gp holds a absolute value, otherwise the ld cannot generate correct code */
+-					sym_vma = bfd_section_vma(abs_bfd, sym_section);
++					sym_vma = elf2flt_bfd_section_vma(sym_section);
+ 					//printf("sym=%x, %d, _gp=%x, %d\n", sym_addr+sym_vma, sym_addr+sym_vma, gp, gp);
+ 					sym_addr += sym_vma + q->addend;
+ 					sym_addr -= gp;
+@@ -1213,7 +1222,7 @@ NIOS2_RELOC_ERR:
+ 				case R_SPARC_32:
+ 				case R_SPARC_UA32:
+ 					relocation_needed = 1;
+-					sym_vma = bfd_section_vma(abs_bfd, sym_section);
++					sym_vma = elf2flt_bfd_section_vma(sym_section);
+ 					sym_addr += sym_vma + q->addend;
+ 					break;
+ 				case R_SPARC_PC22:
+@@ -1232,7 +1241,7 @@ NIOS2_RELOC_ERR:
+ 				case R_SPARC_HI22:
+ 					relocation_needed = 1;
+ 					pflags = 0x80000000;
+-					sym_vma = bfd_section_vma(abs_bfd, sym_section);
++					sym_vma = elf2flt_bfd_section_vma(sym_section);
+ 					sym_addr += sym_vma + q->addend;
+ 					sym_addr |= (
+ 						htonl(*(uint32_t *)r_mem)
+@@ -1242,7 +1251,7 @@ NIOS2_RELOC_ERR:
+ 				case R_SPARC_LO10:
+ 					relocation_needed = 1;
+ 					pflags = 0x40000000;
+-					sym_vma = bfd_section_vma(abs_bfd, sym_section);
++					sym_vma = elf2flt_bfd_section_vma(sym_section);
+ 					sym_addr += sym_vma + q->addend;
+ 					sym_addr &= 0x000003ff;
+ 					sym_addr |= (
+@@ -1256,7 +1265,7 @@ NIOS2_RELOC_ERR:
+ #ifdef TARGET_sh
+ 				case R_SH_DIR32:
+ 					relocation_needed = 1;
+-					sym_vma = bfd_section_vma(abs_bfd, sym_section);
++					sym_vma = elf2flt_bfd_section_vma(sym_section);
+ 					sym_addr += sym_vma + q->addend;
+ 					break;
+ 				case R_SH_REL32:
+@@ -1288,7 +1297,7 @@ NIOS2_RELOC_ERR:
+ 				case R_E1_CONST31:
+ 						relocation_needed = 1;
+ 						DBG_E1("Handling Reloc <CONST31>\n");
+-						sec_vma = bfd_section_vma(abs_bfd, sym_section);
++						sec_vma = elf2flt_bfd_section_vma(sym_section);
+ 						DBG_E1("sec_vma : [0x%x], sym_addr : [0x%x], q->address : [0x%x]\n",
+ 										sec_vma, sym_addr, q->address);
+ 						sym_addr = sec_vma + sym_addr;
+@@ -1303,7 +1312,7 @@ NIOS2_RELOC_ERR:
+ 						relocation_needed = 0;
+ 						DBG_E1("Handling Reloc <CONST31_PCREL>\n");
+ 						DBG_E1("DONT RELOCATE AT LOADING\n");
+-						sec_vma = bfd_section_vma(abs_bfd, sym_section);
++						sec_vma = elf2flt_bfd_section_vma(sym_section);
+ 						DBG_E1("sec_vma : [0x%x], sym_addr : [0x%x], q->address : [0x%x]\n",
+ 										sec_vma, sym_addr, q->address);
+ 						sym_addr =  sec_vma + sym_addr;
+@@ -1330,7 +1339,7 @@ NIOS2_RELOC_ERR:
+ 						relocation_needed = 0;
+ 						DBG_E1("Handling Reloc <DIS29W_PCREL>\n");
+ 						DBG_E1("DONT RELOCATE AT LOADING\n");
+-						sec_vma = bfd_section_vma(abs_bfd, sym_section);
++						sec_vma = elf2flt_bfd_section_vma(sym_section);
+ 						DBG_E1("sec_vma : [0x%x], sym_addr : [0x%x], q->address : [0x%x]\n",
+ 										sec_vma, sym_addr, q->address);
+ 						sym_addr =  sec_vma + sym_addr;
+@@ -1363,7 +1372,7 @@ NIOS2_RELOC_ERR:
+ 						DBG_E1("Handling Reloc <DIS29B>\n");
+ DIS29_RELOCATION:
+ 						relocation_needed = 1;
+-						sec_vma = bfd_section_vma(abs_bfd, sym_section);
++						sec_vma = elf2flt_bfd_section_vma(sym_section);
+ 						DBG_E1("sec_vma : [0x%x], sym_addr : [0x%08x]\n",
+ 										sec_vma, sym_addr);
+ 						sym_addr =  sec_vma + sym_addr;
+@@ -1380,7 +1389,7 @@ DIS29_RELOCATION:
+ 						relocation_needed = 0;
+ 						DBG_E1("Handling Reloc <IMM32_PCREL>\n");
+ 						DBG_E1("DONT RELOCATE AT LOADING\n");
+-						sec_vma = bfd_section_vma(abs_bfd, sym_section);
++						sec_vma = elf2flt_bfd_section_vma(sym_section);
+ 						DBG_E1("sec_vma : [0x%x], sym_addr : [0x%x]\n",
+ 										sec_vma, sym_addr);
+ 						sym_addr =  sec_vma + sym_addr;
+@@ -1406,7 +1415,7 @@ DIS29_RELOCATION:
+ 				case R_E1_IMM32:
+ 						relocation_needed = 1;
+ 						DBG_E1("Handling Reloc <IMM32>\n");
+-						sec_vma = bfd_section_vma(abs_bfd, sym_section);
++						sec_vma = elf2flt_bfd_section_vma(sym_section);
+ 						DBG_E1("sec_vma : [0x%x], sym_addr : [0x%x]\n",
+ 										sec_vma, sym_addr);
+ 						sym_addr =  sec_vma + sym_addr;
+@@ -1422,7 +1431,7 @@ DIS29_RELOCATION:
+ 				case R_E1_WORD:
+ 						relocation_needed = 1;
+ 						DBG_E1("Handling Reloc <WORD>\n");
+-						sec_vma = bfd_section_vma(abs_bfd, sym_section);
++						sec_vma = elf2flt_bfd_section_vma(sym_section);
+ 						DBG_E1("sec_vma : [0x%x], sym_addr : [0x%x]\n",
+ 										sec_vma, sym_addr);
+ 						sym_addr =  sec_vma + sym_addr;
+@@ -1449,7 +1458,7 @@ DIS29_RELOCATION:
+ 			}
+ 
+ 			sprintf(&addstr[0], "+0x%lx", sym_addr - (*(q->sym_ptr_ptr))->value -
+-					 bfd_section_vma(abs_bfd, sym_section));
++					 elf2flt_bfd_section_vma(sym_section));
+ 
+ 
+ 			/*
+@@ -1887,8 +1896,8 @@ int main(int argc, char *argv[])
+     } else
+       continue;
+ 
+-    sec_size = bfd_section_size(abs_bfd, s);
+-    sec_vma  = bfd_section_vma(abs_bfd, s);
++    sec_size = elf2flt_bfd_section_size(s);
++    sec_vma  = elf2flt_bfd_section_vma(s);
+ 
+     if (sec_vma < *vma) {
+       if (*len > 0)
+@@ -1913,7 +1922,7 @@ int main(int argc, char *argv[])
+     if (s->flags & SEC_CODE) 
+       if (!bfd_get_section_contents(abs_bfd, s,
+ 				   text + (s->vma - text_vma), 0,
+-				   bfd_section_size(abs_bfd, s)))
++				   elf2flt_bfd_section_size(s)))
+       {
+ 	fatal("read error section %s", s->name);
+       }
+@@ -1939,7 +1948,7 @@ int main(int argc, char *argv[])
+     if (s->flags & SEC_DATA) 
+       if (!bfd_get_section_contents(abs_bfd, s,
+ 				   data + (s->vma - data_vma), 0,
+-				   bfd_section_size(abs_bfd, s)))
++				   elf2flt_bfd_section_size(s)))
+       {
+ 	fatal("read error section %s", s->name);
+       }
+-- 
+2.25.4
+

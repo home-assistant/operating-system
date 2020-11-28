@@ -1,0 +1,42 @@
+#!/bin/sh
+
+DAEMON="/usr/libexec/iwd"
+PIDFILE="/var/run/iwd.pid"
+
+IWD_ARGS=""
+
+[ -r "/etc/default/iwd" ] && . "/etc/default/iwd"
+
+start() {
+	printf "Starting iwd:"
+	mkdir -p /tmp/iwd/hotspot
+	start-stop-daemon -b -m -S -q -p "$PIDFILE" -x "$DAEMON" \
+		-- $IWD_ARGS
+	status=$?
+	if [ "$status" -eq 0 ]; then
+		echo "OK"
+	else
+		echo "FAIL"
+	fi
+	return "$status"
+}
+
+stop() {
+	printf "Stopping iwd:"
+	start-stop-daemon -K -q -p "$PIDFILE"
+	status=$?
+	if [ "$status" -eq 0 ]; then
+		echo "OK"
+	else
+		echo "FAIL"
+	fi
+	return "$status"
+}
+
+case "$1" in
+	start|stop)
+		"$1";;
+	*)
+		echo "Usage: $0 {start|stop}"
+		exit 1
+esac

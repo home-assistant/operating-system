@@ -1,6 +1,6 @@
 # retrieved by scancpan from http://cpan.metacpan.org/
-md5    f2a0eee9f04c93753dd56437175e5bda File-ShareDir-1.116.tar.gz
-sha256 59d90bfdf98c4656ff4173e62954ea8cf0de66565e35d108ecd7050596cb8328 File-ShareDir-1.116.tar.gz
+md5  0084f730f4e3d4d89703d92b3ea82f54  File-ShareDir-1.118.tar.gz
+sha256  3bb2a20ba35df958dc0a4f2306fc05d903d8b8c4de3c8beefce17739d281c958  File-ShareDir-1.118.tar.gz
 
 # computed by scancpan
-sha256 db57983ce0a3bce54900b5a3a3a69e9a593e7b07d0f58dd9f87ac9b016ff4a6b LICENSE
+sha256  db57983ce0a3bce54900b5a3a3a69e9a593e7b07d0f58dd9f87ac9b016ff4a6b  LICENSE

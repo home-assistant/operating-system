@@ -1,0 +1,67 @@
+From 32027e199368dad9508965aae8cd8de5b6ab5231 Mon Sep 17 00:00:00 2001
+From: Guy Harris <guy@alum.mit.edu>
+Date: Sat, 18 Apr 2020 14:04:59 -0700
+Subject: [PATCH] PPP: When un-escaping, don't allocate a too-large buffer.
+
+The buffer should be big enough to hold the captured data, but it
+doesn't need to be big enough to hold the entire on-the-network packet,
+if we haven't captured all of it.
+
+(backported from commit e4add0b010ed6f2180dcb05a13026242ed935334)
+
+[Retrieved from:
+https://github.com/the-tcpdump-group/tcpdump/commit/32027e199368dad9508965aae8cd8de5b6ab5231]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ print-ppp.c | 18 ++++++++++++++----
+ 1 file changed, 14 insertions(+), 4 deletions(-)
+
+diff --git a/print-ppp.c b/print-ppp.c
+index 891761728..33fb03412 100644
+--- a/print-ppp.c
++++ b/print-ppp.c
+@@ -1367,19 +1367,29 @@ print_bacp_config_options(netdissect_options *ndo,
+ 	return 0;
+ }
+ 
++/*
++ * Un-escape RFC 1662 PPP in HDLC-like framing, with octet escapes.
++ * The length argument is the on-the-wire length, not the captured
++ * length; we can only un-escape the captured part.
++ */
+ static void
+ ppp_hdlc(netdissect_options *ndo,
+          const u_char *p, int length)
+ {
++	u_int caplen = ndo->ndo_snapend - p;
+ 	u_char *b, *t, c;
+ 	const u_char *s;
+-	int i, proto;
++	u_int i;
++	int proto;
+ 	const void *se;
+ 
++	if (caplen == 0)
++		return;
++
+         if (length <= 0)
+                 return;
+ 
+-	b = (u_char *)malloc(length);
++	b = (u_char *)malloc(caplen);
+ 	if (b == NULL)
+ 		return;
+ 
+@@ -1388,10 +1398,10 @@ ppp_hdlc(netdissect_options *ndo,
+ 	 * Do this so that we dont overwrite the original packet
+ 	 * contents.
+ 	 */
+-	for (s = p, t = b, i = length; i > 0 && ND_TTEST(*s); i--) {
++	for (s = p, t = b, i = caplen; i != 0; i--) {
+ 		c = *s++;
+ 		if (c == 0x7d) {
+-			if (i <= 1 || !ND_TTEST(*s))
++			if (i <= 1)
+ 				break;
+ 			i--;
+ 			c = *s++ ^ 0x20;

@@ -1,5 +1,6 @@
 config BR2_PACKAGE_VTE
 	bool "vte"
+	depends on BR2_PACKAGE_HOST_RUSTC_ARCH_SUPPORTS # libgtk3 -> host-libgtk3 -> host-librsvg
 	depends on BR2_USE_WCHAR
 	depends on BR2_TOOLCHAIN_HAS_THREADS
 	depends on BR2_USE_MMU
@@ -22,6 +23,7 @@ config BR2_PACKAGE_VTE
 	  http://github.com/GNOME/vte
 
 comment "vte needs a toolchain w/ wchar, threads, C++, gcc >= 4.8"
+	depends on BR2_PACKAGE_HOST_RUSTC_ARCH_SUPPORTS
 	depends on BR2_USE_MMU
 	depends on BR2_TOOLCHAIN_HAS_SYNC_4
 	depends on !BR2_USE_WCHAR || !BR2_INSTALL_LIBSTDCPP || \
@@ -29,6 +31,7 @@ comment "vte needs a toolchain w/ wchar, threads, C++, gcc >= 4.8"
 		!BR2_TOOLCHAIN_GCC_AT_LEAST_4_8
 
 comment "vte needs an OpenGL or an OpenGL-EGL/wayland backend"
+	depends on BR2_PACKAGE_HOST_RUSTC_ARCH_SUPPORTS
 	depends on BR2_USE_MMU
 	depends on BR2_TOOLCHAIN_HAS_SYNC_4
 	depends on !BR2_PACKAGE_HAS_LIBEGL_WAYLAND && \

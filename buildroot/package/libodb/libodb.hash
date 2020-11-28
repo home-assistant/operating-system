@@ -1,0 +1,6 @@
+# From https://www.codesynthesis.com/projects/libcutl/
+sha1	42bd2a8023e338e004711e755eb30bd122b844a6	libodb-2.4.0.tar.bz2
+
+# Locally Computed
+sha256	66a1bb4e8bb6ef60cc79334f8028c4d4de98d87f2ff6f8123b4cfb7751ce0007	libodb-2.4.0.tar.bz2
+sha256	841105a470fc283851c63941510ffd403c726d1910b688f7df95914ab8b1b5a3	LICENSE

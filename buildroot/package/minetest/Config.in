@@ -5,11 +5,10 @@ config BR2_PACKAGE_MINETEST
 	depends on BR2_TOOLCHAIN_HAS_THREADS
 	depends on BR2_PACKAGE_XORG7 # irrlicht
 	depends on BR2_PACKAGE_HAS_LIBGL # irrlicht
-	depends on BR2_PACKAGE_LUAJIT_ARCH_SUPPORTS
+	depends on BR2_PACKAGE_LUAJIT
 	select BR2_PACKAGE_IRRLICHT
 	select BR2_PACKAGE_GMP
 	select BR2_PACKAGE_JSONCPP
-	select BR2_PACKAGE_LUAJIT
 	select BR2_PACKAGE_SQLITE
 	select BR2_PACKAGE_ZLIB
 	# At least one option must be enabled
@@ -59,7 +58,6 @@ comment "minetest needs a toolchain w/ C++, gcc >= 4.9, threads"
 		|| !BR2_TOOLCHAIN_HAS_THREADS
 
 comment "minetest needs X11 and an OpenGL provider"
-	depends on BR2_PACKAGE_LUAJIT_ARCH_SUPPORTS
 	depends on (BR2_INSTALL_LIBSTDCPP \
 		&& BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 \
 		&& BR2_TOOLCHAIN_HAS_THREADS)

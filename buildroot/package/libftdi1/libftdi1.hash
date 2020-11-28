@@ -1,6 +1,6 @@
 # Locally computed after checking the signature
-# https://www.intra2net.com/en/developer/libftdi/download/libftdi1-1.4.tar.bz2.sig
-sha256  ec36fb49080f834690c24008328a5ef42d3cf584ef4060f3a35aa4681cb31b74  libftdi1-1.4.tar.bz2
+# https://www.intra2net.com/en/developer/libftdi/download/libftdi1-1.5.tar.bz2.sig
+sha256  7c7091e9c86196148bd41177b4590dccb1510bfe6cea5bf7407ff194482eb049  libftdi1-1.5.tar.bz2
 
 # Hash for license files:
 sha256  524f46428bf72bb8c6acfeca4909551fd2e0bdbb5305406d38382f4056095c56  LICENSE

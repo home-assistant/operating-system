@@ -1,0 +1,29 @@
+From 6f994166d8571961a08479736ae86c5baa2bb47f Mon Sep 17 00:00:00 2001
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date: Fri, 7 Aug 2020 12:07:45 +0200
+Subject: [PATCH] Use "extern" qualifier to fix gcc 10.x build
+
+Patch from
+https://src.fedoraproject.org/rpms/tftp/raw/master/f/tftp-hpa-5.2-gcc10.patch.
+
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ tftp/tftp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tftp/tftp.c b/tftp/tftp.c
+index d15da22..d067f96 100644
+--- a/tftp/tftp.c
++++ b/tftp/tftp.c
+@@ -48,7 +48,7 @@ extern int maxtimeout;
+ #define PKTSIZE    SEGSIZE+4
+ char ackbuf[PKTSIZE];
+ int timeout;
+-sigjmp_buf toplevel;
++extern sigjmp_buf toplevel;
+ sigjmp_buf timeoutbuf;
+ 
+ static void nak(int, const char *);
+-- 
+2.26.2
+

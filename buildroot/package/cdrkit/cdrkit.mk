@@ -18,5 +18,14 @@ else
 CDRKIT_CONF_OPTS += -DBITFIELDS_HTOL=0
 endif
 
+ifeq ($(BR2_PACKAGE_FILE),y)
+CDRKIT_DEPENDENCIES += host-pkgconf file
+CDRKIT_CONF_OPTS += \
+	-DUSE_MAGIC=ON \
+	-DEXTRA_LIBS="`$(PKG_CONFIG_HOST_BINARY) --libs libmagic`"
+else
+CDRKIT_CONF_OPTS += -DUSE_MAGIC=OFF
+endif
+
 $(eval $(cmake-package))
 $(eval $(host-cmake-package))

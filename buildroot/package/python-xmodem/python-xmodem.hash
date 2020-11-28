@@ -1,0 +1,5 @@
+# md5, sha256 from https://pypi.org/pypi/xmodem/json
+md5  f876cb35caf276b61990377710a3b4c4  xmodem-0.4.6.tar.gz
+sha256  089737298f5738eabc43f2519efdc80b402693768f16383f7013b9e6f8f279d7  xmodem-0.4.6.tar.gz
+# locally calculated
+sha256  5ddb38acab95bb77e1e92e22830e358082d879d2dd59ba05577c47791edaa78e  PKG-INFO

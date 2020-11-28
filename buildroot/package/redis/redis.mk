@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-REDIS_VERSION = 5.0.9
+REDIS_VERSION = 6.0.9
 REDIS_SITE = http://download.redis.io/releases
 REDIS_LICENSE = BSD-3-Clause (core); MIT and BSD family licenses (Bundled components)
 REDIS_LICENSE_FILES = COPYING
@@ -29,6 +29,20 @@ endif
 # instead.
 REDIS_BUILDOPTS = $(TARGET_CONFIGURE_OPTS) \
 	PREFIX=$(TARGET_DIR)/usr MALLOC=libc
+
+ifeq ($(BR2_PACKAGE_SYSTEMD),y)
+REDIS_DEPENDENCIES += systemd
+REDIS_BUILDOPTS += USE_SYSTEMD=yes
+else
+REDIS_BUILDOPTS += USE_SYSTEMD=no
+endif
+
+ifeq ($(BR2_PACKAGE_LIBOPENSSL),y)
+REDIS_DEPENDENCIES += libopenssl
+REDIS_BUILDOPTS += BUILD_TLS=yes
+else
+REDIS_BUILDOPTS += BUILD_TLS=no
+endif
 
 define REDIS_BUILD_CMDS
 	$(TARGET_MAKE_ENV) $(MAKE) $(REDIS_BUILDOPTS) -C $(@D)

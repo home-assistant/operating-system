@@ -9,3 +9,26 @@ config BR2_PACKAGE_OPENSSH
 	  friends.
 
 	  http://www.openssh.com/
+
+if BR2_PACKAGE_OPENSSH
+
+config BR2_PACKAGE_OPENSSH_CLIENT
+	bool "client"
+	default y
+	help
+	  Client programs: ssh, scp, sftp, ssh-agent, ssh-add,
+	  ssh-copy-id.
+
+config BR2_PACKAGE_OPENSSH_SERVER
+	bool "server"
+	default y
+	help
+	  Server programs: sshd, sftp-server
+
+config BR2_PACKAGE_OPENSSH_KEY_UTILS
+	bool "key utilities"
+	default y
+	help
+	  Key utilities: ssh-keygen, ssh-keyscan.
+
+endif

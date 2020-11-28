@@ -1,0 +1,23 @@
+#!/bin/sh
+#
+
+load_drivers()
+{
+	echo "Loading needed modules..."
+	for file in $(echo "dwmac_generic dwmac-meson8b meson_dw_hdmi meson_gxbb_wdt"); do
+		modprobe ${file}
+	done
+}
+
+case "$1" in
+	start)
+		load_drivers
+		;;
+	stop)
+		;;
+	restart|reload)
+		;;
+	*)
+		echo "Usage: $0 {start|stop|restart}"
+		exit 1
+esac

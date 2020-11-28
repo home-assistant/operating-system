@@ -1,0 +1,5 @@
+# md5, sha256 from https://pypi.org/pypi/m2crypto/json
+md5  b8b34c5b83892096a8676b6f2e8f4e7e  M2Crypto-0.36.0.tar.gz
+sha256  1542c18e3ee5c01db5031d0b594677536963e3f54ecdf5315aeecb3a595b4dc1  M2Crypto-0.36.0.tar.gz
+# Locally computed sha256 checksums
+sha256  4eca478396f4b2b020729a111fce3f096456d74500bfd8f2b0388c3c69f997c0  LICENCE

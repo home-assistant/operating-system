@@ -106,6 +106,7 @@ config BR2_UCLIBC_TARGET_ARCH
 	default "xtensa"   if BR2_xtensa
 	default "i386"	   if BR2_i386
 	default "x86_64"   if BR2_x86_64
+	default "riscv64"  if BR2_RISCV_64
 
 config BR2_UCLIBC_MIPS_ABI
 	string

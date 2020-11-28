@@ -1,0 +1,9 @@
+config BR2_PACKAGE_PYTHON_BOTO3
+	bool "python-boto3"
+	select BR2_PACKAGE_PYTHON_BOTOCORE # runtime
+	select BR2_PACKAGE_PYTHON_JMESPATH # runtime
+	select BR2_PACKAGE_PYTHON_S3TRANSFER # runtime
+	help
+	  The AWS SDK for Python.
+
+	  https://github.com/boto/boto3

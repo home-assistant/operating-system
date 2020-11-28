@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-SPICE_VERSION = 0.14.2
+SPICE_VERSION = 0.14.3
 SPICE_SOURCE = spice-$(SPICE_VERSION).tar.bz2
 SPICE_SITE = http://www.spice-space.org/download/releases/spice-server
 SPICE_LICENSE = LGPL-2.1+
@@ -17,8 +17,6 @@ SPICE_DEPENDENCIES = \
 	openssl \
 	pixman \
 	spice-protocol
-# We're patching subprojects/spice-common/configure.ac
-SPICE_AUTORECONF = YES
 
 # We disable everything for now, because the dependency tree can become
 # quite deep if we try to enable some features, and I have not tested that.

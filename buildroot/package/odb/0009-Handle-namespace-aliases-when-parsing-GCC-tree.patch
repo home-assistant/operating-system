@@ -1,0 +1,30 @@
+From 2d37e44753c1e67de4658b6fdf95760432c74ead Mon Sep 17 00:00:00 2001
+From: Boris Kolpackov <boris@codesynthesis.com>
+Date: Fri, 5 Oct 2018 07:20:18 +0200
+Subject: [PATCH] Handle namespace aliases when parsing GCC tree
+
+[Upstream: 3a1788234bfaa96ee093b68e9ba02cf7d5bdffe6]
+Signed-off-by: Kamel Bouhara <kamel.bouhara@bootlin.com>
+---
+ odb/parser.cxx | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/odb/parser.cxx b/odb/parser.cxx
+index 30e45af..03bcb01 100644
+--- a/odb/parser.cxx
++++ b/odb/parser.cxx
+@@ -906,6 +906,11 @@ collect (tree ns)
+       continue;
+ #endif
+ 
++    // Ignore namespace aliases.
++    //
++    if (DECL_NAMESPACE_ALIAS (decl))
++      continue;
++
+     if (!DECL_IS_BUILTIN (decl) || DECL_NAMESPACE_STD_P (decl))
+     {
+       if (trace)
+-- 
+2.25.0
+

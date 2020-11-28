@@ -47,6 +47,11 @@ define VSFTPD_USERS
 	ftp -1 ftp -1 * /home/ftp - - Anonymous FTP User
 endef
 
+define VSFTPD_INSTALL_INIT_SYSTEMD
+	$(INSTALL) -D -m 0644 package/vsftpd/vsftpd.service \
+		$(TARGET_DIR)/usr/lib/systemd/system/vsftpd.service
+endef
+
 define VSFTPD_INSTALL_INIT_SYSV
 	$(INSTALL) -D -m 755 package/vsftpd/S70vsftpd $(TARGET_DIR)/etc/init.d/S70vsftpd
 endef

@@ -1,0 +1,19 @@
+# Map the GBE0 and GBE1 names from the SMARC standard to the network
+# interfaces. This depends on the variant of the board.
+
+# get the variant compatible string
+PROGRAM=="/bin/grep '^kontron,sl28-var[1-4]$' /sys/firmware/devicetree/base/compatible", ENV{sl28_compatible}="%c"
+
+# variant 1
+ACTION=="add", SUBSYSTEM=="net", KERNELS=="0000:00:00.1", DRIVERS=="fsl_enetc", ENV{sl28_compatible}=="kontron,sl28-var1", NAME="gbe0"
+
+# variant 2
+ACTION=="add", SUBSYSTEM=="net", KERNELS=="0000:00:00.5", DRIVERS=="mscc_felix", ATTR{phys_port_name}=="p0", ENV{sl28_compatible}=="kontron,sl28-var2", NAME="gbe0"
+ACTION=="add", SUBSYSTEM=="net", KERNELS=="0000:00:00.5", DRIVERS=="mscc_felix", ATTR{phys_port_name}=="p1", ENV{sl28_compatible}=="kontron,sl28-var2", NAME="gbe1"
+
+# variant 3
+ACTION=="add", SUBSYSTEM=="net", KERNELS=="0000:00:00.0", DRIVERS=="fsl_enetc", ENV{sl28_compatible}=="kontron,sl28-var3", NAME="gbe0"
+
+# variant 4
+ACTION=="add", SUBSYSTEM=="net", KERNELS=="0000:00:00.0", DRIVERS=="fsl_enetc", ENV{sl28_compatible}=="kontron,sl28-var4", NAME="gbe0"
+ACTION=="add", SUBSYSTEM=="net", KERNELS=="0000:00:00.1", DRIVERS=="fsl_enetc", ENV{sl28_compatible}=="kontron,sl28-var4", NAME="gbe1"

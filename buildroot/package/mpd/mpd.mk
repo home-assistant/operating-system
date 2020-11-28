@@ -5,7 +5,7 @@
 ################################################################################
 
 MPD_VERSION_MAJOR = 0.21
-MPD_VERSION = $(MPD_VERSION_MAJOR).19
+MPD_VERSION = $(MPD_VERSION_MAJOR).25
 MPD_SOURCE = mpd-$(MPD_VERSION).tar.xz
 MPD_SITE = http://www.musicpd.org/download/mpd/$(MPD_VERSION_MAJOR)
 MPD_DEPENDENCIES = host-pkgconf boost
@@ -97,10 +97,24 @@ else
 MPD_CONF_OPTS += -Dflac=disabled
 endif
 
+ifeq ($(BR2_PACKAGE_MPD_FLUIDSYNTH),y)
+MPD_DEPENDENCIES += fluidsynth
+MPD_CONF_OPTS += -Dfluidsynth=enabled
+else
+MPD_CONF_OPTS += -Dfluidsynth=disabled
+endif
+
 ifeq ($(BR2_PACKAGE_MPD_HTTPD_OUTPUT),y)
 MPD_CONF_OPTS += -Dhttpd=true
 else
 MPD_CONF_OPTS += -Dhttpd=false
+endif
+
+ifeq ($(BR2_PACKAGE_MPD_ID3TAG),y)
+MPD_DEPENDENCIES += libid3tag
+MPD_CONF_OPTS += -Did3tag=enabled
+else
+MPD_CONF_OPTS += -Did3tag=disabled
 endif
 
 ifeq ($(BR2_PACKAGE_MPD_JACK2),y)
@@ -173,6 +187,13 @@ else
 MPD_CONF_OPTS += -Dmad=disabled
 endif
 
+ifeq ($(BR2_PACKAGE_MPD_MODPLUG),y)
+MPD_DEPENDENCIES += libmodplug
+MPD_CONF_OPTS += -Dmodplug=enabled
+else
+MPD_CONF_OPTS += -Dmodplug=disabled
+endif
+
 ifeq ($(BR2_PACKAGE_MPD_MPG123),y)
 MPD_DEPENDENCIES += libid3tag mpg123
 MPD_CONF_OPTS += -Dmpg123=enabled
@@ -191,6 +212,13 @@ ifeq ($(BR2_PACKAGE_MPD_NEIGHBOR_DISCOVERY_SUPPORT),y)
 MPD_CONF_OPTS += -Dneighbor=true
 else
 MPD_CONF_OPTS += -Dneighbor=false
+endif
+
+ifeq ($(BR2_PACKAGE_MPD_OPENAL),y)
+MPD_DEPENDENCIES += openal
+MPD_CONF_OPTS += -Dopenal=enabled
+else
+MPD_CONF_OPTS += -Dopenal=disabled
 endif
 
 ifeq ($(BR2_PACKAGE_MPD_OPUS),y)
@@ -225,6 +253,13 @@ MPD_DEPENDENCIES += libshout
 MPD_CONF_OPTS += -Dshout=enabled
 else
 MPD_CONF_OPTS += -Dshout=disabled
+endif
+
+ifeq ($(BR2_PACKAGE_MPD_SIDPLAY),y)
+MPD_DEPENDENCIES += libsidplay2
+MPD_CONF_OPTS += -Dsidplay=enabled
+else
+MPD_CONF_OPTS += -Dsidplay=disabled
 endif
 
 ifeq ($(BR2_PACKAGE_MPD_SOUNDCLOUD),y)
@@ -287,6 +322,13 @@ MPD_DEPENDENCIES += wavpack
 MPD_CONF_OPTS += -Dwavpack=enabled
 else
 MPD_CONF_OPTS += -Dwavpack=disabled
+endif
+
+ifeq ($(BR2_PACKAGE_MPD_ZZIP),y)
+MPD_DEPENDENCIES += zziplib
+MPD_CONF_OPTS += -Dzzip=enabled
+else
+MPD_CONF_OPTS += -Dzzip=disabled
 endif
 
 define MPD_INSTALL_EXTRA_FILES

@@ -1,6 +1,6 @@
 # retrieved by scancpan from http://cpan.metacpan.org/
-md5    eb7505e5f626913350df9dd4a03d54a8 HTML-Parser-3.72.tar.gz
-sha256 ec28c7e1d9e67c45eca197077f7cdc41ead1bb4c538c7f02a3296a4bb92f608b HTML-Parser-3.72.tar.gz
+md5  65bf65aa8b34b35443e094010f991406  HTML-Parser-3.75.tar.gz
+sha256  ac6b5e25a8df7af54885201e91c45fb9ab6744c08cedc1a38fcc7d95d21193a9  HTML-Parser-3.75.tar.gz
 
 # computed by scancpan
-sha256 663867028ae22c6f2fabab11238f65f1bf8dd789233b844bead5f6d22220d160 README
+sha256  0e57338bc10d5fb8891012ebee65a7b504b247f5bb485e121b8b48d7a118a60b  LICENSE

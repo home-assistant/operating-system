@@ -1,0 +1,32 @@
+comment "multipath-tools needs udev and a uClibc or glibc toolchain w/ threads, dynamic library"
+	depends on BR2_USE_MMU
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4
+	depends on !BR2_TOOLCHAIN_USES_MUSL
+	depends on BR2_PACKAGE_LIBURCU_ARCH_SUPPORTS
+	depends on !BR2_TOOLCHAIN_HAS_THREADS || BR2_STATIC_LIBS || !BR2_PACKAGE_HAS_UDEV
+
+config BR2_PACKAGE_MULTIPATH_TOOLS
+	bool "multipath-tools"
+	depends on !BR2_STATIC_LIBS
+	depends on !BR2_TOOLCHAIN_USES_MUSL
+	depends on BR2_USE_MMU
+	depends on BR2_TOOLCHAIN_HAS_THREADS
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4
+	depends on BR2_PACKAGE_LIBURCU_ARCH_SUPPORTS
+	depends on BR2_PACKAGE_HAS_UDEV
+	select BR2_PACKAGE_JSON_C
+	select BR2_PACKAGE_LIBURCU
+	select BR2_PACKAGE_LIBAIO
+	select BR2_PACKAGE_LVM2
+	select BR2_PACKAGE_LVM2_STANDARD_INSTALL
+	select BR2_PACKAGE_READLINE
+	help
+	  This package provides the following binaries to drive
+	  the Device Mapper multipathing driver:
+	    * multipath - Device mapper target autoconfig.
+	    * multipathd - Multipath daemon.
+	    * mpathpersist - Manages SCSI persistent reservations on
+	      dm multipath devices.
+	    * kpartx - Create device maps from partition tables.
+
+	  https://github.com/openSUSE/multipath-tools

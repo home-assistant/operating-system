@@ -6,6 +6,8 @@ class InitSystemSystemdBase(InitSystemBase):
     config = \
         """
         BR2_arm=y
+        BR2_cortex_a9=y
+        BR2_ARM_ENABLE_VFP=y
         BR2_TOOLCHAIN_EXTERNAL=y
         BR2_INIT_SYSTEMD=y
         BR2_TARGET_GENERIC_GETTY_PORT="ttyAMA0"
@@ -89,7 +91,6 @@ class TestInitSystemSystemdRwIfupdown(InitSystemSystemdBase):
         """
         BR2_SYSTEM_DHCP="eth0"
         # BR2_PACKAGE_SYSTEMD_NETWORKD is not set
-        # BR2_TARGET_GENERIC_REMOUNT_ROOTFS_RW is not set
         BR2_TARGET_ROOTFS_EXT2=y
         """
 
@@ -104,7 +105,7 @@ class TestInitSystemSystemdRoFull(InitSystemSystemdBase):
         """
         BR2_SYSTEM_DHCP="eth0"
         # BR2_TARGET_GENERIC_REMOUNT_ROOTFS_RW is not set
-        BR2_PACKAGE_SYSTEMD_JOURNAL_GATEWAY=y
+        BR2_PACKAGE_SYSTEMD_JOURNAL_REMOTE=y
         BR2_PACKAGE_SYSTEMD_BACKLIGHT=y
         BR2_PACKAGE_SYSTEMD_BINFMT=y
         BR2_PACKAGE_SYSTEMD_COREDUMP=y
@@ -134,7 +135,7 @@ class TestInitSystemSystemdRwFull(InitSystemSystemdBase):
     config = InitSystemSystemdBase.config + \
         """
         BR2_SYSTEM_DHCP="eth0"
-        BR2_PACKAGE_SYSTEMD_JOURNAL_GATEWAY=y
+        BR2_PACKAGE_SYSTEMD_JOURNAL_REMOTE=y
         BR2_PACKAGE_SYSTEMD_BACKLIGHT=y
         BR2_PACKAGE_SYSTEMD_BINFMT=y
         BR2_PACKAGE_SYSTEMD_COREDUMP=y

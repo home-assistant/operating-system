@@ -1,0 +1,14 @@
+config BR2_PACKAGE_LIBNIDS
+	bool "libnids"
+	select BR2_PACKAGE_LIBPCAP
+	help
+	  Libnids is an implementation of an E-component of Network
+	  Intrusion Detection System.
+
+	  libnids watches all local network traffic, and provides
+	  convenient information on them to perform further analysis.
+
+	  Libnids offers IP defragmentation, TCP stream assembly, TCP
+	  port scan detection.
+
+	  http://libnids.sourceforge.net/

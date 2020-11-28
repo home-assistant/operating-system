@@ -1,0 +1,41 @@
+From 82129852d74785267f95ef598ac483ff9af38a55 Mon Sep 17 00:00:00 2001
+From: "mail@eworm.de" <mail@eworm.de>
+Date: Sat, 25 Apr 2020 21:11:13 +0200
+Subject: [PATCH] fix boolean value with json-c 0.14
+
+Upstream json-c removed the TRUE and FALSE defines in commit
+0992aac61f8b087efd7094e9ac2b84fa9c040fcd.
+
+[mwilck]: Use stdbool.h, and keep the log message unchanged.
+
+Signed-off-by: Christian Hesse <mail@eworm.de>
+Signed-off-by: Martin Wilck <mwilck@suse.com>
+Signed-off-by: Alexander Egorenkov <egorenar-dev@posteo.net>
+---
+ libdmmp/libdmmp_private.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/libdmmp/libdmmp_private.h b/libdmmp/libdmmp_private.h
+index ac85b63f..b1a6ddea 100644
+--- a/libdmmp/libdmmp_private.h
++++ b/libdmmp/libdmmp_private.h
+@@ -30,6 +30,7 @@
+ #include <stdint.h>
+ #include <string.h>
+ #include <assert.h>
++#include <stdbool.h>
+ #include <json.h>
+ 
+ #include "libdmmp/libdmmp.h"
+@@ -82,7 +83,7 @@ static out_type func_name(struct dmmp_context *ctx, const char *var_name) { \
+ do { \
+ 	json_type j_type = json_type_null; \
+ 	json_object *j_obj_tmp = NULL; \
+-	if (json_object_object_get_ex(j_obj, key, &j_obj_tmp) != TRUE) { \
++	if (json_object_object_get_ex(j_obj, key, &j_obj_tmp) != true) { \
+ 		_error(ctx, "Invalid JSON output from multipathd IPC: " \
+ 		       "key '%s' not found", key); \
+ 		rc = DMMP_ERR_IPC_ERROR; \
+-- 
+2.28.0
+

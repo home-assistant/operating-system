@@ -1,5 +1,5 @@
-# From https://rpm.org/wiki/Releases/4.15.1.html
-sha256 ddef45f9601cd12042edfc9b6e37efcca32814e1e0f4bb8682d08144a3e2d230  rpm-4.15.1.tar.bz2
+# From https://rpm.org/wiki/Releases/4.16.0.html
+sha256  ca5974e9da2939afb422598818ef187385061889ba766166c4a3829c5ef8d411  rpm-4.16.0.tar.bz2
 
 # Hash for license file
-sha256 d56f4f1f290f6920cb053aef0dbcd0b853cda289e2568b364ddbfce220a6f3e0  COPYING
+sha256  171d94d9f1641316bff7f157a903237dc69cdb5fca405fed8c832c76ed8370f9  COPYING

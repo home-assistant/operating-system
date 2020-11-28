@@ -13,4 +13,4 @@ config BR2_PACKAGE_GST1_LIBAV
 	  The codecs, muxers, bitstreams and filters to build can be
 	  selected in the ffmpeg package.
 
-	  http://gstreamer.freedesktop.org/
+	  https://gstreamer.freedesktop.org/

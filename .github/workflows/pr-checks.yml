@@ -1,0 +1,20 @@
+# Home Assistant Operating System pull-request checks
+
+name: PR checks
+
+on: [pull_request]
+
+jobs:
+  linters:
+    runs-on: ubuntu-20.04
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v1
+    - name: Check Dockerfile
+      uses: brpaz/hadolint-action@v1.1.0
+      with:
+        dockerfile: Dockerfile
+    - name: Check shell scripts
+      uses: ludeeus/action-shellcheck@1.0.0
+      with:
+        ignore: "buildroot"

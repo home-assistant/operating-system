@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBPFM4_VERSION = 4.10.1
+LIBPFM4_VERSION = 4.11.0
 LIBPFM4_SOURCE = libpfm-$(LIBPFM4_VERSION).tar.gz
 LIBPFM4_SITE = http://downloads.sourceforge.net/project/perfmon2/libpfm4
 LIBPFM4_LICENSE = libpfm4 license
@@ -14,7 +14,8 @@ LIBPFM4_INSTALL_STAGING = YES
 LIBPFM4_FLAGS = SYS=Linux ARCH=$(BR2_ARCH) \
 	CC="$(TARGET_CC)" LDCONFIG=true \
 	CONFIG_PFMLIB_SHARED=$(if $(BR2_STATIC_LIBS),n,y) \
-	DBG=
+	DBG= \
+	EXAMPLE_DIRS=
 
 define LIBPFM4_BUILD_CMDS
 	$(TARGET_MAKE_ENV) $(MAKE) -C $(@D) $(LIBPFM4_FLAGS)

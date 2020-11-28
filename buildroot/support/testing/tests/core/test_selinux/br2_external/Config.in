@@ -1,0 +1,1 @@
+source "$BR2_EXTERNAL_SELINUX_PATH/package/selinux-test/Config.in"

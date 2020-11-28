@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-RYGEL_VERSION_MAJOR = 0.36
-RYGEL_VERSION = $(RYGEL_VERSION_MAJOR).2
+RYGEL_VERSION_MAJOR = 0.38
+RYGEL_VERSION = $(RYGEL_VERSION_MAJOR).3
 RYGEL_SOURCE = rygel-$(RYGEL_VERSION).tar.xz
 RYGEL_SITE = http://ftp.gnome.org/pub/gnome/sources/rygel/$(RYGEL_VERSION_MAJOR)
 RYGEL_LICENSE = LGPL-2.1+, CC-BY-SA-3.0 (logo)
@@ -31,6 +31,13 @@ RYGEL_CONF_OPTS += \
 
 ifeq ($(BR2_PACKAGE_GDK_PIXBUF),y)
 RYGEL_DEPENDENCIES += gdk-pixbuf
+endif
+
+ifeq ($(BR2_PACKAGE_GOBJECT_INTROSPECTION),y)
+RYGEL_CONF_OPTS += --enable-introspection
+RYGEL_DEPENDENCIES += gobject-introspection
+else
+RYGEL_CONF_OPTS += --disable-introspection
 endif
 
 ifeq ($(BR2_PACKAGE_RYGEL_MEDIA_ENGINE_GSTREAMER1),y)

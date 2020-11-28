@@ -23,4 +23,4 @@ staff:x:50:
 lock:x:54:
 netdev:x:82:
 users:x:100:
-nogroup:x:65534:
+nobody:x:65534:

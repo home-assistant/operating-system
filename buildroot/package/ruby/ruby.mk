@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-RUBY_VERSION_MAJOR = 2.4
-RUBY_VERSION = $(RUBY_VERSION_MAJOR).10
-RUBY_VERSION_EXT = 2.4.0
+RUBY_VERSION_MAJOR = 2.7
+RUBY_VERSION = $(RUBY_VERSION_MAJOR).2
+RUBY_VERSION_EXT = 2.7.0
 RUBY_SITE = http://cache.ruby-lang.org/pub/ruby/$(RUBY_VERSION_MAJOR)
 RUBY_SOURCE = ruby-$(RUBY_VERSION).tar.xz
 RUBY_DEPENDENCIES = host-pkgconf host-ruby
@@ -19,15 +19,8 @@ HOST_RUBY_CONF_OPTS = \
 	--without-gmp
 RUBY_LICENSE = Ruby or BSD-2-Clause, BSD-3-Clause, others
 RUBY_LICENSE_FILES = LEGAL COPYING BSDL
-
-RUBY_CFLAGS = $(TARGET_CFLAGS)
-# With some SuperH toolchains (like Sourcery CodeBench 2012.09), ruby fails to
-# build with 'pcrel too far'. This seems to be caused by the -Os option we pass
-# by default. To fix the problem, use standard -O2 optimization instead.
-ifeq ($(BR2_sh),y)
-RUBY_CFLAGS += -O2
-endif
-RUBY_CONF_ENV = CFLAGS="$(RUBY_CFLAGS)"
+# 0001-fix-default-coroutine-selection.patch
+RUBY_AUTORECONF = YES
 
 ifeq ($(BR2_TOOLCHAIN_USES_UCLIBC),y)
 # On uClibc, finite, isinf and isnan are not directly implemented as
@@ -78,13 +71,6 @@ RUBY_CONF_OPTS += --with-gmp
 else
 RUBY_CONF_OPTS += --without-gmp
 endif
-
-# workaround for amazing build failure, see
-# http://lists.busybox.net/pipermail/buildroot/2014-December/114273.html
-define RUBY_REMOVE_VERCONF_H
-	rm -f $(@D)/verconf.h
-endef
-RUBY_POST_CONFIGURE_HOOKS += RUBY_REMOVE_VERCONF_H
 
 # Remove rubygems and friends, as they need extensions that aren't
 # built and a target compiler.

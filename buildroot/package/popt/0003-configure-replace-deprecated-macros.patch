@@ -1,0 +1,76 @@
+From f492b19f59229b0494b5b9ffe5c660a35493a405 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>
+Date: Mon, 29 Jun 2020 18:58:09 +0200
+Subject: [PATCH] configure: replace deprecated macros
+
+* use LT_INIT instead of deprecated AC_PROG_LIBTOOL
+* use AS_HELP_STRING instead of deprecated AC_HELP_STRING
+* quote macros
+
+[Retrieved from:
+https://github.com/rpm-software-management/popt/commit/f492b19f59229b0494b5b9ffe5c660a35493a405]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ configure.ac | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
+ mode change 100755 => 100644 configure.ac
+
+diff --git a/configure.ac b/configure.ac
+old mode 100755
+new mode 100644
+index 3b71d1a..009ae7b
+--- a/configure.ac
++++ b/configure.ac
+@@ -1,5 +1,5 @@
+-AC_PREREQ(2.57)
+-AC_INIT(popt, 1.18, rpm-maint@lists.rpm.org)
++AC_PREREQ([2.57])
++AC_INIT([popt], [1.18], [rpm-maint@lists.rpm.org])
+ AC_CONFIG_SRCDIR([src/popt.h])
+ AC_CONFIG_HEADERS([config.h])
+ 
+@@ -14,11 +14,11 @@ AC_USE_SYSTEM_EXTENSIONS
+ AM_PROG_AR
+ 
+ AC_PROG_INSTALL
+-AC_PROG_LIBTOOL
++LT_INIT
+ 
+ AC_SYS_LARGEFILE
+ 
+-AC_CHECK_HEADERS(fnmatch.h glob.h langinfo.h libintl.h mcheck.h stdalign.h)
++AC_CHECK_HEADERS([fnmatch.h glob.h langinfo.h libintl.h mcheck.h stdalign.h])
+ 
+ # For some systems we know that we have ld_version scripts.
+ # Use it then as default.
+@@ -32,15 +32,15 @@ case "${host}" in
+         ;;
+ esac
+ AC_ARG_ENABLE([ld-version-script],
+-              AC_HELP_STRING([--enable-ld-version-script],
++              [AS_HELP_STRING([--enable-ld-version-script],
+                              [enable/disable use of linker version script.
+-                              (default is system dependent)]),
++                              (default is system dependent)])],
+               [have_ld_version_script=$enableval],
+               [ : ] )
+ AM_CONDITIONAL(HAVE_LD_VERSION_SCRIPT, test "$have_ld_version_script" = "yes")
+ 
+-AC_ARG_ENABLE(build-gcov,
+-    AS_HELP_STRING([--enable-build-gcov], [build POPT instrumented for gcov]), [dnl
++AC_ARG_ENABLE([build-gcov],
++    [AS_HELP_STRING([--enable-build-gcov], [build POPT instrumented for gcov])], [dnl
+     if test ".$enableval" = .yes; then
+         if test ".`$CC --version 2>&1 | grep 'GCC'`" != .; then
+             dnl # GNU GCC (usually "gcc")
+@@ -49,8 +49,8 @@ AC_ARG_ENABLE(build-gcov,
+     fi
+ ])
+ 
+-AC_SEARCH_LIBS(setreuid, [ucb])
+-AC_CHECK_FUNCS(getuid geteuid iconv mtrace secure_getenv __secure_getenv setreuid setuid stpcpy strerror vasprintf srandom glob_pattern_p)
++AC_SEARCH_LIBS([setreuid], [ucb])
++AC_CHECK_FUNCS([getuid geteuid iconv mtrace secure_getenv __secure_getenv setreuid setuid stpcpy strerror vasprintf srandom glob_pattern_p])
+ 
+ AM_GNU_GETTEXT_VERSION([0.18.2])
+ AM_GNU_GETTEXT([external])

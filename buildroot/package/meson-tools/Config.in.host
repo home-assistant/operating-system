@@ -1,0 +1,9 @@
+config BR2_PACKAGE_HOST_MESON_TOOLS
+	bool "host meson-tools"
+	help
+	  meson-tools is a collection of tools for use with the
+	  Amlogic Meson family of ARM based SoCs. It allows management
+	  of signatures which are required for booting amlogic based
+	  boards with u-boot.
+
+	  https://github.com/afaerber/meson-tools

@@ -1,0 +1,13 @@
+config BR2_PACKAGE_UNCLUTTER_XFIXES
+	bool "unclutter-xfixes"
+	depends on BR2_PACKAGE_XORG7
+	select BR2_PACKAGE_LIBEV
+	select BR2_PACKAGE_XLIB_LIBX11
+	select BR2_PACKAGE_XLIB_LIBXFIXES
+	select BR2_PACKAGE_XLIB_LIBXI
+	help
+	  Remove idle cursor image from screen.
+
+	  A rewrite of unclutter using the x11-xfixes extension.
+
+	  https://github.com/Airblader/unclutter-xfixes

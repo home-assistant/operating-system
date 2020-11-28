@@ -1,0 +1,37 @@
+From b16f6813011519ce247b0af9a4b78486daefad54 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Wed, 26 Aug 2020 22:54:50 +0200
+Subject: [PATCH] src/roxml_mem.h: add missing extern
+
+Add missing extern to head_cell otherwise the build with gcc 10 (with
+-fno-common being default) will fail on:
+
+/bin/bash ./libtool  --tag=CC   --mode=link /home/peko/autobuild/instance-0/output-1/host/bin/arm-buildroot-linux-gnueabihf-gcc -DIGNORE_EMPTY_TEXT_NODES -DCONFIG_XML_CONTENT -DCONFIG_XML_NAV -DCONFIG_XML_BUFF  -DCONFIG_XML_COMMIT -DCONFIG_XML_EDIT -DCONFIG_XML_FILE -DCONFIG_XML_XPATH -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64  -O2   -pthread -version-info 0:0:0  -o libroxml.la -rpath /usr/lib src/libroxml_la-roxml_core.lo src/libroxml_la-roxml_parser.lo src/libroxml_la-roxml_buff.lo src/libroxml_la-roxml_nav.lo src/libroxml_la-roxml_content.lo src/libroxml_la-roxml_mem.lo src/libroxml_la-roxml_stub.lo src/libroxml_la-roxml_commit.lo src/libroxml_la-roxml_edit.lo src/libroxml_la-roxml_file.lo src/libroxml_la-roxml_xpath.lo  -pthread
+libtool: link: /home/peko/autobuild/instance-0/output-1/host/bin/arm-buildroot-linux-gnueabihf-gcc -shared  -fPIC -DPIC  src/.libs/libroxml_la-roxml_core.o src/.libs/libroxml_la-roxml_parser.o src/.libs/libroxml_la-roxml_buff.o src/.libs/libroxml_la-roxml_nav.o src/.libs/libroxml_la-roxml_content.o src/.libs/libroxml_la-roxml_mem.o src/.libs/libroxml_la-roxml_stub.o src/.libs/libroxml_la-roxml_commit.o src/.libs/libroxml_la-roxml_edit.o src/.libs/libroxml_la-roxml_file.o src/.libs/libroxml_la-roxml_xpath.o    -O2 -pthread -pthread   -pthread -Wl,-soname -Wl,libroxml.so.0 -o .libs/libroxml.so.0.0.0
+/home/peko/autobuild/instance-0/output-1/host/lib/gcc/arm-buildroot-linux-gnueabihf/10.2.0/../../../../arm-buildroot-linux-gnueabihf/bin/ld: src/.libs/libroxml_la-roxml_mem.o:(.data+0x0): multiple definition of `head_cell'; src/.libs/libroxml_la-roxml_content.o:(.bss+0x0): first defined here
+
+Fixes:
+ - http://autobuild.buildroot.org/results/b6ac3664d61ad826515b57c4d057b6f001b5167d
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: https://github.com/blunderer/libroxml/pull/79]
+---
+ src/roxml_mem.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/roxml_mem.h b/src/roxml_mem.h
+index aff6137..34a5070 100644
+--- a/src/roxml_mem.h
++++ b/src/roxml_mem.h
+@@ -14,7 +14,7 @@
+ 
+ #include "roxml_internal.h"
+ 
+-memory_cell_t head_cell;
++extern memory_cell_t head_cell;
+ 
+ /** \brief alloc memory function
+  *
+-- 
+2.28.0
+

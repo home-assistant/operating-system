@@ -1,5 +1,5 @@
 # md5, sha256 from https://pypi.org/pypi/scapy/json
-md5	469ae6f5615799a5de3f3b4eb217b18d  scapy-2.4.3.tar.gz
-sha256	e2f8d11f6a941c14a789ae8b236b27bd634681f1b29b5e893861e284d234f6b0  scapy-2.4.3.tar.gz
+md5  01e52ff5d1f04364e17fc2d42872282e  scapy-2.4.4.tar.gz
+sha256  ecfd7a14cd9c3ef0eb08d28d5bb71d97219edff1454ccbdff229f676b27900ee  scapy-2.4.4.tar.gz
 # Locally computed sha256 checksums
-sha256	8177f97513213526df2cf6184d8ff986c675afb514d4e68a404010521b880643  LICENSE
+sha256  8177f97513213526df2cf6184d8ff986c675afb514d4e68a404010521b880643  LICENSE

@@ -1,0 +1,34 @@
+From b0895f2384712f3d0d89405c06519da195e9ccc9 Mon Sep 17 00:00:00 2001
+Message-Id: <b0895f2384712f3d0d89405c06519da195e9ccc9.1606428503.git.stefan@agner.ch>
+In-Reply-To: <a04331a6ba7334282836bbaa76e979c4e6be3900.1606428503.git.stefan@agner.ch>
+References: <a04331a6ba7334282836bbaa76e979c4e6be3900.1606428503.git.stefan@agner.ch>
+From: Stefan Agner <stefan@agner.ch>
+Date: Thu, 26 Nov 2020 17:56:01 +0100
+Subject: [PATCH 03/15] rpi: force a smaller amount of memory
+
+This fixes booting from USB on 32-bit installations. It seems not to
+affect the detected memory or SD card boot negatively.
+
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+---
+ board/raspberrypi/rpi/rpi.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/board/raspberrypi/rpi/rpi.c b/board/raspberrypi/rpi/rpi.c
+index 5cfee7c00a..18e60e76cc 100644
+--- a/board/raspberrypi/rpi/rpi.c
++++ b/board/raspberrypi/rpi/rpi.c
+@@ -267,6 +267,10 @@ int dram_init(void)
+ 	}
+ 
+ 	gd->ram_size = msg->get_arm_mem.body.resp.mem_size;
++#ifdef CONFIG_TARGET_RPI_4_32B
++	printf("(fixing) ");
++	gd->ram_size = SZ_512M;
++#endif
+ 
+ 	return 0;
+ }
+-- 
+2.29.2
+

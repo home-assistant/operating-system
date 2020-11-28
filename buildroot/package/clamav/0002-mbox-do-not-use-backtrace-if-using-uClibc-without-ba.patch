@@ -12,6 +12,8 @@ This is a bit hacky, and would greatly benefit from a test in ./configure
 instead, but does nicely as a quick fix for now.
 
 Signed-off-by: "Yann E. MORIN" <yann.morin.1998@free.fr>
+Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
+[Bernd: rebased for 0.103.0]
 ---
  libclamav/mbox.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
@@ -20,7 +22,7 @@ diff --git a/libclamav/mbox.c b/libclamav/mbox.c
 index 71f540c0a..4851297a9 100644
 --- a/libclamav/mbox.c
 +++ b/libclamav/mbox.c
-@@ -98,7 +98,7 @@
+@@ -91,7 +91,7 @@
  #include <features.h>
  #endif
  

@@ -1,0 +1,10 @@
+config BR2_PACKAGE_LIBBYTESIZE
+	bool "libbytesize"
+	select BR2_PACKAGE_GMP
+	select BR2_PACKAGE_MPFR
+	select BR2_PACKAGE_PCRE2
+	help
+	  A tiny library that facilitates the common operations with
+	  sizes in bytes
+
+	  https://github.com/storaged-project/libbytesize/

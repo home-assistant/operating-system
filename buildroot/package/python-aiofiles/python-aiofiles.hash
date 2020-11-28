@@ -1,0 +1,5 @@
+# md5, sha256 from https://pypi.org/pypi/aiofiles/json
+md5  2243eff06072115e8afe8907677ca51d  aiofiles-0.5.0.tar.gz
+sha256  98e6bcfd1b50f97db4980e182ddd509b7cc35909e903a8fe50d8849e02d815af  aiofiles-0.5.0.tar.gz
+# Locally computed sha256 checksums
+sha256  cb5e8e7e5f4a3988e1063c142c60dc2df75605f4c46515e776e3aca6df976e14  LICENSE

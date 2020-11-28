@@ -1,4 +1,4 @@
-From 868823f15bab031caf05dc5e8ce2eac076bfc82b Mon Sep 17 00:00:00 2001
+From f034b1b0f33a7bd4dde23f0bc1fa8e00e3518c9d Mon Sep 17 00:00:00 2001
 From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 Date: Wed, 22 Feb 2017 17:15:31 -0800
 Subject: [PATCH] Add an option to disable lib2to3
@@ -17,10 +17,10 @@ Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
  3 files changed, 21 insertions(+), 6 deletions(-)
 
 diff --git a/Makefile.pre.in b/Makefile.pre.in
-index 6fa0549a56..3e1f130532 100644
+index 63e3df0470..8b7de12999 100644
 --- a/Makefile.pre.in
 +++ b/Makefile.pre.in
-@@ -1293,7 +1293,9 @@ ifeq (@PYDOC@,yes)
+@@ -1361,7 +1361,9 @@ ifeq (@PYDOC@,yes)
  	(cd $(DESTDIR)$(BINDIR); $(LN) -s pydoc$(VERSION) pydoc3)
  endif
  	-rm -f $(DESTDIR)$(BINDIR)/2to3
@@ -30,7 +30,7 @@ index 6fa0549a56..3e1f130532 100644
  	if test "x$(LIPO_32BIT_FLAGS)" != "x" ; then \
  		rm -f $(DESTDIR)$(BINDIR)/python3-32$(EXE); \
  		(cd $(DESTDIR)$(BINDIR); $(LN) -s python$(VERSION)-32$(EXE) python3-32$(EXE)) \
-@@ -1328,7 +1330,6 @@ LIBSUBDIRS=	tkinter site-packages \
+@@ -1396,7 +1398,6 @@ LIBSUBDIRS=	tkinter site-packages \
  		html json http dbm xmlrpc \
  		sqlite3 \
  		logging csv wsgiref urllib \
@@ -38,7 +38,7 @@ index 6fa0549a56..3e1f130532 100644
  		ctypes ctypes/macholib \
  		idlelib idlelib/Icons \
  		distutils distutils/command $(XMLLIBSUBDIRS) \
-@@ -1402,9 +1403,6 @@ TESTSUBDIRS=	tkinter/test tkinter/test/test_tkinter \
+@@ -1473,9 +1474,6 @@ TESTSUBDIRS=	tkinter/test tkinter/test/test_tkinter \
  		test/test_email test/test_email/data \
  		test/test_json \
  		sqlite3/test \
@@ -48,7 +48,7 @@ index 6fa0549a56..3e1f130532 100644
  		ctypes/test \
  		idlelib/idle_test \
  		distutils/tests \
-@@ -1412,6 +1410,14 @@ TESTSUBDIRS=	tkinter/test tkinter/test/test_tkinter \
+@@ -1484,6 +1482,14 @@ TESTSUBDIRS=	tkinter/test tkinter/test/test_tkinter \
  		test/test_tools test/test_warnings test/test_warnings/data \
  		unittest/test unittest/test/testmock
  
@@ -63,7 +63,7 @@ index 6fa0549a56..3e1f130532 100644
  ifeq (@TEST_MODULES@,yes)
  LIBSUBDIRS += $(TESTSUBDIRS)
  endif
-@@ -1511,10 +1517,12 @@ ifeq (@PYC_BUILD@,yes)
+@@ -1584,10 +1590,12 @@ ifeq (@PYC_BUILD@,yes)
  		-j0 -d $(LIBDEST)/site-packages -f \
  		-x badsyntax $(DESTDIR)$(LIBDEST)/site-packages
  endif
@@ -77,10 +77,10 @@ index 6fa0549a56..3e1f130532 100644
  # bpo-21536: Misc/python-config.sh is generated in the build directory
  # from $(srcdir)Misc/python-config.sh.in.
 diff --git a/configure.ac b/configure.ac
-index f53cc86d89..caa8eaf88a 100644
+index 174ed85a7c..f1f5e9a7b0 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -3246,6 +3246,12 @@ AC_ARG_ENABLE(test-modules,
+@@ -3341,6 +3341,12 @@ AC_ARG_ENABLE(test-modules,
  	AS_HELP_STRING([--disable-test-modules], [disable test modules]),
  	[ TEST_MODULES="${enableval}" ], [ TEST_MODULES=yes ])
  
@@ -94,10 +94,10 @@ index f53cc86d89..caa8eaf88a 100644
  AH_TEMPLATE(ENABLE_IPV6, [Define if --enable-ipv6 is specified])
  AC_MSG_CHECKING([if --enable-ipv6 is specified])
 diff --git a/setup.py b/setup.py
-index 748c269960..1669797cad 100644
+index 1fc5fac90c..4063d7ffa5 100644
 --- a/setup.py
 +++ b/setup.py
-@@ -2402,10 +2402,11 @@ def main():
+@@ -2587,10 +2587,11 @@ def main():
      import warnings
      warnings.filterwarnings("ignore",category=DeprecationWarning)
  
@@ -112,5 +112,5 @@ index 748c269960..1669797cad 100644
      setup(# PyPI Metadata (PEP 301)
            name = "Python",
 -- 
-2.20.1
+2.25.1
 

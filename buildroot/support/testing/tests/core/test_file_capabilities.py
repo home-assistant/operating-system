@@ -44,4 +44,4 @@ class TestFileCapabilities(infra.basetest.BRTest):
         self.assertIn("cap_kill", output[0])
         self.assertIn("cap_sys_nice", output[0])
         self.assertIn("cap_sys_time", output[0])
-        self.assertIn("+eip", output[0])
+        self.assertIn("=eip", output[0])

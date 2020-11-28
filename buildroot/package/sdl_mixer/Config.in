@@ -9,3 +9,13 @@ config BR2_PACKAGE_SDL_MIXER
 	  SMPEG MP3 libraries.
 
 	  http://www.libsdl.org/projects/SDL_mixer/
+
+if BR2_PACKAGE_SDL_MIXER
+
+config BR2_PACKAGE_SDL_MIXER_MIDI_TIMIDITY
+	bool "MIDI support with built-in Timidity synth"
+	help
+	  Support MIDI audio using the built-in synth based on Timidity.
+	  You will need MIDI instruments installed in the filesystem.
+
+endif

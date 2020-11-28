@@ -1,5 +1,5 @@
-From 698972869afda7095e31892c48051350788aa0a1 Mon Sep 17 00:00:00 2001
-Message-Id: <698972869afda7095e31892c48051350788aa0a1.1603550330.git.stefan@agner.ch>
+From f9877c2895d6c05710a828d0cd46d9f25626b070 Mon Sep 17 00:00:00 2001
+Message-Id: <f9877c2895d6c05710a828d0cd46d9f25626b070.1606490648.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Mon, 31 Aug 2020 13:40:18 +0200
 Subject: [PATCH 1/2] ARM: meson: isolate loading of socinfo
@@ -9,14 +9,14 @@ reused later.
 
 Signed-off-by: Stefan Agner <stefan@agner.ch>
 ---
- arch/arm/mach-meson/board-info.c | 20 ++++++++++++++++++--
- 1 file changed, 18 insertions(+), 2 deletions(-)
+ arch/arm/mach-meson/board-info.c | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
 
 diff --git a/arch/arm/mach-meson/board-info.c b/arch/arm/mach-meson/board-info.c
-index 3abb27e03b..cfcd5bbd3b 100644
+index 3abb27e03b..c585b12ca5 100644
 --- a/arch/arm/mach-meson/board-info.c
 +++ b/arch/arm/mach-meson/board-info.c
-@@ -126,12 +126,16 @@ static void print_board_model(void)
+@@ -126,7 +126,7 @@ static void print_board_model(void)
  	printf("Model: %s\n", model ? model : "Unknown");
  }
  
@@ -25,17 +25,7 @@ index 3abb27e03b..cfcd5bbd3b 100644
  {
  	struct regmap *regmap;
  	int nodeoffset, ret;
- 	ofnode node;
--	unsigned int socinfo;
-+	static unsigned int socinfo = 0;
-+
-+	/* Empty socinfo is invalid, so !socinfo is successfully initialized */
-+	if (socinfo)
-+		return socinfo;
- 
- 	/* find the offset of compatible node */
- 	nodeoffset = fdt_node_offset_by_compatible(gd->fdt_blob, -1,
-@@ -158,8 +162,20 @@ int show_board_info(void)
+@@ -158,8 +158,20 @@ int show_board_info(void)
  		return 0;
  	}
  
@@ -57,5 +47,5 @@ index 3abb27e03b..cfcd5bbd3b 100644
  	       socinfo_to_soc_id(socinfo),
  	       socinfo_to_package_id(socinfo),
 -- 
-2.29.1
+2.29.2
 

@@ -1,0 +1,8 @@
+config BR2_PACKAGE_PYTHON_PACKAGING
+	bool "python-packaging"
+	select BR2_PACKAGE_PYTHON_PYPARSING # runtime
+	select BR2_PACKAGE_PYTHON_SIX # runtime
+	help
+	  Core utilities for Python packages.
+
+	  https://github.com/pypa/packaging

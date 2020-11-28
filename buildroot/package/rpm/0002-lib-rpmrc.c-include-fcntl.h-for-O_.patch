@@ -1,0 +1,31 @@
+From 8d446d33a705cb37420e1fda18379d7439ee841f Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sun, 25 Oct 2020 15:04:56 +0100
+Subject: [PATCH 2/2] lib/rpmrc.c: include fcntl.h for O_*
+
+Fixes compilation on musl, otherwise it fails with undefined references
+to various O_* symbols as mentioned here:
+
+https://www.man7.org/linux/man-pages/man0/fcntl.h.0p.html
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status:
+https://github.com/rpm-software-management/rpm/pull/1413]
+---
+ lib/rpmrc.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/lib/rpmrc.c b/lib/rpmrc.c
+index 78c4a6d42..8bfe7a0ab 100644
+--- a/lib/rpmrc.c
++++ b/lib/rpmrc.c
+@@ -1,5 +1,6 @@
+ #include "system.h"
+ 
++#include <fcntl.h>
+ #include <stdarg.h>
+ #include <pthread.h>
+ 
+-- 
+2.28.0
+

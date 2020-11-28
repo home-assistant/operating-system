@@ -1,0 +1,16 @@
+config BR2_PACKAGE_HOST_KMOD
+	bool "host kmod"
+	help
+	  kmod is a set of tools to handle common tasks with Linux
+	  kernel modules like insert, remove, list, check properties,
+	  resolve dependencies and aliases.
+
+if BR2_PACKAGE_HOST_KMOD
+
+config BR2_PACKAGE_HOST_KMOD_GZ
+	bool "support gzip-compressed modules"
+
+config BR2_PACKAGE_HOST_KMOD_XZ
+	bool "support xz-compressed modules"
+
+endif

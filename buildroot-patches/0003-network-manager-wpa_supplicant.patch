@@ -1,7 +1,10 @@
-From 297ba4e3286e590bd1c2d2e6ec778a84748b5807 Mon Sep 17 00:00:00 2001
+From d1f588ab003b001079b6fab1cfd5d43401989b3b Mon Sep 17 00:00:00 2001
+Message-Id: <d1f588ab003b001079b6fab1cfd5d43401989b3b.1605131156.git.stefan@agner.ch>
+In-Reply-To: <8aa12f1835721959d0d1999fceee632404f28366.1605131156.git.stefan@agner.ch>
+References: <8aa12f1835721959d0d1999fceee632404f28366.1605131156.git.stefan@agner.ch>
 From: Pascal Vizeli <pvizeli@syshack.ch>
 Date: Thu, 16 Apr 2020 14:32:45 +0000
-Subject: [PATCH 1/1] network-manager: wpa_supplicant
+Subject: [PATCH 3/7] network-manager: wpa_supplicant
 
 Signed-off-by: Pascal Vizeli <pvizeli@syshack.ch>
 ---
@@ -10,7 +13,7 @@ Signed-off-by: Pascal Vizeli <pvizeli@syshack.ch>
  2 files changed, 4 insertions(+), 3 deletions(-)
 
 diff --git a/package/network-manager/Config.in b/package/network-manager/Config.in
-index e6a3f5f04f..accea923af 100644
+index 7d44768460..218dc860ff 100644
 --- a/package/network-manager/Config.in
 +++ b/package/network-manager/Config.in
 @@ -15,8 +15,9 @@ config BR2_PACKAGE_NETWORK_MANAGER
@@ -26,7 +29,7 @@ index e6a3f5f04f..accea923af 100644
  	select BR2_PACKAGE_LIBNDP
  	help
 diff --git a/package/network-manager/network-manager.mk b/package/network-manager/network-manager.mk
-index 56b768cdef..727cfb98a4 100644
+index 3dc3188f32..2a04b00cee 100644
 --- a/package/network-manager/network-manager.mk
 +++ b/package/network-manager/network-manager.mk
 @@ -10,7 +10,7 @@ NETWORK_MANAGER_SOURCE = NetworkManager-$(NETWORK_MANAGER_VERSION).tar.xz
@@ -35,9 +38,9 @@ index 56b768cdef..727cfb98a4 100644
  NETWORK_MANAGER_DEPENDENCIES = host-pkgconf udev gnutls libglib2 \
 -	libgcrypt wireless_tools util-linux host-intltool readline libndp
 +	libgcrypt wpa_supplicant util-linux host-intltool readline libndp
- # Even though the COPYING file only contains the GPL-2.0 text, many
- # parts of network-manager are under LGPL-2.0. See the "Legal" section
- # of the CONTRIBUTING file for details.
+ NETWORK_MANAGER_LICENSE = GPL-2.0+ (app), LGPL-2.1+ (libnm)
+ NETWORK_MANAGER_LICENSE_FILES = COPYING COPYING.LGPL CONTRIBUTING
+ 
 -- 
-2.17.1
+2.29.2
 

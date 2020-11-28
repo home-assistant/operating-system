@@ -4,27 +4,20 @@
 #
 ################################################################################
 
-SETOOLS_VERSION = 4.1.1
-SETOOLS_SITE = $(call github,TresysTechnology,setools,$(SETOOLS_VERSION))
-SETOOLS_DEPENDENCIES = libselinux libsepol python-setuptools host-bison host-flex host-swig
+SETOOLS_VERSION = 4.3.0
+SETOOLS_SITE = $(call github,SELinuxProject,setools,$(SETOOLS_VERSION))
+SETOOLS_DEPENDENCIES = libselinux libsepol python-setuptools host-bison host-flex host-python-cython host-swig
 SETOOLS_INSTALL_STAGING = YES
 SETOOLS_LICENSE = GPL-2.0+, LGPL-2.1+
 SETOOLS_LICENSE_FILES = COPYING COPYING.GPL COPYING.LGPL
 SETOOLS_SETUP_TYPE = setuptools
-HOST_SETOOLS_DEPENDENCIES = host-libselinux host-libsepol host-python-networkx
-
-ifeq ($(BR2_PACKAGE_PYTHON3),y)
-SETOOLS_PYLIBVER = python$(PYTHON3_VERSION_MAJOR)
-else
-SETOOLS_PYLIBVER = python$(PYTHON_VERSION_MAJOR)
-SETOOLS_DEPENDENCIES += python-enum34
-HOST_SETOOLS_DEPENDENCIES += host-python-enum34
-endif
+HOST_SETOOLS_DEPENDENCIES = host-python3-cython host-libselinux host-libsepol host-python-networkx
+HOST_SETOOLS_NEEDS_HOST_PYTHON = python3
 
 define SETOOLS_FIX_SETUP
 	# By default, setup.py will look for libsepol.a in the host machines
 	# /usr/lib directory. This needs to be changed to the staging directory.
-	$(SED) "s@base_lib_dirs =.*@base_lib_dirs = ['$(STAGING_DIR)/usr/lib']@g" \
+	$(SED) "s@lib_dirs =.*@lib_dirs = ['$(STAGING_DIR)/usr/lib']@g" \
 		$(@D)/setup.py
 endef
 SETOOLS_POST_PATCH_HOOKS += SETOOLS_FIX_SETUP
@@ -32,7 +25,7 @@ SETOOLS_POST_PATCH_HOOKS += SETOOLS_FIX_SETUP
 define HOST_SETOOLS_FIX_SETUP
 	# By default, setup.py will look for libsepol.a in the host machines
 	# /usr/lib directory. This needs to be changed to the host directory.
-	$(SED) "s@base_lib_dirs =.*@base_lib_dirs = ['$(HOST_DIR)/lib']@g" \
+	$(SED) "s@lib_dirs =.*@lib_dirs = ['$(HOST_DIR)/lib']@g" \
 		$(@D)/setup.py
 endef
 HOST_SETOOLS_POST_PATCH_HOOKS += HOST_SETOOLS_FIX_SETUP
@@ -43,7 +36,7 @@ HOST_SETOOLS_POST_PATCH_HOOKS += HOST_SETOOLS_FIX_SETUP
 ifeq ($(BR2_PACKAGE_PYTHON_PYQT5),)
 define SETOOLS_REMOVE_QT_SCRIPTS
 	$(RM) $(TARGET_DIR)/usr/bin/apol
-	$(RM) -r $(TARGET_DIR)/lib/$(SETOOLS_PYLIBVER)/site-packages/setoolsgui/
+	$(RM) -r $(TARGET_DIR)/lib/python$(PYTHON3_VERSION_MAJOR)/site-packages/setoolsgui/
 endef
 SETOOLS_POST_INSTALL_TARGET_HOOKS += SETOOLS_REMOVE_QT_SCRIPTS
 endif

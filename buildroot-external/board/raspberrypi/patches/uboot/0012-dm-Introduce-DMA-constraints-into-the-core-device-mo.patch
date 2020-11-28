@@ -1,0 +1,78 @@
+From ea24a497a84cf0d1efb9c4f285d4d29bd69f3ebb Mon Sep 17 00:00:00 2001
+Message-Id: <ea24a497a84cf0d1efb9c4f285d4d29bd69f3ebb.1606428503.git.stefan@agner.ch>
+In-Reply-To: <a04331a6ba7334282836bbaa76e979c4e6be3900.1606428503.git.stefan@agner.ch>
+References: <a04331a6ba7334282836bbaa76e979c4e6be3900.1606428503.git.stefan@agner.ch>
+From: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+Date: Thu, 19 Nov 2020 18:48:19 +0100
+Subject: [PATCH 12/15] dm: Introduce DMA constraints into the core device
+ model
+
+Calculating the DMA offset between a bus address space and CPU's every
+time we call phys_to_bus() and bus_to_phys() isn't ideal performance
+wise. This information is static and available before initializing the
+devices so parse it before the probe call an provide the DMA offset it
+in 'struct udevice' for the DMA code to use it.
+
+Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+---
+ drivers/core/device.c | 24 ++++++++++++++++++++++++
+ include/dm/device.h   |  1 +
+ 2 files changed, 25 insertions(+)
+
+diff --git a/drivers/core/device.c b/drivers/core/device.c
+index 355dbd147a..484852b2ac 100644
+--- a/drivers/core/device.c
++++ b/drivers/core/device.c
+@@ -402,6 +402,28 @@ fail:
+ 	return ret;
+ }
+ 
++void device_get_dma_constraints(struct udevice *dev)
++{
++	phys_addr_t cpu;
++	dma_addr_t bus;
++	u64 size;
++	int ret;
++
++	if (!dev_of_valid(dev))
++		return;
++
++	ret = dev_get_dma_range(dev, &cpu, &bus, &size);
++	if (ret) {
++		/* Don't complain if no 'dma-ranges' were found */
++		if (ret != -ENODEV)
++			dm_warn("%s: failed to get DMA range, %d\n",
++				dev->name, ret);
++		return;
++	}
++
++	dev->dma_offset = cpu - bus;
++}
++
+ int device_probe(struct udevice *dev)
+ {
+ 	const struct driver *drv;
+@@ -463,6 +485,8 @@ int device_probe(struct udevice *dev)
+ 			goto fail;
+ 	}
+ 
++	device_get_dma_constraints(dev);
++
+ 	ret = uclass_pre_probe_device(dev);
+ 	if (ret)
+ 		goto fail;
+diff --git a/include/dm/device.h b/include/dm/device.h
+index 953706cf52..6489f7ae61 100644
+--- a/include/dm/device.h
++++ b/include/dm/device.h
+@@ -161,6 +161,7 @@ struct udevice {
+ #ifdef CONFIG_DEVRES
+ 	struct list_head devres_head;
+ #endif
++	u64 dma_offset;
+ };
+ 
+ /* Maximum sequence number supported */
+-- 
+2.29.2
+

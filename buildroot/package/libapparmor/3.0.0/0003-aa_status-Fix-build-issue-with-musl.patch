@@ -1,0 +1,33 @@
+From a2a0d14b9c5046b76124c828a53b0e9cbc1bc5c8 Mon Sep 17 00:00:00 2001
+From: Armin Kuster <akuster808@gmail.com>
+Date: Wed, 7 Oct 2020 08:27:11 -0700
+Subject: [PATCH] aa_status: Fix build issue with musl
+
+add limits.h
+
+aa_status.c:269:22: error: 'PATH_MAX' undeclared (first use in this function); did you mean 'AF_MAX'?
+|   269 |    real_exe = calloc(PATH_MAX + 1, sizeof(char));
+
+Signed-off-by: Armin Kuster <akuster808@gmail.com>
+[Retrieved from:
+https://gitlab.com/apparmor/apparmor/-/commit/a2a0d14b9c5046b76124c828a53b0e9cbc1bc5c8]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ binutils/aa_status.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/binutils/aa_status.c b/binutils/aa_status.c
+index 78b034090..41f1954e9 100644
+--- a/binutils/aa_status.c
++++ b/binutils/aa_status.c
+@@ -10,6 +10,7 @@
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <string.h>
++#include <limits.h>
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <sys/wait.h>
+-- 
+GitLab
+

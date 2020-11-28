@@ -13,15 +13,9 @@ files of your package to be updated by using:
 <pkg>_POST_PATCH_HOOKS += UPDATE_CONFIG_HOOK
 
 --- UPDATE ---
-GNU config is now managed in git, so to update:
+Run the script 'update' in this directory, and commit the result.
 
-# git clone git://git.savannah.gnu.org/config.git
-# cp config/config.* .
-# for p in $(ls patches/*.patch); do patch -p1 < $p; done
-# rm -rf config
+The current Buildroot version is based on this commit of the config.git
+repository (leave alone on its own line, the script updates it):
 
-Currently no patches are needed, but they may be needed again in the
-future.
-
-The current Buildroot version is based on the Git commit
-104ee6463c4bfaac3f3029d9be9bdd6e93879323 of the config.git repository.
+d7a4dee7cc25e332b990d0a6d9f0ddd42cb33cf5

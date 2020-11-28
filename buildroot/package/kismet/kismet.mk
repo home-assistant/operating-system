@@ -4,16 +4,20 @@
 #
 ################################################################################
 
-KISMET_VERSION = 2016-07-R1
+KISMET_VERSION = 2020-09-R4
 KISMET_SOURCE = kismet-$(KISMET_VERSION).tar.xz
 KISMET_SITE = http://www.kismetwireless.net/code
-KISMET_DEPENDENCIES = host-pkgconf libpcap ncurses libnl
-KISMET_CONF_OPTS += --with-netlink-version=3
+KISMET_DEPENDENCIES = \
+	host-pkgconf \
+	libpcap \
+	$(if $(BR2_PACKAGE_LIBNL),libnl) \
+	$(if $(BR2_PACKAGE_PROTOBUF),protobuf) \
+	protobuf-c \
+	sqlite \
+	zlib
 KISMET_LICENSE = GPL-2.0+
-KISMET_LICENSE_FILES = debian/copyright
-
-# We touch configure.in:
-KISMET_AUTORECONF = YES
+KISMET_LICENSE_FILES = LICENSE
+KISMET_CONF_OPTS = --disable-debuglibs
 
 KISMET_CXXFLAGS = $(TARGET_CXXFLAGS)
 
@@ -23,43 +27,60 @@ endif
 
 KISMET_CONF_ENV += CXXFLAGS="$(KISMET_CXXFLAGS)"
 
+ifeq ($(BR2_TOOLCHAIN_HAS_LIBATOMIC),y)
+KISMET_CONF_ENV += LIBS=-latomic
+endif
+
 ifeq ($(BR2_PACKAGE_LIBCAP),y)
 KISMET_DEPENDENCIES += libcap
+KISMET_CONF_OPTS += --enable-libcap
+else
+KISMET_CONF_OPTS += --disable-libcap
+endif
+
+ifeq ($(BR2_PACKAGE_LIBUSB),y)
+KISMET_DEPENDENCIES += libusb
+KISMET_CONF_OPTS += --enable-libusb
+else
+KISMET_CONF_OPTS += --disable-libusb
+endif
+
+ifeq ($(BR2_PACKAGE_LM_SENSORS),y)
+KISMET_DEPENDENCIES += lm-sensors
+KISMET_CONF_OPTS += --enable-lmsensors
+else
+KISMET_CONF_OPTS += --disable-lmsensors
 endif
 
 ifeq ($(BR2_PACKAGE_PCRE),y)
 KISMET_DEPENDENCIES += pcre
+KISMET_CONF_OPTS += --enable-pcre
+else
+KISMET_CONF_OPTS += --disable-pcre
 endif
 
-ifeq ($(BR2_PACKAGE_KISMET_CLIENT),y)
-KISMET_TARGET_BINARIES += kismet_client
+ifeq ($(BR2_PACKAGE_KISMET_PYTHON_TOOLS),y)
+KISMET_DEPENDENCIES += python3 python-setuptools
+KISMET_CONF_OPTS += \
+	--enable-python-tools \
+	--with-python-interpreter=$(HOST_DIR)/bin/python$(PYTHON3_VERSION_MAJOR)
+else
+KISMET_CONF_OPTS += --disable-python-tools
 endif
+
+KISMET_INSTALL_TARGET_OPTS += \
+	DESTDIR=$(TARGET_DIR) \
+	INSTUSR=$(shell id -u) \
+	INSTGRP=$(shell id -g) \
+	SUIDGROUP=$(shell id -g)
 
 ifeq ($(BR2_PACKAGE_KISMET_SERVER),y)
-KISMET_TARGET_BINARIES += kismet_server
-KISMET_TARGET_CONFIGS += kismet.conf
+KISMET_DEPENDENCIES += libmicrohttpd
+KISMET_CONF_OPTS += --disable-capture-tools-only
+KISMET_INSTALL_TARGET_OPTS += install
+else
+KISMET_CONF_OPTS += --enable-capture-tools-only
+KISMET_INSTALL_TARGET_OPTS += binsuidinstall
 endif
-
-ifeq ($(BR2_PACKAGE_KISMET_DRONE),y)
-KISMET_TARGET_BINARIES += kismet_drone
-KISMET_TARGET_CONFIGS += kismet_drone.conf
-endif
-
-ifdef KISMET_TARGET_BINARIES
-define KISMET_INSTALL_TARGET_BINARIES
-	$(INSTALL) -m 755 $(addprefix $(KISMET_DIR)/, $(KISMET_TARGET_BINARIES)) $(TARGET_DIR)/usr/bin
-endef
-endif
-
-ifdef KISMET_TARGET_CONFIGS
-define KISMET_INSTALL_TARGET_CONFIGS
-	$(INSTALL) -m 644 $(addprefix $(KISMET_DIR)/conf/, $(KISMET_TARGET_CONFIGS)) $(TARGET_DIR)/etc
-endef
-endif
-
-define KISMET_INSTALL_TARGET_CMDS
-	$(KISMET_INSTALL_TARGET_BINARIES)
-	$(KISMET_INSTALL_TARGET_CONFIGS)
-endef
 
 $(eval $(autotools-package))

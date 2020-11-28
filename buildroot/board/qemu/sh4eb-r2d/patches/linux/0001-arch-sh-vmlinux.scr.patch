@@ -1,0 +1,32 @@
+From fe657afd48fc67841d32207ef9eeeb5f099764cd Mon Sep 17 00:00:00 2001
+From: Romain Naour <romain.naour@gmail.com>
+Date: Sat, 21 Dec 2019 11:52:04 +0100
+Subject: [PATCH] arch/sh: vmlinux.scr
+
+Building the kernel using a toolchain built with Binutils 2.33.1 prevent
+booting a sh4 system under Qemu.
+Apply the patch provided by Alan Modra [2] that fix alignment of rodata.
+
+[1] https://sourceware.org/git/gitweb.cgi?p=binutils-gdb.git;h=ebd2263ba9a9124d93bbc0ece63d7e0fae89b40e
+[2] https://www.sourceware.org/ml/binutils/2019-12/msg00112.html
+
+Signed-off-by: Romain Naour <romain.naour@gmail.com>
+---
+ arch/sh/boot/compressed/vmlinux.scr | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/sh/boot/compressed/vmlinux.scr b/arch/sh/boot/compressed/vmlinux.scr
+index 862d74808236..dd292b4b9082 100644
+--- a/arch/sh/boot/compressed/vmlinux.scr
++++ b/arch/sh/boot/compressed/vmlinux.scr
+@@ -1,6 +1,6 @@
+ SECTIONS
+ {
+-  .rodata..compressed : {
++  .rodata..compressed : ALIGN(8) {
+ 	input_len = .;
+ 	LONG(input_data_end - input_data) input_data = .;
+ 	*(.data)
+-- 
+2.24.1
+

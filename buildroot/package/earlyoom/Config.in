@@ -1,0 +1,12 @@
+config BR2_PACKAGE_EARLYOOM
+	bool "earlyoom"
+	depends on BR2_USE_MMU
+	help
+	  Early OOM daemon for Linux.
+
+	  User space daemon for triggering Linux OOM killer
+	  before running out of memory, avoiding situations
+	  where the machine becomes unresponsive from out of
+	  control swapping.
+
+	  https://github.com/rfjakob/earlyoom

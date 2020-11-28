@@ -1,0 +1,10 @@
+[Unit]
+Description=Media Redundancy Protocol
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/mrp
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

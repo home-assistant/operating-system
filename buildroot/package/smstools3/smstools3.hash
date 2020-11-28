@@ -1,4 +1,7 @@
-# Locally calculated
-sha256  ed00ffaeaa312a5b4f969f4e97a64603a866bbe16e393ea02f5bf05234814d59  smstools3-3.1.15.tar.gz
-sha256  61ae4d83c30236cc7df40b1ccbbe6be07d334f9579b8d0facecc34334fe15b61  doc/license.html
+# From http://smstools3.kekekasvi.com/packages/
+md5  6a9f038fb38a49cc3a4f8f14a88fb8af smstools-3.1.21.tar.gz
+sha256  a26ba4c02b16f6cf13177bffca6c9230dc5fefaeba8e3030cd4e4905f6a92084  smstools3-3.1.21.tar.gz
+
+# Hash for license files
+sha256  884d8f0377259f291432f4fa31d5a9720eefa0e0d797652ae686b6325a434624  doc/license.html
 sha256  786b4da4dd900cad87a7dc17769458607bdeae575d62e6e98ad7144e9225f8d3  LICENSE

@@ -1,0 +1,37 @@
+From e2180d95fb67f57b6ffba01fefb4844a1ca4f792 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Wed, 18 Nov 2020 08:12:45 +0100
+Subject: [PATCH] src/lib/Makefile.am: install ares_dns.h
+
+This will avoid the following build failure with resiprocate:
+
+In file included from dns/DnsCnameRecord.cxx:7:
+dns/AresCompat.hxx:5:10: fatal error: ares_dns.h: No such file or directory
+ #include "ares_dns.h"
+          ^~~~~~~~~~~~
+
+Fixes:
+ - http://autobuild.buildroot.org/results/cbf158f0c037d44ef293a8804d18c84e3b731059
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: https://github.com/c-ares/c-ares/pull/376]
+---
+ src/lib/Makefile.am | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/src/lib/Makefile.am b/src/lib/Makefile.am
+index c918667..92a4152 100644
+--- a/src/lib/Makefile.am
++++ b/src/lib/Makefile.am
+@@ -14,6 +14,8 @@ lib_LTLIBRARIES = libcares.la
+ 
+ man_MANS = $(MANPAGES)
+ 
++include_HEADERS = ares_dns.h
++
+ # adig and ahost are just sample programs and thus not mentioned with the
+ # regular sources and headers
+ EXTRA_DIST = Makefile.inc config-win32.h CMakeLists.txt \
+-- 
+2.29.2
+

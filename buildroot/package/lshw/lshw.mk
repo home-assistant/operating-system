@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LSHW_VERSION = 02.18
+LSHW_VERSION = 02.19.2
 LSHW_SITE = http://ezix.org/software/files
 LSHW_SOURCE = lshw-B.$(LSHW_VERSION).tar.gz
 LSHW_LICENSE = GPL-2.0

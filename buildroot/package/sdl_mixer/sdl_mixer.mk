@@ -22,10 +22,28 @@ SDL_MIXER_AUTORECONF = YES
 SDL_MIXER_CONF_OPTS = \
 	--without-x \
 	--with-sdl-prefix=$(STAGING_DIR)/usr \
-	--disable-music-midi \
 	--disable-music-mod \
 	--disable-music-mp3 \
 	--disable-music-flac # configure script fails when cross compiling
+
+ifeq ($(BR2_PACKAGE_FLUIDSYNTH),y)
+SDL_MIXER_DEPENDENCIES += fluidsynth
+SDL_MIXER_CONF_OPTS += \
+	--enable-music-midi \
+	--enable-music-fluidsynth-midi
+SDL_MIXER_HAS_MIDI = YES
+endif
+
+ifeq ($(BR2_PACKAGE_SDL_MIXER_MIDI_TIMIDITY),y)
+SDL_MIXER_CONF_OPTS += \
+	--enable-music-midi \
+	--enable-music-timidity-midi
+SDL_MIXER_HAS_MIDI = YES
+endif
+
+ifneq ($(SDL_MIXER_HAS_MIDI),YES)
+SDL_MIXER_CONF_OPTS += --disable-music-midi
+endif
 
 ifeq ($(BR2_PACKAGE_LIBMAD),y)
 SDL_MIXER_CONF_OPTS += --enable-music-mp3-mad-gpl

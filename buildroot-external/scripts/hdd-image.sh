@@ -312,10 +312,10 @@ function convert_disk_image_virtual() {
 }
 
 
-function convert_disk_image_gz() {
+function convert_disk_image_xz() {
     local hdd_ext=${1:-img}
     local hdd_img="$(hassos_image_name "${hdd_ext}")"
 
-    rm -f "${hdd_img}.gz"
-    gzip --best "${hdd_img}"
+    rm -f "${hdd_img}.xz"
+    xz -3 -T0 "${hdd_img}"
 }

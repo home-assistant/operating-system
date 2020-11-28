@@ -1,7 +1,7 @@
-From 439e2a240062c4be21ac7879b130ef590106cdd8 Mon Sep 17 00:00:00 2001
-Message-Id: <439e2a240062c4be21ac7879b130ef590106cdd8.1603550497.git.stefan@agner.ch>
-In-Reply-To: <698972869afda7095e31892c48051350788aa0a1.1603550497.git.stefan@agner.ch>
-References: <698972869afda7095e31892c48051350788aa0a1.1603550497.git.stefan@agner.ch>
+From 31e32295dc261032d7f5540a0b7f79a4f5a5b807 Mon Sep 17 00:00:00 2001
+Message-Id: <31e32295dc261032d7f5540a0b7f79a4f5a5b807.1606490648.git.stefan@agner.ch>
+In-Reply-To: <f9877c2895d6c05710a828d0cd46d9f25626b070.1606490648.git.stefan@agner.ch>
+References: <f9877c2895d6c05710a828d0cd46d9f25626b070.1606490648.git.stefan@agner.ch>
 From: Pascal Vizeli <pvizeli@syshack.ch>
 Date: Tue, 4 Aug 2020 13:50:57 +0000
 Subject: [PATCH 2/2] meson: Add board_rev to env
@@ -35,10 +35,10 @@ index a90fe55081..c67d12d06c 100644
 +
  #endif /* __MESON_BOOT_H__ */
 diff --git a/arch/arm/mach-meson/board-info.c b/arch/arm/mach-meson/board-info.c
-index cfcd5bbd3b..3ea7eb7251 100644
+index c585b12ca5..9dbb997281 100644
 --- a/arch/arm/mach-meson/board-info.c
 +++ b/arch/arm/mach-meson/board-info.c
-@@ -186,3 +186,15 @@ int show_board_info(void)
+@@ -182,3 +182,15 @@ int show_board_info(void)
  
  	return 0;
  }
@@ -78,5 +78,5 @@ index caf7fd6810..c2a191ba6a 100644
  
  	if (!eth_env_get_enetaddr("ethaddr", mac_addr)) {
 -- 
-2.29.1
+2.29.2
 

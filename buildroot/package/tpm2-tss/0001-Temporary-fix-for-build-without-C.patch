@@ -1,4 +1,4 @@
-From 158d0bc3a2a7a93090cc12c5b0dd3c27e6f44d61 Mon Sep 17 00:00:00 2001
+From 7dc753ad27a8cd14c9b00be94ca89b847cf05ce9 Mon Sep 17 00:00:00 2001
 From: Carlos Santos <unixmania@gmail.com>
 Date: Mon, 23 Dec 2019 08:02:19 -0300
 Subject: [PATCH] Temporary fix for build without C++
@@ -28,17 +28,17 @@ Signed-off-by: Carlos Santos <unixmania@gmail.com>
  1 file changed, 1 deletion(-)
 
 diff --git a/configure.ac b/configure.ac
-index cd50451d..a3bd7144 100644
+index ff59dd7c..3e4028fb 100755
 --- a/configure.ac
 +++ b/configure.ac
-@@ -25,7 +25,6 @@ AC_CANONICAL_HOST
- AX_IS_RELEASE(dash-version)
+@@ -26,7 +26,6 @@ AX_IS_RELEASE(dash-version)
  AX_CHECK_ENABLE_DEBUG([info])
  
--AC_PROG_CXX
  AC_PROG_CC
+-AC_PROG_CXX
  AC_PROG_LN_S
  AC_USE_SYSTEM_EXTENSIONS
+ LT_INIT()
 -- 
-2.18.1
+2.26.2
 

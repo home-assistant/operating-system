@@ -1,0 +1,281 @@
+From f12d0a67a79679641299b1b923883e62332ee6d4 Mon Sep 17 00:00:00 2001
+Message-Id: <f12d0a67a79679641299b1b923883e62332ee6d4.1606428503.git.stefan@agner.ch>
+In-Reply-To: <a04331a6ba7334282836bbaa76e979c4e6be3900.1606428503.git.stefan@agner.ch>
+References: <a04331a6ba7334282836bbaa76e979c4e6be3900.1606428503.git.stefan@agner.ch>
+From: Michael Walle <michael@walle.cc>
+Date: Wed, 23 Sep 2020 12:42:51 +0200
+Subject: [PATCH 07/15] mmc: sdhci: move the ADMA2 table handling into own
+ module
+
+There are other (non-SDHCI) controllers which supports ADMA2 descriptor
+tables, namely the Freescale eSDHC. Instead of copying the code, move it
+into an own module.
+
+Signed-off-by: Michael Walle <michael@walle.cc>
+---
+ drivers/mmc/Kconfig      |  5 +++
+ drivers/mmc/Makefile     |  1 +
+ drivers/mmc/sdhci-adma.c | 73 ++++++++++++++++++++++++++++++++++++++++
+ drivers/mmc/sdhci.c      | 63 +++++-----------------------------
+ include/sdhci.h          |  8 +++--
+ 5 files changed, 92 insertions(+), 58 deletions(-)
+ create mode 100644 drivers/mmc/sdhci-adma.c
+
+diff --git a/drivers/mmc/Kconfig b/drivers/mmc/Kconfig
+index 0c252e34c7..88582db58c 100644
+--- a/drivers/mmc/Kconfig
++++ b/drivers/mmc/Kconfig
+@@ -46,6 +46,9 @@ config SPL_DM_MMC
+ 
+ if MMC
+ 
++config MMC_SDHCI_ADMA_HELPERS
++	bool
++
+ config MMC_SPI
+ 	bool "Support for SPI-based MMC controller"
+ 	depends on DM_MMC && DM_SPI
+@@ -445,6 +448,7 @@ config MMC_SDHCI_SDMA
+ config MMC_SDHCI_ADMA
+ 	bool "Support SDHCI ADMA2"
+ 	depends on MMC_SDHCI
++	select MMC_SDHCI_ADMA_HELPERS
+ 	help
+ 	  This enables support for the ADMA (Advanced DMA) defined
+ 	  in the SD Host Controller Standard Specification Version 3.00
+@@ -452,6 +456,7 @@ config MMC_SDHCI_ADMA
+ config SPL_MMC_SDHCI_ADMA
+ 	bool "Support SDHCI ADMA2 in SPL"
+ 	depends on MMC_SDHCI
++	select MMC_SDHCI_ADMA_HELPERS
+ 	help
+ 	  This enables support for the ADMA (Advanced DMA) defined
+ 	  in the SD Host Controller Standard Specification Version 3.00 in SPL.
+diff --git a/drivers/mmc/Makefile b/drivers/mmc/Makefile
+index 22266ec8ec..1c849cbab2 100644
+--- a/drivers/mmc/Makefile
++++ b/drivers/mmc/Makefile
+@@ -6,6 +6,7 @@
+ obj-y += mmc.o
+ obj-$(CONFIG_$(SPL_)DM_MMC) += mmc-uclass.o
+ obj-$(CONFIG_$(SPL_)MMC_WRITE) += mmc_write.o
++obj-$(CONFIG_MMC_SDHCI_ADMA_HELPERS) += sdhci-adma.o
+ 
+ ifndef CONFIG_$(SPL_)BLK
+ obj-y += mmc_legacy.o
+diff --git a/drivers/mmc/sdhci-adma.c b/drivers/mmc/sdhci-adma.c
+new file mode 100644
+index 0000000000..2ec057fbb1
+--- /dev/null
++++ b/drivers/mmc/sdhci-adma.c
+@@ -0,0 +1,73 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * SDHCI ADMA2 helper functions.
++ */
++
++#include <common.h>
++#include <cpu_func.h>
++#include <sdhci.h>
++#include <malloc.h>
++#include <asm/cache.h>
++
++static void sdhci_adma_desc(struct sdhci_adma_desc *desc,
++			    dma_addr_t addr, u16 len, bool end)
++{
++	u8 attr;
++
++	attr = ADMA_DESC_ATTR_VALID | ADMA_DESC_TRANSFER_DATA;
++	if (end)
++		attr |= ADMA_DESC_ATTR_END;
++
++	desc->attr = attr;
++	desc->len = len;
++	desc->reserved = 0;
++	desc->addr_lo = lower_32_bits(addr);
++#ifdef CONFIG_DMA_ADDR_T_64BIT
++	desc->addr_hi = upper_32_bits(addr);
++#endif
++}
++
++/**
++ * sdhci_prepare_adma_table() - Populate the ADMA table
++ *
++ * @table:	Pointer to the ADMA table
++ * @data:	Pointer to MMC data
++ * @addr:	DMA address to write to or read from
++ *
++ * Fill the ADMA table according to the MMC data to read from or write to the
++ * given DMA address.
++ * Please note, that the table size depends on CONFIG_SYS_MMC_MAX_BLK_COUNT and
++ * we don't have to check for overflow.
++ */
++void sdhci_prepare_adma_table(struct sdhci_adma_desc *table,
++			      struct mmc_data *data, dma_addr_t addr)
++{
++	uint trans_bytes = data->blocksize * data->blocks;
++	uint desc_count = DIV_ROUND_UP(trans_bytes, ADMA_MAX_LEN);
++	struct sdhci_adma_desc *desc = table;
++	int i = desc_count;
++
++	while (--i) {
++		sdhci_adma_desc(desc, addr, ADMA_MAX_LEN, false);
++		addr += ADMA_MAX_LEN;
++		trans_bytes -= ADMA_MAX_LEN;
++		desc++;
++	}
++
++	sdhci_adma_desc(desc, addr, trans_bytes, true);
++
++	flush_cache((dma_addr_t)table,
++		    ROUND(desc_count * sizeof(struct sdhci_adma_desc),
++			  ARCH_DMA_MINALIGN));
++}
++
++/**
++ * sdhci_adma_init() - initialize the ADMA descriptor table
++ *
++ * @return pointer to the allocated descriptor table or NULL in case of an
++ * error.
++ */
++struct sdhci_adma_desc *sdhci_adma_init(void)
++{
++	return memalign(ARCH_DMA_MINALIGN, ADMA_TABLE_SZ);
++}
+diff --git a/drivers/mmc/sdhci.c b/drivers/mmc/sdhci.c
+index 7673219fb3..d549a264d7 100644
+--- a/drivers/mmc/sdhci.c
++++ b/drivers/mmc/sdhci.c
+@@ -69,57 +69,6 @@ static void sdhci_transfer_pio(struct sdhci_host *host, struct mmc_data *data)
+ 	}
+ }
+ 
+-#if CONFIG_IS_ENABLED(MMC_SDHCI_ADMA)
+-static void sdhci_adma_desc(struct sdhci_host *host, dma_addr_t dma_addr,
+-			    u16 len, bool end)
+-{
+-	struct sdhci_adma_desc *desc;
+-	u8 attr;
+-
+-	desc = &host->adma_desc_table[host->desc_slot];
+-
+-	attr = ADMA_DESC_ATTR_VALID | ADMA_DESC_TRANSFER_DATA;
+-	if (!end)
+-		host->desc_slot++;
+-	else
+-		attr |= ADMA_DESC_ATTR_END;
+-
+-	desc->attr = attr;
+-	desc->len = len;
+-	desc->reserved = 0;
+-	desc->addr_lo = lower_32_bits(dma_addr);
+-#ifdef CONFIG_DMA_ADDR_T_64BIT
+-	desc->addr_hi = upper_32_bits(dma_addr);
+-#endif
+-}
+-
+-static void sdhci_prepare_adma_table(struct sdhci_host *host,
+-				     struct mmc_data *data)
+-{
+-	uint trans_bytes = data->blocksize * data->blocks;
+-	uint desc_count = DIV_ROUND_UP(trans_bytes, ADMA_MAX_LEN);
+-	int i = desc_count;
+-	dma_addr_t dma_addr = host->start_addr;
+-
+-	host->desc_slot = 0;
+-
+-	while (--i) {
+-		sdhci_adma_desc(host, dma_addr, ADMA_MAX_LEN, false);
+-		dma_addr += ADMA_MAX_LEN;
+-		trans_bytes -= ADMA_MAX_LEN;
+-	}
+-
+-	sdhci_adma_desc(host, dma_addr, trans_bytes, true);
+-
+-	flush_cache((dma_addr_t)host->adma_desc_table,
+-		    ROUND(desc_count * sizeof(struct sdhci_adma_desc),
+-			  ARCH_DMA_MINALIGN));
+-}
+-#elif defined(CONFIG_MMC_SDHCI_SDMA)
+-static void sdhci_prepare_adma_table(struct sdhci_host *host,
+-				     struct mmc_data *data)
+-{}
+-#endif
+ #if (defined(CONFIG_MMC_SDHCI_SDMA) || CONFIG_IS_ENABLED(MMC_SDHCI_ADMA))
+ static void sdhci_prepare_dma(struct sdhci_host *host, struct mmc_data *data,
+ 			      int *is_aligned, int trans_bytes)
+@@ -156,8 +105,11 @@ static void sdhci_prepare_dma(struct sdhci_host *host, struct mmc_data *data,
+ 	if (host->flags & USE_SDMA) {
+ 		sdhci_writel(host, phys_to_bus((ulong)host->start_addr),
+ 				SDHCI_DMA_ADDRESS);
+-	} else if (host->flags & (USE_ADMA | USE_ADMA64)) {
+-		sdhci_prepare_adma_table(host, data);
++	}
++#if CONFIG_IS_ENABLED(MMC_SDHCI_ADMA)
++	else if (host->flags & (USE_ADMA | USE_ADMA64)) {
++		sdhci_prepare_adma_table(host->adma_desc_table, data,
++					 host->start_addr);
+ 
+ 		sdhci_writel(host, lower_32_bits(host->adma_addr),
+ 			     SDHCI_ADMA_ADDRESS);
+@@ -165,6 +117,7 @@ static void sdhci_prepare_dma(struct sdhci_host *host, struct mmc_data *data,
+ 			sdhci_writel(host, upper_32_bits(host->adma_addr),
+ 				     SDHCI_ADMA_ADDRESS_HI);
+ 	}
++#endif
+ }
+ #else
+ static void sdhci_prepare_dma(struct sdhci_host *host, struct mmc_data *data,
+@@ -770,9 +723,9 @@ int sdhci_setup_cfg(struct mmc_config *cfg, struct sdhci_host *host,
+ 		       __func__);
+ 		return -EINVAL;
+ 	}
+-	host->adma_desc_table = memalign(ARCH_DMA_MINALIGN, ADMA_TABLE_SZ);
+-
++	host->adma_desc_table = sdhci_adma_init();
+ 	host->adma_addr = (dma_addr_t)host->adma_desc_table;
++
+ #ifdef CONFIG_DMA_ADDR_T_64BIT
+ 	host->flags |= USE_ADMA64;
+ #else
+diff --git a/include/sdhci.h b/include/sdhci.h
+index 94fc3ed56a..f69d5f81fb 100644
+--- a/include/sdhci.h
++++ b/include/sdhci.h
+@@ -271,7 +271,6 @@ struct sdhci_ops {
+ 	int	(*deferred_probe)(struct sdhci_host *host);
+ };
+ 
+-#if CONFIG_IS_ENABLED(MMC_SDHCI_ADMA)
+ #define ADMA_MAX_LEN	65532
+ #ifdef CONFIG_DMA_ADDR_T_64BIT
+ #define ADMA_DESC_LEN	16
+@@ -302,7 +301,7 @@ struct sdhci_adma_desc {
+ 	u32 addr_hi;
+ #endif
+ } __packed;
+-#endif
++
+ struct sdhci_host {
+ 	const char *name;
+ 	void *ioaddr;
+@@ -334,7 +333,6 @@ struct sdhci_host {
+ 	dma_addr_t adma_addr;
+ #if CONFIG_IS_ENABLED(MMC_SDHCI_ADMA)
+ 	struct sdhci_adma_desc *adma_desc_table;
+-	uint desc_slot;
+ #endif
+ };
+ 
+@@ -496,4 +494,8 @@ extern const struct dm_mmc_ops sdhci_ops;
+ #else
+ #endif
+ 
++struct sdhci_adma_desc *sdhci_adma_init(void);
++void sdhci_prepare_adma_table(struct sdhci_adma_desc *table,
++			      struct mmc_data *data, dma_addr_t addr);
++
+ #endif /* __SDHCI_HW_H */
+-- 
+2.29.2
+

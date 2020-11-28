@@ -1,16 +1,18 @@
 categories:
-  - title: 'HassOS Core'
+  - title: 'Home Assistant Operating System'
     label: 'os'
-  - title: 'Build'
+  - title: 'Build System'
     label: 'build'
   - title: 'Raspberry Pi'
     label: 'board/raspberrypi'
   - title: 'Open Virtual Appliance'
     label: 'board/ova'
-  - title: 'Intel-Nuc'
+  - title: 'Intel NUC'
     label: 'board/intel-nuc'
-  - title: 'Hardkernel'
+  - title: 'Hardkernel ODROID'
     label: 'board/hardkernel'
+  - title: 'ASUS Tinker'
+    label: 'board/tinker'
 template: |
   ## Changes
 

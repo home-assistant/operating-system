@@ -11,6 +11,8 @@ if [ "${BUILDER_UID:-0}" -ne 0 ] && [ "${BUILDER_GID:-0}" -ne 0 ]; then
   groupadd -g "${BUILDER_GID}" builder
   useradd -m -u "${BUILDER_UID}" -g "${BUILDER_GID}" -G docker,sudo builder
   echo "builder ALL=(ALL:ALL) NOPASSWD: ALL" >> /etc/sudoers
+  # Make sure cache is accessible by builder
+  chown "${BUILDER_UID}:${BUILDER_GID}" /cache
   USER="builder"
 fi
 

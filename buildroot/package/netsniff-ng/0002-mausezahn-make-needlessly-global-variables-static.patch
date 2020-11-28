@@ -1,0 +1,139 @@
+From bfa3c89317869ffe1e90b7e01e7cacad7a7ea10e Mon Sep 17 00:00:00 2001
+From: Tobias Klauser <tklauser@distanz.ch>
+Date: Thu, 13 Aug 2020 12:09:28 +0200
+Subject: [PATCH] mausezahn: make needlessly global variables static
+
+Move variables only used withing a single compilation unit from mz.h and
+make them static. This avoids "multiple definition of symbol" linker
+errors with gcc-10.
+
+Updates #216
+
+Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
+[Retrieved from:
+https://github.com/netsniff-ng/netsniff-ng/commit/bfa3c89317869ffe1e90b7e01e7cacad7a7ea10e]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ staging/dns.c     |  2 ++
+ staging/mz.h      | 28 +---------------------------
+ staging/rcv_rtp.c | 19 +++++++++++++++++++
+ staging/rtp.c     |  1 -
+ 4 files changed, 22 insertions(+), 28 deletions(-)
+
+diff --git a/staging/dns.c b/staging/dns.c
+index bfa61d84..83227e25 100644
+--- a/staging/dns.c
++++ b/staging/dns.c
+@@ -89,6 +89,8 @@
+ 		"|   arcount (or arc) ........... Number of RRs in additional records section  0  / 0\n" \
+ 		"\n"
+ 
++static u_int8_t  gbuf[MAX_PAYLOAD_SIZE];  // This is only a generic global buffer to handover data more easily
++static u_int32_t gbuf_s;
+ 
+ int dns_get_query (char* argval);
+ int dns_get_answer (char* argval);
+diff --git a/staging/mz.h b/staging/mz.h
+index c7a131d8..42e64cfc 100644
+--- a/staging/mz.h
++++ b/staging/mz.h
+@@ -285,11 +285,6 @@ FILE *fp, *fp2;             // global multipurpose file pointer
+ long double total_d;
+ clock_t mz_start, mz_stop;
+ 
+-enum rtp_display_mode {
+-	BAR, NCURSES, TEXT
+-} rtp_dm;
+-	
+-
+ int mz_rand;
+ int bwidth;
+ 
+@@ -298,14 +293,7 @@ struct mz_timestamp {
+ 	u_int32_t nsec;
+ };
+ 
+-struct mz_timestamp 
+-	tv, 
+-	timeTX[TIME_COUNT_MAX],  
+-	timeRX[TIME_COUNT_MAX];
+-
+ int32_t
+-  time0,
+-  jitter_rfc,
+   jitter[TIME_COUNT_MAX];   
+ 
+ int 
+@@ -322,14 +310,8 @@ u_int16_t
+   sqnr_next;
+ 
+ u_int32_t
+-  drop,    // packet drop count
+-  dis,     // packet disorder count
+   gind,      // a global index to run through deltaRX, deltaTX, and jitter
+-  gind_max,  // the amount of entries used in the (ugly oversized) arrays; per default set to TIME_COUNT
+-  gtotal;    // counts number of file write cycles (see "got_rtp_packet()") 
+-
+-
+-char rtp_filter_str[64];
++  gind_max;  // the amount of entries used in the (ugly oversized) arrays; per default set to TIME_COUNT
+ 
+ struct tx_struct
+ {
+@@ -496,14 +478,6 @@ struct tx_struct
+    
+ } tx;  // NOTE: tx elements are considered as default values for MOPS
+ 
+-
+-
+-
+-
+-u_int8_t  gbuf[MAX_PAYLOAD_SIZE];  // This is only a generic global buffer to handover data more easily
+-u_int32_t gbuf_s;                  //
+-
+-
+ // ************************************
+ // 
+ //  Prototypes: General Tools
+diff --git a/staging/rcv_rtp.c b/staging/rcv_rtp.c
+index 0a911552..f43b92cd 100644
+--- a/staging/rcv_rtp.c
++++ b/staging/rcv_rtp.c
+@@ -39,6 +39,25 @@
+ #include "mz.h"
+ #include "mops.h"
+ 
++static enum rtp_display_mode {
++	BAR, NCURSES, TEXT
++} rtp_dm;
++
++static int32_t
++  time0,
++  jitter_rfc;
++
++static struct mz_timestamp
++  timeTX[TIME_COUNT_MAX],
++  timeRX[TIME_COUNT_MAX];
++
++static u_int32_t
++  drop,    // packet drop count
++  dis,     // packet disorder count
++  gtotal;    // counts number of file write cycles (see "got_rtp_packet()")
++
++static char rtp_filter_str[64];
++
+ // Initialize the rcv_rtp process: Read user parameters and initialize globals
+ int rcv_rtp_init(void)
+ {
+diff --git a/staging/rtp.c b/staging/rtp.c
+index 54a195eb..da40884b 100644
+--- a/staging/rtp.c
++++ b/staging/rtp.c
+@@ -56,7 +56,6 @@
+ 		"|\n"
+ 
+ 
+-
+ int create_rtp_packet(void)
+ {
+ 	u_int8_t byte1,	byte2;

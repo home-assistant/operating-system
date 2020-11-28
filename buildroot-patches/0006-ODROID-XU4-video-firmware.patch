@@ -1,0 +1,50 @@
+From 502b35edadbac3d51c3f37b4c74917ffff6f1332 Mon Sep 17 00:00:00 2001
+Message-Id: <502b35edadbac3d51c3f37b4c74917ffff6f1332.1605131156.git.stefan@agner.ch>
+In-Reply-To: <8aa12f1835721959d0d1999fceee632404f28366.1605131156.git.stefan@agner.ch>
+References: <8aa12f1835721959d0d1999fceee632404f28366.1605131156.git.stefan@agner.ch>
+From: Stefan Agner <stefan@agner.ch>
+Date: Wed, 11 Nov 2020 22:16:10 +0100
+Subject: [PATCH 6/7] ODROID-XU4: video firmware
+
+---
+ package/linux-firmware/Config.in         | 6 ++++++
+ package/linux-firmware/linux-firmware.mk | 6 ++++++
+ 2 files changed, 12 insertions(+)
+
+diff --git a/package/linux-firmware/Config.in b/package/linux-firmware/Config.in
+index 9b999034da..d3b7a2b79b 100644
+--- a/package/linux-firmware/Config.in
++++ b/package/linux-firmware/Config.in
+@@ -44,6 +44,12 @@ config BR2_PACKAGE_LINUX_FIRMWARE_QCOM_ADRENO
+ 	help
+ 	  Firmware files for Qualcomm Adreno GPU firmware
+ 
++
++config BR2_PACKAGE_LINUX_FIRMWARE_MFC_V8
++	bool "Samsung MFC video encoder/decoder driver v8"
++	help
++	  Firmware files for samsung MFC video encoder/decoder driver v8
++
+ endmenu # Video
+ 
+ menu "Bluetooth firmware"
+diff --git a/package/linux-firmware/linux-firmware.mk b/package/linux-firmware/linux-firmware.mk
+index d9ad942903..5474377a36 100644
+--- a/package/linux-firmware/linux-firmware.mk
++++ b/package/linux-firmware/linux-firmware.mk
+@@ -39,6 +39,12 @@ LINUX_FIRMWARE_FILES += qcom/a*
+ LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENSE.qcom qcom/NOTICE.txt
+ endif
+ 
++ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_MFC_V8),y)
++LINUX_FIRMWARE_FILES += s5p-mfc-v8.fw
++# No license file; the license is in the file WHENCE
++# which is installed unconditionally
++endif
++
+ # Intel Wireless Bluetooth
+ ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_IBT),y)
+ LINUX_FIRMWARE_FILES += intel/ibt-*
+-- 
+2.29.2
+

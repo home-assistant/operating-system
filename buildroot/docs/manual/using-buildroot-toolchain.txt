@@ -32,3 +32,17 @@ the tarball (e.g. because you will just be moving the +host+ directory,
 or will be generating the tarball on your own), Buildroot also allows
 you to just prepare the SDK with +make prepare-sdk+ without actually
 generating a tarball.
+
+For your convenience, by selecting the option
++BR2_PACKAGE_HOST_ENVIRONMENT_SETUP+, you can get a
++setup-environment+ script installed in +output/host/+ and therefore
+in your SDK.  This script can be sourced with
++. your/sdk/path/environment-setup+ to export a number of environment
+variables that will help cross-compile your projects using the
+Buildroot SDK: the +PATH+ will contain the SDK binaries, standard
+_autotools_ variables will be defined with the appropriate values, and
++CONFIGURE_FLAGS+ will contain basic +./configure+ options to
+cross-compile _autotools_ projects. It also provides some useful
+commands. Note however that once this script is sourced, the
+environment is setup only for cross-compilation, and no longer for
+native compilation.

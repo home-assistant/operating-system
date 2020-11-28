@@ -1,0 +1,36 @@
+From 452123a4491b26c5b078934477bd5864f1d004e4 Mon Sep 17 00:00:00 2001
+From: Peter Seiderer <ps.report@gmx.net>
+Date: Thu, 28 May 2020 20:58:26 +0200
+Subject: [PATCH] Fix QPainterPath include
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Add missing QPainterPath (needed for Qt-5.15.0 compile).
+
+Fixes:
+
+  searchlineedit.cpp:121:18: error: aggregate ‘QPainterPath myPath’ has incomplete type and cannot be defined
+       QPainterPath myPath;
+                    ^~~~~~
+
+Signed-off-by: Peter Seiderer <ps.report@gmx.net>
+---
+ examples/webkitwidgets/browser/searchlineedit.cpp | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/examples/webkitwidgets/browser/searchlineedit.cpp b/examples/webkitwidgets/browser/searchlineedit.cpp
+index fbd73cb..7462c82 100644
+--- a/examples/webkitwidgets/browser/searchlineedit.cpp
++++ b/examples/webkitwidgets/browser/searchlineedit.cpp
+@@ -34,6 +34,7 @@
+ #include "searchlineedit.h"
+ 
+ #include <QtGui/QPainter>
++#include <QtGui/QPainterPath>
+ #include <QtGui/QMouseEvent>
+ #include <QtWidgets/QMenu>
+ #include <QtWidgets/QStyle>
+-- 
+2.26.2
+

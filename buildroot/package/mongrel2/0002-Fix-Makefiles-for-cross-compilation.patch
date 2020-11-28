@@ -1,0 +1,78 @@
+From 298356c44a7df2b34c4e307c531d2010e2cb4b79 Mon Sep 17 00:00:00 2001
+From: Lionel Orry <lionel.orry@gmail.com>
+Date: Wed, 27 Mar 2013 15:56:56 +0100
+Subject: [PATCH] Fix Makefiles for cross-compilation
+
+The CFLAGS handling in mongrel2 is really messy and it is hard to make
+it behave correctly with cross-compiling environments. This patch
+restricts the Makefiles syntax to GNU Make, but help cross-compiling.
+
+This is not meant to be applied upstream.
+
+Signed-off-by: Lionel Orry <lionel.orry@gmail.com>
+[Fabrice: refresh for 1.12.2]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ Makefile                      | 2 +-
+ tools/config_modules/Makefile | 2 +-
+ tools/filters/Makefile        | 2 +-
+ tools/m2sh/Makefile           | 2 +-
+ tools/procer/Makefile         | 2 +-
+ 5 files changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index 4e89c33..2f549a8 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,5 +1,5 @@
+ CFLAGS?=-g -O2
+-CFLAGS += -Wall -Wextra -Wno-implicit-fallthrough -Wno-unused-const-variable -I./src -DNDEBUG -D_FILE_OFFSET_BITS=64 -pthread
++override CFLAGS += -Wall -Wextra -Wno-implicit-fallthrough -Wno-unused-const-variable -I./src -DNDEBUG -D_FILE_OFFSET_BITS=64 -pthread
+ CFLAGS += ${OPTFLAGS}
+ LIBS+=-lzmq -ldl -lsqlite3 -lmbedtls -lmbedx509 -lmbedcrypto
+ PREFIX?=/usr/local
+diff --git a/tools/config_modules/Makefile b/tools/config_modules/Makefile
+index c2680d1..ada3169 100644
+--- a/tools/config_modules/Makefile
++++ b/tools/config_modules/Makefile
+@@ -1,5 +1,5 @@
+ PREFIX?=/usr/local
+-CFLAGS=-I../../src -I../../src/mbedtls/include $(OPTFLAGS) -fPIC -shared -nostartfiles -L../../build
++override CFLAGS=-I../../src -I../../src/mbedtls/include $(OPTFLAGS) -fPIC -shared -nostartfiles -L../../build
+ LDFLAGS=$(OPTLIBS)
+ 
+ MONGO_SRC = mongo-c-driver/src/bson.c \
+diff --git a/tools/filters/Makefile b/tools/filters/Makefile
+index 6505ad5..a968ef6 100644
+--- a/tools/filters/Makefile
++++ b/tools/filters/Makefile
+@@ -1,5 +1,5 @@
+ PREFIX?=/usr/local
+-CFLAGS=-I../../src -I../../src/mbedtls/include $(OPTFLAGS) -g -fPIC -shared -nostartfiles -L../../build
++override CFLAGS=-I../../src -I../../src/mbedtls/include $(OPTFLAGS) -g -fPIC -shared -nostartfiles -L../../build
+ LDFLAGS=$(OPTLIBS)
+ 
+ all: null.so rewrite.so sendfile.so
+diff --git a/tools/m2sh/Makefile b/tools/m2sh/Makefile
+index b50d8a0..cc00062 100644
+--- a/tools/m2sh/Makefile
++++ b/tools/m2sh/Makefile
+@@ -1,4 +1,4 @@
+-CFLAGS=-DNDEBUG -DNO_LINENOS -pthread -g -I../../src -Isrc -Wall $(OPTFLAGS)
++override CFLAGS=-DNDEBUG -DNO_LINENOS -pthread -g -I../../src -Isrc -Wall $(OPTFLAGS)
+ LIBS=-lzmq -lsqlite3 ../../build/libm2.a $(OPTLIBS)
+ 
+ PREFIX?=/usr/local
+diff --git a/tools/procer/Makefile b/tools/procer/Makefile
+index bb9aa31..d377f7f 100644
+--- a/tools/procer/Makefile
++++ b/tools/procer/Makefile
+@@ -1,4 +1,4 @@
+-CFLAGS=-DNDEBUG -pthread -g -I../../src -Wall $(OPTFLAGS)
++override CFLAGS=-DNDEBUG -pthread -g -I../../src -Wall $(OPTFLAGS)
+ PREFIX?=/usr/local
+ LIBS?=-lzmq 
+ SOURCES=$(wildcard *.c)
+-- 
+2.27.0
+

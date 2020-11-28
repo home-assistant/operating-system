@@ -1,0 +1,32 @@
+From 305a7a5a74a612801d9df2b2efc86dd952b8c4e7 Mon Sep 17 00:00:00 2001
+From: Stefano Babic <sbabic@denx.de>
+Date: Tue, 9 Jun 2020 13:58:06 +0000
+Subject: [PATCH] diskpart: force kernel to reread partition table
+
+After writing a partition table to disk, the kernel should be informed
+(like the partconf tool does), else it is not possible to install images
+in the new created partitions.
+
+Signed-off-by: Stefano Babic <sbabic@denx.de>
+Signed-off-by: Joris Offouga <offougajoris@gmail.com>
+---
+ handlers/diskpart_handler.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/handlers/diskpart_handler.c b/handlers/diskpart_handler.c
+index 16adc17..372412b 100644
+--- a/handlers/diskpart_handler.c
++++ b/handlers/diskpart_handler.c
+@@ -273,7 +273,8 @@ static int diskpart(struct img_type *img,
+ 	/*
+ 	 * Everything done, write into disk
+ 	 */
+-	ret = fdisk_write_disklabel(cxt);
++	ret = fdisk_write_disklabel(cxt) |
++		fdisk_reread_partition_table(cxt);
+ 
+ handler_exit:
+ 	if (fdisk_deassign_device(cxt, 0))
+-- 
+2.25.1
+

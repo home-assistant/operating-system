@@ -75,6 +75,12 @@ config BR2_PACKAGE_NGINX_HTTP_IMAGE_FILTER_MODULE
 	help
 	  Enable ngx_http_image_filter_module
 
+config BR2_PACKAGE_NGINX_HTTP_GEOIP_MODULE
+	bool "ngx_http_geoip_module"
+	select BR2_PACKAGE_GEOIP
+	help
+	  Enable ngx_http_geoip_module
+
 config BR2_PACKAGE_NGINX_HTTP_SUB_MODULE
 	bool "ngx_http_sub_module"
 	help
@@ -127,6 +133,11 @@ config BR2_PACKAGE_NGINX_HTTP_DEGRADATION_MODULE
 	bool "ngx_http_degradation_module"
 	help
 	  Enable ngx_http_degradation_module
+
+config BR2_PACKAGE_NGINX_HTTP_SLICE_MODULE
+	bool "ngx_http_slice_module"
+	help
+	  Enable ngx_http_slice_module
 
 config BR2_PACKAGE_NGINX_HTTP_STUB_STATUS_MODULE
 	bool "ngx_http_stub_status_module"
@@ -279,6 +290,12 @@ config BR2_PACKAGE_NGINX_HTTP_UPSTREAM_KEEPALIVE_MODULE
 	help
 	  Enable ngx_http_upstream_keepalive_module
 
+config BR2_PACKAGE_NGINX_HTTP_UPSTREAM_RANDOM_MODULE
+	bool "ngx_http_upstream_random_module"
+	default y
+	help
+	  Enable ngx_http_upstream_random_module
+
 endif #BR2_PACKAGE_NGINX_HTTP
 
 config BR2_PACKAGE_NGINX_MAIL
@@ -317,11 +334,27 @@ config BR2_PACKAGE_NGINX_STREAM
 
 if BR2_PACKAGE_NGINX_STREAM
 
+config BR2_PACKAGE_NGINX_STREAM_REALIP_MODULE
+	bool "ngx_stream_realip_module"
+	help
+	  Enable ngx_stream_realip_module
+
 config BR2_PACKAGE_NGINX_STREAM_SSL_MODULE
 	bool "ngx_stream_ssl_module"
 	select BR2_PACKAGE_OPENSSL
 	help
 	  Enable ngx_stream_ssl_module
+
+config BR2_PACKAGE_NGINX_STREAM_GEOIP_MODULE
+	bool "ngx_stream_geoip_module"
+	select BR2_PACKAGE_GEOIP
+	help
+	  Enable ngx_stream_geoip_module
+
+config BR2_PACKAGE_NGINX_STREAM_SSL_PREREAD_MODULE
+	bool "ngx_stream_ssl_preread_module"
+	help
+	  Enable ngx_stream_ssl_preread_module
 
 config BR2_PACKAGE_NGINX_STREAM_LIMIT_CONN_MODULE
 	bool "ngx_stream_limit_conn_module"
@@ -335,6 +368,30 @@ config BR2_PACKAGE_NGINX_STREAM_ACCESS_MODULE
 	help
 	  Enable ngx_stream_access_module
 
+config BR2_PACKAGE_NGINX_STREAM_GEO_MODULE
+	bool "ngx_stream_geo_module"
+	default y
+	help
+	  Enable ngx_stream_geo_module
+
+config BR2_PACKAGE_NGINX_STREAM_MAP_MODULE
+	bool "ngx_stream_map_module"
+	default y
+	help
+	  Enable ngx_stream_map_module
+
+config BR2_PACKAGE_NGINX_STREAM_SPLIT_CLIENTS_MODULE
+	bool "ngx_stream_split_clients_module"
+	default y
+	help
+	  Enable ngx_stream_split_clients_module
+
+config BR2_PACKAGE_NGINX_STREAM_RETURN_MODULE
+	bool "ngx_stream_return_module"
+	default y
+	help
+	  Enable ngx_stream_return_module
+
 config BR2_PACKAGE_NGINX_STREAM_UPSTREAM_HASH_MODULE
 	bool "ngx_stream_upstream_hash_module"
 	default y
@@ -346,6 +403,12 @@ config BR2_PACKAGE_NGINX_STREAM_UPSTREAM_LEAST_CONN_MODULE
 	default y
 	help
 	  Enable ngx_stream_upstream_least_conn_module
+
+config BR2_PACKAGE_NGINX_STREAM_UPSTREAM_RANDOM_MODULE
+	bool "ngx_stream_upstream_random_module"
+	default y
+	help
+	  Enable ngx_stream_upstream_random_module
 
 config BR2_PACKAGE_NGINX_STREAM_UPSTREAM_ZONE_MODULE
 	bool "ngx_stream_upstream_zone_module"

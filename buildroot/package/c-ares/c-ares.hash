@@ -1,5 +1,5 @@
 # Locally calculated after checking pgp signature
-sha256  d08312d0ecc3bd48eee0a4cc0d2137c9f194e0a28de2028928c0f6cae85f86ce  c-ares-1.16.1.tar.gz
+sha256  1cecd5dbe21306c7263f8649aa6e9a37aecb985995a3489f487d98df2b40757d  c-ares-1.17.0.tar.gz
 
 # Hash for license file
 sha256  db4eb63fe09daebdf57d3f79b091bb5ee5070c0d761040e83264e648d307af4c  LICENSE.md

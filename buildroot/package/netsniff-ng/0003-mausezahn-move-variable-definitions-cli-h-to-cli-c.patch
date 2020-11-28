@@ -1,0 +1,77 @@
+From 0d5aa3246c20dad2d76165559fb575136b7216e8 Mon Sep 17 00:00:00 2001
+From: Tobias Klauser <tklauser@distanz.ch>
+Date: Wed, 19 Aug 2020 12:04:47 +0200
+Subject: [PATCH] mausezahn: move variable definitions cli.h to cli.c
+
+Move variable definitions to avoid "multiple definition of symbol"
+linker errors with gcc-10.
+
+Updates #216
+
+Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
+[Retrieved from:
+https://github.com/netsniff-ng/netsniff-ng/commit/0d5aa3246c20dad2d76165559fb575136b7216e8]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ staging/cli.c | 13 +++++++++++++
+ staging/cli.h | 20 ++++++++++----------
+ 2 files changed, 23 insertions(+), 10 deletions(-)
+
+diff --git a/staging/cli.c b/staging/cli.c
+index 5b5a1592..dbfdb550 100644
+--- a/staging/cli.c
++++ b/staging/cli.c
+@@ -23,6 +23,19 @@
+ #include "mops.h"
+ #include "llist.h"
+ 
++struct cli_def *gcli;
++
++char mz_username[32];
++char mz_password[32];
++char mz_enable[32];
++char mz_listen_addr[16];
++int mz_port;
++struct mops *clipkt; // actual packet used by CLI thread
++
++int clidev;
++
++int cli_debug;
++
+ void mz_cli_init(void)
+ {
+ 	amp_head = automops_init();
+diff --git a/staging/cli.h b/staging/cli.h
+index 1a0156fd..2ec153a0 100644
+--- a/staging/cli.h
++++ b/staging/cli.h
+@@ -54,19 +54,19 @@
+ #define MZ_DEFAULT_ENABLE_PASSWORD "mops"
+ #define MZ_DEFAULT_PORT     25542     // Towel day and 42
+ 
+-struct cli_def *gcli;
+-
+-char mz_username[32];
+-char mz_password[32];
+-char mz_enable[32];
+-char mz_listen_addr[16];
+-int mz_port;
+-struct mops *clipkt; // actual packet used by CLI thread
++extern struct cli_def *gcli;
++
++extern char mz_username[32];
++extern char mz_password[32];
++extern char mz_enable[32];
++extern char mz_listen_addr[16];
++extern int mz_port;
++extern struct mops *clipkt; // actual packet used by CLI thread
+ 	
+-int clidev;
++extern int clidev;
+ 
+ // =================================================================
+-int cli_debug;
++extern int cli_debug;
+ 
+ // Flags from 0x0000 to 0xFFFF
+ // cli_debug & 8000  => Developer specific debugs

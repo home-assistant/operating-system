@@ -1,11 +1,13 @@
-comment "elfutils needs a uClibc or glibc toolchain w/ wchar, dynamic library"
+comment "elfutils needs a uClibc or glibc toolchain w/ wchar, dynamic library, threads"
 	depends on !BR2_USE_WCHAR || BR2_STATIC_LIBS \
+		|| !BR2_TOOLCHAIN_HAS_THREADS \
 		|| !(BR2_TOOLCHAIN_USES_UCLIBC || BR2_TOOLCHAIN_USES_GLIBC)
 
 config BR2_PACKAGE_ELFUTILS
 	bool "elfutils"
 	depends on BR2_USE_WCHAR
 	depends on !BR2_STATIC_LIBS
+	depends on BR2_TOOLCHAIN_HAS_THREADS
 	# Only glibc and uClibc implement the myriad of required GNUisms
 	depends on BR2_TOOLCHAIN_USES_UCLIBC || BR2_TOOLCHAIN_USES_GLIBC
 	select BR2_PACKAGE_ZLIB

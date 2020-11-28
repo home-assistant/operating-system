@@ -1,5 +1,5 @@
-# From http://ftp.gnome.org/pub/GNOME/sources/gvfs/1.31/gvfs-1.31.4.sha256sum
-sha256	55244d447d040884dfb335fde638274cb6f2794285ada7fa84bcbbd34f06be04	gvfs-1.31.4.tar.xz
+# From http://ftp.gnome.org/pub/GNOME/sources/gvfs/1.44/gvfs-1.44.1.sha256sum
+sha256  50ef3245d1b03666a40455109169a2a1bd51419fd2d51f9fa6cfd4f89f04fb46  gvfs-1.44.1.tar.xz
 
 # Hash for license file
-sha256	45cf336e2e48176993babc5aabf44437390f40e6a86a472c6abfc7ce9c035db4	COPYING
+sha256  45cf336e2e48176993babc5aabf44437390f40e6a86a472c6abfc7ce9c035db4  COPYING

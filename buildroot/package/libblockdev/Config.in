@@ -1,0 +1,72 @@
+config BR2_PACKAGE_LIBBLOCKDEV
+	bool "libblockdev"
+	depends on !BR2_STATIC_LIBS # kmod
+	depends on BR2_USE_WCHAR # libglib2
+	depends on BR2_TOOLCHAIN_HAS_THREADS # libglib2
+	depends on BR2_USE_MMU # libglib2
+	depends on BR2_PACKAGE_HAS_UDEV
+	select BR2_PACKAGE_KMOD
+	select BR2_PACKAGE_LIBGLIB2
+	help
+	  libblockdev is a C library supporting GObject introspection
+	  for manipulation of block devices. It has a plugin-based
+	  architecture where each technology (like LVM, Btrfs, MD RAID,
+	  Swap,...) is implemented in a separate plugin, possibly with
+	  multiple implementations.
+
+	  https://github.com/storaged-project/libblockdev/
+
+if BR2_PACKAGE_LIBBLOCKDEV
+
+comment "plugins"
+
+config BR2_PACKAGE_LIBBLOCKDEV_CRYPTO
+	bool "crypto"
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4 # cryptsetup -> json-c
+	select BR2_PACKAGE_CRYPTSETUP
+
+config BR2_PACKAGE_LIBBLOCKDEV_FS
+	bool "filesystem"
+	depends on BR2_ENABLE_LOCALE # parted
+	select BR2_PACKAGE_UTIL_LINUX
+	select BR2_PACKAGE_UTIL_LINUX_LIBMOUNT
+	select BR2_PACKAGE_PARTED
+
+comment "filesystem plugin needs a toolchain w/ locale"
+	depends on !BR2_ENABLE_LOCALE
+
+config BR2_PACKAGE_LIBBLOCKDEV_LOOP
+	bool "loop"
+
+config BR2_PACKAGE_LIBBLOCKDEV_LVM2
+	bool "lvm2"
+	depends on BR2_ENABLE_LOCALE # parted
+	select BR2_PACKAGE_PARTED
+	select BR2_PACKAGE_LVM2
+
+comment "lvm2 support needs a toolchain w/ locale"
+	depends on !BR2_ENABLE_LOCALE
+
+config BR2_PACKAGE_LIBBLOCKDEV_MDRAID
+	bool "mdraid"
+	select BR2_PACKAGE_LIBBYTESIZE
+
+config BR2_PACKAGE_LIBBLOCKDEV_PART
+	bool "part"
+	depends on BR2_ENABLE_LOCALE # parted
+	select BR2_PACKAGE_PARTED
+
+comment "part plugin needs a toolchain w/ locale"
+	depends on !BR2_ENABLE_LOCALE
+
+config BR2_PACKAGE_LIBBLOCKDEV_SWAP
+	bool "swap"
+	select BR2_PACKAGE_UTIL_LINUX
+	select BR2_PACKAGE_UTIL_LINUX_LIBBLKID
+
+endif
+
+comment "libblockdev needs udev /dev management and a toolchain w/ wchar, threads, dynamic library"
+	depends on BR2_USE_MMU
+	depends on !BR2_PACKAGE_HAS_UDEV || BR2_STATIC_LIBS || \
+		!BR2_USE_WCHAR || !BR2_TOOLCHAIN_HAS_THREADS

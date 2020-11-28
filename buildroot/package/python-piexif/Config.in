@@ -1,0 +1,10 @@
+config BR2_PACKAGE_PYTHON_PIEXIF
+	bool "python-piexif"
+	depends on BR2_PACKAGE_PYTHON3
+	help
+	  Piexif simplifies interacting with EXIF data in Python. It
+	  includes the tools necessary for extracting, creating,
+	  manipulating, converting and writing EXIF data to JPEG, WebP
+	  and TIFF files.
+
+	  https://github.com/hMatoba/Piexif

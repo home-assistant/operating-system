@@ -4,10 +4,45 @@
 #
 ################################################################################
 
-XEN_VERSION = 4.13.1
+XEN_VERSION = 4.14.0
 XEN_SITE = https://downloads.xenproject.org/release/xen/$(XEN_VERSION)
 XEN_PATCH = \
-	https://xenbits.xenproject.org/xsa/xsa327.patch
+	https://xenbits.xenproject.org/xsa/xsa333.patch \
+	https://xenbits.xenproject.org/xsa/xsa334.patch \
+	https://xenbits.xenproject.org/xsa/xsa336.patch \
+	https://xenbits.xenproject.org/xsa/xsa337/xsa337-1.patch \
+	https://xenbits.xenproject.org/xsa/xsa337/xsa337-2.patch \
+	https://xenbits.xenproject.org/xsa/xsa338.patch \
+	https://xenbits.xenproject.org/xsa/xsa339.patch \
+	https://xenbits.xenproject.org/xsa/xsa340.patch \
+	https://xenbits.xenproject.org/xsa/xsa342.patch \
+	https://xenbits.xenproject.org/xsa/xsa343/xsa343-1.patch \
+	https://xenbits.xenproject.org/xsa/xsa343/xsa343-2.patch \
+	https://xenbits.xenproject.org/xsa/xsa343/xsa343-3.patch \
+	https://xenbits.xenproject.org/xsa/xsa344/xsa344-1.patch \
+	https://xenbits.xenproject.org/xsa/xsa344/xsa344-2.patch
+
+# xsa333.patch
+XEN_IGNORE_CVES += CVE-2020-25602
+# xsa334.patch
+XEN_IGNORE_CVES += CVE-2020-25598
+# xsa336.patch
+XEN_IGNORE_CVES += CVE-2020-25604
+# xsa337-1.patch, xsa337-2.patch
+XEN_IGNORE_CVES += CVE-2020-25595
+# xsa338.patch
+XEN_IGNORE_CVES += CVE-2020-25597
+# xsa339.patch
+XEN_IGNORE_CVES += CVE-2020-25596
+# xsa340.patch
+XEN_IGNORE_CVES += CVE-2020-25603
+# xsa342.patch
+XEN_IGNORE_CVES += CVE-2020-25600
+# xsa343-1.patch, xsa-343-2.patch, xsa-343-3.patch
+XEN_IGNORE_CVES += CVE-2020-25599
+# xsa344-1.patch, xsa344-2.patch
+XEN_IGNORE_CVES += CVE-2020-25601
+
 XEN_LICENSE = GPL-2.0
 XEN_LICENSE_FILES = COPYING
 XEN_DEPENDENCIES = host-acpica host-python3
@@ -20,6 +55,7 @@ XEN_ARCH = arm32
 endif
 
 XEN_CONF_OPTS = \
+	--disable-golang \
 	--disable-ocamltools \
 	--with-initddir=/etc/init.d
 
@@ -42,7 +78,8 @@ XEN_CONF_OPTS += --disable-xen
 endif
 
 ifeq ($(BR2_PACKAGE_XEN_TOOLS),y)
-XEN_DEPENDENCIES += dtc libaio libglib2 ncurses openssl pixman util-linux yajl
+XEN_DEPENDENCIES += \
+	dtc libaio libglib2 ncurses openssl pixman slirp util-linux yajl
 ifeq ($(BR2_PACKAGE_ARGP_STANDALONE),y)
 XEN_DEPENDENCIES += argp-standalone
 endif

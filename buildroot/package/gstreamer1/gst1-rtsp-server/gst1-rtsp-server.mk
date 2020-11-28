@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-GST1_RTSP_SERVER_VERSION = 1.16.2
+GST1_RTSP_SERVER_VERSION = 1.18.1
 GST1_RTSP_SERVER_SOURCE = gst-rtsp-server-$(GST1_RTSP_SERVER_VERSION).tar.xz
 GST1_RTSP_SERVER_SITE = http://gstreamer.freedesktop.org/src/gst-rtsp-server
 GST1_RTSP_SERVER_LICENSE = LGPL-2.0+
@@ -20,15 +20,22 @@ GST1_RTSP_SERVER_LDFLAGS = $(TARGET_LDFLAGS) $(TARGET_NLS_LIBS)
 
 GST1_RTSP_SERVER_CONF_OPTS = \
 	-Dexamples=disabled \
-	-Dtests=disabled
+	-Dtests=disabled \
+	-Ddoc=disabled
 
 GST1_RTSP_SERVER_CONF_OPTS += \
 	-Dexamples=disabled \
 	-Dtests=disabled \
-	-Dintrospection=disabled \
 	-Dgobject-cast-checks=disabled \
 	-Dglib-asserts=disabled \
 	-Dglib-checks=disabled
+
+ifeq ($(BR2_PACKAGE_GOBJECT_INTROSPECTION),y)
+GST1_RTSP_SERVER_CONF_OPTS += -Dintrospection=enabled
+GST1_RTSP_SERVER_DEPENDENCIES += gobject-introspection
+else
+GST1_RTSP_SERVER_CONF_OPTS += -Dintrospection=disabled
+endif
 
 ifeq ($(BR2_PACKAGE_LIBCGROUP),y)
 GST1_RTSP_SERVER_DEPENDENCIES += libcgroup

@@ -18,6 +18,12 @@ menuconfig BR2_PACKAGE_JANUS_GATEWAY
 
 if BR2_PACKAGE_JANUS_GATEWAY
 
+config BR2_PACKAGE_JANUS_GATEWAY_DEMOS
+	bool "HTML demos"
+	help
+	  Install the demonstration website, as featured on
+	  https://janus.conf.meetecho.com/
+
 comment "plugins"
 
 config BR2_PACKAGE_JANUS_GATEWAY_AUDIO_BRIDGE
@@ -76,11 +82,7 @@ comment "RabbitMQ transport needs a toolchain w/ dynamic library, threads"
 
 config BR2_PACKAGE_JANUS_GATEWAY_REST
 	bool "REST (HTTP/HTTPS)"
-	depends on BR2_TOOLCHAIN_HAS_THREADS
 	select BR2_PACKAGE_LIBMICROHTTPD
-
-comment "REST transport needs a toolchain w/ threads"
-	depends on !BR2_TOOLCHAIN_HAS_THREADS
 
 config BR2_PACKAGE_JANUS_GATEWAY_UNIX_SOCKETS
 	bool "Unix Sockets"

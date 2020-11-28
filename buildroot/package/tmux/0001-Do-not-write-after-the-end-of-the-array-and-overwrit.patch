@@ -1,0 +1,35 @@
+From a868bacb46e3c900530bed47a1c6f85b0fbe701c Mon Sep 17 00:00:00 2001
+From: nicm <nicm>
+Date: Thu, 29 Oct 2020 16:33:01 +0000
+Subject: [PATCH] Do not write after the end of the array and overwrite the
+ stack when colon-separated SGR sequences contain empty arguments. Reported by
+ Sergey Nizovtsev.
+
+[Peter: Fixes CVE-2020-27347]
+Signed-off-by: Peter Korsgaard <peter@korsgaard.com>
+---
+ input.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/input.c b/input.c
+index 42a60c92..c280c0d9 100644
+--- a/input.c
++++ b/input.c
+@@ -1976,8 +1976,13 @@ input_csi_dispatch_sgr_colon(struct input_ctx *ictx, u_int i)
+ 				free(copy);
+ 				return;
+ 			}
+-		} else
++		} else {
+ 			n++;
++			if (n == nitems(p)) {
++				free(copy);
++				return;
++			}
++		}
+ 		log_debug("%s: %u = %d", __func__, n - 1, p[n - 1]);
+ 	}
+ 	free(copy);
+-- 
+2.20.1
+

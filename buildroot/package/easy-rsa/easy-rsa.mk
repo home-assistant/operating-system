@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-EASY_RSA_VERSION = 3.0.6
-EASY_RSA_SOURCE = EasyRSA-unix-v$(EASY_RSA_VERSION).tgz
+EASY_RSA_VERSION = 3.0.8
+EASY_RSA_SOURCE = EasyRSA-$(EASY_RSA_VERSION).tgz
 EASY_RSA_SITE = https://github.com/OpenVPN/easy-rsa/releases/download/v$(EASY_RSA_VERSION)
 EASY_RSA_LICENSE = GPL-2.0
 EASY_RSA_LICENSE_FILES = COPYING.md gpl-2.0.txt

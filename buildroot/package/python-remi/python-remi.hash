@@ -1,3 +1,2 @@
-# Locally computed
-sha256 678c9caf1ecffc03c4a3d59931906520545d77e9a8027ff1a1ca90fc580f56e2  python-remi-2019.9.tar.gz
-sha256 bc198f9846c1da3a1c1b1fa2b12909b021365d1e7fe9b4039245edfcec3b7f7f  LICENSE
+# sha256 from https://pypi.org/pypi/remi/json
+sha256  2a1953747fd01bfda25381624f6b84d83586d247f6b47282dbafff348fd05d88  remi-2020.8.6.tar.gz

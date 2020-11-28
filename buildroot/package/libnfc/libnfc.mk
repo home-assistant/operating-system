@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBNFC_VERSION = 1.7.1
+LIBNFC_VERSION = 1.8.0
 LIBNFC_SOURCE = libnfc-$(LIBNFC_VERSION).tar.bz2
 LIBNFC_SITE = https://github.com/nfc-tools/libnfc/releases/download/libnfc-$(LIBNFC_VERSION)
 LIBNFC_LICENSE = LGPL-3.0+

@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-FREESWITCH_VERSION = 1.10.2
+FREESWITCH_VERSION = 1.10.5
 FREESWITCH_SOURCE = freeswitch-$(FREESWITCH_VERSION).-release.tar.xz
 FREESWITCH_SITE = https://files.freeswitch.org/freeswitch-releases
 # External modules need headers/libs from staging
@@ -12,17 +12,12 @@ FREESWITCH_INSTALL_STAGING = YES
 FREESWITCH_LICENSE = MPL-1.1, \
 	GPL-3.0+ with font exception (fonts), \
 	Apache-2.0 (apr, apr-util), \
-	LGPL-2.0+ (sofia-sip), \
-	LGPL-2.1, GPL-2.0 (spandsp), \
 	BSD-3-Clause (libsrtp)
 
 FREESWITCH_LICENSE_FILES = \
 	COPYING \
 	libs/apr/LICENSE \
 	libs/apr-util/LICENSE \
-	libs/sofia-sip/COPYING \
-	libs/sofia-sip/COPYRIGHTS \
-	libs/spandsp/COPYING \
 	libs/srtp/LICENSE
 
 # required dependencies
@@ -32,6 +27,8 @@ FREESWITCH_DEPENDENCIES = \
 	libcurl \
 	openssl \
 	pcre \
+	spandsp \
+	sofia-sip \
 	speex \
 	sqlite \
 	tiff \
@@ -277,8 +274,8 @@ FREESWITCH_DEPENDENCIES += libsoundtouch
 FREESWITCH_ENABLED_MODULES += applications/mod_soundtouch
 endif
 
-ifeq ($(BR2_PACKAGE_OPENCV),y)
-FREESWITCH_DEPENDENCIES += opencv
+ifeq ($(BR2_PACKAGE_OPENCV3),y)
+FREESWITCH_DEPENDENCIES += opencv3
 FREESWITCH_ENABLED_MODULES += applications/mod_cv
 endif
 

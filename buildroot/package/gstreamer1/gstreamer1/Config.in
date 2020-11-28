@@ -12,7 +12,7 @@ config BR2_PACKAGE_GSTREAMER1
 	  GStreamer is an open source multimedia framework. This 1.x
 	  version of Gstreamer is incompatible with Gstreamer 0.10.x.
 
-	  http://gstreamer.freedesktop.org/
+	  https://gstreamer.freedesktop.org/
 
 if BR2_PACKAGE_GSTREAMER1
 

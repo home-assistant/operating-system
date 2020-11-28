@@ -65,10 +65,13 @@ config BR2_PACKAGE_COLLECTD_LOGSTASH
 
 config BR2_PACKAGE_COLLECTD_LUA
 	bool "lua"
-	select BR2_PACKAGE_LUA
+	depends on BR2_PACKAGE_HAS_LUAINTERPRETER
 	help
 	  Embeds a Lua interpreter into collectd and provides an
 	  interface to collectd's plugin system.
+
+comment "lua support needs a Lua interpreter"
+	depends on !BR2_PACKAGE_HAS_LUAINTERPRETER
 
 config BR2_PACKAGE_COLLECTD_NOTIFY_EMAIL
 	bool "notify_email"
@@ -127,6 +130,21 @@ config BR2_PACKAGE_COLLECTD_BIND
 	select BR2_PACKAGE_LIBXML2
 	help
 	  Collects BIND DNS statistics.
+
+config BR2_PACKAGE_COLLECTD_BUDDYINFO
+	bool "buddyinfo"
+	help
+	  Statistics from buddyinfo file about memory fragmentation.
+
+config BR2_PACKAGE_COLLECTD_CAPABILITIES
+	bool "capabilities"
+	depends on BR2_aarch64 || BR2_i386 || BR2_x86_64 # dmidecode
+	select BR2_PACKAGE_DMIDECODE # runtime
+	select BR2_PACKAGE_JANSSON
+	select BR2_PACKAGE_LIBMICROHTTPD
+	help
+	  Collects selected static platform data using dmidecode and
+	  expose it through micro embedded webserver.
 
 config BR2_PACKAGE_COLLECTD_CEPH
 	bool "ceph"
@@ -209,6 +227,13 @@ config BR2_PACKAGE_COLLECTD_DNS
 	select BR2_PACKAGE_LIBPCAP
 	help
 	  Collects statistics of DNS traffic using libpcap.
+
+config BR2_PACKAGE_COLLECTD_DPDK_TELEMETRY
+	bool "dpdk_telemetry"
+	select BR2_PACKAGE_JANSSON
+	help
+	  Collects DPDK ethernet device metrics via dpdk_telemetry
+	  library.
 
 config BR2_PACKAGE_COLLECTD_DRBD
 	bool "drbd"
@@ -296,19 +321,6 @@ config BR2_PACKAGE_COLLECTD_LOAD
 	help
 	  Collects the system load.
 
-config BR2_PACKAGE_COLLECTD_LVM
-	bool "lvm"
-	depends on !BR2_TOOLCHAIN_USES_MUSL # lvm2 app library
-	select BR2_PACKAGE_LVM2
-	select BR2_PACKAGE_LVM2_APP_LIBRARY
-	help
-	  Collects the size of logical volumes (LV) and free space
-	  inside a volume group (VG) from Linux' Logical Volume Manager
-	  (LVM).
-
-comment "lvm needs a glibc or uClibc toolchain"
-	depends on BR2_TOOLCHAIN_USES_MUSL
-
 config BR2_PACKAGE_COLLECTD_MD
 	bool "md"
 	help
@@ -373,6 +385,17 @@ config BR2_PACKAGE_COLLECTD_NTPD
 	bool "ntpd"
 	help
 	  Queries an NTP server and extracts parameters.
+
+config BR2_PACKAGE_COLLECTD_NUT
+	bool "nut"
+	depends on BR2_INSTALL_LIBSTDCPP
+	select BR2_PACKAGE_NUT
+	help
+	  The NUT plugin collects uninterruptible power supply (UPS)
+	  statistics using the Network UPS Tools (NUT).
+
+comment "nut needs a toolchain w/ C++"
+	depends on !BR2_INSTALL_LIBSTDCPP
 
 config BR2_PACKAGE_COLLECTD_OLSRD
 	bool "olsrd"
@@ -559,6 +582,7 @@ comment "Select at least one for collectd to be useful"
 
 config BR2_PACKAGE_COLLECTD_AMQP
 	bool "amqp"
+	select BR2_PACKAGE_OPENSSL # needs rabbitmq-c with ssl support
 	select BR2_PACKAGE_RABBITMQ_C
 	help
 	  Send/receive values via the Advanced Message Queuing Protocol
@@ -581,15 +605,19 @@ config BR2_PACKAGE_COLLECTD_GRPC
 	depends on BR2_TOOLCHAIN_HAS_SYNC_4 || BR2_TOOLCHAIN_HAS_ATOMIC # grpc
 	depends on BR2_INSTALL_LIBSTDCPP # grpc -> protobuf
 	depends on BR2_PACKAGE_PROTOBUF_ARCH_SUPPORTS # grpc -> protobuf
-	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_8 # grpc -> protobuf
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # grpc -> libabseil-cpp
+	depends on BR2_HOST_GCC_AT_LEAST_4_9 # grpc -> host-libabseil-cpp
+	depends on BR2_PACKAGE_LIBABSEIL_CPP_ARCH_SUPPORTS # grpc
 	select BR2_PACKAGE_GRPC
 	help
 	  Send/receive values using the gRPC protocol.
 
-comment "grpc needs a toolchain w/ C++, gcc >= 4.8"
+comment "grpc needs a toolchain w/ C++, gcc >= 4.9, host gcc >= 4.9"
 	depends on BR2_TOOLCHAIN_HAS_SYNC_4 || BR2_TOOLCHAIN_HAS_ATOMIC
-	depends on !BR2_INSTALL_LIBSTDCPP || !BR2_TOOLCHAIN_GCC_AT_LEAST_4_8
+	depends on !BR2_INSTALL_LIBSTDCPP || !BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 \
+		|| !BR2_HOST_GCC_AT_LEAST_4_9
 	depends on BR2_PACKAGE_PROTOBUF_ARCH_SUPPORTS
+	depends on BR2_PACKAGE_LIBABSEIL_CPP_ARCH_SUPPORTS # grpc
 
 config BR2_PACKAGE_COLLECTD_MQTT
 	bool "mqtt"
@@ -601,6 +629,14 @@ config BR2_PACKAGE_COLLECTD_NETWORK
 	bool "network"
 	help
 	  Send/receive values from other instances of collectd.
+
+config BR2_PACKAGE_COLLECTD_NETWORK_GCRYPT
+	bool "crypto support"
+	depends on BR2_PACKAGE_LIBGPG_ERROR_ARCH_SUPPORTS # libgcrypt
+	depends on BR2_PACKAGE_COLLECTD_NETWORK
+	select BR2_PACKAGE_LIBGCRYPT
+	help
+	  Enable crypto support
 
 config BR2_PACKAGE_COLLECTD_RRDTOOL
 	bool "rrdtool"
@@ -635,6 +671,12 @@ config BR2_PACKAGE_COLLECTD_WRITEHTTP
 	help
 	  Sends values collected to a web-server using HTTP POST and
 	  PUTVAL.
+
+config BR2_PACKAGE_COLLECTD_WRITEINFLUXDBUDP
+	bool "write_influxdb_udp"
+	help
+	  Sends data to an instance of InfluxDB using the "Line
+	  Protocol".
 
 config BR2_PACKAGE_COLLECTD_WRITELOG
 	bool "write_log"

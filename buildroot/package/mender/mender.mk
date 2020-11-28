@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-MENDER_VERSION = 2.1.2
+MENDER_VERSION = 2.3.0
 MENDER_SITE = https://github.com/mendersoftware/mender/archive
 MENDER_SOURCE = $(MENDER_VERSION).tar.gz
 MENDER_LICENSE = Apache-2.0, BSD-2-Clause, BSD-3-Clause, ISC, MIT, OLDAP-2.8
@@ -15,8 +15,6 @@ MENDER_LICENSE_FILES = \
 	LICENSE \
 	LIC_FILES_CHKSUM.sha256 \
 	vendor/github.com/mendersoftware/mendertesting/LICENSE \
-	vendor/github.com/mendersoftware/log/LICENSE \
-	vendor/github.com/mendersoftware/scopestack/LICENSE \
 	vendor/github.com/mendersoftware/mender-artifact/LICENSE \
 	vendor/github.com/pkg/errors/LICENSE \
 	vendor/github.com/pmezard/go-difflib/LICENSE \
@@ -32,16 +30,23 @@ MENDER_LICENSE_FILES = \
 	vendor/github.com/stretchr/testify/LICENCE.txt \
 	vendor/github.com/stretchr/objx/LICENSE.md \
 	vendor/github.com/ungerik/go-sysfs/LICENSE \
-	vendor/github.com/konsorten/go-windows-terminal-sequences/LICENSE \
+	vendor/github.com/urfave/cli/LICENSE \
 	vendor/github.com/bmatsuo/lmdb-go/LICENSE.mdb.md
 
 MENDER_DEPENDENCIES = xz
 
 MENDER_LDFLAGS = -X main.Version=$(MENDER_VERSION)
 
+MENDER_UPDATE_MODULES_FILES = \
+	directory \
+	script \
+	single-file \
+	$(if $(BR2_PACKAGE_DOCKER_CLI),docker) \
+	$(if $(BR2_PACKAGE_RPM),rpm)
+
 define MENDER_INSTALL_CONFIG_FILES
 	$(INSTALL) -d -m 755 $(TARGET_DIR)/etc/mender/scripts
-	echo -n "2" > $(TARGET_DIR)/etc/mender/scripts/version
+	echo -n "3" > $(TARGET_DIR)/etc/mender/scripts/version
 
 	$(INSTALL) -D -m 0644 $(MENDER_PKGDIR)/mender.conf \
 		$(TARGET_DIR)/etc/mender/mender.conf
@@ -63,13 +68,17 @@ define MENDER_INSTALL_CONFIG_FILES
 
 	mkdir -p $(TARGET_DIR)/var/lib
 	ln -snf /var/run/mender $(TARGET_DIR)/var/lib/mender
+	$(foreach f,$(MENDER_UPDATE_MODULES_FILES), \
+		$(INSTALL) -D -m 0755 $(@D)/support/modules/$(notdir $(f)) \
+			$(TARGET_DIR)/usr/share/mender/modules/v3/$(notdir $(f))
+	)
 endef
 
 MENDER_POST_INSTALL_TARGET_HOOKS += MENDER_INSTALL_CONFIG_FILES
 
 define MENDER_INSTALL_INIT_SYSTEMD
-	$(INSTALL) -D -m 0644 $(MENDER_PKGDIR)/mender.service \
-		$(TARGET_DIR)/usr/lib/systemd/system/mender.service
+	$(INSTALL) -D -m 0644 $(MENDER_PKGDIR)/mender-client.service \
+		$(TARGET_DIR)/usr/lib/systemd/system/mender-client.service
 endef
 
 define MENDER_INSTALL_INIT_SYSV

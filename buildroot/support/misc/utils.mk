@@ -88,6 +88,10 @@ notfirstword = $(wordlist 2,$(words $(1)),$(1))
 # list of unquoted items:   a b c d  -->  "a", "b", "c", "d"
 make-comma-list = $(subst $(space),$(comma)$(space),$(patsubst %,"%",$(strip $(1))))
 
+# build a comma-separated list of single quoted items, from a space-separated
+# list of unquoted items:   a b c d  -->  'a', 'b', 'c', 'd'
+make-sq-comma-list = $(subst $(space),$(comma)$(space),$(patsubst %,'%',$(strip $(1))))
+
 # Needed for the foreach loops to loop over the list of hooks, so that
 # each hook call is properly separated by a newline.
 define sep

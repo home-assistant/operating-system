@@ -1,0 +1,41 @@
+From e22ca2f593aa8fd392f1ac4f8dd104bc56d0d100 Mon Sep 17 00:00:00 2001
+From: Ezra Cooper <ezra@qumulo.com>
+Date: Thu, 21 Jun 2018 11:07:35 -0700
+Subject: [PATCH] Fix issue #66 by ignoring the first section header when
+ sorting, and not overwriting NOBITS entries.
+
+Fetch from: https://github.com/NixOS/patchelf/commit/52ab908394958a2a5d0476e306e2cad4da4fdeae
+
+Backported to v0.9
+
+Signed-off-by: Conrad Ratschan <conrad.ratschan@rockwellcollins.com>
+---
+ src/patchelf.cc | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/src/patchelf.cc b/src/patchelf.cc
+index c025ae2..fa2945e 100644
+--- a/src/patchelf.cc
++++ b/src/patchelf.cc
+@@ -435,7 +435,7 @@ void ElfFile<ElfFileParamNames>::sortShdrs()
+     /* Sort the sections by offset. */
+     CompShdr comp;
+     comp.elfFile = this;
+-    sort(shdrs.begin(), shdrs.end(), comp);
++    sort(shdrs.begin() + 1, shdrs.end(), comp);
+ 
+     /* Restore the sh_link mappings. */
+     for (unsigned int i = 1; i < rdi(hdr->e_shnum); ++i)
+@@ -586,7 +586,8 @@ void ElfFile<ElfFileParamNames>::writeReplacedSections(Elf_Off & curOff,
+     {
+         string sectionName = i->first;
+         Elf_Shdr & shdr = findSection(sectionName);
+-        memset(contents + rdi(shdr.sh_offset), 'X', rdi(shdr.sh_size));
++        if (shdr.sh_type != SHT_NOBITS)
++            memset(contents + rdi(shdr.sh_offset), 'X', rdi(shdr.sh_size));
+     }
+ 
+     for (ReplacedSections::iterator i = replacedSections.begin();
+-- 
+2.17.1
+

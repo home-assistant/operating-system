@@ -38,6 +38,8 @@ include::common-usage.txt[]
 
 include::customize.txt[]
 
+include::selinux-support.txt[]
+
 include::faq-troubleshooting.txt[]
 
 include::known-issues.txt[]

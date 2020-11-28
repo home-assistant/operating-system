@@ -1,0 +1,74 @@
+From f6f1396807607f5649d20631db517cfca3a1f5c4 Mon Sep 17 00:00:00 2001
+From: Joseph Benden <joe@benden.us>
+Date: Tue, 7 Jul 2020 11:44:40 -0700
+Subject: [PATCH] Fix duplicated symbols.
+
+Signed-off-by: Joseph Benden <joe@benden.us>
+[Retrieved from:
+https://github.com/aircrack-ng/aircrack-ng/commit/f6f1396807607f5649d20631db517cfca3a1f5c4]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ src/airodump-ng/airodump-ng.c                 | 2 --
+ src/airventriloquist-ng/airventriloquist-ng.c | 6 +++---
+ src/tkiptun-ng/tkiptun-ng.c                   | 4 ++--
+ 3 files changed, 5 insertions(+), 7 deletions(-)
+
+diff --git a/src/airodump-ng/airodump-ng.c b/src/airodump-ng/airodump-ng.c
+index 3ae6994dd..e72bc88e2 100644
+--- a/src/airodump-ng/airodump-ng.c
++++ b/src/airodump-ng/airodump-ng.c
+@@ -92,8 +92,6 @@
+ #include "radiotap/radiotap_iter.h"
+ 
+ struct devices dev;
+-uint8_t h80211[4096] __attribute__((aligned(16)));
+-uint8_t tmpbuf[4096] __attribute__((aligned(16)));
+ 
+ static const unsigned char llcnull[] = {0, 0, 0, 0};
+ 
+diff --git a/src/airventriloquist-ng/airventriloquist-ng.c b/src/airventriloquist-ng/airventriloquist-ng.c
+index ac6b7647e..267d95540 100644
+--- a/src/airventriloquist-ng/airventriloquist-ng.c
++++ b/src/airventriloquist-ng/airventriloquist-ng.c
+@@ -173,7 +173,7 @@ static struct local_options
+ } lopt;
+ 
+ struct devices dev;
+-struct wif *_wi_in, *_wi_out;
++extern struct wif *_wi_in, *_wi_out;
+ 
+ struct ARP_req
+ {
+@@ -195,8 +195,8 @@ struct APt
+ };
+ 
+ unsigned long nb_pkt_sent;
+-u_int8_t h80211[4096];
+-static u_int8_t tmpbuf[4096];
++extern u_int8_t h80211[4096];
++extern u_int8_t tmpbuf[4096];
+ 
+ static int tcp_test(const char * ip_str, const short port)
+ {
+diff --git a/src/tkiptun-ng/tkiptun-ng.c b/src/tkiptun-ng/tkiptun-ng.c
+index dc67f5d58..43db0bc23 100644
+--- a/src/tkiptun-ng/tkiptun-ng.c
++++ b/src/tkiptun-ng/tkiptun-ng.c
+@@ -267,7 +267,7 @@ static struct local_options
+ 
+ // unused, but needed for link
+ struct devices dev;
+-struct wif *_wi_in, *_wi_out;
++extern struct wif *_wi_in, *_wi_out;
+ 
+ struct ARP_req
+ {
+@@ -289,7 +289,7 @@ struct APt
+ };
+ 
+ unsigned long nb_pkt_sent;
+-unsigned char h80211[4096];
++extern unsigned char h80211[4096];
+ static unsigned char srcbuf[4096];
+ static char strbuf[512];
+ static int alarmed;

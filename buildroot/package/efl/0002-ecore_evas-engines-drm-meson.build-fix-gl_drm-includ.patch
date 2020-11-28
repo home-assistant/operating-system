@@ -1,0 +1,37 @@
+From 8548b02c487ba7e9d78489c6db58812ee5cfb197 Mon Sep 17 00:00:00 2001
+From: Romain Naour <romain.naour@gmail.com>
+Date: Sat, 1 Aug 2020 01:01:00 +0200
+Subject: [PATCH] ecore_evas/engines/drm/meson.build: fix "gl_drm" include
+ directory
+
+The Evas_Engine_GL_Drm.h file is in "gl_drm" directory, not "drm".
+
+../src/modules/ecore_evas/engines/drm/ecore_evas_drm.c:23:11: fatal error: Evas_Engine_GL_Drm.h: No such file or directory
+   23 | # include <Evas_Engine_GL_Drm.h>
+      |           ^~~~~~~~~~~~~~~~~~~~~~
+compilation terminated.
+
+Upstream status:
+https://sourceforge.net/p/enlightenment/mailman/message/37075004/
+
+Signed-off-by: Romain Naour <romain.naour@gmail.com>
+---
+ src/modules/ecore_evas/engines/drm/meson.build | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/modules/ecore_evas/engines/drm/meson.build b/src/modules/ecore_evas/engines/drm/meson.build
+index 0741d7fccd..edda1abd71 100644
+--- a/src/modules/ecore_evas/engines/drm/meson.build
++++ b/src/modules/ecore_evas/engines/drm/meson.build
+@@ -6,7 +6,7 @@ if get_option('opengl') != 'none'
+   engine_deps += [gl_deps]
+ endif
+ 
+-engine_include_dir += include_directories(join_paths('..', '..', '..', 'evas', 'engines', 'drm'))
++engine_include_dir += include_directories(join_paths('..', '..', '..', 'evas', 'engines', 'gl_drm'))
+ 
+ shared_module(mod_full_name, engine_src,
+   include_directories : config_dir + [engine_include_dir],
+-- 
+2.25.4
+
