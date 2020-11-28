@@ -58,6 +58,7 @@ comment "Networking options"
 
 config BR2_PACKAGE_QEMU_SLIRP
 	bool "Enable user mode networking (SLIRP)"
+	select BR2_PACKAGE_SLIRP
 	help
 	  Enable user mode network stack, which is the default
 	  networking backend. It requires no administrator privileges

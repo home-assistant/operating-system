@@ -1,3 +1,23 @@
+2020.11-rc3, released November 28th, 2020
+
+	Fixes all over the tree.
+
+	Updated/fixed packages: c-ares, cage, cdrkit,
+	dovecot-pigeonhole, efl, gvfs, harfbuzz, jpeg-turbo,
+	libcamera, libkrb5, libpam-tacplus, libxkbcommon, minidlna,
+	modem-manager, monkey, musl, ncurses, numactl, openntpd,
+	openrc, postgresql, proftpd, python-flask-cors, python-pip,
+	qemu, raptor, redis, slirp, spandsp, thermald, uhd, vsftpd,
+	webkitgtk, wireless-regdb, wlroots, wpewebkit, xen, xinetd,
+	xorriso
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#13296: host-libcap failed to build
+	#13331: openrc-0.42.1 compilation failure on gcc-10
+	#13336: thermald-1.9.1 compilation failure with musl 1.2.1
+	#13341: Mistake in /etc/init.d/S70vsftpd
+
 2020.11-rc2, released November 14th, 2020
 
 	Fixes all over the tree.
@@ -105,6 +125,34 @@
 	#12911: usb_modeswitch installation race condition
 	#13236: Can't compile linux 5.4.8 (with gcc 10 on host)
 	#13286: The system hangs in vmware workstation on the line..
+
+2020.08.2, released November 16th, 2020
+
+	Important / security related fixes.
+
+	Toolchain-wrapper: Pass -fno-tree-loop-distribute-patterns to
+	fix kernel build on microblaze with gcc 10.x when
+	optimizations are enabled.
+
+	Updated/fixed packages: apparmor, argp-standalone, asterisk,
+	bandwidthd, binutils, bitcoin, busybox, collectd, cryptsetup,
+	cups-filters, darkhttpd, davfs2, docker-cli,
+	docker-containerd, docker-engine, dovecot-pigeonhole,
+	dvb-apps, elf2flt, fastd, fbset, fbtft, freetype, gcc,
+	ghostscript, grpc, gst1-plugins-bad, jsoncpp,
+	kernel-module-imx-gpu-viv, keepalived, kmscube, libass,
+	libexif, libiqrf, libnetfilter_conntrack, libpam-tacplus,
+	libraw, linux-backports, linux-firmware, lzlib, mp4v2,
+	netsnmp, nginx, numactl, oniguruma, opencv3, openntpd,
+	patchelf, php, pistache, postgresql, python-pyqt5, qemu,
+	qt5base, rauc, redis, samba4, slirp, systemd, tcpdump,
+	tinyproxy, tmux, tor, waf, webkitgtk, wine,
+	wireguard-linux-compat, wireshark, wpewebkit, xen, xorriso,
+	xvisor, zeromq, zxing-cpp
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#11931: Bugs in support/scripts/apply-patches.sh
 
 2020.08.1, released October 12th, 2020
 
@@ -611,6 +659,26 @@
 	#12751: OpenJdk package installation issues on	target
 	#12796: Update OpenSSL to Version 1.1.1g to patch  CVE-2020-1967
 	#12811: bootstrap stuck and no login prompt
+
+2020.02.8, released November 16th, 2020
+
+	Important / security related fixes.
+
+	Updated/fixed packages: angularjs, argp-standalone, asterisk,
+	bandwidthd, bitcoin, busybox, cryptsetup, darkhttpd, davfs2,
+	docker-cli, docker-containerd, docker-engine,
+	dovecot-pigeonhole, fastd, fbset, fbtft, freetype, gcc,
+	ghostscript, gnuradio, grpc, gst1-plugins-bad, jsoncpp,
+	keepalived, libass, libexif, libiqrf, libpam-tacplus, libraw,
+	linux-backports, linux-firmware, lzlib, netsnmp, nginx,
+	oniguruma, opencv3, openntpd, patchelf, php, postgresql,
+	python-pyqt5, qt5base, rauc, redis, samba4, slirp, systemd,
+	tcpdump, tmux, tor, webkitgtk, wireguard-linux-compat,
+	wireshark, wpewebkit, xen, xorriso, zeromq, zxing-cpp
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#11931: Bugs in support/scripts/apply-patches.sh
 
 2020.02.7, released October 12th, 2020
 

@@ -126,6 +126,7 @@ class Developer:
     def hasfile(self, f):
         f = os.path.abspath(f)
         for fs in self.files:
+            fs = os.path.abspath(fs)
             if f.startswith(fs):
                 return True
         return False

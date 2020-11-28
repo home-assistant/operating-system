@@ -10,10 +10,6 @@ MONKEY_SITE = http://monkey-project.com/releases/$(MONKEY_VERSION_MAJOR)
 MONKEY_LICENSE = Apache-2.0
 MONKEY_LICENSE_FILES = LICENSE
 
-# This package has a configure script, but it's not using
-# autoconf/automake, so we're using the generic-package
-# infrastructure.
-
 MONKEY_CONF_OPTS = \
 	-DINSTALL_SYSCONFDIR=/etc/monkey \
 	-DINSTALL_WEBROOTDIR=/var/www \

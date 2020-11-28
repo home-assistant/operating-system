@@ -51,8 +51,10 @@ endif
 
 endif
 
-# There is no "--enable-slirp"
-ifeq ($(BR2_PACKAGE_QEMU_SLIRP),)
+ifeq ($(BR2_PACKAGE_QEMU_SLIRP),y)
+QEMU_OPTS += --enable-slirp=system
+QEMU_DEPENDENCIES += slirp
+else
 QEMU_OPTS += --disable-slirp
 endif
 

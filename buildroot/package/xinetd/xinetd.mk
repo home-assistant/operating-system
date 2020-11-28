@@ -9,6 +9,9 @@ XINETD_SITE = $(call github,xinetd-org,xinetd,xinetd-$(XINETD_VERSION))
 XINETD_LICENSE = xinetd license
 XINETD_LICENSE_FILES = COPYRIGHT
 
+# 0005-CVE-2013-4342-xinetd-ignores-user-and-group-directiv.patch
+XINETD_IGNORE_CVES += CVE-2013-4342
+
 XINETD_CFLAGS = $(TARGET_CFLAGS)
 
 # Three cases here:

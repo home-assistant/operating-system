@@ -1,5 +1,4 @@
-# md5, sha256 from https://pypi.org/pypi/flask-cors/json
-md5	551cc4c0305a171d28caa2b3bc838867  Flask-Cors-3.0.8.tar.gz
-sha256	72170423eb4612f0847318afff8c247b38bd516b7737adfc10d1c2cdbb382d16  Flask-Cors-3.0.8.tar.gz
+# sha256 from https://pypi.org/pypi/flask-cors/json
+sha256  6bcfc100288c5d1bcb1dbb854babd59beee622ffd321e444b05f24d6d58466b8  Flask-Cors-3.0.9.tar.gz
 # Locally computed sha256 checksums
-sha256	6e1a1bdc54834c1e0740cbce5d5f6f2cae1c846fd2a7f482b11649594fafbd5d  LICENSE
+sha256  6e1a1bdc54834c1e0740cbce5d5f6f2cae1c846fd2a7f482b11649594fafbd5d  LICENSE

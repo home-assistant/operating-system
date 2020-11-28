@@ -14,4 +14,7 @@ SLIRP_LICENSE_FILES = COPYRIGHT
 SLIRP_INSTALL_STAGING = YES
 SLIRP_DEPENDENCIES = libglib2
 
+# 0001-slirp-check-pkt_len-before-reading-protocol-header.patch
+SLIRP_IGNORE_CVES += CVE-2020-29129 CVE-2020-29130
+
 $(eval $(meson-package))

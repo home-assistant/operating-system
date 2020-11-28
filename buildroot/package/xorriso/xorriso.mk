@@ -14,7 +14,7 @@ XORRISO_LICENSE_FILES = COPYING COPYRIGHT
 HOST_XORRISO_CONF_OPTS = \
 	--disable-xattr-h-pref-attr \
 	--disable-zlib \
-	--disable-bzip2 \
+	--disable-libbz2 \
 	--disable-libcdio \
 	--disable-libreadline \
 	--disable-libedit \
