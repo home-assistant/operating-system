@@ -1,0 +1,52 @@
+From 665603ecadb8385dd6c18840d3b0120859a00369 Mon Sep 17 00:00:00 2001
+Message-Id: <665603ecadb8385dd6c18840d3b0120859a00369.1606682453.git.stefan@agner.ch>
+In-Reply-To: <4e9abe7945370765a9e8e88b01a7ef5f266bf7fd.1606682453.git.stefan@agner.ch>
+References: <4e9abe7945370765a9e8e88b01a7ef5f266bf7fd.1606682453.git.stefan@agner.ch>
+From: Stefan Agner <stefan@agner.ch>
+Date: Fri, 13 Nov 2020 10:39:03 +0100
+Subject: [PATCH dt-utils 3/3] state: use /run to store lockfile
+
+The current location /var/lock is considered legacy (at least by
+systemd). Just use /run to store the lockfile and append the usual .lock
+suffix.
+
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+---
+ src/barebox-state.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/src/barebox-state.c b/src/barebox-state.c
+index 76f9c41..53e5eb6 100644
+--- a/src/barebox-state.c
++++ b/src/barebox-state.c
+@@ -38,6 +38,8 @@
+ #include <dt/dt.h>
+ #include <state.h>
+ 
++#define BAREBOX_STATE_LOCKFILE "/run/barebox-state.lock"
++
+ struct state_variable;
+ 
+ static int __state_uint8_set(struct state_variable *var, const char *val);
+@@ -515,15 +517,15 @@ int main(int argc, char *argv[])
+ 		++nr_states;
+ 	}
+ 
+-	lock_fd = open("/var/lock/barebox-state", O_CREAT | O_RDWR, 0600);
++	lock_fd = open(BAREBOX_STATE_LOCKFILE, O_CREAT | O_RDWR, 0600);
+ 	if (lock_fd < 0) {
+-		pr_err("Failed to open lock-file /var/lock/barebox-state\n");
++		pr_err("Failed to open lock-file " BAREBOX_STATE_LOCKFILE "\n");
+ 		exit(1);
+ 	}
+ 
+ 	ret = flock(lock_fd, LOCK_EX);
+ 	if (ret < 0) {
+-		pr_err("Failed to lock /var/lock/barebox-state: %m\n");
++		pr_err("Failed to lock " BAREBOX_STATE_LOCKFILE ": %m\n");
+ 		close(lock_fd);
+ 		exit(1);
+ 	}
+-- 
+2.29.2
+

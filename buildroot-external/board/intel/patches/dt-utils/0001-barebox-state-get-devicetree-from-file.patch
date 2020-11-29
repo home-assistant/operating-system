@@ -1,12 +1,18 @@
-From 405590bdb7ae434798010458e810c415e4e99db4 Mon Sep 17 00:00:00 2001
+From 4e9abe7945370765a9e8e88b01a7ef5f266bf7fd Mon Sep 17 00:00:00 2001
+Message-Id: <4e9abe7945370765a9e8e88b01a7ef5f266bf7fd.1606682453.git.stefan@agner.ch>
 From: Steffen Trumtrar <s.trumtrar@pengutronix.de>
 Date: Fri, 30 Jun 2017 16:53:34 +0200
-Subject: barebox-state: get devicetree from file
+Subject: [PATCH dt-utils 1/3] barebox-state: get devicetree from file
 
 Signed-off-by: Steffen Trumtrar <s.trumtrar@pengutronix.de>
+---
+ src/barebox-state.c | 30 ++++++++++++++++++++++--------
+ src/barebox-state.h |  2 +-
+ src/keystore-blob.c |  2 +-
+ 3 files changed, 24 insertions(+), 10 deletions(-)
 
 diff --git a/src/barebox-state.c b/src/barebox-state.c
-index e68b8cb..3622e76 100644
+index f8b8df6..76f9c41 100644
 --- a/src/barebox-state.c
 +++ b/src/barebox-state.c
 @@ -308,7 +308,7 @@ static int state_set_var(struct state *state, const char *var, const char *val)
@@ -16,11 +22,11 @@ index e68b8cb..3622e76 100644
 -struct state *state_get(const char *name, bool readonly, bool auth)
 +struct state *state_get(const char *name, const char *filename, bool readonly, bool auth)
  {
- 	struct device_node *root, *node, *partition_node;
+ 	struct device_node *root, *node;
  	char *path;
-@@ -320,11 +320,19 @@ struct state *state_get(const char *name, bool readonly, bool auth)
- 	off_t offset;
- 	size_t size;
+@@ -317,11 +317,19 @@ struct state *state_get(const char *name, bool readonly, bool auth)
+ 	const char *backend_type = NULL;
+ 	struct state_variable *v;
  
 -	root = of_read_proc_devicetree();
 -	if (IS_ERR(root)) {
@@ -43,7 +49,7 @@ index e68b8cb..3622e76 100644
  	}
  
  	of_set_root_node(root);
-@@ -387,6 +395,7 @@ static struct option long_options[] = {
+@@ -372,6 +380,7 @@ static struct option long_options[] = {
  	{"get",		required_argument,	0,	'g' },
  	{"set",		required_argument,	0,	's' },
  	{"name",	required_argument,	0,	'n' },
@@ -51,7 +57,7 @@ index e68b8cb..3622e76 100644
  	{"dump",	no_argument,		0,	'd' },
  	{"dump-shell",	no_argument,		0,	OPT_DUMP_SHELL },
  	{"verbose",	no_argument,		0,	'v' },
-@@ -402,6 +411,7 @@ static void usage(char *name)
+@@ -387,6 +396,7 @@ static void usage(char *name)
  "-g, --get <variable>                      get the value of a variable\n"
  "-s, --set <variable>=<value>              set the value of a variable\n"
  "-n, --name <name>                         specify the state to use (default=\"state\"). Multiple states are allowed.\n"
@@ -59,7 +65,7 @@ index e68b8cb..3622e76 100644
  "-d, --dump                                dump the state\n"
  "--dump-shell                              dump the state suitable for shell sourcing\n"
  "-v, --verbose                             increase verbosity\n"
-@@ -439,12 +449,13 @@ int main(int argc, char *argv[])
+@@ -424,12 +434,13 @@ int main(int argc, char *argv[])
  	bool readonly = true;
  	int pr_level = 5;
  	int auth = 1;
@@ -74,7 +80,7 @@ index e68b8cb..3622e76 100644
  		if (c < 0)
  			break;
  		switch (c) {
-@@ -490,6 +501,9 @@ int main(int argc, char *argv[])
+@@ -475,6 +486,9 @@ int main(int argc, char *argv[])
  			++nr_states;
  			break;
  		}
@@ -84,7 +90,7 @@ index e68b8cb..3622e76 100644
  		case ':':
  		case '?':
  		default:
-@@ -530,7 +544,7 @@ int main(int argc, char *argv[])
+@@ -515,7 +529,7 @@ int main(int argc, char *argv[])
  	}
  
  	list_for_each_entry(state, &state_list.list, list) {
@@ -120,4 +126,5 @@ index 028dd8b..4572431 100644
  			return  PTR_ERR(tmp);
  		state = tmp;
 -- 
-cgit v0.10.2
+2.29.2
+
