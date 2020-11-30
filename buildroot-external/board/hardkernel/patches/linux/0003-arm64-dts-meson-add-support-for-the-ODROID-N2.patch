@@ -1,10 +1,10 @@
-From c714cb26fcb59f5201f7aac68dfd9883319881b2 Mon Sep 17 00:00:00 2001
-Message-Id: <c714cb26fcb59f5201f7aac68dfd9883319881b2.1603528796.git.stefan@agner.ch>
-In-Reply-To: <734f52f38625ce29c964517255538b3b0b546e8d.1603528796.git.stefan@agner.ch>
-References: <734f52f38625ce29c964517255538b3b0b546e8d.1603528796.git.stefan@agner.ch>
+From 6cfaddae585e5a87c5253c932b8d58e153159f6b Mon Sep 17 00:00:00 2001
+Message-Id: <6cfaddae585e5a87c5253c932b8d58e153159f6b.1606779815.git.stefan@agner.ch>
+In-Reply-To: <9d2a2b44e67b0ef49e534c097e8b5e3e1173b033.1606779815.git.stefan@agner.ch>
+References: <9d2a2b44e67b0ef49e534c097e8b5e3e1173b033.1606779815.git.stefan@agner.ch>
 From: Christian Hewitt <christianshewitt@gmail.com>
 Date: Tue, 15 Sep 2020 17:24:32 +0200
-Subject: [PATCH 3/7] arm64: dts: meson: add support for the ODROID-N2+
+Subject: [PATCH 3/6] arm64: dts: meson: add support for the ODROID-N2+
 
 HardKernel ODROID-N2+ uses an Amlogic S922X rev. C chip capable of higher
 clock speeds than the original ODROID-N2.
@@ -74,5 +74,5 @@ index 000000000000..5de2815ba99d
 +};
 +
 -- 
-2.28.0
+2.29.2
 
