@@ -1,10 +1,10 @@
-From 75f1e8330dac46a0bef8a360be0ae4566d9a470c Mon Sep 17 00:00:00 2001
-Message-Id: <75f1e8330dac46a0bef8a360be0ae4566d9a470c.1603528796.git.stefan@agner.ch>
-In-Reply-To: <734f52f38625ce29c964517255538b3b0b546e8d.1603528796.git.stefan@agner.ch>
-References: <734f52f38625ce29c964517255538b3b0b546e8d.1603528796.git.stefan@agner.ch>
+From 258f03fa4fd897a61b5861df1f809e234711dd49 Mon Sep 17 00:00:00 2001
+Message-Id: <258f03fa4fd897a61b5861df1f809e234711dd49.1606779815.git.stefan@agner.ch>
+In-Reply-To: <9d2a2b44e67b0ef49e534c097e8b5e3e1173b033.1606779815.git.stefan@agner.ch>
+References: <9d2a2b44e67b0ef49e534c097e8b5e3e1173b033.1606779815.git.stefan@agner.ch>
 From: Christian Hewitt <christianshewitt@gmail.com>
 Date: Tue, 15 Sep 2020 17:24:31 +0200
-Subject: [PATCH 2/7] dt-bindings: arm: amlogic: add support for the ODROID-N2+
+Subject: [PATCH 2/6] dt-bindings: arm: amlogic: add support for the ODROID-N2+
 
 HardKernel ODROID-N2+ uses a revised Amlogic S922X v2 chip that supports
 higher cpu clock speeds than the original ODROID-N2.
@@ -32,5 +32,5 @@ index 5eba9f48823e..12ba8d074370 100644
                - ugoos,am6
            - const: amlogic,s922x
 -- 
-2.28.0
+2.29.2
 

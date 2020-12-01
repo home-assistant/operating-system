@@ -1,10 +1,10 @@
-From 0a3a45efeefaf65c170df265126a07da3236e178 Mon Sep 17 00:00:00 2001
-Message-Id: <0a3a45efeefaf65c170df265126a07da3236e178.1603528796.git.stefan@agner.ch>
-In-Reply-To: <734f52f38625ce29c964517255538b3b0b546e8d.1603528796.git.stefan@agner.ch>
-References: <734f52f38625ce29c964517255538b3b0b546e8d.1603528796.git.stefan@agner.ch>
+From 47f804dc970e2b1f71f1f032a0da2ef3b8315be0 Mon Sep 17 00:00:00 2001
+Message-Id: <47f804dc970e2b1f71f1f032a0da2ef3b8315be0.1606779815.git.stefan@agner.ch>
+In-Reply-To: <9d2a2b44e67b0ef49e534c097e8b5e3e1173b033.1606779815.git.stefan@agner.ch>
+References: <9d2a2b44e67b0ef49e534c097e8b5e3e1173b033.1606779815.git.stefan@agner.ch>
 From: Jerome Brunet <jbrunet@baylibre.com>
 Date: Fri, 23 Oct 2020 11:41:39 +0200
-Subject: [PATCH 5/7] arm64: dts: meson: odroid-n2 plus: fix vddcpu_a pwm
+Subject: [PATCH 4/6] arm64: dts: meson: odroid-n2 plus: fix vddcpu_a pwm
 
 On the odroid N2 plus, cpufreq is not available due to an error on the cpu
 regulators. vddcpu a and b get the same PWM. The one provided to vddcpu A
@@ -38,5 +38,5 @@ index 5de2815ba99d..ce1198ad34e4 100644
  
  &vddcpu_b {
 -- 
-2.28.0
+2.29.2
 
