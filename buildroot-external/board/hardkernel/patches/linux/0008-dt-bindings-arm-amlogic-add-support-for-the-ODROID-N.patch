@@ -1,10 +1,10 @@
 From 40c86a409f3fa18c3f30bad3abeccff04379eaa9 Mon Sep 17 00:00:00 2001
-Message-Id: <40c86a409f3fa18c3f30bad3abeccff04379eaa9.1603880585.git.stefan@agner.ch>
-In-Reply-To: <59bbf3567b02c36edfa4ee013d7e7e8c492756f2.1603880585.git.stefan@agner.ch>
-References: <59bbf3567b02c36edfa4ee013d7e7e8c492756f2.1603880585.git.stefan@agner.ch>
+Message-Id: <40c86a409f3fa18c3f30bad3abeccff04379eaa9.1606830718.git.stefan@agner.ch>
+In-Reply-To: <59bbf3567b02c36edfa4ee013d7e7e8c492756f2.1606830718.git.stefan@agner.ch>
+References: <59bbf3567b02c36edfa4ee013d7e7e8c492756f2.1606830718.git.stefan@agner.ch>
 From: Christian Hewitt <christianshewitt@gmail.com>
 Date: Tue, 15 Sep 2020 17:24:31 +0200
-Subject: [PATCH 08/14] dt-bindings: arm: amlogic: add support for the
+Subject: [PATCH 08/17] dt-bindings: arm: amlogic: add support for the
  ODROID-N2+
 
 HardKernel ODROID-N2+ uses a revised Amlogic S922X v2 chip that supports
@@ -33,5 +33,5 @@ index f74aba48cec1..915ef4f355ad 100644
                - ugoos,am6
            - const: amlogic,s922x
 -- 
-2.29.1
+2.29.2
 

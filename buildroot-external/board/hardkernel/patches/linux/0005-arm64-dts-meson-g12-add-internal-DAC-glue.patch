@@ -1,10 +1,10 @@
 From e7d1f61513cfe9d2557fbd0ac981a3ecaab9bc70 Mon Sep 17 00:00:00 2001
-Message-Id: <e7d1f61513cfe9d2557fbd0ac981a3ecaab9bc70.1603880585.git.stefan@agner.ch>
-In-Reply-To: <59bbf3567b02c36edfa4ee013d7e7e8c492756f2.1603880585.git.stefan@agner.ch>
-References: <59bbf3567b02c36edfa4ee013d7e7e8c492756f2.1603880585.git.stefan@agner.ch>
+Message-Id: <e7d1f61513cfe9d2557fbd0ac981a3ecaab9bc70.1606830718.git.stefan@agner.ch>
+In-Reply-To: <59bbf3567b02c36edfa4ee013d7e7e8c492756f2.1606830718.git.stefan@agner.ch>
+References: <59bbf3567b02c36edfa4ee013d7e7e8c492756f2.1606830718.git.stefan@agner.ch>
 From: Jerome Brunet <jbrunet@baylibre.com>
 Date: Thu, 7 May 2020 00:16:56 +0200
-Subject: [PATCH 05/14] arm64: dts: meson: g12: add internal DAC glue
+Subject: [PATCH 05/17] arm64: dts: meson: g12: add internal DAC glue
 
 add the internal DAC glue support on the g12 and sm1 family
 This glue connects the different TDM interfaces of the SoC to
@@ -38,5 +38,5 @@ index 55d39020ec72..0d14409f509c 100644
  			compatible = "amlogic,g12a-tohdmitx";
  			reg = <0x0 0x744 0x0 0x4>;
 -- 
-2.29.1
+2.29.2
 

@@ -1,10 +1,10 @@
 From a778ae244b9e6035ef4c0e4fb36d81f140ed5019 Mon Sep 17 00:00:00 2001
-Message-Id: <a778ae244b9e6035ef4c0e4fb36d81f140ed5019.1603880585.git.stefan@agner.ch>
-In-Reply-To: <59bbf3567b02c36edfa4ee013d7e7e8c492756f2.1603880585.git.stefan@agner.ch>
-References: <59bbf3567b02c36edfa4ee013d7e7e8c492756f2.1603880585.git.stefan@agner.ch>
+Message-Id: <a778ae244b9e6035ef4c0e4fb36d81f140ed5019.1606830718.git.stefan@agner.ch>
+In-Reply-To: <59bbf3567b02c36edfa4ee013d7e7e8c492756f2.1606830718.git.stefan@agner.ch>
+References: <59bbf3567b02c36edfa4ee013d7e7e8c492756f2.1606830718.git.stefan@agner.ch>
 From: Jerome Brunet <jbrunet@baylibre.com>
 Date: Mon, 15 Jun 2020 15:38:44 +0200
-Subject: [PATCH 06/14] arm64: dts: meson-g12b: odroid-n2: enable audio
+Subject: [PATCH 06/17] arm64: dts: meson-g12b: odroid-n2: enable audio
  loopback
 
 Add capture pcm interfaces and loopback routes to the odroid-n2
@@ -123,5 +123,5 @@ index 169ea283d4ee..d4421ad164bd 100644
  	status = "okay";
  	pinctrl-0 = <&uart_ao_a_pins>;
 -- 
-2.29.1
+2.29.2
 

@@ -1,10 +1,10 @@
 From 5f7bab7b52bc68738dd23af62a085dcc45c22f79 Mon Sep 17 00:00:00 2001
-Message-Id: <5f7bab7b52bc68738dd23af62a085dcc45c22f79.1603880585.git.stefan@agner.ch>
-In-Reply-To: <59bbf3567b02c36edfa4ee013d7e7e8c492756f2.1603880585.git.stefan@agner.ch>
-References: <59bbf3567b02c36edfa4ee013d7e7e8c492756f2.1603880585.git.stefan@agner.ch>
+Message-Id: <5f7bab7b52bc68738dd23af62a085dcc45c22f79.1606830718.git.stefan@agner.ch>
+In-Reply-To: <59bbf3567b02c36edfa4ee013d7e7e8c492756f2.1606830718.git.stefan@agner.ch>
+References: <59bbf3567b02c36edfa4ee013d7e7e8c492756f2.1606830718.git.stefan@agner.ch>
 From: Jerome Brunet <jbrunet@baylibre.com>
 Date: Thu, 7 May 2020 00:16:55 +0200
-Subject: [PATCH 04/14] arm64: dts: meson: g12: add internal DAC
+Subject: [PATCH 04/17] arm64: dts: meson: g12: add internal DAC
 
 add internal audio DAC support on the g12 and sm1 SoC family
 
@@ -38,5 +38,5 @@ index c0aef7d69117..593a006f4b7b 100644
  				compatible = "simple-bus";
  				reg = <0x0 0x34400 0x0 0x400>;
 -- 
-2.29.1
+2.29.2
 

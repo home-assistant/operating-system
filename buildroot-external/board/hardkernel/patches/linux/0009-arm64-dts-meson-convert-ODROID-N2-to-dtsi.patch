@@ -1,10 +1,10 @@
 From 7b28edf8a4004c3636afab617191fbfb6cff9b58 Mon Sep 17 00:00:00 2001
-Message-Id: <7b28edf8a4004c3636afab617191fbfb6cff9b58.1603880585.git.stefan@agner.ch>
-In-Reply-To: <59bbf3567b02c36edfa4ee013d7e7e8c492756f2.1603880585.git.stefan@agner.ch>
-References: <59bbf3567b02c36edfa4ee013d7e7e8c492756f2.1603880585.git.stefan@agner.ch>
+Message-Id: <7b28edf8a4004c3636afab617191fbfb6cff9b58.1606830718.git.stefan@agner.ch>
+In-Reply-To: <59bbf3567b02c36edfa4ee013d7e7e8c492756f2.1606830718.git.stefan@agner.ch>
+References: <59bbf3567b02c36edfa4ee013d7e7e8c492756f2.1606830718.git.stefan@agner.ch>
 From: Christian Hewitt <christianshewitt@gmail.com>
 Date: Tue, 15 Sep 2020 17:24:30 +0200
-Subject: [PATCH 09/14] arm64: dts: meson: convert ODROID-N2 to dtsi
+Subject: [PATCH 09/17] arm64: dts: meson: convert ODROID-N2 to dtsi
 
 Convert the current ODROID-N2 dts into a common dtsi in preparation
 for adding ODROID-N2+ support.
@@ -1284,5 +1284,5 @@ index 000000000000..6982632ae646
 +	phy-supply = <&hub_5v>;
 +};
 -- 
-2.29.1
+2.29.2
 

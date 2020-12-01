@@ -1,10 +1,10 @@
 From 26603168f26468ac1872fcbcd703d2cd5a626310 Mon Sep 17 00:00:00 2001
-Message-Id: <26603168f26468ac1872fcbcd703d2cd5a626310.1603880585.git.stefan@agner.ch>
-In-Reply-To: <59bbf3567b02c36edfa4ee013d7e7e8c492756f2.1603880585.git.stefan@agner.ch>
-References: <59bbf3567b02c36edfa4ee013d7e7e8c492756f2.1603880585.git.stefan@agner.ch>
+Message-Id: <26603168f26468ac1872fcbcd703d2cd5a626310.1606830718.git.stefan@agner.ch>
+In-Reply-To: <59bbf3567b02c36edfa4ee013d7e7e8c492756f2.1606830718.git.stefan@agner.ch>
+References: <59bbf3567b02c36edfa4ee013d7e7e8c492756f2.1606830718.git.stefan@agner.ch>
 From: Jerome Brunet <jbrunet@baylibre.com>
 Date: Mon, 15 Jun 2020 16:34:37 +0200
-Subject: [PATCH 07/14] arm64: dts: meson: odroid-n2: add jack audio output
+Subject: [PATCH 07/17] arm64: dts: meson: odroid-n2: add jack audio output
  support
 
 Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
@@ -167,5 +167,5 @@ index d4421ad164bd..34fffa6d859d 100644
  	status = "okay";
  };
 -- 
-2.29.1
+2.29.2
 

@@ -1,10 +1,10 @@
 From b65f3fd306972087aa43e91ab0951b19883a21f7 Mon Sep 17 00:00:00 2001
-Message-Id: <b65f3fd306972087aa43e91ab0951b19883a21f7.1603880585.git.stefan@agner.ch>
-In-Reply-To: <59bbf3567b02c36edfa4ee013d7e7e8c492756f2.1603880585.git.stefan@agner.ch>
-References: <59bbf3567b02c36edfa4ee013d7e7e8c492756f2.1603880585.git.stefan@agner.ch>
+Message-Id: <b65f3fd306972087aa43e91ab0951b19883a21f7.1606830718.git.stefan@agner.ch>
+In-Reply-To: <59bbf3567b02c36edfa4ee013d7e7e8c492756f2.1606830718.git.stefan@agner.ch>
+References: <59bbf3567b02c36edfa4ee013d7e7e8c492756f2.1606830718.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Thu, 27 Aug 2020 23:29:57 +0200
-Subject: [PATCH 13/14] clk: meson: g12a: mark fclk_div2 as critical
+Subject: [PATCH 13/17] clk: meson: g12a: mark fclk_div2 as critical
 
 On Amlogic Meson G12b platform, similar to fclk_div3, the fclk_div2
 seems to be necessary for the system to operate correctly as well.
@@ -34,5 +34,5 @@ index fad616cac01e..2214b974f748 100644
  };
  
 -- 
-2.29.1
+2.29.2
 

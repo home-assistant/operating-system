@@ -1,10 +1,10 @@
 From 9a736bfb2ee71ed09e5f37ec4a506e7bd2a80bf5 Mon Sep 17 00:00:00 2001
-Message-Id: <9a736bfb2ee71ed09e5f37ec4a506e7bd2a80bf5.1606127729.git.stefan@agner.ch>
-In-Reply-To: <59bbf3567b02c36edfa4ee013d7e7e8c492756f2.1606127729.git.stefan@agner.ch>
-References: <59bbf3567b02c36edfa4ee013d7e7e8c492756f2.1606127729.git.stefan@agner.ch>
+Message-Id: <9a736bfb2ee71ed09e5f37ec4a506e7bd2a80bf5.1606830718.git.stefan@agner.ch>
+In-Reply-To: <59bbf3567b02c36edfa4ee013d7e7e8c492756f2.1606830718.git.stefan@agner.ch>
+References: <59bbf3567b02c36edfa4ee013d7e7e8c492756f2.1606830718.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Mon, 16 Nov 2020 23:11:02 +0100
-Subject: [PATCH 15/15] arm64: dts: meson: add RTC to ODROID-N2 boards
+Subject: [PATCH 15/17] arm64: dts: meson: add RTC to ODROID-N2 boards
 
 All ODROID-N2 boards come with a NXP PCF8563TS RTC connected to I2C bus
 3. This is the RTC which is connected to the on-board RTC backup battery.

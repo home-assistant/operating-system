@@ -1,10 +1,10 @@
 From 07eb6dcfc912281b3c4ad598d8cfd3b7548fc965 Mon Sep 17 00:00:00 2001
-Message-Id: <07eb6dcfc912281b3c4ad598d8cfd3b7548fc965.1603880585.git.stefan@agner.ch>
-In-Reply-To: <59bbf3567b02c36edfa4ee013d7e7e8c492756f2.1603880585.git.stefan@agner.ch>
-References: <59bbf3567b02c36edfa4ee013d7e7e8c492756f2.1603880585.git.stefan@agner.ch>
+Message-Id: <07eb6dcfc912281b3c4ad598d8cfd3b7548fc965.1606830718.git.stefan@agner.ch>
+In-Reply-To: <59bbf3567b02c36edfa4ee013d7e7e8c492756f2.1606830718.git.stefan@agner.ch>
+References: <59bbf3567b02c36edfa4ee013d7e7e8c492756f2.1606830718.git.stefan@agner.ch>
 From: Jerome Brunet <jbrunet@baylibre.com>
 Date: Mon, 24 Feb 2020 14:35:17 +0100
-Subject: [PATCH 03/14] ASoC: meson: gx-card: fix sound-dai dt schema
+Subject: [PATCH 03/17] ASoC: meson: gx-card: fix sound-dai dt schema
 
 There is a fair amount of warnings when running 'make dtbs_check' with
 amlogic,gx-sound-card.yaml.
@@ -46,5 +46,5 @@ index fb374c659be1..a48222e8cd08 100644
  
          required:
 -- 
-2.29.1
+2.29.2
 

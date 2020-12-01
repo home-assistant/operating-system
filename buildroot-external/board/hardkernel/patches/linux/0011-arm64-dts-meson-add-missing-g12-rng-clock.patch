@@ -1,10 +1,10 @@
 From ab2773aa8ea7ff7f30c104bd3a1f93b67c5eac32 Mon Sep 17 00:00:00 2001
-Message-Id: <ab2773aa8ea7ff7f30c104bd3a1f93b67c5eac32.1603880585.git.stefan@agner.ch>
-In-Reply-To: <59bbf3567b02c36edfa4ee013d7e7e8c492756f2.1603880585.git.stefan@agner.ch>
-References: <59bbf3567b02c36edfa4ee013d7e7e8c492756f2.1603880585.git.stefan@agner.ch>
+Message-Id: <ab2773aa8ea7ff7f30c104bd3a1f93b67c5eac32.1606830718.git.stefan@agner.ch>
+In-Reply-To: <59bbf3567b02c36edfa4ee013d7e7e8c492756f2.1606830718.git.stefan@agner.ch>
+References: <59bbf3567b02c36edfa4ee013d7e7e8c492756f2.1606830718.git.stefan@agner.ch>
 From: Scott K Logan <logans@cottsay.net>
 Date: Fri, 25 Sep 2020 01:43:53 -0700
-Subject: [PATCH 11/14] arm64: dts: meson: add missing g12 rng clock
+Subject: [PATCH 11/17] arm64: dts: meson: add missing g12 rng clock
 
 This adds the missing perpheral clock for the RNG for Amlogic G12. As
 stated in amlogic,meson-rng.yaml, this isn't always necessary for the
@@ -34,5 +34,5 @@ index 593a006f4b7b..6ec40af658ba 100644
  			};
  
 -- 
-2.29.1
+2.29.2
 

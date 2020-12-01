@@ -1,10 +1,10 @@
 From 83fb88f53712d309ee106cdbd1dfe228d1649918 Mon Sep 17 00:00:00 2001
-Message-Id: <83fb88f53712d309ee106cdbd1dfe228d1649918.1603880585.git.stefan@agner.ch>
-In-Reply-To: <59bbf3567b02c36edfa4ee013d7e7e8c492756f2.1603880585.git.stefan@agner.ch>
-References: <59bbf3567b02c36edfa4ee013d7e7e8c492756f2.1603880585.git.stefan@agner.ch>
+Message-Id: <83fb88f53712d309ee106cdbd1dfe228d1649918.1606830718.git.stefan@agner.ch>
+In-Reply-To: <59bbf3567b02c36edfa4ee013d7e7e8c492756f2.1606830718.git.stefan@agner.ch>
+References: <59bbf3567b02c36edfa4ee013d7e7e8c492756f2.1606830718.git.stefan@agner.ch>
 From: Jerome Brunet <jbrunet@baylibre.com>
 Date: Mon, 19 Oct 2020 19:07:02 +0200
-Subject: [PATCH 14/14] usb: cdc-acm: fix cooldown mechanism
+Subject: [PATCH 14/17] usb: cdc-acm: fix cooldown mechanism
 
 Commit a4e7279cd1d1 ("cdc-acm: introduce a cool down") is causing
 regression if there is some USB error, such as -EPROTO.
@@ -122,5 +122,5 @@ index cd5e9d8ab237..b95ff769072e 100644
  	unsigned int ctrlout;				/* output control lines (DTR, RTS) */
  	struct async_icount iocount;			/* counters for control line changes */
 -- 
-2.29.1
+2.29.2
 
