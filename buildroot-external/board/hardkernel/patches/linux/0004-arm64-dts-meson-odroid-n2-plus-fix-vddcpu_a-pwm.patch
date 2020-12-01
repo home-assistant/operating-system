@@ -1,10 +1,10 @@
 From 47f804dc970e2b1f71f1f032a0da2ef3b8315be0 Mon Sep 17 00:00:00 2001
-Message-Id: <47f804dc970e2b1f71f1f032a0da2ef3b8315be0.1606779815.git.stefan@agner.ch>
-In-Reply-To: <9d2a2b44e67b0ef49e534c097e8b5e3e1173b033.1606779815.git.stefan@agner.ch>
-References: <9d2a2b44e67b0ef49e534c097e8b5e3e1173b033.1606779815.git.stefan@agner.ch>
+Message-Id: <47f804dc970e2b1f71f1f032a0da2ef3b8315be0.1606829302.git.stefan@agner.ch>
+In-Reply-To: <9d2a2b44e67b0ef49e534c097e8b5e3e1173b033.1606829302.git.stefan@agner.ch>
+References: <9d2a2b44e67b0ef49e534c097e8b5e3e1173b033.1606829302.git.stefan@agner.ch>
 From: Jerome Brunet <jbrunet@baylibre.com>
 Date: Fri, 23 Oct 2020 11:41:39 +0200
-Subject: [PATCH 4/6] arm64: dts: meson: odroid-n2 plus: fix vddcpu_a pwm
+Subject: [PATCH 4/7] arm64: dts: meson: odroid-n2 plus: fix vddcpu_a pwm
 
 On the odroid N2 plus, cpufreq is not available due to an error on the cpu
 regulators. vddcpu a and b get the same PWM. The one provided to vddcpu A
