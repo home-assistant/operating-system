@@ -6,11 +6,9 @@ set -e
 
 # Rely on systemd-udev symlinks to find current data partition by fs label
 OLD_DEVICE_CHILD="$(readlink -f "/dev/disk/by-label/hassos-data")"
-OLD_DEVICE_ROOT="/dev/$(lsblk -no pkname "${OLD_DEVICE_CHILD}")"
 
 # Rely on systemd-udev symlinks to find external data partition by partlabel
 NEW_DEVICE_CHILD="$(readlink -f "/dev/disk/by-partlabel/hassos-data-external")"
-NEW_DEVICE_ROOT="/dev/$(lsblk -no pkname "${NEW_DEVICE_CHILD}")"
 
 echo "[INFO] Moving data from ${OLD_DEVICE_CHILD} to ${NEW_DEVICE_CHILD}"
 if ! e2image -ra -p "${OLD_DEVICE_CHILD}" "${NEW_DEVICE_CHILD}"; then
