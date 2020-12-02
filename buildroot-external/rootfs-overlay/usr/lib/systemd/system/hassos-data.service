@@ -1,16 +1,17 @@
 [Unit]
-Description=HassOS data partition
+Description=Home Assistant OS data partition migration
 DefaultDependencies=no
 RefuseManualStart=true
 RefuseManualStop=true
-Requires=mnt-overlay.mount dev-disk-by\x2dlabel-hassos\x2ddata.device
+Requires=mnt-overlay.mount dev-disk-by\x2dlabel-hassos\x2ddata.device dev-disk-by\x2dpartlabel-hassos\x2ddata\x2dexternal.service
 Wants=hassos-expand.service
-After=mnt-overlay.mount dev-disk-by\x2dlabel-hassos\x2ddata.device systemd-fsck@dev-disk-by\x2dlabel-hassos\x2ddata.service
+After=mnt-overlay.mount dev-disk-by\x2dlabel-hassos\x2ddata.device systemd-fsck@dev-disk-by\x2dlabel-hassos\x2ddata.service dev-disk-by\x2dpartlabel-hassos\x2ddata\x2dexternal.service
 Before=hassos-expand.service
-ConditionPathExists=/mnt/overlay/data.opt
+ConditionPathExists=/mnt/overlay/move-data
 
 [Service]
 Type=oneshot
+ExecStartPre=-/usr/bin/rm -f /mnt/overlay/move-data
 ExecStart=/usr/libexec/hassos-data
 
 [Install]
