@@ -51,6 +51,7 @@ for BOOT_SLOT in "${BOOT_ORDER}"; do
       echo "Trying to boot slot B, ${BOOT_B_LEFT} attempts remaining. Loading kernel ..."
       if ext4load mmc ${devnum}:4 ${kernel_addr_r} zImage"; then
           setenv bootargs "${bootargs_hassos} ${bootargs_b} rauc.slot=B ${cmdline}"
+      fi
     fi
   fi
 done
