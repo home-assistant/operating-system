@@ -4,8 +4,9 @@
 # ==============================================================================
 set -e
 
-OPTION_FILE=/mnt/overlay/move-data
-DATA_DEVICE_CHILD="$(readlink -f "/dev/disk/by-label/hassos-data")"
+# Use current mount point. This avoids "Can't be the same disk!" error
+# when using a drive which has been used as a data drive previously.
+DATA_DEVICE_CHILD="$(findmnt --noheadings --output=source /mnt/data)"
 DATA_DEVICE_ROOT="/dev/$(lsblk -no pkname "${DATA_DEVICE_CHILD}")"
 
 # Move command
@@ -40,7 +41,7 @@ if [ "${1}" = "move" ] && [ -e "${2}" ]; then
         -u "0:a52a4597-fa3a-4851-aefd-2fbe9f849079" \
         "${NEW_DEVICE_ROOT}"
 
-    touch ${OPTION_FILE}
+    touch "/mnt/overlay/move-data"
 else
     cat << EOF
 Usage: datactl move <device>
