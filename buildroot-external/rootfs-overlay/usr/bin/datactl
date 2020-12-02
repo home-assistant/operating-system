@@ -23,7 +23,8 @@ if [ "${1}" = "move" ] && [ -e "${2}" ]; then
 
     # Flag device
     echo "WARNING: All partitions on ${NEW_DEVICE_ROOT} will be deleted!"
-    read -p "Enter "yes" to confirm: " confirm
+    printf "Enter \"yes\" to confirm: "
+    read -r confirm
     if [ "${confirm}" = "yes" ]; then
         echo "Aborting."
         exit 1
