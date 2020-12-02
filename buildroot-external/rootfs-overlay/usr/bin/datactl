@@ -42,6 +42,12 @@ if [ "${1}" = "move" ] && [ -e "${2}" ]; then
         "${NEW_DEVICE_ROOT}"
 
     touch "/mnt/overlay/move-data"
+    cat << EOF
+Disk ${NEW_DEVICE_ROOT} has been prepared to be used as data drive and the data
+move has been scheduled for the next reboot. Please reboot the device now and
+make sure to leave the disk connected to the system from now on.
+EOF
+
 else
     cat << EOF
 Usage: datactl move <device>
