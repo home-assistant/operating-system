@@ -1,7 +1,7 @@
-From d1f588ab003b001079b6fab1cfd5d43401989b3b Mon Sep 17 00:00:00 2001
-Message-Id: <d1f588ab003b001079b6fab1cfd5d43401989b3b.1605131156.git.stefan@agner.ch>
-In-Reply-To: <8aa12f1835721959d0d1999fceee632404f28366.1605131156.git.stefan@agner.ch>
-References: <8aa12f1835721959d0d1999fceee632404f28366.1605131156.git.stefan@agner.ch>
+From 506a2a77b2967f911f93a3941bfbdfe9f6acfa77 Mon Sep 17 00:00:00 2001
+Message-Id: <506a2a77b2967f911f93a3941bfbdfe9f6acfa77.1607000394.git.stefan@agner.ch>
+In-Reply-To: <dd83e231779b8daaeaa0a78d6686b80eeb49c12b.1607000394.git.stefan@agner.ch>
+References: <dd83e231779b8daaeaa0a78d6686b80eeb49c12b.1607000394.git.stefan@agner.ch>
 From: Pascal Vizeli <pvizeli@syshack.ch>
 Date: Thu, 16 Apr 2020 14:32:45 +0000
 Subject: [PATCH 3/7] network-manager: wpa_supplicant

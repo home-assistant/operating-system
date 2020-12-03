@@ -1,7 +1,7 @@
-From baba5ba468fe84e1a85818dd5a2a111e1391d822 Mon Sep 17 00:00:00 2001
-Message-Id: <baba5ba468fe84e1a85818dd5a2a111e1391d822.1605131156.git.stefan@agner.ch>
-In-Reply-To: <8aa12f1835721959d0d1999fceee632404f28366.1605131156.git.stefan@agner.ch>
-References: <8aa12f1835721959d0d1999fceee632404f28366.1605131156.git.stefan@agner.ch>
+From 51babd578150f840311099d54abf8ea39b2127e6 Mon Sep 17 00:00:00 2001
+Message-Id: <51babd578150f840311099d54abf8ea39b2127e6.1607000394.git.stefan@agner.ch>
+In-Reply-To: <dd83e231779b8daaeaa0a78d6686b80eeb49c12b.1607000394.git.stefan@agner.ch>
+References: <dd83e231779b8daaeaa0a78d6686b80eeb49c12b.1607000394.git.stefan@agner.ch>
 From: Pascal Vizeli <pvizeli@syshack.ch>
 Date: Thu, 16 Apr 2020 12:05:21 +0000
 Subject: [PATCH 5/7] rpi: use latest wifi driver

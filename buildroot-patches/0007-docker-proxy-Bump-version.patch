@@ -1,7 +1,7 @@
-From 14cd8a7e9eec46e0cdd243db17827335de2803c5 Mon Sep 17 00:00:00 2001
-Message-Id: <14cd8a7e9eec46e0cdd243db17827335de2803c5.1605131156.git.stefan@agner.ch>
-In-Reply-To: <8aa12f1835721959d0d1999fceee632404f28366.1605131156.git.stefan@agner.ch>
-References: <8aa12f1835721959d0d1999fceee632404f28366.1605131156.git.stefan@agner.ch>
+From 0feaec5aace7006f2a4afbb8d69541acac0842e4 Mon Sep 17 00:00:00 2001
+Message-Id: <0feaec5aace7006f2a4afbb8d69541acac0842e4.1607000394.git.stefan@agner.ch>
+In-Reply-To: <dd83e231779b8daaeaa0a78d6686b80eeb49c12b.1607000394.git.stefan@agner.ch>
+References: <dd83e231779b8daaeaa0a78d6686b80eeb49c12b.1607000394.git.stefan@agner.ch>
 From: Pascal Vizeli <pvizeli@syshack.ch>
 Date: Thu, 7 May 2020 09:02:05 +0000
 Subject: [PATCH 7/7] docker-proxy: Bump version
