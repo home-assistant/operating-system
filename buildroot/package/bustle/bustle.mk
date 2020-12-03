@@ -6,7 +6,7 @@
 
 BUSTLE_VERSION = 0.7.5
 BUSTLE_SITE = https://www.freedesktop.org/software/bustle/$(BUSTLE_VERSION)
-BUSTLE_LICENSE = LGPL-2.1+
+BUSTLE_LICENSE = LGPL-2.1+, GPL-3.0 (binaries)
 BUSTLE_LICENSE_FILES = LICENSE
 BUSTLE_DEPENDENCIES = libglib2 libpcap host-pkgconf
 

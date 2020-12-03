@@ -1,0 +1,37 @@
+From 434f6c3fe7d1d2c6a3e6ae6338608a4a4421ab1b Mon Sep 17 00:00:00 2001
+From: Michael Drake <michael.drake@codethink.co.uk>
+Date: Fri, 13 Nov 2020 11:12:58 +0000
+Subject: framebuffer: Fix internal font generated source for GCC 10.
+
+[Retrieved (and backported) from:
+https://git.netsurf-browser.org/netsurf.git/commit/?id=434f6c3fe7d1d2c6a3e6ae6338608a4a4421ab1b]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ tools/convert_font.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/netsurf/frontends/framebuffer/convert_font.c b/netsurf/frontends/framebuffer/convert_font.c
+index 9f5734b71..d22c85920 100644
+--- a/netsurf/frontends/framebuffer/convert_font.c
++++ b/netsurf/frontends/framebuffer/convert_font.c
+@@ -290,14 +290,14 @@ static bool generate_font_header(const char *path, struct font_data *data)
+ 
+ 
+ 	for (s = 0; s < 4; s++) {
+-		fprintf(fp, "const uint8_t *%s_section_table;\n",
++		fprintf(fp, "extern const uint8_t *%s_section_table;\n",
+ 			var_lables[s]);
+-		fprintf(fp, "const uint16_t *%s_sections;\n",
++		fprintf(fp, "extern const uint16_t *%s_sections;\n",
+ 			var_lables[s]);
+ 
+ 	}
+ 
+-	fprintf(fp, "const uint8_t *font_glyph_data;\n");
++	fprintf(fp, "extern const uint8_t *font_glyph_data;\n");
+ 
+ 	fprintf(fp, "\n\n");
+ 
+-- 
+cgit v1.2.1
+

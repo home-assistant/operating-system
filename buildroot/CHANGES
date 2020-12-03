@@ -1,3 +1,16 @@
+2020.11, released December 2nd, 2020
+
+	Various fixes.
+
+	Updated/fixed packages: bustle, docker-containerd, gnuplot,
+	gst1-plugins-good, jemalloc, kmsxx, libcap, libplist,
+	libuhttpd, libxkbcommon, lynx, mariadb, netsurf, privoxy,
+	s390-tools, setserial, xserver_xorg-server
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#13276: libcap builds libcap.pc incorrectly
+
 2020.11-rc3, released November 28th, 2020
 
 	Fixes all over the tree.
