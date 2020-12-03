@@ -17,7 +17,11 @@ DOCKER_CONTAINERD_LDFLAGS = \
 DOCKER_CONTAINERD_BUILD_TARGETS = cmd/ctr cmd/containerd cmd/containerd-shim
 
 DOCKER_CONTAINERD_INSTALL_BINS = containerd containerd-shim
-DOCKER_CONTAINERD_TAGS = apparmor
+
+ifeq ($(BR2_PACKAGE_LIBAPPARMOR),y)
+DOCKER_CONTAINERD_DEPENDENCIES += libapparmor
+DOCKER_CONTAINERD_TAGS += apparmor
+endif
 
 ifeq ($(BR2_PACKAGE_LIBSECCOMP),y)
 DOCKER_CONTAINERD_DEPENDENCIES += libseccomp host-pkgconf

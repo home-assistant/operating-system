@@ -1,7 +1,7 @@
-From 05fa58fbff93719044a9d1bb9e7c82d67068e346 Mon Sep 17 00:00:00 2001
-Message-Id: <05fa58fbff93719044a9d1bb9e7c82d67068e346.1605131156.git.stefan@agner.ch>
-In-Reply-To: <8aa12f1835721959d0d1999fceee632404f28366.1605131156.git.stefan@agner.ch>
-References: <8aa12f1835721959d0d1999fceee632404f28366.1605131156.git.stefan@agner.ch>
+From 7c7198d6075748a5f831c0068441695455d06e6f Mon Sep 17 00:00:00 2001
+Message-Id: <7c7198d6075748a5f831c0068441695455d06e6f.1607000394.git.stefan@agner.ch>
+In-Reply-To: <dd83e231779b8daaeaa0a78d6686b80eeb49c12b.1607000394.git.stefan@agner.ch>
+References: <dd83e231779b8daaeaa0a78d6686b80eeb49c12b.1607000394.git.stefan@agner.ch>
 From: Pascal Vizeli <pvizeli@syshack.ch>
 Date: Thu, 16 Apr 2020 11:51:46 +0000
 Subject: [PATCH 2/7] rpi-firmware: Bump firmware
