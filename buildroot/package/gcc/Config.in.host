@@ -9,7 +9,7 @@ choice
 	  Select the version of gcc you wish to use.
 
 config BR2_GCC_VERSION_ARC
-	bool "gcc arc (9.x)"
+	bool "gcc arc (10.x)"
 	# Only supported architecture
 	depends on BR2_arc
 	select BR2_TOOLCHAIN_GCC_AT_LEAST_9
