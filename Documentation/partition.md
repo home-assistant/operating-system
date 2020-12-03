@@ -51,10 +51,13 @@ Log in as `root` to get to the Home Assistant CLI and then enter `login` to cont
 
 Confirm your USB SSD/HD is connected and recognized using `fdisk -l`.
 
-Make sure the drive has no partition named `hassos-data` (or no partition at all). With the drive, use the below command (again, replacing XXX with your drive)
+With the drive connected, use the following command (replacing sdx with your drive, without a partition number):
 
 ```sh
-$ datactl move /dev/xxx
+$ datactl move /dev/sdx
 ```
 
-Hit any key to continue, and then the move will happen after the next reboot. Once complete, the external drive will be owned and used by the system.
+Enter "yes" to confirm the operation. This will prepare the disk, however, the
+actual move will be running on next reboot. Once complete, the external drive
+will contain the data and will need to be plugged in to successfully boot Home
+Assistant OS.
