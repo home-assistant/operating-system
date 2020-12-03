@@ -31,8 +31,6 @@ if [ "${1}" = "move" ] && [ -e "${2}" ]; then
         exit 1
     fi
 
-    #echo 'label: gpt' | sfdisk ${NEW_DEVICE_ROOT}
-
     sgdisk --zap-all "${NEW_DEVICE_ROOT}"
     sgdisk \
         -n "0:0:0" \
