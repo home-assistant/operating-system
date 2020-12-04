@@ -1,10 +1,10 @@
-From de9f878b9cc4ab665c6aa4e6bb14193c66f78816 Mon Sep 17 00:00:00 2001
-Message-Id: <de9f878b9cc4ab665c6aa4e6bb14193c66f78816.1606428503.git.stefan@agner.ch>
-In-Reply-To: <a04331a6ba7334282836bbaa76e979c4e6be3900.1606428503.git.stefan@agner.ch>
-References: <a04331a6ba7334282836bbaa76e979c4e6be3900.1606428503.git.stefan@agner.ch>
+From a92d8e7740d65859f5e08abe110fd9d37aebf4cd Mon Sep 17 00:00:00 2001
+Message-Id: <a92d8e7740d65859f5e08abe110fd9d37aebf4cd.1607085588.git.stefan@agner.ch>
+In-Reply-To: <a04331a6ba7334282836bbaa76e979c4e6be3900.1607085588.git.stefan@agner.ch>
+References: <a04331a6ba7334282836bbaa76e979c4e6be3900.1607085588.git.stefan@agner.ch>
 From: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 Date: Thu, 19 Nov 2020 18:48:22 +0100
-Subject: [PATCH 15/15] mmc: Introduce mmc_phys_to_bus()/mmc_bus_to_phys()
+Subject: [PATCH 16/16] mmc: Introduce mmc_phys_to_bus()/mmc_bus_to_phys()
 
 This will allow us to use DM variants of phys_to_bus()/bus_to_phys()
 when relevant.

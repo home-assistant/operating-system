@@ -1,10 +1,10 @@
-From f12d0a67a79679641299b1b923883e62332ee6d4 Mon Sep 17 00:00:00 2001
-Message-Id: <f12d0a67a79679641299b1b923883e62332ee6d4.1606428503.git.stefan@agner.ch>
-In-Reply-To: <a04331a6ba7334282836bbaa76e979c4e6be3900.1606428503.git.stefan@agner.ch>
-References: <a04331a6ba7334282836bbaa76e979c4e6be3900.1606428503.git.stefan@agner.ch>
+From 361a81dd4eb8c508c882484a69bf85c00570cfe8 Mon Sep 17 00:00:00 2001
+Message-Id: <361a81dd4eb8c508c882484a69bf85c00570cfe8.1607085588.git.stefan@agner.ch>
+In-Reply-To: <a04331a6ba7334282836bbaa76e979c4e6be3900.1607085588.git.stefan@agner.ch>
+References: <a04331a6ba7334282836bbaa76e979c4e6be3900.1607085588.git.stefan@agner.ch>
 From: Michael Walle <michael@walle.cc>
 Date: Wed, 23 Sep 2020 12:42:51 +0200
-Subject: [PATCH 07/15] mmc: sdhci: move the ADMA2 table handling into own
+Subject: [PATCH 08/16] mmc: sdhci: move the ADMA2 table handling into own
  module
 
 There are other (non-SDHCI) controllers which supports ADMA2 descriptor

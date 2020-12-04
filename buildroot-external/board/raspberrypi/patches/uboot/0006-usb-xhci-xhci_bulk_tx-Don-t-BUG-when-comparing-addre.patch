@@ -1,0 +1,40 @@
+From 0c4bf0c18097807364ee302effc0d0c7a32e4364 Mon Sep 17 00:00:00 2001
+Message-Id: <0c4bf0c18097807364ee302effc0d0c7a32e4364.1607085588.git.stefan@agner.ch>
+In-Reply-To: <a04331a6ba7334282836bbaa76e979c4e6be3900.1607085588.git.stefan@agner.ch>
+References: <a04331a6ba7334282836bbaa76e979c4e6be3900.1607085588.git.stefan@agner.ch>
+From: Stefan Roese <sr@denx.de>
+Date: Mon, 24 Aug 2020 13:04:37 +0200
+Subject: [PATCH 06/16] usb: xhci: xhci_bulk_tx: Don't "BUG" when comparing
+ addresses
+
+Octeon uses mapped addresses for virtual and physical memory. It's not
+that easy to calculate the resulting addresses here. So let's remove
+this BUG_ON() completely, as it's not really helpful.
+
+Please also note, that BUG_ON() is not recommended any more in the Linux
+kernel.
+
+Signed-off-by: Stefan Roese <sr@denx.de>
+Reviewed-by: Bin Meng <bmeng.cn@gmail.com>
+Cc: Bin Meng <bmeng.cn@gmail.com>
+Cc: Marek Vasut <marex@denx.de>
+---
+ drivers/usb/host/xhci-ring.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.c
+index a893277c75..d912cba2f4 100644
+--- a/drivers/usb/host/xhci-ring.c
++++ b/drivers/usb/host/xhci-ring.c
+@@ -726,8 +726,6 @@ int xhci_bulk_tx(struct usb_device *udev, unsigned long pipe,
+ 
+ 	BUG_ON(TRB_TO_SLOT_ID(field) != slot_id);
+ 	BUG_ON(TRB_TO_EP_INDEX(field) != ep_index);
+-	BUG_ON(*(void **)(uintptr_t)le64_to_cpu(event->trans_event.buffer) -
+-		buffer > (size_t)length);
+ 
+ 	record_transfer_result(udev, event, length);
+ 	xhci_acknowledge_event(ctrl);
+-- 
+2.29.2
+

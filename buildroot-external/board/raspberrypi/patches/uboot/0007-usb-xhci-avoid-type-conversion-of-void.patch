@@ -1,10 +1,10 @@
-From 8591faf0da31be68ea45fdc8a0485c0163a3eb52 Mon Sep 17 00:00:00 2001
-Message-Id: <8591faf0da31be68ea45fdc8a0485c0163a3eb52.1606428503.git.stefan@agner.ch>
-In-Reply-To: <a04331a6ba7334282836bbaa76e979c4e6be3900.1606428503.git.stefan@agner.ch>
-References: <a04331a6ba7334282836bbaa76e979c4e6be3900.1606428503.git.stefan@agner.ch>
+From 99d6472fd9105c821582f069dfd151466bb5d263 Mon Sep 17 00:00:00 2001
+Message-Id: <99d6472fd9105c821582f069dfd151466bb5d263.1607085588.git.stefan@agner.ch>
+In-Reply-To: <a04331a6ba7334282836bbaa76e979c4e6be3900.1607085588.git.stefan@agner.ch>
+References: <a04331a6ba7334282836bbaa76e979c4e6be3900.1607085588.git.stefan@agner.ch>
 From: Heinrich Schuchardt <xypron.glpk@gmx.de>
 Date: Tue, 29 Sep 2020 22:03:01 +0200
-Subject: [PATCH 06/15] usb: xhci: avoid type conversion of void *
+Subject: [PATCH 07/16] usb: xhci: avoid type conversion of void *
 
 void * can be assigned to any pointer variable. Avoid unnecessary
 conversions.
