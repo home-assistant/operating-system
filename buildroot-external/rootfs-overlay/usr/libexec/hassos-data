@@ -10,9 +10,18 @@ OLD_DEVICE_CHILD="$(readlink -f "/dev/disk/by-label/hassos-data")"
 # Rely on systemd-udev symlinks to find external data partition by partlabel
 NEW_DEVICE_CHILD="$(readlink -f "/dev/disk/by-partlabel/hassos-data-external")"
 
+NEW_DEVICE_PART_SIZE=$(cat "/sys/class/block/$(basename "${NEW_DEVICE_CHILD}")/size")
+OLD_DEVICE_PART_SIZE=$(cat "/sys/class/block/$(basename "${OLD_DEVICE_CHILD}")/size")
+if [ "${NEW_DEVICE_PART_SIZE}" -lt "${OLD_DEVICE_PART_SIZE}" ]; then
+    echo "[INFO] Target device too small!"
+    exit 1
+fi
+
 echo "[INFO] Moving data from ${OLD_DEVICE_CHILD} to ${NEW_DEVICE_CHILD}"
 if ! e2image -ra -p "${OLD_DEVICE_CHILD}" "${NEW_DEVICE_CHILD}"; then
     echo "[ERROR] Copying data partition to external device failed!"
+    # Rename partition to make sure HAOS does not try to mount a failed copy attempt.
+    e2label "${NEW_DEVICE_CHILD}" hassos-data-failed || true
     exit 1
 fi
 
