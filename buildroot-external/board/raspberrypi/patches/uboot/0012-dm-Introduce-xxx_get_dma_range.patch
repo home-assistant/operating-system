@@ -1,10 +1,10 @@
-From a2052b8361818ec5acb04e5d0c1d229083dfbeb6 Mon Sep 17 00:00:00 2001
-Message-Id: <a2052b8361818ec5acb04e5d0c1d229083dfbeb6.1606428503.git.stefan@agner.ch>
-In-Reply-To: <a04331a6ba7334282836bbaa76e979c4e6be3900.1606428503.git.stefan@agner.ch>
-References: <a04331a6ba7334282836bbaa76e979c4e6be3900.1606428503.git.stefan@agner.ch>
+From 754d53fbedf5f97384f473f6f5a831aecae687f6 Mon Sep 17 00:00:00 2001
+Message-Id: <754d53fbedf5f97384f473f6f5a831aecae687f6.1607085588.git.stefan@agner.ch>
+In-Reply-To: <a04331a6ba7334282836bbaa76e979c4e6be3900.1607085588.git.stefan@agner.ch>
+References: <a04331a6ba7334282836bbaa76e979c4e6be3900.1607085588.git.stefan@agner.ch>
 From: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 Date: Thu, 19 Nov 2020 18:48:18 +0100
-Subject: [PATCH 11/15] dm: Introduce xxx_get_dma_range()
+Subject: [PATCH 12/16] dm: Introduce xxx_get_dma_range()
 
 Add the follwing functions to get a specific device's DMA ranges:
  - dev_get_dma_range()

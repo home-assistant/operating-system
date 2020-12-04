@@ -1,10 +1,10 @@
 From 000f636c9ea4909a23119ba65d3a3847687c8c6b Mon Sep 17 00:00:00 2001
-Message-Id: <000f636c9ea4909a23119ba65d3a3847687c8c6b.1606428503.git.stefan@agner.ch>
-In-Reply-To: <a04331a6ba7334282836bbaa76e979c4e6be3900.1606428503.git.stefan@agner.ch>
-References: <a04331a6ba7334282836bbaa76e979c4e6be3900.1606428503.git.stefan@agner.ch>
+Message-Id: <000f636c9ea4909a23119ba65d3a3847687c8c6b.1607085588.git.stefan@agner.ch>
+In-Reply-To: <a04331a6ba7334282836bbaa76e979c4e6be3900.1607085588.git.stefan@agner.ch>
+References: <a04331a6ba7334282836bbaa76e979c4e6be3900.1607085588.git.stefan@agner.ch>
 From: Chunfeng Yun <chunfeng.yun@mediatek.com>
 Date: Tue, 8 Sep 2020 18:59:59 +0200
-Subject: [PATCH 04/15] usb: xhci: convert to TRB_TYPE()
+Subject: [PATCH 04/16] usb: xhci: convert to TRB_TYPE()
 
 Use TRB_TYPE(p) instead of ((p) << TRB_TYPE_SHIFT)
 

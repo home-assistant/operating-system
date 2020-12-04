@@ -1,10 +1,10 @@
-From e3c96fd50787aa9ea2e5136593166cc49696d7ea Mon Sep 17 00:00:00 2001
-Message-Id: <e3c96fd50787aa9ea2e5136593166cc49696d7ea.1606428503.git.stefan@agner.ch>
-In-Reply-To: <a04331a6ba7334282836bbaa76e979c4e6be3900.1606428503.git.stefan@agner.ch>
-References: <a04331a6ba7334282836bbaa76e979c4e6be3900.1606428503.git.stefan@agner.ch>
+From edbdacb93fb0372ba456d84dc760314ed7757f86 Mon Sep 17 00:00:00 2001
+Message-Id: <edbdacb93fb0372ba456d84dc760314ed7757f86.1607085588.git.stefan@agner.ch>
+In-Reply-To: <a04331a6ba7334282836bbaa76e979c4e6be3900.1607085588.git.stefan@agner.ch>
+References: <a04331a6ba7334282836bbaa76e979c4e6be3900.1607085588.git.stefan@agner.ch>
 From: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 Date: Thu, 19 Nov 2020 18:48:21 +0100
-Subject: [PATCH 14/15] xhci: translate virtual addresses into the bus's
+Subject: [PATCH 15/16] xhci: translate virtual addresses into the bus's
  address space
 
 So far we've been content with passing physical addresses when
@@ -191,7 +191,7 @@ index b002d6f166..e8d435d644 100644
  
  	/*
 diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.c
-index a893277c75..74deaabb9b 100644
+index d912cba2f4..3d4b84f9a1 100644
 --- a/drivers/usb/host/xhci-ring.c
 +++ b/drivers/usb/host/xhci-ring.c
 @@ -275,10 +275,13 @@ void xhci_queue_command(struct xhci_ctrl *ctrl, u8 *ptr, u32 slot_id,
@@ -227,7 +227,7 @@ index a893277c75..74deaabb9b 100644
  
  	debug("dev=%p, pipe=%lx, buffer=%p, length=%d\n",
  		udev, pipe, buffer, length);
-@@ -876,7 +879,7 @@ int xhci_ctrl_tx(struct usb_device *udev, unsigned long pipe,
+@@ -874,7 +877,7 @@ int xhci_ctrl_tx(struct usb_device *udev, unsigned long pipe,
  	if (length > 0) {
  		if (req->requesttype & USB_DIR_IN)
  			field |= TRB_DIR_IN;

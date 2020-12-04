@@ -1,10 +1,10 @@
-From c576988161912dfcb1bcd8b87640f5f998a87bf3 Mon Sep 17 00:00:00 2001
-Message-Id: <c576988161912dfcb1bcd8b87640f5f998a87bf3.1606428503.git.stefan@agner.ch>
-In-Reply-To: <a04331a6ba7334282836bbaa76e979c4e6be3900.1606428503.git.stefan@agner.ch>
-References: <a04331a6ba7334282836bbaa76e979c4e6be3900.1606428503.git.stefan@agner.ch>
+From ed5a66c3f22d0f01c4f71371714af4180e65b37d Mon Sep 17 00:00:00 2001
+Message-Id: <ed5a66c3f22d0f01c4f71371714af4180e65b37d.1607085588.git.stefan@agner.ch>
+In-Reply-To: <a04331a6ba7334282836bbaa76e979c4e6be3900.1607085588.git.stefan@agner.ch>
+References: <a04331a6ba7334282836bbaa76e979c4e6be3900.1607085588.git.stefan@agner.ch>
 From: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 Date: Thu, 19 Nov 2020 18:48:17 +0100
-Subject: [PATCH 10/15] pci: pcie-brcmstb: Fix inbound window configurations
+Subject: [PATCH 11/16] pci: pcie-brcmstb: Fix inbound window configurations
 
 So far we've assumed a fixed configuration for inbound windows as we had
 a single user for this controller. But the controller's DMA constraints

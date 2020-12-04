@@ -1,10 +1,10 @@
 From bab3fd38c8eec5f3d12e41e706c02c79b4c4a21e Mon Sep 17 00:00:00 2001
-Message-Id: <bab3fd38c8eec5f3d12e41e706c02c79b4c4a21e.1606428503.git.stefan@agner.ch>
-In-Reply-To: <a04331a6ba7334282836bbaa76e979c4e6be3900.1606428503.git.stefan@agner.ch>
-References: <a04331a6ba7334282836bbaa76e979c4e6be3900.1606428503.git.stefan@agner.ch>
+Message-Id: <bab3fd38c8eec5f3d12e41e706c02c79b4c4a21e.1607085588.git.stefan@agner.ch>
+In-Reply-To: <a04331a6ba7334282836bbaa76e979c4e6be3900.1607085588.git.stefan@agner.ch>
+References: <a04331a6ba7334282836bbaa76e979c4e6be3900.1607085588.git.stefan@agner.ch>
 From: Chunfeng Yun <chunfeng.yun@mediatek.com>
 Date: Tue, 8 Sep 2020 19:00:02 +0200
-Subject: [PATCH 05/15] usb: xhci: use macros with parameter to fill ep_info2
+Subject: [PATCH 05/16] usb: xhci: use macros with parameter to fill ep_info2
 
 Use macros with parameter to fill ep_info2, then some macros
 for MASK and SHIFT can be removed

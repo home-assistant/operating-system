@@ -1,10 +1,10 @@
 From b0895f2384712f3d0d89405c06519da195e9ccc9 Mon Sep 17 00:00:00 2001
-Message-Id: <b0895f2384712f3d0d89405c06519da195e9ccc9.1606428503.git.stefan@agner.ch>
-In-Reply-To: <a04331a6ba7334282836bbaa76e979c4e6be3900.1606428503.git.stefan@agner.ch>
-References: <a04331a6ba7334282836bbaa76e979c4e6be3900.1606428503.git.stefan@agner.ch>
+Message-Id: <b0895f2384712f3d0d89405c06519da195e9ccc9.1607085588.git.stefan@agner.ch>
+In-Reply-To: <a04331a6ba7334282836bbaa76e979c4e6be3900.1607085588.git.stefan@agner.ch>
+References: <a04331a6ba7334282836bbaa76e979c4e6be3900.1607085588.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Thu, 26 Nov 2020 17:56:01 +0100
-Subject: [PATCH 03/15] rpi: force a smaller amount of memory
+Subject: [PATCH 03/16] rpi: force a smaller amount of memory
 
 This fixes booting from USB on 32-bit installations. It seems not to
 affect the detected memory or SD card boot negatively.

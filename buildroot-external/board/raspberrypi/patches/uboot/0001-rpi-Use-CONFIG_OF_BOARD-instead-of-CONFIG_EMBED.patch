@@ -1,8 +1,8 @@
 From a04331a6ba7334282836bbaa76e979c4e6be3900 Mon Sep 17 00:00:00 2001
-Message-Id: <a04331a6ba7334282836bbaa76e979c4e6be3900.1606428503.git.stefan@agner.ch>
+Message-Id: <a04331a6ba7334282836bbaa76e979c4e6be3900.1607085588.git.stefan@agner.ch>
 From: Pascal Vizeli <pvizeli@syshack.ch>
 Date: Tue, 10 Dec 2019 09:48:46 +0000
-Subject: [PATCH 01/15] rpi: Use CONFIG_OF_BOARD instead of CONFIG_EMBED
+Subject: [PATCH 01/16] rpi: Use CONFIG_OF_BOARD instead of CONFIG_EMBED
 
 Signed-off-by: Pascal Vizeli <pvizeli@syshack.ch>
 ---

@@ -1,10 +1,10 @@
-From ea24a497a84cf0d1efb9c4f285d4d29bd69f3ebb Mon Sep 17 00:00:00 2001
-Message-Id: <ea24a497a84cf0d1efb9c4f285d4d29bd69f3ebb.1606428503.git.stefan@agner.ch>
-In-Reply-To: <a04331a6ba7334282836bbaa76e979c4e6be3900.1606428503.git.stefan@agner.ch>
-References: <a04331a6ba7334282836bbaa76e979c4e6be3900.1606428503.git.stefan@agner.ch>
+From e286d6acbf158bc385d702aafcf1caa8da9ab8ee Mon Sep 17 00:00:00 2001
+Message-Id: <e286d6acbf158bc385d702aafcf1caa8da9ab8ee.1607085588.git.stefan@agner.ch>
+In-Reply-To: <a04331a6ba7334282836bbaa76e979c4e6be3900.1607085588.git.stefan@agner.ch>
+References: <a04331a6ba7334282836bbaa76e979c4e6be3900.1607085588.git.stefan@agner.ch>
 From: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 Date: Thu, 19 Nov 2020 18:48:19 +0100
-Subject: [PATCH 12/15] dm: Introduce DMA constraints into the core device
+Subject: [PATCH 13/16] dm: Introduce DMA constraints into the core device
  model
 
 Calculating the DMA offset between a bus address space and CPU's every
