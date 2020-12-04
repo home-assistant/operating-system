@@ -9,6 +9,11 @@ set -e
 DATA_DEVICE_CHILD="$(findmnt --noheadings --output=source /mnt/data)"
 DATA_DEVICE_ROOT="/dev/$(lsblk -no pkname "${DATA_DEVICE_CHILD}")"
 
+if [ "${DATA_DEVICE_ROOT}" = "" ]; then
+    echo "[ERROR] Data disk device not found!"
+    exit 1
+fi
+
 # Move command
 if [ "${1}" = "move" ] && [ -e "${2}" ]; then
     NEW_DEVICE_ROOT="${2}"
@@ -39,8 +44,20 @@ if [ "${1}" = "move" ] && [ -e "${2}" ]; then
         -u "0:a52a4597-fa3a-4851-aefd-2fbe9f849079" \
         "${NEW_DEVICE_ROOT}"
 
+    # Since we create a new partition table etc. we are guaranteed the target
+    # partition is partition 1
+    NEW_DEVICE_PART_SIZE=$(cat "/sys/class/block/$(basename "${NEW_DEVICE_ROOT}")1/size")
+    OLD_DEVICE_PART_SIZE=$(cat "/sys/class/block/$(basename "${DATA_DEVICE_CHILD}")/size")
+
+    if [ "${NEW_DEVICE_PART_SIZE}" -lt "${OLD_DEVICE_PART_SIZE}" ]; then
+        echo "[INFO] Target device too small!"
+        sgdisk --zap-all "${NEW_DEVICE_ROOT}"
+        exit 1
+    fi
+
     touch "/mnt/overlay/move-data"
     cat << EOF
+
 Disk ${NEW_DEVICE_ROOT} has been prepared to be used as data drive and the data
 move has been scheduled for the next reboot. Please reboot the device now and
 make sure to leave the disk connected to the system from now on.
