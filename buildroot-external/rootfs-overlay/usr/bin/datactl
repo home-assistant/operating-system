@@ -36,13 +36,11 @@ if [ "${1}" = "move" ] && [ -e "${2}" ]; then
         exit 1
     fi
 
-    sgdisk --zap-all "${NEW_DEVICE_ROOT}"
-    sgdisk \
-        -n "0:0:0" \
-        -c "0:hassos-data-external" \
-        -t "0:0FC63DAF-8483-4772-8E79-3D69D8477DE4" \
-        -u "0:a52a4597-fa3a-4851-aefd-2fbe9f849079" \
-        "${NEW_DEVICE_ROOT}"
+    # Create GPT partition table with a single data partition
+    cat << EOF | sfdisk --wipe-partitions=always --wipe=always "${NEW_DEVICE_ROOT}"
+label: gpt
+uuid=a52a4597-fa3a-4851-aefd-2fbe9f849079, type=0FC63DAF-8483-4772-8E79-3D69D8477DE4, name=hassos-data-external
+EOF
 
     # Since we create a new partition table etc. we are guaranteed the target
     # partition is partition 1
@@ -51,7 +49,7 @@ if [ "${1}" = "move" ] && [ -e "${2}" ]; then
 
     if [ "${NEW_DEVICE_PART_SIZE}" -lt "${OLD_DEVICE_PART_SIZE}" ]; then
         echo "[INFO] Target device too small!"
-        sgdisk --zap-all "${NEW_DEVICE_ROOT}"
+        echo "label: gpt" | sfdisk "${NEW_DEVICE_ROOT}"
         exit 1
     fi
 
