@@ -40,16 +40,16 @@ jobs:
   strategy:
     maxParallel: 1
     matrix:
+      OdroidN2:
+        board: 'odroid_n2'
+      OdroidC2:
+        board: 'odroid_c2'
+      OdroidXU4:
+        board: 'odroid_xu4'
       OpenVirtualAppliance:
         board: 'ova'
       IntelNuc:
         board: 'intel_nuc'
-      OdroidC2:
-        board: 'odroid_c2'
-      OdroidN2:
-        board: 'odroid_n2'
-      OdroidXU4:
-        board: 'odroid_xu4'
       RaspberryPi:
         board: 'rpi'
       RaspberryPi0-W:
