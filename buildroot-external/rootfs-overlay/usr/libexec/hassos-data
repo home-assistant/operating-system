@@ -7,8 +7,18 @@ set -e
 # Rely on systemd-udev symlinks to find current data partition by fs label
 OLD_DEVICE_CHILD="$(readlink -f "/dev/disk/by-label/hassos-data")"
 
+NEW_DEVICE="/dev/disk/by-partlabel/hassos-data-external"
+
+# The device should be ready by now guaranteed by systemd Wants/After,
+# but in case the user unplugged the device, this service still gets started.
+# Exit with an error in this case.
+if [ ! -e "${NEW_DEVICE}" ]; then
+    echo "[ERROR] External data device ${NEW_DEVICE} not found!"
+    exit 1
+fi
+
 # Rely on systemd-udev symlinks to find external data partition by partlabel
-NEW_DEVICE_CHILD="$(readlink -f "/dev/disk/by-partlabel/hassos-data-external")"
+NEW_DEVICE_CHILD="$(readlink -f "${NEW_DEVICE}")"
 
 NEW_DEVICE_PART_SIZE=$(cat "/sys/class/block/$(basename "${NEW_DEVICE_CHILD}")/size")
 OLD_DEVICE_PART_SIZE=$(cat "/sys/class/block/$(basename "${OLD_DEVICE_CHILD}")/size")
