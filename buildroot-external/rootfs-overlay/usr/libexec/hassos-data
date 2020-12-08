@@ -7,6 +7,16 @@ set -e
 # Rely on systemd-udev symlinks to find current data partition by fs label
 OLD_DEVICE_CHILD="$(readlink -f "/dev/disk/by-label/hassos-data")"
 
+# We cannot rely on systemd Wants/Requires since this is evaluated before
+# ConditionPathExists, and would make us wait for an external device on
+# every boot.
+# Instead, just start the unit here, which makes sure a device with the
+# partlabel "hassos-data-external" is present.
+if ! systemctl start "dev-disk-by\\x2dpartlabel-hassos\\x2ddata\\x2dexternal.device"; then
+    echo "[ERROR] External data device ${NEW_DEVICE} not found!"
+    exit 1
+fi
+
 # Rely on systemd-udev symlinks to find external data partition by partlabel
 NEW_DEVICE_CHILD="$(readlink -f "/dev/disk/by-partlabel/hassos-data-external")"
 
