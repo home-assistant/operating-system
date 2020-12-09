@@ -1,4 +1,7 @@
-From 64017a2cc9e501329016d50b701c5e9a9488991d Mon Sep 17 00:00:00 2001
+From 0077176ac369a1125c3fb22f7ba8e5d53576a1b3 Mon Sep 17 00:00:00 2001
+Message-Id: <0077176ac369a1125c3fb22f7ba8e5d53576a1b3.1607542946.git.stefan@agner.ch>
+In-Reply-To: <526ccae8321b9b48925c44999611c3c5a374328e.1607542946.git.stefan@agner.ch>
+References: <526ccae8321b9b48925c44999611c3c5a374328e.1607542946.git.stefan@agner.ch>
 From: Neil Armstrong <narmstrong@baylibre.com>
 Date: Mon, 2 Sep 2019 15:42:04 +0200
 Subject: [PATCH 3/3] HACK: mmc: meson-gx: limit to 24MHz
@@ -9,10 +12,10 @@ Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/mmc/meson_gx_mmc.c b/drivers/mmc/meson_gx_mmc.c
-index b5f5122b..00bfa324 100644
+index 719dd1e5e5..dd3dd7c08c 100644
 --- a/drivers/mmc/meson_gx_mmc.c
 +++ b/drivers/mmc/meson_gx_mmc.c
-@@ -252,7 +252,7 @@ static int meson_mmc_probe(struct udevice *dev)
+@@ -265,7 +265,7 @@ static int meson_mmc_probe(struct udevice *dev)
  	cfg->host_caps = MMC_MODE_8BIT | MMC_MODE_4BIT |
  			MMC_MODE_HS_52MHz | MMC_MODE_HS;
  	cfg->f_min = DIV_ROUND_UP(SD_EMMC_CLKSRC_24M, CLK_MAX_DIV);
@@ -20,6 +23,7 @@ index b5f5122b..00bfa324 100644
 +	cfg->f_max = SD_EMMC_CLKSRC_24M;
  	cfg->b_max = 511; /* max 512 - 1 blocks */
  	cfg->name = dev->name;
+ 
+-- 
+2.29.2
 
---
-2.22.0
