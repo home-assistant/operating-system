@@ -11,15 +11,23 @@ jobs:
     name: Generate version
     runs-on: [ "ubuntu-20.04" ]
     outputs:
-      version_dev: ${{ steps.version.outputs.version_dev }}
+      version_main: ${{ steps.version_main.outputs.version_main }}
+      version_dev: ${{ steps.version_dev.outputs.version_dev }}
     steps:
       - name: Generate Development build version
         shell: bash
-        id: version
+        id: version_dev
         run: |
           version_dev="dev$(date --utc +'%Y%m%d')"
           echo "Development version \"${version_dev}\""
           echo "::set-output name=version_dev::${version_dev}"
+      - uses: actions/checkout@v2
+      - name: Get Major/Minor version
+        id: version_main
+        run: |
+          major=$(cat ${GITHUB_WORKSPACE}/buildroot-external/meta | grep VERSION_MAJOR | cut -d'=' -f2)
+          build=$(cat ${GITHUB_WORKSPACE}/buildroot-external/meta | grep VERSION_BUILD | cut -d'=' -f2)
+          echo "::set-output name=version_main::${major}.${build}"
 
   build:
     name: Release build for ${{ matrix.board.name }}
@@ -76,6 +84,6 @@ jobs:
           port: ${{ secrets.DEV_PORT }}
           key: ${{ secrets.DEV_SCP_KEY }}
           source: "release/*"
-          target: ${{ secrets.DEV_TARGET_PATH }}/${{ needs.version.outputs.version_dev }}/
+          target: ${{ secrets.DEV_TARGET_PATH }}/${{ needs.version.outputs.version_main }}.${{ needs.version.outputs.version_dev }}/
           strip_components: 1
 
