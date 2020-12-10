@@ -1,83 +1,43 @@
 #!/bin/sh
-# shellcheck disable=SC2039
 # ==============================================================================
-# HassOS data partition handler
+# Home Assistant OS data partition migration script
 # ==============================================================================
 set -e
 
-OPTION_FILE=/mnt/overlay/data.opt
+# Rely on systemd-udev symlinks to find current data partition by fs label
+OLD_DEVICE_CHILD="$(readlink -f "/dev/disk/by-label/hassos-data")"
 
-# New data partition exits
-if ! [ -e "${OPTION_FILE}" ]; then
-    echo "[INFO] No data option found"
-    exit 0
-else
-    NEW_DEVICE_ROOT="$(cat ${OPTION_FILE})"
-    rm ${OPTION_FILE}
-fi
-
-# Get device information
-OLD_DEVICE_CHILD="$(findfs LABEL="hassos-data")"
-OLD_DEVICE_ROOT="/dev/$(lsblk -no pkname "${OLD_DEVICE_CHILD}")"
-OLD_PART_NUM="${OLD_DEVICE_CHILD: -1}"
-
-# Wait for devices
-timeout 90 \
-    ash -c \
-        "until [ -e \"${NEW_DEVICE_ROOT}\" ]; do sleep 5; done" \
-            > /dev/null 2>&1 || true;
-
-# Check if block device is exists
-if [ ! -b "${NEW_DEVICE_ROOT}" ]; then
-    echo "[ERROR] No block device ${NEW_DEVICE_ROOT}!"
-    exit 1
-fi
-echo "[INFO] Cleanup device ${NEW_DEVICE_ROOT}!"
-sgdisk -Z "${NEW_DEVICE_ROOT}"
-
-# Create new partition
-echo "[INFO] Create new hassos-data partition"
-sgdisk -o "${NEW_DEVICE_ROOT}"
-sgdisk \
-    -n "0:0:0" \
-    -c "0:hassos-data" \
-    -t "0:0FC63DAF-8483-4772-8E79-3D69D8477DE4" \
-    -u "0:a52a4597-fa3a-4851-aefd-2fbe9f849079" \
-    "${NEW_DEVICE_ROOT}"
-sgdisk -v "${NEW_DEVICE_ROOT}"
-partx -u "${NEW_DEVICE_ROOT}"
-
-NEW_DEVICE_CHILD="$(fdisk -l "${NEW_DEVICE_ROOT}" | grep '^/dev' | cut -d' ' -f1 | head -n 1)"
-
-echo "[INFO] Move hassos-data from ${OLD_DEVICE_CHILD} to ${NEW_DEVICE_CHILD}"
-if ! dd if="${OLD_DEVICE_CHILD}" of="${NEW_DEVICE_CHILD}" status=none; then
-    echo "[ERROR] Data copy fails!"
-
-    # Reset new data partition
-    sgdisk -o "${NEW_DEVICE_ROOT}"
-    partx -u "${NEW_DEVICE_ROOT}"
+# We cannot rely on systemd Wants/Requires since this is evaluated before
+# ConditionPathExists, and would make us wait for an external device on
+# every boot.
+# Instead, just start the unit here, which makes sure a device with the
+# partlabel "hassos-data-external" is present.
+if ! systemctl start "dev-disk-by\\x2dpartlabel-hassos\\x2ddata\\x2dexternal.device"; then
+    echo "[ERROR] External data device ${NEW_DEVICE} not found!"
     exit 1
 fi
 
-echo "[INFO] Remove old hassos-data partition ${OLD_PART_NUM} / ${OLD_DEVICE_ROOT}"
-if sfdisk -dq "${OLD_DEVICE_ROOT}" | grep -q 'label: gpt'; then
-    sgdisk -d "${OLD_PART_NUM}" "${OLD_DEVICE_ROOT}"
-    sgdisk -v "${OLD_DEVICE_ROOT}"
+# Rely on systemd-udev symlinks to find external data partition by partlabel
+NEW_DEVICE_CHILD="$(readlink -f "/dev/disk/by-partlabel/hassos-data-external")"
 
-else
-    sfdisk --delete "${OLD_DEVICE_ROOT}" "${OLD_PART_NUM}" --force
-    sfdisk -V "${OLD_DEVICE_ROOT}"
+NEW_DEVICE_PART_SIZE=$(cat "/sys/class/block/$(basename "${NEW_DEVICE_CHILD}")/size")
+OLD_DEVICE_PART_SIZE=$(cat "/sys/class/block/$(basename "${OLD_DEVICE_CHILD}")/size")
+if [ "${NEW_DEVICE_PART_SIZE}" -lt "${OLD_DEVICE_PART_SIZE}" ]; then
+    echo "[INFO] Target device too small!"
+    exit 1
 fi
 
-echo "[INFO] fix filesystem & layout"
+echo "[INFO] Moving data from ${OLD_DEVICE_CHILD} to ${NEW_DEVICE_CHILD}"
+if ! e2image -ra -p "${OLD_DEVICE_CHILD}" "${NEW_DEVICE_CHILD}"; then
+    echo "[ERROR] Copying data partition to external device failed!"
+    # Rename partition to make sure HAOS does not try to mount a failed copy attempt.
+    e2label "${NEW_DEVICE_CHILD}" hassos-data-failed || true
+    exit 1
+fi
 
-# Fix filesystem
-e2fsck -y "${NEW_DEVICE_CHILD}"
-resize2fs -f "${NEW_DEVICE_CHILD}"
+# At this point we have two partition with the same fs label. Make sure
+# to rename the internal partition so we won't mount it anymore.
+echo "[INFO] Rename old hassos-data partition ${OLD_DEVICE_CHILD}"
+e2label "${OLD_DEVICE_CHILD}" hassos-data-old
 
-# Fix partition layout
-partx -d "${OLD_DEVICE_CHILD}"
-partx -u "${OLD_DEVICE_ROOT}"
-partx -u "${NEW_DEVICE_ROOT}"
-
-echo "[INFO] Finish hassos data movement"
+echo "[INFO] Data move has been completed successfully"

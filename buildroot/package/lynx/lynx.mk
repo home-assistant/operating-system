@@ -12,6 +12,13 @@ LYNX_LICENSE_FILES = COPYING
 
 LYNX_DEPENDENCIES = host-pkgconf $(TARGET_NLS_DEPENDENCIES)
 
+ifeq ($(BR2_REPRODUCIBLE),y)
+# configuration info leaks build paths
+LYNX_CONF_OPTS += --disable-config-info
+# disable build timestamp
+LYNX_CFLAGS += -DNO_BUILDSTAMP
+endif
+
 ifeq ($(BR2_PACKAGE_NCURSES),y)
 LYNX_DEPENDENCIES += ncurses
 LYNX_CONF_OPTS += --with-screen=ncurses$(if $(BR2_PACKAGE_NCURSES_WCHAR),w)
@@ -41,6 +48,6 @@ LYNX_DEPENDENCIES += libidn
 LYNX_LIBS += `$(PKG_CONFIG_HOST_BINARY) --libs libidn`
 endif
 
-LYNX_CONF_ENV = LIBS="$(LYNX_LIBS)"
+LYNX_CONF_ENV = LIBS="$(LYNX_LIBS)" CFLAGS="$(TARGET_CFLAGS) $(LYNX_CFLAGS)"
 
 $(eval $(autotools-package))

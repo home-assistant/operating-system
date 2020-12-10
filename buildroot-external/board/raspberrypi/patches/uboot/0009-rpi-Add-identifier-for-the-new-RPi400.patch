@@ -1,10 +1,10 @@
-From 0ad1fdab7a52554d1da758b36917c09965495dd9 Mon Sep 17 00:00:00 2001
-Message-Id: <0ad1fdab7a52554d1da758b36917c09965495dd9.1606428503.git.stefan@agner.ch>
-In-Reply-To: <a04331a6ba7334282836bbaa76e979c4e6be3900.1606428503.git.stefan@agner.ch>
-References: <a04331a6ba7334282836bbaa76e979c4e6be3900.1606428503.git.stefan@agner.ch>
+From 47206784cfd0100ea48b8ede65119687a4af8f09 Mon Sep 17 00:00:00 2001
+Message-Id: <47206784cfd0100ea48b8ede65119687a4af8f09.1607085588.git.stefan@agner.ch>
+In-Reply-To: <a04331a6ba7334282836bbaa76e979c4e6be3900.1607085588.git.stefan@agner.ch>
+References: <a04331a6ba7334282836bbaa76e979c4e6be3900.1607085588.git.stefan@agner.ch>
 From: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 Date: Thu, 19 Nov 2020 18:48:15 +0100
-Subject: [PATCH 08/15] rpi: Add identifier for the new RPi400
+Subject: [PATCH 09/16] rpi: Add identifier for the new RPi400
 
 The Raspberry Pi Foundation released the new RPi400 which we want to
 detect, so we can enable Ethernet on it and know the correct device tree

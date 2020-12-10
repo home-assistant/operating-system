@@ -17,8 +17,13 @@ DOCKER_ENGINE_LDFLAGS = \
 	-X main.GitCommit=$(DOCKER_ENGINE_VERSION) \
 	-X main.Version=$(DOCKER_ENGINE_VERSION)
 
-DOCKER_ENGINE_TAGS = cgo exclude_graphdriver_zfs autogen apparmor
+DOCKER_ENGINE_TAGS = cgo exclude_graphdriver_zfs autogen
 DOCKER_ENGINE_BUILD_TARGETS = cmd/dockerd
+
+ifeq ($(BR2_PACKAGE_LIBAPPARMOR),y)
+DOCKER_ENGINE_DEPENDENCIES += libapparmor
+DOCKER_ENGINE_TAGS += apparmor
+endif
 
 ifeq ($(BR2_PACKAGE_LIBSECCOMP),y)
 DOCKER_ENGINE_TAGS += seccomp

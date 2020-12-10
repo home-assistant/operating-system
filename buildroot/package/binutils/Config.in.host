@@ -39,7 +39,7 @@ config BR2_BINUTILS_VERSION_2_35_X
 	depends on !BR2_BINFMT_FLAT
 
 config BR2_BINUTILS_VERSION_ARC
-	bool "binutils arc (2.31)"
+	bool "binutils arc (2.34.50)"
 	depends on BR2_arc
 
 config BR2_BINUTILS_VERSION_CSKY

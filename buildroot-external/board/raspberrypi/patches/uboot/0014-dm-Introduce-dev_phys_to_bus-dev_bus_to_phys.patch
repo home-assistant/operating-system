@@ -1,10 +1,10 @@
-From 3f75e2303ddb7fa6eed6dc288880f613329ce3bb Mon Sep 17 00:00:00 2001
-Message-Id: <3f75e2303ddb7fa6eed6dc288880f613329ce3bb.1606428503.git.stefan@agner.ch>
-In-Reply-To: <a04331a6ba7334282836bbaa76e979c4e6be3900.1606428503.git.stefan@agner.ch>
-References: <a04331a6ba7334282836bbaa76e979c4e6be3900.1606428503.git.stefan@agner.ch>
+From c5d66c3defc09d5dba273f430d871dd8f7ab6352 Mon Sep 17 00:00:00 2001
+Message-Id: <c5d66c3defc09d5dba273f430d871dd8f7ab6352.1607085588.git.stefan@agner.ch>
+In-Reply-To: <a04331a6ba7334282836bbaa76e979c4e6be3900.1607085588.git.stefan@agner.ch>
+References: <a04331a6ba7334282836bbaa76e979c4e6be3900.1607085588.git.stefan@agner.ch>
 From: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 Date: Thu, 19 Nov 2020 18:48:20 +0100
-Subject: [PATCH 13/15] dm: Introduce dev_phys_to_bus()/dev_bus_to_phys()
+Subject: [PATCH 14/16] dm: Introduce dev_phys_to_bus()/dev_bus_to_phys()
 
 These functions, instead of relying on hard-coded platform-specific
 address translations, make use of the DMA constraints provided by the DM

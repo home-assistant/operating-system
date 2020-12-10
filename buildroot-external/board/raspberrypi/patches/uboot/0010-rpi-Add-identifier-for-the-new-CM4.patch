@@ -1,10 +1,10 @@
-From f9cb12f4cf902797987fea885fa186ba7d676aa0 Mon Sep 17 00:00:00 2001
-Message-Id: <f9cb12f4cf902797987fea885fa186ba7d676aa0.1606428503.git.stefan@agner.ch>
-In-Reply-To: <a04331a6ba7334282836bbaa76e979c4e6be3900.1606428503.git.stefan@agner.ch>
-References: <a04331a6ba7334282836bbaa76e979c4e6be3900.1606428503.git.stefan@agner.ch>
+From aad1a59f4c8929f46b715e023aa19a224844c3a0 Mon Sep 17 00:00:00 2001
+Message-Id: <aad1a59f4c8929f46b715e023aa19a224844c3a0.1607085588.git.stefan@agner.ch>
+In-Reply-To: <a04331a6ba7334282836bbaa76e979c4e6be3900.1607085588.git.stefan@agner.ch>
+References: <a04331a6ba7334282836bbaa76e979c4e6be3900.1607085588.git.stefan@agner.ch>
 From: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 Date: Thu, 19 Nov 2020 18:48:16 +0100
-Subject: [PATCH 09/15] rpi: Add identifier for the new CM4
+Subject: [PATCH 10/16] rpi: Add identifier for the new CM4
 
 The Raspberry Pi Foundation released the new Compute Module 4which we
 want to detect, so we can enable Ethernet on it and know the correct

@@ -1,7 +1,7 @@
-From fe8fec1b597f65938376451c7cf84a462c492fd9 Mon Sep 17 00:00:00 2001
-Message-Id: <fe8fec1b597f65938376451c7cf84a462c492fd9.1605131156.git.stefan@agner.ch>
-In-Reply-To: <8aa12f1835721959d0d1999fceee632404f28366.1605131156.git.stefan@agner.ch>
-References: <8aa12f1835721959d0d1999fceee632404f28366.1605131156.git.stefan@agner.ch>
+From ad1b1c5ef75626ae0fc735473034ca1b571dc281 Mon Sep 17 00:00:00 2001
+Message-Id: <ad1b1c5ef75626ae0fc735473034ca1b571dc281.1607000394.git.stefan@agner.ch>
+In-Reply-To: <dd83e231779b8daaeaa0a78d6686b80eeb49c12b.1607000394.git.stefan@agner.ch>
+References: <dd83e231779b8daaeaa0a78d6686b80eeb49c12b.1607000394.git.stefan@agner.ch>
 From: Pascal Vizeli <pvizeli@syshack.ch>
 Date: Thu, 16 Apr 2020 12:01:44 +0000
 Subject: [PATCH 4/7] Fix dhcp client

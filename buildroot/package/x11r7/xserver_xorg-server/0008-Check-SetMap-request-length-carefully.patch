@@ -1,0 +1,131 @@
+From 446ff2d3177087b8173fa779fa5b77a2a128988b Mon Sep 17 00:00:00 2001
+From: Matthieu Herrb <matthieu@herrb.eu>
+Date: Thu, 12 Nov 2020 19:15:07 +0100
+Subject: [PATCH] Check SetMap request length carefully.
+
+Avoid out of bounds memory accesses on too short request.
+
+ZDI-CAN 11572 /  CVE-2020-14360
+
+This vulnerability was discovered by:
+Jan-Niklas Sohn working with Trend Micro Zero Day Initiative
+
+Signed-off-by: Matthieu Herrb <matthieu@herrb.eu>
+Signed-off-by: Peter Korsgaard <peter@korsgaard.com>
+---
+ xkb/xkb.c | 92 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 92 insertions(+)
+
+diff --git a/xkb/xkb.c b/xkb/xkb.c
+index f54cc97f8..d056c698c 100644
+--- a/xkb/xkb.c
++++ b/xkb/xkb.c
+@@ -2382,6 +2382,93 @@ SetVirtualModMap(XkbSrvInfoPtr xkbi,
+     return (char *) wire;
+ }
+ 
++#define _add_check_len(new) \
++    if (len > UINT32_MAX - (new) || len > req_len - (new)) goto bad; \
++    else len += new
++
++/**
++ * Check the length of the SetMap request
++ */
++static int
++_XkbSetMapCheckLength(xkbSetMapReq *req)
++{
++    size_t len = sz_xkbSetMapReq, req_len = req->length << 2;
++    xkbKeyTypeWireDesc *keytype;
++    xkbSymMapWireDesc *symmap;
++    BOOL preserve;
++    int i, map_count, nSyms;
++
++    if (req_len < len)
++        goto bad;
++    /* types */
++    if (req->present & XkbKeyTypesMask) {
++        keytype = (xkbKeyTypeWireDesc *)(req + 1);
++        for (i = 0; i < req->nTypes; i++) {
++            _add_check_len(XkbPaddedSize(sz_xkbKeyTypeWireDesc));
++            if (req->flags & XkbSetMapResizeTypes) {
++                _add_check_len(keytype->nMapEntries
++                               * sz_xkbKTSetMapEntryWireDesc);
++                preserve = keytype->preserve;
++                map_count = keytype->nMapEntries;
++                if (preserve) {
++                    _add_check_len(map_count * sz_xkbModsWireDesc);
++                }
++                keytype += 1;
++                keytype = (xkbKeyTypeWireDesc *)
++                          ((xkbKTSetMapEntryWireDesc *)keytype + map_count);
++                if (preserve)
++                    keytype = (xkbKeyTypeWireDesc *)
++                              ((xkbModsWireDesc *)keytype + map_count);
++            }
++        }
++    }
++    /* syms */
++    if (req->present & XkbKeySymsMask) {
++        symmap = (xkbSymMapWireDesc *)((char *)req + len);
++        for (i = 0; i < req->nKeySyms; i++) {
++            _add_check_len(sz_xkbSymMapWireDesc);
++            nSyms = symmap->nSyms;
++            _add_check_len(nSyms*sizeof(CARD32));
++            symmap += 1;
++            symmap = (xkbSymMapWireDesc *)((CARD32 *)symmap + nSyms);
++        }
++    }
++    /* actions */
++    if (req->present & XkbKeyActionsMask) {
++        _add_check_len(req->totalActs * sz_xkbActionWireDesc 
++                       + XkbPaddedSize(req->nKeyActs));
++    }
++    /* behaviours */
++    if (req->present & XkbKeyBehaviorsMask) {
++        _add_check_len(req->totalKeyBehaviors * sz_xkbBehaviorWireDesc);
++    }
++    /* vmods */
++    if (req->present & XkbVirtualModsMask) {
++        _add_check_len(XkbPaddedSize(Ones(req->virtualMods)));
++    }
++    /* explicit */
++    if (req->present & XkbExplicitComponentsMask) {
++        /* two bytes per non-zero explicit componen */
++        _add_check_len(XkbPaddedSize(req->totalKeyExplicit * sizeof(CARD16)));
++    }
++    /* modmap */
++    if (req->present & XkbModifierMapMask) {
++         /* two bytes per non-zero modmap component */
++        _add_check_len(XkbPaddedSize(req->totalModMapKeys * sizeof(CARD16)));
++    }
++    /* vmodmap */
++    if (req->present & XkbVirtualModMapMask) {
++        _add_check_len(req->totalVModMapKeys * sz_xkbVModMapWireDesc);
++    }
++    if (len == req_len)
++        return Success;
++bad:
++    ErrorF("[xkb] BOGUS LENGTH in SetMap: expected %ld got %ld\n",
++           len, req_len);
++    return BadLength;
++}
++
++
+ /**
+  * Check if the given request can be applied to the given device but don't
+  * actually do anything, except swap values when client->swapped and doswap are both true.
+@@ -2642,6 +2729,11 @@ ProcXkbSetMap(ClientPtr client)
+     CHK_KBD_DEVICE(dev, stuff->deviceSpec, client, DixManageAccess);
+     CHK_MASK_LEGAL(0x01, stuff->present, XkbAllMapComponentsMask);
+ 
++    /* first verify the request length carefully */
++    rc = _XkbSetMapCheckLength(stuff);
++    if (rc != Success)
++        return rc;
++
+     tmp = (char *) &stuff[1];
+ 
+     /* Check if we can to the SetMap on the requested device. If this
+-- 
+2.20.1
+

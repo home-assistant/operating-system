@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-DOCKER_CONTAINERD_VERSION = 1.4.1
+DOCKER_CONTAINERD_VERSION = 1.4.3
 DOCKER_CONTAINERD_SITE = $(call github,containerd,containerd,v$(DOCKER_CONTAINERD_VERSION))
 DOCKER_CONTAINERD_LICENSE = Apache-2.0
 DOCKER_CONTAINERD_LICENSE_FILES = LICENSE
@@ -17,7 +17,11 @@ DOCKER_CONTAINERD_LDFLAGS = \
 DOCKER_CONTAINERD_BUILD_TARGETS = cmd/ctr cmd/containerd cmd/containerd-shim
 
 DOCKER_CONTAINERD_INSTALL_BINS = containerd containerd-shim
-DOCKER_CONTAINERD_TAGS = apparmor
+
+ifeq ($(BR2_PACKAGE_LIBAPPARMOR),y)
+DOCKER_CONTAINERD_DEPENDENCIES += libapparmor
+DOCKER_CONTAINERD_TAGS += apparmor
+endif
 
 ifeq ($(BR2_PACKAGE_LIBSECCOMP),y)
 DOCKER_CONTAINERD_DEPENDENCIES += libseccomp host-pkgconf

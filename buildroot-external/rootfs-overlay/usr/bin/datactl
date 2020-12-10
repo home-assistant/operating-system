@@ -1,31 +1,74 @@
 #!/bin/sh
 # ==============================================================================
-# HassOS data partition handling 
+# Home Assistant OS data partition handling
 # ==============================================================================
 set -e
 
-OPTION_FILE=/mnt/overlay/data.opt
-DATA_DEVICE_CHILD="$(findfs LABEL="hassos-data")"
+# Use current mount point. This avoids "Can't be the same disk!" error
+# when using a drive which has been used as a data drive previously.
+DATA_DEVICE_CHILD="$(findmnt --noheadings --output=source /mnt/data)"
 DATA_DEVICE_ROOT="/dev/$(lsblk -no pkname "${DATA_DEVICE_CHILD}")"
+
+if [ "${DATA_DEVICE_ROOT}" = "" ]; then
+    echo "[ERROR] Data disk device not found!"
+    exit 1
+fi
 
 # Move command
 if [ "${1}" = "move" ] && [ -e "${2}" ]; then
-    DEVICE="${2}"
+    NEW_DEVICE_ROOT="${2}"
 
     # Check device
-    if ! lsblk "${DEVICE}" | grep disk > /dev/null 2>&1; then
+    if ! lsblk "${NEW_DEVICE_ROOT}" | grep disk > /dev/null 2>&1; then
         echo "[ERROR] Is not disk!"
         exit 1
-    elif [ "${DEVICE}" = "${DATA_DEVICE_ROOT}" ]; then
+    elif [ "${NEW_DEVICE_ROOT}" = "${DATA_DEVICE_ROOT}" ]; then
         echo "[ERROR] Can't be the same disk!"
         exit 1
     fi
 
     # Flag device
-    echo "WARNING: ${DEVICE} will be reset on next restart!"
-    echo "Press a key to move forward"
-    read -r
+    echo "WARNING: All partitions on ${NEW_DEVICE_ROOT} will be deleted!"
+    printf "Enter \"yes\" to confirm: "
+    read -r confirm
+    if [ "${confirm}" != "yes" ]; then
+        echo "Aborting."
+        exit 1
+    fi
 
-    echo "${DEVICE}" > ${OPTION_FILE}
+    # Create GPT partition table with a single data partition
+    cat << EOF | sfdisk --wipe-partitions=always --wipe=always "${NEW_DEVICE_ROOT}"
+label: gpt
+uuid=a52a4597-fa3a-4851-aefd-2fbe9f849079, type=0FC63DAF-8483-4772-8E79-3D69D8477DE4, name=hassos-data-external
+EOF
+
+    # Since we create a new partition table etc. we are guaranteed the target
+    # partition is partition 1
+    NEW_DEVICE_PART_SIZE=$(cat "/sys/class/block/$(basename "${NEW_DEVICE_ROOT}")1/size")
+    OLD_DEVICE_PART_SIZE=$(cat "/sys/class/block/$(basename "${DATA_DEVICE_CHILD}")/size")
+
+    if [ "${NEW_DEVICE_PART_SIZE}" -lt "${OLD_DEVICE_PART_SIZE}" ]; then
+        echo "[INFO] Target device too small!"
+        echo "label: gpt" | sfdisk "${NEW_DEVICE_ROOT}"
+        exit 1
+    fi
+
+    touch "/mnt/overlay/move-data"
+    cat << EOF
+
+Disk ${NEW_DEVICE_ROOT} has been prepared to be used as data drive and the data
+move has been scheduled for the next reboot. Please reboot the device now and
+make sure to leave the disk connected to the system from now on.
+EOF
+
+else
+    cat << EOF
+Usage: datactl move <device>
+
+Moves data partition to external device provided by <device> (without partition
+number). A new partition table and a partition for the complete device will be
+created by datactl.
+EOF
+
 fi
 
