@@ -21,7 +21,7 @@ install_hassos_cli
 # Write os-release
 # shellcheck disable=SC2153
 (
-    echo "NAME=${HASSOS_NAME}"
+    echo "NAME=\"${HASSOS_NAME}\""
     echo "VERSION=\"$(hassos_version) (${BOARD_NAME})\""
     echo "ID=${HASSOS_ID}"
     echo "VERSION_ID=$(hassos_version)"
