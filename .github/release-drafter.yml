@@ -10,7 +10,7 @@ categories:
   - title: 'Intel NUC'
     label: 'board/intel-nuc'
   - title: 'Hardkernel ODROID'
-    label: 'board/hardkernel'
+    label: 'board/odroid'
   - title: 'ASUS Tinker'
     label: 'board/tinker'
 template: |
