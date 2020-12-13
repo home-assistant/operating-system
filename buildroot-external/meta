@@ -1,7 +1,7 @@
 VERSION_MAJOR=5
-VERSION_BUILD=7
+VERSION_BUILD=8
 
 HASSOS_NAME="Home Assistant OS"
 HASSOS_ID="hassos"
 
-DEPLOYMENT="staging"
+DEPLOYMENT="production"
