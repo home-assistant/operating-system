@@ -36,7 +36,7 @@ Sometime the bootloader part can look different because there can be firmware or
 
 ## Data disk
 
-![Data-Disk preview](usb-disk.png)
+![Data-Disk preview](./usb-disk.png)
 
 The data partition is the only partition with real I/O. It will be expanded automatically at boot to the full size of the disk.
 
