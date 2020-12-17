@@ -10,6 +10,7 @@ Wants=systemd-fsck@dev-disk-by\x2dlabel-hassos\x2dboot.service
 What=/dev/disk/by-label/hassos-boot
 Where=/mnt/boot
 Type=auto
+Options=sync
 
 [Install]
 WantedBy=local-fs.target
