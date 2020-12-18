@@ -14,14 +14,18 @@ function hassos_pre_image() {
     # Firmware
     if [[ "${BOARD_ID}" =~ "rpi4" ]]; then
         cp "${BINARIES_DIR}/rpi-firmware/fixup.dat" "${BOOT_DATA}/fixup4.dat" 
-        cp "${BINARIES_DIR}/rpi-firmware/start.elf" "${BOOT_DATA}/start4.elf" 
-        cp "${BINARIES_DIR}/rpi-eeprom/pieeprom.sig" "${BOOT_DATA}/pieeprom.sig"
-        cp "${BINARIES_DIR}/rpi-eeprom/pieeprom.upd" "${BOOT_DATA}/pieeprom.upd"
+        cp "${BINARIES_DIR}/rpi-firmware/start.elf" "${BOOT_DATA}/start4.elf"
     else
         cp -t "${BOOT_DATA}" \
             "${BINARIES_DIR}/rpi-firmware/fixup.dat" \
             "${BINARIES_DIR}/rpi-firmware/start.elf" \
             "${BINARIES_DIR}/rpi-firmware/bootcode.bin"
+    fi
+
+    # EEPROM update for Raspberry Pi 4/Compute Module 4
+    if grep -Eq "^BR2_PACKAGE_RPI_EEPROM=y$" "${BR2_CONFIG}"; then
+        cp "${BINARIES_DIR}/rpi-eeprom/pieeprom.sig" "${BOOT_DATA}/pieeprom.sig"
+        cp "${BINARIES_DIR}/rpi-eeprom/pieeprom.upd" "${BOOT_DATA}/pieeprom.upd"
     fi
 
     # Set cmd options
