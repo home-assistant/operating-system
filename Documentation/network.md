@@ -86,6 +86,8 @@ dns=8.8.8.8;8.8.4.4;
 
 For `address`, the value before the semicolon is the IP address and subnet prefix bitlength. The second value (after the semicolon) is the IP address of the local gateway.
 
+You could also use the new network settings feature in the Supervisor UI, click change next to ip address then select static, review all values and click save.
+
 ## Tips
 
 ### Reset network
