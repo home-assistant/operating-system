@@ -1,0 +1,18 @@
+#
+# Extracted from fstab-generator
+#
+
+[Unit]
+Description=Grow File System on %f
+Documentation=man:systemd-growfs@.service(8)
+DefaultDependencies=no
+BindsTo=%i.mount
+Conflicts=shutdown.target
+After=%i.mount
+Before=shutdown.target local-fs.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/lib/systemd/systemd-growfs %f
+TimeoutSec=0
