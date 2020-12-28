@@ -54,9 +54,4 @@ fi
 
 partx -u "${DEVICE_ROOT}"
 
-# Resize filesystem
-echo "[INFO] Resize hassos-data filesystem"
-e2fsck -y "${DEVICE_CHILD}"
-resize2fs -f "${DEVICE_CHILD}"
-
-echo "[INFO] Finish hassos-data resizing"
+echo "[INFO] Finished hassos-data partition resizing"
