@@ -1,0 +1,37 @@
+From 7c073e3a1b736689135fd2ed44ede5b83790bd37 Mon Sep 17 00:00:00 2001
+From: Bart Van Assche <bvanassche@acm.org>
+Date: Mon, 26 Aug 2019 18:32:08 -0700
+Subject: IP-MIB, Linux: Fix a memory leak in an error path
+
+When a Linux system is booted with "ipv6.disable=1" in the kernel command
+line, the file "/proc/net/snmp6" is not created. Fix the memory leak in
+_systemstats_v6_load_systemstats() that is triggered with IPv6 disabled.
+
+See also https://sourceforge.net/p/net-snmp/bugs/2976/.
+
+Reported-by: Mark E Rusk <marker55@users.sourceforge.net>
+---
+ agent/mibgroup/ip-mib/data_access/systemstats_linux.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/agent/mibgroup/ip-mib/data_access/systemstats_linux.c b/agent/mibgroup/ip-mib/data_access/systemstats_linux.c
+index e28ff93..f68d122 100644
+--- a/agent/mibgroup/ip-mib/data_access/systemstats_linux.c
++++ b/agent/mibgroup/ip-mib/data_access/systemstats_linux.c
+@@ -560,10 +560,12 @@ _systemstats_v6_load_systemstats(netsnmp_container* container, u_int load_flags)
+      * try to open file. If we can't, that's ok - maybe the module hasn't
+      * been loaded yet.
+      */
+-    if (!(devin = fopen(filename, "r"))) {
++    devin = fopen(filename, "r");
++    if (!devin) {
+         DEBUGMSGTL(("access:systemstats",
+                 "Failed to load Systemstats Table (linux1), cannot open %s\n",
+                 filename));
++        netsnmp_access_systemstats_entry_free(entry);
+         return 0;
+     }
+     
+-- 
+2.7.4
+

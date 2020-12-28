@@ -187,6 +187,9 @@ define HOST_NCURSES_BUILD_CMDS
 	$(HOST_MAKE_ENV) $(MAKE) -C $(@D)/progs tic
 endef
 
+HOST_NCURSES_CONF_ENV = \
+	ac_cv_path_LDCONFIG=""
+
 HOST_NCURSES_CONF_OPTS = \
 	--with-shared \
 	--without-gpm \
