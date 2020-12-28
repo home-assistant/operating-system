@@ -1,0 +1,84 @@
+From bf6fcd59d1ff51584a703b1d78c9e8fd4f808917 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sat, 28 Nov 2020 11:44:00 +0100
+Subject: [PATCH] add nios2 tls macros from glibc
+
+Retrieved from
+https://github.com/bminor/glibc/blob/master/sysdeps/nios2/tls-macros.h
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Retrieved from:
+https://github.com/wbx-github/uclibc-ng-test/commit/bf6fcd59d1ff51584a703b1d78c9e8fd4f808917]
+---
+ test/tls/tls-macros-nios2.h | 46 +++++++++++++++++++++++++++++++++++++
+ test/tls/tls-macros.h       |  4 ++++
+ 2 files changed, 50 insertions(+)
+ create mode 100644 test/tls/tls-macros-nios2.h
+
+diff --git a/test/tls/tls-macros-nios2.h b/test/tls/tls-macros-nios2.h
+new file mode 100644
+index 0000000..7029530
+--- /dev/null
++++ b/test/tls/tls-macros-nios2.h
+@@ -0,0 +1,46 @@
++#define TLS_LE(x)					\
++  ({ int *__result;					\
++     asm ("addi %0, r23, %%tls_le(" #x ")"		\
++	  : "=r" (__result));		                \
++     __result; })
++
++#define TLS_IE(x)					\
++  ({ int *__result;					\
++     int __tmp;                                         \
++     asm ("nextpc %0 ; "                                \
++          "1: movhi %1, %%hiadj(_gp_got - 1b) ; "	\
++          "addi %1, %1, %%lo(_gp_got - 1b) ; "		\
++          "add %0, %0, %1 ; "                           \
++          "ldw %1, %%tls_ie(" #x ")(%0) ; "        	\
++	  "add %1, r23, %1"              		\
++          : "=&r" (__tmp), "=&r" (__result));           \
++     __result; })
++
++#define TLS_LD(x)					\
++  ({ char *__result;					\
++     char *__result2;                                   \
++     int *__result3;                                    \
++     int __tmp;                                         \
++     extern void *__tls_get_addr (void *);		\
++     asm ("nextpc %0 ; "                                \
++          "1: movhi %1, %%hiadj(_gp_got - 1b) ; "	\
++          "addi %1, %1, %%lo(_gp_got - 1b) ; "		\
++          "add %0, %0, %1 ; "                           \
++          "addi %0, %0, %%tls_ldm(" #x ")"              \
++          : "=r" (__result), "=r" (__tmp));             \
++     __result2 = (char *)__tls_get_addr (__result);	\
++     asm ("addi %0, %1, %%tls_ldo(" #x ")"              \
++	  : "=r" (__result3) : "r" (__result2));        \
++     __result3; })
++
++#define TLS_GD(x)					\
++  ({ int *__result;					\
++     int __tmp;                                         \
++     extern void *__tls_get_addr (void *);		\
++     asm ("nextpc %0 ; "                                \
++          "1: movhi %1, %%hiadj(_gp_got - 1b) ; "	\
++          "addi %1, %1, %%lo(_gp_got - 1b) ; "		\
++          "add %0, %0, %1 ; "                           \
++          "addi %0, %0, %%tls_gd(" #x ")"		\
++	  : "=r" (__result), "=r" (__tmp));		\
++     (int *)__tls_get_addr (__result); })
+diff --git a/test/tls/tls-macros.h b/test/tls/tls-macros.h
+index 4a4e916..087b365 100644
+--- a/test/tls/tls-macros.h
++++ b/test/tls/tls-macros.h
+@@ -64,6 +64,10 @@
+ #include <tls-macros-mips.h>
+ #endif
+ 
++#ifdef __nios2__
++#include <tls-macros-nios2.h>
++#endif
++
+ #if defined(__powerpc__) && !defined(__powerpc64__)
+ #include <tls-macros-powerpc.h>
+ #endif

@@ -11,6 +11,8 @@ Reviewed-by: Richard Levitte <levitte@openssl.org>
 (Merged from https://github.com/openssl/openssl/pull/8883)
 [vfazio: fixup for 1.1.1d]
 Signed-off-by: Vincent Fazio <vfazio@xes-inc.com>
+[rebased on openssl-1.1.1i]
+Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
 ---
  Configure | 4 ++++
  1 file changed, 4 insertions(+)
@@ -19,7 +21,7 @@ diff --git a/Configure b/Configure
 index 5a699836f3..f9152b1702 100755
 --- a/Configure
 +++ b/Configure
-@@ -1413,6 +1413,10 @@ my %predefined_CXX = $config{CXX}
+@@ -1417,6 +1417,10 @@ my %predefined_CXX = $config{CXX}
      ? compiler_predefined($config{CROSS_COMPILE}.$config{CXX})
      : ();
  

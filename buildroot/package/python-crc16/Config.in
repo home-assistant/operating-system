@@ -1,6 +1,5 @@
 config BR2_PACKAGE_PYTHON_CRC16
 	bool "python-crc16"
-	depends on BR2_PACKAGE_PYTHON
 	help
 	  This library calculates only CRC16 (16-bit codes) and the
 	  only supported variant at the moment is CRC-CCITT (XModem).
