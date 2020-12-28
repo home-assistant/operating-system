@@ -52,11 +52,17 @@ else
     sfdisk -V "${DEVICE_ROOT}"
 fi
 
+# Reload partition table
 partx -u "${DEVICE_ROOT}"
+udevadm settle
 
-# Resize filesystem
-echo "[INFO] Resize hassos-data filesystem"
-e2fsck -y "${DEVICE_CHILD}"
-resize2fs -f "${DEVICE_CHILD}"
+# Make sure /dev/disk/by-label/hassos-data is actually present before exiting.
+# This avoids a race condition with mnt-data.mount which might fail to bind
+# otherwise:
+# Bound to unit dev-disk-by\x2dlabel-hassos\x2ddata.device, but unit isn't active.
+if ! systemctl start "dev-disk-by\\x2dlabel-hassos\\x2ddata.device"; then
+    echo "[ERROR] Data partition not found!"
+    exit 1
+fi
 
-echo "[INFO] Finish hassos-data resizing"
+echo "[INFO] Finished hassos-data partition resizing"
