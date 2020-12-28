@@ -1,4 +1,4 @@
-# From https://github.com/ARMmbed/mbedtls/releases/tag/v2.16.8:
-sha256  fe9e3b15c3375943bdfebbbb20dd6b4f1147b3b5d926248bd835d73247407430  mbedtls-2.16.8.tar.gz
+# From https://github.com/ARMmbed/mbedtls/releases/tag/v2.16.9:
+sha256  fc17ff7d8c11d08f23ae2800a18269408ad2c24ea6bb8b9363e41a01c2425697  mbedtls-2.16.9.tar.gz
 # Locally calculated
 sha256  cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30  apache-2.0.txt

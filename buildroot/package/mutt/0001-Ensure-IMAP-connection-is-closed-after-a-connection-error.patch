@@ -1,0 +1,48 @@
+From 04b06aaa3e0cc0022b9b01dbca2863756ebbf59a Mon Sep 17 00:00:00 2001
+From: Kevin McCarthy <kevin@8t8.us>
+Date: Mon, 16 Nov 2020 10:20:21 -0800
+Subject: [PATCH] Ensure IMAP connection is closed after a connection error.
+
+During connection, if the server provided an illegal initial response,
+Mutt "bailed", but did not actually close the connection.  The calling
+code unfortunately relied on the connection status to decide to
+continue with authentication, instead of checking the "bail" return
+value.
+
+This could result in authentication credentials being sent over an
+unencrypted connection, without $ssl_force_tls being consulted.
+
+Fix this by strictly closing the connection on any invalid response
+during connection.  The fix is intentionally small, to ease
+backporting.  A better fix would include removing the 'err_close_conn'
+label, and perhaps adding return value checking in the caller (though
+this change obviates the need for that).
+
+This addresses CVE-2020-28896.  Thanks to Gabriel Salles-Loustau for
+reporting the problem, and providing test cases to reproduce.
+
+[Retrieved from:
+https://gitlab.com/muttmua/mutt/-/commit/04b06aaa3e0cc0022b9b01dbca2863756ebbf59a]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ imap/imap.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/imap/imap.c b/imap/imap.c
+index b24e8a3f..b13dd54d 100644
+--- a/imap/imap.c
++++ b/imap/imap.c
+@@ -561,9 +561,9 @@ int imap_open_connection (IMAP_DATA* idata)
+ 
+ #if defined(USE_SSL)
+ err_close_conn:
+-  imap_close_connection (idata);
+ #endif
+ bail:
++  imap_close_connection (idata);
+   FREE (&idata->capstr);
+   return -1;
+ }
+-- 
+GitLab
+

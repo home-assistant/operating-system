@@ -15,7 +15,7 @@ Signed-off-by: "Yann E. MORIN" <yann.morin.1998@free.fr>
 diff -durN openldap-2.4.40.orig/configure openldap-2.4.40/configure
 --- openldap-2.4.40.orig/configure	2014-09-19 03:48:49.000000000 +0200
 +++ openldap-2.4.40/configure	2015-01-25 18:44:54.216879362 +0100
-@@ -23478,7 +23478,7 @@
+@@ -23431,7 +23431,7 @@
  
  	if test "$ac_cv_header_openssl_bn_h" = "yes" &&
  		test "$ac_cv_header_openssl_crypto_h" = "yes" &&
@@ -27,7 +27,7 @@ diff -durN openldap-2.4.40.orig/configure openldap-2.4.40/configure
 diff -durN openldap-2.4.40.orig/configure.in openldap-2.4.40/configure.in
 --- openldap-2.4.40.orig/configure.in	2014-09-19 03:48:49.000000000 +0200
 +++ openldap-2.4.40/configure.in	2015-01-25 18:44:37.628676446 +0100
-@@ -2367,7 +2367,7 @@
+@@ -2383,7 +2383,7 @@
  	AC_CHECK_HEADERS(openssl/crypto.h)
  	if test "$ac_cv_header_openssl_bn_h" = "yes" &&
  		test "$ac_cv_header_openssl_crypto_h" = "yes" &&

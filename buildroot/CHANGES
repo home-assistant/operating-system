@@ -1,3 +1,32 @@
+2020.11.1, released December 27th, 2020
+
+	Important / security related fixes.
+
+	Infrastructure:
+	- cmake: fix host ccache handling for CMake 3.19
+	- meson: Forcibly disable binary stripping for
+	  target builds, enable for host builds
+	- golang: Fix HOST / TARGET directories for per-package builds
+
+	Defconfigs: Beaglebone Qt5: Fix ti-sgx related issues
+
+	Updated/fixed packages: apitrace, arm-trusted-firmware,
+	ca-certificates, cryptopp, dhcpcd, dtv-scan-tables,
+	flare-engine, ghostscript, go, haproxy, imagemagick,
+	imx-gpu-viv, jasper, kismet, libcurl, libglib2, libhtp,
+	libopenssl, libressl, libuv, libuvw, lua, mbedtls, mongodb,
+	mutt, ncurses, netsnmp, nodejs, opencv3, openldap, opkg-utils,
+	paho-mqtt-c, python-crc16, python-lxml, python-pyparsing,
+	python-pyqt5, qt5base, rauc, shadowsocks-libev, sqlcipher,
+	suricata, ti-sgx-demos, tinycbor, uclibc-ng-test, unbound,
+	webkitgtk, wpewebkit, wireshark, x11vnc, xen,
+	xserver_xorg-server
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#13316: beaglebone_qt5_defconfig: PowerVR fails to start
+	#13416: dhcpcd start warning message: no such user dhcpcd
+
 2020.11, released December 2nd, 2020
 
 	Various fixes.
