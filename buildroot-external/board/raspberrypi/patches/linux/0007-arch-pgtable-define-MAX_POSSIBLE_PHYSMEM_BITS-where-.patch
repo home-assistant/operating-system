@@ -1,7 +1,7 @@
-From 5038cc5a33a1534bd0e521674314938224838ce4 Mon Sep 17 00:00:00 2001
-Message-Id: <5038cc5a33a1534bd0e521674314938224838ce4.1605346684.git.stefan@agner.ch>
-In-Reply-To: <3651b4af52d63d4e37f40c7a6d0809b0a6c9dd73.1605346684.git.stefan@agner.ch>
-References: <3651b4af52d63d4e37f40c7a6d0809b0a6c9dd73.1605346684.git.stefan@agner.ch>
+From 189ef4e3aabe995021fdfb3ff9bfb3f9ffa5fae4 Mon Sep 17 00:00:00 2001
+Message-Id: <189ef4e3aabe995021fdfb3ff9bfb3f9ffa5fae4.1609281882.git.stefan@agner.ch>
+In-Reply-To: <3651b4af52d63d4e37f40c7a6d0809b0a6c9dd73.1609281882.git.stefan@agner.ch>
+References: <3651b4af52d63d4e37f40c7a6d0809b0a6c9dd73.1609281882.git.stefan@agner.ch>
 From: Arnd Bergmann <arnd@arndb.de>
 Date: Fri, 13 Nov 2020 15:59:32 +0100
 Subject: [PATCH 7/8] arch: pgtable: define MAX_POSSIBLE_PHYSMEM_BITS where

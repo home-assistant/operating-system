@@ -1,5 +1,5 @@
 From 3651b4af52d63d4e37f40c7a6d0809b0a6c9dd73 Mon Sep 17 00:00:00 2001
-Message-Id: <3651b4af52d63d4e37f40c7a6d0809b0a6c9dd73.1605346684.git.stefan@agner.ch>
+Message-Id: <3651b4af52d63d4e37f40c7a6d0809b0a6c9dd73.1609281882.git.stefan@agner.ch>
 From: Florian Fainelli <f.fainelli@gmail.com>
 Date: Mon, 15 Jun 2020 10:40:41 +0200
 Subject: [PATCH 1/8] dt-bindings: arm: bcm: Convert BCM2835 firmware binding
