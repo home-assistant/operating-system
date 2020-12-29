@@ -30,6 +30,10 @@ function fix_rootfs() {
 
     # Use systemd-resolved for Host OS resolve
     sed -i '/^hosts:/ {/resolve/! s/files/resolve [!UNAVAIL=return] files/}' "${TARGET_DIR}/etc/nsswitch.conf"
+
+    # Remove e2scrub (LVM specific tools provided by e2fsprogs)
+    rm -f "/usr/lib/systemd/system/e2scrub*"
+    rm -f "/usr/sbin/e2scrub*" "/usr/lib/e2fsprogs/e2scrub*"
 }
 
 
