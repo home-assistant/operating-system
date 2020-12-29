@@ -1,7 +1,7 @@
-From c18ca341da823bd2ec5aa04ea5970d3867eaae73 Mon Sep 17 00:00:00 2001
-Message-Id: <c18ca341da823bd2ec5aa04ea5970d3867eaae73.1605346684.git.stefan@agner.ch>
-In-Reply-To: <3651b4af52d63d4e37f40c7a6d0809b0a6c9dd73.1605346684.git.stefan@agner.ch>
-References: <3651b4af52d63d4e37f40c7a6d0809b0a6c9dd73.1605346684.git.stefan@agner.ch>
+From febaf077f14b86da1edaa01abee2d0bfcf7bdece Mon Sep 17 00:00:00 2001
+Message-Id: <febaf077f14b86da1edaa01abee2d0bfcf7bdece.1609281882.git.stefan@agner.ch>
+In-Reply-To: <3651b4af52d63d4e37f40c7a6d0809b0a6c9dd73.1609281882.git.stefan@agner.ch>
+References: <3651b4af52d63d4e37f40c7a6d0809b0a6c9dd73.1609281882.git.stefan@agner.ch>
 From: Pascal Vizeli <pvizeli@syshack.ch>
 Date: Tue, 2 Jun 2020 21:20:08 +0000
 Subject: [PATCH 8/8] ARM: dts: bcm283x: add compatible picked up by U-Boot

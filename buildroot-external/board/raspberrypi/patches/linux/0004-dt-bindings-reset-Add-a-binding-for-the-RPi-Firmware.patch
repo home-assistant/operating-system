@@ -1,7 +1,7 @@
 From 33743cfcff296b1011e46168ecab185a00e0f00d Mon Sep 17 00:00:00 2001
-Message-Id: <33743cfcff296b1011e46168ecab185a00e0f00d.1605346684.git.stefan@agner.ch>
-In-Reply-To: <3651b4af52d63d4e37f40c7a6d0809b0a6c9dd73.1605346684.git.stefan@agner.ch>
-References: <3651b4af52d63d4e37f40c7a6d0809b0a6c9dd73.1605346684.git.stefan@agner.ch>
+Message-Id: <33743cfcff296b1011e46168ecab185a00e0f00d.1609281882.git.stefan@agner.ch>
+In-Reply-To: <3651b4af52d63d4e37f40c7a6d0809b0a6c9dd73.1609281882.git.stefan@agner.ch>
+References: <3651b4af52d63d4e37f40c7a6d0809b0a6c9dd73.1609281882.git.stefan@agner.ch>
 From: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 Date: Mon, 29 Jun 2020 18:18:37 +0200
 Subject: [PATCH 4/8] dt-bindings: reset: Add a binding for the RPi Firmware

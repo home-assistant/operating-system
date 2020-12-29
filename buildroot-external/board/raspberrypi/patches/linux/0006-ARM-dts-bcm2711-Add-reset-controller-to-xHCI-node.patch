@@ -1,7 +1,7 @@
-From e0231cd65d8c13be1cebae1e6b5fbef61be6be0d Mon Sep 17 00:00:00 2001
-Message-Id: <e0231cd65d8c13be1cebae1e6b5fbef61be6be0d.1605346684.git.stefan@agner.ch>
-In-Reply-To: <3651b4af52d63d4e37f40c7a6d0809b0a6c9dd73.1605346684.git.stefan@agner.ch>
-References: <3651b4af52d63d4e37f40c7a6d0809b0a6c9dd73.1605346684.git.stefan@agner.ch>
+From c19d86704ffaa9fbe830aaa2a4015259928abf70 Mon Sep 17 00:00:00 2001
+Message-Id: <c19d86704ffaa9fbe830aaa2a4015259928abf70.1609281882.git.stefan@agner.ch>
+In-Reply-To: <3651b4af52d63d4e37f40c7a6d0809b0a6c9dd73.1609281882.git.stefan@agner.ch>
+References: <3651b4af52d63d4e37f40c7a6d0809b0a6c9dd73.1609281882.git.stefan@agner.ch>
 From: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 Date: Mon, 29 Jun 2020 18:18:40 +0200
 Subject: [PATCH 6/8] ARM: dts: bcm2711: Add reset controller to xHCI node
@@ -18,7 +18,9 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 (cherry picked from commit 258f92d2f840b6ea62c0b33f04eb4d9270935bba)
 ---
  arch/arm/boot/dts/bcm2711-rpi-4-b.dts | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ arch/arm/boot/dts/bcm2711-rpi-400.dts | 17 +++++++++++++++++
+ arch/arm/boot/dts/bcm2711-rpi-cm4.dts | 12 ++++++++++++
+ 3 files changed, 46 insertions(+)
 
 diff --git a/arch/arm/boot/dts/bcm2711-rpi-4-b.dts b/arch/arm/boot/dts/bcm2711-rpi-4-b.dts
 index d77d61d41bbc..513cae21e64c 100644
@@ -49,6 +51,71 @@ index d77d61d41bbc..513cae21e64c 100644
 +			reg = <0x10000 0 0 0 0>;
 +			resets = <&reset RASPBERRYPI_FIRMWARE_RESET_ID_USB>;
 +		};
++	};
++};
++
+ /* uart0 communicates with the BT module */
+ &uart0 {
+ 	pinctrl-names = "default";
+diff --git a/arch/arm/boot/dts/bcm2711-rpi-400.dts b/arch/arm/boot/dts/bcm2711-rpi-400.dts
+index 3a1eb65f7075..c122aebd4d5e 100644
+--- a/arch/arm/boot/dts/bcm2711-rpi-400.dts
++++ b/arch/arm/boot/dts/bcm2711-rpi-400.dts
+@@ -3,6 +3,8 @@
+ #include "bcm2711.dtsi"
+ #include "bcm2835-rpi.dtsi"
+ 
++#include <dt-bindings/reset/raspberrypi,firmware-reset.h>
++
+ / {
+ 	compatible = "raspberrypi,400", "brcm,bcm2711";
+ 	model = "Raspberry Pi 400";
+@@ -195,6 +197,21 @@
+ 	};
+ };
+ 
++&pcie0 {
++	pci@1,0 {
++		#address-cells = <3>;
++		#size-cells = <2>;
++		ranges;
++
++		reg = <0 0 0 0 0>;
++
++		usb@1,0 {
++			reg = <0x10000 0 0 0 0>;
++			resets = <&reset RASPBERRYPI_FIRMWARE_RESET_ID_USB>;
++		};
++	};
++};
++
+ /* uart0 communicates with the BT module */
+ &uart0 {
+ 	pinctrl-names = "default";
+diff --git a/arch/arm/boot/dts/bcm2711-rpi-cm4.dts b/arch/arm/boot/dts/bcm2711-rpi-cm4.dts
+index 7f0a621a47f5..5eda5d096bfb 100644
+--- a/arch/arm/boot/dts/bcm2711-rpi-cm4.dts
++++ b/arch/arm/boot/dts/bcm2711-rpi-cm4.dts
+@@ -3,6 +3,8 @@
+ #include "bcm2711.dtsi"
+ #include "bcm2835-rpi.dtsi"
+ 
++#include <dt-bindings/reset/raspberrypi,firmware-reset.h>
++
+ / {
+ 	compatible = "raspberrypi,4-compute-module", "brcm,bcm2711";
+ 	model = "Raspberry Pi Compute Module 4";
+@@ -134,6 +136,16 @@
+ 	};
+ };
+ 
++&pcie0 {
++	pci@1,0 {
++		#address-cells = <3>;
++		#size-cells = <2>;
++		ranges;
++
++		reg = <0 0 0 0 0>;
 +	};
 +};
 +
