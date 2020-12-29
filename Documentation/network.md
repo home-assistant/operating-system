@@ -75,6 +75,8 @@ method=auto
 
 ### Static IP
 
+*Since Supervisor 2020.12 and newer network settings can be edited in the Supervisor UI web frontend, click change next to ip address then select static, review all values and click save.
+
 Replace the following configuration:
 
 ```ini
