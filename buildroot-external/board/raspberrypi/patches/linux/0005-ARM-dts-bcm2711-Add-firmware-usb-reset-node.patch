@@ -1,7 +1,7 @@
-From fecb02cc3664de0d1c43ce566ff95c1b68fca51e Mon Sep 17 00:00:00 2001
-Message-Id: <fecb02cc3664de0d1c43ce566ff95c1b68fca51e.1605346684.git.stefan@agner.ch>
-In-Reply-To: <3651b4af52d63d4e37f40c7a6d0809b0a6c9dd73.1605346684.git.stefan@agner.ch>
-References: <3651b4af52d63d4e37f40c7a6d0809b0a6c9dd73.1605346684.git.stefan@agner.ch>
+From a97dba6bf04aa09279a7c5b4aec6e4520e354fbd Mon Sep 17 00:00:00 2001
+Message-Id: <a97dba6bf04aa09279a7c5b4aec6e4520e354fbd.1609281882.git.stefan@agner.ch>
+In-Reply-To: <3651b4af52d63d4e37f40c7a6d0809b0a6c9dd73.1609281882.git.stefan@agner.ch>
+References: <3651b4af52d63d4e37f40c7a6d0809b0a6c9dd73.1609281882.git.stefan@agner.ch>
 From: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 Date: Mon, 29 Jun 2020 18:18:39 +0200
 Subject: [PATCH 5/8] ARM: dts: bcm2711: Add firmware usb reset node
@@ -16,7 +16,9 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 (cherry picked from commit b03300db06bed1997a1eecc4c26f3a2895c57726)
 ---
  arch/arm/boot/dts/bcm2711-rpi-4-b.dts | 5 +++++
- 1 file changed, 5 insertions(+)
+ arch/arm/boot/dts/bcm2711-rpi-400.dts | 5 +++++
+ arch/arm/boot/dts/bcm2711-rpi-cm4.dts | 5 +++++
+ 3 files changed, 15 insertions(+)
 
 diff --git a/arch/arm/boot/dts/bcm2711-rpi-4-b.dts b/arch/arm/boot/dts/bcm2711-rpi-4-b.dts
 index 21b20e334b1a..d77d61d41bbc 100644
@@ -34,6 +36,38 @@ index 21b20e334b1a..d77d61d41bbc 100644
  };
  
  &gpio {
+diff --git a/arch/arm/boot/dts/bcm2711-rpi-400.dts b/arch/arm/boot/dts/bcm2711-rpi-400.dts
+index afd1ca215518..3a1eb65f7075 100644
+--- a/arch/arm/boot/dts/bcm2711-rpi-400.dts
++++ b/arch/arm/boot/dts/bcm2711-rpi-400.dts
+@@ -72,6 +72,11 @@
+ 				  "SD_OC_N";
+ 		status = "okay";
+ 	};
++
++	reset: reset {
++		compatible = "raspberrypi,firmware-reset";
++		#reset-cells = <1>;
++	};
+ };
+ 
+ &gpio {
+diff --git a/arch/arm/boot/dts/bcm2711-rpi-cm4.dts b/arch/arm/boot/dts/bcm2711-rpi-cm4.dts
+index 3ff0be02cb34..7f0a621a47f5 100644
+--- a/arch/arm/boot/dts/bcm2711-rpi-cm4.dts
++++ b/arch/arm/boot/dts/bcm2711-rpi-cm4.dts
+@@ -84,6 +84,11 @@
+ 			output-low;
+ 		};
+ 	};
++
++	reset: reset {
++		compatible = "raspberrypi,firmware-reset";
++		#reset-cells = <1>;
++	};
+ };
+ 
+ &pwm1 {
 -- 
 2.29.2
 
