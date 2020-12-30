@@ -15,22 +15,27 @@ PART_TABLE="$(sfdisk -lqJ "${DEVICE_ROOT}")"
 PART_LABEL="$(echo "${PART_TABLE}" | jq -r '.partitiontable.label')"
 
 if [ "${PART_LABEL}" = "gpt" ]; then
-    echo "[INFO] Detected GPT partition label"
-    # We cannot use .partitiontable.lastlba from the json output as we might
-    # still have the backup GPT not at the end of the disk. Calculate last
-    # usable LBA using disk size
-    LAST_USABLE_LBA=$(( $(cat "/sys/class/block/${DEVICE_ROOT_NAME}/size") - 34 ))
+    echo "[INFO] Detected GPT partition label on ${DEVICE_ROOT}"
+
+    if sfdisk --verify "${DEVICE_ROOT}" 2>&1 | grep "The backup GPT table is not on the end of the device."; then
+        echo "[INFO] Moving GPT backup header to the end"
+        sfdisk --relocate gpt-bak-std "${DEVICE_ROOT}"
+
+        # Reload partition label to get correct .partitiontable.lastlba
+        PART_TABLE="$(sfdisk -lqJ "${DEVICE_ROOT}")"
+    fi
 else
-    echo "[INFO] Detected MBR partition label"
-    LAST_USABLE_LBA=$(cat "/sys/class/block/${DEVICE_ROOT_NAME}/size")
+    echo "[INFO] Detected MBR partition label on ${DEVICE_ROOT}"
 fi
+
+LAST_USABLE_LBA="$(echo "${PART_TABLE}" | jq -r '.partitiontable.lastlba')"
 
 # Calculate end of data partition
 JQ_FILTER=".partitiontable.partitions[] | select ( .node == \"${DEVICE_CHILD}\" ) | .start + .size"
 DATA_PARTITION_END="$(echo "${PART_TABLE}" | jq "${JQ_FILTER}")"
 
-# Need resize? Ignore everything less than 8MB since that could be partition
-# alignment rounding...
+# Need resize? Ignore free space if its less than 8MB/64MB (4k sectors) since
+# that could be partition alignment rounding...
 UNUSED_BLOCKS=$(( LAST_USABLE_LBA - DATA_PARTITION_END ))
 if [ "${UNUSED_BLOCKS}" -le "16384" ]; then
     echo "[INFO] No resize of data partition needed"
@@ -38,21 +43,10 @@ if [ "${UNUSED_BLOCKS}" -le "16384" ]; then
 fi
 
 echo "[INFO] Update hassos-data partition ${PART_NUM}"
-if [ "${PART_LABEL}" = "gpt" ]; then
-    sgdisk -e "${DEVICE_ROOT}"
-    sgdisk -d "${PART_NUM}" \
-        -n "${PART_NUM}:0:0" \
-        -c "${PART_NUM}:hassos-data" \
-        -t "${PART_NUM}:0FC63DAF-8483-4772-8E79-3D69D8477DE4" \
-        -u "${PART_NUM}:a52a4597-fa3a-4851-aefd-2fbe9f849079" \
-        "${DEVICE_ROOT}"
-    sgdisk -v "${DEVICE_ROOT}"
-else
-    echo ", +" | sfdisk -N "${PART_NUM}" "${DEVICE_ROOT}" --force
-    sfdisk -V "${DEVICE_ROOT}"
-fi
+echo ", +" | sfdisk --no-reread --no-tell-kernel -N "${PART_NUM}" "${DEVICE_ROOT}"
+sfdisk -V "${DEVICE_ROOT}"
 
-# Reload partition table
+# Update the kernel's partition table
 partx -u "${DEVICE_ROOT}"
 udevadm settle
 
