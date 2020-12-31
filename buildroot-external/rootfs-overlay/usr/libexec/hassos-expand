@@ -13,6 +13,7 @@ PART_NUM="$(cat "/sys/class/block/${DEVICE_CHILD_NAME}/partition")"
 # Get partition label type
 PART_TABLE="$(sfdisk -lqJ "${DEVICE_ROOT}")"
 PART_LABEL="$(echo "${PART_TABLE}" | jq -r '.partitiontable.label')"
+echo "[INFO] Checking if expanding data partition on ${DEVICE_CHILD} is necessary"
 
 if [ "${PART_LABEL}" = "gpt" ]; then
     echo "[INFO] Detected GPT partition label on ${DEVICE_ROOT}"
@@ -24,15 +25,21 @@ if [ "${PART_LABEL}" = "gpt" ]; then
         # Reload partition label to get correct .partitiontable.lastlba
         PART_TABLE="$(sfdisk -lqJ "${DEVICE_ROOT}")"
     fi
+    LAST_USABLE_LBA="$(echo "${PART_TABLE}" | jq -r '.partitiontable.lastlba')"
 else
     echo "[INFO] Detected MBR partition label on ${DEVICE_ROOT}"
-fi
 
-LAST_USABLE_LBA="$(echo "${PART_TABLE}" | jq -r '.partitiontable.lastlba')"
+    # For MBR, we have to calculate the last usable sector by ourselfs
+    DEVICE_SIZE=$(blockdev --getsize64 "${DEVICE_ROOT}")
+    SECTOR_SIZE=$(echo "${PART_TABLE}" | jq -r '.partitiontable.sectorsize')
+    LAST_USABLE_LBA="$((DEVICE_SIZE / SECTOR_SIZE))"
+fi
+echo "[INFO] Last usable logical block ${LAST_USABLE_LBA}"
 
 # Calculate end of data partition
 JQ_FILTER=".partitiontable.partitions[] | select ( .node == \"${DEVICE_CHILD}\" ) | .start + .size"
 DATA_PARTITION_END="$(echo "${PART_TABLE}" | jq "${JQ_FILTER}")"
+echo "[INFO] Data partition end block ${DATA_PARTITION_END}"
 
 # Need resize? Ignore free space if its less than 8MB/64MB (4k sectors) since
 # that could be partition alignment rounding...
