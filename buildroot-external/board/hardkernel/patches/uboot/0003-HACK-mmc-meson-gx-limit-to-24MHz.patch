@@ -1,10 +1,10 @@
-From 0077176ac369a1125c3fb22f7ba8e5d53576a1b3 Mon Sep 17 00:00:00 2001
-Message-Id: <0077176ac369a1125c3fb22f7ba8e5d53576a1b3.1607542946.git.stefan@agner.ch>
-In-Reply-To: <526ccae8321b9b48925c44999611c3c5a374328e.1607542946.git.stefan@agner.ch>
-References: <526ccae8321b9b48925c44999611c3c5a374328e.1607542946.git.stefan@agner.ch>
+From 01ba1339ffd095b146b9d9d772aea6f2b3594a06 Mon Sep 17 00:00:00 2001
+Message-Id: <01ba1339ffd095b146b9d9d772aea6f2b3594a06.1609421746.git.stefan@agner.ch>
+In-Reply-To: <f9877c2895d6c05710a828d0cd46d9f25626b070.1609421746.git.stefan@agner.ch>
+References: <f9877c2895d6c05710a828d0cd46d9f25626b070.1609421746.git.stefan@agner.ch>
 From: Neil Armstrong <narmstrong@baylibre.com>
 Date: Mon, 2 Sep 2019 15:42:04 +0200
-Subject: [PATCH 3/3] HACK: mmc: meson-gx: limit to 24MHz
+Subject: [PATCH 3/4] HACK: mmc: meson-gx: limit to 24MHz
 
 Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 ---
@@ -25,5 +25,5 @@ index 719dd1e5e5..dd3dd7c08c 100644
  	cfg->name = dev->name;
  
 -- 
-2.29.2
+2.30.0
 
