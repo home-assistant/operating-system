@@ -1,10 +1,10 @@
-From 2b2ad8c105cbb5fb48c3c5f0512c031f6533d522 Mon Sep 17 00:00:00 2001
-Message-Id: <2b2ad8c105cbb5fb48c3c5f0512c031f6533d522.1607542946.git.stefan@agner.ch>
-In-Reply-To: <526ccae8321b9b48925c44999611c3c5a374328e.1607542946.git.stefan@agner.ch>
-References: <526ccae8321b9b48925c44999611c3c5a374328e.1607542946.git.stefan@agner.ch>
+From 31e32295dc261032d7f5540a0b7f79a4f5a5b807 Mon Sep 17 00:00:00 2001
+Message-Id: <31e32295dc261032d7f5540a0b7f79a4f5a5b807.1609421746.git.stefan@agner.ch>
+In-Reply-To: <f9877c2895d6c05710a828d0cd46d9f25626b070.1609421746.git.stefan@agner.ch>
+References: <f9877c2895d6c05710a828d0cd46d9f25626b070.1609421746.git.stefan@agner.ch>
 From: Pascal Vizeli <pvizeli@syshack.ch>
 Date: Tue, 4 Aug 2020 13:50:57 +0000
-Subject: [PATCH 2/3] meson: Add board_rev to env
+Subject: [PATCH 2/4] meson: Add board_rev to env
 
 Signed-off-by: Pascal Vizeli <pvizeli@syshack.ch>
 Signed-off-by: Stefan Agner <stefan@agner.ch>
@@ -78,5 +78,5 @@ index caf7fd6810..c2a191ba6a 100644
  
  	if (!eth_env_get_enetaddr("ethaddr", mac_addr)) {
 -- 
-2.29.2
+2.30.0
 
