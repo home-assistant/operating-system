@@ -1,0 +1,63 @@
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-meson.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-meson.c
+index bbc16b5a4..9ed39e4cf 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac-meson.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-meson.c
+@@ -15,7 +15,11 @@
+ 
+ #include "stmmac_platform.h"
+ 
+-#define ETHMAC_SPEED_100	BIT(1)
++#define ETHMAC_SPEED_10   BIT(1)
++#define ETHMAC_SPEED_100  BIT(2)
++#define ETHMAC_SPEED_1000 BIT(0)
++
++#define CONFIG_AMLOGIC_ETH_PRIVE
+ 
+ struct meson_dwmac {
+ 	struct device	*dev;
+@@ -24,6 +28,28 @@ struct meson_dwmac {
+ 
+ static void meson6_dwmac_fix_mac_speed(void *priv, unsigned int speed)
+ {
++#ifdef CONFIG_AMLOGIC_ETH_PRIVE
++	struct meson_dwmac *dwmac = priv;
++	unsigned int val;
++
++	val = readl(dwmac->reg);
++
++	switch (speed) {
++	case SPEED_10:
++		val &= ~ETHMAC_SPEED_1000;
++		val &= ~ETHMAC_SPEED_100;
++		val |= ETHMAC_SPEED_10;
++		break;
++	case SPEED_100:
++		val &= ~ETHMAC_SPEED_1000;
++		val &= ~ETHMAC_SPEED_10;
++		val |= ETHMAC_SPEED_100;
++		break;
++	}
++
++	writel(val, dwmac->reg);
++
++#else
+ 	struct meson_dwmac *dwmac = priv;
+ 	unsigned int val;
+ 
+@@ -39,6 +65,7 @@ static void meson6_dwmac_fix_mac_speed(void *priv, unsigned int speed)
+ 	}
+ 
+ 	writel(val, dwmac->reg);
++#endif
+ }
+ 
+ static int meson6_dwmac_probe(struct platform_device *pdev)
+@@ -71,6 +98,8 @@ static int meson6_dwmac_probe(struct platform_device *pdev)
+ 	plat_dat->bsp_priv = dwmac;
+ 	plat_dat->fix_mac_speed = meson6_dwmac_fix_mac_speed;
+ 
++	meson6_dwmac_fix_mac_speed(dwmac, SPEED_100); // Workaround by JetHome
++
+ 	ret = stmmac_dvr_probe(&pdev->dev, plat_dat, &stmmac_res);
+ 	if (ret)
+ 		goto err_remove_config_dt;
