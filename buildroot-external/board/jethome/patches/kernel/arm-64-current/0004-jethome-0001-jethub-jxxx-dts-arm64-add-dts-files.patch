@@ -144,11 +144,7 @@ new file mode 100644
 index 000000000..8e6bd30ca
 --- /dev/null
 +++ b/arch/arm64/boot/dts/amlogic/meson-axg-jethome-jethub-j100.dts
-@@ -0,0 +1,323 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright (c) 2017 Amlogic, Inc. All rights reserved.
-+ */
+@@ -0,0 +1,629 @@
 +
 +/dts-v1/;
 +
@@ -156,14 +152,13 @@ index 000000000..8e6bd30ca
 +#include <dt-bindings/input/input.h>
 +
 +/ {
-+	compatible = "jethome,j100", "amlogic,a113d", "amlogic,meson-axg";
-+	model = "JetHome JetHub J100 Compatible Board";
++	compatible = "amlogic,s400", "amlogic,a113d", "amlogic,meson-axg";
++	model = "JetHome JetHub J100";
 +	amlogic-dt-id = "axg_jethubj100_v1";
 +
 +	aliases {
 +		serial0 = &uart_AO;   /* Console */
-+		serial1 = &uart_B;    /* Bluetooth */
-+		serial2 = &uart_AO_B; /* External UART (Wireless Module) */
++		serial1 = &uart_A;    /* Bluetooth */
 +	};
 +
 +	chosen {
@@ -176,9 +171,60 @@ index 000000000..8e6bd30ca
 +		reg = <0x0 0x0 0x0 0x20000000>;
 +	};
 +
++	linein: audio-codec-0 {
++		#sound-dai-cells = <0>;
++		compatible = "everest,es7241";
++		VDDA-supply = <&vcc_3v3>;
++		VDDP-supply = <&vcc_3v3>;
++		VDDD-supply = <&vcc_3v3>;
++		status = "okay";
++		sound-name-prefix = "Linein";
++	};
++
++	lineout: audio-codec-1 {
++		#sound-dai-cells = <0>;
++		compatible = "everest,es7154";
++		VDD-supply = <&vcc_3v3>;
++		PVDD-supply = <&vcc_5v>;
++		status = "okay";
++		sound-name-prefix = "Lineout";
++	};
++
++	spdif_dit: audio-codec-2 {
++		#sound-dai-cells = <0>;
++		compatible = "linux,spdif-dit";
++		status = "okay";
++		sound-name-prefix = "DIT";
++	};
++
++	dmics: audio-codec-3 {
++		#sound-dai-cells = <0>;
++		compatible = "dmic-codec";
++		num-channels = <7>;
++		wakeup-delay-ms = <50>;
++		status = "okay";
++		sound-name-prefix = "MIC";
++	};
++
++	spdif_dir: audio-codec-4 {
++		#sound-dai-cells = <0>;
++		compatible = "linux,spdif-dir";
++		status = "okay";
++		sound-name-prefix = "DIR";
++	};
++
 +	emmc_pwrseq: emmc-pwrseq {
 +		compatible = "mmc-pwrseq-emmc";
 +		reset-gpios = <&gpio BOOT_9 GPIO_ACTIVE_LOW>;
++	};
++
++
++	main_12v: regulator-main_12v {
++		compatible = "regulator-fixed";
++		regulator-name = "12V";
++		regulator-min-microvolt = <12000000>;
++		regulator-max-microvolt = <12000000>;
++		regulator-always-on;
 +	};
 +
 +	vcc_3v3: regulator-vcc_3v3 {
@@ -195,6 +241,10 @@ index 000000000..8e6bd30ca
 +		regulator-name = "VCC5V";
 +		regulator-min-microvolt = <5000000>;
 +		regulator-max-microvolt = <5000000>;
++		vin-supply = <&main_12v>;
++
++		gpio = <&gpio_ao GPIOAO_13 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
 +		regulator-always-on;
 +	};
 +
@@ -203,7 +253,7 @@ index 000000000..8e6bd30ca
 +		regulator-name = "VDDAO_3V3";
 +		regulator-min-microvolt = <3300000>;
 +		regulator-max-microvolt = <3300000>;
-+		vin-supply = <&vcc_5v>;
++		vin-supply = <&main_12v>;
 +		regulator-always-on;
 +	};
 +
@@ -231,7 +281,9 @@ index 000000000..8e6bd30ca
 +		regulator-min-microvolt = <5000000>;
 +		regulator-max-microvolt = <5000000>;
 +		vin-supply = <&vcc_5v>;
-+		regulator-always-on;
++
++		gpio = <&gpio_ao GPIOAO_5 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
 +	};
 +
 +	sdio_pwrseq: sdio-pwrseq {
@@ -241,12 +293,176 @@ index 000000000..8e6bd30ca
 +		clock-names = "ext_clock";
 +	};
 +
++	speaker-leds {
++		compatible = "gpio-leds";
++
++		aled1 {
++			label = "speaker:aled1";
++			gpios = <&gpio_speaker 7 0>;
++		};
++
++		aled2 {
++			label = "speaker:aled2";
++			gpios = <&gpio_speaker 6 0>;
++		};
++
++		aled3 {
++			label = "speaker:aled3";
++			gpios = <&gpio_speaker 5 0>;
++		};
++
++		aled4 {
++			label = "speaker:aled4";
++			gpios = <&gpio_speaker 4 0>;
++		};
++
++		aled5 {
++			label = "speaker:aled5";
++			gpios = <&gpio_speaker 3 0>;
++		};
++
++		aled6 {
++			label = "speaker:aled6";
++			gpios = <&gpio_speaker 2 0>;
++		};
++	};
++
++	sound {
++		compatible = "amlogic,axg-sound-card";
++		model = "AXG-S400";
++		audio-aux-devs = <&tdmin_a>, <&tdmin_b>,  <&tdmin_c>,
++				 <&tdmin_lb>, <&tdmout_c>;
++		audio-widgets = "Line", "Lineout",
++				"Line", "Linein",
++				"Speaker", "Speaker1 Left",
++				"Speaker", "Speaker1 Right";
++		audio-routing = "TDMOUT_C IN 0", "FRDDR_A OUT 2",
++				"SPDIFOUT IN 0", "FRDDR_A OUT 3",
++				"TDMOUT_C IN 1", "FRDDR_B OUT 2",
++				"SPDIFOUT IN 1", "FRDDR_B OUT 3",
++				"TDMOUT_C IN 2", "FRDDR_C OUT 2",
++				"SPDIFOUT IN 2", "FRDDR_C OUT 3",
++				"TDM_C Playback", "TDMOUT_C OUT",
++				"TDMIN_A IN 2", "TDM_C Capture",
++				"TDMIN_A IN 5", "TDM_C Loopback",
++				"TDMIN_B IN 2", "TDM_C Capture",
++				"TDMIN_B IN 5", "TDM_C Loopback",
++				"TDMIN_C IN 2", "TDM_C Capture",
++				"TDMIN_C IN 5", "TDM_C Loopback",
++				"TDMIN_LB IN 2", "TDM_C Loopback",
++				"TDMIN_LB IN 5", "TDM_C Capture",
++				"TODDR_A IN 0", "TDMIN_A OUT",
++				"TODDR_B IN 0", "TDMIN_A OUT",
++				"TODDR_C IN 0", "TDMIN_A OUT",
++				"TODDR_A IN 1", "TDMIN_B OUT",
++				"TODDR_B IN 1", "TDMIN_B OUT",
++				"TODDR_C IN 1", "TDMIN_B OUT",
++				"TODDR_A IN 2", "TDMIN_C OUT",
++				"TODDR_B IN 2", "TDMIN_C OUT",
++				"TODDR_C IN 2", "TDMIN_C OUT",
++				"TODDR_A IN 3", "SPDIFIN Capture",
++				"TODDR_B IN 3", "SPDIFIN Capture",
++				"TODDR_C IN 3", "SPDIFIN Capture",
++				"TODDR_A IN 4", "PDM Capture",
++				"TODDR_B IN 4", "PDM Capture",
++				"TODDR_C IN 4", "PDM Capture",
++				"TODDR_A IN 6", "TDMIN_LB OUT",
++				"TODDR_B IN 6", "TDMIN_LB OUT",
++				"TODDR_C IN 6", "TDMIN_LB OUT",
++				"Lineout", "Lineout AOUTL",
++				"Lineout", "Lineout AOUTR",
++				"Speaker1 Left", "SPK1 OUT_A",
++				"Speaker1 Left", "SPK1 OUT_B",
++				"Speaker1 Right", "SPK1 OUT_C",
++				"Speaker1 Right", "SPK1 OUT_D",
++				"Linein AINL", "Linein",
++				"Linein AINR", "Linein";
++		assigned-clocks = <&clkc CLKID_HIFI_PLL>,
++				  <&clkc CLKID_MPLL0>,
++				  <&clkc CLKID_MPLL1>;
++		assigned-clock-parents = <0>, <0>, <0>;
++		assigned-clock-rates = <589824000>,
++				       <270950400>,
++				       <393216000>;
++		status = "okay";
++
++		dai-link-0 {
++			sound-dai = <&frddr_a>;
++		};
++
++		dai-link-1 {
++			sound-dai = <&frddr_b>;
++		};
++
++		dai-link-2 {
++			sound-dai = <&frddr_c>;
++		};
++
++		dai-link-3 {
++			sound-dai = <&toddr_a>;
++		};
++
++		dai-link-4 {
++			sound-dai = <&toddr_b>;
++		};
++
++		dai-link-5 {
++			sound-dai = <&toddr_c>;
++		};
++
++		dai-link-6 {
++			sound-dai = <&tdmif_c>;
++			dai-format = "i2s";
++			dai-tdm-slot-tx-mask-2 = <1 1>;
++			dai-tdm-slot-rx-mask-1 = <1 1>;
++			mclk-fs = <256>;
++
++			codec-0 {
++				sound-dai = <&lineout>;
++			};
++
++			codec-1 {
++				sound-dai = <&speaker_amp1>;
++			};
++
++			codec-2 {
++				sound-dai = <&linein>;
++			};
++
++		};
++
++		dai-link-7 {
++			sound-dai = <&spdifout>;
++
++			codec {
++				sound-dai = <&spdif_dit>;
++			};
++		};
++
++		dai-link-8 {
++			sound-dai = <&spdifin>;
++
++			codec {
++				sound-dai = <&spdif_dir>;
++			};
++		};
++
++		dai-link-9 {
++			sound-dai = <&pdm>;
++
++			codec {
++				sound-dai = <&dmics>;
++			};
++		};
++	};
++
 +	wifi32k: wifi32k {
 +		compatible = "pwm-clock";
 +		#clock-cells = <0>;
 +		clock-frequency = <32768>;
 +		pwms = <&pwm_ab 0 30518 0>; /* PWM_A at 32.768KHz */
 +	};
++
 +	partitions: partitions{
 +		parts = <8>;
 +		part-0 = <&boot>;
@@ -306,6 +522,7 @@ index 000000000..8e6bd30ca
 +		key1 = <&key_1>;
 +		key2 = <&key_2>;
 +		key3 = <&key_3>;
++
 +		key_0:key_0{
 +			keyname = "mac";
 +			offset = <0>;
@@ -331,53 +548,96 @@ index 000000000..8e6bd30ca
 +};
 +
 +&ethmac {
-+	status = "okay";
-+	pinctrl-0 = <&eth_rmii_x_pins>;
-+	pinctrl-names = "default";
-+	phy-handle = <&eth_phy0>;
-+	phy-mode = "rmii";
-+	internal_phy=<0>;
-+	interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
++	  status = "okay";
++	  pinctrl-0 = <&eth_rmii_x_pins>;
++	  pinctrl-names = "default";
++	  phy-handle = <&eth_phy0>;
++	  phy-mode = "rmii";
++	  internal_phy=<0>;
++	  interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
 +
-+	mdio {
-+		compatible = "snps,dwmac-mdio";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
++	  mdio {
++		    compatible = "snps,dwmac-mdio";
++		    #address-cells = <1>;
++		    #size-cells = <0>;
 +
-+		/* ICPlus IP101A/G Ethernet PHY (vendor_id=0x0243, model_id=0x0c54) */
-+		eth_phy0: ethernet-phy@0 {
-+			compatible = "ethernet-phy-id0243.0c54";
-+			max-speed = <100>;
-+			reg = <0>;
-+		};
-+	};
++		    /* ICPlus IP101A/G Ethernet PHY (vendor_id=0x0243, model_id=0x0c54) */
++		    eth_phy0: ethernet-phy@0 {
++				compatible = "ethernet-phy-id0243.0c54";
++				max-speed = <100>;
++				reg = <0>;
++		    };
++	  };
 +};
 +
-+/* Internal I2C bus (on CPU module) */
++&frddr_a {
++	status = "okay";
++};
++
++&frddr_b {
++	status = "okay";
++};
++
++&frddr_c {
++	status = "okay";
++};
++
++&ir {
++	status = "okay";
++	pinctrl-0 = <&remote_input_ao_pins>;
++	pinctrl-names = "default";
++};
++
 +&i2c1 {
 +	status = "okay";
 +	pinctrl-0 = <&i2c1_z_pins>;
 +	pinctrl-names = "default";
 +
-+	/* RTC */
-+	pcf8563: pcf8563@51 {
-+		compatible = "nxp,pcf8563";
-+		reg = <0x51>;
-+		status = "okay";
++	speaker_amp1: audio-codec@1b {
++		compatible = "ti,tas5707";
++		reg = <0x1b>;
++		reset-gpios = <&gpio_ao GPIOAO_4 GPIO_ACTIVE_LOW>;
++		#sound-dai-cells = <0>;
++		AVDD-supply = <&vcc_3v3>;
++		DVDD-supply = <&vcc_3v3>;
++		PVDD_A-supply = <&main_12v>;
++		PVDD_B-supply = <&main_12v>;
++		PVDD_C-supply = <&main_12v>;
++		PVDD_D-supply = <&main_12v>;
++		sound-name-prefix = "SPK1";
 +	};
 +};
 +
-+/* Peripheral I2C bus (on motherboard) */
 +&i2c_AO {
 +	status = "okay";
 +	pinctrl-0 = <&i2c_ao_sck_10_pins>, <&i2c_ao_sda_11_pins>;
 +	pinctrl-names = "default";
++
++	gpio_speaker: gpio-controller@1f {
++		compatible = "nxp,pca9557";
++		reg = <0x1f>;
++		gpio-controller;
++		#gpio-cells = <2>;
++		vcc-supply = <&vddao_3v3>;
++	};
++};
++
++&pdm {
++	pinctrl-0 = <&pdm_dclk_a14_pins>, <&pdm_din0_pins>,
++		    <&pdm_din1_pins>, <&pdm_din2_pins>, <&pdm_din3_pins>;
++	pinctrl-names = "default";
++	status = "okay";
 +};
 +
 +&pwm_ab {
 +	status = "okay";
 +	pinctrl-0 = <&pwm_a_x20_pins>;
 +	pinctrl-names = "default";
++};
++
++&saradc {
++	status = "okay";
++	vref-supply = <&vddio_ao18>;
 +};
 +
 +/* wifi module */
@@ -429,8 +689,73 @@ index 000000000..8e6bd30ca
 +	vqmmc-supply = <&vddio_boot>;
 +};
 +
-+/* UART Bluetooth */
-+&uart_B {
++&spdifin {
++	pinctrl-0 = <&spdif_in_a19_pins>;
++	pinctrl-names = "default";
++	status = "okay";
++};
++
++&spdifout {
++	pinctrl-0 = <&spdif_out_a20_pins>;
++	pinctrl-names = "default";
++	status = "okay";
++};
++
++&tdmif_a {
++	pinctrl-0 = <&tdma_sclk_pins>, <&tdma_fs_pins>,
++		    <&tdma_din0_pins>, <&tdma_dout0_x15_pins>;
++	pinctrl-names = "default";
++	status = "okay";
++};
++
++&tdmif_b {
++	pinctrl-0 = <&tdmb_sclk_pins>, <&tdmb_fs_pins>,
++		    <&tdmb_din3_pins>, <&mclk_b_pins>;
++	pinctrl-names = "default";
++	status = "okay";
++};
++
++&tdmif_c {
++	pinctrl-0 = <&tdmc_sclk_pins>, <&tdmc_fs_pins>,
++		    <&tdmc_din1_pins>, <&tdmc_dout2_pins>,
++		    <&mclk_c_pins>;
++	pinctrl-names = "default";
++	status = "okay";
++};
++
++&tdmin_a {
++	status = "okay";
++};
++
++&tdmin_b {
++	status = "okay";
++};
++
++&tdmin_c {
++	status = "okay";
++};
++
++&tdmin_lb {
++	status = "okay";
++};
++
++&tdmout_c {
++	status = "okay";
++};
++
++&toddr_a {
++	status = "okay";
++};
++
++&toddr_b {
++	status = "okay";
++};
++
++&toddr_c {
++	status = "okay";
++};
++
++&uart_A {
 +	status = "okay";
 +	pinctrl-0 = <&uart_b_z_pins>, <&uart_b_z_cts_rts_pins>;
 +	pinctrl-names = "default";
@@ -442,29 +767,10 @@ index 000000000..8e6bd30ca
 +	};
 +};
 +
-+/* UART Console */
++
 +&uart_AO {
 +	status = "okay";
 +	pinctrl-0 = <&uart_ao_a_pins>;
 +	pinctrl-names = "default";
 +};
 +
-+/* UART Wireless module */
-+&uart_AO_B {
-+	status = "okay";
-+	pinctrl-0 = <&uart_ao_b_pins>;
-+	pinctrl-names = "default";
-+};
-+
-+&usb0 {
-+	status = "okay";
-+	phy-supply = <&usb_pwr>;
-+};
-+
-+&spicc1 {
-+	status = "okay";
-+};
-+
-+&audio {
-+	status = "disabled";
-+};
