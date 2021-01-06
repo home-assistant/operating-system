@@ -1,0 +1,37 @@
+From 31a3e5d8147c754775353d31e2064b718b8186cf Mon Sep 17 00:00:00 2001
+From: Hanjie Lin <hanjie.lin@amlogic.com>
+Date: Thu, 27 Jun 2019 13:34:31 +0800
+Subject: [PATCH] dts:emmc: Setup S400 with Upstream Linux Kernel [1/1]
+
+PD#SWPL-9856
+
+Problem:
+
+Solution:
+enable emmc and add partitions
+
+Verify:
+s400
+
+Change-Id: Id77540fdbfe00e0e3b11426b4327d5a024c0acab
+Signed-off-by: Hanjie Lin <hanjie.lin@amlogic.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-axg.dtsi    |  2 +-
+ 2 files changed, 99 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
+index 34704fecf756..eaf066c7128c 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
+@@ -1697,7 +1697,7 @@
+ 				compatible = "amlogic,meson-axg-mmc";
+ 				reg = <0x0 0x7000 0x0 0x800>;
+ 				interrupts = <GIC_SPI 218 IRQ_TYPE_EDGE_RISING>;
+-				status = "disabled";
++				status = "okay";
+ 				clocks = <&clkc CLKID_SD_EMMC_C>,
+ 					<&clkc CLKID_SD_EMMC_C_CLK0>,
+ 					<&clkc CLKID_FCLK_DIV2>;
+-- 
+2.26.2
+

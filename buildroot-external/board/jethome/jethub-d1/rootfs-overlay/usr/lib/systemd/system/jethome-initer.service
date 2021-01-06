@@ -1,0 +1,12 @@
+[Unit]
+Description=JetHome initializer 
+Before=basic.target
+DefaultDependencies=no
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash /usr/lib/jethome/initer
+TimeoutStartSec=1min
+
+[Install]
+WantedBy=basic.target
