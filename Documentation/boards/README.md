@@ -31,6 +31,8 @@ The following boards/devices are supported:
   - VHDX ?
   - VDI ?
   - QCOW2 ?
+- JetHome
+  - JetHub D1
 
 Notes:
   - see ? above: are these currently supported? see ova documentation which explains issues with previous OVA distribution)
@@ -53,3 +55,4 @@ Notes:
 |NUC         |`make intel_nuc` |[intel_nuc](../../buildroot-external/configs/intel_nuc_defconfig)|[intel](./intel/)|
 |Tinker Board|`make tinker`    |[tinker](../../buildroot-external/configs/tinker_defconfig)|[asus](./asus/)|
 |OVA         |`make ova`       |[ova](../../buildroot-external/configs/ova_defconfig)|[ova](./ova/)|
+|JetHub D1   |`make jethub_d1` |[jethub_d1](../../buildroot-external/configs/jethub_d1_defconfig)|[jethome](./jethome/)|

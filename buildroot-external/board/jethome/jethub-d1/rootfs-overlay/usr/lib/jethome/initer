@@ -1,0 +1,13 @@
+#!/bin/bash
+
+SRC="$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
+
+if grep -Eq "^GXL.+S905W" /sys/devices/soc0/soc_id; then
+  echo "Amlogic S905W detected."
+elif grep -Eq "^AXG" /sys/devices/soc0/soc_id; then
+  echo "Amlogic AXG detected."
+  bash "$SRC/init_j100"
+else
+  echo "SoC detection failed. Unable to init"
+fi
+
