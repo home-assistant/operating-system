@@ -9,6 +9,7 @@ Wants=mnt-data.mount hassos-expand.service
 
 [Service]
 Type=oneshot
+<<<<<<< HEAD
 ExecStart=/usr/lib/jethome/swap_file_maker
 TimeoutStartSec=15min
 RemainAfterExit=true
