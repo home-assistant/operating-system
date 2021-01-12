@@ -48,6 +48,7 @@ configure_gpio "453" "${GPIO_DIRECTION_OUTPUT}" "${GPIO_ACTIVE_LOW}"
 # Button
 configure_gpio "436" "${GPIO_DIRECTION_INPUT}" "${GPIO_ACTIVE_LOW}"
 
+
 echo "${0}: Turn off LEDs ..."
 echo 0 > /sys/class/gpio/gpio452/value
 echo 0 > /sys/class/gpio/gpio453/value

@@ -74,7 +74,7 @@ jobs:
           docker run --rm --privileged -v "${GITHUB_WORKSPACE}:/build" \
             -e BUILDER_UID="${BUILDER_UID}" -e BUILDER_GID="${BUILDER_GID}" \
             -v "${{ matrix.board.runner }}-build-cache:/cache" \
-            haos-builder make VERSION_DEV=${{ needs.version.outputs.version_dev }} ${{ matrix.board.name }}
+            haos-builder make BUILDDIR=/build VERSION_DEV=${{ needs.version.outputs.version_dev }} ${{ matrix.board.name }}
 
       - name: Upload images
         uses: appleboy/scp-action@master
