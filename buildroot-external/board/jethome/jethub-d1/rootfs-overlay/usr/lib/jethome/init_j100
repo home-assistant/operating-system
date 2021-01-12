@@ -31,22 +31,22 @@ configure_gpio() {
 echo "${0}: Configure GPIOs ..."
 
 # Discrete inputs
-configure_gpio "472 ${GPIO_DIRECTION_INPUT} ${GPIO_ACTIVE_HIGH}"
-configure_gpio "471 ${GPIO_DIRECTION_INPUT} ${GPIO_ACTIVE_HIGH}"
-configure_gpio "470 ${GPIO_DIRECTION_INPUT} ${GPIO_ACTIVE_HIGH}"
-configure_gpio "469 ${GPIO_DIRECTION_INPUT} ${GPIO_ACTIVE_HIGH}"
+configure_gpio "472" "${GPIO_DIRECTION_INPUT}" "${GPIO_ACTIVE_HIGH}"
+configure_gpio "471" "${GPIO_DIRECTION_INPUT}" "${GPIO_ACTIVE_HIGH}"
+configure_gpio "470" "${GPIO_DIRECTION_INPUT}" "${GPIO_ACTIVE_HIGH}"
+configure_gpio "469" "${GPIO_DIRECTION_INPUT}" "${GPIO_ACTIVE_HIGH}"
 # Relays
-configure_gpio "456 ${GPIO_DIRECTION_OUTPUT} ${GPIO_ACTIVE_HIGH}"
-configure_gpio "455 ${GPIO_DIRECTION_OUTPUT} ${GPIO_ACTIVE_HIGH}"
-configure_gpio "454 ${GPIO_DIRECTION_OUTPUT} ${GPIO_ACTIVE_HIGH}"
+configure_gpio "456" "${GPIO_DIRECTION_OUTPUT}" "${GPIO_ACTIVE_HIGH}"
+configure_gpio "455" "${GPIO_DIRECTION_OUTPUT}" "${GPIO_ACTIVE_HIGH}"
+configure_gpio "454" "${GPIO_DIRECTION_OUTPUT}" "${GPIO_ACTIVE_HIGH}"
 # ZigBee module
-configure_gpio "467 ${GPIO_DIRECTION_OUTPUT} ${GPIO_ACTIVE_HIGH}"
-configure_gpio "462 ${GPIO_DIRECTION_OUTPUT} ${GPIO_ACTIVE_HIGH}"
+configure_gpio "467" "${GPIO_DIRECTION_OUTPUT}" "${GPIO_ACTIVE_HIGH}"
+configure_gpio "462" "${GPIO_DIRECTION_OUTPUT}" "${GPIO_ACTIVE_HIGH}"
 # LEDs
-configure_gpio "452 ${GPIO_DIRECTION_OUTPUT} ${GPIO_ACTIVE_LOW}"
-configure_gpio "453 ${GPIO_DIRECTION_OUTPUT} ${GPIO_ACTIVE_LOW}"
+configure_gpio "452" "${GPIO_DIRECTION_OUTPUT}" "${GPIO_ACTIVE_LOW}"
+configure_gpio "453" "${GPIO_DIRECTION_OUTPUT}" "${GPIO_ACTIVE_LOW}"
 # Button
-configure_gpio "436 ${GPIO_DIRECTION_INPUT} ${GPIO_ACTIVE_LOW}"
+configure_gpio "436" "${GPIO_DIRECTION_INPUT}" "${GPIO_ACTIVE_LOW}"
 
 echo "${0}: Turn off LEDs ..."
 echo 0 > /sys/class/gpio/gpio452/value
