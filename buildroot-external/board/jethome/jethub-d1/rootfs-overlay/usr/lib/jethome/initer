@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SRC="$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
+SRC=$( cd -P -- "$(dirname -- "$(command -v -- "$0")")" && pwd -P )
 
 if grep -Eq "^GXL.+S905W" /sys/devices/soc0/soc_id; then
   echo "Amlogic S905W detected."
