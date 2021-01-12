@@ -18,6 +18,7 @@ Home Assistant Operating System uses Docker as Container engine. It by default d
 - Hardkernel ODROID
 - Intel NUC
 - Asus Tinker Board
+- JetHome JetHub D1
 - Virtual appliances
 
 See the full list and specific models [here](./Documentation/boards/README.md)
