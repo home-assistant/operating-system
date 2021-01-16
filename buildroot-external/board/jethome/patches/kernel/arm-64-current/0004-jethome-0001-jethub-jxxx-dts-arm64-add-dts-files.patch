@@ -333,7 +333,7 @@ index 000000000..8e6bd30ca
 +		ranges;
 +		linux,cma {
 +			compatible = "shared-dma-pool";
-+			reusable; size = <0x0 0x2000000>;
++			reusable; size = <0x0 0x400000>;
 +			alignment = <0x0 0x400000>;
 +			linux,cma-default;
 +		};
