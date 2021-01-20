@@ -1,0 +1,4 @@
+config BR2_PACKAGE_ARMBIAN_FIRMWARE_AP6255
+	bool "AP6255 SDIO WiFi/BT"
+	help
+	  Firmware files for AP6255 WiFi/BT combo chip.
