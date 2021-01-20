@@ -12,7 +12,12 @@ choice
 config BR2_PACKAGE_JETHOME_BOOT_JETHUB_D1
 	bool "JetHub-D1"
 	help
-	  For the JetHub-D1
+	  For the JetHome JetHub-D1 (j100)
+
+config BR2_PACKAGE_JETHOME_BOOT_JETHUB_H1
+	bool "JetHub-H1"
+	help
+	  For the JetHome JetHub-H1 (j80)
 
 endchoice
 
