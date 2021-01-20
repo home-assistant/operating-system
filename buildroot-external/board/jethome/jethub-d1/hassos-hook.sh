@@ -71,6 +71,18 @@ function create_disk_image() {
     _create_disk_aml
 }
 
+function create_platform_conf () {
+    echo 'Platform:0x0811' > ${BINARIES_DIR}/platform.conf
+    echo 'DDRLoad:0xfffc0000' > ${BINARIES_DIR}/platform.conf
+    echo 'DDRRun:0xfffc0000' > ${BINARIES_DIR}/platform.conf
+    echo 'UbootLoad:0x200c000' > ${BINARIES_DIR}/platform.conf
+    echo 'UbootRun:0xfffc0000' > ${BINARIES_DIR}/platform.conf
+    echo 'Control0=0xfffc0000:0x000000b1' > ${BINARIES_DIR}/platform.conf
+    echo 'Control1=0xfffc0000:0x00005183' > ${BINARIES_DIR}/platform.conf
+    echo 'Encrypt_reg:0xff800228' > ${BINARIES_DIR}/platform.conf
+    echo 'bl2ParaAddr=0xfffcc000' > ${BINARIES_DIR}/platform.conf
+}
+
 function _create_disk_aml() {
     # ${FILE##*/}
     local boot_img="$(path_boot_img)"
@@ -82,29 +94,29 @@ function _create_disk_aml() {
     local hdd_count=${DISK_SIZE:-2}
     local disk_layout="${BINARIES_DIR}/disk.layout"
     local boot_start=$(size2sectors "8M")
+    local bootloader_img="u-boot.bin" # old bootloader.PARTITION
+    local ubootbin_img="u-boot.bin.usb.tpl" # UBOOT.USB
 
     echo '[LIST_NORMAL]' > ${BINARIES_DIR}/image.cfg
     echo 'file="DDR.USB"		main_type="USB"		sub_type="DDR"'  >> ${BINARIES_DIR}/image.cfg
-    echo 'file="UBOOT.USB"		main_type="USB"		sub_type="UBOOT"' >> ${BINARIES_DIR}/image.cfg
+    echo 'file="'${ubootbin_img}'"		main_type="USB"		sub_type="UBOOT"' >> ${BINARIES_DIR}/image.cfg
     echo 'file="_aml_dtb.PARTITION"		main_type="dtb"		sub_type="meson1"' >> ${BINARIES_DIR}/image.cfg
     echo 'file="platform.conf"		main_type="conf"		sub_type="platform"' >> ${BINARIES_DIR}/image.cfg
     echo '' >> ${BINARIES_DIR}/image.cfg
     echo '[LIST_VERIFY]' >> ${BINARIES_DIR}/image.cfg
     echo 'file="_aml_dtb.PARTITION"	main_type="PARTITION"		sub_type="_aml_dtb"' >> ${BINARIES_DIR}/image.cfg
-    echo 'file="bootloader.PARTITION"	main_type="PARTITION"		sub_type="bootloader"' >> ${BINARIES_DIR}/image.cfg
+    echo 'file="'${bootloader_img}'"	main_type="PARTITION"		sub_type="bootloader"' >> ${BINARIES_DIR}/image.cfg
     echo 'file="'${boot_img##*/}'"		main_type="PARTITION"		sub_type="boot"' >> ${BINARIES_DIR}/image.cfg
     echo 'file="'${kernel_img##*/}'"		main_type="PARTITION"		sub_type="kernela"' >> ${BINARIES_DIR}/image.cfg
     echo 'file="'${rootfs_img##*/}'"		main_type="PARTITION"		sub_type="systema"' >> ${BINARIES_DIR}/image.cfg
-#    echo 'file="'PART.4.kernelb'"		main_type="PARTITION"		sub_type="kernelb"' >> ${BINARIES_DIR}/image.cfg
-#    echo 'file="'PART.5.systemb'"		main_type="PARTITION"		sub_type="systemb"' >> ${BINARIES_DIR}/image.cfg
-#    echo 'file="'PART.6.bootinfo'"		main_type="PARTITION"		sub_type="bootstate"' >> ${BINARIES_DIR}/image.cfg
     echo 'file="'${overlay_img##*/}'"		main_type="PARTITION"		sub_type="overlay"' >> ${BINARIES_DIR}/image.cfg
     echo 'file="'${data_img##*/}'"		main_type="PARTITION"		sub_type="data"' >> ${BINARIES_DIR}/image.cfg
 
     cp $BOARD_DIR/bin/DDR.USB $BINARIES_DIR/
-    cp $BOARD_DIR/bin/UBOOT.USB $BINARIES_DIR/
-    cp $BOARD_DIR/bin/bootloader.PARTITION $BINARIES_DIR/
-    cp $BOARD_DIR/bin/platform.conf $BINARIES_DIR/
+    #cp $BOARD_DIR/bin/UBOOT.USB $BINARIES_DIR/
+    #cp $BOARD_DIR/bin/bootloader.PARTITION $BINARIES_DIR/
+
+    create_platform_conf
 
     cc -o $BINARIES_DIR/dtbTool $BOARD_DIR/bin/dtbTool.c
     $BINARIES_DIR/dtbTool -o $BINARIES_DIR/_aml_dtb.PARTITION ${BINARIES_DIR}/
