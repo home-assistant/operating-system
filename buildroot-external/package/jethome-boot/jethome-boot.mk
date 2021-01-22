@@ -9,7 +9,7 @@ JETHOME_BOOT_SITE = https://github.com/adeepn/jethub-prebuilt-u-boot.git
 JETHOME_BOOT_SITE_METHOD = git
 JETHOME_BOOT_INSTALL_IMAGES = YES
 JETHOME_BOOT_DEPENDENCIES = uboot
-JETHOME_BOOT_BINS = u-boot.bin u-boot.bin.usb.tpl
+JETHOME_BOOT_BINS = u-boot.bin u-boot.bin.usb.tpl u-boot.bin.usb.bl2
 
 
 ifeq ($(BR2_PACKAGE_JETHOME_BOOT_JETHUB_D1),y)
