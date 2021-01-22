@@ -59,6 +59,8 @@ if [ ${?} != 0 ]; then
   exit 1
 fi
 
-sh -c "echo ds2482 0x18 > /sys/bus/i2c/devices/i2c-0/new_device"
+sleep 5
+
+echo ds2482 0x18 > /sys/bus/i2c/devices/i2c-0/new_device
 
 exit 0

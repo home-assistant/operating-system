@@ -1,12 +1,13 @@
 #!/bin/bash
 # shellcheck disable=SC2155
 
-# bootloader.PARTITION \
-# DDR.USB \
-# platform.conf \
-# UBOOT.USB
-# $BOARD_DIR
-# $BOARD_DIR/bin/
+# Change size partitions
+BOOT_SIZE=(64M 64M)
+BOOTSTATE_SIZE=8M
+SYSTEM_SIZE=256M
+KERNEL_SIZE=64M
+OVERLAY_SIZE=128M
+DATA_SIZE=1G
 
 set -e # Exit immediately if a command exits with a non-zero status
 set -u # Treat unset variables and parameters as an error
@@ -33,34 +34,12 @@ self_name() {
 }
 
 
-# Change size partitions
-BOOT_SIZE=(64M 64M)
-BOOTSTATE_SIZE=8M
-SYSTEM_SIZE=256M
-KERNEL_SIZE=64M
-OVERLAY_SIZE=128M
-DATA_SIZE=1G
-
 function hassos_pre_image() {
     local BOOT_DATA="$(path_boot_dir)"
-    #local BL1="${BINARIES_DIR}/bl1.bin.hardkernel"
-    #local UBOOT_GXBB="${BINARIES_DIR}/u-boot.gxbb"
-    #local SPL_IMG="$(path_spl_img)"
-
-    #cp "${BINARIES_DIR}/boot.scr" "${BOOT_DATA}/boot.scr"
-    #cp "${BINARIES_DIR}/meson-gxbb-odroidc2.dtb" "${BOOT_DATA}/meson-gxbb-odroidc2.dtb"
 
     echo "console=tty0 console=ttyAML0,115200n8" > "${BOOT_DATA}/cmdline.txt"
     cp "${BINARIES_DIR}/meson-axg-jethome-jethub-j100.dtb" "${BOOT_DATA}/meson-axg-jethome-jethub-j100.dtb"
-
-    # SPL
-    #create_spl_image
-
-    #dd if="${BL1}" of="${SPL_IMG}" conv=notrunc bs=1 count=440
-    #dd if="${BL1}" of="${SPL_IMG}" conv=notrunc bs=512 skip=1 seek=1
-    #dd if="${UBOOT_GXBB}" of="${SPL_IMG}" conv=notrunc bs=512 seek=97
 }
-
 
 function hassos_post_image() {
     convert_disk_image_xz
@@ -84,7 +63,6 @@ function create_platform_conf () {
 }
 
 function _create_disk_aml() {
-    # ${FILE##*/}
     local boot_img="$(path_boot_img)"
     local rootfs_img="$(path_rootfs_img)"
     local overlay_img="$(path_overlay_img)"
@@ -94,11 +72,12 @@ function _create_disk_aml() {
     local hdd_count=${DISK_SIZE:-2}
     local disk_layout="${BINARIES_DIR}/disk.layout"
     local boot_start=$(size2sectors "8M")
-    local bootloader_img="u-boot.bin" # old bootloader.PARTITION
-    local ubootbin_img="u-boot.bin.usb.tpl" # UBOOT.USB
+    local bootloader_img="u-boot.bin" # bootloader
+    local ubootbin_img="u-boot.bin.usb.tpl" # UBOOT
+    local ddrbin_img="u-boot.bin.usb.bl2" # DDR
 
     echo '[LIST_NORMAL]' > ${BINARIES_DIR}/image.cfg
-    echo 'file="DDR.USB"		main_type="USB"		sub_type="DDR"'  >> ${BINARIES_DIR}/image.cfg
+    echo 'file="'${ddrbin_img}'"		main_type="USB"		sub_type="DDR"'  >> ${BINARIES_DIR}/image.cfg
     echo 'file="'${ubootbin_img}'"		main_type="USB"		sub_type="UBOOT"' >> ${BINARIES_DIR}/image.cfg
     echo 'file="_aml_dtb.PARTITION"		main_type="dtb"		sub_type="meson1"' >> ${BINARIES_DIR}/image.cfg
     echo 'file="platform.conf"		main_type="conf"		sub_type="platform"' >> ${BINARIES_DIR}/image.cfg
@@ -111,10 +90,6 @@ function _create_disk_aml() {
     echo 'file="'${rootfs_img##*/}'"		main_type="PARTITION"		sub_type="systema"' >> ${BINARIES_DIR}/image.cfg
     echo 'file="'${overlay_img##*/}'"		main_type="PARTITION"		sub_type="overlay"' >> ${BINARIES_DIR}/image.cfg
     echo 'file="'${data_img##*/}'"		main_type="PARTITION"		sub_type="data"' >> ${BINARIES_DIR}/image.cfg
-
-    cp $BOARD_DIR/bin/DDR.USB $BINARIES_DIR/
-    #cp $BOARD_DIR/bin/UBOOT.USB $BINARIES_DIR/
-    #cp $BOARD_DIR/bin/bootloader.PARTITION $BINARIES_DIR/
 
     create_platform_conf
 
