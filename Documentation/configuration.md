@@ -17,7 +17,7 @@ hassos-xy.raucb
 - The `network` folder can contain any kind of NetworkManager connection files. For more information see [Network][network.md]. 
 - The `modules` folder is for modules-load configuration files.
 - The `udev` folder is for udev rules files.
-- The `authorized_keys` file activates debug SSH access on port `22222`. See [Debugging Hassio][debug-hassio].
+- The `authorized_keys` file activates debug SSH access on port `22222`. See [Debugging the Home Assistant Operating System][debug-os].
 - The `timesyncd.conf` file allow you to set different NTP servers. HassOS won't boot without correct working time servers!
 - The `hassos-*.raucb` file is a firmware OTA update which will be installed. These can be found on on the [release][hassos-release] page. 
 
@@ -45,4 +45,4 @@ You can manual add, edit or remove connections configs from `/etc/NetworkManager
 [systemd-modules]: https://www.freedesktop.org/software/systemd/man/modules-load.d.html
 [network.md]: network.md
 [hassos-release]: https://github.com/home-assistant/hassos/releases/
-[debug-hassio]: https://developers.home-assistant.io/docs/en/hassio_debugging.html
+[debug-os]: https://developers.home-assistant.io/docs/operating-system/debugging
