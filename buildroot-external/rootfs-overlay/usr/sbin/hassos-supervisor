@@ -72,7 +72,7 @@ if [ -z "${SUPERVISOR_CONTAINER_ID}" ]; then
         -v /var/run/docker.sock:/var/run/docker.sock \
         -v /var/run/dbus:/var/run/dbus \
         -v /run/supervisor:/run/os:rw \
-        -v /run/udev:/run/udev:ro
+        -v /run/udev:/run/udev:ro \
         -v /etc/machine-id:/etc/machine-id:ro \
         -v ${SUPERVISOR_DATA}:/data:rw \
         -v /mnt/overlay:/os/overlay:rw \
