@@ -69,9 +69,10 @@ if [ -z "${SUPERVISOR_CONTAINER_ID}" ]; then
     docker container create \
         --name hassio_supervisor \
         --privileged --security-opt apparmor="hassio-supervisor" \
-        -v /var/run/docker.sock:/var/run/docker.sock \
-        -v /var/run/dbus:/var/run/dbus \
+        -v /run/docker.sock:/run/docker.sock:rw \
+        -v /run/dbus:/run/dbus:ro \
         -v /run/supervisor:/run/os:rw \
+        -v /run/udev:/run/udev:ro \
         -v /etc/machine-id:/etc/machine-id:ro \
         -v ${SUPERVISOR_DATA}:/data:rw \
         -v /mnt/overlay:/os/overlay:rw \
