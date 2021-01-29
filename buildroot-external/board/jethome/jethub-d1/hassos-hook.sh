@@ -52,14 +52,14 @@ function create_disk_image() {
 
 function create_platform_conf () {
     echo 'Platform:0x0811' > ${BINARIES_DIR}/platform.conf
-    echo 'DDRLoad:0xfffc0000' > ${BINARIES_DIR}/platform.conf
-    echo 'DDRRun:0xfffc0000' > ${BINARIES_DIR}/platform.conf
-    echo 'UbootLoad:0x200c000' > ${BINARIES_DIR}/platform.conf
-    echo 'UbootRun:0xfffc0000' > ${BINARIES_DIR}/platform.conf
-    echo 'Control0=0xfffc0000:0x000000b1' > ${BINARIES_DIR}/platform.conf
-    echo 'Control1=0xfffc0000:0x00005183' > ${BINARIES_DIR}/platform.conf
-    echo 'Encrypt_reg:0xff800228' > ${BINARIES_DIR}/platform.conf
-    echo 'bl2ParaAddr=0xfffcc000' > ${BINARIES_DIR}/platform.conf
+    echo 'DDRLoad:0xfffc0000' >> ${BINARIES_DIR}/platform.conf
+    echo 'DDRRun:0xfffc0000' >> ${BINARIES_DIR}/platform.conf
+    echo 'UbootLoad:0x200c000' >> ${BINARIES_DIR}/platform.conf
+    echo 'UbootRun:0xfffc0000' >> ${BINARIES_DIR}/platform.conf
+    echo 'Control0=0xfffc0000:0x000000b1' >> ${BINARIES_DIR}/platform.conf
+    echo 'Control1=0xfffc0000:0x00005183' >> ${BINARIES_DIR}/platform.conf
+    echo 'Encrypt_reg:0xff800228' >> ${BINARIES_DIR}/platform.conf
+    echo 'bl2ParaAddr=0xfffcc000' >> ${BINARIES_DIR}/platform.conf
 }
 
 function _create_disk_aml() {
@@ -93,8 +93,8 @@ function _create_disk_aml() {
 
     create_platform_conf
 
-    cc -o $BINARIES_DIR/dtbTool $BOARD_DIR/bin/dtbTool.c
+    cc -o $BINARIES_DIR/dtbTool $BOARD_DIR/../src/dtbTool.c
     $BINARIES_DIR/dtbTool -o $BINARIES_DIR/_aml_dtb.PARTITION ${BINARIES_DIR}/
-    $BOARD_DIR/bin/aml_image_v2_packer -r ${BINARIES_DIR}/image.cfg ${BINARIES_DIR}/ $hdd_img
+    $BOARD_DIR/../bin/aml_image_v2_packer -r ${BINARIES_DIR}/image.cfg ${BINARIES_DIR}/ $hdd_img
     echo "Image created"
 }
