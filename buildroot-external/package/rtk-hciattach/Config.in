@@ -1,0 +1,6 @@
+menuconfig BR2_PACKAGE_RTK_HCIATTACH
+	bool "Realtek hciattach"
+	help
+	  Hciattach is used to attach a serial UART to 
+	  the Bluetooth stack as HCI transport interface.
+
