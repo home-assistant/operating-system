@@ -5,6 +5,7 @@
 ################################################################################
 
 JETHOME_BOOT_VERSION = HEAD
+#afe09f3df8d8fdaf03d764fc76e5ce7b6d0637a5
 JETHOME_BOOT_SITE = https://github.com/adeepn/jethub-prebuilt-u-boot.git
 JETHOME_BOOT_SITE_METHOD = git
 JETHOME_BOOT_INSTALL_IMAGES = YES
