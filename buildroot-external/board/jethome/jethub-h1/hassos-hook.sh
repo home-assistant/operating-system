@@ -38,7 +38,7 @@ function hassos_pre_image() {
     local BOOT_DATA="$(path_boot_dir)"
 
     echo "console=tty0 console=ttyAML0,115200n8" > "${BOOT_DATA}/cmdline.txt"
-    cp "${BINARIES_DIR}/meson-axg-jethome-jethub-j100.dtb" "${BOOT_DATA}/meson-axg-jethome-jethub-j100.dtb"
+    cp "${BINARIES_DIR}/meson-gxl-s905w-jethome-jethub-j80.dtb" "${BOOT_DATA}/meson-gxl-s905w-jethome-jethub-j80.dtb"
 }
 
 function hassos_post_image() {
@@ -52,14 +52,14 @@ function create_disk_image() {
 
 function create_platform_conf () {
     echo 'Platform:0x0811' > ${BINARIES_DIR}/platform.conf
-    echo 'DDRLoad:0xfffc0000' >> ${BINARIES_DIR}/platform.conf
-    echo 'DDRRun:0xfffc0000' >> ${BINARIES_DIR}/platform.conf
+    echo 'DDRLoad:0xd9000000' >> ${BINARIES_DIR}/platform.conf
+    echo 'DDRRun:0xd9000000' >> ${BINARIES_DIR}/platform.conf
     echo 'UbootLoad:0x200c000' >> ${BINARIES_DIR}/platform.conf
-    echo 'UbootRun:0xfffc0000' >> ${BINARIES_DIR}/platform.conf
-    echo 'Control0=0xfffc0000:0x000000b1' >> ${BINARIES_DIR}/platform.conf
-    echo 'Control1=0xfffc0000:0x00005183' >> ${BINARIES_DIR}/platform.conf
-    echo 'Encrypt_reg:0xff800228' >> ${BINARIES_DIR}/platform.conf
-    echo 'bl2ParaAddr=0xfffcc000' >> ${BINARIES_DIR}/platform.conf
+    echo 'UbootRun:0xd9000000' >> ${BINARIES_DIR}/platform.conf
+    echo 'Control0=0xd9000000:0x000000b1' >> ${BINARIES_DIR}/platform.conf
+    echo 'Control1=0xd9000000:0x00005183' >> ${BINARIES_DIR}/platform.conf
+    echo 'Encrypt_reg:0xc8100228' >> ${BINARIES_DIR}/platform.conf
+    echo 'bl2ParaAddr=0xd900c000' >> ${BINARIES_DIR}/platform.conf
 }
 
 function _create_disk_aml() {

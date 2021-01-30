@@ -1,0 +1,10 @@
+comment "RTL8822CS needs a Linux kernel to be built"
+	depends on !BR2_LINUX_KERNEL
+
+config BR2_PACKAGE_RTL8822CS
+	bool "Realtek RTL8822CS SDIO Wi-Fi driver"
+	depends on BR2_LINUX_KERNEL
+	help
+          Install Realtek RTL8822CS Wi-Fi driver as a kernel module.
+
+          https://github.com/jethome-ru/rtl88x2cs/

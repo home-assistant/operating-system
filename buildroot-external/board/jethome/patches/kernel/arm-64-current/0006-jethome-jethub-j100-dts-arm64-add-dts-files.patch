@@ -1,150 +1,9 @@
-diff --git a/arch/arm64/boot/dts/amlogic/Makefile b/arch/arm64/boot/dts/amlogic/Makefile
-index 666b1544c..903b9e1ab 100644
---- a/arch/arm64/boot/dts/amlogic/Makefile
-+++ b/arch/arm64/boot/dts/amlogic/Makefile
-@@ -1,5 +1,6 @@
- # SPDX-License-Identifier: GPL-2.0
- dtb-$(CONFIG_ARCH_MESON) += meson-axg-s400.dtb
-+dtb-$(CONFIG_ARCH_MESON) += meson-axg-jethome-jethub-j100.dtb
- dtb-$(CONFIG_ARCH_MESON) += meson-g12a-sei510.dtb
- dtb-$(CONFIG_ARCH_MESON) += meson-g12a-u200.dtb
- dtb-$(CONFIG_ARCH_MESON) += meson-g12a-x96-max.dtb
-@@ -35,6 +36,7 @@ dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s805x-p241.dtb
- dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905w-p281.dtb
- dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905w-tx3-mini.dtb
- dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905d-libretech-pc.dtb
-+dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905w-jethome-jethub-j80.dtb
- dtb-$(CONFIG_ARCH_MESON) += meson-gxm-khadas-vim2.dtb
- dtb-$(CONFIG_ARCH_MESON) += meson-gxm-nexbox-a1.dtb
- dtb-$(CONFIG_ARCH_MESON) += meson-gxm-q200.dtb
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905w-jethome-jethub-j80.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s905w-jethome-jethub-j80.dts
-new file mode 100644
-index 000000000..cf0e6e742
---- /dev/null
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905w-jethome-jethub-j80.dts
-@@ -0,0 +1,116 @@
-+
-+/dts-v1/;
-+
-+#include "meson-gxl-s905x.dtsi"
-+#include "meson-gx-p23x-q20x.dtsi"
-+
-+/ {
-+	compatible = "amlogic,p281", "amlogic,s905w", "amlogic,meson-gxl";
-+	model = "JetHome JetHub J80";
-+	amlogic-dt-id = "gxl_jethubj80_v1";
-+
-+	memory@0 {
-+		device_type = "memory";
-+		reg = <0x0 0x0 0x0 0x40000000>;
-+	};
-+
-+	partitions: partitions {
-+		parts = <1>;
-+		part-0 = <&rootfs>;
-+		rootfs: rootfs {
-+			pname = "rootfs";
-+			size = <0xffffffff 0xffffffff>;
-+			mask = <4>;
-+		};
-+	};
-+
-+	efusekey: efusekey {
-+		keynum = <5>;
-+		key0 = <&key_0>;
-+		key1 = <&key_1>;
-+		key2 = <&key_2>;
-+		key3 = <&key_3>;
-+		key4 = <&key_4>;
-+
-+		key_0: key_0 {
-+			keyname = "mac";
-+			offset = <0>;
-+			size = <6>;
-+		};
-+		key_1: key_1 {
-+			keyname = "mac_bt";
-+			offset = <6>;
-+			size = <6>;
-+		};
-+		key_2: key_2 {
-+			keyname = "mac_wifi";
-+			offset = <12>;
-+			size = <6>;
-+		};
-+		key_3: key_3 {
-+			keyname = "usid";
-+			offset = <18>;
-+			size = <32>;
-+		};
-+		key_4: key_4 {
-+			keyname = "serial";
-+			offset = <50>;
-+			size = <32>;
-+		};
-+	}; //End efusekey
-+
-+	unifykey {
-+		compatible = "amlogic, unifykey";
-+		status = "ok";
-+		unifykey-num = <6>;
-+		unifykey-index-0 = <&keysn_0>;
-+		unifykey-index-1 = <&keysn_1>;
-+		unifykey-index-2 = <&keysn_2>;
-+		unifykey-index-3 = <&keysn_3>;
-+		unifykey-index-4 = <&keysn_4>;
-+		unifykey-index-5 = <&keysn_5>;
-+
-+		keysn_0: key_0 {
-+			key-name = "usid";
-+			key-device = "efuse";
-+			key-permit = "read","write";
-+		};
-+		keysn_1: key_1 {
-+			key-name = "mac";
-+			key-device = "efuse";
-+			key-permit = "read","write";
-+		};
-+		keysn_2: key_2 {
-+			key-name = "mac_bt";
-+			key-device = "normal";
-+			key-permit = "read","write","del";
-+			key-type  = "mac";
-+		};
-+		keysn_3: key_3 {
-+			key-name = "mac_wifi";
-+			key-device = "normal";
-+			key-permit = "read","write","del";
-+			key-type = "mac";
-+		};
-+		keysn_4: key_4 {
-+			key-name = "serial";
-+			key-device = "efuse";
-+			key-permit = "read","write";
-+		};
-+		keysn_5:key_5 {
-+			key-name = "deviceid";
-+			key-device = "normal";
-+			key-permit = "read","write","del";
-+		};
-+	}; //End unifykey
-+};
-+
-+&efuse {
-+	status = "okay";
-+	compatible = "amlogic,meson-gxbb-efuse", "amlogic, efuse";
-+	read_cmd = <0x82000030>;
-+	write_cmd = <0x82000031>;
-+	get_max_cmd = <0x82000033>;
-+	key = <&efusekey>;
-+	clock-names = "efuse_clk";
-+};
 diff --git a/arch/arm64/boot/dts/amlogic/meson-axg-jethome-jethub-j100.dts b/arch/arm64/boot/dts/amlogic/meson-axg-jethome-jethub-j100.dts
 new file mode 100644
 index 000000000..8e6bd30ca
 --- /dev/null
 +++ b/arch/arm64/boot/dts/amlogic/meson-axg-jethome-jethub-j100.dts
-@@ -0,0 +1,334 @@
+@@ -0,0 +1,395 @@
 +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
 +/*
 + * Copyright (c) 2017 Amlogic, Inc. All rights reserved.
@@ -299,13 +158,26 @@ index 000000000..8e6bd30ca
 +			mask = <4>;
 +		};
 +	};
++	reserved-memory {
++		#address-cells = <2>;
++		#size-cells = <2>;
++		ranges;
++		linux,cma {
++			compatible = "shared-dma-pool";
++			reusable; size = <0x0 0x400000>;
++			alignment = <0x0 0x400000>;
++			linux,cma-default;
++		};
++	};
 +	// It is necessary only as key map to read efuse values from nvmem from Armbian OS.
 +	efusekey:efusekey{
-+		keynum = <4>;
++		keynum = <5>;
 +		key0 = <&key_0>;
 +		key1 = <&key_1>;
 +		key2 = <&key_2>;
 +		key3 = <&key_3>;
++		key4 = <&key_4>;
++
 +		key_0:key_0{
 +			keyname = "mac";
 +			offset = <0>;
@@ -326,19 +198,67 @@ index 000000000..8e6bd30ca
 +			offset = <18>;
 +			size = <32>;
 +		};
-+	};
-+	reserved-memory {
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+		linux,cma {
-+			compatible = "shared-dma-pool";
-+			reusable; size = <0x0 0x400000>;
-+			alignment = <0x0 0x400000>;
-+			linux,cma-default;
++		key_4: key_4 {
++			keyname = "serial";
++			offset = <50>;
++			size = <32>;
 +		};
-+	};
++	}; //End efusekey
 +
++	unifykey {
++		compatible = "amlogic, unifykey";
++		status = "ok";
++		unifykey-num = <6>;
++		unifykey-index-0 = <&keysn_0>;
++		unifykey-index-1 = <&keysn_1>;
++		unifykey-index-2 = <&keysn_2>;
++		unifykey-index-3 = <&keysn_3>;
++		unifykey-index-4 = <&keysn_4>;
++		unifykey-index-5 = <&keysn_5>;
++
++		keysn_0: key_0 {
++			key-name = "usid";
++			key-device = "normal";
++			key-permit = "read";
++		};
++		keysn_1: key_1 {
++			key-name = "mac";
++			key-device = "normal";
++			key-permit = "read";
++		};
++		keysn_2: key_2 {
++			key-name = "mac_bt";
++			key-device = "normal";
++			key-permit = "read","write","del";
++			key-type  = "mac";
++		};
++		keysn_3: key_3 {
++			key-name = "mac_wifi";
++			key-device = "normal";
++			key-permit = "read","write","del";
++			key-type = "mac";
++		};
++		keysn_4: key_4 {
++			key-name = "serial";
++			key-device = "normal";
++			key-permit = "read";
++		};
++		keysn_5:key_5 {
++			key-name = "deviceid";
++			key-device = "normal";
++			key-permit = "read","write","del";
++		};
++	}; //End unifykey
++};
++
++&efuse {
++	status = "okay";
++	compatible = "amlogic,meson-gxbb-efuse", "amlogic, efuse";
++	read_cmd = <0x82000030>;
++	write_cmd = <0x82000031>;
++	get_max_cmd = <0x82000033>;
++	key = <&efusekey>;
++	clock-names = "efuse_clk";
 +};
 +
 +&ethmac {

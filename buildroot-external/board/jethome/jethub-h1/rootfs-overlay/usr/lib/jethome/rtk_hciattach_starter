@@ -1,0 +1,15 @@
+#!/bin/bash
+
+if grep -Eq "^GXL.+S905W" /sys/devices/soc0/soc_id; then
+  if [ ! -f /sys/class/gpio/gpio497/value ]; then
+    echo 497 > /sys/class/gpio/export
+    echo out > /sys/class/gpio/gpio497/direction
+  fi
+  echo 0 > /sys/class/gpio/gpio497/value && sleep 0.1
+  echo 1 > /sys/class/gpio/gpio497/value && sleep 0.1
+  rtk_hciattach /dev/ttyAML1 -s 115200 rtk_h5 115200
+elif grep -Eq "^AXG" /sys/devices/soc0/soc_id; then
+  echo "Amlogic AXG detected. Skip rtk_hciattach execution."
+else
+  echo "SoC detection failed. Unable to execute rtk_hciattach."
+fi
