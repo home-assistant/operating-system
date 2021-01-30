@@ -1,5 +1,5 @@
 KERNEL=="mmcblk1p6", SYMLINK+="disk/by-partlabel/hassos-boot"
-KERNEL=="mmcblk1p7", SYMLINK+="disk/by-partlabel/hassos-bootstate"
+KERNEL=="mmcblk1p5", SYMLINK+="disk/by-partlabel/hassos-bootstate"
 KERNEL=="mmcblk1p8", SYMLINK+="disk/by-partlabel/hassos-kernel0"
 KERNEL=="mmcblk1p9", SYMLINK+="disk/by-partlabel/hassos-system0"
 KERNEL=="mmcblk1p10", SYMLINK+="disk/by-partlabel/hassos-kernel1"

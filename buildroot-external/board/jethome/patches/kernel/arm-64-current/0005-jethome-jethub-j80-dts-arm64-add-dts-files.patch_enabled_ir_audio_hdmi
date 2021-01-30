@@ -3,7 +3,7 @@ new file mode 100644
 index 000000000..cf0e6e742
 --- /dev/null
 +++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905w-jethome-jethub-j80.dts
-@@ -0,0 +1,381 @@
+@@ -0,0 +1,368 @@
 +
 +/dts-v1/;
 +
@@ -141,10 +141,6 @@ index 000000000..cf0e6e742
 +		clocks = <&wifi32k>;
 +		clock-names = "ext_clock";
 +	};
-+
-+	sound {
-+		status = "disabled";
-+	}
 +
 +	efusekey: efusekey {
 +		keynum = <5>;
@@ -376,12 +372,3 @@ index 000000000..cf0e6e742
 +	};
 +};
 +
-+&acodec {
-+	status = "disabled";
-+};
-+&hdmi_tx {
-+	status = "disabled";
-+};
-+&ir {
-+	status = "disabled";
-+};
