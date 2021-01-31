@@ -123,13 +123,13 @@ homeassistant login:
 
 From there you use the `nmcli` configuration tool.
 
-- `# nmcli con show` will list the "HassOS default" connection in use.
-- `# nmcli con show "HassOS default"` will list all the properties of the connection.
+- `# nmcli con show` will list the "my-network" connection in use.
+- `# nmcli con show "my-network"` will list all the properties of the connection.
 
-To start editing the configuration setting for "HassOS default":
+To start editing the configuration setting for "my-network":
 
 ```bash
-# nmcli con edit "HassOS default"
+# nmcli con edit "my-network"
 ```
 
 To add your static IP address (select 'yes' for manual method);
