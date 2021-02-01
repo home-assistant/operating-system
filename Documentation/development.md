@@ -50,6 +50,8 @@ Default 2. That is the size of end image in GB.
 - raspberrypi3-64
 - raspberrypi4-64
 - tinker
+- jethub-d1
+- jethub-h1
 
 `SUPERVISOR_ARCH`:
 
