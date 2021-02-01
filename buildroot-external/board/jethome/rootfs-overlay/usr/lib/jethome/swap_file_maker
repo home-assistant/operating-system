@@ -1,6 +1,6 @@
 #!/bin/bash
 
-swap_size=512
+swap_size=512 # MiBs
 swap_part=/mnt/data
 swap_path=/mnt/data/swapfile
 swap_priority=-3
@@ -9,9 +9,9 @@ swap_free_space=$(env stat -f -c '%a*%S/1024/1024' $swap_part | bc)
 
 make_swap()
 {
-  if [ "$swap_free_space" -ge $swap_size ]; then
+  if [ $swap_free_space -ge $swap_size ]; then
     echo "allocating file for swap ..."
-    if dd if=/dev/zero of=$swap_path bs=1M count=$swap_size; then
+    if fallocate -l ${swap_size}M $swap_path; then
       chmod 0600 $swap_path
       if mkswap "$swap_path"; then
         if swapon --verbose --priority $swap_priority "$swap_path"; then
@@ -28,27 +28,11 @@ make_swap()
   fi
 }
 
-enable_swap()
-{
-  local swap_size_bytes
-  local swap_fsize
-  swap_size_bytes=$(env echo $swap_size*1024*1024 | bc)
-  swap_fsize=$(stat -c "%s" "/mnt/data/swapfile")
-  if [ "$swap_fsize" -lt "$swap_size_bytes" ]; then
-    make_swap
-  elif swapon --verbose --priority $swap_priority "$swap_path"; then
-    echo "swap added succesfully"
-  else
-    echo "swapon $swap_path failed"
-  fi
-}
-
-
 
 make_swap_axg() {
   if [ -f "$swap_path" ]; then
     echo "Swap file exist. Check and enable swap."
-    enable_swap
+    make_swap
   elif grep -Eq "^GXL.+S905W" /sys/devices/soc0/soc_id; then
     echo "Amlogic S905W detected. Skip swap file creation"
   elif grep -Eq "^AXG" /sys/devices/soc0/soc_id; then
