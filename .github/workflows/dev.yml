@@ -50,6 +50,8 @@ jobs:
           - {"name": "rpi4", "output": "rpi4", "runner": "arm-runner"}
           - {"name": "rpi4_64", "output": "rpi4-64", "runner": "aarch64-runner"}
           - {"name": "tinker", "output": "tinker", "runner": "arm-runner"}
+          - {"name": "jethub_d1", "output": "jethub-d1", "runner": "aarch64-runner"}
+          - {"name": "jethub_h1", "output": "jethub-h1", "runner": "aarch64-runner"}
     runs-on: ${{ matrix.board.runner }}
 
     steps:
