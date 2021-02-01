@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-RTL8822CS_VERSION = 65af8fc4a72aa6ebcb02fbe3a5ea6f6886eeaebe
+RTL8822CS_VERSION = 010b40a050bbf9164c914169e79d506888839e98
 RTL8822CS_SITE = $(call github,adeepn,rtl88x2cs,$(RTL8822CS_VERSION))
 RTL8822CS_LICENSE = Unknown
 #RTL8822CS_LICENSE_FILES = COPYING
