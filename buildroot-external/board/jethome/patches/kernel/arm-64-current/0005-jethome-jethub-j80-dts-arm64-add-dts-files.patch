@@ -3,12 +3,11 @@ new file mode 100644
 index 000000000..cf0e6e742
 --- /dev/null
 +++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905w-jethome-jethub-j80.dts
-@@ -0,0 +1,381 @@
+@@ -0,0 +1,373 @@
 +
 +/dts-v1/;
 +
-+#include "meson-gxl-s905x.dtsi"
-+#include "meson-gx-p23x-q20x.dtsi"
++#include "meson-gxl.dtsi"
 +
 +/ {
 +	compatible = "amlogic,p281", "amlogic,s905w", "amlogic,meson-gxl";
@@ -141,10 +140,6 @@ index 000000000..cf0e6e742
 +		clocks = <&wifi32k>;
 +		clock-names = "ext_clock";
 +	};
-+
-+	sound {
-+		status = "disabled";
-+	}
 +
 +	efusekey: efusekey {
 +		keynum = <5>;
@@ -376,12 +371,9 @@ index 000000000..cf0e6e742
 +	};
 +};
 +
-+&acodec {
-+	status = "disabled";
-+};
-+&hdmi_tx {
-+	status = "disabled";
-+};
-+&ir {
-+	status = "disabled";
++
++/* S905X only has access to its internal PHY */
++&ethmac {
++	phy-mode = "rmii";
++	phy-handle = <&internal_phy>;
 +};

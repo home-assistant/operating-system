@@ -1,0 +1,25 @@
+From c3b53a1f97d2ac88b6ec060c15759b8da4bbb652 Mon Sep 17 00:00:00 2001
+From: Vyacheslav Bocharov <devel@lexina.in>
+Date: Sun, 31 Jan 2021 15:28:20 +0300
+Subject: [PATCH] Fix cma
+
+---
+ arch/arm64/boot/dts/amlogic/meson-gx.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gx.dtsi b/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
+index 5c6770b4dd..9c72e8c42d 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
+@@ -51,7 +51,7 @@ secmon_reserved_bl32: secmon@5300000 {
+ 		linux,cma {
+ 			compatible = "shared-dma-pool";
+ 			reusable;
+-			size = <0x0 0x10000000>;
++			size = <0x0 0x400000>;
+ 			alignment = <0x0 0x400000>;
+ 			linux,cma-default;
+ 		};
+-- 
+2.25.1
+
