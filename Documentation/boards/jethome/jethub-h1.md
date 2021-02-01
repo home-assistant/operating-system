@@ -1,21 +1,18 @@
-# JetHub D1
+# JetHub H1
 
-More information [JetHub D1 wiki](http://wiki.jethome.ru/jethub_d1) (Russian)
+More information [JetHub H1 wiki](http://wiki.jethome.ru/jethub_h1) (Russian)
 
-- 4-core CPU Amlogic A113X (ARM Cortex-A53) 1,4 ГГц;
-- RAM 512 or 1024 MB DDR3;
+- 4-core CPU Amlogic S905W (ARM Cortex-A53) 1,5 Ghz;
+- RAM 1024 MB DDR3;
 - eMMC flash 8 Gbyte.
 
 ## Interfaces
 
-- WiFi/Bluetooth AMPAK AP6255 (Broadcom BCM43455)
+- WiFi/Bluetooth Realtek RTL8822CS
+- MicroSD 2.x/3.x/4.x DS/HS card slot
 - Ethernet IEEE 802.3 10/100 Mbps
 - ZigBee TI CC2538 + CC2592
-- 1 x USB 2.0 high-speed
-- 1 X 1-Wire
-- 2 x RS-485
-- 4 x inputs  «dry contact»
-- 3 х relay output
+- 2 x USB 2.0 high-speed
 
 ## MMC
 
