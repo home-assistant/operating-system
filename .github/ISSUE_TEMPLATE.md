@@ -19,6 +19,7 @@ Describe the Homme Assistant image you are using and the hardare environemnt
 - [ ] ASUS Tinker [S]
 - [ ] Intel NUC (or compatible)
 - [ ] OVA (Open Virtualization Applicance, on Intel NUC or any other hardware, please add the Hypervisor you are using)
+- [ ] JetHome (D1/H1)
 
 **Home Assistant OS release:**
 - [ ] Fresh installation of release x.y
