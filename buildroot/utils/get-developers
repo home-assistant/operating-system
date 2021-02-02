@@ -3,7 +3,6 @@
 import argparse
 import getdeveloperlib
 import sys
-import os
 
 
 def parse_args():
@@ -45,10 +44,6 @@ def __main__():
         print("No action specified")
         return
 
-    # getdeveloperlib expects to be executed from the toplevel buildroot
-    # directory, which is one level up from this script
-    os.chdir(os.path.join(os.path.dirname(os.path.realpath(__file__)), '..'))
-
     devs = getdeveloperlib.parse_developers()
     if devs is None:
         sys.exit(1)
@@ -75,11 +70,9 @@ def __main__():
 
     # Handle the files action
     if args.files is not None:
-        args.files = [os.path.abspath(f) for f in args.files]
         for dev in devs:
-            for devfile in dev.files:
-                commonfiles = [f for f in args.files if f.startswith(devfile)]
-                if commonfiles:
+            for f in args.files:
+                if dev.hasfile(f):
                     print(dev.name)
                     break
 

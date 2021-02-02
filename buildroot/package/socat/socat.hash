@@ -1,8 +1,8 @@
 # From http://www.dest-unreach.org/socat/download.md5sum
-md5	3cca4f8cd9d2d1caabd9cc099451bac9	socat-1.7.3.4.tar.bz2
+md5  36cad050ecf4981ab044c3fbd75c643f  socat-1.7.4.1.tar.bz2
 # From http://www.dest-unreach.org/socat/download.sha256sum
-sha256	972374ca86f65498e23e3259c2ee1b8f9dbeb04d12c2a78c0c9b5d1cb97dfdfc	socat-1.7.3.4.tar.bz2
+sha256  3faca25614e89123dff5045680549ecef519d02e331aaf3c4f5a8f6837c675e9  socat-1.7.4.1.tar.bz2
 # Locally calculated
-sha256	4846488cea98a2905dc75b7aa5eea721568e372447efe06b85bd896ee8c54f10	README
-sha256	8177f97513213526df2cf6184d8ff986c675afb514d4e68a404010521b880643	COPYING
-sha256	fd9e48ca316a5032069b9521f4f4b4d9b1c60365012bae1e62286bcd5bd2e761	COPYING.OpenSSL
+sha256  b1ebebbce145027f4268211f36d121b083aeeabdc1736eb144b8afd8e86ce8da  README
+sha256  8177f97513213526df2cf6184d8ff986c675afb514d4e68a404010521b880643  COPYING
+sha256  fd9e48ca316a5032069b9521f4f4b4d9b1c60365012bae1e62286bcd5bd2e761  COPYING.OpenSSL

@@ -41,6 +41,7 @@ config BR2_PACKAGE_RESIPROCATE_REND
 
 config BR2_PACKAGE_RESIPROCATE_APPS
 	bool "resiprocate-apps"
+	select BR2_PACKAGE_OPENSSL
 	select BR2_PACKAGE_PCRE
 	help
 	  Build apps clicktocall and sipdial

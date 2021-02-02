@@ -3,8 +3,6 @@ config BR2_PACKAGE_P11_KIT
 	depends on !BR2_STATIC_LIBS
 	depends on BR2_USE_MMU
 	depends on BR2_TOOLCHAIN_HAS_THREADS
-	select BR2_PACKAGE_LIBFFI
-	select BR2_PACKAGE_LIBTASN1
 	help
 	  Provides a way to load and enumerate PKCS#11 modules.
 	  Provides a standard configuration setup for installing PKCS#11

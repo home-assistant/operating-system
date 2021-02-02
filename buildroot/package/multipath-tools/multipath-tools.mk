@@ -4,12 +4,28 @@
 #
 ################################################################################
 
-MULTIPATH_TOOLS_VERSION = 0.8.4
-MULTIPATH_TOOLS_SITE = $(call github,openSUSE,multipath-tools,$(MULTIPATH_TOOLS_VERSION))
-MULTIPATH_TOOLS_LICENSE = LGPL-2.0
-MULTIPATH_TOOLS_LICENSE_FILES = COPYING
+MULTIPATH_TOOLS_VERSION = 0.8.5
+MULTIPATH_TOOLS_SITE = $(call github,opensvc,multipath-tools,$(MULTIPATH_TOOLS_VERSION))
+
+MULTIPATH_TOOLS_LICENSE = \
+	LGPL-2.0 (default), \
+	LGPL-2.1+ (libmpathcmd), \
+	GPL-2.0+ (libmultipath), \
+	GPL-3.0+ (libdmmp)
+MULTIPATH_TOOLS_LICENSE_FILES = \
+	LICENSES/GPL-2.0 \
+	LICENSES/GPL-3.0 \
+	LICENSES/LGPL-2.0 \
+	LICENSES/LGPL-2.1 \
+	README.md
+
 MULTIPATH_TOOLS_DEPENDENCIES = lvm2 json-c readline udev liburcu libaio host-pkgconf
-MULTIPATH_TOOLS_MAKE_OPTS = LIB="lib" RUN="run" OPTFLAGS="" STACKPROT=""
+MULTIPATH_TOOLS_MAKE_OPTS = \
+	LIB="lib" \
+	RUN="run" \
+	OPTFLAGS="" \
+	STACKPROT="" \
+	WARNFLAGS=""
 
 ifeq ($(BR2_PACKAGE_SYSTEMD),y)
 MULTIPATH_TOOLS_DEPENDENCIES += systemd

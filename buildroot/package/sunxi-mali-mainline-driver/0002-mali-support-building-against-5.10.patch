@@ -1,0 +1,98 @@
+From 8ea1fb65dd5db556b386a1ed726f7315d3511c2b Mon Sep 17 00:00:00 2001
+From: Giulio Benetti <giulio.benetti@benettiengineering.com>
+Date: Thu, 17 Dec 2020 01:54:52 +0100
+Subject: [PATCH] mali: support building against 5.10
+
+Add patch to fix build failure with Linux version 5.10 due to missing
+linux/dma-contiguous.h which content has been moved to
+linux/dma-mapping.h
+
+Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+---
+ ...5-mali-support-building-against-5.10.patch | 34 +++++++++++++++++++
+ patches/r6p0/series                           |  1 +
+ patches/r6p2/series                           |  1 +
+ patches/r8p1/series                           |  1 +
+ patches/r9p0/series                           |  1 +
+ 5 files changed, 38 insertions(+)
+ create mode 100644 patches/0025-mali-support-building-against-5.10.patch
+
+diff --git a/patches/0025-mali-support-building-against-5.10.patch b/patches/0025-mali-support-building-against-5.10.patch
+new file mode 100644
+index 0000000..e9070e7
+--- /dev/null
++++ b/patches/0025-mali-support-building-against-5.10.patch
+@@ -0,0 +1,34 @@
++From 9a6b4558bb7f470152ab00692010f07fd0bfa8f8 Mon Sep 17 00:00:00 2001
++From: Giulio Benetti <giulio.benetti@benettiengineering.com>
++Date: Thu, 17 Dec 2020 01:19:33 +0100
++Subject: [PATCH] mali: support building against 5.10
++
++Starting from Linux version 5.10.0 <linux/dma-contiguous.h> has been
++removed and its content moved to <linux/dma-mapping.h> and this leads
++to build failure with Linux 5.10. So let's include
++<include/dma-contiguous.h> only if we're building with Linux
++version < 5.10.0.
++
++Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
++---
++ src/devicedrv/mali/platform/sunxi/sunxi.c | 3 +++
++ 1 file changed, 3 insertions(+)
++
++diff --git a/src/devicedrv/mali/platform/sunxi/sunxi.c b/src/devicedrv/mali/platform/sunxi/sunxi.c
++index 74ebe0b..a8df0d9 100644
++--- a/src/devicedrv/mali/platform/sunxi/sunxi.c
+++++ b/src/devicedrv/mali/platform/sunxi/sunxi.c
++@@ -3,7 +3,10 @@
++ #include <linux/clkdev.h>
++ #include <linux/cma.h>
++ #include <linux/delay.h>
+++#include <linux/version.h>
+++#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 10, 0)
++ #include <linux/dma-contiguous.h>
+++#endif
++ #include <linux/dma-mapping.h>
++ #include <linux/io.h>
++ #include <linux/kernel.h>
++-- 
++2.25.1
++
+diff --git a/patches/r6p0/series b/patches/r6p0/series
+index 4074177..5d4883f 100644
+--- a/patches/r6p0/series
++++ b/patches/r6p0/series
+@@ -18,3 +18,4 @@ r6p0/0013-mali-support-building-against-4.15.patch
+ r6p0/0022-mali-support-building-against-5.6.patch
+ 0023-mali-support-building-against-5.7.patch
+ r6p0/0024-mali-support-building-against-5.9.patch
++0025-mali-support-building-against-5.10.patch
+diff --git a/patches/r6p2/series b/patches/r6p2/series
+index 775bc6f..e19cf11 100644
+--- a/patches/r6p2/series
++++ b/patches/r6p2/series
+@@ -21,3 +21,4 @@ r6p2/0016-mali-support-building-against-4.16.patch
+ r6p2/0022-mali-support-building-against-5.6.patch
+ 0023-mali-support-building-against-5.7.patch
+ r6p2/0024-mali-support-building-against-5.9.patch
++0025-mali-support-building-against-5.10.patch
+diff --git a/patches/r8p1/series b/patches/r8p1/series
+index 0f15e40..4ad43c1 100644
+--- a/patches/r8p1/series
++++ b/patches/r8p1/series
+@@ -16,3 +16,4 @@ r8p1/0017-mali-support-building-against-4.9-later.patch
+ r6p2/0022-mali-support-building-against-5.6.patch
+ 0023-mali-support-building-against-5.7.patch
+ 0024-mali-support-building-against-5.9.patch
++0025-mali-support-building-against-5.10.patch
+diff --git a/patches/r9p0/series b/patches/r9p0/series
+index 866e869..dca4e02 100644
+--- a/patches/r9p0/series
++++ b/patches/r9p0/series
+@@ -13,3 +13,4 @@ r6p2/0016-mali-support-building-against-4.16.patch
+ r6p2/0022-mali-support-building-against-5.6.patch
+ 0023-mali-support-building-against-5.7.patch
+ 0024-mali-support-building-against-5.9.patch
++0025-mali-support-building-against-5.10.patch
+-- 
+2.25.1
+

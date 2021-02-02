@@ -14,6 +14,11 @@ MUTT_CONF_OPTS = --disable-doc --disable-smtp
 # 0001-Ensure-IMAP-connection-is-closed-after-a-connection-error.patch
 MUTT_IGNORE_CVES += CVE-2020-28896
 
+# 0002-CVE-2021-3181-1.patch
+# 0003-CVE-2021-3181-2.patch
+# 0004-CVE-2021-3181-3.patch
+MUTT_IGNORE_CVES += CVE-2021-3181
+
 ifeq ($(BR2_PACKAGE_LIBICONV),y)
 MUTT_DEPENDENCIES += libiconv
 MUTT_CONF_OPTS += --enable-iconv

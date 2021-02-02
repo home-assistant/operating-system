@@ -6,6 +6,8 @@ import subprocess
 import sys
 import unittest
 
+brpath = os.path.normpath(os.path.join(os.path.dirname(__file__), ".."))
+
 #
 # Patch parsing functions
 #
@@ -94,14 +96,14 @@ def get_all_test_cases(suite):
         yield (suite.__module__, suite.__class__.__name__)
 
 
-def list_unittests(path):
+def list_unittests():
     """Use the unittest module to retreive all test cases from a given
     directory"""
     loader = unittest.TestLoader()
-    suite = loader.discover(path)
+    suite = loader.discover(os.path.join(brpath, "support", "testing"))
     tests = {}
     for module, test in get_all_test_cases(suite):
-        module_path = os.path.join(path, *module.split('.'))
+        module_path = os.path.join("support", "testing", *module.split('.'))
         tests.setdefault(module_path, []).append('%s.%s' % (module, test))
     return tests
 
@@ -124,9 +126,7 @@ class Developer:
         self.defconfigs = parse_developer_defconfigs(files)
 
     def hasfile(self, f):
-        f = os.path.abspath(f)
         for fs in self.files:
-            fs = os.path.abspath(fs)
             if f.startswith(fs):
                 return True
         return False
@@ -158,7 +158,7 @@ def parse_developer_packages(fnames):
     patterns, and return a list of those packages."""
     packages = set()
     for fname in fnames:
-        for root, dirs, files in os.walk(fname):
+        for root, dirs, files in os.walk(os.path.join(brpath, fname)):
             for f in files:
                 path = os.path.join(root, f)
                 if fname_get_package_infra(path):
@@ -223,7 +223,7 @@ def parse_developer_runtime_tests(fnames):
     # List all files recursively
     for fname in fnames:
         if os.path.isdir(fname):
-            for root, _dirs, files in os.walk(fname):
+            for root, _dirs, files in os.walk(os.path.join(brpath, fname)):
                 all_files += [os.path.join(root, f) for f in files]
         else:
             all_files.append(fname)
@@ -237,15 +237,13 @@ def parse_developer_runtime_tests(fnames):
     return runtimes
 
 
-def parse_developers(basepath=None):
+def parse_developers():
     """Parse the DEVELOPERS file and return a list of Developer objects."""
     developers = []
     linen = 0
-    if basepath is None:
-        basepath = os.getcwd()
     global unittests
-    unittests = list_unittests(os.path.join(basepath, 'support/testing'))
-    with open(os.path.join(basepath, "DEVELOPERS"), "r") as f:
+    unittests = list_unittests()
+    with open(os.path.join(brpath, "DEVELOPERS"), "r") as f:
         files = []
         name = None
         for line in f:
@@ -259,11 +257,11 @@ def parse_developers(basepath=None):
                 name = line[2:].strip()
             elif line.startswith("F:"):
                 fname = line[2:].strip()
-                dev_files = glob.glob(os.path.join(basepath, fname))
+                dev_files = glob.glob(os.path.join(brpath, fname))
                 if len(dev_files) == 0:
                     print("WARNING: '%s' doesn't match any file" % fname,
                           file=sys.stderr)
-                files += dev_files
+                files += [os.path.relpath(f, brpath) for f in dev_files]
             elif line == "":
                 if not name:
                     continue

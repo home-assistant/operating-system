@@ -2523,7 +2523,7 @@ config BR2_TOOLCHAIN_EXTERNAL_BOOTLIN_OPENRISC_UCLIBC_STABLE
 	  https://toolchains.bootlin.com/
 
 config BR2_TOOLCHAIN_EXTERNAL_BOOTLIN_POWERPC_440FP_GLIBC_BLEEDING_EDGE
-	bool "powerpc-440fp glibc bleeding-edge 2020.08-1"
+	bool "powerpc-440fp glibc bleeding-edge 2020.08-2"
 	depends on BR2_powerpc
 	depends on BR2_powerpc_440fp
 	depends on BR2_USE_MMU
@@ -2538,8 +2538,8 @@ config BR2_TOOLCHAIN_EXTERNAL_BOOTLIN_POWERPC_440FP_GLIBC_BLEEDING_EDGE
 	select BR2_TOOLCHAIN_HAS_THREADS
 	select BR2_TOOLCHAIN_HAS_THREADS
 	select BR2_TOOLCHAIN_HAS_THREADS_NPTL
-	select BR2_TOOLCHAIN_EXTERNAL_GLIBC
 	select BR2_TOOLCHAIN_HAS_NATIVE_RPC
+	select BR2_TOOLCHAIN_EXTERNAL_GLIBC
 	help
 	  Bootlin toolchain for the powerpc-440fp architecture, using
 	  the glibc C library. This is a bleeding-edge version, which
@@ -2549,7 +2549,7 @@ config BR2_TOOLCHAIN_EXTERNAL_BOOTLIN_POWERPC_440FP_GLIBC_BLEEDING_EDGE
 	  https://toolchains.bootlin.com/
 
 config BR2_TOOLCHAIN_EXTERNAL_BOOTLIN_POWERPC_440FP_GLIBC_STABLE
-	bool "powerpc-440fp glibc stable 2020.08-1"
+	bool "powerpc-440fp glibc stable 2020.08-2"
 	depends on BR2_powerpc
 	depends on BR2_powerpc_440fp
 	depends on BR2_USE_MMU
@@ -2564,8 +2564,8 @@ config BR2_TOOLCHAIN_EXTERNAL_BOOTLIN_POWERPC_440FP_GLIBC_STABLE
 	select BR2_TOOLCHAIN_HAS_THREADS
 	select BR2_TOOLCHAIN_HAS_THREADS
 	select BR2_TOOLCHAIN_HAS_THREADS_NPTL
-	select BR2_TOOLCHAIN_EXTERNAL_GLIBC
 	select BR2_TOOLCHAIN_HAS_NATIVE_RPC
+	select BR2_TOOLCHAIN_EXTERNAL_GLIBC
 	help
 	  Bootlin toolchain for the powerpc-440fp architecture, using
 	  the glibc C library. This is a stable version, which means
@@ -2575,7 +2575,7 @@ config BR2_TOOLCHAIN_EXTERNAL_BOOTLIN_POWERPC_440FP_GLIBC_STABLE
 	  https://toolchains.bootlin.com/
 
 config BR2_TOOLCHAIN_EXTERNAL_BOOTLIN_POWERPC_440FP_MUSL_BLEEDING_EDGE
-	bool "powerpc-440fp musl bleeding-edge 2020.08-1"
+	bool "powerpc-440fp musl bleeding-edge 2020.08-2"
 	depends on BR2_powerpc
 	depends on BR2_powerpc_440fp
 	depends on BR2_USE_MMU
@@ -2598,7 +2598,7 @@ config BR2_TOOLCHAIN_EXTERNAL_BOOTLIN_POWERPC_440FP_MUSL_BLEEDING_EDGE
 	  https://toolchains.bootlin.com/
 
 config BR2_TOOLCHAIN_EXTERNAL_BOOTLIN_POWERPC_440FP_MUSL_STABLE
-	bool "powerpc-440fp musl stable 2020.08-1"
+	bool "powerpc-440fp musl stable 2020.08-2"
 	depends on BR2_powerpc
 	depends on BR2_powerpc_440fp
 	depends on BR2_USE_MMU
@@ -2621,7 +2621,7 @@ config BR2_TOOLCHAIN_EXTERNAL_BOOTLIN_POWERPC_440FP_MUSL_STABLE
 	  https://toolchains.bootlin.com/
 
 config BR2_TOOLCHAIN_EXTERNAL_BOOTLIN_POWERPC_440FP_UCLIBC_BLEEDING_EDGE
-	bool "powerpc-440fp uclibc bleeding-edge 2020.08-1"
+	bool "powerpc-440fp uclibc bleeding-edge 2020.08-2"
 	depends on BR2_powerpc
 	depends on BR2_powerpc_440fp
 	select BR2_TOOLCHAIN_GCC_AT_LEAST_10
@@ -2645,7 +2645,7 @@ config BR2_TOOLCHAIN_EXTERNAL_BOOTLIN_POWERPC_440FP_UCLIBC_BLEEDING_EDGE
 	  https://toolchains.bootlin.com/
 
 config BR2_TOOLCHAIN_EXTERNAL_BOOTLIN_POWERPC_440FP_UCLIBC_STABLE
-	bool "powerpc-440fp uclibc stable 2020.08-1"
+	bool "powerpc-440fp uclibc stable 2020.08-2"
 	depends on BR2_powerpc
 	depends on BR2_powerpc_440fp
 	select BR2_TOOLCHAIN_GCC_AT_LEAST_9
