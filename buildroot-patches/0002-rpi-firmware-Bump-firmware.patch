@@ -1,10 +1,10 @@
-From 7c7198d6075748a5f831c0068441695455d06e6f Mon Sep 17 00:00:00 2001
-Message-Id: <7c7198d6075748a5f831c0068441695455d06e6f.1607000394.git.stefan@agner.ch>
-In-Reply-To: <dd83e231779b8daaeaa0a78d6686b80eeb49c12b.1607000394.git.stefan@agner.ch>
-References: <dd83e231779b8daaeaa0a78d6686b80eeb49c12b.1607000394.git.stefan@agner.ch>
+From b24a9853bf61b59c44f5b5e0c02a41e07b6d776f Mon Sep 17 00:00:00 2001
+Message-Id: <b24a9853bf61b59c44f5b5e0c02a41e07b6d776f.1612369715.git.stefan@agner.ch>
+In-Reply-To: <53aff7f049c974ab861db563c24d31c5512d1fbc.1612369715.git.stefan@agner.ch>
+References: <53aff7f049c974ab861db563c24d31c5512d1fbc.1612369715.git.stefan@agner.ch>
 From: Pascal Vizeli <pvizeli@syshack.ch>
 Date: Thu, 16 Apr 2020 11:51:46 +0000
-Subject: [PATCH 2/7] rpi-firmware: Bump firmware
+Subject: [PATCH 2/9] rpi-firmware: Bump firmware
 
 Signed-off-by: Pascal Vizeli <pvizeli@syshack.ch>
 ---
@@ -35,5 +35,5 @@ index 8b2b2c7154..fe7a099407 100644
  RPI_FIRMWARE_LICENSE = BSD-3-Clause
  RPI_FIRMWARE_LICENSE_FILES = boot/LICENCE.broadcom
 -- 
-2.29.2
+2.30.0
 

@@ -1,10 +1,10 @@
-From a19d20fdbeab82cfe0c972ef6b2a292b582011cb Mon Sep 17 00:00:00 2001
-Message-Id: <a19d20fdbeab82cfe0c972ef6b2a292b582011cb.1608480376.git.stefan@agner.ch>
-In-Reply-To: <dd83e231779b8daaeaa0a78d6686b80eeb49c12b.1608480376.git.stefan@agner.ch>
-References: <dd83e231779b8daaeaa0a78d6686b80eeb49c12b.1608480376.git.stefan@agner.ch>
+From 6ca8035a4ffbb4e6de6fd128a1e6a638bb974f11 Mon Sep 17 00:00:00 2001
+Message-Id: <6ca8035a4ffbb4e6de6fd128a1e6a638bb974f11.1612369715.git.stefan@agner.ch>
+In-Reply-To: <53aff7f049c974ab861db563c24d31c5512d1fbc.1612369715.git.stefan@agner.ch>
+References: <53aff7f049c974ab861db563c24d31c5512d1fbc.1612369715.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Sun, 20 Dec 2020 16:57:09 +0100
-Subject: [PATCH 8/8] systemd: Bump to latest systemd-stable release 246.9
+Subject: [PATCH 8/9] systemd: Bump to latest systemd-stable release 246.10
 
 ---
  ...o-not-fail-with-read-only-etc-or-var.patch | 34 -------------------
@@ -54,18 +54,18 @@ index 01e7f1e906..0000000000
 -2.25.4
 -
 diff --git a/package/systemd/systemd.hash b/package/systemd/systemd.hash
-index cad249199c..2b41ee55f9 100644
+index cad249199c..0c2ba1e1c3 100644
 --- a/package/systemd/systemd.hash
 +++ b/package/systemd/systemd.hash
 @@ -1,5 +1,5 @@
  # sha256 locally computed
 -sha256  f45c5a98d3be7dd05ed7f1e1a0ab00c7ba52602aa2dc42615bf74be61fcbe178  systemd-246.5.tar.gz
-+sha256  944f264141ee12199124fe09e811173a3cec72f3db195844707260ee56ad9220  systemd-246.9.tar.gz
++sha256  3a972d287edd864e0b33321bc74dfe6083d390306461fa7e958895eaa4be6b67  systemd-246.10.tar.gz
  sha256  ab15fd526bd8dd18a9e77ebc139656bf4d33e97fc7238cd11bf60e2b9b8666c6  LICENSE.GPL2
  sha256  dc626520dcd53a22f727af3ee42c770e56c97a64fe3adb063799d8ab032fe551  LICENSE.LGPL2.1
  sha256  b142af99a3d950fb465326d6fd5a49d348523dc0d216682880527264d0a011e9  README
 diff --git a/package/systemd/systemd.mk b/package/systemd/systemd.mk
-index cb12f667d6..1e4171a9e2 100644
+index ddd3f4380e..51a3160050 100644
 --- a/package/systemd/systemd.mk
 +++ b/package/systemd/systemd.mk
 @@ -4,7 +4,7 @@
@@ -73,10 +73,10 @@ index cb12f667d6..1e4171a9e2 100644
  ################################################################################
  
 -SYSTEMD_VERSION = 246.5
-+SYSTEMD_VERSION = 246.9
++SYSTEMD_VERSION = 246.10
  SYSTEMD_SITE = $(call github,systemd,systemd-stable,v$(SYSTEMD_VERSION))
  SYSTEMD_LICENSE = LGPL-2.1+, GPL-2.0+ (udev), Public Domain (few source files, see README), BSD-3-Clause (tools/chromiumos)
  SYSTEMD_LICENSE_FILES = LICENSE.GPL2 LICENSE.LGPL2.1 README tools/chromiumos/LICENSE
 -- 
-2.29.2
+2.30.0
 
