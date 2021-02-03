@@ -1,10 +1,10 @@
-From ad1b1c5ef75626ae0fc735473034ca1b571dc281 Mon Sep 17 00:00:00 2001
-Message-Id: <ad1b1c5ef75626ae0fc735473034ca1b571dc281.1607000394.git.stefan@agner.ch>
-In-Reply-To: <dd83e231779b8daaeaa0a78d6686b80eeb49c12b.1607000394.git.stefan@agner.ch>
-References: <dd83e231779b8daaeaa0a78d6686b80eeb49c12b.1607000394.git.stefan@agner.ch>
+From bd1542bc2e242b189b4a778cb879e3416c40b60a Mon Sep 17 00:00:00 2001
+Message-Id: <bd1542bc2e242b189b4a778cb879e3416c40b60a.1612369715.git.stefan@agner.ch>
+In-Reply-To: <53aff7f049c974ab861db563c24d31c5512d1fbc.1612369715.git.stefan@agner.ch>
+References: <53aff7f049c974ab861db563c24d31c5512d1fbc.1612369715.git.stefan@agner.ch>
 From: Pascal Vizeli <pvizeli@syshack.ch>
 Date: Thu, 16 Apr 2020 12:01:44 +0000
-Subject: [PATCH 4/7] Fix dhcp client
+Subject: [PATCH 4/9] Fix dhcp client
 
 Signed-off-by: Pascal Vizeli <pvizeli@syshack.ch>
 ---
@@ -26,5 +26,5 @@ index ad59804d3b..f1ffa81d9a 100644
  		install-sbinPROGRAMS
  	$(INSTALL) -m 0644 -D package/dhcp/dhclient.conf \
 -- 
-2.29.2
+2.30.0
 

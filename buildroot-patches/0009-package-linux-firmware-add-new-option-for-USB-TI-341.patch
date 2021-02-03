@@ -1,7 +1,7 @@
-From 2a63d2fb5dc2a51888737af1d3e868b4b8cf74c8 Mon Sep 17 00:00:00 2001
-Message-Id: <2a63d2fb5dc2a51888737af1d3e868b4b8cf74c8.1608718424.git.stefan@agner.ch>
-In-Reply-To: <dd83e231779b8daaeaa0a78d6686b80eeb49c12b.1608718424.git.stefan@agner.ch>
-References: <dd83e231779b8daaeaa0a78d6686b80eeb49c12b.1608718424.git.stefan@agner.ch>
+From 5296f74bba93a16fe1db5493f36e35fad434f9ee Mon Sep 17 00:00:00 2001
+Message-Id: <5296f74bba93a16fe1db5493f36e35fad434f9ee.1612369715.git.stefan@agner.ch>
+In-Reply-To: <53aff7f049c974ab861db563c24d31c5512d1fbc.1612369715.git.stefan@agner.ch>
+References: <53aff7f049c974ab861db563c24d31c5512d1fbc.1612369715.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Wed, 23 Dec 2020 10:53:20 +0100
 Subject: [PATCH 9/9] package/linux-firmware: add new option for USB TI
@@ -49,5 +49,5 @@ index f1c84a134d..f00fb2e6ae 100644
  define LINUX_FIRMWARE_INSTALL_FILES
  	cd $(@D) && \
 -- 
-2.29.2
+2.30.0
 
