@@ -146,6 +146,16 @@ endif
 
 comment "Legacy options removed in 2020.11"
 
+config BR2_PACKAGE_LIBUPNP18
+	bool "libupnp18 package removed"
+	select BR2_LEGACY
+	select BR2_PACKAGE_LIBUPNP
+	help
+	  Version 1.8.x of libupnp (i.e. libupnp18) has been removed
+	  because it will never be fixed against CallStranger a.k.a.
+	  CVE-2020-12695. The libupnp package (which has been updated to
+	  version 1.14.x) has been selected instead.
+
 config BR2_PACKAGE_OPENCV
 	bool "opencv package was removed"
 	select BR2_LEGACY

@@ -18,4 +18,8 @@ ifeq ($(BR2_TOOLCHAIN_USES_MUSL),y)
 XAPP_XLOAD_CONF_OPTS += CFLAGS="$(TARGET_CFLAGS) -DRLOADSTUB"
 endif
 
+ifeq ($(BR2_SYSTEM_ENABLE_NLS),)
+XAPP_XLOAD_CONF_ENV += ac_cv_search_gettext=no
+endif
+
 $(eval $(autotools-package))

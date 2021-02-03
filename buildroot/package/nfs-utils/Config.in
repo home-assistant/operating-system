@@ -7,7 +7,6 @@ config BR2_PACKAGE_NFS_UTILS
 	depends on BR2_TOOLCHAIN_HAS_THREADS # libtirpc, rpcbind
 	depends on BR2_USE_MMU # fork()
 	select BR2_PACKAGE_LIBTIRPC # IPv6 requires libtirpc
-	select BR2_PACKAGE_RPCBIND # runtime
 	help
 	  The NFS Linux kernel server.
 
@@ -28,6 +27,7 @@ config BR2_PACKAGE_NFS_UTILS_RPC_LOCKD
 config BR2_PACKAGE_NFS_UTILS_RPC_NFSD
 	bool "rpc.nfsd"
 	default y
+	select BR2_PACKAGE_RPCBIND # runtime
 	help
 	  NFS server
 

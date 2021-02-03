@@ -23,4 +23,8 @@ define LIBFUSE3_PERMISSIONS
 	/usr/bin/fusermount3 f 4755 0 0 - - - - -
 endef
 
+define LIBFUSE3_LINUX_CONFIG_FIXUPS
+	$(call KCONFIG_ENABLE_OPT,CONFIG_FUSE_FS)
+endef
+
 $(eval $(meson-package))

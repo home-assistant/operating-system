@@ -16,12 +16,13 @@ from checkpackagelib.lib import Utf8Characters         # noqa: F401
 
 # used in more than one check
 start_conditional = ["ifdef", "ifeq", "ifndef", "ifneq"]
+continue_conditional = ["elif", "else"]
 end_conditional = ["endif"]
 
 
 class Indent(_CheckFunction):
     COMMENT = re.compile(r"^\s*#")
-    CONDITIONAL = re.compile(r"^\s*({})\s".format("|".join(start_conditional + end_conditional)))
+    CONDITIONAL = re.compile(r"^\s*({})\s".format("|".join(start_conditional + end_conditional + continue_conditional)))
     ENDS_WITH_BACKSLASH = re.compile(r"^[^#].*\\$")
     END_DEFINE = re.compile(r"^\s*endef\s")
     MAKEFILE_TARGET = re.compile(r"^[^# \t]+:\s")
@@ -43,7 +44,7 @@ class Indent(_CheckFunction):
         expect_tabs = False
         if self.define or self.backslash or self.makefile_target:
             expect_tabs = True
-        if self.CONDITIONAL.search(text):
+        if not self.backslash and self.CONDITIONAL.search(text):
             expect_tabs = False
 
         # calculate for next line
