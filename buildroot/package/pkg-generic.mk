@@ -567,6 +567,12 @@ ifneq ($$(filter bzr cvs hg,$$($(2)_SITE_METHOD)),)
 BR_NO_CHECK_HASH_FOR += $$($(2)_SOURCE)
 endif
 
+ifndef $(2)_GIT_SUBMODULES
+ ifdef $(3)_GIT_SUBMODULES
+  $(2)_GIT_SUBMODULES = $$($(3)_GIT_SUBMODULES)
+ endif
+endif
+
 # Do not accept to download git submodule if not using the git method
 ifneq ($$($(2)_GIT_SUBMODULES),)
  ifneq ($$($(2)_SITE_METHOD),git)

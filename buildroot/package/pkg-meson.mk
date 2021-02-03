@@ -81,7 +81,11 @@ define $(2)_CONFIGURE_CMDS
 	    -e "/^\[properties\]$$$$/s:$$$$:$$(foreach x,$$($(2)_MESON_EXTRA_PROPERTIES),\n$$(x)):" \
 	    package/meson/cross-compilation.conf.in \
 	    > $$($$(PKG)_SRCDIR)/build/cross-compilation.conf
-	PATH=$$(BR_PATH) $$($$(PKG)_CONF_ENV) $$(MESON) \
+	PATH=$$(BR_PATH) \
+	CC_FOR_BUILD="$(HOSTCC)" \
+	CXX_FOR_BUILD="$(HOSTCC)" \
+	$$($$(PKG)_CONF_ENV) \
+	$$(MESON) \
 		--prefix=/usr \
 		--libdir=lib \
 		--default-library=$(if $(BR2_STATIC_LIBS),static,shared) \

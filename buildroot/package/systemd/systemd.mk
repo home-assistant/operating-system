@@ -576,7 +576,7 @@ ifneq ($(call qstrip,$(BR2_TARGET_GENERIC_GETTY_PORT)),)
 # * enable serial-getty@xxx for other $BR2_TARGET_GENERIC_TTY_PATH
 # * rewrite baudrates if a baudrate is provided
 define SYSTEMD_INSTALL_SERVICE_TTY
-	mkdir $(TARGET_DIR)/usr/lib/systemd/system/getty@.service.d; \
+	mkdir -p $(TARGET_DIR)/usr/lib/systemd/system/getty@.service.d; \
 	printf '[Install]\nDefaultInstance=\n' \
 		>$(TARGET_DIR)/usr/lib/systemd/system/getty@.service.d/buildroot-console.conf; \
 	if [ $(BR2_TARGET_GENERIC_GETTY_PORT) = "console" ]; \
@@ -588,7 +588,7 @@ define SYSTEMD_INSTALL_SERVICE_TTY
 			$(call qstrip,$(BR2_TARGET_GENERIC_GETTY_PORT)) \
 			>$(TARGET_DIR)/usr/lib/systemd/system/getty@.service.d/buildroot-console.conf; \
 	else \
-		mkdir $(TARGET_DIR)/usr/lib/systemd/system/serial-getty@.service.d;\
+		mkdir -p $(TARGET_DIR)/usr/lib/systemd/system/serial-getty@.service.d;\
 		printf '[Install]\nDefaultInstance=%s\n' \
 			$(call qstrip,$(BR2_TARGET_GENERIC_GETTY_PORT)) \
 			>$(TARGET_DIR)/usr/lib/systemd/system/serial-getty@.service.d/buildroot-console.conf;\

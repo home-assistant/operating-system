@@ -87,6 +87,8 @@ define UBOOT_TOOLS_INSTALL_TARGET_CMDS
 	$(UBOOT_TOOLS_INSTALL_FIT_CHECK_SIGN)
 endef
 
+# host-uboot-tools
+
 define HOST_UBOOT_TOOLS_CONFIGURE_CMDS
 	mkdir -p $(@D)/include/config
 	touch $(@D)/include/config/auto.conf
@@ -106,10 +108,6 @@ HOST_UBOOT_TOOLS_MAKE_OPTS += CONFIG_FIT_SIGNATURE=y CONFIG_FIT_SIGNATURE_MAX_SI
 HOST_UBOOT_TOOLS_DEPENDENCIES += host-openssl
 endif
 
-define HOST_UBOOT_TOOLS_BUILD_CMDS
-	$(BR2_MAKE1) -C $(@D) $(HOST_UBOOT_TOOLS_MAKE_OPTS) tools-only
-endef
-
 ifeq ($(BR2_PACKAGE_HOST_UBOOT_TOOLS_ENVIMAGE),y)
 
 UBOOT_TOOLS_GENERATE_ENV_FILE = $(call qstrip,$(BR2_PACKAGE_HOST_UBOOT_TOOLS_ENVIMAGE_SOURCE))
@@ -122,30 +120,32 @@ define HOST_UBOOT_TOOLS_GENERATE_ENV_DEFAULTS
 		> $(UBOOT_TOOLS_GENERATE_ENV_FILE)
 endef
 HOST_UBOOT_TOOLS_DEPENDENCIES += uboot
-endif
-
-define HOST_UBOOT_TOOLS_GENERATE_ENV_IMAGE
-	$(HOST_UBOOT_TOOLS_GENERATE_ENV_DEFAULTS)
-	$(HOST_DIR)/bin/mkenvimage -s $(BR2_PACKAGE_HOST_UBOOT_TOOLS_ENVIMAGE_SIZE) \
-		$(if $(BR2_PACKAGE_HOST_UBOOT_TOOLS_ENVIMAGE_REDUNDANT),-r) \
-		$(if $(filter "BIG",$(BR2_ENDIAN)),-b) \
-		-o $(BINARIES_DIR)/uboot-env.bin \
-		$(UBOOT_TOOLS_GENERATE_ENV_FILE)
-endef
+endif #UBOOT_TOOLS_GENERATE_ENV_FILE:BR2_TARGET_UBOOT
 
 ifeq ($(BR_BUILDING),y)
 ifeq ($(call qstrip,$(BR2_PACKAGE_HOST_UBOOT_TOOLS_ENVIMAGE_SIZE)),)
 $(error Please provide U-Boot environment size (BR2_PACKAGE_HOST_UBOOT_TOOLS_ENVIMAGE_SIZE setting))
 endif
-# If U-Boot is available, ENVIMAGE_SOURCE is optional because the default can
-# be taken from U-Boot.
+# If U-Boot is not available, ENVIMAGE_SOURCE must be provided by user,
+# otherwise it is optional because the default can be taken from U-Boot
 ifeq ($(BR2_TARGET_UBOOT),)
-ifeq ($(call qstrip,$(BR2_PACKAGE_HOST_UBOOT_TOOLS_ENVIMAGE_SOURCE),)
-$(error Please provide U-Boot environment file BR2_PACKAGE_HOST_UBOOT_TOOLS_ENVIMAGE_SOURCE setting))
+ifeq ($(call qstrip,$(BR2_PACKAGE_HOST_UBOOT_TOOLS_ENVIMAGE_SOURCE)),)
+$(error Please provide U-Boot environment file (BR2_PACKAGE_HOST_UBOOT_TOOLS_ENVIMAGE_SOURCE setting))
 endif
 endif #BR2_TARGET_UBOOT
 endif #BR_BUILDING
 
+define HOST_UBOOT_TOOLS_GENERATE_ENVIMAGE
+	$(HOST_UBOOT_TOOLS_GENERATE_ENV_DEFAULTS)
+	$(@D)/tools/mkenvimage -s $(BR2_PACKAGE_HOST_UBOOT_TOOLS_ENVIMAGE_SIZE) \
+		$(if $(BR2_PACKAGE_HOST_UBOOT_TOOLS_ENVIMAGE_REDUNDANT),-r) \
+		$(if $(filter "BIG",$(BR2_ENDIAN)),-b) \
+		-o $(@D)/tools/uboot-env.bin \
+		$(UBOOT_TOOLS_GENERATE_ENV_FILE)
+endef
+define HOST_UBOOT_TOOLS_INSTALL_ENVIMAGE
+	$(INSTALL) -m 0755 -D $(@D)/tools/uboot-env.bin $(BINARIES_DIR)/uboot-env.bin
+endef
 endif #BR2_PACKAGE_HOST_UBOOT_TOOLS_ENVIMAGE
 
 ifeq ($(BR2_PACKAGE_HOST_UBOOT_TOOLS_BOOT_SCRIPT),y)
@@ -154,17 +154,29 @@ ifeq ($(call qstrip,$(BR2_PACKAGE_HOST_UBOOT_TOOLS_BOOT_SCRIPT_SOURCE)),)
 $(error Please define a source file for U-Boot boot script (BR2_PACKAGE_HOST_UBOOT_TOOLS_BOOT_SCRIPT_SOURCE setting))
 endif
 endif #BR_BUILDING
+
+define HOST_UBOOT_TOOLS_GENERATE_BOOT_SCRIPT
+	$(@D)/tools/mkimage -C none -A $(MKIMAGE_ARCH) -T script \
+		-d $(call qstrip,$(BR2_PACKAGE_HOST_UBOOT_TOOLS_BOOT_SCRIPT_SOURCE)) \
+		$(@D)/tools/boot.scr
+endef
+define HOST_UBOOT_TOOLS_INSTALL_BOOT_SCRIPT
+	$(INSTALL) -m 0755 -D $(@D)/tools/boot.scr $(BINARIES_DIR)/boot.scr
+endef
 endif #BR2_PACKAGE_HOST_UBOOT_TOOLS_BOOT_SCRIPT
+
+define HOST_UBOOT_TOOLS_BUILD_CMDS
+	$(BR2_MAKE1) -C $(@D) $(HOST_UBOOT_TOOLS_MAKE_OPTS) tools-only
+	$(HOST_UBOOT_TOOLS_GENERATE_ENVIMAGE)
+	$(HOST_UBOOT_TOOLS_GENERATE_BOOT_SCRIPT)
+endef
 
 define HOST_UBOOT_TOOLS_INSTALL_CMDS
 	$(INSTALL) -m 0755 -D $(@D)/tools/mkimage $(HOST_DIR)/bin/mkimage
 	$(INSTALL) -m 0755 -D $(@D)/tools/mkenvimage $(HOST_DIR)/bin/mkenvimage
 	$(INSTALL) -m 0755 -D $(@D)/tools/dumpimage $(HOST_DIR)/bin/dumpimage
-	$(HOST_UBOOT_TOOLS_GENERATE_ENV_IMAGE)
-	$(if $(BR2_PACKAGE_HOST_UBOOT_TOOLS_BOOT_SCRIPT),
-		$(MKIMAGE) -C none -A $(MKIMAGE_ARCH) -T script \
-			-d $(call qstrip,$(BR2_PACKAGE_HOST_UBOOT_TOOLS_BOOT_SCRIPT_SOURCE)) \
-			$(BINARIES_DIR)/boot.scr)
+	$(HOST_UBOOT_TOOLS_INSTALL_ENVIMAGE)
+	$(HOST_UBOOT_TOOLS_INSTALL_BOOT_SCRIPT)
 endef
 
 $(eval $(generic-package))

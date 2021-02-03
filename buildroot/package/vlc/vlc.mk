@@ -4,11 +4,13 @@
 #
 ################################################################################
 
-VLC_VERSION = 3.0.11
+VLC_VERSION = 3.0.12
 VLC_SITE = https://get.videolan.org/vlc/$(VLC_VERSION)
 VLC_SOURCE = vlc-$(VLC_VERSION).tar.xz
 VLC_LICENSE = GPL-2.0+, LGPL-2.1+
 VLC_LICENSE_FILES = COPYING COPYING.LIB
+VLC_CPE_ID_VENDOR = videolan
+VLC_CPE_ID_NAME = vlc_media_player
 VLC_DEPENDENCIES = host-pkgconf
 VLC_AUTORECONF = YES
 
@@ -376,9 +378,9 @@ else
 VLC_CONF_OPTS += --disable-theora
 endif
 
-ifeq ($(BR2_PACKAGE_LIBUPNP)$(BR2_PACKAGE_LIBUPNP18),y)
+ifeq ($(BR2_PACKAGE_LIBUPNP),y)
 VLC_CONF_OPTS += --enable-upnp
-VLC_DEPENDENCIES += $(if $(BR2_PACKAGE_LIBUPNP),libupnp,libupnp18)
+VLC_DEPENDENCIES += libupnp
 else
 VLC_CONF_OPTS += --disable-upnp
 endif

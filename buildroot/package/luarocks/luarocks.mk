@@ -17,8 +17,7 @@ LUAROCKS_CONFIG_FILE = $(LUAROCKS_CONFIG_DIR)/luarocks/config.lua
 HOST_LUAROCKS_CONFIG_FILE = $(LUAROCKS_CONFIG_DIR)/luarocks/host-config.lua
 
 define LUAROCKS_ADDON_EXTRACT
-	mkdir $(@D)/src/luarocks/cmd/external
-	cp package/luarocks/buildroot.lua $(@D)/src/luarocks/cmd/external/buildroot.lua
+	$(INSTALL) -D -m 0644 package/luarocks/buildroot.lua $(@D)/src/luarocks/cmd/external/buildroot.lua
 endef
 HOST_LUAROCKS_POST_EXTRACT_HOOKS += LUAROCKS_ADDON_EXTRACT
 

@@ -138,6 +138,11 @@ define $(1)_INSTALL_IMAGES_CMDS
 	$$($(1)_INSTALL_CUSTOM_ENV)
 endef
 
+# Starting with barebox v2020.09.0, the kconfig used calls the
+# cross-compiler to check its capabilities. So we need the
+# toolchain before we can call the configurators.
+$(1)_KCONFIG_DEPENDENCIES += toolchain
+
 ifeq ($$(BR2_TARGET_$(1)_BAREBOXENV),y)
 define $(1)_INSTALL_TARGET_CMDS
 	cp $$(@D)/scripts/bareboxenv-target $$(TARGET_DIR)/usr/bin/bareboxenv
