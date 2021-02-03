@@ -31,8 +31,7 @@ else
 
     # For MBR, we have to calculate the last usable sector by ourselfs
     DEVICE_SIZE=$(blockdev --getsize64 "${DEVICE_ROOT}")
-    SECTOR_SIZE=$(echo "${PART_TABLE}" | jq -r '.partitiontable.sectorsize')
-    LAST_USABLE_LBA="$((DEVICE_SIZE / SECTOR_SIZE))"
+    LAST_USABLE_LBA=$(echo "${PART_TABLE}" | jq -r "${DEVICE_SIZE} / .partitiontable.sectorsize")
 fi
 echo "[INFO] Last usable logical block ${LAST_USABLE_LBA}"
 
