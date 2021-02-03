@@ -96,6 +96,13 @@ else
 BRLTTY_CONF_OPTS += --without-rgx-package
 endif
 
+ifeq ($(BR2_PACKAGE_POLKIT),y)
+BRLTTY_DEPENDENCIES += polkit
+BRLTTY_CONF_OPTS += --enable-polkit
+else
+BRLTTY_CONF_OPTS += --disable-polkit
+endif
+
 ifeq ($(BR2_PACKAGE_SYSTEMD),y)
 BRLTTY_DEPENDENCIES += systemd
 BRLTTY_CONF_OPTS += --with-service-package

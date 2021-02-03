@@ -1,4 +1,4 @@
 # From: http://www.sudo.ws/download.html
-sha256 7ea8d97a3cee4c844e0887ea7a1bd80eb54cc98fd77966776cb1a80653ad454f  sudo-1.8.31.tar.gz
+sha256  539e2ef43c8a55026697fb0474ab6a925a11206b5aa58710cb42a0e1c81f0978  sudo-1.9.5p2.tar.gz
 # Locally calculated
-sha256 be099fd0ee954224f392dde163aef6d6359c58a5afa1ebb1bd55058318add789  doc/LICENSE
+sha256  505c5955c373514e2533a24a8346f44038e29cba874f5ca83beb171a7409089f  doc/LICENSE

@@ -13,6 +13,6 @@ GMRENDER_RESURRECT_LICENSE = GPL-2.0+
 GMRENDER_RESURRECT_LICENSE_FILES = COPYING
 GMRENDER_RESURRECT_DEPENDENCIES = \
 	gstreamer1 \
-	$(if $(BR2_PACKAGE_LIBUPNP),libupnp,libupnp18)
+	libupnp
 
 $(eval $(autotools-package))

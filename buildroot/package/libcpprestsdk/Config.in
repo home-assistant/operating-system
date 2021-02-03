@@ -3,6 +3,7 @@ config BR2_PACKAGE_LIBCPPRESTSDK
 	depends on BR2_ENABLE_LOCALE
 	depends on BR2_INSTALL_LIBSTDCPP
 	depends on BR2_USE_WCHAR # boost
+	depends on BR2_TOOLCHAIN_SUPPORTS_ALWAYS_LOCKFREE_ATOMIC_INTS # boost-atomic
 	depends on !BR2_TOOLCHAIN_HAS_GCC_BUG_64735 # exception_ptr
 	depends on BR2_TOOLCHAIN_HAS_THREADS_NPTL
 	select BR2_PACKAGE_BOOST
@@ -23,6 +24,7 @@ config BR2_PACKAGE_LIBCPPRESTSDK
 	  https://github.com/Microsoft/cpprestsdk
 
 comment "libcpprestsdk needs a toolchain w/ NPTL, C++, wchar, locale"
+	depends on BR2_TOOLCHAIN_SUPPORTS_ALWAYS_LOCKFREE_ATOMIC_INTS
 	depends on !BR2_TOOLCHAIN_HAS_THREADS_NPTL || \
 		!BR2_INSTALL_LIBSTDCPP || \
 		!BR2_USE_WCHAR || !BR2_ENABLE_LOCALE

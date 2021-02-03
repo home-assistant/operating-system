@@ -32,7 +32,6 @@ brpath = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", ".."))
 
 sys.path.append(os.path.join(brpath, "utils"))
 from getdeveloperlib import parse_developers  # noqa: E402
-import cve as cvecheck  # noqa: E402
 
 
 INFRA_RE = re.compile(r"\$\(eval \$\(([a-z-]*)-package\)\)")
@@ -414,7 +413,7 @@ async def check_package_urls(packages):
     async with aiohttp.ClientSession(connector=connector, trust_env=True) as sess:
         packages = [p for p in packages if p.status['url'][0] == 'ok']
         for pkg in packages:
-            tasks.append(check_url_status(sess, pkg, len(packages)))
+            tasks.append(asyncio.ensure_future(check_url_status(sess, pkg, len(packages))))
         await asyncio.wait(tasks)
 
 
@@ -532,7 +531,7 @@ async def check_package_latest_version(packages):
     async with aiohttp.ClientSession(connector=connector, trust_env=True) as sess:
         packages = [p for p in packages if p.has_valid_infra]
         for pkg in packages:
-            tasks.append(check_package_latest_version_get(sess, pkg, len(packages)))
+            tasks.append(asyncio.ensure_future(check_package_latest_version_get(sess, pkg, len(packages))))
         await asyncio.wait(tasks)
 
 
@@ -950,7 +949,13 @@ def parse_args():
 
 
 def __main__():
+    global cvecheck
+
     args = parse_args()
+
+    if args.nvd_path:
+        import cve as cvecheck
+
     if args.packages:
         package_list = args.packages.split(",")
     elif args.configpackages:
@@ -964,7 +969,7 @@ def __main__():
     print("Build package list ...")
     packages = get_pkglist(args.npackages, package_list)
     print("Getting developers ...")
-    developers = parse_developers(brpath)
+    developers = parse_developers()
     print("Build defconfig list ...")
     defconfigs = get_defconfig_list()
     for d in defconfigs:

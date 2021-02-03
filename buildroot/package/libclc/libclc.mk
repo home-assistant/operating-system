@@ -6,7 +6,7 @@
 
 # Use the latest commit from release_90 branch.
 LIBCLC_VERSION = d1cbc92e2ceee59963f5c3a576382e5bba31f060
-LIBCLC_SITE = https://git.llvm.org/git/libclc
+LIBCLC_SITE = https://github.com/llvm-mirror/libclc
 LIBCLC_SITE_METHOD = git
 LIBCLC_LICENSE = Apache-2.0 with exceptions or MIT
 LIBCLC_LICENSE_FILES = LICENSE.TXT

@@ -18,10 +18,10 @@ diff --git a/Makefile b/Makefile
 index 1b714a8..00d2c09 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -437,7 +437,7 @@ INSTALL:	ALL install date.1
- 		cp date $(DESTDIR)$(BINDIR)/.
- 		cp -f date.1 $(DESTDIR)$(MANDIR)/man1/.
- 
+@@ -587,7 +587,7 @@ INSTALL:	ALL install date.1
+ # Otherwise, use $(VERSION) unless it is "unknown" and there is already
+ # a 'version' file, in which case reuse the existing 'version' contents
+ # and append "-dirty" if the contents do not already end in "-dirty".
 -version:	$(VERSION_DEPS)
 +version:
  		{ (type git) >/dev/null 2>&1 && \
