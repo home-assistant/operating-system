@@ -1,4 +1,4 @@
-BOARD_ID=generic-x64-64
+BOARD_ID=generic-x86-64
 BOARD_NAME="Generic x86-64"
 CHASSIS=embedded
 BOOTLOADER=barebox
