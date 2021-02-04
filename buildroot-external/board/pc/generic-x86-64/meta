@@ -1,5 +1,5 @@
-BOARD_ID=intel-nuc
-BOARD_NAME="Intel NUC"
+BOARD_ID=generic-x64-64
+BOARD_NAME="Generic x86-64"
 CHASSIS=embedded
 BOOTLOADER=barebox
 KERNEL_FILE=bzImage
