@@ -33,6 +33,7 @@ The following boards/devices are supported:
   - QCOW2 ?
 - JetHome
   - JetHub D1
+  - JetHub H1
 
 Notes:
   - see ? above: are these currently supported? see ova documentation which explains issues with previous OVA distribution)
@@ -56,3 +57,4 @@ Notes:
 |Tinker Board|`make tinker`    |[tinker](../../buildroot-external/configs/tinker_defconfig)|[asus](./asus/)|
 |OVA         |`make ova`       |[ova](../../buildroot-external/configs/ova_defconfig)|[ova](./ova/)|
 |JetHub D1   |`make jethub_d1` |[jethub_d1](../../buildroot-external/configs/jethub_d1_defconfig)|[jethome](./jethome/)|
+|JetHub H1   |`make jethub_h1` |[jethub_h1](../../buildroot-external/configs/jethub_h1_defconfig)|[jethome](./jethome/)|

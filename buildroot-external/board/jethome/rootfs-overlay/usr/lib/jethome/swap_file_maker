@@ -1,47 +1,52 @@
 #!/bin/bash
 
+swap_size=512
+swap_part=/mnt/data
+swap_path=/mnt/data/swapfile
+swap_priority=-3
+
+swap_free_space=$(env stat -f -c '%a*%S/1024/1024' $swap_part | bc)
+
 make_swap()
 {
-  local swap_size=512 # MiBs
-  local swap_part=/mnt/data
-  local swap_path=/mnt/data/swapfile
-  local swap_free_space=$(env stat -f -c '%a*%S/1024/1024' $swap_part | bc)
-  local swap_priority=-3
-
-  if [ -n "$swap_free_space" ]; then
-    if [ ! -f "$swap_path" ]; then
-      if [ $swap_free_space -ge $swap_size ]; then
-        echo "dd if=/dev/zero of=$swap_path ..."
-        if dd if=/dev/zero of=$swap_path bs=1M count=512; then
-          chmod 0600 $swap_path
-          if mkswap "$swap_path"; then
-            if swapon --verbose --priority $swap_priority "$swap_path"; then
-              echo "swap created and added succesfully"
-            else
-              echo "swapon $swap_path failed"
-            fi
-          fi
+  if [ $swap_free_space -ge $swap_size ]; then
+    echo "allocating file for swap ..."
+    if dd if=/dev/zero of=$swap_path bs=1M count=$swap_size; then
+      chmod 0600 $swap_path
+      if mkswap "$swap_path"; then
+        if swapon --verbose --priority $swap_priority "$swap_path"; then
+          echo "swap added succesfully"
         else
-          echo "dd if=/dev/zero of=$swap_path failed"
+          echo "swapon $swap_path failed"
         fi
       else
-        echo "Unable to make swap file. swap_free_space==$swap_free_space < $swap_size"
+        echo "mkswap $swap_path failed"
       fi
     else
-      echo "$swap_path already exist. Unable to make swap file"
-      if swapon --verbose --priority $swap_priority "$swap_path"; then
-        echo "swap added succesfully"
-      else
-        echo "swapon $swap_path failed"
-      fi
+      echo "allocate file $swap_path with $swap_size MB size failed."
     fi
-  else
-    echo "swap_free_space is empty. Unable to make swap file"
   fi
 }
 
+enable_swap()
+{
+  local swap_size_bytes=$(env echo $swap_size*1024*1024 | bc)
+  if [ stat -c "%s" "/mnt/data/swapfile" -lt $swap_size_bytes ]; then
+    make_swap
+  elif swapon --verbose --priority $swap_priority "$swap_path"; then
+    echo "swap added succesfully"
+  else
+    echo "swapon $swap_path failed"
+  fi
+}
+
+
+
 make_swap_axg() {
-  if grep -Eq "^GXL.+S905W" /sys/devices/soc0/soc_id; then
+  if [ -f "$swap_path" ]; then
+    echo "Swap file exist. Check and enable swap."
+    enable_swap
+  elif grep -Eq "^GXL.+S905W" /sys/devices/soc0/soc_id; then
     echo "Amlogic S905W detected. Skip swap file creation"
   elif grep -Eq "^AXG" /sys/devices/soc0/soc_id; then
     echo "Amlogic AXG detected"
