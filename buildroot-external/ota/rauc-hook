@@ -5,12 +5,13 @@
 
 case "$1" in
      install-check)
-         if [[ "$RAUC_MF_COMPATIBLE" == "$RAUC_SYSTEM_COMPATIBLE" ]]; then
+         if [ "$RAUC_MF_COMPATIBLE" = "$RAUC_SYSTEM_COMPATIBLE" ]; then
              exit 0
          fi
          # Be compatible with hassos OS ID
+	 # shellcheck disable=SC2039
          rauc_os_compatible=${RAUC_MF_COMPATIBLE/haos-/hassos-}
-         if [[ "$rauc_os_compatible" == "$RAUC_SYSTEM_COMPATIBLE" ]]; then
+         if [ "$rauc_os_compatible" = "$RAUC_SYSTEM_COMPATIBLE" ]; then
              exit 0
          fi
          echo "Compatible does not match!" 1>&2
