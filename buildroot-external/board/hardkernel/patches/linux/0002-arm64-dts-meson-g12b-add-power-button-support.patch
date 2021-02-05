@@ -1,10 +1,10 @@
-From 83ec133319bc8b04fad2bec65ffe95246c600520 Mon Sep 17 00:00:00 2001
-Message-Id: <83ec133319bc8b04fad2bec65ffe95246c600520.1610380198.git.stefan@agner.ch>
-In-Reply-To: <9d2a2b44e67b0ef49e534c097e8b5e3e1173b033.1610380198.git.stefan@agner.ch>
-References: <9d2a2b44e67b0ef49e534c097e8b5e3e1173b033.1610380198.git.stefan@agner.ch>
+From 3a2086e15c0b121250dd4c48214cd0486a67fde1 Mon Sep 17 00:00:00 2001
+Message-Id: <3a2086e15c0b121250dd4c48214cd0486a67fde1.1612541102.git.stefan@agner.ch>
+In-Reply-To: <516c081bcdd8f248982588aa8ca5bd8d24b2e7ef.1612541102.git.stefan@agner.ch>
+References: <516c081bcdd8f248982588aa8ca5bd8d24b2e7ef.1612541102.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Mon, 11 Jan 2021 11:20:48 +0100
-Subject: [PATCH 08/10] arm64: dts: meson: g12b: add power button support
+Subject: [PATCH 2/4] arm64: dts: meson: g12b: add power button support
 
 Add power button support on J2 pin 11 (GPIOX_3 on the SoC side). The
 GPIO is low active, e.g. when connecting with pin 9 (GND) a power
