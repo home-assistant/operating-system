@@ -32,6 +32,7 @@ function create_ota_update() {
         echo "version=$(hassos_version)"
         echo "[hooks]"
         echo "filename=hook"
+        echo "hooks=install-check"
         echo "[image.boot]"
         echo "filename=boot.vfat"
         echo "hooks=install"
