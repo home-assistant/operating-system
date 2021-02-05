@@ -1,10 +1,10 @@
-From 8ff3ba007f500ec4f21361fcac4ec7a5b67bcf7e Mon Sep 17 00:00:00 2001
-Message-Id: <8ff3ba007f500ec4f21361fcac4ec7a5b67bcf7e.1610382778.git.stefan@agner.ch>
-In-Reply-To: <9d2a2b44e67b0ef49e534c097e8b5e3e1173b033.1610382778.git.stefan@agner.ch>
-References: <9d2a2b44e67b0ef49e534c097e8b5e3e1173b033.1610382778.git.stefan@agner.ch>
+From 575ca5decaccee6cdea036ce88711dac6672cc4b Mon Sep 17 00:00:00 2001
+Message-Id: <575ca5decaccee6cdea036ce88711dac6672cc4b.1612541102.git.stefan@agner.ch>
+In-Reply-To: <516c081bcdd8f248982588aa8ca5bd8d24b2e7ef.1612541102.git.stefan@agner.ch>
+References: <516c081bcdd8f248982588aa8ca5bd8d24b2e7ef.1612541102.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Mon, 11 Jan 2021 15:53:55 +0100
-Subject: [PATCH 10/10] arm64: dts: meson: g12b: odroid-n2: add fan as cooling
+Subject: [PATCH 4/4] arm64: dts: meson: g12b: odroid-n2: add fan as cooling
  device
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
