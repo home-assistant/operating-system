@@ -3,12 +3,12 @@
 # shellcheck disable=SC2034
 
 # Change size partitions
-BOOT_SIZE=(64M)
-BOOTSTATE_SIZE=8M
-SYSTEM_SIZE=256M
-KERNEL_SIZE=64M
-OVERLAY_SIZE=128M
-DATA_SIZE=1G
+#BOOT_SIZE=(64M)
+#BOOTSTATE_SIZE=8M
+#SYSTEM_SIZE=256M
+#KERNEL_SIZE=64M
+#OVERLAY_SIZE=128M
+#DATA_SIZE=1G
 
 set -e # Exit immediately if a command exits with a non-zero status
 set -u # Treat unset variables and parameters as an error
@@ -96,7 +96,8 @@ function _create_disk_aml() {
 
     create_platform_conf
 
+    cc -o "$BINARIES_DIR/dtbTool" "$BOARD_DIR/../src/dtbTool.c"
     "$BINARIES_DIR/dtbTool" -o "$BINARIES_DIR/_aml_dtb.PARTITION" "${BINARIES_DIR}/"
-    "$BINARIES_DIR/aml_image_v2_packer_new" -r "${BINARIES_DIR}/image.cfg" "${BINARIES_DIR}/" "$hdd_img"
+    "$BOARD_DIR/../bin/aml_image_v2_packer" -r "${BINARIES_DIR}/image.cfg" "${BINARIES_DIR}/" "$hdd_img"
     echo "Image created"
 }
