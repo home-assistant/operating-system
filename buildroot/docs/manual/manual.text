@@ -174,13 +174,13 @@ List of Examples
 
 ---------------------------------------------------------------------
 
-Buildroot 2020.11.1 manual generated on 2020-12-27 14:25:17 UTC from
-git revision 804a9e1865
+Buildroot 2020.11.2 manual generated on 2021-01-31 20:36:55 UTC from
+git revision 551cb63007
 
 The Buildroot manual is written by the Buildroot developers. It is
 licensed under the GNU General Public License, version 2. Refer to
 the COPYING [http://git.buildroot.org/buildroot/tree/COPYING?id=
-804a9e18656c1584b059129e0b5cebe2a2405fac] file in the Buildroot
+551cb630079316efe928d7c2eb0358a19e38fc48] file in the Buildroot
 sources for the full text of this license.
 
 Copyright © 2004-2020 The Buildroot developers
@@ -1710,7 +1710,7 @@ you to just prepare the SDK with make prepare-sdk without actually
 generating a tarball.
 
 For your convenience, by selecting the option
-BR2_PACKAGE_HOST_ENVIRONMENT_SETUP, you can get a setup-environment
+BR2_PACKAGE_HOST_ENVIRONMENT_SETUP, you can get a environment-setup
 script installed in output/host/ and therefore in your SDK. This
 script can be sourced with . your/sdk/path/environment-setup to
 export a number of environment variables that will help cross-compile
@@ -5225,13 +5225,17 @@ typical packages will therefore only use a few of them.
   * LIBFOO_MAKE_OPTS, to specify additional variables to pass to make
     in the build step. These are passed after the make command. By
     default, empty.
+  * LIBFOO_INSTALL_OPTS contains the make options used to install the
+    package to the host directory. By default, the value is install,
+    which is correct for most CMake packages. It is still possible to
+    override it.
   * LIBFOO_INSTALL_STAGING_OPTS contains the make options used to
     install the package to the staging directory. By default, the
-    value is DESTDIR=$(STAGING_DIR) install, which is correct for
-    most CMake packages. It is still possible to override it.
+    value is DESTDIR=$(STAGING_DIR) install/fast, which is correct
+    for most CMake packages. It is still possible to override it.
   * LIBFOO_INSTALL_TARGET_OPTS contains the make options used to
     install the package to the target directory. By default, the
-    value is DESTDIR=$(TARGET_DIR) install. The default value is
+    value is DESTDIR=$(TARGET_DIR) install/fast. The default value is
     correct for most CMake packages, but it is still possible to
     override it if needed.
 

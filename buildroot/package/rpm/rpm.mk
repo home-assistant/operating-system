@@ -19,7 +19,12 @@ RPM_DEPENDENCIES = \
 	$(TARGET_NLS_DEPENDENCIES)
 RPM_LICENSE = GPL-2.0 or LGPL-2.0 (library only)
 RPM_LICENSE_FILES = COPYING
+# We're patching configure.ac
+RPM_AUTORECONF = YES
 
+# Don't set --{dis,en}-openmp as upstream wants to abort the build if
+# --enable-openmp is provided and OpenMP is < 4.5:
+# https://github.com/rpm-software-management/rpm/pull/1433
 RPM_CONF_OPTS = \
 	--disable-python \
 	--disable-rpath \
@@ -104,12 +109,6 @@ RPM_DEPENDENCIES += zstd
 RPM_CONF_OPTS += --enable-zstd
 else
 RPM_CONF_OPTS += --disable-zstd
-endif
-
-ifeq ($(BR2_TOOLCHAIN_HAS_OPENMP),y)
-RPM_CONF_OPTS += --enable-openmp
-else
-RPM_CONF_OPTS += --disable-openmp
 endif
 
 # ac_cv_prog_cc_c99: RPM uses non-standard GCC extensions (ex. `asm`).

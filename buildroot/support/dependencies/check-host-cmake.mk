@@ -3,7 +3,12 @@
 # package is bumped or a new one added, and it requires a higher
 # version, our cmake infra will catch it and build its own.
 #
+ifeq ($(BR2_PACKAGE_GERBERA),y)
+# gerbera needs 3.14+
+BR2_CMAKE_VERSION_MIN = 3.14
+else
 BR2_CMAKE_VERSION_MIN = 3.10
+endif
 
 BR2_CMAKE_CANDIDATES ?= cmake cmake3
 BR2_CMAKE ?= $(call suitable-host-package,cmake,\

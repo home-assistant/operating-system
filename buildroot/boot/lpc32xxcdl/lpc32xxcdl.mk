@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-LPC32XXCDL_VERSION = lpc32xx_cdl_v2.11
-LPC32XXCDL_SITE = http://git.lpcware.com/lpc3xxx_cdl.git
-LPC32XXCDL_SITE_METHOD = git
+LPC32XXCDL_VERSION = 2.11
+LPC32XXCDL_SOURCE = lpc32xx_cdl-v$(LPC32XXCDL_VERSION).zip
+LPC32XXCDL_SITE = https://community.nxp.com/pwmxy87654/attachments/pwmxy87654/lpcware-archive/61/2
 
 LPC32XXCDL_INSTALL_TARGET = NO
 LPC32XXCDL_INSTALL_IMAGES = YES
@@ -45,12 +45,13 @@ LPC32XXCDL_BOARD_STARTUP_DIR = \
 # Source files are with dos newlines, which our patch infrastructure doesn't
 # handle. Work around it by converting the affected files to unix newlines
 # before patching
-define LPC32XXCDL_DOS2UNIX_FOR_PATCH
+define LPC32XXCDL_EXTRACT_CMDS
+	unzip $(LPC32XXCDL_DL_DIR)/$(LPC32XXCDL_SOURCE) -d $(@D)
+	mv $(@D)/lpc3xxx_cdl/* $(@D)
+	rmdir $(@D)/lpc3xxx_cdl/
 	sed -n 's|^[+-]\{3\} [^/]\+\([^ \t]*\)\(.*\)|$(@D)\1|p' \
 		boot/lpc32xxcdl/*.patch| sort -u | xargs $(SED) 's/\x0D$$//'
 endef
-
-LPC32XXCDL_POST_EXTRACT_HOOKS += LPC32XXCDL_DOS2UNIX_FOR_PATCH
 
 define LPC32XXCDL_BUILD_CMDS
 	$(MAKE1) $(LPC32XXCDL_BUILD_FLAGS) -C $(@D)

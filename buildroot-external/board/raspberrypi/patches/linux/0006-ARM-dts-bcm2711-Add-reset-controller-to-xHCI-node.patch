@@ -1,10 +1,10 @@
-From c19d86704ffaa9fbe830aaa2a4015259928abf70 Mon Sep 17 00:00:00 2001
-Message-Id: <c19d86704ffaa9fbe830aaa2a4015259928abf70.1609281882.git.stefan@agner.ch>
-In-Reply-To: <3651b4af52d63d4e37f40c7a6d0809b0a6c9dd73.1609281882.git.stefan@agner.ch>
-References: <3651b4af52d63d4e37f40c7a6d0809b0a6c9dd73.1609281882.git.stefan@agner.ch>
+From 874e651872c2b9e2a2a7f5e139197b9c8c96240b Mon Sep 17 00:00:00 2001
+Message-Id: <874e651872c2b9e2a2a7f5e139197b9c8c96240b.1611839042.git.stefan@agner.ch>
+In-Reply-To: <625000fe2a9c1f78099895bf14c2f9753e359fba.1611839042.git.stefan@agner.ch>
+References: <625000fe2a9c1f78099895bf14c2f9753e359fba.1611839042.git.stefan@agner.ch>
 From: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 Date: Mon, 29 Jun 2020 18:18:40 +0200
-Subject: [PATCH 6/8] ARM: dts: bcm2711: Add reset controller to xHCI node
+Subject: [PATCH 6/7] ARM: dts: bcm2711: Add reset controller to xHCI node
 
 The chip is hardwired to the board's PCIe bus and needs to be properly
 setup trough a firmware routine after a PCI fundamental reset. Pass the
@@ -23,7 +23,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  3 files changed, 46 insertions(+)
 
 diff --git a/arch/arm/boot/dts/bcm2711-rpi-4-b.dts b/arch/arm/boot/dts/bcm2711-rpi-4-b.dts
-index d77d61d41bbc..513cae21e64c 100644
+index 37f14d7fd4f0..1139d60a643d 100644
 --- a/arch/arm/boot/dts/bcm2711-rpi-4-b.dts
 +++ b/arch/arm/boot/dts/bcm2711-rpi-4-b.dts
 @@ -3,6 +3,8 @@
@@ -58,7 +58,7 @@ index d77d61d41bbc..513cae21e64c 100644
  &uart0 {
  	pinctrl-names = "default";
 diff --git a/arch/arm/boot/dts/bcm2711-rpi-400.dts b/arch/arm/boot/dts/bcm2711-rpi-400.dts
-index 3a1eb65f7075..c122aebd4d5e 100644
+index a4f4e619d83c..264f0226f1b0 100644
 --- a/arch/arm/boot/dts/bcm2711-rpi-400.dts
 +++ b/arch/arm/boot/dts/bcm2711-rpi-400.dts
 @@ -3,6 +3,8 @@
@@ -93,7 +93,7 @@ index 3a1eb65f7075..c122aebd4d5e 100644
  &uart0 {
  	pinctrl-names = "default";
 diff --git a/arch/arm/boot/dts/bcm2711-rpi-cm4.dts b/arch/arm/boot/dts/bcm2711-rpi-cm4.dts
-index 7f0a621a47f5..5eda5d096bfb 100644
+index aa346b063b2a..4c0f6b320656 100644
 --- a/arch/arm/boot/dts/bcm2711-rpi-cm4.dts
 +++ b/arch/arm/boot/dts/bcm2711-rpi-cm4.dts
 @@ -3,6 +3,8 @@
@@ -123,5 +123,5 @@ index 7f0a621a47f5..5eda5d096bfb 100644
  &uart0 {
  	pinctrl-names = "default";
 -- 
-2.29.2
+2.30.0
 

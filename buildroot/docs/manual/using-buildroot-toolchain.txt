@@ -35,7 +35,7 @@ generating a tarball.
 
 For your convenience, by selecting the option
 +BR2_PACKAGE_HOST_ENVIRONMENT_SETUP+, you can get a
-+setup-environment+ script installed in +output/host/+ and therefore
++environment-setup+ script installed in +output/host/+ and therefore
 in your SDK.  This script can be sourced with
 +. your/sdk/path/environment-setup+ to export a number of environment
 variables that will help cross-compile your projects using the

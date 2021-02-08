@@ -4,11 +4,12 @@
 #
 ################################################################################
 
-IGD2_FOR_LINUX_VERSION = 1.2
-IGD2_FOR_LINUX_SITE = $(call github,ffontaine,igd2-for-linux,v$(IGD2_FOR_LINUX_VERSION))
+IGD2_FOR_LINUX_VERSION = 2.0
+IGD2_FOR_LINUX_SITE = \
+	$(call github,Orange-OpenSource,igd2-for-linux,v$(IGD2_FOR_LINUX_VERSION))
 
-IGD2_FOR_LINUX_LICENSE = GPL-2.0
-IGD2_FOR_LINUX_LICENSE_FILES = linuxigd2/doc/LICENSE
+IGD2_FOR_LINUX_LICENSE = GPL-2.0, BSD-3-Clause
+IGD2_FOR_LINUX_LICENSE_FILES = linuxigd2/doc/LICENSE linuxigd2/src/threadutil/COPYING
 
 IGD2_FOR_LINUX_DEPENDENCIES = libupnp
 

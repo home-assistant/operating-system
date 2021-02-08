@@ -1,10 +1,10 @@
-From a97dba6bf04aa09279a7c5b4aec6e4520e354fbd Mon Sep 17 00:00:00 2001
-Message-Id: <a97dba6bf04aa09279a7c5b4aec6e4520e354fbd.1609281882.git.stefan@agner.ch>
-In-Reply-To: <3651b4af52d63d4e37f40c7a6d0809b0a6c9dd73.1609281882.git.stefan@agner.ch>
-References: <3651b4af52d63d4e37f40c7a6d0809b0a6c9dd73.1609281882.git.stefan@agner.ch>
+From 78ad38829939c60437fd8a11cabc92679cc3e6df Mon Sep 17 00:00:00 2001
+Message-Id: <78ad38829939c60437fd8a11cabc92679cc3e6df.1611839042.git.stefan@agner.ch>
+In-Reply-To: <625000fe2a9c1f78099895bf14c2f9753e359fba.1611839042.git.stefan@agner.ch>
+References: <625000fe2a9c1f78099895bf14c2f9753e359fba.1611839042.git.stefan@agner.ch>
 From: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 Date: Mon, 29 Jun 2020 18:18:39 +0200
-Subject: [PATCH 5/8] ARM: dts: bcm2711: Add firmware usb reset node
+Subject: [PATCH 5/7] ARM: dts: bcm2711: Add firmware usb reset node
 
 Now that the reset driver exposing Raspberry Pi 4's firmware based USB
 reset routine is available, let's add the device tree node exposing it.
@@ -21,7 +21,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  3 files changed, 15 insertions(+)
 
 diff --git a/arch/arm/boot/dts/bcm2711-rpi-4-b.dts b/arch/arm/boot/dts/bcm2711-rpi-4-b.dts
-index 21b20e334b1a..d77d61d41bbc 100644
+index b5daeee077ec..37f14d7fd4f0 100644
 --- a/arch/arm/boot/dts/bcm2711-rpi-4-b.dts
 +++ b/arch/arm/boot/dts/bcm2711-rpi-4-b.dts
 @@ -72,6 +72,11 @@
@@ -37,7 +37,7 @@ index 21b20e334b1a..d77d61d41bbc 100644
  
  &gpio {
 diff --git a/arch/arm/boot/dts/bcm2711-rpi-400.dts b/arch/arm/boot/dts/bcm2711-rpi-400.dts
-index afd1ca215518..3a1eb65f7075 100644
+index 9454ce193ec5..a4f4e619d83c 100644
 --- a/arch/arm/boot/dts/bcm2711-rpi-400.dts
 +++ b/arch/arm/boot/dts/bcm2711-rpi-400.dts
 @@ -72,6 +72,11 @@
@@ -53,7 +53,7 @@ index afd1ca215518..3a1eb65f7075 100644
  
  &gpio {
 diff --git a/arch/arm/boot/dts/bcm2711-rpi-cm4.dts b/arch/arm/boot/dts/bcm2711-rpi-cm4.dts
-index 3ff0be02cb34..7f0a621a47f5 100644
+index fc3f062fd820..aa346b063b2a 100644
 --- a/arch/arm/boot/dts/bcm2711-rpi-cm4.dts
 +++ b/arch/arm/boot/dts/bcm2711-rpi-cm4.dts
 @@ -84,6 +84,11 @@
@@ -69,5 +69,5 @@ index 3ff0be02cb34..7f0a621a47f5 100644
  
  &pwm1 {
 -- 
-2.29.2
+2.30.0
 
