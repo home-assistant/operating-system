@@ -1,5 +1,5 @@
 config BR2_PACKAGE_JETHOME_BOOT
-	bool "Hardkernel Secure Boot Loader"
+	bool "JetHome Secure Boot Loader"
 	depends on BR2_TARGET_UBOOT
 	help
 	  Augment uboot for secure loading on jethome targets.
