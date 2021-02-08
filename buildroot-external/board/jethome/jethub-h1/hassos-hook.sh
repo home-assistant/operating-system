@@ -39,6 +39,7 @@ function hassos_pre_image() {
 
     echo "console=tty0 console=ttyAML0,115200n8" > "${BOOT_DATA}/cmdline.txt"
     cp "${BINARIES_DIR}/meson-gxl-s905w-jethome-jethub-j80.dtb" "${BOOT_DATA}/meson-gxl-s905w-jethome-jethub-j80.dtb"
+    cp "${BINARIES_DIR}/boot.scr" "${BOOT_DATA}/boot.scr"
 }
 
 function hassos_post_image() {
