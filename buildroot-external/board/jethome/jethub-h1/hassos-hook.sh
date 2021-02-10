@@ -95,8 +95,7 @@ function _create_disk_aml() {
 
     create_platform_conf
 
-    cc -o "$BINARIES_DIR/dtbTool" "$BOARD_DIR/../src/dtbTool.c"
     "$BINARIES_DIR/dtbTool" -o "$BINARIES_DIR/_aml_dtb.PARTITION" "${BINARIES_DIR}/"
-    "$BOARD_DIR/../bin/aml_image_v2_packer" -r "${BINARIES_DIR}/image.cfg" "${BINARIES_DIR}/" "$hdd_img"
+    "$BINARIES_DIR/aml_image_v2_packer_new" -r "${BINARIES_DIR}/image.cfg" "${BINARIES_DIR}/" "$hdd_img"
     echo "Image created"
 }
