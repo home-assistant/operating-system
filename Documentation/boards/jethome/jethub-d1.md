@@ -2,7 +2,7 @@
 
 More information [JetHub D1 wiki](http://wiki.jethome.ru/jethub_d1) (Russian)
 
-- 4-core CPU Amlogic A113X (ARM Cortex-A53) 1,4 ГГц;
+- 4-core CPU Amlogic A113X (ARM Cortex-A53) 1,4 Ghz;
 - RAM 512 or 1024 MB DDR3;
 - eMMC flash 8 Gbyte.
 
