@@ -1,0 +1,55 @@
+From 3f3c4cd047234fb94de4d6b701d05ff0450890cf Mon Sep 17 00:00:00 2001
+Message-Id: <3f3c4cd047234fb94de4d6b701d05ff0450890cf.1613588152.git.stefan@agner.ch>
+From: Stefan Agner <stefan@agner.ch>
+Date: Wed, 17 Feb 2021 19:55:41 +0100
+Subject: [PATCH] Revert "ARM: dts: rockchip: use DMA channels for UARTs for
+ RK3288"
+
+This reverts commit 3425fe335c29310f6628faf9a7947d07f32d8962.
+---
+ arch/arm/boot/dts/rk3288.dtsi | 8 --------
+ 1 file changed, 8 deletions(-)
+
+diff --git a/arch/arm/boot/dts/rk3288.dtsi b/arch/arm/boot/dts/rk3288.dtsi
+index 8fa80facc8cd..8636d95c45e1 100644
+--- a/arch/arm/boot/dts/rk3288.dtsi
++++ b/arch/arm/boot/dts/rk3288.dtsi
+@@ -422,8 +422,6 @@ uart0: serial@ff180000 {
+ 		reg-io-width = <4>;
+ 		clocks = <&cru SCLK_UART0>, <&cru PCLK_UART0>;
+ 		clock-names = "baudclk", "apb_pclk";
+-		dmas = <&dmac_peri 1>, <&dmac_peri 2>;
+-		dma-names = "tx", "rx";
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&uart0_xfer>;
+ 		status = "disabled";
+@@ -437,8 +435,6 @@ uart1: serial@ff190000 {
+ 		reg-io-width = <4>;
+ 		clocks = <&cru SCLK_UART1>, <&cru PCLK_UART1>;
+ 		clock-names = "baudclk", "apb_pclk";
+-		dmas = <&dmac_peri 3>, <&dmac_peri 4>;
+-		dma-names = "tx", "rx";
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&uart1_xfer>;
+ 		status = "disabled";
+@@ -465,8 +461,6 @@ uart3: serial@ff1b0000 {
+ 		reg-io-width = <4>;
+ 		clocks = <&cru SCLK_UART3>, <&cru PCLK_UART3>;
+ 		clock-names = "baudclk", "apb_pclk";
+-		dmas = <&dmac_peri 7>, <&dmac_peri 8>;
+-		dma-names = "tx", "rx";
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&uart3_xfer>;
+ 		status = "disabled";
+@@ -480,8 +474,6 @@ uart4: serial@ff1c0000 {
+ 		reg-io-width = <4>;
+ 		clocks = <&cru SCLK_UART4>, <&cru PCLK_UART4>;
+ 		clock-names = "baudclk", "apb_pclk";
+-		dmas = <&dmac_peri 9>, <&dmac_peri 10>;
+-		dma-names = "tx", "rx";
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&uart4_xfer>;
+ 		status = "disabled";
+-- 
+2.30.1
+

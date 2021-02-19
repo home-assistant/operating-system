@@ -1,0 +1,28 @@
+From ebc29962ac27264772a4227f5abd6900cb72fa79 Mon Sep 17 00:00:00 2001
+From: "Miouyouyou (Myy)" <myy@miouyouyou.fr>
+Date: Mon, 5 Nov 2018 20:16:05 +0100
+Subject: [PATCH] ARM: DTSI: rk3288-tinker: Improving the CPU max voltage
+
+Taken from the various patches provided by @TonyMac32 .
+
+Signed-off-by: Miouyouyou (Myy) <myy@miouyouyou.fr>
+---
+ arch/arm/boot/dts/rk3288-tinker.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm/boot/dts/rk3288-tinker.dtsi b/arch/arm/boot/dts/rk3288-tinker.dtsi
+index aa107ee41..3da1c830f 100644
+--- a/arch/arm/boot/dts/rk3288-tinker.dtsi
++++ b/arch/arm/boot/dts/rk3288-tinker.dtsi
+@@ -164,7 +164,7 @@
+ 				regulator-always-on;
+ 				regulator-boot-on;
+ 				regulator-min-microvolt = <750000>;
+-				regulator-max-microvolt = <1400000>;
++				regulator-max-microvolt = <1450000>;
+ 				regulator-name = "vdd_arm";
+ 				regulator-ramp-delay = <6000>;
+ 				regulator-state-mem {
+-- 
+2.16.4
+
