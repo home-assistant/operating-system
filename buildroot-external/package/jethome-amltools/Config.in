@@ -1,5 +1,5 @@
 config BR2_PACKAGE_JETHOME_AMLTOOLS
-	bool "JetHome AmLogic tools for image creating.
+	bool "JetHome AmLogic tools for image creating."
 	depends on BR2_TARGET_UBOOT
 	help
 	  AmLogic tools: aml_image_v2_packer_new and dtbTool for mmc images
