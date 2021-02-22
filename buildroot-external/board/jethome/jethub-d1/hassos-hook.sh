@@ -1,13 +1,14 @@
 #!/bin/bash
 # shellcheck disable=SC2155
+# shellcheck disable=SC2034
 
 # Change size partitions
-#BOOT_SIZE=(64M)
-#BOOTSTATE_SIZE=8M
-#SYSTEM_SIZE=256M
-#KERNEL_SIZE=64M
-#OVERLAY_SIZE=128M
-#DATA_SIZE=1G
+BOOT_SIZE=(64M)
+BOOTSTATE_SIZE=8M
+SYSTEM_SIZE=256M
+KERNEL_SIZE=64M
+OVERLAY_SIZE=128M
+DATA_SIZE=1G
 
 set -e # Exit immediately if a command exits with a non-zero status
 set -u # Treat unset variables and parameters as an error
