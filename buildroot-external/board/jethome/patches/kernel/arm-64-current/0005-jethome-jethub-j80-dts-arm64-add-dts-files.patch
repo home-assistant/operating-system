@@ -12,7 +12,7 @@ index 000000000..cf0e6e742
 +/ {
 +	compatible = "amlogic,p281", "amlogic,s905w", "amlogic,meson-gxl";
 +	model = "JetHome JetHub J80";
-+	amlogic-dt-id = "gxl_j80_1g";
++	amlogic-dt-id = "gxl_jethubj80_v1";
 +
 +	/* 1G RAM */
 +	memory@0 {

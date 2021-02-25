@@ -17,7 +17,7 @@ index 000000000..8e6bd30ca
 +/ {
 +	compatible = "jethome,j100", "amlogic,a113d", "amlogic,meson-axg";
 +	model = "JetHome JetHub J100 Compatible Board";
-+	amlogic-dt-id = "jethome_j100_v1";
++	amlogic-dt-id = "axg_jethubj100_v1";
 +
 +	aliases {
 +		serial0 = &uart_AO;   /* Console */
