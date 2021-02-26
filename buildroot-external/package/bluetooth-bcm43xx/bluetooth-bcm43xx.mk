@@ -11,11 +11,11 @@ BLUETOOTH_BCM43XX_SITE = $(BR2_EXTERNAL_HASSOS_PATH)/package/bluetooth-bcm43xx
 BLUETOOTH_BCM43XX_SITE_METHOD = local
 
 define BLUETOOTH_BCM43XX_BUILD_CMDS
-	curl -L -o $(@D)/BCM43430A1.hcd https://raw.githubusercontent.com/RPi-Distro/bluez-firmware/a4e08822e3f24a6211f6ac94bc98b7ef87700c70/broadcom/BCM43430A1.hcd
-	curl -L -o $(@D)/BCM4345C0.hcd https://raw.githubusercontent.com/RPi-Distro/bluez-firmware/a4e08822e3f24a6211f6ac94bc98b7ef87700c70/broadcom/BCM4345C0.hcd
-	curl -L -o $(@D)/btuart https://raw.githubusercontent.com/RPi-Distro/pi-bluetooth/cbdbcb66bcc5b9af05f1a9fffe2254c872bb0ace/usr/bin/btuart
-	curl -L -o $(@D)/bthelper https://raw.githubusercontent.com/RPi-Distro/pi-bluetooth/cbdbcb66bcc5b9af05f1a9fffe2254c872bb0ace/usr/bin/bthelper
-	curl -L -o $(@D)/90-pi-bluetooth.rules https://raw.githubusercontent.com/RPi-Distro/pi-bluetooth/cbdbcb66bcc5b9af05f1a9fffe2254c872bb0ace/lib/udev/rules.d/90-pi-bluetooth.rules
+	curl -L -o $(@D)/BCM43430A1.hcd https://raw.githubusercontent.com/RPi-Distro/bluez-firmware/e7fd166981ab4bb9a36c2d1500205a078a35714d/broadcom/BCM43430A1.hcd
+	curl -L -o $(@D)/BCM4345C0.hcd https://raw.githubusercontent.com/RPi-Distro/bluez-firmware/e7fd166981ab4bb9a36c2d1500205a078a35714d/broadcom/BCM4345C0.hcd
+	curl -L -o $(@D)/btuart https://raw.githubusercontent.com/RPi-Distro/pi-bluetooth/6f6386e91e33966d3c4a3cfee72d61e14c6a11ef/usr/bin/btuart
+	curl -L -o $(@D)/bthelper https://raw.githubusercontent.com/RPi-Distro/pi-bluetooth/6f6386e91e33966d3c4a3cfee72d61e14c6a11ef/usr/bin/bthelper
+	curl -L -o $(@D)/90-pi-bluetooth.rules https://raw.githubusercontent.com/RPi-Distro/pi-bluetooth/6f6386e91e33966d3c4a3cfee72d61e14c6a11ef/lib/udev/rules.d/90-pi-bluetooth.rules
 
 	patch $(@D)/btuart $(@D)/0001-btuart-reduced-baud-rate-rpi3b.patch
 endef
