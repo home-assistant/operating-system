@@ -5,17 +5,19 @@
 
 case "$1" in
      install-check)
-         if [[ "$RAUC_MF_COMPATIBLE" == "$RAUC_SYSTEM_COMPATIBLE" ]]; then
+         if [ "$RAUC_MF_COMPATIBLE" = "$RAUC_SYSTEM_COMPATIBLE" ]; then
              exit 0
          fi
          # Be compatible with upcomming releases using haos OS ID
+         # shellcheck disable=SC2039
          rauc_new_os_compatible=${RAUC_SYSTEM_COMPATIBLE/hassos-/haos-}
-         if [[ "$RAUC_MF_COMPATIBLE" == "${rauc_new_os_compatible}" ]]; then
+         if [ "$RAUC_MF_COMPATIBLE" = "${rauc_new_os_compatible}" ]; then
              exit 0
          fi
          # intel-nuc: Be compatible with upcomming generic-x86-64
+         # shellcheck disable=SC2039
          rauc_new_board_compatible=${rauc_new_os_compatible/intel-nuc/generic-x86-64}
-         if [[ "$RAUC_MF_COMPATIBLE" == "${rauc_new_board_compatible}" ]]; then
+         if [ "$RAUC_MF_COMPATIBLE" = "${rauc_new_board_compatible}" ]; then
              exit 0
          fi
          echo "Compatible does not match!" 1>&2
