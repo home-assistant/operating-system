@@ -1,0 +1,37 @@
+From 144f2823453ec5acb6b67a4fb4c63726cad0d2f4 Mon Sep 17 00:00:00 2001
+From: Vyacheslav Bocharov <devel@lexina.in>
+Date: Mon, 1 Mar 2021 09:13:35 +0300
+Subject: [PATCH 5/9] Fix: brcmfmac: disable power saving for stable wifi
+ connection
+
+---
+ drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
+index ab0da2ff9..4b278d2d7 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
+@@ -2914,6 +2914,8 @@ brcmf_cfg80211_set_power_mgmt(struct wiphy *wiphy, struct net_device *ndev,
+ 	struct brcmf_pub *drvr = cfg->pub;
+ 
+ 	brcmf_dbg(TRACE, "Enter\n");
++	// jethub j100: force disable Powersave (for wifi connection stability)
++	enabled = 0;
+ 
+ 	/*
+ 	 * Powersave enable/disable request is coming from the
+@@ -2952,7 +2954,9 @@ brcmf_cfg80211_set_power_mgmt(struct wiphy *wiphy, struct net_device *ndev,
+ 
+ done:
+ 	brcmf_dbg(TRACE, "Exit\n");
+-	return err;
++	// return err;
++	// jethub j100: tell the system that the operation is not supported
++	return -EOPNOTSUPP;
+ }
+ 
+ static s32 brcmf_inform_single_bss(struct brcmf_cfg80211_info *cfg,
+-- 
+2.25.1
+

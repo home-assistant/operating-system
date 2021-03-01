@@ -1,0 +1,47 @@
+From eddd4a420f28e8ccb8ff5160e9864db2dda2f1fd Mon Sep 17 00:00:00 2001
+From: Vyacheslav Bocharov <devel@lexina.in>
+Date: Fri, 19 Feb 2021 14:01:38 +0300
+Subject: [PATCH 3/9] Backport agx support for dwc3
+
+---
+ drivers/usb/dwc3/dwc3-meson-g12a.c | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
+
+diff --git a/drivers/usb/dwc3/dwc3-meson-g12a.c b/drivers/usb/dwc3/dwc3-meson-g12a.c
+index 1f7f4d88e..90275c13c 100644
+--- a/drivers/usb/dwc3/dwc3-meson-g12a.c
++++ b/drivers/usb/dwc3/dwc3-meson-g12a.c
+@@ -215,6 +215,19 @@ static struct dwc3_meson_g12a_drvdata gxm_drvdata = {
+ 	.usb_post_init = dwc3_meson_gxl_usb_post_init,
+ };
+ 
++static struct dwc3_meson_g12a_drvdata axg_drvdata = {
++	.otg_switch_supported = true,
++	.clks = meson_gxl_clocks,
++	.num_clks = ARRAY_SIZE(meson_gxl_clocks),
++	.phy_names = meson_a1_phy_names,
++	.num_phys = ARRAY_SIZE(meson_a1_phy_names),
++	.setup_regmaps = dwc3_meson_gxl_setup_regmaps,
++	.usb2_init_phy = dwc3_meson_gxl_usb2_init_phy,
++	.set_phy_mode = dwc3_meson_gxl_set_phy_mode,
++	.usb_init = dwc3_meson_g12a_usb_init,
++	.usb_post_init = dwc3_meson_gxl_usb_post_init,
++};
++
+ static struct dwc3_meson_g12a_drvdata g12a_drvdata = {
+ 	.otg_switch_supported = true,
+ 	.clks = meson_g12a_clocks,
+@@ -930,6 +943,10 @@ static const struct of_device_id dwc3_meson_g12a_match[] = {
+ 		.compatible = "amlogic,meson-gxm-usb-ctrl",
+ 		.data = &gxm_drvdata,
+ 	},
++	{
++		.compatible = "amlogic,meson-axg-usb-ctrl",
++		.data = &axg_drvdata,
++	},
+ 	{
+ 		.compatible = "amlogic,meson-g12a-usb-ctrl",
+ 		.data = &g12a_drvdata,
+-- 
+2.25.1
+

@@ -1,0 +1,44 @@
+From 91a9ff430fd1e7ba8e4f71dbb3844a2a0cf02b90 Mon Sep 17 00:00:00 2001
+From: Vyacheslav Bocharov <devel@lexina.in>
+Date: Mon, 1 Mar 2021 10:35:21 +0300
+Subject: [PATCH 9/9] Fix: GX: update TEXT_OFFSET for Amlogic MESON SoC
+
+---
+ arch/arm64/Makefile      | 4 ++++
+ arch/arm64/kernel/head.S | 4 ++--
+ 2 files changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm64/Makefile b/arch/arm64/Makefile
+index 3904f9ea1..4e7fb0049 100644
+--- a/arch/arm64/Makefile
++++ b/arch/arm64/Makefile
+@@ -133,7 +133,11 @@ endif
+ head-y		:= arch/arm64/kernel/head.o
+ 
+ # The byte offset of the kernel image in RAM from the start of RAM.
++ifeq ($(CONFIG_ARCH_MESON),y)
++TEXT_OFFSET := 0x01080000
++else
+ TEXT_OFFSET := 0x0
++endif
+ 
+ ifeq ($(CONFIG_KASAN_SW_TAGS), y)
+ KASAN_SHADOW_SCALE_SHIFT := 4
+diff --git a/arch/arm64/kernel/head.S b/arch/arm64/kernel/head.S
+index 037421c66..18b37e2d2 100644
+--- a/arch/arm64/kernel/head.S
++++ b/arch/arm64/kernel/head.S
+@@ -42,8 +42,8 @@
+ #error TEXT_OFFSET must be at least 4KB aligned
+ #elif (PAGE_OFFSET & 0x1fffff) != 0
+ #error PAGE_OFFSET must be at least 2MB aligned
+-#elif TEXT_OFFSET > 0x1fffff
+-#error TEXT_OFFSET must be less than 2MB
++//#elif TEXT_OFFSET > 0x1fffff
++//#error TEXT_OFFSET must be less than 2MB
+ #endif
+ 
+ /*
+-- 
+2.25.1
+

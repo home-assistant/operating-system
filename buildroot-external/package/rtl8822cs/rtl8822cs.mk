@@ -4,12 +4,9 @@
 #
 ################################################################################
 
-RTL8822CS_VERSION = 42779c3f1aa28ff4d3004de760276b6d515efa0d
-RTL8822CS_SITE = $(call github,adeepn,rtl88x2cs,$(RTL8822CS_VERSION))
-RTL8822CS_LICENSE = Unknown
-#RTL8822CS_LICENSE_FILES = COPYING
-#RTL8822CS_MODULE_SUBDIRS = src
-
+RTL8822CS_VERSION = d07a0daa29ef50a16f85fd2a5f43396e534f57a8
+RTL8822CS_SITE = $(call github,jethome-ru,rtl88x2cs,$(RTL8822CS_VERSION))
+RTL8822CS_LICENSE = GPL-2.0
 
 RTL8822CS_MODULE_MAKE_OPTS = \
 	CONFIG_RTL8822CS=m \

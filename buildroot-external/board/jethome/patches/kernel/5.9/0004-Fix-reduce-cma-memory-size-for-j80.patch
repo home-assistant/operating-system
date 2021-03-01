@@ -1,17 +1,17 @@
-From c3b53a1f97d2ac88b6ec060c15759b8da4bbb652 Mon Sep 17 00:00:00 2001
+From 25e0f0f0548daac8c3e535045b5230f855c689de Mon Sep 17 00:00:00 2001
 From: Vyacheslav Bocharov <devel@lexina.in>
-Date: Sun, 31 Jan 2021 15:28:20 +0300
-Subject: [PATCH] Fix cma
+Date: Wed, 24 Feb 2021 13:43:07 +0300
+Subject: [PATCH 4/9] Fix: reduce cma memory size for j80
 
 ---
  arch/arm64/boot/dts/amlogic/meson-gx.dtsi | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/arch/arm64/boot/dts/amlogic/meson-gx.dtsi b/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
-index 5c6770b4dd..9c72e8c42d 100644
+index 726b91d3a..d561f15ec 100644
 --- a/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
 +++ b/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
-@@ -51,7 +51,7 @@ secmon_reserved_bl32: secmon@5300000 {
+@@ -47,7 +47,7 @@ secmon_reserved_alt: secmon@5000000 {
  		linux,cma {
  			compatible = "shared-dma-pool";
  			reusable;

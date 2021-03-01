@@ -64,8 +64,8 @@ elif test ""x${BOOT_SLOT}"" = ""xA""; then
     fi;
     echo "Trying to boot slot A, ${BOOT_A_LEFT} attempts remaining. Loading kernel ...";
     if ext4load mmc ${hassos_mmc_dev}:${hassos_kernel_part_a} ${hassos_kernel_addr_r} ${hassos_LINUX}; then
-      if fatload mmc ${hassos_mmc_dev}:${hassos_boot_part} ${hassos_fdt_addr_r} ${hassos_FDT}; then
-        fdt addr ${hassos_fdt_addr_r};
+      if fatload mmc ${hassos_mmc_dev}:${hassos_boot_part} ${dtb_mem_addr} ${hassos_FDT}; then
+        fdt addr ${dtb_mem_addr};
         run hassos_addmac;
               setenv bootargs ${hassos_bootargs} ${hassos_bootargs_a} rauc.slot=A ${cmdline};
       fi;
@@ -82,8 +82,8 @@ elif test ""x${BOOT_SLOT}"" = ""xB""; then
     fi;
     echo "Trying to boot slot B, ${BOOT_B_LEFT} attempts remaining. Loading kernel ...";
     if ext4load mmc ${hassos_mmc_dev}:${hassos_kernel_part_b} ${hassos_kernel_addr_r} ${hassos_LINUX}; then
-      if fatload mmc ${hassos_mmc_dev}:${hassos_boot_part} ${hassos_fdt_addr_r} ${hassos_FDT}; then
-        fdt addr ${hassos_fdt_addr_r};
+      if fatload mmc ${hassos_mmc_dev}:${hassos_boot_part} ${dtb_mem_addr} ${hassos_FDT}; then
+        fdt addr ${dtb_mem_addr};
         run hassos_addmac;
         setenv bootargs ${hassos_bootargs} ${hassos_bootargs_b} rauc.slot=B ${cmdline};
       fi;
@@ -102,7 +102,7 @@ if test \"z${bootargs}\" = \"z\" ; then
 fi;
 run storebootstate;
 echo Starting kernel;
-booti ${hassos_kernel_addr_r} - ${hassos_fdt_addr_r};
+booti ${hassos_kernel_addr_r} - ${dtb_mem_addr};
 echo "Boot failed, resetting...";
 reset
 

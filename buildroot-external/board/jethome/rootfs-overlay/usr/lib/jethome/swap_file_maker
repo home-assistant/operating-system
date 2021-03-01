@@ -53,7 +53,6 @@ make_swap_axg() {
     echo "Amlogic S905W detected. Skip swap file creation"
   elif grep -Eq "^AXG" /sys/devices/soc0/soc_id; then
     echo "Amlogic AXG detected. Skip swap file creation"
-    make_swap
   else
     echo "SoC detection failed. Unable to create swap file"
   fi
