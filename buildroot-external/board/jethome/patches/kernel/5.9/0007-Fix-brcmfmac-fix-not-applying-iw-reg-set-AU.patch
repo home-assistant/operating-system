@@ -1,0 +1,25 @@
+From 28710adb86cb820faa74b47037c7a44d752b3cbc Mon Sep 17 00:00:00 2001
+From: Vyacheslav Bocharov <devel@lexina.in>
+Date: Mon, 1 Mar 2021 09:15:54 +0300
+Subject: [PATCH 7/9] Fix: brcmfmac: fix not applying 'iw reg set AU'
+
+---
+ net/wireless/reg.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/net/wireless/reg.c b/net/wireless/reg.c
+index 763a45655..d655f65bd 100644
+--- a/net/wireless/reg.c
++++ b/net/wireless/reg.c
+@@ -262,7 +262,7 @@ static const struct ieee80211_regdomain world_regdom = {
+ static const struct ieee80211_regdomain *cfg80211_world_regdom =
+ 	&world_regdom;
+ 
+-static char *ieee80211_regdom = "00";
++static char *ieee80211_regdom = "AU";
+ static char user_alpha2[2];
+ static const struct ieee80211_regdomain *cfg80211_user_regdom;
+ 
+-- 
+2.25.1
+
