@@ -1,0 +1,1721 @@
+From 8acdbd718b7828b5d8903a6254b2fa198b866491 Mon Sep 17 00:00:00 2001
+From: Florian Bezdeka <florian.bezdeka@siemens.com>
+Date: Thu, 12 Nov 2020 11:45:28 +0000
+Subject: [PATCH] lib/boilerplate/iniparser: Allow building with GCC 10.2
+ 2020101
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Updating to upstream revision f858275f7f307eecba84c2f5429483f9f28007f8.
+Upstream repository is located at [1].
+
+The reason for updating was the following compiler error when trying
+to compile with GCC 10.2 10.2.1 20201016. As it turned out the problem
+was already addressed upstream:
+
+iniparser/iniparser.c: In function ‘iniparser_load’:
+iniparser/iniparser.c:616:13: error: ‘sprintf’ arguments 3, 4 may
+overlap destination object ‘buf’ [-Werror=restrict]
+   616 |             sprintf(tmp, "%s:%s", section, key);
+       |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+I reviewed especially the API changes. Most of them are cleanups only
+but two things should be pointed out:
+
+  - The type of the size field of struct _dictionary_ changed from int
+    to ssize_t. The only user of this struct is
+    lib/analogy/calibration.c which uses this structure for internal
+    things only. It is never exposed to any public API so updating is
+    OK and fully backward compatible.
+
+  - dictionary_new changed its signature
+      from dictionary_new(int size)
+      to   dictionary_new(size_t size).
+    This function is not part of any public API. So updating does not
+    break backward compatibility.
+
+[1] https://github.com/ndevilla/iniparser
+
+Signed-off-by: Florian Bezdeka <florian.bezdeka@siemens.com>
+Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+
+[Retrieved from:
+https://gitlab.denx.de/Xenomai/xenomai/-/commit/8acdbd718b7828b5d8903a6254b2fa198b866491]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ lib/boilerplate/iniparser/dictionary.c | 409 ++++++++++----------
+ lib/boilerplate/iniparser/dictionary.h |  43 ++-
+ lib/boilerplate/iniparser/iniparser.c  | 491 +++++++++++++++++--------
+ lib/boilerplate/iniparser/iniparser.h  | 131 +++++--
+ 4 files changed, 646 insertions(+), 428 deletions(-)
+
+diff --git a/lib/boilerplate/iniparser/dictionary.c b/lib/boilerplate/iniparser/dictionary.c
+index 5299b77ed..cb7ccd49e 100644
+--- a/lib/boilerplate/iniparser/dictionary.c
++++ b/lib/boilerplate/iniparser/dictionary.c
+@@ -1,10 +1,8 @@
+ /*-------------------------------------------------------------------------*/
+ /**
+-   @file	dictionary.c
+-   @author	N. Devillard
+-   @date	Sep 2007
+-   @version	$Revision: 1.27 $
+-   @brief	Implements a dictionary for string variables.
++   @file    dictionary.c
++   @author  N. Devillard
++   @brief   Implements a dictionary for string variables.
+ 
+    This module implements a simple dictionary object, i.e. a list
+    of string/string associations. This object is useful to store e.g.
+@@ -12,12 +10,8 @@
+ */
+ /*--------------------------------------------------------------------------*/
+ 
+-/*
+-	$Id: dictionary.c,v 1.27 2007-11-23 21:39:18 ndevilla Exp $
+-	$Revision: 1.27 $
+-*/
+ /*---------------------------------------------------------------------------
+-   								Includes
++                                Includes
+  ---------------------------------------------------------------------------*/
+ #include "dictionary.h"
+ 
+@@ -27,33 +21,18 @@
+ #include <unistd.h>
+ 
+ /** Maximum value size for integers and doubles. */
+-#define MAXVALSZ	1024
++#define MAXVALSZ    1024
+ 
+ /** Minimal allocated number of entries in a dictionary */
+-#define DICTMINSZ	128
++#define DICTMINSZ   128
+ 
+ /** Invalid key token */
+ #define DICT_INVALID_KEY    ((char*)-1)
+ 
+ /*---------------------------------------------------------------------------
+-  							Private functions
++                            Private functions
+  ---------------------------------------------------------------------------*/
+ 
+-/* Doubles the allocated size associated to a pointer */
+-/* 'size' is the current allocated size. */
+-static void * mem_double(void * ptr, int size)
+-{
+-    void * newptr ;
+- 
+-    newptr = calloc(2*size, 1);
+-    if (newptr==NULL) {
+-        return NULL ;
+-    }
+-    memcpy(newptr, ptr, size);
+-    free(ptr);
+-    return newptr ;
+-}
+-
+ /*-------------------------------------------------------------------------*/
+ /**
+   @brief    Duplicate a string
+@@ -67,23 +46,68 @@ static void * mem_double(void * ptr, int size)
+ static char * xstrdup(const char * s)
+ {
+     char * t ;
++    size_t len ;
+     if (!s)
+         return NULL ;
+-    t = malloc(strlen(s)+1) ;
++
++    len = strlen(s) + 1 ;
++    t = (char*) malloc(len) ;
+     if (t) {
+-        strcpy(t,s);
++        memcpy(t, s, len) ;
+     }
+     return t ;
+ }
+ 
++/*-------------------------------------------------------------------------*/
++/**
++  @brief    Double the size of the dictionary
++  @param    d Dictionary to grow
++  @return   This function returns non-zero in case of failure
++ */
++/*--------------------------------------------------------------------------*/
++static int dictionary_grow(dictionary * d)
++{
++    char        ** new_val ;
++    char        ** new_key ;
++    unsigned     * new_hash ;
++
++    new_val  = (char**) calloc(d->size * 2, sizeof *d->val);
++    new_key  = (char**) calloc(d->size * 2, sizeof *d->key);
++    new_hash = (unsigned*) calloc(d->size * 2, sizeof *d->hash);
++    if (!new_val || !new_key || !new_hash) {
++        /* An allocation failed, leave the dictionary unchanged */
++        if (new_val)
++            free(new_val);
++        if (new_key)
++            free(new_key);
++        if (new_hash)
++            free(new_hash);
++        return -1 ;
++    }
++    /* Initialize the newly allocated space */
++    memcpy(new_val, d->val, d->size * sizeof(char *));
++    memcpy(new_key, d->key, d->size * sizeof(char *));
++    memcpy(new_hash, d->hash, d->size * sizeof(unsigned));
++    /* Delete previous data */
++    free(d->val);
++    free(d->key);
++    free(d->hash);
++    /* Actually update the dictionary */
++    d->size *= 2 ;
++    d->val = new_val;
++    d->key = new_key;
++    d->hash = new_hash;
++    return 0 ;
++}
++
+ /*---------------------------------------------------------------------------
+-  							Function codes
++                            Function codes
+  ---------------------------------------------------------------------------*/
+ /*-------------------------------------------------------------------------*/
+ /**
+-  @brief	Compute the hash key for a string.
+-  @param	key		Character string to use for key.
+-  @return	1 unsigned int on at least 32 bits.
++  @brief    Compute the hash key for a string.
++  @param    key     Character string to use for key.
++  @return   1 unsigned int on at least 32 bits.
+ 
+   This hash function has been taken from an Article in Dr Dobbs Journal.
+   This is normally a collision-free function, distributing keys evenly.
+@@ -93,84 +117,88 @@ static char * xstrdup(const char * s)
+ /*--------------------------------------------------------------------------*/
+ unsigned dictionary_hash(const char * key)
+ {
+-	int			len ;
+-	unsigned	hash ;
+-	int			i ;
+-
+-	len = strlen(key);
+-	for (hash=0, i=0 ; i<len ; i++) {
+-		hash += (unsigned)key[i] ;
+-		hash += (hash<<10);
+-		hash ^= (hash>>6) ;
+-	}
+-	hash += (hash <<3);
+-	hash ^= (hash >>11);
+-	hash += (hash <<15);
+-	return hash ;
++    size_t      len ;
++    unsigned    hash ;
++    size_t      i ;
++
++    if (!key)
++        return 0 ;
++
++    len = strlen(key);
++    for (hash=0, i=0 ; i<len ; i++) {
++        hash += (unsigned)key[i] ;
++        hash += (hash<<10);
++        hash ^= (hash>>6) ;
++    }
++    hash += (hash <<3);
++    hash ^= (hash >>11);
++    hash += (hash <<15);
++    return hash ;
+ }
+ 
+ /*-------------------------------------------------------------------------*/
+ /**
+-  @brief	Create a new dictionary object.
+-  @param	size	Optional initial size of the dictionary.
+-  @return	1 newly allocated dictionary objet.
++  @brief    Create a new dictionary object.
++  @param    size    Optional initial size of the dictionary.
++  @return   1 newly allocated dictionary objet.
+ 
+   This function allocates a new dictionary object of given size and returns
+   it. If you do not know in advance (roughly) the number of entries in the
+   dictionary, give size=0.
+  */
+-/*--------------------------------------------------------------------------*/
+-dictionary * dictionary_new(int size)
++/*-------------------------------------------------------------------------*/
++dictionary * dictionary_new(size_t size)
+ {
+-	dictionary	*	d ;
+-
+-	/* If no size was specified, allocate space for DICTMINSZ */
+-	if (size<DICTMINSZ) size=DICTMINSZ ;
+-
+-	if (!(d = (dictionary *)calloc(1, sizeof(dictionary)))) {
+-		return NULL;
+-	}
+-	d->size = size ;
+-	d->val  = (char **)calloc(size, sizeof(char*));
+-	d->key  = (char **)calloc(size, sizeof(char*));
+-	d->hash = (unsigned int *)calloc(size, sizeof(unsigned));
+-	return d ;
++    dictionary  *   d ;
++
++    /* If no size was specified, allocate space for DICTMINSZ */
++    if (size<DICTMINSZ) size=DICTMINSZ ;
++
++    d = (dictionary*) calloc(1, sizeof *d) ;
++
++    if (d) {
++        d->size = size ;
++        d->val  = (char**) calloc(size, sizeof *d->val);
++        d->key  = (char**) calloc(size, sizeof *d->key);
++        d->hash = (unsigned*) calloc(size, sizeof *d->hash);
++    }
++    return d ;
+ }
+ 
+ /*-------------------------------------------------------------------------*/
+ /**
+-  @brief	Delete a dictionary object
+-  @param	d	dictionary object to deallocate.
+-  @return	void
++  @brief    Delete a dictionary object
++  @param    d   dictionary object to deallocate.
++  @return   void
+ 
+   Deallocate a dictionary object and all memory associated to it.
+  */
+ /*--------------------------------------------------------------------------*/
+ void dictionary_del(dictionary * d)
+ {
+-	int		i ;
+-
+-	if (d==NULL) return ;
+-	for (i=0 ; i<d->size ; i++) {
+-		if (d->key[i]!=NULL)
+-			free(d->key[i]);
+-		if (d->val[i]!=NULL)
+-			free(d->val[i]);
+-	}
+-	free(d->val);
+-	free(d->key);
+-	free(d->hash);
+-	free(d);
+-	return ;
++    ssize_t  i ;
++
++    if (d==NULL) return ;
++    for (i=0 ; i<d->size ; i++) {
++        if (d->key[i]!=NULL)
++            free(d->key[i]);
++        if (d->val[i]!=NULL)
++            free(d->val[i]);
++    }
++    free(d->val);
++    free(d->key);
++    free(d->hash);
++    free(d);
++    return ;
+ }
+ 
+ /*-------------------------------------------------------------------------*/
+ /**
+-  @brief	Get a value from a dictionary.
+-  @param	d		dictionary object to search.
+-  @param	key		Key to look for in the dictionary.
++  @brief    Get a value from a dictionary.
++  @param    d       dictionary object to search.
++  @param    key     Key to look for in the dictionary.
+   @param    def     Default value to return if key not found.
+-  @return	1 pointer to internally allocated character string.
++  @return   1 pointer to internally allocated character string.
+ 
+   This function locates a key in a dictionary and returns a pointer to its
+   value, or the passed 'def' pointer if no such key can be found in
+@@ -178,24 +206,24 @@ void dictionary_del(dictionary * d)
+   dictionary object, you should not try to free it or modify it.
+  */
+ /*--------------------------------------------------------------------------*/
+-const char * dictionary_get(dictionary * d, const char * key, const char * def)
++const char * dictionary_get(const dictionary * d, const char * key, const char * def)
+ {
+-	unsigned	hash ;
+-	int			i ;
++    unsigned    hash ;
++    ssize_t      i ;
+ 
+-	hash = dictionary_hash(key);
+-	for (i=0 ; i<d->size ; i++) {
++    hash = dictionary_hash(key);
++    for (i=0 ; i<d->size ; i++) {
+         if (d->key[i]==NULL)
+             continue ;
+         /* Compare hash */
+-		if (hash==d->hash[i]) {
++        if (hash==d->hash[i]) {
+             /* Compare string, to avoid hash collisions */
+             if (!strcmp(key, d->key[i])) {
+-				return d->val[i] ;
+-			}
+-		}
+-	}
+-	return def ;
++                return d->val[i] ;
++            }
++        }
++    }
++    return def ;
+ }
+ 
+ /*-------------------------------------------------------------------------*/
+@@ -226,66 +254,57 @@ const char * dictionary_get(dictionary * d, const char * key, const char * def)
+ /*--------------------------------------------------------------------------*/
+ int dictionary_set(dictionary * d, const char * key, const char * val)
+ {
+-	int			i ;
+-	unsigned	hash ;
+-
+-	if (d==NULL || key==NULL) return -1 ;
+-	
+-	/* Compute hash for this key */
+-	hash = dictionary_hash(key) ;
+-	/* Find if value is already in dictionary */
+-	if (d->n>0) {
+-		for (i=0 ; i<d->size ; i++) {
++    ssize_t         i ;
++    unsigned       hash ;
++
++    if (d==NULL || key==NULL) return -1 ;
++
++    /* Compute hash for this key */
++    hash = dictionary_hash(key) ;
++    /* Find if value is already in dictionary */
++    if (d->n>0) {
++        for (i=0 ; i<d->size ; i++) {
+             if (d->key[i]==NULL)
+                 continue ;
+-			if (hash==d->hash[i]) { /* Same hash value */
+-				if (!strcmp(key, d->key[i])) {	 /* Same key */
+-					/* Found a value: modify and return */
+-					if (d->val[i]!=NULL)
+-						free(d->val[i]);
+-                    d->val[i] = val ? xstrdup(val) : NULL ;
++            if (hash==d->hash[i]) { /* Same hash value */
++                if (!strcmp(key, d->key[i])) {   /* Same key */
++                    /* Found a value: modify and return */
++                    if (d->val[i]!=NULL)
++                        free(d->val[i]);
++                    d->val[i] = (val ? xstrdup(val) : NULL);
+                     /* Value has been modified: return */
+-					return 0 ;
+-				}
+-			}
+-		}
+-	}
+-	/* Add a new value */
+-	/* See if dictionary needs to grow */
+-	if (d->n==d->size) {
+-
+-		/* Reached maximum size: reallocate dictionary */
+-		d->val  = (char **)mem_double(d->val,  d->size * sizeof(char*)) ;
+-		d->key  = (char **)mem_double(d->key,  d->size * sizeof(char*)) ;
+-		d->hash = (unsigned int *)mem_double(d->hash, d->size * sizeof(unsigned)) ;
+-        if ((d->val==NULL) || (d->key==NULL) || (d->hash==NULL)) {
+-            /* Cannot grow dictionary */
+-            return -1 ;
++                    return 0 ;
++                }
++            }
+         }
+-		/* Double size */
+-		d->size *= 2 ;
+-	}
++    }
++    /* Add a new value */
++    /* See if dictionary needs to grow */
++    if (d->n==d->size) {
++        /* Reached maximum size: reallocate dictionary */
++        if (dictionary_grow(d) != 0)
++            return -1;
++    }
+ 
+-    /* Insert key in the first empty slot */
+-    for (i=0 ; i<d->size ; i++) {
+-        if (d->key[i]==NULL) {
+-            /* Add key here */
+-            break ;
+-        }
++    /* Insert key in the first empty slot. Start at d->n and wrap at
++       d->size. Because d->n < d->size this will necessarily
++       terminate. */
++    for (i=d->n ; d->key[i] ; ) {
++        if(++i == d->size) i = 0;
+     }
+-	/* Copy key */
+-	d->key[i]  = xstrdup(key);
+-    d->val[i]  = val ? xstrdup(val) : NULL ;
+-	d->hash[i] = hash;
+-	d->n ++ ;
+-	return 0 ;
++    /* Copy key */
++    d->key[i]  = xstrdup(key);
++    d->val[i]  = (val ? xstrdup(val) : NULL) ;
++    d->hash[i] = hash;
++    d->n ++ ;
++    return 0 ;
+ }
+ 
+ /*-------------------------------------------------------------------------*/
+ /**
+-  @brief	Delete a key in a dictionary
+-  @param	d		dictionary object to modify.
+-  @param	key		Key to remove.
++  @brief    Delete a key in a dictionary
++  @param    d       dictionary object to modify.
++  @param    key     Key to remove.
+   @return   void
+ 
+   This function deletes a key in a dictionary. Nothing is done if the
+@@ -294,26 +313,26 @@ int dictionary_set(dictionary * d, const char * key, const char * val)
+ /*--------------------------------------------------------------------------*/
+ void dictionary_unset(dictionary * d, const char * key)
+ {
+-	unsigned	hash ;
+-	int			i ;
++    unsigned    hash ;
++    ssize_t      i ;
+ 
+-	if (key == NULL) {
+-		return;
+-	}
++    if (key == NULL || d == NULL) {
++        return;
++    }
+ 
+-	hash = dictionary_hash(key);
+-	for (i=0 ; i<d->size ; i++) {
++    hash = dictionary_hash(key);
++    for (i=0 ; i<d->size ; i++) {
+         if (d->key[i]==NULL)
+             continue ;
+         /* Compare hash */
+-		if (hash==d->hash[i]) {
++        if (hash==d->hash[i]) {
+             /* Compare string, to avoid hash collisions */
+             if (!strcmp(key, d->key[i])) {
+                 /* Found key */
+                 break ;
+-			}
+-		}
+-	}
++            }
++        }
++    }
+     if (i>=d->size)
+         /* Key not found */
+         return ;
+@@ -331,75 +350,31 @@ void dictionary_unset(dictionary * d, const char * key)
+ 
+ /*-------------------------------------------------------------------------*/
+ /**
+-  @brief	Dump a dictionary to an opened file pointer.
+-  @param	d	Dictionary to dump
+-  @param	out	Opened file pointer.
+-  @return	void
++  @brief    Dump a dictionary to an opened file pointer.
++  @param    d   Dictionary to dump
++  @param    f   Opened file pointer.
++  @return   void
+ 
+   Dumps a dictionary onto an opened file pointer. Key pairs are printed out
+   as @c [Key]=[Value], one per line. It is Ok to provide stdout or stderr as
+   output file pointers.
+  */
+ /*--------------------------------------------------------------------------*/
+-void dictionary_dump(dictionary * d, FILE * out)
++void dictionary_dump(const dictionary * d, FILE * out)
+ {
+-	int		i ;
+-
+-	if (d==NULL || out==NULL) return ;
+-	if (d->n<1) {
+-		fprintf(out, "empty dictionary\n");
+-		return ;
+-	}
+-	for (i=0 ; i<d->size ; i++) {
++    ssize_t  i ;
++
++    if (d==NULL || out==NULL) return ;
++    if (d->n<1) {
++        fprintf(out, "empty dictionary\n");
++        return ;
++    }
++    for (i=0 ; i<d->size ; i++) {
+         if (d->key[i]) {
+             fprintf(out, "%20s\t[%s]\n",
+                     d->key[i],
+                     d->val[i] ? d->val[i] : "UNDEF");
+         }
+-	}
+-	return ;
+-}
+-
+-
+-/* Test code */
+-#ifdef TESTDIC
+-#define NVALS 20000
+-int main(int argc, char *argv[])
+-{
+-	dictionary	*	d ;
+-	char	*	val ;
+-	int			i ;
+-	char		cval[90] ;
+-
+-	/* Allocate dictionary */
+-	printf("allocating...\n");
+-	d = dictionary_new(0);
+-	
+-	/* Set values in dictionary */
+-	printf("setting %d values...\n", NVALS);
+-	for (i=0 ; i<NVALS ; i++) {
+-		sprintf(cval, "%04d", i);
+-		dictionary_set(d, cval, "salut");
+-	}
+-	printf("getting %d values...\n", NVALS);
+-	for (i=0 ; i<NVALS ; i++) {
+-		sprintf(cval, "%04d", i);
+-		val = dictionary_get(d, cval, DICT_INVALID_KEY);
+-		if (val==DICT_INVALID_KEY) {
+-			printf("cannot get value for key [%s]\n", cval);
+-		}
+-	}
+-    printf("unsetting %d values...\n", NVALS);
+-	for (i=0 ; i<NVALS ; i++) {
+-		sprintf(cval, "%04d", i);
+-		dictionary_unset(d, cval);
+-	}
+-    if (d->n != 0) {
+-        printf("error deleting values\n");
+     }
+-	printf("deallocating...\n");
+-	dictionary_del(d);
+-	return 0 ;
++    return ;
+ }
+-#endif
+-/* vim: set ts=4 et sw=4 tw=75 */
+diff --git a/lib/boilerplate/iniparser/dictionary.h b/lib/boilerplate/iniparser/dictionary.h
+index fa4dcb727..d04b6ce71 100644
+--- a/lib/boilerplate/iniparser/dictionary.h
++++ b/lib/boilerplate/iniparser/dictionary.h
+@@ -3,8 +3,6 @@
+ /**
+    @file    dictionary.h
+    @author  N. Devillard
+-   @date    Sep 2007
+-   @version $Revision: 1.12 $
+    @brief   Implements a dictionary for string variables.
+ 
+    This module implements a simple dictionary object, i.e. a list
+@@ -13,18 +11,11 @@
+ */
+ /*--------------------------------------------------------------------------*/
+ 
+-/*
+-	$Id: dictionary.h,v 1.12 2007-11-23 21:37:00 ndevilla Exp $
+-	$Author: ndevilla $
+-	$Date: 2007-11-23 21:37:00 $
+-	$Revision: 1.12 $
+-*/
+-
+ #ifndef _DICTIONARY_H_
+ #define _DICTIONARY_H_
+ 
+ /*---------------------------------------------------------------------------
+-   								Includes
++                                Includes
+  ---------------------------------------------------------------------------*/
+ 
+ #include <stdio.h>
+@@ -32,14 +23,18 @@
+ #include <string.h>
+ #include <unistd.h>
+ 
++#ifdef __cplusplus
++extern "C" {
++#endif
++
+ /*---------------------------------------------------------------------------
+-   								New types
++                                New types
+  ---------------------------------------------------------------------------*/
+ 
+ 
+ /*-------------------------------------------------------------------------*/
+ /**
+-  @brief	Dictionary object
++  @brief    Dictionary object
+ 
+   This object contains a list of string/string associations. Each
+   association is identified by a unique string key. Looking up values
+@@ -48,16 +43,16 @@
+  */
+ /*-------------------------------------------------------------------------*/
+ typedef struct _dictionary_ {
+-	int				n ;		/** Number of entries in dictionary */
+-	int				size ;	/** Storage size */
+-	char 		**	val ;	/** List of string values */
+-	char 		**  key ;	/** List of string keys */
+-	unsigned	 *	hash ;	/** List of hash values for keys */
++    int             n ;     /** Number of entries in dictionary */
++    ssize_t         size ;  /** Storage size */
++    char        **  val ;   /** List of string values */
++    char        **  key ;   /** List of string keys */
++    unsigned     *  hash ;  /** List of hash values for keys */
+ } dictionary ;
+ 
+ 
+ /*---------------------------------------------------------------------------
+-  							Function prototypes
++                            Function prototypes
+  ---------------------------------------------------------------------------*/
+ 
+ /*-------------------------------------------------------------------------*/
+@@ -85,7 +80,7 @@ unsigned dictionary_hash(const char * key);
+   dictionary, give size=0.
+  */
+ /*--------------------------------------------------------------------------*/
+-dictionary * dictionary_new(int size);
++dictionary * dictionary_new(size_t size);
+ 
+ /*-------------------------------------------------------------------------*/
+ /**
+@@ -112,7 +107,7 @@ void dictionary_del(dictionary * vd);
+   dictionary object, you should not try to free it or modify it.
+  */
+ /*--------------------------------------------------------------------------*/
+-const char * dictionary_get(dictionary * d, const char * key, const char * def);
++const char * dictionary_get(const dictionary * d, const char * key, const char * def);
+ 
+ 
+ /*-------------------------------------------------------------------------*/
+@@ -161,7 +156,7 @@ void dictionary_unset(dictionary * d, const char * key);
+ /**
+   @brief    Dump a dictionary to an opened file pointer.
+   @param    d   Dictionary to dump
+-  @param    out   Opened file pointer.
++  @param    f   Opened file pointer.
+   @return   void
+ 
+   Dumps a dictionary onto an opened file pointer. Key pairs are printed out
+@@ -169,6 +164,10 @@ void dictionary_unset(dictionary * d, const char * key);
+   output file pointers.
+  */
+ /*--------------------------------------------------------------------------*/
+-void dictionary_dump(dictionary * d, FILE * out);
++void dictionary_dump(const dictionary * d, FILE * out);
++
++#ifdef __cplusplus
++}
++#endif
+ 
+ #endif
+diff --git a/lib/boilerplate/iniparser/iniparser.c b/lib/boilerplate/iniparser/iniparser.c
+index 5b2094a00..f1d165896 100644
+--- a/lib/boilerplate/iniparser/iniparser.c
++++ b/lib/boilerplate/iniparser/iniparser.c
+@@ -3,19 +3,12 @@
+ /**
+    @file    iniparser.c
+    @author  N. Devillard
+-   @date    Sep 2007
+-   @version 3.0
+    @brief   Parser for ini files.
+ */
+ /*--------------------------------------------------------------------------*/
+-/*
+-    $Id: iniparser.c,v 2.18 2008-01-03 18:35:39 ndevilla Exp $
+-    $Revision: 2.18 $
+-    $Date: 2008-01-03 18:35:39 $
+-*/
+ /*---------------------------- Includes ------------------------------------*/
+ #include <ctype.h>
+-#include <errno.h>
++#include <stdarg.h>
+ #include "iniparser.h"
+ 
+ /*---------------------------- Defines -------------------------------------*/
+@@ -39,65 +32,115 @@ typedef enum _line_status_ {
+ 
+ /*-------------------------------------------------------------------------*/
+ /**
+-  @brief	Convert a string to lowercase.
+-  @param	s	String to convert.
+-  @return	ptr to statically allocated string.
+-
+-  This function returns a pointer to a statically allocated string
+-  containing a lowercased version of the input string. Do not free
+-  or modify the returned string! Since the returned string is statically
+-  allocated, it will be modified at each function call (not re-entrant).
++  @brief    Convert a string to lowercase.
++  @param    in   String to convert.
++  @param    out Output buffer.
++  @param    len Size of the out buffer.
++  @return   ptr to the out buffer or NULL if an error occured.
++
++  This function convert a string into lowercase.
++  At most len - 1 elements of the input string will be converted.
+  */
+ /*--------------------------------------------------------------------------*/
+-
+-static char strbuf[ASCIILINESZ+1];
+-
+-static char * strlwc(const char * s)
++static const char * strlwc(const char * in, char *out, unsigned len)
+ {
+-    int i ;
++    unsigned i ;
+ 
+-    if (s==NULL) return NULL ;
+-    memset(strbuf, 0, ASCIILINESZ+1);
++    if (in==NULL || out == NULL || len==0) return NULL ;
+     i=0 ;
+-    while (s[i] && i<ASCIILINESZ) {
+-        strbuf[i] = (char)tolower((int)s[i]);
++    while (in[i] != '\0' && i < len-1) {
++        out[i] = (char)tolower((int)in[i]);
+         i++ ;
+     }
+-    strbuf[ASCIILINESZ]=(char)0;
+-    return strbuf ;
++    out[i] = '\0';
++    return out ;
++}
++
++/*-------------------------------------------------------------------------*/
++/**
++  @brief    Duplicate a string
++  @param    s String to duplicate
++  @return   Pointer to a newly allocated string, to be freed with free()
++
++  This is a replacement for strdup(). This implementation is provided
++  for systems that do not have it.
++ */
++/*--------------------------------------------------------------------------*/
++static char * xstrdup(const char * s)
++{
++    char * t ;
++    size_t len ;
++    if (!s)
++        return NULL ;
++
++    len = strlen(s) + 1 ;
++    t = (char*) malloc(len) ;
++    if (t) {
++        memcpy(t, s, len) ;
++    }
++    return t ;
++}
++
++/*-------------------------------------------------------------------------*/
++/**
++  @brief    Remove blanks at the beginning and the end of a string.
++  @param    str  String to parse and alter.
++  @return   unsigned New size of the string.
++ */
++/*--------------------------------------------------------------------------*/
++static unsigned strstrip(char * s)
++{
++    char *last = NULL ;
++    char *dest = s;
++
++    if (s==NULL) return 0;
++
++    last = s + strlen(s);
++    while (isspace((int)*s) && *s) s++;
++    while (last > s) {
++        if (!isspace((int)*(last-1)))
++            break ;
++        last -- ;
++    }
++    *last = (char)0;
++
++    memmove(dest,s,last - s + 1);
++    return last - s;
++}
++
++/*-------------------------------------------------------------------------*/
++/**
++  @brief    Default error callback for iniparser: wraps `fprintf(stderr, ...)`.
++ */
++/*--------------------------------------------------------------------------*/
++static int default_error_callback(const char *format, ...)
++{
++  int ret;
++  va_list argptr;
++  va_start(argptr, format);
++  ret = vfprintf(stderr, format, argptr);
++  va_end(argptr);
++  return ret;
+ }
+ 
++static int (*iniparser_error_callback)(const char*, ...) = default_error_callback;
++
+ /*-------------------------------------------------------------------------*/
+ /**
+-  @brief	Remove blanks at the beginning and the end of a string.
+-  @param	s	String to parse.
+-  @return	ptr to statically allocated string.
+-
+-  This function returns a pointer to a statically allocated string,
+-  which is identical to the input string, except that all blank
+-  characters at the end and the beg. of the string have been removed.
+-  Do not free or modify the returned string! Since the returned string
+-  is statically allocated, it will be modified at each function call
+-  (not re-entrant).
++  @brief    Configure a function to receive the error messages.
++  @param    errback  Function to call.
++
++  By default, the error will be printed on stderr. If a null pointer is passed
++  as errback the error callback will be switched back to default.
+  */
+ /*--------------------------------------------------------------------------*/
+-static char * strstrip(const char * s)
++void iniparser_set_error_callback(int (*errback)(const char *, ...))
+ {
+-	char * last ;
+-	
+-    if (s==NULL) return NULL ;
+-    
+-	while (isspace((int)*s) && *s) s++;
+-	memset(strbuf, 0, ASCIILINESZ+1);
+-	strcpy(strbuf, s);
+-	last = strbuf + strlen(strbuf);
+-	while (last > strbuf) {
+-		if (!isspace((int)*(last-1)))
+-			break ;
+-		last -- ;
+-	}
+-	*last = (char)0;
+-	return (char*)strbuf ;
++  if (errback) {
++    iniparser_error_callback = errback;
++  } else {
++    iniparser_error_callback = default_error_callback;
++  }
+ }
+ 
+ /*-------------------------------------------------------------------------*/
+@@ -118,7 +161,7 @@ static char * strstrip(const char * s)
+   This function returns -1 in case of error.
+  */
+ /*--------------------------------------------------------------------------*/
+-int iniparser_getnsec(dictionary * d)
++int iniparser_getnsec(const dictionary * d)
+ {
+     int i ;
+     int nsec ;
+@@ -149,7 +192,7 @@ int iniparser_getnsec(dictionary * d)
+   This function returns NULL in case of error.
+  */
+ /*--------------------------------------------------------------------------*/
+-const char * iniparser_getsecname(dictionary * d, int n)
++const char * iniparser_getsecname(const dictionary * d, int n)
+ {
+     int i ;
+     int foundsec ;
+@@ -184,7 +227,7 @@ const char * iniparser_getsecname(dictionary * d, int n)
+   purposes mostly.
+  */
+ /*--------------------------------------------------------------------------*/
+-void iniparser_dump(dictionary * d, FILE * f)
++void iniparser_dump(const dictionary * d, FILE * f)
+ {
+     int     i ;
+ 
+@@ -212,13 +255,11 @@ void iniparser_dump(dictionary * d, FILE * f)
+   It is Ok to specify @c stderr or @c stdout as output files.
+  */
+ /*--------------------------------------------------------------------------*/
+-void iniparser_dump_ini(dictionary * d, FILE * f)
++void iniparser_dump_ini(const dictionary * d, FILE * f)
+ {
+-    int     i, j ;
+-    char    keym[ASCIILINESZ+1];
+-    int     nsec ;
+-    const char *  secname ;
+-    int     seclen ;
++    int          i ;
++    int          nsec ;
++    const char * secname ;
+ 
+     if (d==NULL || f==NULL) return ;
+ 
+@@ -234,24 +275,126 @@ void iniparser_dump_ini(dictionary * d, FILE * f)
+     }
+     for (i=0 ; i<nsec ; i++) {
+         secname = iniparser_getsecname(d, i) ;
+-        seclen  = (int)strlen(secname);
+-        fprintf(f, "\n[%s]\n", secname);
+-        sprintf(keym, "%s:", secname);
+-        for (j=0 ; j<d->size ; j++) {
+-            if (d->key[j]==NULL)
+-                continue ;
+-            if (!strncmp(d->key[j], keym, seclen+1)) {
+-                fprintf(f,
+-                        "%-30s = %s\n",
+-                        d->key[j]+seclen+1,
+-                        d->val[j] ? d->val[j] : "");
+-            }
++        iniparser_dumpsection_ini(d, secname, f);
++    }
++    fprintf(f, "\n");
++    return ;
++}
++
++/*-------------------------------------------------------------------------*/
++/**
++  @brief    Save a dictionary section to a loadable ini file
++  @param    d   Dictionary to dump
++  @param    s   Section name of dictionary to dump
++  @param    f   Opened file pointer to dump to
++  @return   void
++
++  This function dumps a given section of a given dictionary into a loadable ini
++  file.  It is Ok to specify @c stderr or @c stdout as output files.
++ */
++/*--------------------------------------------------------------------------*/
++void iniparser_dumpsection_ini(const dictionary * d, const char * s, FILE * f)
++{
++    int     j ;
++    char    keym[ASCIILINESZ+1];
++    int     seclen ;
++
++    if (d==NULL || f==NULL) return ;
++    if (! iniparser_find_entry(d, s)) return ;
++
++    seclen  = (int)strlen(s);
++    fprintf(f, "\n[%s]\n", s);
++    sprintf(keym, "%s:", s);
++    for (j=0 ; j<d->size ; j++) {
++        if (d->key[j]==NULL)
++            continue ;
++        if (!strncmp(d->key[j], keym, seclen+1)) {
++            fprintf(f,
++                    "%-30s = %s\n",
++                    d->key[j]+seclen+1,
++                    d->val[j] ? d->val[j] : "");
+         }
+     }
+     fprintf(f, "\n");
+     return ;
+ }
+ 
++/*-------------------------------------------------------------------------*/
++/**
++  @brief    Get the number of keys in a section of a dictionary.
++  @param    d   Dictionary to examine
++  @param    s   Section name of dictionary to examine
++  @return   Number of keys in section
++ */
++/*--------------------------------------------------------------------------*/
++int iniparser_getsecnkeys(const dictionary * d, const char * s)
++{
++    int     seclen, nkeys ;
++    char    keym[ASCIILINESZ+1];
++    int j ;
++
++    nkeys = 0;
++
++    if (d==NULL) return nkeys;
++    if (! iniparser_find_entry(d, s)) return nkeys;
++
++    seclen  = (int)strlen(s);
++    strlwc(s, keym, sizeof(keym));
++    keym[seclen] = ':';
++
++    for (j=0 ; j<d->size ; j++) {
++        if (d->key[j]==NULL)
++            continue ;
++        if (!strncmp(d->key[j], keym, seclen+1))
++            nkeys++;
++    }
++
++    return nkeys;
++
++}
++
++/*-------------------------------------------------------------------------*/
++/**
++  @brief    Get the number of keys in a section of a dictionary.
++  @param    d    Dictionary to examine
++  @param    s    Section name of dictionary to examine
++  @param    keys Already allocated array to store the keys in
++  @return   The pointer passed as `keys` argument or NULL in case of error
++
++  This function queries a dictionary and finds all keys in a given section.
++  The keys argument should be an array of pointers which size has been
++  determined by calling `iniparser_getsecnkeys` function prior to this one.
++
++  Each pointer in the returned char pointer-to-pointer is pointing to
++  a string allocated in the dictionary; do not free or modify them.
++ */
++/*--------------------------------------------------------------------------*/
++const char ** iniparser_getseckeys(const dictionary * d, const char * s, const char ** keys)
++{
++    int i, j, seclen ;
++    char keym[ASCIILINESZ+1];
++
++    if (d==NULL || keys==NULL) return NULL;
++    if (! iniparser_find_entry(d, s)) return NULL;
++
++    seclen  = (int)strlen(s);
++    strlwc(s, keym, sizeof(keym));
++    keym[seclen] = ':';
++
++    i = 0;
++
++    for (j=0 ; j<d->size ; j++) {
++        if (d->key[j]==NULL)
++            continue ;
++        if (!strncmp(d->key[j], keym, seclen+1)) {
++            keys[i] = d->key[j];
++            i++;
++        }
++    }
++
++    return keys;
++}
++
+ /*-------------------------------------------------------------------------*/
+ /**
+   @brief    Get the string associated to a key
+@@ -267,24 +410,27 @@ void iniparser_dump_ini(dictionary * d, FILE * f)
+   the dictionary, do not free or modify it.
+  */
+ /*--------------------------------------------------------------------------*/
+-const char * iniparser_getstring(dictionary * d, const char * key, const char * def)
++const char * iniparser_getstring(const dictionary * d, const char * key, const char * def)
+ {
+-    char * lc_key ;
++    const char * lc_key ;
++    const char * sval ;
++    char tmp_str[ASCIILINESZ+1];
+ 
+     if (d==NULL || key==NULL)
+         return def ;
+ 
+-    lc_key = strlwc(key);
+-    return dictionary_get(d, lc_key, def);
++    lc_key = strlwc(key, tmp_str, sizeof(tmp_str));
++    sval = dictionary_get(d, lc_key, def);
++    return sval ;
+ }
+ 
+ /*-------------------------------------------------------------------------*/
+ /**
+-  @brief    Get the string associated to a key, convert to an int
++  @brief    Get the string associated to a key, convert to an long int
+   @param    d Dictionary to search
+   @param    key Key string to look for
+   @param    notfound Value to return in case of error
+-  @return   integer
++  @return   long integer
+ 
+   This function queries a dictionary for a key. A key as read from an
+   ini file is given as "section:key". If the key cannot be found,
+@@ -305,13 +451,46 @@ const char * iniparser_getstring(dictionary * d, const char * key, const char *
+   Credits: Thanks to A. Becker for suggesting strtol()
+  */
+ /*--------------------------------------------------------------------------*/
+-int iniparser_getint(dictionary * d, const char * key, int notfound)
++long int iniparser_getlongint(const dictionary * d, const char * key, long int notfound)
+ {
+-    const char    *   str ;
++    const char * str ;
+ 
+     str = iniparser_getstring(d, key, INI_INVALID_KEY);
+     if (str==INI_INVALID_KEY) return notfound ;
+-    return (int)strtol(str, NULL, 0);
++    return strtol(str, NULL, 0);
++}
++
++
++/*-------------------------------------------------------------------------*/
++/**
++  @brief    Get the string associated to a key, convert to an int
++  @param    d Dictionary to search
++  @param    key Key string to look for
++  @param    notfound Value to return in case of error
++  @return   integer
++
++  This function queries a dictionary for a key. A key as read from an
++  ini file is given as "section:key". If the key cannot be found,
++  the notfound value is returned.
++
++  Supported values for integers include the usual C notation
++  so decimal, octal (starting with 0) and hexadecimal (starting with 0x)
++  are supported. Examples:
++
++  "42"      ->  42
++  "042"     ->  34 (octal -> decimal)
++  "0x42"    ->  66 (hexa  -> decimal)
++
++  Warning: the conversion may overflow in various ways. Conversion is
++  totally outsourced to strtol(), see the associated man page for overflow
++  handling.
++
++  Credits: Thanks to A. Becker for suggesting strtol()
++ */
++/*--------------------------------------------------------------------------*/
++int iniparser_getint(const dictionary * d, const char * key, int notfound)
++{
++    return (int)iniparser_getlongint(d, key, notfound);
+ }
+ 
+ /*-------------------------------------------------------------------------*/
+@@ -327,9 +506,9 @@ int iniparser_getint(dictionary * d, const char * key, int notfound)
+   the notfound value is returned.
+  */
+ /*--------------------------------------------------------------------------*/
+-double iniparser_getdouble(dictionary * d, const char * key, double notfound)
++double iniparser_getdouble(const dictionary * d, const char * key, double notfound)
+ {
+-    const char    *   str ;
++    const char * str ;
+ 
+     str = iniparser_getstring(d, key, INI_INVALID_KEY);
+     if (str==INI_INVALID_KEY) return notfound ;
+@@ -368,10 +547,10 @@ double iniparser_getdouble(dictionary * d, const char * key, double notfound)
+   necessarily have to be 0 or 1.
+  */
+ /*--------------------------------------------------------------------------*/
+-int iniparser_getboolean(dictionary * d, const char * key, int notfound)
++int iniparser_getboolean(const dictionary * d, const char * key, int notfound)
+ {
+-    const char    *   c ;
+-    int         ret ;
++    int          ret ;
++    const char * c ;
+ 
+     c = iniparser_getstring(d, key, INI_INVALID_KEY);
+     if (c==INI_INVALID_KEY) return notfound ;
+@@ -397,10 +576,7 @@ int iniparser_getboolean(dictionary * d, const char * key, int notfound)
+   of querying for the presence of sections in a dictionary.
+  */
+ /*--------------------------------------------------------------------------*/
+-int iniparser_find_entry(
+-    dictionary  *   ini,
+-    const char        *   entry
+-)
++int iniparser_find_entry(const dictionary * ini, const char * entry)
+ {
+     int found=0 ;
+     if (iniparser_getstring(ini, entry, INI_INVALID_KEY)!=INI_INVALID_KEY) {
+@@ -418,13 +594,14 @@ int iniparser_find_entry(
+   @return   int 0 if Ok, -1 otherwise.
+ 
+   If the given entry can be found in the dictionary, it is modified to
+-  contain the provided value. If it cannot be found, -1 is returned.
++  contain the provided value. If it cannot be found, the entry is created.
+   It is Ok to set val to NULL.
+  */
+ /*--------------------------------------------------------------------------*/
+ int iniparser_set(dictionary * ini, const char * entry, const char * val)
+ {
+-    return dictionary_set(ini, strlwc(entry), val) ;
++    char tmp_str[ASCIILINESZ+1];
++    return dictionary_set(ini, strlwc(entry, tmp_str, sizeof(tmp_str)), val) ;
+ }
+ 
+ /*-------------------------------------------------------------------------*/
+@@ -439,12 +616,13 @@ int iniparser_set(dictionary * ini, const char * entry, const char * val)
+ /*--------------------------------------------------------------------------*/
+ void iniparser_unset(dictionary * ini, const char * entry)
+ {
+-    dictionary_unset(ini, strlwc(entry));
++    char tmp_str[ASCIILINESZ+1];
++    dictionary_unset(ini, strlwc(entry, tmp_str, sizeof(tmp_str)));
+ }
+ 
+ /*-------------------------------------------------------------------------*/
+ /**
+-  @brief	Load a single line from an INI file
++  @brief    Load a single line from an INI file
+   @param    input_line  Input line, may be concatenated multi-line input
+   @param    section     Output space to store section
+   @param    key         Output space to store key
+@@ -457,34 +635,39 @@ static line_status iniparser_line(
+     char * section,
+     char * key,
+     char * value)
+-{   
++{
+     line_status sta ;
+-    char        line[ASCIILINESZ+1];
+-    int         len ;
++    char * line = NULL;
++    size_t      len ;
+ 
+-    strcpy(line, strstrip(input_line));
+-    len = (int)strlen(line);
++    line = xstrdup(input_line);
++    len = strstrip(line);
+ 
+     sta = LINE_UNPROCESSED ;
+     if (len<1) {
+         /* Empty line */
+         sta = LINE_EMPTY ;
+-    } else if (line[0]=='#') {
++    } else if (line[0]=='#' || line[0]==';') {
+         /* Comment line */
+-        sta = LINE_COMMENT ; 
++        sta = LINE_COMMENT ;
+     } else if (line[0]=='[' && line[len-1]==']') {
+         /* Section name */
+         sscanf(line, "[%[^]]", section);
+-        strcpy(section, strstrip(section));
+-        strcpy(section, strlwc(section));
++        strstrip(section);
++        strlwc(section, section, len);
+         sta = LINE_SECTION ;
+     } else if (sscanf (line, "%[^=] = \"%[^\"]\"", key, value) == 2
+-           ||  sscanf (line, "%[^=] = '%[^\']'",   key, value) == 2
+-           ||  sscanf (line, "%[^=] = %[^;#]",     key, value) == 2) {
+-        /* Usual key=value, with or without comments */
+-        strcpy(key, strstrip(key));
+-        strcpy(key, strlwc(key));
+-        strcpy(value, strstrip(value));
++           ||  sscanf (line, "%[^=] = '%[^\']'",   key, value) == 2) {
++        /* Usual key=value with quotes, with or without comments */
++        strstrip(key);
++        strlwc(key, key, len);
++        /* Don't strip spaces from values surrounded with quotes */
++        sta = LINE_VALUE ;
++    } else if (sscanf (line, "%[^=] = %[^;#]", key, value) == 2) {
++        /* Usual key=value without quotes, with or without comments */
++        strstrip(key);
++        strlwc(key, key, len);
++        strstrip(value);
+         /*
+          * sscanf cannot handle '' or "" as empty values
+          * this is done here
+@@ -501,14 +684,16 @@ static line_status iniparser_line(
+          * key=;
+          * key=#
+          */
+-        strcpy(key, strstrip(key));
+-        strcpy(key, strlwc(key));
++        strstrip(key);
++        strlwc(key, key, len);
+         value[0]=0 ;
+         sta = LINE_VALUE ;
+     } else {
+         /* Generate syntax error */
+         sta = LINE_ERROR ;
+     }
++
++    free(line);
+     return sta ;
+ }
+ 
+@@ -528,44 +713,33 @@ static line_status iniparser_line(
+ /*--------------------------------------------------------------------------*/
+ dictionary * iniparser_load(const char * ininame)
+ {
+-    char *buf;
+     FILE * in ;
+ 
+-    char *line;
+-    char *section;
+-    char *key;
+-    char *tmp;
+-    char *val;
++    char line    [ASCIILINESZ+1] ;
++    char section [ASCIILINESZ+1] ;
++    char key     [ASCIILINESZ+1] ;
++    char tmp     [(ASCIILINESZ * 2) + 2] ;
++    char val     [ASCIILINESZ+1] ;
+ 
+     int  last=0 ;
+     int  len ;
+     int  lineno=0 ;
+     int  errs=0;
+-    int  ret;
++    int  mem_err=0;
+ 
+     dictionary * dict ;
+ 
+-    if ((in=fopen(ininame, "r"))==NULL)
++    if ((in=fopen(ininame, "r"))==NULL) {
++        iniparser_error_callback("iniparser: cannot open %s\n", ininame);
+         return NULL ;
++    }
+ 
+     dict = dictionary_new(0) ;
+     if (!dict) {
+         fclose(in);
+-	errno = ENOMEM;
+         return NULL ;
+     }
+ 
+-    buf = malloc((ASCIILINESZ+1) * 5);
+-    if (buf == NULL) {
+-	    errno = -ENOMEM;
+-	    return NULL;
+-    }
+-    line = buf;
+-    section = line + ASCIILINESZ + 1;
+-    key = section + ASCIILINESZ + 1;
+-    tmp = key + ASCIILINESZ + 1;
+-    val = tmp + ASCIILINESZ + 1;
+-
+     memset(line,    0, ASCIILINESZ);
+     memset(section, 0, ASCIILINESZ);
+     memset(key,     0, ASCIILINESZ);
+@@ -575,18 +749,16 @@ dictionary * iniparser_load(const char * ininame)
+     while (fgets(line+last, ASCIILINESZ-last, in)!=NULL) {
+         lineno++ ;
+         len = (int)strlen(line)-1;
++        if (len<=0)
++            continue;
+         /* Safety check against buffer overflows */
+-        if (last > 0 && line[len]!='\n') {
+-#if 0
+-            warning(anon_scope,
+-                    "iniparser: input line too long in %s (%d)\n",
+-                    ininame,
+-                    lineno);
+-#endif
++        if (line[len]!='\n' && !feof(in)) {
++            iniparser_error_callback(
++              "iniparser: input line too long in %s (%d)\n",
++              ininame,
++              lineno);
+             dictionary_del(dict);
+             fclose(in);
+-	    free(buf);
+-	    errno = EINVAL;
+             return NULL ;
+         }
+         /* Get rid of \n and spaces at end of line */
+@@ -595,8 +767,11 @@ dictionary * iniparser_load(const char * ininame)
+             line[len]=0 ;
+             len-- ;
+         }
++        if (len < 0) { /* Line was entirely \n and/or spaces */
++            len = 0;
++        }
+         /* Detect multi-line */
+-        if (len >= 0 && line[len]=='\\') {
++        if (line[len]=='\\') {
+             /* Multi-line value */
+             last=len ;
+             continue ;
+@@ -609,24 +784,20 @@ dictionary * iniparser_load(const char * ininame)
+             break ;
+ 
+             case LINE_SECTION:
+-            errs = dictionary_set(dict, section, NULL);
++            mem_err = dictionary_set(dict, section, NULL);
+             break ;
+ 
+             case LINE_VALUE:
+             sprintf(tmp, "%s:%s", section, key);
+-            errs = dictionary_set(dict, tmp, val) ;
++            mem_err = dictionary_set(dict, tmp, val);
+             break ;
+ 
+-	case LINE_ERROR:
+-#if 0
+-            printf("iniparser: syntax error in %s (%d):\n",
+-                    ininame,
+-                    lineno);
+-            printf( "-> %s\n", line);
+-
+-#endif
+-
+-	    ret = EINVAL;
++            case LINE_ERROR:
++            iniparser_error_callback(
++              "iniparser: syntax error in %s (%d):\n-> %s\n",
++              ininame,
++              lineno,
++              line);
+             errs++ ;
+             break;
+ 
+@@ -635,18 +806,16 @@ dictionary * iniparser_load(const char * ininame)
+         }
+         memset(line, 0, ASCIILINESZ);
+         last=0;
+-        if (errs<0) {
+-	    ret = ENOMEM;
++        if (mem_err<0) {
++            iniparser_error_callback("iniparser: memory allocation failure\n");
+             break ;
+         }
+     }
+-    fclose(in);
+-    free(buf);
+     if (errs) {
+         dictionary_del(dict);
+         dict = NULL ;
+-	errno = ret;
+     }
++    fclose(in);
+     return dict ;
+ }
+ 
+@@ -665,5 +834,3 @@ void iniparser_freedict(dictionary * d)
+ {
+     dictionary_del(d);
+ }
+-
+-/* vim: set ts=4 et sw=4 tw=75 */
+diff --git a/lib/boilerplate/iniparser/iniparser.h b/lib/boilerplate/iniparser/iniparser.h
+index d454cef34..37ff7b71b 100644
+--- a/lib/boilerplate/iniparser/iniparser.h
++++ b/lib/boilerplate/iniparser/iniparser.h
+@@ -3,22 +3,15 @@
+ /**
+    @file    iniparser.h
+    @author  N. Devillard
+-   @date    Sep 2007
+-   @version 3.0
+    @brief   Parser for ini files.
+ */
+ /*--------------------------------------------------------------------------*/
+ 
+-/*
+-	$Id: iniparser.h,v 1.24 2007-11-23 21:38:19 ndevilla Exp $
+-	$Revision: 1.24 $
+-*/
+-
+ #ifndef _INIPARSER_H_
+ #define _INIPARSER_H_
+ 
+ /*---------------------------------------------------------------------------
+-   								Includes
++                                Includes
+  ---------------------------------------------------------------------------*/
+ 
+ #include <stdio.h>
+@@ -34,12 +27,21 @@
+ 
+ #include "dictionary.h"
+ 
+-/*---------------------------------------------------------------------------
+-   								Macros
+- ---------------------------------------------------------------------------*/
+-/** For backwards compatibility only */
+-#define iniparser_getstr(d, k)  iniparser_getstring(d, k, NULL)
+-#define iniparser_setstr        iniparser_setstring
++#ifdef __cplusplus
++extern "C" {
++#endif
++
++/*-------------------------------------------------------------------------*/
++/**
++  @brief    Configure a function to receive the error messages.
++  @param    errback  Function to call.
++
++  By default, the error will be printed on stderr. If a null pointer is passed
++  as errback the error callback will be switched back to default.
++ */
++/*--------------------------------------------------------------------------*/
++
++void iniparser_set_error_callback(int (*errback)(const char *, ...));
+ 
+ /*-------------------------------------------------------------------------*/
+ /**
+@@ -60,7 +62,7 @@
+  */
+ /*--------------------------------------------------------------------------*/
+ 
+-int iniparser_getnsec(dictionary * d);
++int iniparser_getnsec(const dictionary * d);
+ 
+ 
+ /*-------------------------------------------------------------------------*/
+@@ -78,7 +80,7 @@ int iniparser_getnsec(dictionary * d);
+  */
+ /*--------------------------------------------------------------------------*/
+ 
+-const char * iniparser_getsecname(dictionary * d, int n);
++const char * iniparser_getsecname(const dictionary * d, int n);
+ 
+ 
+ /*-------------------------------------------------------------------------*/
+@@ -93,7 +95,22 @@ const char * iniparser_getsecname(dictionary * d, int n);
+  */
+ /*--------------------------------------------------------------------------*/
+ 
+-void iniparser_dump_ini(dictionary * d, FILE * f);
++void iniparser_dump_ini(const dictionary * d, FILE * f);
++
++/*-------------------------------------------------------------------------*/
++/**
++  @brief    Save a dictionary section to a loadable ini file
++  @param    d   Dictionary to dump
++  @param    s   Section name of dictionary to dump
++  @param    f   Opened file pointer to dump to
++  @return   void
++
++  This function dumps a given section of a given dictionary into a loadable ini
++  file.  It is Ok to specify @c stderr or @c stdout as output files.
++ */
++/*--------------------------------------------------------------------------*/
++
++void iniparser_dumpsection_ini(const dictionary * d, const char * s, FILE * f);
+ 
+ /*-------------------------------------------------------------------------*/
+ /**
+@@ -108,7 +125,36 @@ void iniparser_dump_ini(dictionary * d, FILE * f);
+   purposes mostly.
+  */
+ /*--------------------------------------------------------------------------*/
+-void iniparser_dump(dictionary * d, FILE * f);
++void iniparser_dump(const dictionary * d, FILE * f);
++
++/*-------------------------------------------------------------------------*/
++/**
++  @brief    Get the number of keys in a section of a dictionary.
++  @param    d   Dictionary to examine
++  @param    s   Section name of dictionary to examine
++  @return   Number of keys in section
++ */
++/*--------------------------------------------------------------------------*/
++int iniparser_getsecnkeys(const dictionary * d, const char * s);
++
++/*-------------------------------------------------------------------------*/
++/**
++  @brief    Get the number of keys in a section of a dictionary.
++  @param    d    Dictionary to examine
++  @param    s    Section name of dictionary to examine
++  @param    keys Already allocated array to store the keys in
++  @return   The pointer passed as `keys` argument or NULL in case of error
++
++  This function queries a dictionary and finds all keys in a given section.
++  The keys argument should be an array of pointers which size has been
++  determined by calling `iniparser_getsecnkeys` function prior to this one.
++
++  Each pointer in the returned char pointer-to-pointer is pointing to
++  a string allocated in the dictionary; do not free or modify them.
++ */
++/*--------------------------------------------------------------------------*/
++const char ** iniparser_getseckeys(const dictionary * d, const char * s, const char ** keys);
++
+ 
+ /*-------------------------------------------------------------------------*/
+ /**
+@@ -125,7 +171,7 @@ void iniparser_dump(dictionary * d, FILE * f);
+   the dictionary, do not free or modify it.
+  */
+ /*--------------------------------------------------------------------------*/
+-const char * iniparser_getstring(dictionary * d, const char * key, const char * def);
++const char * iniparser_getstring(const dictionary * d, const char * key, const char * def);
+ 
+ /*-------------------------------------------------------------------------*/
+ /**
+@@ -154,7 +200,35 @@ const char * iniparser_getstring(dictionary * d, const char * key, const char *
+   Credits: Thanks to A. Becker for suggesting strtol()
+  */
+ /*--------------------------------------------------------------------------*/
+-int iniparser_getint(dictionary * d, const char * key, int notfound);
++int iniparser_getint(const dictionary * d, const char * key, int notfound);
++
++/*-------------------------------------------------------------------------*/
++/**
++  @brief    Get the string associated to a key, convert to an long int
++  @param    d Dictionary to search
++  @param    key Key string to look for
++  @param    notfound Value to return in case of error
++  @return   integer
++
++  This function queries a dictionary for a key. A key as read from an
++  ini file is given as "section:key". If the key cannot be found,
++  the notfound value is returned.
++
++  Supported values for integers include the usual C notation
++  so decimal, octal (starting with 0) and hexadecimal (starting with 0x)
++  are supported. Examples:
++
++  - "42"      ->  42
++  - "042"     ->  34 (octal -> decimal)
++  - "0x42"    ->  66 (hexa  -> decimal)
++
++  Warning: the conversion may overflow in various ways. Conversion is
++  totally outsourced to strtol(), see the associated man page for overflow
++  handling.
++ */
++/*--------------------------------------------------------------------------*/
++long int iniparser_getlongint(const dictionary * d, const char * key, long int notfound);
++
+ 
+ /*-------------------------------------------------------------------------*/
+ /**
+@@ -169,7 +243,7 @@ int iniparser_getint(dictionary * d, const char * key, int notfound);
+   the notfound value is returned.
+  */
+ /*--------------------------------------------------------------------------*/
+-double iniparser_getdouble(dictionary * d, const char * key, double notfound);
++double iniparser_getdouble(const dictionary * d, const char * key, double notfound);
+ 
+ /*-------------------------------------------------------------------------*/
+ /**
+@@ -203,7 +277,7 @@ double iniparser_getdouble(dictionary * d, const char * key, double notfound);
+   necessarily have to be 0 or 1.
+  */
+ /*--------------------------------------------------------------------------*/
+-int iniparser_getboolean(dictionary * d, const char * key, int notfound);
++int iniparser_getboolean(const dictionary * d, const char * key, int notfound);
+ 
+ 
+ /*-------------------------------------------------------------------------*/
+@@ -212,17 +286,16 @@ int iniparser_getboolean(dictionary * d, const char * key, int notfound);
+   @param    ini     Dictionary to modify.
+   @param    entry   Entry to modify (entry name)
+   @param    val     New value to associate to the entry.
+-  @return   int 0 if Ok, -1 otherwise.
++  @return   int     0 if Ok, -1 otherwise.
+ 
+   If the given entry can be found in the dictionary, it is modified to
+-  contain the provided value. If it cannot be found, -1 is returned.
++  contain the provided value. If it cannot be found, the entry is created.
+   It is Ok to set val to NULL.
+  */
+ /*--------------------------------------------------------------------------*/
+-int iniparser_setstring(dictionary * ini, const char * entry, const char * val);
+-
+ int iniparser_set(dictionary * ini, const char * entry, const char * val);
+ 
++
+ /*-------------------------------------------------------------------------*/
+ /**
+   @brief    Delete an entry in a dictionary
+@@ -247,7 +320,7 @@ void iniparser_unset(dictionary * ini, const char * entry);
+   of querying for the presence of sections in a dictionary.
+  */
+ /*--------------------------------------------------------------------------*/
+-int iniparser_find_entry(dictionary * ini, const char * entry) ;
++int iniparser_find_entry(const dictionary * ini, const char * entry) ;
+ 
+ /*-------------------------------------------------------------------------*/
+ /**
+@@ -278,4 +351,8 @@ dictionary * iniparser_load(const char * ininame);
+ /*--------------------------------------------------------------------------*/
+ void iniparser_freedict(dictionary * d);
+ 
++#ifdef __cplusplus
++}
++#endif
++
+ #endif
+-- 
+GitLab
+

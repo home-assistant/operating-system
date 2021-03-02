@@ -17,6 +17,11 @@ export HG := $(call qstrip,$(BR2_HG))
 export SCP := $(call qstrip,$(BR2_SCP))
 export LOCALFILES := $(call qstrip,$(BR2_LOCALFILES))
 
+# Version of the format of the archives we generate in the corresponding
+# download backend:
+BR_FMT_VERSION_git = -br1
+BR_FMT_VERSION_svn = -br1
+
 DL_WRAPPER = support/download/dl-wrapper
 
 # DL_DIR may have been set already from the environment
@@ -99,7 +104,8 @@ endif
 
 define DOWNLOAD
 	$(Q)mkdir -p $($(2)_DL_DIR)
-	$(Q)$(EXTRA_ENV) flock $($(2)_DL_DIR)/.lock $(DL_WRAPPER) \
+	$(Q)$(EXTRA_ENV) $($(2)_DL_ENV) \
+		flock $($(2)_DL_DIR)/.lock $(DL_WRAPPER) \
 		-c '$($(2)_DL_VERSION)' \
 		-d '$($(2)_DL_DIR)' \
 		-D '$(DL_DIR)' \

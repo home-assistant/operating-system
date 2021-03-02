@@ -88,7 +88,11 @@ config BR2_PACKAGE_HOST_QEMU_VIRTFS
 
 config BR2_PACKAGE_HOST_QEMU_USB
 	bool "USB passthrough support"
+	depends on BR2_HOST_GCC_AT_LEAST_4_9 # host-libusb
 	help
 	  Enables USB passthrough support from guest to host.
+
+comment "USB passthrough support needs a toolchain w/ host gcc >= 4.9"
+	depends on !BR2_HOST_GCC_AT_LEAST_4_9
 
 endif

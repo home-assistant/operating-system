@@ -4,10 +4,11 @@
 #
 ################################################################################
 
-SNORT_VERSION = 2.9.16.1
+SNORT_VERSION = 2.9.17
 SNORT_SITE = https://www.snort.org/downloads/snort
 SNORT_LICENSE = GPL-2.0
 SNORT_LICENSE_FILES = LICENSE COPYING
+SNORT_CPE_ID_VENDOR = snort
 
 SNORT_DEPENDENCIES = libpcap libdnet daq pcre zlib host-pkgconf
 

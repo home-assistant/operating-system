@@ -4,13 +4,16 @@
 #
 ################################################################################
 
-MPD_VERSION_MAJOR = 0.21
-MPD_VERSION = $(MPD_VERSION_MAJOR).25
+MPD_VERSION_MAJOR = 0.22
+MPD_VERSION = $(MPD_VERSION_MAJOR).3
 MPD_SOURCE = mpd-$(MPD_VERSION).tar.xz
 MPD_SITE = http://www.musicpd.org/download/mpd/$(MPD_VERSION_MAJOR)
 MPD_DEPENDENCIES = host-pkgconf boost
 MPD_LICENSE = GPL-2.0+
 MPD_LICENSE_FILES = COPYING
+MPD_CONF_OPTS = \
+	-Daudiofile=disabled \
+	-Ddocumentation=disabled
 
 # Zeroconf support depends on libdns_sd from avahi.
 ifeq ($(BR2_PACKAGE_MPD_AVAHI_SUPPORT),y)
@@ -40,13 +43,6 @@ MPD_DEPENDENCIES += libao
 MPD_CONF_OPTS += -Dao=enabled
 else
 MPD_CONF_OPTS += -Dao=disabled
-endif
-
-ifeq ($(BR2_PACKAGE_MPD_AUDIOFILE),y)
-MPD_DEPENDENCIES += audiofile
-MPD_CONF_OPTS += -Daudiofile=enabled
-else
-MPD_CONF_OPTS += -Daudiofile=disabled
 endif
 
 ifeq ($(BR2_PACKAGE_MPD_BZIP2),y)

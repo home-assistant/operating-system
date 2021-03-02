@@ -16,7 +16,7 @@ config BR2_PACKAGE_LIGHTTPD
 	  webserver-software for every server that is suffering load
 	  problems.
 
-	  http://www.lighttpd.net/
+	  https://www.lighttpd.net/
 
 if BR2_PACKAGE_LIGHTTPD
 

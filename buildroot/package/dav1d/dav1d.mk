@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-DAV1D_VERSION = 0.7.1
+DAV1D_VERSION = 0.8.1
 DAV1D_SOURCE = dav1d-$(DAV1D_VERSION).tar.bz2
 DAV1D_SITE = https://code.videolan.org/videolan/dav1d/-/archive/$(DAV1D_VERSION)
 DAV1D_LICENSE = BSD-2-Clause

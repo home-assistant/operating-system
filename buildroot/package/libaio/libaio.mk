@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBAIO_VERSION = 0.3.111
+LIBAIO_VERSION = 0.3.112
 LIBAIO_SITE = https://releases.pagure.org/libaio
 LIBAIO_INSTALL_STAGING = YES
 LIBAIO_LICENSE = LGPL-2.1+

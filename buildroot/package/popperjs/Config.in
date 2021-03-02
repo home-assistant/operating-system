@@ -1,0 +1,6 @@
+config BR2_PACKAGE_POPPERJS
+	bool "popperjs"
+	help
+	  Popper.js, a JavaScript Tooltip & Popover Positioning Engine.
+
+	  https://popper.js.org

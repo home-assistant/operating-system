@@ -5,7 +5,7 @@
 ################################################################################
 
 # When updating the version, please also update mesa3d-headers
-MESA3D_VERSION = 20.2.2
+MESA3D_VERSION = 20.3.4
 MESA3D_SOURCE = mesa-$(MESA3D_VERSION).tar.xz
 MESA3D_SITE = https://mesa.freedesktop.org/archive
 MESA3D_LICENSE = MIT, SGI, Khronos
@@ -71,7 +71,7 @@ endif
 else
 MESA3D_CONF_OPTS += \
 	-Dglx=disabled \
-	-Dgallium-xa=false
+	-Dgallium-xa=disabled
 endif
 
 ifeq ($(BR2_ARM_CPU_HAS_NEON),y)

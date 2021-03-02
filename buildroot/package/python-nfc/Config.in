@@ -2,6 +2,7 @@ config BR2_PACKAGE_PYTHON_NFC
 	bool "python-nfc"
 	depends on BR2_PACKAGE_PYTHON
 	depends on BR2_TOOLCHAIN_HAS_THREADS # libusb
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # libusb
 	select BR2_PACKAGE_LIBUSB
 	select BR2_PACKAGE_LIBUSB_COMPAT
 	help
@@ -9,6 +10,7 @@ config BR2_PACKAGE_PYTHON_NFC
 
 	  https://launchpad.net/nfcpy
 
-comment "python-nfc needs a toolchain w/ threads"
+comment "python-nfc needs a toolchain w/ threads, gcc >= 4.9"
 	depends on BR2_PACKAGE_PYTHON
-	depends on !BR2_TOOLCHAIN_HAS_THREADS
+	depends on !BR2_TOOLCHAIN_HAS_THREADS || \
+		!BR2_TOOLCHAIN_GCC_AT_LEAST_4_9

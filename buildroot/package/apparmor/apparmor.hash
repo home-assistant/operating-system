@@ -1,5 +1,5 @@
 # From: https://gitlab.com/apparmor/apparmor/-/wikis/home#userspace
-sha256  66fd751fe51eb427d2aa864ee035b12d01d212fd595579275219b0148c43755e  apparmor-3.0.0.tar.gz
+sha256  8fada772d9a60989525594346d9aa22af938daafc1781adce9a1acb3c75bdf24  apparmor-3.0.1.tar.gz
 
 # locally computed
 sha256  a7e0cdcbea5c14927cedfc600d46526bdcbb1eb0a4d951e2ea53c2a6de159cb4  LICENSE

@@ -9,6 +9,7 @@ DBUS_GLIB_SITE = http://dbus.freedesktop.org/releases/dbus-glib
 DBUS_GLIB_INSTALL_STAGING = YES
 DBUS_GLIB_LICENSE = AFL-2.1 or GPL-2.0+
 DBUS_GLIB_LICENSE_FILES = COPYING
+DBUS_GLIB_CPE_ID_VENDOR = freedesktop
 
 DBUS_GLIB_CONF_ENV = \
 	ac_cv_have_abstract_sockets=yes \

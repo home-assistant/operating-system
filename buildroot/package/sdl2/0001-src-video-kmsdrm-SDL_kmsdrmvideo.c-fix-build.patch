@@ -1,0 +1,39 @@
+From d265b1ee94aa4faf5fa405f14cc731a25d7a00ab Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Tue, 24 Mar 2020 14:11:14 +0100
+Subject: [PATCH] src/video/kmsdrm/SDL_kmsdrmvideo.c: fix build
+
+Build is broken without EGL since version 2.0.12 and
+https://hg.libsdl.org/SDL/rev/9761858bd6a3:
+
+/home/giuliobenetti/autobuild/run/instance-1/output-1/build/sdl2-2.0.12/src/video/kmsdrm/SDL_kmsdrmvideo.c: In function 'KMSDRM_CreateSurfaces':
+/home/giuliobenetti/autobuild/run/instance-1/output-1/build/sdl2-2.0.12/src/video/kmsdrm/SDL_kmsdrmvideo.c:394:5: error: unknown type name 'EGLContext'
+     EGLContext egl_context;
+     ^
+
+Fixes:
+ - http://autobuild.buildroot.org/results/fafd20a01591032662f9ca025fcea3478239cf3c
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+
+[Upstream: https://hg.libsdl.org/SDL/rev/389ce8cfa2a3]
+
+
+Fixes: 
+ - Update patch to version 2.0.14
+
+Signed-off-by: Michael Fischer <mf@go-sys.de>
+
+diff -purN a/src/video/kmsdrm/SDL_kmsdrmvideo.c b/src/video/kmsdrm/SDL_kmsdrmvideo.c
+--- a/src/video/kmsdrm/SDL_kmsdrmvideo.c	2021-01-08 09:56:44.028217792 +0100
++++ b/src/video/kmsdrm/SDL_kmsdrmvideo.c	2021-01-08 09:55:52.295932111 +0100
+@@ -1407,7 +1407,9 @@ KMSDRM_CreateSurfaces(_THIS, SDL_Window
+     uint32_t surface_flags = GBM_BO_USE_SCANOUT | GBM_BO_USE_RENDERING;
+     uint32_t width, height;
+ 
++#if SDL_VIDEO_OPENGL_EGL
+     EGLContext egl_context;
++#endif
+ 
+     int ret = 0;
+ 

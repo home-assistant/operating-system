@@ -11,6 +11,8 @@ SLIRP_SOURCE = libslirp-$(SLIRP_VERSION).tar.xz
 SLIRP_SITE = https://elmarco.fedorapeople.org
 SLIRP_LICENSE = BSD-3-Clause
 SLIRP_LICENSE_FILES = COPYRIGHT
+SLIRP_CPE_ID_VENDOR = libslirp_project
+SLIRP_CPE_ID_PRODUCT = libslirp
 SLIRP_INSTALL_STAGING = YES
 SLIRP_DEPENDENCIES = libglib2
 

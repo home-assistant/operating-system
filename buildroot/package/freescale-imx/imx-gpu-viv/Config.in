@@ -14,6 +14,7 @@ config BR2_PACKAGE_IMX_GPU_VIV
 	depends on BR2_TOOLCHAIN_USES_GLIBC
 	select BR2_PACKAGE_HAS_LIBEGL
 	select BR2_PACKAGE_HAS_LIBGLES
+	select BR2_PACKAGE_HAS_LIBOPENCL
 	select BR2_PACKAGE_HAS_LIBOPENVG
 	help
 	  Userspace libraries for Vivante GPU on i.MX platforms
@@ -66,12 +67,15 @@ config BR2_PACKAGE_IMX_GPU_VIV_OUTPUT
 	string
 	default "x11" if BR2_PACKAGE_IMX_GPU_VIV_OUTPUT_X11
 	default "fb" if BR2_PACKAGE_IMX_GPU_VIV_OUTPUT_FB
-	default "wl" if BR2_PACKAGE_IMX_GPU_VIV_OUTPUT_WL
+	default "wayland" if BR2_PACKAGE_IMX_GPU_VIV_OUTPUT_WL
 
 config BR2_PACKAGE_PROVIDES_LIBEGL
 	default "imx-gpu-viv"
 
 config BR2_PACKAGE_PROVIDES_LIBGLES
+	default "imx-gpu-viv"
+
+config BR2_PACKAGE_PROVIDES_LIBOPENCL
 	default "imx-gpu-viv"
 
 config BR2_PACKAGE_PROVIDES_LIBOPENVG

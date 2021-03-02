@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-# This corresponds to SDK 06.00.00.07 plus one pull request
-TI_SGX_UM_VERSION = 2a2e5bb090ced870d73ed4edbc54793e952cc6d8
+# This corresponds to SDK 06.01.00.08
+TI_SGX_UM_VERSION = 909e237baf47d0bde006ff25552f5403fd7e359d
 TI_SGX_UM_SITE = http://git.ti.com/git/graphics/omap5-sgx-ddk-um-linux.git
 TI_SGX_UM_SITE_METHOD = git
 TI_SGX_UM_LICENSE = TI TSPA License

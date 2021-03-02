@@ -22,7 +22,7 @@ config BR2_PACKAGE_PANGO
 	  widget toolkit. Pango forms the core of text and font
 	  handling for GTK+-2.x.
 
-	  http://www.pango.org/
+	  https://pango.gnome.org/
 
 comment "pango needs a toolchain w/ wchar, threads, C++, gcc >= 4.8"
 	depends on BR2_USE_MMU

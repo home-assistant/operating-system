@@ -73,4 +73,25 @@ config BR2_PACKAGE_OPENBLAS_TARGET
 	string "OpenBLAS target CPU"
 	default BR2_PACKAGE_OPENBLAS_DEFAULT_TARGET
 
+config BR2_PACKAGE_OPENBLAS_USE_THREAD
+	bool "use multithreading"
+	default y
+	depends on BR2_TOOLCHAIN_HAS_THREADS
+	depends on !BR2_STATIC_LIBS
+	help
+	  Tell OpenBLAS to use multithreading, by passing USE_THREAD=1.
+
+config BR2_PACKAGE_OPENBLAS_USE_LOCKING
+	bool "use locking"
+	default y
+	depends on BR2_TOOLCHAIN_HAS_THREADS
+	depends on !BR2_PACKAGE_OPENBLAS_USE_THREAD
+	help
+	  Tell OpenBLAS to use locking, by passing USE_LOCKING=1.
+	  Locking is implicitly enabled when USE_THREAD=1.
+	  However, if USE_THREAD=0 (i.e. OpenBLAS itself will run in
+	  single-threaded mode) but an application makes OpenBLAS
+	  function calls from multiple threads, then locking is
+	  mandatory for correct operation.
+
 endif

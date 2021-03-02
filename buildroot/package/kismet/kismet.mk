@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-KISMET_VERSION = 2020-09-R4
+KISMET_VERSION = 2020-12-R3
 KISMET_SOURCE = kismet-$(KISMET_VERSION).tar.xz
 KISMET_SITE = http://www.kismetwireless.net/code
 KISMET_DEPENDENCIES = \
@@ -17,8 +17,6 @@ KISMET_DEPENDENCIES = \
 	zlib
 KISMET_LICENSE = GPL-2.0+
 KISMET_LICENSE_FILES = LICENSE
-# We're patching configure.ac
-KISMET_AUTORECONF = YES
 KISMET_CONF_OPTS = --disable-debuglibs
 
 KISMET_CXXFLAGS = $(TARGET_CXXFLAGS)
@@ -45,6 +43,13 @@ KISMET_DEPENDENCIES += libusb
 KISMET_CONF_OPTS += --enable-libusb
 else
 KISMET_CONF_OPTS += --disable-libusb
+endif
+
+ifeq ($(BR2_PACKAGE_LIBWEBSOCKETS),y)
+KISMET_DEPENDENCIES += libwebsockets
+KISMET_CONF_OPTS += --enable-libwebsockets
+else
+KISMET_CONF_OPTS += --disable-libwebsockets
 endif
 
 ifeq ($(BR2_PACKAGE_LM_SENSORS),y)
@@ -77,7 +82,6 @@ KISMET_INSTALL_TARGET_OPTS += \
 	SUIDGROUP=$(shell id -g)
 
 ifeq ($(BR2_PACKAGE_KISMET_SERVER),y)
-KISMET_DEPENDENCIES += libmicrohttpd
 KISMET_CONF_OPTS += --disable-capture-tools-only
 KISMET_INSTALL_TARGET_OPTS += install
 else

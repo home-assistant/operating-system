@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBGPHOTO2_VERSION = 2.5.23
+LIBGPHOTO2_VERSION = 2.5.26
 LIBGPHOTO2_SOURCE = libgphoto2-$(LIBGPHOTO2_VERSION).tar.bz2
 # Project is maintained on github but github tarball doesn't have
 # configure, so use tarballs from SourceForge
@@ -25,6 +25,13 @@ ifeq ($(BR2_PACKAGE_LIBUSB_COMPAT),y)
 # libusb-compat is not actually used, but it is detected, so add it
 # here to guarantee reproducible builds
 LIBGPHOTO2_DEPENDENCIES += libusb-compat
+endif
+
+ifeq ($(BR2_PACKAGE_LIBCURL),y)
+LIBGPHOTO2_DEPENDENCIES += libcurl
+LIBGPHOTO2_CONF_OPTS += --with-libcurl=auto
+else
+LIBGPHOTO2_CONF_OPTS += --with-libcurl=no
 endif
 
 ifeq ($(BR2_PACKAGE_LIBEXIF),y)

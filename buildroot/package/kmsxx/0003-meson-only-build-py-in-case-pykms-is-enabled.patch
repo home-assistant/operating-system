@@ -1,0 +1,48 @@
+From 0ef36b2e22c2ac0331b3096b7adc69fb08044048 Mon Sep 17 00:00:00 2001
+From: Peter Seiderer <ps.report@gmx.net>
+Date: Sun, 29 Nov 2020 11:37:26 +0100
+Subject: [PATCH] meson: only build py in case pykms is enabled
+
+[Upstream: https://github.com/tomba/kmsxx/pull/60]
+Signed-off-by: Peter Seiderer <ps.report@gmx.net>
+---
+ meson.build | 16 ++++++++++------
+ 1 file changed, 10 insertions(+), 6 deletions(-)
+
+diff --git a/meson.build b/meson.build
+index 4b3e7c3..1810b17 100644
+--- a/meson.build
++++ b/meson.build
+@@ -39,11 +39,13 @@ else
+                                     compile_args : '-DFMT_HEADER_ONLY')
+ endif
+ 
+-if get_option('use-system-pybind11')
+-    pybind11_dep = dependency('pybind11')
+-else
+-    pybind11_includes = include_directories('ext/pybind11/include')
+-    pybind11_dep = declare_dependency(include_directories : pybind11_includes)
++if get_option('pykms').enabled()
++    if get_option('use-system-pybind11')
++        pybind11_dep = dependency('pybind11')
++    else
++        pybind11_includes = include_directories('ext/pybind11/include')
++        pybind11_dep = declare_dependency(include_directories : pybind11_includes)
++    endif
+ endif
+ 
+ libdrmomap_dep = dependency('libdrm_omap', required : get_option('omap'))
+@@ -55,7 +57,9 @@ if get_option('utils')
+     subdir('utils')
+ endif
+ 
+-subdir('py')
++if get_option('pykms').enabled()
++    subdir('py')
++endif
+ 
+ if get_option('kmscube')
+     subdir('kmscube')
+-- 
+2.29.2
+

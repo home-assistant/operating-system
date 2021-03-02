@@ -1,0 +1,8 @@
+config BR2_PACKAGE_COREMARK
+	bool "coremark"
+	help
+	  CoreMark is a benchmark that measures the performance of
+	  microcontrollers (MCUs) and central processing units (CPUs)
+	  used in embedded systems
+
+	  https://www.eembc.org/coremark/

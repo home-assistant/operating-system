@@ -1,0 +1,85 @@
+From 64c17f08c4a78cf6063651632d95906ab3bcb41b Mon Sep 17 00:00:00 2001
+From: Sven Klemm <sven@timescale.com>
+Date: Sat, 19 Sep 2020 17:43:52 +0200
+Subject: [PATCH] Allow building against PG13 source
+
+This patch adjusts the version checks to allow building against
+postgres 13. It also adjusts the cmake version check to allow
+building against RC and devel versions.
+
+Signed-off-by: Maxim Kochetkov <fido_max@inbox.ru>
+Fetch from: https://github.com/timescale/timescaledb/commit/21dc9b9c1a307e46eda5fa621488ebeb6ee9636c.patch
+---
+ CMakeLists.txt | 18 ++++++++----------
+ src/compat.h   |  7 ++++++-
+ 2 files changed, 14 insertions(+), 11 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 8288b444..ce6e9d48 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -221,27 +221,25 @@ execute_process(
+   OUTPUT_VARIABLE PG_VERSION_STRING
+   OUTPUT_STRIP_TRAILING_WHITESPACE)
+ 
+-if (NOT ${PG_VERSION_STRING} MATCHES "^PostgreSQL[ ]+([0-9]+)\\.([0-9]+)(\\.([0-9]+))*")
++if (NOT ${PG_VERSION_STRING} MATCHES "^PostgreSQL[ ]+([0-9]+)(\\.([0-9]+)|devel|rc[0-9]+)")
+   message(FATAL_ERROR "Could not parse PostgreSQL version ${PG_VERSION_STRING}")
+ endif ()
+ 
+ set(PG_VERSION_MAJOR ${CMAKE_MATCH_1})
+-set(PG_VERSION_MINOR ${CMAKE_MATCH_2})
+-set(PG_VERSION_PATCH ${CMAKE_MATCH_4})
+-
+-if (NOT ${PG_VERSION_PATCH} OR ${PG_VERSION_PATCH} EQUAL "")
+-  set(PG_VERSION "${PG_VERSION_MAJOR}.${PG_VERSION_MINOR}")
+-else ()
+-  set(PG_VERSION "${PG_VERSION_MAJOR}.${PG_VERSION_MINOR}.${PG_VERSION_PATCH}")
++if (${CMAKE_MATCH_COUNT} GREATER "2" )
++  set(PG_VERSION_MINOR ${CMAKE_MATCH_3})
++else()
++  set(PG_VERSION_MINOR 0)
+ endif ()
++set(PG_VERSION "${PG_VERSION_MAJOR}.${PG_VERSION_MINOR}")
+ 
+ message(STATUS "Compiling against PostgreSQL version ${PG_VERSION}")
+ 
+ # Ensure that PostgreSQL version is supported and consistent
+ # with src/compat.h version check
+ if ((${PG_VERSION_MAJOR} LESS "11") OR
+-    (${PG_VERSION_MAJOR} GREATER "12"))
+-  message(FATAL_ERROR "TimescaleDB only supports PostgreSQL 11 and 12")
++    (${PG_VERSION_MAJOR} GREATER "13"))
++  message(FATAL_ERROR "TimescaleDB only supports PostgreSQL 11, 12 and 13")
+ endif()
+ 
+ # Get PostgreSQL configuration from pg_config
+diff --git a/src/compat.h b/src/compat.h
+index 475217c6..267bb09a 100644
+--- a/src/compat.h
++++ b/src/compat.h
+@@ -24,15 +24,20 @@
+ 
+ #define is_supported_pg_version_11(version) ((version >= 110000) && (version < 120000))
+ #define is_supported_pg_version_12(version) ((version >= 120000) && (version < 130000))
++#define is_supported_pg_version_13(version) ((version >= 130000) && (version < 140000))
+ 
+ #define is_supported_pg_version(version)                                                           \
+-	(is_supported_pg_version_11(version) || is_supported_pg_version_12(version))
++	(is_supported_pg_version_11(version) || is_supported_pg_version_12(version) ||                 \
++	 is_supported_pg_version_13(version))
+ 
+ #define PG11 is_supported_pg_version_11(PG_VERSION_NUM)
+ #define PG12 is_supported_pg_version_12(PG_VERSION_NUM)
++#define PG13 is_supported_pg_version_13(PG_VERSION_NUM)
+ 
+ #define PG12_LT PG11
+ #define PG12_GE !(PG12_LT)
++#define PG13_LT !(PG13)
++#define PG13_GE PG13
+ 
+ #if !(is_supported_pg_version(PG_VERSION_NUM))
+ #error "Unsupported PostgreSQL version"
+-- 
+2.29.2
+

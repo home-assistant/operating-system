@@ -4,11 +4,12 @@
 #
 ################################################################################
 
-STRONGSWAN_VERSION = 5.9.0
+STRONGSWAN_VERSION = 5.9.1
 STRONGSWAN_SOURCE = strongswan-$(STRONGSWAN_VERSION).tar.bz2
 STRONGSWAN_SITE = http://download.strongswan.org
 STRONGSWAN_LICENSE = GPL-2.0+
 STRONGSWAN_LICENSE_FILES = COPYING LICENSE
+STRONGSWAN_CPE_ID_VENDOR = strongswan
 STRONGSWAN_DEPENDENCIES = host-pkgconf
 STRONGSWAN_INSTALL_STAGING = YES
 STRONGSWAN_CONF_OPTS += \

@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-IGD2_FOR_LINUX_VERSION = 2.0
+IGD2_FOR_LINUX_VERSION = 2.1
 IGD2_FOR_LINUX_SITE = \
 	$(call github,Orange-OpenSource,igd2-for-linux,v$(IGD2_FOR_LINUX_VERSION))
 
@@ -12,26 +12,9 @@ IGD2_FOR_LINUX_LICENSE = GPL-2.0, BSD-3-Clause
 IGD2_FOR_LINUX_LICENSE_FILES = linuxigd2/doc/LICENSE linuxigd2/src/threadutil/COPYING
 
 IGD2_FOR_LINUX_DEPENDENCIES = libupnp
-
-IGD2_FOR_LINUX_BUILD_DIR = $(@D)/linuxigd2
-IGD2_FOR_LINUX_CONF_DIR = $(IGD2_FOR_LINUX_BUILD_DIR)/configs
-
-define IGD2_FOR_LINUX_BUILD_CMDS
-	$(TARGET_MAKE_ENV) $(MAKE) -C $(IGD2_FOR_LINUX_BUILD_DIR) \
-		$(TARGET_CONFIGURE_OPTS) \
-		LIBUPNP_PREFIX="$(STAGING_DIR)/usr" \
-		all
-endef
-
-define IGD2_FOR_LINUX_INSTALL_TARGET_CMDS
-	$(INSTALL) -D -m 0755 $(IGD2_FOR_LINUX_BUILD_DIR)/bin/upnpd \
-		$(TARGET_DIR)/usr/sbin/upnpd
-	$(INSTALL) -D -m 0644 $(IGD2_FOR_LINUX_CONF_DIR)/upnpd.conf \
-		$(TARGET_DIR)/etc/upnpd.conf
-	mkdir -p $(TARGET_DIR)/etc/linuxigd/
-	cp -dpfr $(IGD2_FOR_LINUX_CONF_DIR)/*.{xml,png} \
-		$(TARGET_DIR)/etc/linuxigd/
-endef
+# From git
+IGD2_FOR_LINUX_AUTORECONF = YES
+IGD2_FOR_LINUX_SUBDIR = linuxigd2
 
 define IGD2_FOR_LINUX_INSTALL_INIT_SYSV
 	$(INSTALL) -D -m 0755 package/igd2-for-linux/S99upnpd \
@@ -43,4 +26,4 @@ define IGD2_FOR_LINUX_INSTALL_INIT_SYSTEMD
 		$(TARGET_DIR)/usr/lib/systemd/system/upnpd.service
 endef
 
-$(eval $(generic-package))
+$(eval $(autotools-package))

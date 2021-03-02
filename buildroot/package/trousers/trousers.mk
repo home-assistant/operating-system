@@ -4,17 +4,15 @@
 #
 ################################################################################
 
-TROUSERS_VERSION = 0.3.14
+TROUSERS_VERSION = 0.3.15
 TROUSERS_SITE = http://downloads.sourceforge.net/project/trousers/trousers/$(TROUSERS_VERSION)
 TROUSERS_LICENSE = BSD-3-Clause
 TROUSERS_LICENSE_FILES = LICENSE
+TROUSERS_CPE_ID_VENDOR = trustedcomputinggroup
 TROUSERS_INSTALL_STAGING = YES
 # Need autoreconf because of a patch touching configure.in and Makefile.am
 TROUSERS_AUTORECONF = YES
 TROUSERS_DEPENDENCIES = host-pkgconf openssl
-
-# 0003-Correct-multiple-security-issues-that-are-present-if.patch
-TROUSERS_IGNORE_CVES += CVE-2020-24330 CVE-2020-24331 CVE-2020-24332
 
 ifeq ($(BR2_PACKAGE_LIBICONV),y)
 TROUSERS_DEPENDENCIES += libiconv

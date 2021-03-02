@@ -1,0 +1,7 @@
+config BR2_PACKAGE_PYTHON_TYPING_EXTENSIONS
+	bool "python-typing-extensions"
+	select BR2_PACKAGE_PYTHON_TYPING if BR2_PACKAGE_PYTHON # runtime
+	help
+	  Backported and Experimental Type Hints for Python 3.5+.
+
+	  https://github.com/python/typing/blob/master/typing_extensions/README.rst

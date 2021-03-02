@@ -6,6 +6,7 @@ config BR2_PACKAGE_GST1_PYTHON
 	depends on BR2_TOOLCHAIN_USES_GLIBC # gobject-introspection
 	depends on BR2_PACKAGE_PYTHON3 # gobject-introspection
 	select BR2_PACKAGE_GOBJECT_INTROSPECTION
+	select BR2_PACKAGE_GST1_PLUGINS_BASE
 	select BR2_PACKAGE_LIBGLIB2
 	select BR2_PACKAGE_PYTHON_GOBJECT
 	help

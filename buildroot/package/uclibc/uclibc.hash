@@ -1,4 +1,4 @@
-# From https://downloads.uclibc-ng.org/releases/1.0.36/uClibc-ng-1.0.36.tar.xz.sha256
-sha256  010f40841669809422e01b47e7169d49c61bf3382f493c2571a8a96634ed300c  uClibc-ng-1.0.36.tar.xz
+# From https://downloads.uclibc-ng.org/releases/1.0.37/uClibc-ng-1.0.37.tar.xz.sha256
+sha256  b2b815d20645cf604b99728202bf3ecb62507ce39dfa647884b4453caf86212c  uClibc-ng-1.0.37.tar.xz
 # Locally calculated
 sha256  6095e9ffa777dd22839f7801aa845b31c9ed07f3d6bf8a26dc5d2dec8ccc0ef3  COPYING.LIB

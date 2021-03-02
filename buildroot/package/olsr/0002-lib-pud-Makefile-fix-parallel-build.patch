@@ -1,0 +1,33 @@
+From 2f9311668dfdeee0453f5fceb27e8c95c065c4b6 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sat, 18 Jan 2020 17:29:56 +0100
+Subject: [PATCH] lib/pud/Makefile: fix parallel build
+
+nmealib is needed to build olsrd_pud plugin otherwise build fails on:
+
+[LD] olsrd_pud.so.3.0.0 (nmealib dynamically linked)
+/home/fabrice/buildroot/output/host/opt/ext-toolchain/bin/../lib/gcc/arm-none-linux-gnueabi/4.8.3/../../../../arm-none-linux-gnueabi/bin/ld: cannot find -lnmea
+wireformat/lib/libOlsrdPudWireFormat.so: file not recognized: File truncated
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: https://github.com/OLSR/olsrd/pull/78]
+---
+ lib/pud/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/lib/pud/Makefile b/lib/pud/Makefile
+index e2524421..28330d92 100644
+--- a/lib/pud/Makefile
++++ b/lib/pud/Makefile
+@@ -108,7 +108,7 @@ endif
+ 
+ default_target: nmealib library $(PLUGIN_FULLNAME)
+ 
+-$(PLUGIN_FULLNAME): $(OBJS) version-script.txt
++$(PLUGIN_FULLNAME): $(OBJS) version-script.txt nmealib
+ ifeq ($(PUD_NMEALIB_STATICALLY_LINKED),)
+ ifeq ($(VERBOSE),0)
+ 	@echo "[LD] $@ (nmealib dynamically linked)"
+-- 
+2.24.1
+

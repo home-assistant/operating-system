@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-# This corresponds to SDK 06.00.00.07
-TI_SGX_KM_VERSION = 4519ed3b83d1d72207ddc2874c7eb5e5a7f20d8d
+# This corresponds to SDK 06.01.00.08
+TI_SGX_KM_VERSION = cf7f48cb30abfd5df7a60c9bf4bbb1dde0d496d9
 TI_SGX_KM_SITE = http://git.ti.com/git/graphics/omap5-sgx-ddk-linux.git
 TI_SGX_KM_SITE_METHOD = git
 TI_SGX_KM_LICENSE = GPL-2.0

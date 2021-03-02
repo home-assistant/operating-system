@@ -7,7 +7,7 @@ config BR2_PACKAGE_LIBCAP
 	  capabilities are a partitioning of the all powerful root
 	  privilege into a set of distinct privileges.
 
-	  http://sites.google.com/site/fullycapable/
+	  https://sites.google.com/site/fullycapable/
 
 if BR2_PACKAGE_LIBCAP
 

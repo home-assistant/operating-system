@@ -1,8 +1,5 @@
-# From https://lists.x.org/archives/xorg/2019-June/059825.html
-md5 a9019421d3ee8b4937b6afd9025f018a  libXt-1.2.0.tar.bz2
-sha1 f6b5ed799bc2e8d721e5407a09c2a8f570963f1b  libXt-1.2.0.tar.bz2
-sha256 b31df531dabed9f4611fc8980bc51d7782967e2aff44c4105251a1acb5a77831  libXt-1.2.0.tar.bz2
-sha512 06248508b6fe5dfba8ceb4518475f656162351d78136eeb5d65086d680dabe9aca7bba3c94347f9c13ef03f82dab3ac19d0952ee610bc8c51c14cee7cf65f0b1  libXt-1.2.0.tar.bz2
-
+# From https://lists.x.org/archives/xorg-announce/2021-January/003070.html
+sha256  679cc08f1646dbd27f5e48ffe8dd49406102937109130caab02ca32c083a3d60  libXt-1.2.1.tar.bz2
+sha512  6877af61ba91eeed6b6f80471b84f354ad0ec0827249c7ee0a00c13508063fe8d2696dd400a4bdbc6ca2ff67cbe1317ad5ac24522fd96099dc56535e33ca052c  libXt-1.2.1.tar.bz2
 # Locally calculated
-sha256 a2866ccc0b1745149e4a2258d934314d40cbb43bd8318c6fa597f233995b0a81 COPYING
+sha256  a2866ccc0b1745149e4a2258d934314d40cbb43bd8318c6fa597f233995b0a81 COPYING

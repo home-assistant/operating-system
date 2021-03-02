@@ -25,9 +25,13 @@ config BR2_PACKAGE_GR_OSMOSDR_IQFILE
 
 config BR2_PACKAGE_GR_OSMOSDR_RTLSDR
 	bool "Osmocom RTLSDR support"
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # librtlsdr -> libusb
 	select BR2_PACKAGE_LIBRTLSDR
 	help
 	  Enable Osmocom RTLSDR support
+
+comment "Osmocom RTLSDR support needs a toolchain w/ gcc >= 4.9"
+	depends on !BR2_TOOLCHAIN_GCC_AT_LEAST_4_9
 
 config BR2_PACKAGE_GR_OSMOSDR_RTLSDR_TCP
 	bool "RTLSDR TCP Client support"

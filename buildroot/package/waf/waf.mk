@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WAF_VERSION = 2.0.20
+WAF_VERSION = 2.0.22
 WAF_SOURCE = waf-$(WAF_VERSION)
 WAF_SITE = https://waf.io
 WAF_LICENSE = BSD-3-Clause

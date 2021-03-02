@@ -17,20 +17,25 @@ if [ $# -ne 2 ] ; then
     exit 1
 fi
 
+if [ -z "${BR_PYTHON_VERSION}" ]; then
+    echo "Environment variable BR_PYTHON_VERSION not set." >&2
+    exit 1
+fi
+
 # The first argument is the path to python-config.py, ignore it.
 
 case "$2" in
     --includes)
-	echo "-I${STAGING_DIR}/usr/include/python2.7"
-	;;
+        echo "-I${STAGING_DIR}/usr/include/python${BR_PYTHON_VERSION}"
+        ;;
     --ldflags)
-	echo "-lpthread -ldl -lutil -lm -lpython2.7"
-	;;
+        echo "-lpthread -ldl -lutil -lm -lpython${BR_PYTHON_VERSION}"
+        ;;
     --exec-prefix)
-	echo "/usr"
-	;;
+        echo "/usr"
+        ;;
     *)
-	echo "Bad arg $2." >&2
-	exit 1
-	;;
+        echo "Bad arg $2." >&2
+        exit 1
+        ;;
 esac

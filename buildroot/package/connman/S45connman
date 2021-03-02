@@ -1,22 +1,52 @@
 #!/bin/sh
 
+DAEMON="connmand"
+PIDFILE="/var/run/$DAEMON.pid"
+
+CONNMAND_ARGS="-n"
+
+# shellcheck source=/dev/null
+[ -r "/etc/default/$DAEMON" ] && . "/etc/default/$DAEMON"
+
+start() {
+	printf 'Starting %s: ' "$DAEMON"
+	# shellcheck disable=SC2086 # we need the word splitting
+	start-stop-daemon -S -q -m -b -p "$PIDFILE" -x "/usr/sbin/$DAEMON" \
+		-- $CONNMAND_ARGS
+	status=$?
+	if [ "$status" -eq 0 ]; then
+		echo "OK"
+	else
+		echo "FAIL"
+	fi
+	return "$status"
+}
+
+stop() {
+	printf 'Stopping %s: ' "$DAEMON"
+	start-stop-daemon -K -q -p "$PIDFILE"
+	status=$?
+	if [ "$status" -eq 0 ]; then
+		echo "OK"
+	else
+		echo "FAIL"
+	fi
+	return "$status"
+}
+
+restart() {
+	stop
+	sleep 1
+	start
+}
+
 case "$1" in
-	start)
-		printf "Starting connman ... "
-		start-stop-daemon -S -q -m -b -p /var/run/connmand.pid --exec /usr/sbin/connmand -- -n
-		echo "done."
-		;;
-	stop)
-		printf "Stopping connman ..."
-		start-stop-daemon -K -q -p /var/run/connmand.pid
-		echo "done."
-		;;
-	restart)
-		$0 stop
-		sleep 1
-		$0 start
-		;;
+	start|stop|restart)
+		"$1";;
+	reload)
+		# Restart, since there is no true "reload" feature.
+		restart;;
 	*)
-		echo "usage: $0 {start|stop|restart}"
-		;;
+		echo "Usage: $0 {start|stop|restart|reload}"
+		exit 1
 esac

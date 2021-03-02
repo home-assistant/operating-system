@@ -1,4 +1,4 @@
 # From http://www.mirbsd.org/mksh.htm#build
-sha256  907ed1a9586e7f18bdefdd4a763aaa8397b755e15034aa54f4d753bfb272e0e6  mksh-R59b.tgz
+sha256  77ae1665a337f1c48c61d6b961db3e52119b38e58884d1c89684af31f87bc506  mksh-R59c.tgz
 # Locally computed
-sha256  fb1e64c95ded58058c7f0cf5269236bc83c3cbda089cbb025b03e08f189bf47e  mksh.1
+sha256  abf44a61ec777c98f8ae7e08e4fe25fe258e0c470215e2eeb22816f6bae72c80  mksh.1

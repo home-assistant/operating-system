@@ -285,6 +285,11 @@ config BR2_PACKAGE_COLLECTD_HUGEPAGES
 	help
 	  Reports the number of used and free hugepages on Linux.
 
+config BR2_PACKAGE_COLLECTD_INFINIBAND
+	bool "infiniband"
+	help
+	  Attributes and counters for each port on each IB device.
+
 config BR2_PACKAGE_COLLECTD_INTERFACE
 	bool "interface"
 	help
@@ -321,10 +326,20 @@ config BR2_PACKAGE_COLLECTD_LOAD
 	help
 	  Collects the system load.
 
+config BR2_PACKAGE_COLLECTD_LOGPARSER
+	bool "logparser"
+	help
+	  Plugin for filtering and parsing log messages.
+
 config BR2_PACKAGE_COLLECTD_MD
 	bool "md"
 	help
 	  Collects software-RAID device information.
+
+config BR2_PACKAGE_COLLECTD_MDEVENTS
+	bool "mdevents"
+	help
+	  Events from md (Linux Software RAID) devices.
 
 config BR2_PACKAGE_COLLECTD_MEMCACHEC
 	bool "memcachec"
@@ -498,6 +513,11 @@ config BR2_PACKAGE_COLLECTD_SWAP
 	help
 	  Collects the amount of memory currently written to disk.
 
+config BR2_PACKAGE_COLLECTD_SYNPROXY
+	bool "synproxy"
+	help
+	  Synproxy stats plugin.
+
 config BR2_PACKAGE_COLLECTD_TABLE
 	bool "table"
 	help
@@ -524,6 +544,16 @@ config BR2_PACKAGE_COLLECTD_THERMAL
 	bool "thermal"
 	help
 	  Reads ACPI thermal zone information.
+
+config BR2_PACKAGE_COLLECTD_UBI
+	bool "ubi"
+	help
+	  UBI (Unsorted Block Images) is an erase block management layer
+	  for flash memory devices. UBI serves two purposes, tracking
+	  NAND flash bad blocks and providing wear leveling.
+	  This plugin collects some stats about UBI devices:
+	   * bad physical underlying blocks (bad_peb_count)
+	   * max erase counter value (max_ec)
 
 config BR2_PACKAGE_COLLECTD_UPTIME
 	bool "uptime"

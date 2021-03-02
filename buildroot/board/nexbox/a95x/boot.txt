@@ -1,4 +1,4 @@
-setenv bootargs console=ttyAML0,115200 earlyprintk root=/dev/mmcblk1p2 rootwait
+setenv bootargs console=ttyAML0,115200 earlyprintk root=PARTUUID=feedc0de-02 rootwait
 
 fatload mmc 0:1 0x01080000 uImage
 

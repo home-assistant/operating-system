@@ -1,5 +1,5 @@
-# From http://www.apache.org/dist/xerces/c/3/sources/xerces-c-3.2.2.tar.xz.sha256
-sha256 6daca3b23364d8d883dc77a73f681242f69389e3564543287ed3d073007e0a8e xerces-c-3.2.2.tar.xz
+# From http://www.apache.org/dist/xerces/c/3/sources/xerces-c-3.2.3.tar.xz.sha256
+sha256  12fc99a9fc1d1a79bd0e927b8b5637a576d6656f45b0d5e70ee3694d379cc149  xerces-c-3.2.3.tar.xz
 
 # Hash for license file
-sha256 cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30 LICENSE
+sha256  cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30  LICENSE

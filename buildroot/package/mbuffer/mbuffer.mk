@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-MBUFFER_VERSION = 20200505
+MBUFFER_VERSION = 20200929
 MBUFFER_SOURCE = mbuffer-$(MBUFFER_VERSION).tgz
 MBUFFER_SITE = http://www.maier-komor.de/software/mbuffer
 MBUFFER_LICENSE = GPL-3.0+

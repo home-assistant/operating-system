@@ -1,5 +1,5 @@
 # md5, sha256 from https://pypi.org/pypi/aiohttp-remotes/json
-md5	70213413433ece4e2110ae90a070d279  aiohttp_remotes-0.1.2.tar.gz
-sha256	43c3f7e1c5ba27f29fb4dbde5d43b900b5b5fc7e37bf7e35e6eaedabaec4a3fc  aiohttp_remotes-0.1.2.tar.gz
+md5  e90fad4b7aa088207f831698fddd9eea  aiohttp_remotes-1.0.0.tar.gz
+sha256  caec1681de70bac82daa676078d9b125758fb3952fdaa893a6b42bdd995562ef  aiohttp_remotes-1.0.0.tar.gz
 # Locally computed sha256 checksums
-sha256	5240758b8a5c34a46c166294eaae7dc7034ec45c727fce889c9abf7ef5afc158  LICENSE
+sha256  4e7d0edf250abe2a28027788b8c55a53d1b5c9ff961b8a00643c76aed637ba13  LICENSE

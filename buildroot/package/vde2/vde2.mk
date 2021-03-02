@@ -9,6 +9,8 @@ VDE2_SOURCE = vde2-$(VDE2_VERSION).tar.bz2
 VDE2_SITE = http://downloads.sourceforge.net/project/vde/vde2/$(VDE2_VERSION)
 VDE2_LICENSE = GPL-2.0+, LGPL-2.1+, BSD-3-Clause
 VDE2_LICENSE_FILES = COPYING COPYING.libvdeplug COPYING.slirpvde
+VDE2_CPE_ID_VENDOR = vde_project
+VDE2_CPE_ID_PRODUCT = vde
 VDE2_INSTALL_STAGING = YES
 
 # We touch configure.ac, so we need to autoreconf

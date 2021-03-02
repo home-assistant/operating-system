@@ -61,7 +61,6 @@ config BR2_PACKAGE_KISMET_SERVER
 	depends on !BR2_STATIC_LIBS # dlfcn.h
 	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_8 # protobuf
 	depends on !BR2_TOOLCHAIN_HAS_GCC_BUG_64735 # std::future
-	select BR2_PACKAGE_LIBMICROHTTPD
 	select BR2_PACKAGE_PROTOBUF
 
 comment "server needs a toolchain w/ dynamic library, gcc >= 4.8"

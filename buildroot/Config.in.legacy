@@ -144,7 +144,29 @@ endif
 
 ###############################################################################
 
-comment "Legacy options removed in 2020.11"
+comment "Legacy options removed in 2021.02"
+
+config BR2_PACKAGE_MPD_AUDIOFILE
+	bool "mpd audiofile support removed"
+	select BR2_LEGACY
+	help
+	  The audiofile support was removed from mpd as audiofile is
+	  affected by multiple CVEs and is not maintained anymore (no
+	  release since 2013).
+
+config BR2_PACKAGE_AUDIOFILE
+	bool "audiofile package removed"
+	select BR2_LEGACY
+	help
+	  The audiofile package was removed as it is affected by
+	  multiple CVEs and is not maintained anymore (no release since
+	  2013).
+
+config BR2_BINUTILS_VERSION_2_33_X
+	bool "binutils 2.33.x has been removed"
+	select BR2_LEGACY
+	help
+	  binutils 2.33.x has been removed, use a newer version.
 
 config BR2_PACKAGE_LIBUPNP18
 	bool "libupnp18 package removed"
@@ -155,6 +177,74 @@ config BR2_PACKAGE_LIBUPNP18
 	  because it will never be fixed against CallStranger a.k.a.
 	  CVE-2020-12695. The libupnp package (which has been updated to
 	  version 1.14.x) has been selected instead.
+
+config BR2_PACKAGE_BOA
+	bool "boa package removed"
+	select BR2_LEGACY
+	help
+	  The boa package was removed as it is affected by multiple
+	  CVEs and is not maintained anymore (no release since 2005).
+
+config BR2_PACKAGE_LINUX_FIRMWARE_IMX_SDMA
+	bool "imx sdma firmware is provided by firmware-imx"
+	select BR2_LEGACY
+	select BR2_PACKAGE_FREESCALE_IMX
+	select BR2_PACKAGE_FIRMWARE_IMX
+	help
+	  linux-firmware provide the same firmware as firmware-imx.
+	  We prefer using firmware-imx as the only provider.
+
+config BR2_GDB_VERSION_8_2
+	bool "gdb 8.2.x has been removed"
+	select BR2_LEGACY
+	help
+	  gdb 8.2 support has been removed, you can use a newer
+	  version such as 8.3 or more recent.
+
+config BR2_PACKAGE_HOST_RCW
+	bool "rcw package was renamed to qoriq-rcw"
+	select BR2_PACKAGE_HOST_QORIQ_RCW
+	select BR2_LEGACY
+	help
+	  The rcw package was specific to the QorIQ platform, so it has
+	  been renamed to qoriq-rcw, to leave room for other *-rcw
+	  packages for other platforms.
+
+config BR2_KERNEL_HEADERS_5_9
+	bool "kernel headers version 5.9.x are no longer supported"
+	select BR2_LEGACY
+	help
+	  Version 5.9.x of the Linux kernel headers are no longer
+	  maintained upstream and are now removed.
+
+config BR2_KERNEL_HEADERS_5_8
+	bool "kernel headers version 5.8.x are no longer supported"
+	select BR2_LEGACY
+	help
+	  Version 5.8.x of the Linux kernel headers are no longer
+	  maintained upstream and are now removed.
+
+config BR2_powerpc_601
+	bool "PowerPC 601 support removed"
+	select BR2_LEGACY
+	help
+	  The support for the PowerPC 601 processors has been removed.
+
+config BR2_PACKAGE_TI_SGX_LIBGBM
+	bool "ti-sgx-libgbm support removed"
+	select BR2_LEGACY
+	help
+	  TI has merged the ti-sgx-libgbm package with the ti-sgx-um
+	  package
+
+config BR2_PACKAGE_IPSEC_TOOLS
+	bool "ipsec-tools package was removed"
+	select BR2_LEGACY
+	help
+	  This package has been removed as it has security issues and
+	  has been abandoned since 2014.
+
+comment "Legacy options removed in 2020.11"
 
 config BR2_PACKAGE_OPENCV
 	bool "opencv package was removed"

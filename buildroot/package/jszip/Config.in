@@ -1,0 +1,7 @@
+config BR2_PACKAGE_JSZIP
+	bool "jszip"
+	help
+	  JSZip is a javascript library for creating, reading and
+	  editing .zip files, with a lovely and simple API.
+
+	  https://stuk.github.io/jszip

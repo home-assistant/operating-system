@@ -1,0 +1,19 @@
+config BR2_PACKAGE_QUICKJS
+	bool "quickjs"
+	depends on !BR2_STATIC_LIBS
+	# No way to check for fenv support.
+	depends on !BR2_TOOLCHAIN_USES_UCLIBC
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # C11/stdatomic.h
+	depends on BR2_HOST_GCC_AT_LEAST_4_9 # C11/stdatomic.h
+	depends on BR2_USE_MMU # fork()
+	help
+	  QuickJS is a small and embeddable Javascript engine.
+	  It supports the ES2020 specification including modules,
+	  asynchronous generators, proxies and BigInt.
+
+	  https://bellard.org/quickjs/
+
+comment "quickjs needs a glibc or musl toolchain w/ gcc >= 4.9, host gcc >= 4.9, dynamic library"
+	depends on BR2_USE_MMU
+	depends on BR2_STATIC_LIBS || BR2_TOOLCHAIN_USES_UCLIBC || \
+		!BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 || !BR2_HOST_GCC_AT_LEAST_4_9

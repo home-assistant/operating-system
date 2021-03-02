@@ -12,6 +12,7 @@ LIBASS_SITE = https://github.com/libass/libass/releases/download/$(LIBASS_VERSIO
 LIBASS_INSTALL_STAGING = YES
 LIBASS_LICENSE = ISC
 LIBASS_LICENSE_FILES = COPYING
+LIBASS_CPE_ID_VALID = YES
 LIBASS_DEPENDENCIES = \
 	host-pkgconf \
 	freetype \

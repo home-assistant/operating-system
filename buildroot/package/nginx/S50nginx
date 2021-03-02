@@ -9,7 +9,7 @@ PIDFILE=/var/run/nginx.pid
 case "$1" in
   start)
 	echo "Starting nginx..."
-	mkdir -p /var/log/nginx /var/tmp/nginx
+	mkdir -p /var/log/nginx /var/cache/nginx
 	start-stop-daemon -S -x "$NGINX" -p "$PIDFILE"
 	;;
   stop)

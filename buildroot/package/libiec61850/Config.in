@@ -1,0 +1,21 @@
+config BR2_PACKAGE_LIBIEC61850
+	bool "libiec61850"
+	depends on BR2_INSTALL_LIBSTDCPP
+	depends on BR2_TOOLCHAIN_HAS_THREADS
+	depends on !BR2_STATIC_LIBS
+	help
+	  IEC 61850 is an international standard for
+	  communication systems in Substation Automation Systems
+	  (SAS) and management of Decentralized Energy Resources
+	  (DER). It is seen as one of the communication standards
+	  of the emerging Smart Grid.
+
+	  The project libIEC61850 provides a server and client
+	  library for the IEC 61850/MMS, IEC 61850/GOOSE and IEC
+	  61850-9-2/Sampled Values communication protocols
+	  written in C. It is available under the GPLv3 license.
+
+	  http://libiec61850.com
+
+comment "libiec61850 needs a toolchain w/ C++, threads, dynamic library"
+	depends on !BR2_INSTALL_LIBSTDCPP || !BR2_TOOLCHAIN_HAS_THREADS || BR2_STATIC_LIBS

@@ -3,4 +3,4 @@ config BR2_PACKAGE_PYTHON_ISO8601
 	help
 	  Simple module to parse ISO 8601 dates.
 
-	  https://bitbucket.org/micktwomey/pyiso8601
+	  https://github.com/micktwomey/pyiso8601

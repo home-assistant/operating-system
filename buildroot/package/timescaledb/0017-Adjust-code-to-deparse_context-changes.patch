@@ -1,0 +1,34 @@
+From d7960c761542d7e90e91a32e91b82459e5fcc84f Mon Sep 17 00:00:00 2001
+From: Sven Klemm <sven@timescale.com>
+Date: Sat, 3 Oct 2020 15:53:19 +0200
+Subject: [PATCH] Adjust code to deparse_context changes
+
+PG13 changes EXPLAIN to use Plan instead PlanState as context.
+
+https://github.com/postgres/postgres/commit/6ef77cf46e
+
+Signed-off-by: Maxim Kochetkov <fido_max@inbox.ru>
+Fetch from: https://github.com/timescale/timescaledb/pull/2498/commits/20c5ef33fc9c6d47cd6a95ca79b0b260ee3cfd25.patch
+---
+ src/chunk_append/explain.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/src/chunk_append/explain.c b/src/chunk_append/explain.c
+index 0111cf72..7ee089c1 100644
+--- a/src/chunk_append/explain.c
++++ b/src/chunk_append/explain.c
+@@ -84,7 +84,11 @@ show_sort_group_keys(ChunkAppendState *state, List *ancestors, ExplainState *es)
+ 	initStringInfo(&sortkeybuf);
+ 
+ 	/* Set up deparsing context */
++#if PG13_GE
++	context = set_deparse_context_plan(es->deparse_cxt, plan, ancestors);
++#else
+ 	context = set_deparse_context_planstate(es->deparse_cxt, (Node *) state, ancestors);
++#endif
+ 	useprefix = (list_length(es->rtable) > 1 || es->verbose);
+ 
+ 	for (keyno = 0; keyno < nkeys; keyno++)
+-- 
+2.29.2
+

@@ -2,14 +2,12 @@ config BR2_PACKAGE_ELL
 	bool "ell"
 	depends on BR2_TOOLCHAIN_HAS_SYNC_4
 	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_12
-	depends on !BR2_STATIC_LIBS
 	depends on BR2_USE_WCHAR
 	help
 	  Embedded Linux library (ell)
 
 	  https://01.org/ell
 
-comment "ell needs a toolchain w/ dynamic library, wchar, headers >= 4.12"
+comment "ell needs a toolchain w/ wchar, headers >= 4.12"
 	depends on BR2_TOOLCHAIN_HAS_SYNC_4
-	depends on BR2_STATIC_LIBS || !BR2_USE_WCHAR || \
-		!BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_12
+	depends on !BR2_USE_WCHAR || !BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_12

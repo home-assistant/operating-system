@@ -21,6 +21,8 @@ This guide covers the following configurations:
  - atmel_sama5d2_xplained_mmc_dev_defconfig
  - microchip_sama5d27_wlsom1_ek_mmc_defconfig
  - microchip_sama5d27_wlsom1_ek_mmc_dev_defconfig
+ - microchip_sam9x60ek_mmc_defconfig
+ - microchip_sam9x60ek_mmc_dev_defconfig
 
 These configurations will use AT91Bootstrap, u-boot and a linux kernel from
 the git trees maintained by Atmel.

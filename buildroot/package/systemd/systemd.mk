@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-SYSTEMD_VERSION = 246.10
+SYSTEMD_VERSION = 247.3
 SYSTEMD_SITE = $(call github,systemd,systemd-stable,v$(SYSTEMD_VERSION))
 SYSTEMD_LICENSE = LGPL-2.1+, GPL-2.0+ (udev), Public Domain (few source files, see README), BSD-3-Clause (tools/chromiumos)
 SYSTEMD_LICENSE_FILES = LICENSE.GPL2 LICENSE.LGPL2.1 README tools/chromiumos/LICENSE
@@ -32,8 +32,8 @@ SYSTEMD_CONF_OPTS += \
 	-Dloadkeys-path=/usr/bin/loadkeys \
 	-Dman=false \
 	-Dmount-path=/usr/bin/mount \
+	-Dmode=release \
 	-Dnss-systemd=true \
-	-Dportabled=false \
 	-Dquotacheck-path=/usr/sbin/quotacheck \
 	-Dquotaon-path=/usr/sbin/quotaon \
 	-Drootlibdir='/usr/lib' \
@@ -417,6 +417,12 @@ else
 SYSTEMD_CONF_OPTS += -Dpolkit=false
 endif
 
+ifeq ($(BR2_PACKAGE_SYSTEMD_PORTABLED),y)
+SYSTEMD_CONF_OPTS += -Dportabled=true
+else
+SYSTEMD_CONF_OPTS += -Dportabled=false
+endif
+
 ifeq ($(BR2_PACKAGE_SYSTEMD_NETWORKD),y)
 SYSTEMD_CONF_OPTS += -Dnetworkd=true
 SYSTEMD_NETWORKD_USER = systemd-network -1 systemd-network -1 * - - - systemd Network Management
@@ -643,6 +649,7 @@ HOST_SYSTEMD_CONF_OPTS = \
 	--libdir=lib \
 	--sysconfdir=/etc \
 	--localstatedir=/var \
+	-Dmode=release \
 	-Dutmp=false \
 	-Dhibernate=false \
 	-Dldconfig=false \

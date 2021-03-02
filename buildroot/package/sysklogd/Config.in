@@ -1,8 +1,48 @@
 config BR2_PACKAGE_SYSKLOGD
-	bool "syslogd & klogd"
+	bool "sysklogd"
 	depends on BR2_USE_MMU # fork()
+	depends on BR2_TOOLCHAIN_HAS_THREADS
 	depends on BR2_PACKAGE_BUSYBOX_SHOW_OTHERS
 	help
-	  System log daemons syslogd and klogd.
+	  The continuation of the original sysklogd package, based on
+	  the original Berkeley syslog daemon. Now with kernel
+	  logging, and log rotation built-in. It can both receive from
+	  and send to remote syslog servers. The v2.x series include
+	  extended support for RFC5424 with an alt. syslogp() API for
+	  clients.
 
 	  https://github.com/troglobit/sysklogd/
+
+if BR2_PACKAGE_SYSKLOGD
+
+config BR2_PACKAGE_SYSKLOGD_REMOTE_DELAY
+	int "Retry delay (sec)"
+	default "180"
+	help
+	  Retry delay (seconds) for sending to remote syslog servers.
+
+	  When set up to forward logs to a remote syslog server, the
+	  network may not always be available. E.g., default interface
+	  down, or no route to the remote server. This setting controls
+	  the back-off time before retrying.
+
+	  Default: 180 seconds
+
+config BR2_PACKAGE_SYSKLOGD_LOGGER
+	bool "logger tool"
+	help
+	  Generate log messages from scripts or from the command line.
+
+	  This version of logger is receommended for use with sysklogd.
+	  It makes use of the new syslogp() API for RFC5424 style logs,
+	  e.g. MSGID, strucutred data (SD), etc.
+
+	  The BusyBox, or util-linux, logger tools can also be used, but
+	  are limited to RFC3164 style messages.
+
+endif
+
+comment "sysklogd needs a toolchain w/ threads"
+	depends on BR2_USE_MMU
+	depends on !BR2_TOOLCHAIN_HAS_THREADS
+	depends on BR2_PACKAGE_BUSYBOX_SHOW_OTHERS

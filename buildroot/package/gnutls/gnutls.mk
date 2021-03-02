@@ -17,6 +17,7 @@ GNUTLS_LICENSE_FILES += doc/COPYING
 endif
 
 GNUTLS_DEPENDENCIES = host-pkgconf libtasn1 nettle pcre
+GNUTLS_CPE_ID_VENDOR = gnu
 GNUTLS_CONF_OPTS = \
 	--disable-doc \
 	--disable-guile \

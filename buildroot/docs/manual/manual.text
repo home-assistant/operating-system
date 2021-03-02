@@ -174,13 +174,13 @@ List of Examples
 
 ---------------------------------------------------------------------
 
-Buildroot 2020.11.2 manual generated on 2021-01-31 20:36:55 UTC from
-git revision 551cb63007
+Buildroot 2021.02-rc3 manual generated on 2021-02-27 17:37:02 UTC
+from git revision 4c5b27fbef
 
 The Buildroot manual is written by the Buildroot developers. It is
 licensed under the GNU General Public License, version 2. Refer to
 the COPYING [http://git.buildroot.org/buildroot/tree/COPYING?id=
-551cb630079316efe928d7c2eb0358a19e38fc48] file in the Buildroot
+4c5b27fbef3db3a3dc3628e90d452493729f51aa] file in the Buildroot
 sources for the full text of this license.
 
 Copyright © 2004-2020 The Buildroot developers
@@ -4852,6 +4852,40 @@ LIBFOO_IGNORE_CVES += CVE-2020-12345
 # only when built with libbaz, which Buildroot doesn't support
 LIBFOO_IGNORE_CVES += CVE-2020-54321
 
+  * LIBFOO_CPE_ID_* variables is a set of variables that allows the
+    package to define its CPE identifier [https://nvd.nist.gov/
+    products/cpe]. The available variables are:
+
+      + LIBFOO_CPE_ID_PREFIX, specifies the prefix of the CPE
+        identifier, i.e the first three fields. When not defined, the
+        default value is cpe:2.3:a.
+      + LIBFOO_CPE_ID_VENDOR, specifies the vendor part of the CPE
+        identifier. When not defined, the default value is <pkgname>
+        _project.
+      + LIBFOO_CPE_ID_PRODUCT, specifies the product part of the CPE
+        identifier. When not defined, the default value is <pkgname>.
+      + LIBFOO_CPE_ID_VERSION, specifies the version part of the CPE
+        identifier. When not defined the default value is $
+        (LIBFOO_VERSION).
+      + LIBFOO_CPE_ID_UPDATE specifies the update part of the CPE
+        identifier. When not defined the default value is *.
+
+    If any of those variables is defined, then the generic package
+    infrastructure assumes the package provides valid CPE
+    information. In this case, LIBFOO_CPE_ID_VALID = YES will be set,
+    and the generic package infrastructure will define LIBFOO_CPE_ID.
+
+    Alternatively, a package can also explicitly set
+    LIBFOO_CPE_ID_VALID = YES if the default values for
+    LIBFOO_CPE_ID_PREFIX, LIBFOO_CPE_ID_VENDOR,
+    LIBFOO_CPE_ID_PRODUCT, LIBFOO_CPE_ID_VERSION,
+    LIBFOO_CPE_ID_UPDATE are all correct for this package and don’t
+    need to be explicitly overridden.
+
+    For a host package, if its LIBFOO_CPE_ID_* variables are not
+    defined, it inherits the value of those variables from the
+    corresponding target package.
+
 The recommended way to define these variables is to use the following
 syntax:
 
@@ -6490,6 +6524,9 @@ also be defined.
   * LIBFOO_INSTALL_TARGET_OPTS, to specify additional targets to pass
     to the make command during the target installation step. By
     default, install.
+  * LIBFOO_SYNC_HEADERS, to run syncqt.pl before qmake. Some packages
+    need this to have a properly populated include directory before
+    running the build.
 
 18.19. Infrastructure for packages building kernel modules
 

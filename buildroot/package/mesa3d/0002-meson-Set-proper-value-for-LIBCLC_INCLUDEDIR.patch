@@ -18,7 +18,7 @@ Based on the patch for autotools provided by Valentin Korenblit.
 
 Signed-off-by: Romain Naour <romain.naour@smile.fr>
 Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
-[rebased for 20.02.0]
+[rebased for 20.2.0 & 20.3.0]
 ---
  src/gallium/frontends/clover/meson.build | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
@@ -27,15 +27,15 @@ diff --git a/src/gallium/frontends/clover/meson.build b/src/gallium/frontends/cl
 index 62ac5f5278d..ecdeb39669c 100644
 --- a/src/gallium/frontends/clover/meson.build
 +++ b/src/gallium/frontends/clover/meson.build
-@@ -63,7 +63,7 @@
-     clover_cpp_args,
-     clover_opencl_cpp_args,
-     clover_spirv_cpp_args,
--    '-DLIBCLC_INCLUDEDIR="@0@/"'.format(dep_clc.get_pkgconfig_variable('includedir')),
-+    '-DLIBCLC_INCLUDEDIR="/usr/share"',
-     '-DLIBCLC_LIBEXECDIR="@0@/"'.format(dep_clc.get_pkgconfig_variable('libexecdir')),
-     '-DCLANG_RESOURCE_DIR="@0@"'.format(join_paths(
-       dep_llvm.get_configtool_variable('libdir'), 'clang',
+@@ -27,7 +27,7 @@
+   '-DCL_USE_DEPRECATED_OPENCL_2_0_APIS',
+   '-DCL_USE_DEPRECATED_OPENCL_2_1_APIS',
+   '-DCL_USE_DEPRECATED_OPENCL_2_2_APIS',
+-  '-DLIBCLC_INCLUDEDIR="@0@/"'.format(dep_clc.get_variable(pkgconfig : 'includedir')),
++  '-DLIBCLC_INCLUDEDIR="/usr/share"',
+   '-DLIBCLC_LIBEXECDIR="@0@/"'.format(dep_clc.get_variable(pkgconfig : 'libexecdir'))
+ ]
+ clover_spirv_cpp_args = []
 -- 
 2.20.1
 

@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-FLARE_ENGINE_VERSION = 1.0
-FLARE_ENGINE_SITE =  $(call github,clintbellanger,flare-engine,v$(FLARE_ENGINE_VERSION))
+FLARE_ENGINE_VERSION = 1.11
+FLARE_ENGINE_SITE =  $(call github,flareteam,flare-engine,v$(FLARE_ENGINE_VERSION))
 FLARE_ENGINE_LICENSE = GPL-3.0+
 FLARE_ENGINE_LICENSE_FILES = COPYING
 

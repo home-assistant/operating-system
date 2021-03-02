@@ -32,8 +32,8 @@ index 93044000b..c811c63ec 100644
 -        LIBS="-lssl $LIBCRYPTO"
 +        LIBS="-lssl $LIBCRYPTO $LIBS"
          AC_CHECK_FUNCS([TLS_method TLSv1_method DTLS_method DTLSv1_method]dnl
-                        [SSL_library_init SSL_load_error_strings])
-         LIBS="$netsnmp_save_LIBS"
+                        [SSL_library_init SSL_load_error_strings]dnl
+ 		       [ERR_get_error_all])
 -- 
 2.17.1
 

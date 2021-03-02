@@ -4,11 +4,12 @@
 #
 ################################################################################
 
-BUSYBOX_VERSION = 1.32.0
-BUSYBOX_SITE = http://www.busybox.net/downloads
+BUSYBOX_VERSION = 1.33.0
+BUSYBOX_SITE = https://www.busybox.net/downloads
 BUSYBOX_SOURCE = busybox-$(BUSYBOX_VERSION).tar.bz2
 BUSYBOX_LICENSE = GPL-2.0, bzip2-1.0.4
 BUSYBOX_LICENSE_FILES = LICENSE archival/libarchive/bz/LICENSE
+BUSYBOX_CPE_ID_VENDOR = busybox
 
 define BUSYBOX_HELP_CMDS
 	@echo '  busybox-menuconfig     - Run BusyBox menuconfig'

@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LINPHONE_VERSION = 4.3.1
+LINPHONE_VERSION = 4.4.8
 LINPHONE_SITE = \
 	https://gitlab.linphone.org/BC/public/liblinphone/-/archive/$(LINPHONE_VERSION)
 LINPHONE_CONF_OPTS = \
@@ -18,7 +18,8 @@ LINPHONE_CONF_OPTS = \
 	-DENABLE_TUTORIALS=OFF \
 	-DENABLE_UNIT_TESTS=OFF \
 	-DENABLE_VCARD=OFF \
-	-DENABLE_VIDEO=OFF
+	-DENABLE_VIDEO=OFF \
+	-DGIT_EXECUTABLE=OFF
 LINPHONE_INSTALL_STAGING = YES
 LINPHONE_DEPENDENCIES = \
 	belle-sip \

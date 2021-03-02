@@ -10,6 +10,7 @@ PYTHON_SOURCE = Python-$(PYTHON_VERSION).tar.xz
 PYTHON_SITE = https://python.org/ftp/python/$(PYTHON_VERSION)
 PYTHON_LICENSE = Python-2.0, others
 PYTHON_LICENSE_FILES = LICENSE
+PYTHON_CPE_ID_VENDOR = python
 PYTHON_LIBTOOL_PATCH = NO
 
 # Python needs itself to be built, so in order to cross-compile

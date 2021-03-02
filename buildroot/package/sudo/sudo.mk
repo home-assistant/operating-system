@@ -4,10 +4,13 @@
 #
 ################################################################################
 
-SUDO_VERSION = 1.9.5p2
+SUDO_VERSION = $(SUDO_CPE_ID_VERSION)$(SUDO_CPE_ID_UPDATE)
 SUDO_SITE = https://www.sudo.ws/sudo/dist
 SUDO_LICENSE = ISC, BSD-3-Clause
 SUDO_LICENSE_FILES = doc/LICENSE
+SUDO_CPE_ID_VALID = YES
+SUDO_CPE_ID_VERSION = 1.9.5
+SUDO_CPE_ID_UPDATE = p2
 # This is to avoid sudo's make install from chown()ing files which fails
 SUDO_INSTALL_TARGET_OPTS = INSTALL_OWNER="" DESTDIR="$(TARGET_DIR)" install
 SUDO_CONF_OPTS = \

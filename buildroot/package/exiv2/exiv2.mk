@@ -9,12 +9,9 @@ EXIV2_SITE = $(call github,Exiv2,exiv2,v$(EXIV2_VERSION))
 EXIV2_INSTALL_STAGING = YES
 EXIV2_LICENSE = GPL-2.0+
 EXIV2_LICENSE_FILES = COPYING
+EXIV2_CPE_ID_VENDOR = exiv2
 
 EXIV2_CONF_OPTS += -DEXIV2_BUILD_SAMPLES=OFF
-
-# The following CMake variable disables a TRY_RUN call in the -pthread
-# test which is not allowed when cross-compiling.
-EXIV2_CONF_OPTS += -DTHREADS_PTHREAD_ARG=OFF
 
 ifeq ($(BR2_PACKAGE_EXIV2_LENSDATA),y)
 EXIV2_CONF_OPTS += -DEXIV2_ENABLE_LENSDATA=ON

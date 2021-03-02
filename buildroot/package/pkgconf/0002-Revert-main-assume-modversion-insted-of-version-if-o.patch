@@ -19,7 +19,7 @@ diff --git a/cli/main.c b/cli/main.c
 index b52cc85..c5acc10 100644
 --- a/cli/main.c
 +++ b/cli/main.c
-@@ -955,18 +955,8 @@ main(int argc, char *argv[])
+@@ -1002,18 +1002,8 @@ main(int argc, char *argv[])
  
  	if ((want_flags & PKG_VERSION) == PKG_VERSION)
  	{

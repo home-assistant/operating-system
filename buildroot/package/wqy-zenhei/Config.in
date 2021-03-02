@@ -1,0 +1,16 @@
+config BR2_PACKAGE_WQY_ZENHEI
+	bool "wqy-zenhei"
+	help
+	  "WenQuanYi Zen Hei" is a Hei-Ti Style (sans-serif) Chinese
+	  font capable of text formatting and on-screen display of
+	  both simplified and traditional forms of Chinese Hanzi
+	  glyphs (among many other languages). Both the proportional
+	  "WenQuanYi Zen Hei", as well as the monospaced typeface
+	  "WenQuanYi Zen Hei Mono" provides over 35,000 glyphs,
+	  including over 21,000 Chinese Hanzi. This font provides full
+	  coverage of GBK (CP936) charset, CJK Unified Ideographs, as
+	  well as the code-points needed for zh_CN, zh_SG, zh_TW,
+	  zh_HK, zh_MO, ja (Japanese) and ko (Korean) locales for
+	  fontconfig.
+
+	  https://sourceforge.net/projects/wqy/

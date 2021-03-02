@@ -4,13 +4,15 @@
 #
 ################################################################################
 
-ROCKSDB_VERSION = 6.10.1
+ROCKSDB_VERSION = 6.13.3
 ROCKSDB_SITE = $(call github,facebook,rocksdb,v$(ROCKSDB_VERSION))
 ROCKSDB_LICENSE = GPL-2.0 or Apache-2.0
 ROCKSDB_LICENSE_FILES = COPYING LICENSE.Apache LICENSE.leveldb README.md
 ROCKSDB_INSTALL_STAGING = YES
 
-ROCKSDB_MAKE_OPTS = PORTABLE=1
+ROCKSDB_MAKE_OPTS = \
+	PORTABLE=1 \
+	PREFIX=/usr
 
 # Internal error, aborting at dwarf2cfi.c:2802 in connect_traces
 # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=58864
@@ -67,6 +69,12 @@ else
 ROCKSDB_MAKE_OPTS += ROCKSDB_DISABLE_ZSTD=1
 endif
 
+ifeq ($(BR2_GCC_ENABLE_LTO),y)
+ROCKSDB_MAKE_OPTS += USE_LTO=1
+else
+ROCKSDB_MAKE_OPTS += USE_LTO=0
+endif
+
 ifeq ($(BR2_STATIC_LIBS),y)
 ROCKSDB_BUILD_TARGETS += static_lib
 ROCKSDB_INSTALL_TARGETS += install-static
@@ -88,12 +96,12 @@ endef
 
 define ROCKSDB_INSTALL_STAGING_CMDS
 	$(TARGET_CONFIGURE_OPTS) $(MAKE) $(ROCKSDB_MAKE_OPTS) -C $(@D) \
-		INSTALL_PATH=$(STAGING_DIR) $(ROCKSDB_INSTALL_TARGETS)
+		DESTDIR=$(STAGING_DIR) $(ROCKSDB_INSTALL_TARGETS)
 endef
 
 define ROCKSDB_INSTALL_TARGET_CMDS
 	$(TARGET_CONFIGURE_OPTS) $(MAKE) $(ROCKSDB_MAKE_OPTS) -C $(@D) \
-		INSTALL_PATH=$(TARGET_DIR) $(ROCKSDB_INSTALL_TARGETS)
+		DESTDIR=$(TARGET_DIR) $(ROCKSDB_INSTALL_TARGETS)
 endef
 
 $(eval $(generic-package))

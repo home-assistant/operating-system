@@ -1,3 +1,3 @@
 # computed by luarocks/buildroot
-sha256 98318213be7b5ca60780c39f4736d5a3328631bc2c5dbfb8949b0db80e32746f  http-0.3-0.src.rock
-sha256 817cdf831c9d7cd1a2706b4b99dcc6f61a7a2345b7c9d39ed99e87d36338f4c8  lua-http-0.3/LICENSE.md
+sha256 dbe1b29ff89fb937059e4398c9a628361d97d856acc87fd8cd85cb9340cde328  http-0.4-0.src.rock
+sha256 1b486781068bcfd373f8c54f8d78eeab76d900bdf32e589e8330a4c563c2874b  lua-http-0.4/LICENSE.md

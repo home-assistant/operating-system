@@ -4,9 +4,10 @@
 #
 ################################################################################
 
-MINICOM_VERSION = 23292150e07ec264827fb6cf237ddb0ac9fc043b
-MINICOM_SITE = https://salsa.debian.org/minicom-team/minicom.git
-MINICOM_SITE_METHOD = git
+MINICOM_VERSION = 2.8
+MINICOM_SOURCE = minicom-$(MINICOM_VERSION).tar.bz2
+MINICOM_SITE = \
+	https://salsa.debian.org/minicom-team/minicom/-/archive/$(MINICOM_VERSION)
 MINICOM_LICENSE = GPL-2.0+
 MINICOM_LICENSE_FILES = COPYING
 MINICOM_AUTORECONF = YES

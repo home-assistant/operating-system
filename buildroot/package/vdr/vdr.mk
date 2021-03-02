@@ -4,22 +4,24 @@
 #
 ################################################################################
 
-VDR_VERSION = 2.4.1
+VDR_VERSION = 2.4.6
 VDR_SOURCE = vdr-$(VDR_VERSION).tar.bz2
 VDR_SITE = ftp://ftp.tvdr.de/vdr
 VDR_LICENSE = GPL-2.0+
 VDR_LICENSE_FILES = COPYING
+VDR_CPE_ID_VENDOR = tvdr
 VDR_INSTALL_STAGING = YES
 VDR_DEPENDENCIES = \
+	host-pkgconf \
 	freetype \
 	fontconfig \
 	jpeg \
 	libcap \
 	$(TARGET_NLS_DEPENDENCIES)
 
-VDR_INCLUDE_DIRS = -I$(STAGING_DIR)/usr/include/freetype2
 VDR_MAKE_FLAGS = \
 	NO_KBD=yes \
+	PKG_CONFIG=$(PKG_CONFIG_HOST_BINARY) \
 	PLUGINLIBDIR=/usr/lib/vdr \
 	PREFIX=/usr \
 	VIDEODIR=/var/lib/vdr
@@ -27,8 +29,6 @@ VDR_LDFLAGS = $(TARGET_NLS_LIBS)
 
 ifeq ($(BR2_PACKAGE_LIBFRIBIDI),y)
 VDR_DEPENDENCIES += libfribidi
-VDR_INCLUDE_DIRS += -I$(STAGING_DIR)/usr/include/fribidi
-VDR_LDFLAGS += -lfribidi
 VDR_MAKE_FLAGS += BIDI=1
 endif
 
@@ -38,7 +38,6 @@ VDR_LDFLAGS += -liconv
 endif
 
 VDR_MAKE_ENV = \
-	INCLUDES="$(VDR_INCLUDE_DIRS)" \
 	LDFLAGS="$(VDR_LDFLAGS)" \
 	$(VDR_MAKE_FLAGS)
 

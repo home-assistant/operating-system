@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-PULSEAUDIO_VERSION = 13.0
+PULSEAUDIO_VERSION = 14.2
 PULSEAUDIO_SOURCE = pulseaudio-$(PULSEAUDIO_VERSION).tar.xz
-PULSEAUDIO_SITE = http://freedesktop.org/software/pulseaudio/releases
+PULSEAUDIO_SITE = https://freedesktop.org/software/pulseaudio/releases
 PULSEAUDIO_INSTALL_STAGING = YES
 PULSEAUDIO_LICENSE = LGPL-2.1+ (specific license for modules, see LICENSE file)
 PULSEAUDIO_LICENSE_FILES = LICENSE GPL LGPL

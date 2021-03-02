@@ -38,7 +38,7 @@ config BR2_PACKAGE_LIBGTK3
 	help
 	  The GTK+ version 3 graphical user interface library
 
-	  http://www.gtk.org/
+	  https://www.gtk.org/
 
 if BR2_PACKAGE_LIBGTK3
 

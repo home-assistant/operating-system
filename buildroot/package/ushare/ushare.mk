@@ -4,9 +4,8 @@
 #
 ################################################################################
 
-USHARE_VERSION = 1.1a
-USHARE_SOURCE = ushare-$(USHARE_VERSION).tar.bz2
-USHARE_SITE = http://ushare.geexbox.org/releases
+USHARE_VERSION = 2.0
+USHARE_SITE = $(call github,ddugovic,uShare,v$(USHARE_VERSION))
 USHARE_DEPENDENCIES = host-pkgconf libupnp $(TARGET_NLS_DEPENDENCIES)
 USHARE_LICENSE = GPL-2.0+
 USHARE_LICENSE_FILES = COPYING

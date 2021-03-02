@@ -21,6 +21,9 @@ ASTERISK_LICENSE_FILES = \
 	codecs/speex/speex_resampler.h \
 	utils/db1-ast/include/db.h
 
+ASTERISK_CPE_ID_VENDOR = asterisk
+ASTERISK_CPE_ID_PRODUCT = open_source
+
 # For patches 0002, 0003 and 0005
 ASTERISK_AUTORECONF = YES
 ASTERISK_AUTORECONF_OPTS = -Iautoconf -Ithird-party -Ithird-party/pjproject -Ithird-party/jansson

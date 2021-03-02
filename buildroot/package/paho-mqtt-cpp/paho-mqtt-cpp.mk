@@ -11,10 +11,6 @@ PAHO_MQTT_CPP_LICENSE_FILES = epl-v10 edl-v10
 PAHO_MQTT_CPP_INSTALL_STAGING = YES
 PAHO_MQTT_CPP_DEPENDENCIES = paho-mqtt-c
 
-# The following CMake variable disables a TRY_RUN call in the -pthread
-# test which is not allowed when cross-compiling (for cmake < 3.10)
-PAHO_MQTT_CPP_CONF_OPTS = -DTHREADS_PTHREAD_ARG=OFF
-
 ifeq ($(BR2_PACKAGE_OPENSSL),y)
 PAHO_MQTT_CPP_DEPENDENCIES += openssl
 PAHO_MQTT_CPP_CONF_OPTS += -DPAHO_WITH_SSL=TRUE

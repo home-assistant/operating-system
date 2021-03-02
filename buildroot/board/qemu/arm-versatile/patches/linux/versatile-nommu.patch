@@ -1,4 +1,4 @@
-From 4ac4324dcdaf237aa34545b3795acb2e5c42d10e Mon Sep 17 00:00:00 2001
+From 525dd2f3cf4a94837ce6b71d793acb90c25a5654 Mon Sep 17 00:00:00 2001
 From: Waldemar Brodkorb <wbx@openadk.org>
 Date: Fri, 1 Feb 2019 11:36:20 +0100
 Subject: [PATCH] arm-versatile-nommu: Linux patch
@@ -21,10 +21,10 @@ Signed-off-by: Romain Naour <romain.naour@smile.fr>
  create mode 100644 arch/arm/mach-versatile/Makefile.boot
 
 diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index e8cd55a5b04c..fc2dbff70394 100644
+index 002e0cf025f5..c71299b6f91f 100644
 --- a/arch/arm/Kconfig
 +++ b/arch/arm/Kconfig
-@@ -353,6 +353,17 @@ config ARM_SINGLE_ARMV7M
+@@ -343,6 +343,17 @@ config ARM_SINGLE_ARMV7M
  	select SPARSE_IRQ
  	select USE_OF
  
@@ -43,10 +43,10 @@ index e8cd55a5b04c..fc2dbff70394 100644
  	bool "EBSA-110"
  	select ARCH_USES_GETTIMEOFFSET
 diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
-index f6fcb8a79889..92fc637d3db8 100644
+index 8986a91a6f31..69cb6404e8ce 100644
 --- a/arch/arm/Kconfig.debug
 +++ b/arch/arm/Kconfig.debug
-@@ -1843,7 +1843,8 @@ config DEBUG_UNCOMPRESS
+@@ -1943,7 +1943,8 @@ config DEBUG_UNCOMPRESS
  config UNCOMPRESS_INCLUDE
  	string
  	default "debug/uncompress.h" if ARCH_MULTIPLATFORM || ARCH_MSM || \
@@ -57,10 +57,10 @@ index f6fcb8a79889..92fc637d3db8 100644
  
  config EARLY_PRINTK
 diff --git a/arch/arm/include/asm/mach/map.h b/arch/arm/include/asm/mach/map.h
-index 9b7c328fb207..b1fe9c8b5c3e 100644
+index 92282558caf7..90bd9c069ffc 100644
 --- a/arch/arm/include/asm/mach/map.h
 +++ b/arch/arm/include/asm/mach/map.h
-@@ -62,6 +62,7 @@ extern int ioremap_page(unsigned long virt, unsigned long phys,
+@@ -59,6 +59,7 @@ extern int ioremap_page(unsigned long virt, unsigned long phys,
  #else
  #define iotable_init(map,num)	do { } while (0)
  #define vm_reserve_area_early(a,s,c)	do { } while (0)
@@ -69,7 +69,7 @@ index 9b7c328fb207..b1fe9c8b5c3e 100644
  
  #endif
 diff --git a/arch/arm/mach-versatile/Kconfig b/arch/arm/mach-versatile/Kconfig
-index f5c275434d6c..06ad999d5978 100644
+index d88e7725bf99..d38b90157f13 100644
 --- a/arch/arm/mach-versatile/Kconfig
 +++ b/arch/arm/mach-versatile/Kconfig
 @@ -1,7 +1,8 @@
@@ -93,10 +93,10 @@ index 000000000000..eacfc3f5c33e
 +# Patch waits for application at
 +# http://www.arm.linux.org.uk/developer/patches/viewpatch.php?id=7889/1 .
 diff --git a/arch/arm/mach-versatile/versatile_dt.c b/arch/arm/mach-versatile/versatile_dt.c
-index 3c8d39c12909..8cfa05a37295 100644
+index 02ba68abe533..835b51bc597b 100644
 --- a/arch/arm/mach-versatile/versatile_dt.c
 +++ b/arch/arm/mach-versatile/versatile_dt.c
-@@ -37,7 +37,11 @@
+@@ -22,7 +22,11 @@
  #include <asm/mach/map.h>
  
  /* macro to get at MMIO space when running virtually */
@@ -109,5 +109,5 @@ index 3c8d39c12909..8cfa05a37295 100644
  
  /*
 -- 
-2.14.5
+2.17.1
 

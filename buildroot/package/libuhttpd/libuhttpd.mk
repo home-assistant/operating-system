@@ -4,13 +4,12 @@
 #
 ################################################################################
 
-LIBUHTTPD_VERSION = 3.4.2
+LIBUHTTPD_VERSION = 3.9.0
 LIBUHTTPD_SITE = https://github.com/zhaojh329/libuhttpd/releases/download/v$(LIBUHTTPD_VERSION)
 LIBUHTTPD_LICENSE = MIT
 LIBUHTTPD_LICENSE_FILES = LICENSE
 LIBUHTTPD_INSTALL_STAGING = YES
 LIBUHTTPD_DEPENDENCIES = libev
-LIBUHTTPD_CONF_OPTS = -DBUILD_TEST_PLUGIN=OFF
 
 ifeq ($(BR2_PACKAGE_OPENSSL),y)
 LIBUHTTPD_DEPENDENCIES += openssl

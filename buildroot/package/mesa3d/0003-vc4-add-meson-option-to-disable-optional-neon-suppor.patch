@@ -10,7 +10,7 @@ to force disabling it at compile time.
 [Upstream: https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/4114]
 Signed-off-by: Peter Seiderer <ps.report@gmx.net>
 Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
-[rebased for 20.2.0]
+[rebased for 20.2.0 & 20.3.0]
 ---
  meson_options.txt                    | 7 +++++++
  src/gallium/drivers/vc4/meson.build  | 4 ++--
@@ -21,7 +21,7 @@ diff --git a/meson_options.txt b/meson_options.txt
 index a39596a6f19..0f6b6c62b55 100644
 --- a/meson_options.txt
 +++ b/meson_options.txt
-@@ -124,6 +124,13 @@ option(
+@@ -123,6 +123,13 @@ option(
    choices : ['auto', 'true', 'false', 'enabled', 'disabled'],
    description : 'enable gallium va frontend.',
  )

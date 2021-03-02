@@ -8,6 +8,7 @@ GHOSTSCRIPT_VERSION = 9.53.3
 GHOSTSCRIPT_SITE = https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs$(subst .,,$(GHOSTSCRIPT_VERSION))
 GHOSTSCRIPT_LICENSE = AGPL-3.0
 GHOSTSCRIPT_LICENSE_FILES = LICENSE
+GHOSTSCRIPT_CPE_ID_VENDOR = artifex
 GHOSTSCRIPT_DEPENDENCIES = \
 	host-lcms2 \
 	host-libjpeg \

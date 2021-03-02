@@ -5,16 +5,18 @@
 ################################################################################
 
 LIBCAMERA_SITE = https://git.linuxtv.org/libcamera.git
-LIBCAMERA_VERSION = e59713c68678f3eb6b6ebe97cabdc88c7042567f
+LIBCAMERA_VERSION = ab72e6641c56e876f91edee57a8969982a3ab9b7
 LIBCAMERA_SITE_METHOD = git
 LIBCAMERA_DEPENDENCIES = \
 	host-openssl \
 	host-pkgconf \
+	host-python3-jinja2 \
+	host-python3-ply \
 	host-python3-pyyaml \
 	gnutls
 LIBCAMERA_CONF_OPTS = \
-	-Dandroid=false \
-	-Ddocumentation=false \
+	-Dandroid=disabled \
+	-Ddocumentation=disabled \
 	-Dtest=false \
 	-Dwerror=false
 LIBCAMERA_INSTALL_STAGING = YES
@@ -81,6 +83,13 @@ endif
 
 ifeq ($(BR2_PACKAGE_HAS_UDEV),y)
 LIBCAMERA_DEPENDENCIES += udev
+endif
+
+ifeq ($(BR2_PACKAGE_LTTNG_LIBUST),y)
+LIBCAMERA_CONF_OPTS += -Dtracing=enabled
+LIBCAMERA_DEPENDENCIES += lttng-libust
+else
+LIBCAMERA_CONF_OPTS += -Dtracing=disabled
 endif
 
 $(eval $(meson-package))

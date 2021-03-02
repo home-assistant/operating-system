@@ -4,11 +4,12 @@
 #
 ################################################################################
 
-UNBOUND_VERSION = 1.13.0
+UNBOUND_VERSION = 1.13.1
 UNBOUND_SITE = https://www.unbound.net/downloads
 UNBOUND_DEPENDENCIES = host-pkgconf expat libevent openssl
 UNBOUND_LICENSE = BSD-3-Clause
 UNBOUND_LICENSE_FILES = LICENSE
+UNBOUND_CPE_ID_VENDOR = nlnetlabs
 UNBOUND_CONF_OPTS = \
 	--disable-rpath \
 	--disable-debug \

@@ -15,6 +15,7 @@ LIBXML2_IGNORE_CVES += CVE-2020-7595
 LIBXML2_IGNORE_CVES += CVE-2019-20388
 # 0003-Fix-out-of-bounds-read-with-xmllint--htmlout.patch
 LIBXML2_IGNORE_CVES += CVE-2020-24977
+LIBXML2_CPE_ID_VENDOR = xmlsoft
 LIBXML2_CONFIG_SCRIPTS = xml2-config
 
 # relocation truncated to fit: R_68K_GOT16O

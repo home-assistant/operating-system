@@ -9,6 +9,8 @@ MTD_SOURCE = mtd-utils-$(MTD_VERSION).tar.bz2
 MTD_SITE = ftp://ftp.infradead.org/pub/mtd-utils
 MTD_LICENSE = GPL-2.0
 MTD_LICENSE_FILES = COPYING
+MTD_CPE_ID_VENDOR = mtd-utils_project
+MTD_CPE_ID_PRODUCT = mtd-utils
 MTD_INSTALL_STAGING = YES
 
 ifeq ($(BR2_PACKAGE_MTD_JFFS_UTILS),y)

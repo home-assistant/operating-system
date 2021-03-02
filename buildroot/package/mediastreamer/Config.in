@@ -4,6 +4,7 @@ config BR2_PACKAGE_MEDIASTREAMER
 	depends on !BR2_STATIC_LIBS
 	depends on BR2_TOOLCHAIN_HAS_THREADS # ortp
 	depends on !BR2_TOOLCHAIN_HAS_GCC_BUG_64735 # ortp
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_5 # C++14
 	select BR2_PACKAGE_MBEDTLS
 	select BR2_PACKAGE_ORTP
 	help
@@ -16,9 +17,10 @@ config BR2_PACKAGE_MEDIASTREAMER
 
 	  http://www.linphone.org/technical-corner/mediastreamer2
 
-comment "mediastreamer needs a toolchain w/ threads, C++, dynamic library"
+comment "mediastreamer needs a toolchain w/ threads, C++, dynamic library, gcc >= 5"
 	depends on !BR2_INSTALL_LIBSTDCPP || \
-		!BR2_TOOLCHAIN_HAS_THREADS || BR2_STATIC_LIBS
+		!BR2_TOOLCHAIN_HAS_THREADS || BR2_STATIC_LIBS || \
+		!BR2_TOOLCHAIN_GCC_AT_LEAST_5
 
 comment "mediastreamer needs a toolchain not affected by GCC bug 64735"
 	depends on BR2_TOOLCHAIN_HAS_GCC_BUG_64735

@@ -18,6 +18,10 @@ def main():
     if not sys.argv[1].startswith('qemu_'):
         sys.exit(0)
 
+    if not os.path.exists('output/images/start-qemu.sh'):
+        print('qemu-start.sh is missing, cannot test.')
+        sys.exit(0)
+
     qemu_start = os.path.join(os.getcwd(), 'output/images/start-qemu.sh')
 
     child = pexpect.spawn(qemu_start, ['serial-only'],
@@ -32,7 +36,7 @@ def main():
     time.sleep(1)
 
     try:
-        child.expect(["buildroot login:", pexpect.TIMEOUT], timeout=60)
+        child.expect(["buildroot login:"], timeout=60)
     except pexpect.EOF as e:
         # Some emulations require a fork of qemu-system, which may be
         # missing on the system, and is not provided by Buildroot.
@@ -54,7 +58,7 @@ def main():
     child.sendline("root\r")
 
     try:
-        child.expect(["# ", pexpect.TIMEOUT], timeout=60)
+        child.expect(["# "], timeout=60)
     except pexpect.EOF:
         print("Cannot connect to shell")
         sys.exit(1)
@@ -65,7 +69,7 @@ def main():
     child.sendline("poweroff\r")
 
     try:
-        child.expect(["System halted", pexpect.TIMEOUT], timeout=60)
+        child.expect(["System halted"], timeout=60)
         child.expect(pexpect.EOF)
     except pexpect.EOF:
         pass
