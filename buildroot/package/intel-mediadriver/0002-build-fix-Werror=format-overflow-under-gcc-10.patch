@@ -1,0 +1,162 @@
+From da966a2ab1f5161cc0a21a4cd7e07edf732ebee9 Mon Sep 17 00:00:00 2001
+From: Dmitry Rogozhkin <dmitry.v.rogozhkin@intel.com>
+Date: Thu, 19 Mar 2020 20:59:12 -0700
+Subject: [PATCH] build: fix Werror=format-overflow under gcc-10
+
+Fixes: #870
+
+With upcoming gcc-10 we start to see Werror=format-overflow reporting
+that we attempt to printf %s null strings.
+
+Change-Id: I7a62bc98bf7dd6bcd61d475d7650a06aa1a70932
+Signed-off-by: Dmitry Rogozhkin <dmitry.v.rogozhkin@intel.com>
+[Retrieved from:
+https://github.com/intel/media-driver/commit/da966a2ab1f5161cc0a21a4cd7e07edf732ebee9]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ media_driver/linux/common/os/i915/xf86drm.c   | 57 ++++++++++---------
+ .../linux/ult/libdrm_mock/xf86drm_mock.c      | 57 ++++++++++---------
+ 2 files changed, 58 insertions(+), 56 deletions(-)
+
+diff --git a/media_driver/linux/common/os/i915/xf86drm.c b/media_driver/linux/common/os/i915/xf86drm.c
+index 7594bde99..d0fc1b7ac 100644
+--- a/media_driver/linux/common/os/i915/xf86drm.c
++++ b/media_driver/linux/common/os/i915/xf86drm.c
+@@ -581,37 +581,38 @@ static int drmOpenByBusid(const char *busid, int type)
+ 
+     drmMsg("drmOpenByBusid: Searching for BusID %s\n", busid);
+     for (i = base; i < base + DRM_MAX_MINOR; i++) {
+-    fd = drmOpenMinor(i, 1, type);
+-    drmMsg("drmOpenByBusid: drmOpenMinor returns %d\n", fd);
+-    if (fd >= 0) {
+-        /* We need to try for 1.4 first for proper PCI domain support
+-         * and if that fails, we know the kernel is busted
+-         */
+-        sv.drm_di_major = 1;
+-        sv.drm_di_minor = 4;
+-        sv.drm_dd_major = -1;    /* Don't care */
+-        sv.drm_dd_minor = -1;    /* Don't care */
+-        if (drmSetInterfaceVersion(fd, &sv)) {
++        fd = drmOpenMinor(i, 1, type);
++        drmMsg("drmOpenByBusid: drmOpenMinor returns %d\n", fd);
++        if (fd >= 0) {
++            /* We need to try for 1.4 first for proper PCI domain support
++             * and if that fails, we know the kernel is busted
++             */
++            sv.drm_di_major = 1;
++            sv.drm_di_minor = 4;
++            sv.drm_dd_major = -1;    /* Don't care */
++            sv.drm_dd_minor = -1;    /* Don't care */
++            if (drmSetInterfaceVersion(fd, &sv)) {
+ #ifndef __alpha__
+-        pci_domain_ok = 0;
++                pci_domain_ok = 0;
+ #endif
+-        sv.drm_di_major = 1;
+-        sv.drm_di_minor = 1;
+-        sv.drm_dd_major = -1;       /* Don't care */
+-        sv.drm_dd_minor = -1;       /* Don't care */
+-        drmMsg("drmOpenByBusid: Interface 1.4 failed, trying 1.1\n");
+-        drmSetInterfaceVersion(fd, &sv);
+-        }
+-        buf = drmGetBusid(fd);
+-        drmMsg("drmOpenByBusid: drmGetBusid reports %s\n", buf);
+-        if (buf && drmMatchBusID(buf, busid, pci_domain_ok)) {
+-        drmFreeBusid(buf);
+-        return fd;
++                sv.drm_di_major = 1;
++                sv.drm_di_minor = 1;
++                sv.drm_dd_major = -1;       /* Don't care */
++                sv.drm_dd_minor = -1;       /* Don't care */
++                drmMsg("drmOpenByBusid: Interface 1.4 failed, trying 1.1\n");
++                drmSetInterfaceVersion(fd, &sv);
++            }
++            buf = drmGetBusid(fd);
++            if (buf) {
++                drmMsg("drmOpenByBusid: drmGetBusid reports %s\n", buf);
++                if (drmMatchBusID(buf, busid, pci_domain_ok)) {
++                    drmFreeBusid(buf);
++                    return fd;
++                }
++                drmFreeBusid(buf);
++            }
++            close(fd);
+         }
+-        if (buf)
+-        drmFreeBusid(buf);
+-        close(fd);
+-    }
+     }
+     return -1;
+ }
+diff --git a/media_driver/linux/ult/libdrm_mock/xf86drm_mock.c b/media_driver/linux/ult/libdrm_mock/xf86drm_mock.c
+index 7e5246295..2e5863798 100644
+--- a/media_driver/linux/ult/libdrm_mock/xf86drm_mock.c
++++ b/media_driver/linux/ult/libdrm_mock/xf86drm_mock.c
+@@ -790,37 +790,38 @@ static int drmOpenByBusid(const char *busid, int type)
+ 
+     drmMsg("drmOpenByBusid: Searching for BusID %s\n", busid);
+     for (i = base; i < base + DRM_MAX_MINOR; i++) {
+-    fd = drmOpenMinor(i, 1, type);
+-    drmMsg("drmOpenByBusid: drmOpenMinor returns %d\n", fd);
+-    if (fd >= 0) {
+-        /* We need to try for 1.4 first for proper PCI domain support
+-         * and if that fails, we know the kernel is busted
+-         */
+-        sv.drm_di_major = 1;
+-        sv.drm_di_minor = 4;
+-        sv.drm_dd_major = -1;    /* Don't care */
+-        sv.drm_dd_minor = -1;    /* Don't care */
+-        if (drmSetInterfaceVersion(fd, &sv)) {
++        fd = drmOpenMinor(i, 1, type);
++        drmMsg("drmOpenByBusid: drmOpenMinor returns %d\n", fd);
++        if (fd >= 0) {
++            /* We need to try for 1.4 first for proper PCI domain support
++             * and if that fails, we know the kernel is busted
++             */
++            sv.drm_di_major = 1;
++            sv.drm_di_minor = 4;
++            sv.drm_dd_major = -1;    /* Don't care */
++            sv.drm_dd_minor = -1;    /* Don't care */
++            if (drmSetInterfaceVersion(fd, &sv)) {
+ #ifndef __alpha__
+-        pci_domain_ok = 0;
++                pci_domain_ok = 0;
+ #endif
+-        sv.drm_di_major = 1;
+-        sv.drm_di_minor = 1;
+-        sv.drm_dd_major = -1;       /* Don't care */
+-        sv.drm_dd_minor = -1;       /* Don't care */
+-        drmMsg("drmOpenByBusid: Interface 1.4 failed, trying 1.1\n");
+-        drmSetInterfaceVersion(fd, &sv);
+-        }
+-        buf = drmGetBusid(fd);
+-        drmMsg("drmOpenByBusid: drmGetBusid reports %s\n", buf);
+-        if (buf && drmMatchBusID(buf, busid, pci_domain_ok)) {
+-        drmFreeBusid(buf);
+-        return fd;
++                sv.drm_di_major = 1;
++                sv.drm_di_minor = 1;
++                sv.drm_dd_major = -1;       /* Don't care */
++                sv.drm_dd_minor = -1;       /* Don't care */
++                drmMsg("drmOpenByBusid: Interface 1.4 failed, trying 1.1\n");
++                drmSetInterfaceVersion(fd, &sv);
++            }
++            buf = drmGetBusid(fd);
++            if (buf) {
++                drmMsg("drmOpenByBusid: drmGetBusid reports %s\n", buf);
++                if (drmMatchBusID(buf, busid, pci_domain_ok)) {
++                    drmFreeBusid(buf);
++                    return fd;
++                }
++                drmFreeBusid(buf);
++            }
++            close(fd);
+         }
+-        if (buf)
+-        drmFreeBusid(buf);
+-        close(fd);
+-    }
+     }
+     return -1;
+ }

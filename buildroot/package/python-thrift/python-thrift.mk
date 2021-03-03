@@ -4,11 +4,11 @@
 #
 ################################################################################
 
-PYTHON_THRIFT_VERSION = 0.11.0
+PYTHON_THRIFT_VERSION = 0.13.0
 PYTHON_THRIFT_SOURCE = thrift-$(PYTHON_THRIFT_VERSION).tar.gz
-PYTHON_THRIFT_SITE = https://files.pythonhosted.org/packages/c6/b4/510617906f8e0c5660e7d96fbc5585113f83ad547a3989b80297ac72a74c
-PYTHON_THRIFT_LICENSE = Apache-2.0
-PYTHON_THRIFT_LICENSE_FILES = setup.py
+PYTHON_THRIFT_SITE = https://files.pythonhosted.org/packages/97/1e/3284d19d7be99305eda145b8aa46b0c33244e4a496ec66440dac19f8274d
 PYTHON_THRIFT_SETUP_TYPE = setuptools
+PYTHON_THRIFT_LICENSE = Apache-2.0
+PYTHON_THRIFT_LICENSE_FILES = LICENSE
 
 $(eval $(python-package))

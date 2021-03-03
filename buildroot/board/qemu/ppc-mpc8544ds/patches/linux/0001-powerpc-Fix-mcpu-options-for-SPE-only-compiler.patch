@@ -1,4 +1,4 @@
-From 44e3424424b447b00fbe1f10ddba81b55817e970 Mon Sep 17 00:00:00 2001
+From a0919e3177295f4aaa9006915adcddc31788d809 Mon Sep 17 00:00:00 2001
 From: Ben Hutchings <ben@decadent.org.uk>
 Date: Wed, 26 Dec 2018 00:00:40 +0000
 Subject: [PATCH] powerpc: Fix -mcpu= options for SPE-only compiler
@@ -20,7 +20,7 @@ Signed-off-by: Romain Naour <romain.naour@gmail.com>
  1 file changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/arch/powerpc/Makefile b/arch/powerpc/Makefile
-index 37ac731a556b..5211ea4f48b1 100644
+index 5c8c06215dd4..e3dbea6d7ae0 100644
 --- a/arch/powerpc/Makefile
 +++ b/arch/powerpc/Makefile
 @@ -12,7 +12,7 @@
@@ -32,7 +32,7 @@ index 37ac731a556b..5211ea4f48b1 100644
  
  # Set default 32 bits cross compilers for vdso and boot wrapper
  CROSS32_COMPILE ?=
-@@ -166,6 +166,7 @@ CFLAGS-$(CONFIG_PPC32)	+= $(call cc-option, $(MULTIPLEWORD))
+@@ -164,6 +164,7 @@ CFLAGS-$(CONFIG_PPC32)	+= $(call cc-option, $(MULTIPLEWORD))
  
  CFLAGS-$(CONFIG_PPC32)	+= $(call cc-option,-mno-readonly-in-sdata)
  
@@ -40,7 +40,7 @@ index 37ac731a556b..5211ea4f48b1 100644
  ifdef CONFIG_PPC_BOOK3S_64
  ifdef CONFIG_CPU_LITTLE_ENDIAN
  CFLAGS-$(CONFIG_GENERIC_CPU) += -mcpu=power8
-@@ -177,6 +178,7 @@ endif
+@@ -175,6 +176,7 @@ endif
  else
  CFLAGS-$(CONFIG_GENERIC_CPU) += -mcpu=powerpc64
  endif
@@ -49,5 +49,5 @@ index 37ac731a556b..5211ea4f48b1 100644
  ifdef CONFIG_FUNCTION_TRACER
  CC_FLAGS_FTRACE := -pg
 -- 
-2.25.4
+2.17.1
 

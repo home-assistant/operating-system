@@ -1,0 +1,70 @@
+From 42ac10738119c7d31892d8c3f45d525ad5bda756 Mon Sep 17 00:00:00 2001
+From: Sven Klemm <sven@timescale.com>
+Date: Sat, 26 Sep 2020 02:19:56 +0200
+Subject: [PATCH] Adjust code to PG13 tuptoaster changes
+
+PG13 split tuptoaster.c into three separate files. This patch also
+removes unnecesary tuptoaster.h includes.
+
+https://github.com/postgres/postgres/commit/8b94dab066
+
+Signed-off-by: Maxim Kochetkov <fido_max@inbox.ru>
+Fetch from: https://github.com/timescale/timescaledb/commit/2bef612c04435cdb5257d40373c4955a0d617c39.patch
+---
+ tsl/src/remote/async.c       | 1 -
+ tsl/src/remote/stmt_params.c | 1 -
+ tsl/src/reorder.c            | 7 ++++++-
+ 3 files changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/tsl/src/remote/async.c b/tsl/src/remote/async.c
+index f3462809..0d55deb7 100644
+--- a/tsl/src/remote/async.c
++++ b/tsl/src/remote/async.c
+@@ -13,7 +13,6 @@
+ #include <fmgr.h>
+ #include <utils/lsyscache.h>
+ #include <catalog/pg_type.h>
+-#include <access/tuptoaster.h>
+ 
+ #include "compat.h"
+ #if PG12_GE
+diff --git a/tsl/src/remote/stmt_params.c b/tsl/src/remote/stmt_params.c
+index 0f315f37..1682d476 100644
+--- a/tsl/src/remote/stmt_params.c
++++ b/tsl/src/remote/stmt_params.c
+@@ -6,7 +6,6 @@
+ #include <postgres.h>
+ #include <catalog/pg_type.h>
+ #include <access/htup_details.h>
+-#include <access/tuptoaster.h>
+ #include <utils/lsyscache.h>
+ #include <utils/syscache.h>
+ #include <utils/builtins.h>
+diff --git a/tsl/src/reorder.c b/tsl/src/reorder.c
+index c4b42c12..7f301b2b 100644
+--- a/tsl/src/reorder.c
++++ b/tsl/src/reorder.c
+@@ -19,7 +19,6 @@
+ #include <access/relscan.h>
+ #include <access/rewriteheap.h>
+ #include <access/transam.h>
+-#include <access/tuptoaster.h>
+ #include <access/xact.h>
+ #include <access/xlog.h>
+ #include <catalog/catalog.h>
+@@ -58,6 +57,12 @@
+ #include <utils/tqual.h>
+ #endif
+ 
++#if PG13_LT
++#include <access/tuptoaster.h>
++#else
++#include <access/toast_internals.h>
++#endif
++
+ #include "chunk.h"
+ #include "chunk_index.h"
+ #include "hypertable_cache.h"
+-- 
+2.29.2
+

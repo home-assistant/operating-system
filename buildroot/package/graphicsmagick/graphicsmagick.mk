@@ -4,17 +4,15 @@
 #
 ################################################################################
 
-GRAPHICSMAGICK_VERSION = 1.3.35
+GRAPHICSMAGICK_VERSION = 1.3.36
 GRAPHICSMAGICK_SOURCE = GraphicsMagick-$(GRAPHICSMAGICK_VERSION).tar.xz
 GRAPHICSMAGICK_SITE = https://downloads.sourceforge.net/project/graphicsmagick/graphicsmagick/$(GRAPHICSMAGICK_VERSION)
 GRAPHICSMAGICK_LICENSE = MIT
 GRAPHICSMAGICK_LICENSE_FILES = Copyright.txt
+GRAPHICSMAGICK_CPE_ID_VENDOR = graphicsmagick
 
 GRAPHICSMAGICK_INSTALL_STAGING = YES
 GRAPHICSMAGICK_CONFIG_SCRIPTS = GraphicsMagick-config GraphicsMagickWand-config
-
-# 0001-MNG-Fix-small-heap-overwrite-or-assertion.patch
-GRAPHICSMAGICK_IGNORE_CVES += CVE-2020-12672
 
 ifeq ($(BR2_INSTALL_LIBSTDCPP),y)
 GRAPHICSMAGICK_CONFIG_SCRIPTS += GraphicsMagick++-config

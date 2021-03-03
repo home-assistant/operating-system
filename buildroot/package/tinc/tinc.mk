@@ -9,6 +9,7 @@ TINC_SITE = http://www.tinc-vpn.org/packages
 TINC_DEPENDENCIES = lzo openssl zlib
 TINC_LICENSE = GPL-2.0+ with OpenSSL exception
 TINC_LICENSE_FILES = COPYING COPYING.README
+TINC_CPE_ID_VENDOR = tinc-vpn
 TINC_CONF_ENV = CFLAGS="$(TARGET_CFLAGS) -std=c99"
 
 ifeq ($(BR2_TOOLCHAIN_SUPPORTS_PIE),)

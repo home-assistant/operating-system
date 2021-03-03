@@ -47,6 +47,24 @@ ops = {
 }
 
 
+# Check if two CPE IDs match each other
+def cpe_matches(cpe1, cpe2):
+    cpe1_elems = cpe1.split(":")
+    cpe2_elems = cpe2.split(":")
+
+    remains = filter(lambda x: x[0] not in ["*", "-"] and x[1] not in ["*", "-"] and x[0] != x[1],
+                     zip(cpe1_elems, cpe2_elems))
+    return len(list(remains)) == 0
+
+
+def cpe_product(cpe):
+    return cpe.split(':')[4]
+
+
+def cpe_version(cpe):
+    return cpe.split(':')[5]
+
+
 class CVE:
     """An accessor class for CVE Items in NVD files"""
     CVE_AFFECTS = 1
@@ -134,7 +152,11 @@ class CVE:
         for cpe in node.get('cpe_match', ()):
             if not cpe['vulnerable']:
                 return
-            vendor, product, version = cpe['cpe23Uri'].split(':')[3:6]
+            product = cpe_product(cpe['cpe23Uri'])
+            version = cpe_version(cpe['cpe23Uri'])
+            # ignore when product is '-', which means N/A
+            if product == '-':
+                return
             op_start = ''
             op_end = ''
             v_start = ''
@@ -142,10 +164,6 @@ class CVE:
 
             if version != '*' and version != '-':
                 # Version is defined, this is a '=' match
-                op_start = '='
-                v_start = version
-            elif version == '-':
-                # no version information is available
                 op_start = '='
                 v_start = version
             else:
@@ -167,8 +185,7 @@ class CVE:
                     v_end = cpe['versionEndExcluding']
 
             yield {
-                'vendor': vendor,
-                'product': product,
+                'id': cpe['cpe23Uri'],
                 'v_start': v_start,
                 'op_start': op_start,
                 'v_end': v_end,
@@ -186,11 +203,11 @@ class CVE:
         return self.nvd_cve['cve']['CVE_data_meta']['ID']
 
     @property
-    def pkg_names(self):
-        """The set of package names referred by this CVE definition"""
-        return set(p['product'] for p in self.each_cpe())
+    def affected_products(self):
+        """The set of CPE products referred by this CVE definition"""
+        return set(cpe_product(p['id']) for p in self.each_cpe())
 
-    def affects(self, name, version, cve_ignore_list):
+    def affects(self, name, version, cve_ignore_list, cpeid=None):
         """
         True if the Buildroot Package object passed as argument is affected
         by this CVE.
@@ -203,14 +220,15 @@ class CVE:
             print("Cannot parse package '%s' version '%s'" % (name, version))
             pkg_version = None
 
+        # if we don't have a cpeid, build one based on name and version
+        if not cpeid:
+            cpeid = "cpe:2.3:*:*:%s:%s:*:*:*:*:*:*:*" % (name, version)
+
         for cpe in self.each_cpe():
-            if cpe['product'] != name:
+            if not cpe_matches(cpe['id'], cpeid):
                 continue
-            if cpe['v_start'] == '-':
-                return self.CVE_AFFECTS
             if not cpe['v_start'] and not cpe['v_end']:
-                print("No CVE affected version")
-                continue
+                return self.CVE_AFFECTS
             if not pkg_version:
                 continue
 

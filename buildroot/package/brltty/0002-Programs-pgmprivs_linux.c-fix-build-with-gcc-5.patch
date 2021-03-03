@@ -1,0 +1,55 @@
+From 92b3fca2d55757680398b55869214fc2d19e9b71 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sun, 21 Feb 2021 20:47:06 +0100
+Subject: [PATCH] Programs/pgmprivs_linux.c: fix build with gcc < 5
+
+Build with gcc < 5 is broken since version 6.2 and
+https://github.com/brltty/brltty/commit/8ce262f2c15f10a40d9cbae0b3c88b466970a055:
+
+./pgmprivs_linux.c: In function 'getPrivilegeParameterNames':
+./pgmprivs_linux.c:2220:3: error: array initialized from non-constant array expression
+   static const char *const names[] = NULL_TERMINATED_STRING_ARRAY(
+   ^
+
+Build was partially fixed since
+https://github.com/brltty/brltty/commit/8ae78dd560d00c5074158f90be5ac8dac80183db
+but it forgot to update pgmprivs_linux.c
+
+Fixes:
+ - http://autobuild.buildroot.org/results/58afeb50a0ecdb8b527d7c9946bcae290b79b055
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[yann.morin.1998@free.fr: use an actual backport after upstream merge]
+Signed-off-by: Yann E. MORIN <yann.morin.1998@free.fr>
+---
+ Programs/pgmprivs_linux.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
+
+diff --git a/Programs/pgmprivs_linux.c b/Programs/pgmprivs_linux.c
+index 56e464a82..7dfabaf9b 100644
+--- a/Programs/pgmprivs_linux.c
++++ b/Programs/pgmprivs_linux.c
+@@ -2215,13 +2215,15 @@ typedef enum {
+   PARM_USER,
+ } Parameters;
+ 
++
++static const char *const *const pgmprivs_names =
++  NULL_TERMINATED_STRING_ARRAY(
++    "path", "scfmode", "shell", "user"
++  );
++
+ const char *const *
+ getPrivilegeParameterNames (void) {
+-  static const char *const names[] = NULL_TERMINATED_STRING_ARRAY(
+-    "path", "scfmode", "shell", "user"
+-  );
+-
+-  return names;
++  return pgmprivs_names;
+ }
+ 
+ const char *
+-- 
+2.25.1
+

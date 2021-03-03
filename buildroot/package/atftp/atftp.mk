@@ -4,12 +4,11 @@
 #
 ################################################################################
 
-ATFTP_VERSION = 0.7.2
+ATFTP_VERSION = 0.7.4
 ATFTP_SITE = http://sourceforge.net/projects/atftp/files
 ATFTP_LICENSE = GPL-2.0+
 ATFTP_LICENSE_FILES = LICENSE
-# 0001-Makefile.am-link-against-libpthread-for-atftp.patch patches Makefile.am
-ATFTP_AUTORECONF = YES
+ATFTP_CPE_ID_VALID = YES
 ATFTP_CONF_OPTS = --disable-libwrap --disable-mtftp
 # For static we need to explicitly link against libpthread
 ATFTP_LIBS = -lpthread

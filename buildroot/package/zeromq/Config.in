@@ -59,4 +59,9 @@ config BR2_PACKAGE_ZEROMQ_DRAFTS
 
 	  https://pyzmq.readthedocs.io/en/latest/draft.html
 
+config BR2_PACKAGE_ZEROMQ_WEBSOCKET
+	bool "WebSocket support"
+	help
+	  Enable WebSocket transport
+
 endif

@@ -1,6 +1,6 @@
 # retrieved by scancpan from http://cpan.metacpan.org/
-md5    6cbebcc76099ce822f0aa7764af11f73 Net-HTTP-6.19.tar.gz
-sha256 52b76ec13959522cae64d965f15da3d99dcb445eddd85d2ce4e4f4df385b2fc4 Net-HTTP-6.19.tar.gz
+md5  00f825fb848d50202aeec074c3608453  Net-HTTP-6.20.tar.gz
+sha256  92527b2a24512961b8e3637c6216a057751e39b6fa751422ed181ff599779f1e  Net-HTTP-6.20.tar.gz
 
 # computed by scancpan
-sha256 49fbcc80e17295888b909176a0029f275a8c17b6cbfaf8867fe571ebe9a9ca79 LICENSE
+sha256  49fbcc80e17295888b909176a0029f275a8c17b6cbfaf8867fe571ebe9a9ca79  LICENSE

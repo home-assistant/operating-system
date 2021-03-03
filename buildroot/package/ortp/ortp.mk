@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-ORTP_VERSION = 4.3.1
+ORTP_VERSION = 4.4.8
 ORTP_SITE = https://gitlab.linphone.org/BC/public/ortp/-/archive/$(ORTP_VERSION)
 ORTP_LICENSE = GPL-3.0+
 ORTP_LICENSE_FILES = LICENSE.txt

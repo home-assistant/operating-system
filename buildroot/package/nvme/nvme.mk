@@ -18,6 +18,15 @@ else
 NVME_MAKE_OPTS += LIBUUID=1
 endif
 
+# Yes, HAVE_SYSTEMD=0 means systemd support enabled.
+# HAVE_SYSTEMD=1 means systemd support disabled.
+ifeq ($(BR2_PACKAGE_SYSTEMD),y)
+NVME_DEPENDENCIES += systemd
+NVME_MAKE_OPTS += HAVE_SYSTEMD=0
+else
+NVME_MAKE_OPTS += HAVE_SYSTEMD=1
+endif
+
 define NVME_BUILD_CMDS
 	$(TARGET_MAKE_ENV) $(TARGET_CONFIGURE_OPTS) $(MAKE) \
 		$(NVME_MAKE_OPTS) -C $(@D)

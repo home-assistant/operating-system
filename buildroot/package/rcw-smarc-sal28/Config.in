@@ -1,0 +1,25 @@
+config BR2_PACKAGE_RCW_SMARC_SAL28
+	bool "rcw-smarc-sal28"
+	help
+	  The reset configuration word for the SMARC-sAL28 board. All
+	  available RCWs are copied into the images output directory.
+	  Additionally, you have to choose one default RCW which is
+	  used for booting the board.
+
+if BR2_PACKAGE_RCW_SMARC_SAL28
+config BR2_PACKAGE_RCW_SMARC_SAL28_BUILD_UPDATE_SCRIPT
+	bool "Build RCW u-boot update script"
+	select BR2_PACKAGE_HOST_UBOOT_TOOLS
+	help
+	  Build the RCW updater script which can be used in the
+	  bootloader to change the installed RCW during runtime. The
+	  update script is called update-rcw.img and will be copied
+	  to the output directory.
+
+config BR2_PACKAGE_RCW_SMARC_SAL28_BOOT_VARIANT
+	string "RCW variant for booting"
+	default "3-11_q"
+	help
+	  The suffix of the RCW filename without the ".bin" part.
+	  E.g.  setting this to "3-11_q" will use "sl28-3-11_q.bin".
+endif

@@ -6,4 +6,4 @@ config BR2_PACKAGE_LIBWEBSOCKETS
 	  minimal CPU and memory resources, and provide fast throughput
 	  in both directions.
 
-	  http://libwebsockets.org/
+	  https://libwebsockets.org/

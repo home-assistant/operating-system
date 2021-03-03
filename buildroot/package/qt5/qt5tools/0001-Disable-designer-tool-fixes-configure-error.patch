@@ -1,4 +1,4 @@
-From 34894c12122b2026aa595b42fe84a4648a6b7992 Mon Sep 17 00:00:00 2001
+From 22d7a9050b04b021e33430d0f7e3c5ee80c24caa Mon Sep 17 00:00:00 2001
 From: Peter Seiderer <ps.report@gmx.net>
 Date: Tue, 17 Dec 2019 11:01:59 +0100
 Subject: [PATCH] Disable designer tool (fixes configure error).
@@ -12,6 +12,8 @@ Signed-off-by: Peter Seiderer <ps.report@gmx.net>
 [Rebased for Qt5.15.0]
 Signed-off-by: Peter Seiderer <ps.report@gmx.net>
 [Rebased for Qt5.15.1]
+Signed-off-by: Peter Seiderer <ps.report@gmx.net>
+[Rebased for Qt5.15.2]
 Signed-off-by: Peter Seiderer <ps.report@gmx.net>
 ---
  src/linguist/linguist/linguist.pro | 2 +-
@@ -29,7 +31,7 @@ index d083896..7d74cfc 100644
  DEFINES += QT_NO_CAST_FROM_ASCII QT_NO_CAST_TO_ASCII
  
 diff --git a/src/src.pro b/src/src.pro
-index 8ed567b..d784808 100644
+index f2675c7..360de50 100644
 --- a/src/src.pro
 +++ b/src/src.pro
 @@ -6,12 +6,9 @@ qtHaveModule(widgets) {
@@ -40,12 +42,12 @@ index 8ed567b..d784808 100644
 -                      pixeltool
 +            SUBDIRS = pixeltool
  
-             !static|contains(QT_PLUGINS, qtsqlite): SUBDIRS += assistant
+             !static|contains(QT_PLUGINS, qsqlite): SUBDIRS += assistant
 -
 -            linguist.depends = designer
          }
          qtHaveModule(quick):qtConfig(thread):qtConfig(toolbutton): SUBDIRS += distancefieldgenerator
      }
 -- 
-2.28.0
+2.29.2
 

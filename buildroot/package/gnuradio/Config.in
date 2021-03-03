@@ -156,4 +156,13 @@ config BR2_PACKAGE_GNURADIO_TRELLIS
 	help
 	  Trellis coded modulation blocks
 
+config BR2_PACKAGE_GNURADIO_UHD
+	bool "gr-uhd support"
+	select BR2_PACKAGE_UHD
+	select BR2_PACKAGE_GNURADIO_ANALOG
+	select BR2_PACKAGE_GNURADIO_BLOCKS
+	select BR2_PACKAGE_GNURADIO_FILTER
+	help
+	  UHD support
+
 endif

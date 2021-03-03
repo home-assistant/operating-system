@@ -41,7 +41,7 @@ choice
 	  Select the specific U-Boot version you want to use
 
 config BR2_TARGET_UBOOT_LATEST_VERSION
-	bool "2020.10"
+	bool "2021.01"
 
 config BR2_TARGET_UBOOT_CUSTOM_VERSION
 	bool "Custom version"
@@ -85,7 +85,7 @@ endif
 
 config BR2_TARGET_UBOOT_VERSION
 	string
-	default "2020.10"	if BR2_TARGET_UBOOT_LATEST_VERSION
+	default "2021.01"	if BR2_TARGET_UBOOT_LATEST_VERSION
 	default BR2_TARGET_UBOOT_CUSTOM_VERSION_VALUE \
 		if BR2_TARGET_UBOOT_CUSTOM_VERSION
 	default "custom"	if BR2_TARGET_UBOOT_CUSTOM_TARBALL
@@ -228,6 +228,16 @@ config BR2_TARGET_UBOOT_NEEDS_ATF_BL31_ELF
 	bool "bl31.elf"
 
 endchoice
+
+config BR2_TARGET_UBOOT_NEEDS_OPENSBI
+	bool "U-Boot needs OpenSBI"
+	depends on BR2_TARGET_OPENSBI
+	help
+	  Some RISC-V platforms (such as SiFive HiFive Unleashed)
+	  encapsulate the OpenSBI firmware image inside U-Boot.
+	  This option makes sure OpenSBI gets built prior to U-Boot,
+	  and that the OpenSBI variable pointing to OpenSBI binary,
+	  is passed during the Buildroot build.
 
 menu "U-Boot binary format"
 

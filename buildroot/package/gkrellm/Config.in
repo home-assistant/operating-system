@@ -1,0 +1,43 @@
+config BR2_PACKAGE_GKRELLM
+	bool "gkrellm"
+	depends on BR2_USE_WCHAR # libglib2
+	depends on BR2_TOOLCHAIN_HAS_THREADS # libglib2
+	depends on BR2_USE_MMU # libglib2
+	select BR2_PACKAGE_GKRELLM_SERVER if !BR2_PACKAGE_GKRELLM_CLIENT
+	select BR2_PACKAGE_LIBGLIB2
+	help
+	  GKrellM is a single process stack of system monitors which
+	  supports applying themes to match its appearance to your
+	  window manager, Gtk, or any other theme.
+
+	  http://gkrellm.srcbox.net/
+
+if BR2_PACKAGE_GKRELLM
+
+config BR2_PACKAGE_GKRELLM_SERVER
+	bool "server"
+	help
+	  Enable gkrellm server.
+
+config BR2_PACKAGE_GKRELLM_CLIENT
+	bool "client"
+	depends on BR2_PACKAGE_XORG7 # libgtk2
+	depends on BR2_INSTALL_LIBSTDCPP # libgtk2
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4 # libgtk2
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_8 # libgtk2
+	select BR2_PACKAGE_LIBGTK2
+	select BR2_PACKAGE_XLIB_LIBSM
+	help
+	  Enable gkrellm client.
+
+comment "client needs a toolchain w/ C++, gcc >= 4.8"
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4
+	depends on BR2_PACKAGE_XORG7
+	depends on !BR2_INSTALL_LIBSTDCPP || \
+		!BR2_TOOLCHAIN_GCC_AT_LEAST_4_8
+
+endif # BR2_PACKAGE_GKRELLM
+
+comment "gkrellm needs a toolchain w/ wchar, threads"
+	depends on BR2_USE_MMU
+	depends on !BR2_USE_WCHAR || !BR2_TOOLCHAIN_HAS_THREADS

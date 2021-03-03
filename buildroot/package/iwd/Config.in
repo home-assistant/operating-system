@@ -4,7 +4,6 @@ config BR2_PACKAGE_IWD
 	depends on BR2_TOOLCHAIN_HAS_THREADS # dbus
 	depends on BR2_TOOLCHAIN_HAS_SYNC_4 # ell
 	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_12 # ell
-	depends on !BR2_STATIC_LIBS # ell
 	depends on BR2_USE_WCHAR # ell
 	select BR2_PACKAGE_DBUS # runtime
 	select BR2_PACKAGE_ELL
@@ -14,8 +13,8 @@ config BR2_PACKAGE_IWD
 
 	  https://iwd.wiki.kernel.org/
 
-comment "iwd needs a toolchain w/ threads, dynamic library, wchar, headers >= 4.12"
+comment "iwd needs a toolchain w/ threads, wchar, headers >= 4.12"
 	depends on BR2_USE_MMU # dbus
 	depends on BR2_TOOLCHAIN_HAS_SYNC_4 # ell
-	depends on !BR2_TOOLCHAIN_HAS_THREADS || BR2_STATIC_LIBS || \
-		!BR2_USE_WCHAR || !BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_12
+	depends on !BR2_TOOLCHAIN_HAS_THREADS || !BR2_USE_WCHAR || \
+		!BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_12

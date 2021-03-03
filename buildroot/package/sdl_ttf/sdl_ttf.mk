@@ -4,9 +4,18 @@
 #
 ################################################################################
 
-SDL_TTF_VERSION = 2.0.11
-SDL_TTF_SOURCE = SDL_ttf-$(SDL_TTF_VERSION).tar.gz
-SDL_TTF_SITE = http://www.libsdl.org/projects/SDL_ttf/release
+# There is unlikely to be a new SDL_ttf release for the foreseeable future:
+# https://bugzilla.libsdl.org/show_bug.cgi?id=5344#c1
+#
+# The unreleased version from HEAD as of 2020-11-09 has several bugfixes
+# and DPI scaling support:
+# https://hg.libsdl.org/SDL_ttf/rev/7dbd7cd826d6
+#
+# DPI scaling is used for rendering on HiDPI displays and displays
+# with non-square pixels.
+SDL_TTF_VERSION = de50cffd41e6
+SDL_TTF_SOURCE = $(SDL_TTF_VERSION).tar.gz
+SDL_TTF_SITE = https://hg.libsdl.org/SDL_ttf/archive
 SDL_TTF_LICENSE = Zlib
 SDL_TTF_LICENSE_FILES = COPYING
 

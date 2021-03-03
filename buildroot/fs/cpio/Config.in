@@ -51,6 +51,11 @@ config BR2_TARGET_ROOTFS_CPIO_XZ
 	help
 	  Do compress the cpio filesystem with xz.
 
+config BR2_TARGET_ROOTFS_CPIO_ZSTD
+	bool "zstd"
+	help
+	  Do compress the cpio filesystem with zstd.
+
 endchoice
 
 config BR2_TARGET_ROOTFS_CPIO_UIMAGE

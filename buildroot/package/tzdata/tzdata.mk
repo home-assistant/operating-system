@@ -51,8 +51,8 @@ endef
 define HOST_TZDATA_BUILD_CMDS
 	(cd $(@D); \
 		for zone in $(TZDATA_ZONELIST); do \
-			$(ZIC) -d _output/posix $$zone || exit 1; \
-			$(ZIC) -d _output/right -L leapseconds $$zone || exit 1; \
+			$(ZIC) -b fat -d _output/posix $$zone || exit 1; \
+			$(ZIC) -b fat -d _output/right -L leapseconds $$zone || exit 1; \
 		done; \
 	)
 endef

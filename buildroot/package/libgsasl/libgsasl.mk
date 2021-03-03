@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBGSASL_VERSION = 1.8.1
+LIBGSASL_VERSION = 1.10.0
 LIBGSASL_SITE = $(BR2_GNU_MIRROR)/gsasl
 LIBGSASL_LICENSE = LGPL-2.1+ (library), GPL-3.0+ (programs)
 LIBGSASL_LICENSE_FILES = README COPYING.LIB COPYING

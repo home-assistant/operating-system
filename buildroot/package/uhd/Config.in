@@ -35,15 +35,23 @@ if BR2_PACKAGE_UHD
 
 config BR2_PACKAGE_UHD_B100
 	bool "b100 support"
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # libusb
 	select BR2_PACKAGE_UHD_USB
 	help
 	  enable B100 support
 
+comment "B100 support needs a toolchain w/ gcc >= 4.9"
+	depends on !BR2_TOOLCHAIN_GCC_AT_LEAST_4_9
+
 config BR2_PACKAGE_UHD_B200
 	bool "b200 support"
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # libusb
 	select BR2_PACKAGE_UHD_USB
 	help
 	  enable B200 support
+
+comment "B200 support needs a toolchain w/ gcc >= 4.9"
+	depends on !BR2_TOOLCHAIN_GCC_AT_LEAST_4_9
 
 config BR2_PACKAGE_UHD_E300
 	bool "E300 support"
@@ -67,6 +75,43 @@ config BR2_PACKAGE_UHD_MPMD
 	help
 	  enable MPMD support
 
+config BR2_PACKAGE_UHD_N230
+	bool "N230 support"
+	help
+	  enable N230 support
+
+config BR2_PACKAGE_UHD_N300
+	bool "N300 support"
+	select BR2_PACKAGE_UHD_MPMD
+	help
+	  enable N300 support
+
+config BR2_PACKAGE_UHD_N320
+	bool "N320 support"
+	select BR2_PACKAGE_UHD_MPMD
+	help
+	  enable N320 support
+
+config BR2_PACKAGE_UHD_OCTOCLOCK
+	bool "OctoClock support"
+	help
+	  enable OctoClock support
+
+comment "uhd python API needs python3 and a toolchain w/ glibc or musl"
+	depends on !BR2_PACKAGE_PYTHON3
+	depends on !BR2_PACKAGE_PYTHON_NUMPY_ARCH_SUPPORTS
+	depends on !(BR2_TOOLCHAIN_USES_GLIBC && BR2_TOOLCHAIN_USES_MUSL) # python-numpy
+
+config BR2_PACKAGE_UHD_PYTHON
+	bool "python API support"
+	depends on BR2_PACKAGE_PYTHON3
+	depends on BR2_PACKAGE_PYTHON_NUMPY_ARCH_SUPPORTS
+	depends on BR2_TOOLCHAIN_USES_GLIBC || BR2_TOOLCHAIN_USES_MUSL # python-numpy
+	select BR2_PACKAGE_PYTHON_NUMPY
+	select BR2_PACKAGE_PYTHON_REQUESTS
+	help
+	  enable python API support
+
 config BR2_PACKAGE_UHD_RFNOC
 	bool "RFNoC support"
 	help
@@ -74,8 +119,38 @@ config BR2_PACKAGE_UHD_RFNOC
 
 config BR2_PACKAGE_UHD_USB
 	bool "USB support"
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # libusb
 	select BR2_PACKAGE_LIBUSB
 	help
 	  enable UHD USB support
+
+comment "USB support needs a toolchain w/ gcc >= 4.9"
+	depends on !BR2_TOOLCHAIN_GCC_AT_LEAST_4_9
+
+config BR2_PACKAGE_UHD_USRP1
+	bool "USRP1 support"
+	select BR2_PACKAGE_UHD_USB
+	help
+	  enable USRP1 support
+
+config BR2_PACKAGE_UHD_USRP2
+	bool "USRP2 support"
+	help
+	  enable USRP2 support
+
+comment "uhd utils depends on python API support"
+	depends on !BR2_PACKAGE_UHD_PYTHON
+
+config BR2_PACKAGE_UHD_UTILS
+	bool "uhd-utils"
+	depends on BR2_PACKAGE_UHD_PYTHON
+	select BR2_PACKAGE_PYTHON_SIX
+	help
+	  uhd-utils
+
+config BR2_PACKAGE_UHD_X300
+	bool "X300 support"
+	help
+	  enable X300 support
 
 endif

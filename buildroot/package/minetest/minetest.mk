@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-MINETEST_VERSION = 5.2.0
+MINETEST_VERSION = 5.3.0
 MINETEST_SITE = $(call github,minetest,minetest,$(MINETEST_VERSION))
 MINETEST_LICENSE = LGPL-2.1+ (code), CC-BY-SA-3.0 (textures and sounds)
 MINETEST_LICENSE_FILES = LICENSE.txt
@@ -18,7 +18,8 @@ MINETEST_CONF_OPTS = \
 	-DENABLE_CURSES=OFF \
 	-DAPPLY_LOCALE_BLACKLIST=OFF \
 	-DENABLE_SYSTEM_GMP=ON \
-	-DENABLE_SYSTEM_JSONCPP=ON
+	-DENABLE_SYSTEM_JSONCPP=ON \
+	-DBUILD_UNITTESTS=OFF
 
 ifeq ($(BR2_PACKAGE_MINETEST_CLIENT),y)
 MINETEST_DEPENDENCIES += bzip2 jpeg libgl libpng xlib_libXxf86vm

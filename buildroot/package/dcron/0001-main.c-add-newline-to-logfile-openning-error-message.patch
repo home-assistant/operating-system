@@ -4,6 +4,7 @@ Date: Sat, 20 Jul 2019 00:27:31 -0300
 Subject: [PATCH] main.c: add newline to logfile openning error message
 
 Signed-off-by: Carlos Santos <unixmania@gmail.com>
+[Upstream status: https://github.com/dubiousjim/dcron/pull/22]
 ---
  main.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)

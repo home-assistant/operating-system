@@ -37,7 +37,6 @@ KODI_DEPENDENCIES = \
 	libcurl \
 	libfribidi \
 	libplist \
-	libsamplerate \
 	lzo \
 	ncurses \
 	openssl \

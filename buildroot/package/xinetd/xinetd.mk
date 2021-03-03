@@ -4,10 +4,12 @@
 #
 ################################################################################
 
-XINETD_VERSION = 2-3-15
-XINETD_SITE = $(call github,xinetd-org,xinetd,xinetd-$(XINETD_VERSION))
+XINETD_VERSION = 2.3.15
+XINETD_SITE = \
+	$(call github,xinetd-org,xinetd,xinetd-$(subst .,-,$(XINETD_VERSION)))
 XINETD_LICENSE = xinetd license
 XINETD_LICENSE_FILES = COPYRIGHT
+XINETD_CPE_ID_VENDOR = xinetd
 
 # 0005-CVE-2013-4342-xinetd-ignores-user-and-group-directiv.patch
 XINETD_IGNORE_CVES += CVE-2013-4342

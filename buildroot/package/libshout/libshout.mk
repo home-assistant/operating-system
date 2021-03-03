@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBSHOUT_VERSION = 2.4.3
+LIBSHOUT_VERSION = 2.4.5
 LIBSHOUT_SITE = https://downloads.xiph.org/releases/libshout
 LIBSHOUT_LICENSE = LGPL-2.0+
 LIBSHOUT_LICENSE_FILES = COPYING

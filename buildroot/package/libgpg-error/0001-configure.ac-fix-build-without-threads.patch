@@ -1,0 +1,54 @@
+From 77c89f62f106d88ef2b5963f4a13755c337c793d Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Mon, 15 Feb 2021 07:56:29 +0100
+Subject: [PATCH] configure.ac: fix build without threads
+
+Cross-compilation of libgpg-error fails on toolchain without threads
+since commit 988211d3d4c1f3d5cfa6b460210f65ab636763b5,
+9ee011259f819a3cf50fe7019fa4366dbc437e0e and
+50e62b36ea01ed25d12c443088b85d4f41a2b3e1
+
+Indeed, since that time, libgpg-error assumes that pthread.h is always
+available resulting in the following error at configure time:
+
+checking for arm-unknown-linux-gnueabi-objdump... (cached) /tmp/instance-1/output-1/host/bin/arm-linux-objdump
+conftest.c:1:10: fatal error: pthread.h: No such file or directory
+    1 | #include <pthread.h>
+      |          ^~~~~~~~~~~
+compilation terminated.
+configure: generated src/lock-obj-pub.native.h using arm-unknown-linux-gnueabi-objdump and gawk
+checking whether to enable log_clock... no
+
+This error will in turn results in a build failure because
+"Can't determine mutex size" is echoed by gen-lock-obj.sh:
+
+In file included from strsource-sym.c:27:
+./gpg-error.h:1115:4: warning: missing terminating ' character
+ 1115 | Can't determine mutex size
+      |    ^
+
+Full build log:
+http://autobuild.buildroot.org/results/334/3344c96e5627a9327b0eabe0b27f34490bbabc0d/build-end.log
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: https://dev.gnupg.org/T5296]
+---
+ configure.ac | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/configure.ac b/configure.ac
+index b9a2a3e..15d9fdc 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -599,7 +599,7 @@ if test x$cross_compiling = xyes; then
+   case $host in
+     *-*-linux*)
+     AC_CHECK_TOOL(OBJDUMP, [objdump])
+-    if test -n "$OBJDUMP"; then
++    if test -n "$OBJDUMP" -a x"$gl_use_threads" != xno; then
+       lock_obj_h_generated=yes
+       if test ! -d src; then mkdir src; fi
+       LOCK_ABI_VERSION=1 host=$host host_alias=$host_alias \
+-- 
+2.30.0
+

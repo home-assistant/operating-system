@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-AT_VERSION = 7c74fa1aece6bc6db351763dc012193d5d634b7e
-AT_SITE = https://salsa.debian.org/debian/at.git
-AT_SITE_METHOD = git
+AT_VERSION = 3.2.1
+AT_SOURCE = at-upstream-$(AT_VERSION).tar.bz2
+AT_SITE = https://salsa.debian.org/debian/at/-/archive/upstream/$(AT_VERSION)
 AT_AUTORECONF = YES
 AT_DEPENDENCIES = $(if $(BR2_PACKAGE_FLEX),flex) host-bison host-flex
 AT_LICENSE = GPL-2.0+, GPL-3.0+, ISC

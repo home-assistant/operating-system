@@ -1,0 +1,46 @@
+From b9f13255e5042fc4e8d64b73c2fccee6e7ca0674 Mon Sep 17 00:00:00 2001
+Message-Id: <b9f13255e5042fc4e8d64b73c2fccee6e7ca0674.1614713774.git.stefan@agner.ch>
+In-Reply-To: <f8074c7dbf7966fd15edd897130825684abe05e9.1614713774.git.stefan@agner.ch>
+References: <f8074c7dbf7966fd15edd897130825684abe05e9.1614713774.git.stefan@agner.ch>
+From: Pascal Vizeli <pvizeli@syshack.ch>
+Date: Thu, 16 Apr 2020 14:32:45 +0000
+Subject: [PATCH 2/5] network-manager: wpa_supplicant
+
+Signed-off-by: Pascal Vizeli <pvizeli@syshack.ch>
+---
+ package/network-manager/Config.in          | 5 +++--
+ package/network-manager/network-manager.mk | 2 +-
+ 2 files changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/package/network-manager/Config.in b/package/network-manager/Config.in
+index 7d44768460..218dc860ff 100644
+--- a/package/network-manager/Config.in
++++ b/package/network-manager/Config.in
+@@ -15,8 +15,9 @@ config BR2_PACKAGE_NETWORK_MANAGER
+ 	select BR2_PACKAGE_LIBGCRYPT
+ 	select BR2_PACKAGE_UTIL_LINUX
+ 	select BR2_PACKAGE_UTIL_LINUX_LIBUUID
+-	select BR2_PACKAGE_WIRELESS_TOOLS
+-	select BR2_PACKAGE_WIRELESS_TOOLS_LIB
++	select BR2_PACKAGE_WPA_SUPPLICANT
++	select BR2_PACKAGE_WPA_SUPPLICANT_DBUS
++	select BR2_PACKAGE_WPA_SUPPLICANT_DBUS_INTROSPECTION
+ 	select BR2_PACKAGE_READLINE
+ 	select BR2_PACKAGE_LIBNDP
+ 	help
+diff --git a/package/network-manager/network-manager.mk b/package/network-manager/network-manager.mk
+index 4b2ade5b9b..ad170cbe6f 100644
+--- a/package/network-manager/network-manager.mk
++++ b/package/network-manager/network-manager.mk
+@@ -10,7 +10,7 @@ NETWORK_MANAGER_SOURCE = NetworkManager-$(NETWORK_MANAGER_VERSION).tar.xz
+ NETWORK_MANAGER_SITE = https://download.gnome.org/sources/NetworkManager/$(NETWORK_MANAGER_VERSION_MAJOR)
+ NETWORK_MANAGER_INSTALL_STAGING = YES
+ NETWORK_MANAGER_DEPENDENCIES = host-pkgconf udev gnutls libglib2 \
+-	libgcrypt wireless_tools util-linux host-intltool readline libndp
++	libgcrypt wpa_supplicant util-linux host-intltool readline libndp
+ NETWORK_MANAGER_LICENSE = GPL-2.0+ (app), LGPL-2.1+ (libnm)
+ NETWORK_MANAGER_LICENSE_FILES = COPYING COPYING.LGPL CONTRIBUTING
+ NETWORK_MANAGER_SELINUX_MODULES = networkmanager
+-- 
+2.30.1
+

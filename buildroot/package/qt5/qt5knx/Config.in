@@ -1,0 +1,12 @@
+config BR2_PACKAGE_QT5KNX
+	bool "qt5knx"
+	help
+	  Qt is a cross-platform application and UI framework for
+	  developers using C++.
+
+	  The Qt KNX module implements the client side of a connection
+	  between a client and a KNXnet/IP server. This connection
+	  can be used to send messages to the KNX bus and to control
+	  the functionalities of the KNX devices.
+
+	  https://doc.qt.io/QtKNX/index.html

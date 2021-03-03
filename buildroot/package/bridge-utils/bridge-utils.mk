@@ -10,6 +10,7 @@ BRIDGE_UTILS_SITE = \
 BRIDGE_UTILS_AUTORECONF = YES
 BRIDGE_UTILS_LICENSE = GPL-2.0+
 BRIDGE_UTILS_LICENSE_FILES = COPYING
+BRIDGE_UTILS_CPE_ID_VENDOR = kernel
 
 # Avoid using the host's headers. Location is not important as
 # required headers will anyway be found from within the sysroot.

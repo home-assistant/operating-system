@@ -1,0 +1,57 @@
+From a3d0ef352529217c9c32ce1a1b1db1420798cbe5 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sat, 10 Oct 2020 11:07:39 +0200
+Subject: [PATCH] configure: allow cross-compilation
+
+Some compilers are in fact a wrapper (e.g. to speed compilation with
+ccache or distcc, or as a cross-compiler wrapper). Those wrappers may
+not properly recognise the -v option, or may internally enforce some
+flags that conflict with -v.
+
+Use --version as a fall-back.
+
+With --version. the compiler will report its executable's basename, e.g.
+arm-linux-gcc not gcc. Catter for that by grepping for the compiler
+family name.
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[yann.morin.1998@free.fr:
+  - retain "$CC -v" as default, fallback to "$CC --version"
+]
+Signed-off-by: Yann E. MORIN <yann.morin.1998@free.fr>
+---
+ configure | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/configure b/configure
+index 9d72895..46491f7 100755
+--- a/configure
++++ b/configure
+@@ -513,9 +513,14 @@ else
+   CC_TMP="$CC"
+   test -n "$OPT_CC" && OTHER_CC= || OTHER_CC="gcc cc"
+   for CC in "$CC_TMP" $OTHER_CC; do
++    cc_name_tmp=
+     if run_cmd "$CC -v"; then
+       cc_name_tmp=$($CC -v 2>&1 | tail -n 1 | cut -d ' ' -f 1)
+-      if test "$cc_name_tmp" = "gcc"; then
++    elif run_cmd "$CC --version"; then
++      cc_name_tmp=$($CC --version 2>&1 | head -n 1 | cut -d ' ' -f 1)
++    fi
++    if test "${cc_name_tmp}"; then
++      if echo "$cc_name_tmp" | grep -q "gcc"; then
+         cc_name=$cc_name_tmp
+         start_check "$CC version"
+         cc_vendor=gnu
+@@ -539,7 +544,7 @@ else
+         finish_check "$cc_name $cc_version"
+         break
+       fi
+-      if $CC -v 2>&1 | grep -q "clang"; then
++      if echo "$cc_name_tmp" | grep -q "clang"; then
+         start_check "$CC version"
+         cc_vendor=clang
+         cc_version=$($CC -dumpversion 2>&1)
+-- 
+2.25.1
+

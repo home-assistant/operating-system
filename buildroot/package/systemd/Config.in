@@ -343,6 +343,24 @@ comment "polkit support needs a toolchain with C++, wchar, NPTL, gcc >= 4.9"
 		!BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 || \
 		!BR2_USE_WCHAR
 
+config BR2_PACKAGE_SYSTEMD_PORTABLED
+	bool "enable portable services"
+	help
+	  Portable services are systemd services that can be dynamically
+	  attached and detached from the system.
+
+	  These services must come with their own root directory which
+	  they are bound to through an automatically generated drop-in.
+
+	  They also have restrictions applied by the host system in the
+	  form of profiles.
+
+	  This functionality is provided by the system service
+	  systemd-portabled along with the corresponding CLI
+	  portablectl.
+
+	  https://systemd.io/PORTABLE_SERVICES/
+
 config BR2_PACKAGE_SYSTEMD_QUOTACHECK
 	bool "enable quotacheck tools"
 	help

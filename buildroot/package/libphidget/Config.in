@@ -1,6 +1,7 @@
 config BR2_PACKAGE_LIBPHIDGET
 	bool "libphidget"
 	depends on BR2_TOOLCHAIN_HAS_THREADS # libusb
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # libusb
 	depends on !BR2_STATIC_LIBS
 	select BR2_PACKAGE_LIBUSB
 	help
@@ -23,6 +24,6 @@ config BR2_PACKAGE_LIBPHIDGET
 
 	  http://phidgets.com/
 
-comment "libphidget needs a toolchain w/ threads, dynamic library"
-	depends on !BR2_TOOLCHAIN_HAS_THREADS
-	depends on BR2_STATIC_LIBS
+comment "libphidget needs a toolchain w/ threads, dynamic library, gcc >= 4.9"
+	depends on !BR2_TOOLCHAIN_HAS_THREADS || BR2_STATIC_LIBS || \
+		!BR2_TOOLCHAIN_GCC_AT_LEAST_4_9

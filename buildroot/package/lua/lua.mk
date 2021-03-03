@@ -19,6 +19,7 @@ LUA_LICENSE_FILES = doc/readme.html
 else
 LUA_LICENSE_FILES = COPYRIGHT
 endif
+LUA_CPE_ID_VENDOR = lua
 
 LUA_PROVIDES = luainterpreter
 

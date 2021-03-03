@@ -1,0 +1,37 @@
+From 2cf2aa34d5d55a4eedb1aedd4d56d89d24870230 Mon Sep 17 00:00:00 2001
+From: Peter Seiderer <ps.report@gmx.net>
+Date: Sun, 3 Jan 2021 21:11:44 +0100
+Subject: [PATCH] Makefile: allow linking with extra libraries
+
+With some toolchains, it is neede to link with extra libraries, for
+example with -latomic, to fix:
+
+  .../build/quickjs-2020-11-08/quickjs.c:12229: undefined reference to `__atomic_fetch_xor_1'
+
+Fixes:
+  http://autobuild.buildroot.net/results/e0766eef95a2559d51e58d1a81a9c40df84ae509
+
+Signed-off-by: Peter Seiderer <ps.report@gmx.net>
+[yann.morin.1998@free.fr:
+  - make it a generic variable, not tied to -latomic
+]
+Signed-off-by: Yann E. MORIN <yann.morin.1998@free.fr>
+---
+ Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+index e6ae827..22ad496 100644
+--- a/Makefile
++++ b/Makefile
+@@ -179,6 +179,7 @@ endif
+ ifndef CONFIG_WIN32
+ LIBS+=-ldl -lpthread
+ endif
++LIBS+=$(EXTRA_LIBS)
+ 
+ $(OBJDIR):
+ 	mkdir -p $(OBJDIR) $(OBJDIR)/examples $(OBJDIR)/tests
+-- 
+2.29.2
+

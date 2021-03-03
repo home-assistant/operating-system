@@ -189,6 +189,16 @@ config BR2_PACKAGE_BOOST_IOSTREAMS
 	  Boost.IOStreams provides a framework for defining streams,
 	  stream buffers and i/o filters.
 
+config BR2_PACKAGE_BOOST_JSON
+	bool "boost-json"
+	select BR2_PACKAGE_BOOST_CONTAINER
+	help
+	  Boost.JSON is a portable C++ library which provides containers
+	  and algorithms that implement JavaScript Object Notation, or
+	  simply "JSON", a lightweight data-interchange format.
+
+	  To use the library "header-only" this option is not needed.
+
 config BR2_PACKAGE_BOOST_LOCALE
 	bool "boost-locale"
 	# When boost-locale is enabled with icu support, Boost no
@@ -269,6 +279,11 @@ config BR2_PACKAGE_BOOST_MPI
 	help
 	  Message Passing Interface library, for use in
 	  distributed-memory parallel application programming.
+
+config BR2_PACKAGE_BOOST_NOWIDE
+	bool "boost-nowide"
+	help
+	  Library for cross-platform, unicode aware programming.
 
 config BR2_PACKAGE_BOOST_PROGRAM_OPTIONS
 	bool "boost-program_options"

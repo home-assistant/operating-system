@@ -11,8 +11,8 @@
 # and IPv6 updates.
 # http://www.spinics.net/lists/netdev/msg279881.html
 
-IPUTILS_VERSION = 20200821
-IPUTILS_SITE = $(call github,iputils,iputils,s$(IPUTILS_VERSION))
+IPUTILS_VERSION = 20210202
+IPUTILS_SITE = $(call github,iputils,iputils,$(IPUTILS_VERSION))
 IPUTILS_LICENSE = GPL-2.0+, BSD-3-Clause
 IPUTILS_LICENSE_FILES = LICENSE Documentation/LICENSE.BSD3 Documentation/LICENSE.GPL2
 IPUTILS_DEPENDENCIES = $(TARGET_NLS_DEPENDENCIES)
@@ -26,6 +26,15 @@ IPUTILS_CONF_OPTS += \
 	-DBUILD_TRACEPATH=$(if $(BR2_PACKAGE_IPUTILS_TRACEPATH),true,false) \
 	-DBUILD_TRACEROUTE6=$(if $(BR2_PACKAGE_IPUTILS_TRACEROUTE6),true,false) \
 	-DBUILD_NINFOD=$(if $(BR2_PACKAGE_IPUTILS_NINFOD),true,false)
+
+# Selectively select the appropriate SELinux refpolicy modules
+IPUTILS_SELINUX_MODULES = \
+	$(if $(BR2_PACKAGE_IPUTILS_ARPING),netutils) \
+	$(if $(BR2_PACKAGE_IPUTILS_PING),netutils) \
+	$(if $(BR2_PACKAGE_IPUTILS_TRACEPATH),netutils) \
+	$(if $(BR2_PACKAGE_IPUTILS_TRACEROUTE6),netutils) \
+	$(if $(BR2_PACKAGE_IPUTILS_RDISC),rdisc) \
+	$(if $(BR2_PACKAGE_IPUTILS_TFTPD),tftp)
 
 #
 # arping
@@ -74,11 +83,6 @@ endif
 #
 ifeq ($(BR2_PACKAGE_IPUTILS_TFTPD),y)
 IPUTILS_CONF_OPTS += -DBUILD_TFTPD=true
-
-define IPUTILS_MOVE_TFTPD_BINARY
-	mv $(TARGET_DIR)/usr/bin/tftpd $(TARGET_DIR)/usr/sbin/tftpd
-endef
-IPUTILS_POST_INSTALL_TARGET_HOOKS += IPUTILS_MOVE_TFTPD_BINARY
 
 else
 IPUTILS_CONF_OPTS += -DBUILD_TFTPD=false

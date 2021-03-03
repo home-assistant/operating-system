@@ -1,0 +1,43 @@
+From 27f15549ce67194e4152c57db2b762b7a443b4c7 Mon Sep 17 00:00:00 2001
+From: Peter Seiderer <ps.report@gmx.net>
+Date: Sun, 29 Nov 2020 11:14:41 +0100
+Subject: [PATCH] meson: add use-system-pybind11 option
+
+[Upstream: https://github.com/tomba/kmsxx/pull/60]
+Signed-off-by: Peter Seiderer <ps.report@gmx.net>
+---
+ meson.build       | 8 ++++++--
+ meson_options.txt | 1 +
+ 2 files changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/meson.build b/meson.build
+index 29080f4..4b3e7c3 100644
+--- a/meson.build
++++ b/meson.build
+@@ -39,8 +39,12 @@ else
+                                     compile_args : '-DFMT_HEADER_ONLY')
+ endif
+ 
+-pybind11_includes = include_directories('ext/pybind11/include')
+-pybind11_dep = declare_dependency(include_directories : pybind11_includes)
++if get_option('use-system-pybind11')
++    pybind11_dep = dependency('pybind11')
++else
++    pybind11_includes = include_directories('ext/pybind11/include')
++    pybind11_dep = declare_dependency(include_directories : pybind11_includes)
++endif
+ 
+ libdrmomap_dep = dependency('libdrm_omap', required : get_option('omap'))
+ 
+diff --git a/meson_options.txt b/meson_options.txt
+index 48176a8..095c6f2 100644
+--- a/meson_options.txt
++++ b/meson_options.txt
+@@ -5,3 +5,4 @@ option('static-libc', type : 'boolean', value : false)
+ option('utils', type : 'boolean', value : true)
+ 
+ option('use-system-fmt', type : 'boolean', value : false)
++option('use-system-pybind11', type : 'boolean', value : false)
+-- 
+2.29.2
+

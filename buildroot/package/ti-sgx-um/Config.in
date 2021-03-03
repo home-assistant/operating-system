@@ -9,7 +9,7 @@ config BR2_PACKAGE_TI_SGX_UM
 	bool "ti-sgx-um"
 	depends on BR2_PACKAGE_TI_SGX_KM
 	depends on BR2_TOOLCHAIN_HAS_THREADS # libdrm
-	depends on BR2_PACKAGE_HAS_UDEV # ti-sgx-libgbm
+	depends on BR2_PACKAGE_HAS_UDEV
 	# pre-built binaries
 	depends on BR2_TOOLCHAIN_USES_GLIBC
 	select BR2_PACKAGE_LIBDRM
@@ -17,7 +17,6 @@ config BR2_PACKAGE_TI_SGX_UM
 	select BR2_PACKAGE_HAS_LIBEGL
 	select BR2_PACKAGE_HAS_LIBGLES
 	select BR2_PACKAGE_HAS_POWERVR
-	select BR2_PACKAGE_TI_SGX_LIBGBM
 	select BR2_PACKAGE_LIBFFI
 	select BR2_PACKAGE_WAYLAND
 	help

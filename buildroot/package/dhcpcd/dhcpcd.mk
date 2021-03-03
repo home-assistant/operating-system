@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-DHCPCD_VERSION = 9.1.4
+DHCPCD_VERSION = 9.4.0
 DHCPCD_SOURCE = dhcpcd-$(DHCPCD_VERSION).tar.xz
 DHCPCD_SITE = http://roy.marples.name/downloads/dhcpcd
 DHCPCD_DEPENDENCIES = host-pkgconf
@@ -15,6 +15,11 @@ DHCPCD_CONFIG_OPTS = \
 	--libexecdir=/lib/dhcpcd \
 	--os=linux \
 	--privsepuser=dhcpcd
+
+# AUDIT_ARCH_NDS32 is only available since kernel >= 5.2
+ifeq ($(BR2_nds32):$(BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_2),y:)
+DHCPCD_CONFIG_OPTS += --disable-privsep
+endif
 
 ifeq ($(BR2_PACKAGE_HAS_UDEV),y)
 DHCPCD_CONFIG_OPTS += --with-udev

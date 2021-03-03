@@ -1,0 +1,26 @@
+config BR2_PACKAGE_BALENA_ENGINE
+	bool "balena-engine"
+	depends on BR2_PACKAGE_HOST_GO_TARGET_ARCH_SUPPORTS
+	depends on BR2_PACKAGE_HOST_GO_TARGET_CGO_LINKING_SUPPORTS
+	depends on !BR2_TOOLCHAIN_USES_UCLIBC # no fexecve
+	depends on BR2_USE_MMU # util-linux
+	select BR2_PACKAGE_CGROUPFS_MOUNT if !BR2_PACKAGE_SYSTEMD # runtime
+	select BR2_PACKAGE_IPTABLES # runtime
+	select BR2_PACKAGE_SQLITE # runtime
+	select BR2_PACKAGE_UTIL_LINUX # runtime
+	select BR2_PACKAGE_UTIL_LINUX_BINARIES # runtime
+	select BR2_PACKAGE_UTIL_LINUX_MOUNT # runtime
+	select BR2_PACKAGE_UTIL_LINUX_MOUNTPOINT # runtime
+	select BR2_PACKAGE_UTIL_LINUX_PIVOT_ROOT # runtime
+	help
+	  balenaEngine is a new container engine purpose-built for
+	  embedded and IoT use cases and compatible with Docker
+	  containers.
+
+	  https://github.com/balena-os/balena-engine
+
+comment "balena-engine needs a glibc or musl toolchain w/ threads"
+	depends on BR2_PACKAGE_HOST_GO_TARGET_ARCH_SUPPORTS
+	depends on BR2_PACKAGE_HOST_GO_TARGET_CGO_LINKING_SUPPORTS
+	depends on !BR2_TOOLCHAIN_HAS_THREADS || BR2_TOOLCHAIN_USES_UCLIBC
+	depends on BR2_USE_MMU

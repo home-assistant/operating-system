@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-PROJ_VERSION = 7.1.1
+PROJ_VERSION = 7.2.1
 PROJ_SITE = http://download.osgeo.org/proj
 PROJ_LICENSE = MIT
 PROJ_LICENSE_FILES = COPYING

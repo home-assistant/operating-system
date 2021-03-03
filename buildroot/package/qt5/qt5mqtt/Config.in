@@ -1,0 +1,13 @@
+config BR2_PACKAGE_QT5MQTT
+	bool "qt5mqtt"
+	help
+	  Qt is a cross-platform application and UI framework for
+	  developers using C++.
+
+	  The Qt MQTT module provides a standard compliant
+	  implementation of the MQTT protocol specification. It
+	  enables applications to act as telemetry displays and
+	  devices to publish telemetry data.  The supported versions
+	  are MQTT 3.1, MQTT 3.1.1, and MQTT 5.0.
+
+	  https://doc.qt.io/QtMQTT/index.html

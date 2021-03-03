@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-BELLE_SIP_VERSION = 4.3.1
+BELLE_SIP_VERSION = 4.4.8
 BELLE_SIP_SITE = \
 	https://gitlab.linphone.org/BC/public/belle-sip/-/archive/$(BELLE_SIP_VERSION)
 BELLE_SIP_LICENSE = GPL-3.0+

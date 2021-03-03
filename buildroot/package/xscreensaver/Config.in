@@ -2,13 +2,15 @@ config BR2_PACKAGE_XSCREENSAVER
 	bool "xscreensaver"
 	depends on BR2_PACKAGE_XORG7
 	depends on BR2_INSTALL_LIBSTDCPP # libgtk2 -> pango
-	depends on BR2_TOOLCHAIN_HAS_THREADS # libgtk2 -> glib2
-	depends on BR2_USE_WCHAR # libgtk2 -> glib2
-	depends on BR2_USE_MMU # libgtk2 -> glib2
+	depends on BR2_TOOLCHAIN_HAS_THREADS # gdk-pixbuf, libgtk2 -> glib2
+	depends on BR2_USE_WCHAR # gdk-pixbuf, libgtk2 -> glib2
+	depends on BR2_USE_MMU # gdk-pixbuf, libgtk2 -> glib2
 	depends on BR2_TOOLCHAIN_HAS_SYNC_4 # libgtk2 -> pango -> harfbuzz
 	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_8 # libgtk2 -> pango -> harfbuzz
+	select BR2_PACKAGE_GDK_PIXBUF
+	select BR2_PACKAGE_LIBGLU if BR2_PACKAGE_HAS_LIBGL
 	select BR2_PACKAGE_LIBGTK2
-	select BR2_PACKAGE_LIBGLADE
+	select BR2_PACKAGE_LIBXML2
 	select BR2_PACKAGE_JPEG
 	select BR2_PACKAGE_XLIB_LIBX11
 	select BR2_PACKAGE_XLIB_LIBXT

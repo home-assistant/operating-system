@@ -1,5 +1,5 @@
 # md5, sha256 from https://pypi.org/pypi/requests-oauthlib/json
-md5	c32a54ce04123480132960a290d50792  requests-oauthlib-1.2.0.tar.gz
-sha256	bd6533330e8748e94bf0b214775fed487d309b8b8fe823dc45641ebcd9a32f57  requests-oauthlib-1.2.0.tar.gz
+md5  1ebcd55f1b1b9281940b4bc33010e2ba  requests-oauthlib-1.3.0.tar.gz
+sha256  b4261601a71fd721a8bd6d7aa1cc1d6a8a93b4a9f5e96626f8e4d91e8beeaa6a  requests-oauthlib-1.3.0.tar.gz
 # Locally computed sha256 checksums
-sha256	ae01846afad8a8291fe6a08966f3015af9a8ff675d84b981f9793c122f7876e8  LICENSE
+sha256  ae01846afad8a8291fe6a08966f3015af9a8ff675d84b981f9793c122f7876e8  LICENSE

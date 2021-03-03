@@ -1,6 +1,6 @@
-From 277103e886c9b3ddfede8b3f5b92d3e94736f404 Mon Sep 17 00:00:00 2001
+From cb583beba1acba55112fbb4636c1c73d9ae691a0 Mon Sep 17 00:00:00 2001
 From: Johan Oudinet <johan.oudinet@gmail.com>
-Date: Fri, 23 Nov 2018 16:13:21 +0100
+Date: Fri, 20 Nov 2020 00:33:30 +0100
 Subject: [PATCH] Makefile.in: do not download or compile dependencies
 
 Signed-off-by: Johan Oudinet <johan.oudinet@gmail.com>
@@ -9,10 +9,10 @@ Signed-off-by: Johan Oudinet <johan.oudinet@gmail.com>
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/Makefile.in b/Makefile.in
-index 48dca7d8..d2324dae 100644
+index abd64835..06f876bb 100644
 --- a/Makefile.in
 +++ b/Makefile.in
-@@ -94,7 +94,7 @@ ifneq ($(INSTALLGROUP),)
+@@ -97,7 +97,7 @@ ifneq ($(INSTALLGROUP),)
    G_USER=-g $(INSTALLGROUP)
  endif
  
@@ -21,7 +21,7 @@ index 48dca7d8..d2324dae 100644
  
  deps: deps/.got
  
-@@ -108,7 +108,7 @@ deps/.built: deps/.got
+@@ -111,7 +111,7 @@ deps/.built: deps/.got
  	$(REBAR) configure-deps
  	$(REBAR) compile && :> deps/.built
  
@@ -31,5 +31,5 @@ index 48dca7d8..d2324dae 100644
  
  update:
 -- 
-2.17.1
+2.29.2
 

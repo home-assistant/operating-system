@@ -6,7 +6,7 @@ config BR2_PACKAGE_HOST_LINUX_HEADERS
 choice
 	prompt "Kernel Headers"
 	default BR2_KERNEL_HEADERS_AS_KERNEL if BR2_LINUX_KERNEL
-	default BR2_KERNEL_HEADERS_5_9
+	default BR2_KERNEL_HEADERS_5_10
 	help
 	  Select the kernel version to get headers from.
 
@@ -54,13 +54,9 @@ config BR2_KERNEL_HEADERS_5_4
 	bool "Linux 5.4.x kernel headers"
 	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_4
 
-config BR2_KERNEL_HEADERS_5_8
-	bool "Linux 5.8.x kernel headers"
-	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_8
-
-config BR2_KERNEL_HEADERS_5_9
-	bool "Linux 5.9.x kernel headers"
-	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_9
+config BR2_KERNEL_HEADERS_5_10
+	bool "Linux 5.10.x kernel headers"
+	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_10
 	select BR2_KERNEL_HEADERS_LATEST
 
 config BR2_KERNEL_HEADERS_VERSION
@@ -135,8 +131,12 @@ choice
 	  If your kernel headers are more recent than the latest version
 	  in the choice, then select the latest version.
 
+config BR2_PACKAGE_HOST_LINUX_HEADERS_CUSTOM_5_10
+	bool "5.10.x or later"
+	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_10
+
 config BR2_PACKAGE_HOST_LINUX_HEADERS_CUSTOM_5_9
-	bool "5.9.x or later"
+	bool "5.9.x"
 	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_9
 
 config BR2_PACKAGE_HOST_LINUX_HEADERS_CUSTOM_5_8
@@ -346,13 +346,12 @@ endchoice
 
 config BR2_DEFAULT_KERNEL_HEADERS
 	string
-	default "4.4.253"	if BR2_KERNEL_HEADERS_4_4
-	default "4.9.253"	if BR2_KERNEL_HEADERS_4_9
-	default "4.14.217"	if BR2_KERNEL_HEADERS_4_14
-	default "4.19.171"	if BR2_KERNEL_HEADERS_4_19
-	default "5.4.93"	if BR2_KERNEL_HEADERS_5_4
-	default "5.8.18"	if BR2_KERNEL_HEADERS_5_8
-	default "5.9.16"	if BR2_KERNEL_HEADERS_5_9
+	default "4.4.255"	if BR2_KERNEL_HEADERS_4_4
+	default "4.9.255"	if BR2_KERNEL_HEADERS_4_9
+	default "4.14.219"	if BR2_KERNEL_HEADERS_4_14
+	default "4.19.173"	if BR2_KERNEL_HEADERS_4_19
+	default "5.4.95"	if BR2_KERNEL_HEADERS_5_4
+	default "5.10.13"	if BR2_KERNEL_HEADERS_5_10
 	default BR2_DEFAULT_KERNEL_VERSION if BR2_KERNEL_HEADERS_VERSION
 	default "custom"	if BR2_KERNEL_HEADERS_CUSTOM_TARBALL
 	default BR2_KERNEL_HEADERS_CUSTOM_REPO_VERSION \

@@ -1,0 +1,45 @@
+From 18ace560a15207503805d4df25b90c7a756bcbf6 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Tue, 2 Feb 2021 23:53:39 +0100
+Subject: [PATCH] configure.ac: put back --disable-stack-protector
+
+Put back --disable-stack-protector which has been removed by commit
+70c85915eace83142b84e4f65f5db421cf0c09e3. This will allow the user to
+disable it or to let a higher buildsystem such as buildroot to finely
+configure it.
+
+Indeed, without this patch, build can fail as some compilers (such as
+uclibc) could missed the needed library (-lssp or -lssp_nonshared) at
+linking step:
+
+  CCLD     libsox.la
+/home/fabrice/br-test-pkg/br-arm-full/host/opt/ext-toolchain/bin/../lib/gcc/arm-buildroot-linux-uclibcgnueabi/5.5.0/../../../../arm-buildroot-linux-uclibcgnueabi/bin/ld: cannot find -lssp_nonshared
+/home/fabrice/br-test-pkg/br-arm-full/host/opt/ext-toolchain/bin/../lib/gcc/arm-buildroot-linux-uclibcgnueabi/5.5.0/../../../../arm-buildroot-linux-uclibcgnueabi/bin/ld: cannot find -lssp
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: https://sourceforge.net/p/sox/patches/122/]
+---
+ configure.ac | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/configure.ac b/configure.ac
+index 39306398..a1665467 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -32,7 +32,12 @@ AC_PROG_LN_S
+ PKG_PROG_PKG_CONFIG
+ PKG_INSTALLDIR
+ 
+-AX_APPEND_COMPILE_FLAGS([-fstack-protector-strong])
++AC_ARG_ENABLE([stack-protector],
++    AS_HELP_STRING([--disable-stack-protector], [Disable -fstack-protector-strong]),
++    [enable_stack_protector=$enableval], [enable_stack_protector=yes])
++AS_IF([test x"$enable_stack_protector" = "xyes"],
++    [AX_APPEND_COMPILE_FLAGS([-fstack-protector-strong])])
++
+ AX_APPEND_COMPILE_FLAGS([-Wall -Wmissing-prototypes -Wstrict-prototypes])
+ AX_APPEND_LINK_FLAGS([-Wl,--as-needed])
+ 
+-- 
+2.29.2
+

@@ -1,0 +1,53 @@
+From e3f683dc3013d14bddb9f9ec5bdc31367dc51a1c Mon Sep 17 00:00:00 2001
+From: "Yann E. MORIN" <yann.morin.1998@free.fr>
+Date: Sun, 10 Jan 2021 10:44:39 +0100
+Subject: [PATCH] build: don't install udev rules without udev support
+
+Signed-off-by: Yann E. MORIN <yann.morin.1998@free.fr>
+---
+ meson.build | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
+
+diff --git a/meson.build b/meson.build
+index aac7727..92be1ea 100644
+--- a/meson.build
++++ b/meson.build
+@@ -151,6 +151,11 @@ conf.set10('HAVE_SELINUX', get_option('selinux'))
+ 
+ if get_option('udev')
+         libudev = dependency('libudev')
++        udevrulesdir = get_option('udevrulesdir')
++        if udevrulesdir == ''
++                udev = dependency('udev', required : false)
++                udevrulesdir = join_paths(udev.get_pkgconfig_variable('udevdir'), 'rules.d')
++        endif
+ else
+         libudev = []
+ endif
+@@ -175,12 +180,6 @@ subdir('test')
+ 
+ includes = include_directories('src')
+ 
+-udevrulesdir = get_option('udevrulesdir')
+-if udevrulesdir == ''
+-        udev = dependency('udev', required : false)
+-        udevrulesdir = join_paths(udev.get_pkgconfig_variable('udevdir'), 'rules.d')
+-endif
+-
+ subdir('shell-completion/bash')
+ subdir('doc')
+ 
+@@ -318,7 +317,9 @@ udev_rule = configure_file(
+           input : 'src/75-casync.rules.in',
+           configuration : substs)
+ 
+-install_data(udev_rule, install_dir : udevrulesdir)
++if get_option('udev')
++        install_data(udev_rule, install_dir : udevrulesdir)
++endif
+ 
+ ############################################################
+ 
+-- 
+2.25.1
+

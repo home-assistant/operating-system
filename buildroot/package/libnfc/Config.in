@@ -24,13 +24,15 @@ comment "acr122_pcsc driver needs a toolchain w/ threads, dynamic library"
 config BR2_PACKAGE_LIBNFC_ACR122_USB
 	bool "acr122_usb driver"
 	depends on BR2_TOOLCHAIN_HAS_THREADS
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # libusb
 	select BR2_PACKAGE_LIBUSB
 	select BR2_PACKAGE_LIBUSB_COMPAT
 	help
 	  support for acr122_usb driver
 
-comment "acr122_usb driver needs a toolchain w/ threads"
-	depends on !BR2_TOOLCHAIN_HAS_THREADS
+comment "acr122_usb driver needs a toolchain w/ threads, gcc >= 4.9"
+	depends on !BR2_TOOLCHAIN_HAS_THREADS || \
+		!BR2_TOOLCHAIN_GCC_AT_LEAST_4_9
 
 config BR2_PACKAGE_LIBNFC_ACR122S
 	bool "acr122s driver"
@@ -62,13 +64,15 @@ config BR2_PACKAGE_LIBNFC_PN53X_USB
 	bool "pn53x_usb driver"
 	default y
 	depends on BR2_TOOLCHAIN_HAS_THREADS
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # libusb
 	select BR2_PACKAGE_LIBUSB
 	select BR2_PACKAGE_LIBUSB_COMPAT
 	help
 	  support for pn53x_usb driver
 
-comment "pn53x_usb driver needs a toolchain w/ threads"
-	depends on !BR2_TOOLCHAIN_HAS_THREADS
+comment "pn53x_usb driver needs a toolchain w/ threads, gcc >= 4.9"
+	depends on !BR2_TOOLCHAIN_HAS_THREADS || \
+		!BR2_TOOLCHAIN_GCC_AT_LEAST_4_9
 
 config BR2_PACKAGE_LIBNFC_EXAMPLES
 	bool "build libnfc examples"

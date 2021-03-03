@@ -1,0 +1,11 @@
+config BR2_PACKAGE_XORCURSES
+	bool "xorcurses"
+	select BR2_PACKAGE_NCURSES
+	help
+	  XorCurses is a game remake of the 8-bit game 'Xor'. Your task
+	  is to roam around a series of mazes where you have to collect
+	  all blue masks before finding the exit. Note that the game
+	  needs a terminal with colors, i.e. make sure that the TERM
+	  environment variable is set to "linux" ("vt100" won't work).
+
+	  https://github.com/jwm-art-net/XorCurses/

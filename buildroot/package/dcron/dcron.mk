@@ -4,10 +4,10 @@
 #
 ################################################################################
 
-DCRON_VERSION = 4.5
-DCRON_SITE = http://www.jimpryor.net/linux/releases
-# The source code does not specify the version of the GPL that is used.
-DCRON_LICENSE = GPL
+DCRON_VERSION = 1ba33c3325df48de46263276a43ed76cf9d81518
+DCRON_SITE = $(call github,dubiousjim,dcron,$(DCRON_VERSION))
+DCRON_LICENSE = GPL-2.0+
+DCRON_LICENSE_FILES = COPYING
 
 define DCRON_BUILD_CMDS
 	$(TARGET_MAKE_ENV) $(MAKE) -C $(@D) $(TARGET_CONFIGURE_OPTS)

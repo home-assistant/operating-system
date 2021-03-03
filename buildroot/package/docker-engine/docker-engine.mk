@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-DOCKER_ENGINE_VERSION = 19.03.13
+DOCKER_ENGINE_VERSION = 20.10.3
 DOCKER_ENGINE_SITE = $(call github,moby,moby,v$(DOCKER_ENGINE_VERSION))
 
 DOCKER_ENGINE_LICENSE = Apache-2.0
@@ -14,10 +14,13 @@ DOCKER_ENGINE_DEPENDENCIES = host-pkgconf
 DOCKER_ENGINE_GOMOD = github.com/docker/docker
 
 DOCKER_ENGINE_LDFLAGS = \
-	-X main.GitCommit=$(DOCKER_ENGINE_VERSION) \
-	-X main.Version=$(DOCKER_ENGINE_VERSION)
+	-X $(DOCKER_ENGINE_GOMOD)/dockerversion.BuildTime="" \
+	-X $(DOCKER_ENGINE_GOMOD)/dockerversion.GitCommit="buildroot" \
+	-X $(DOCKER_ENGINE_GOMOD)/dockerversion.IAmStatic="false" \
+	-X $(DOCKER_ENGINE_GOMOD)/dockerversion.InitCommitID="" \
+	-X $(DOCKER_ENGINE_GOMOD)/dockerversion.Version="$(DOCKER_ENGINE_VERSION)"
 
-DOCKER_ENGINE_TAGS = cgo exclude_graphdriver_zfs autogen
+DOCKER_ENGINE_TAGS = cgo exclude_graphdriver_zfs
 DOCKER_ENGINE_BUILD_TARGETS = cmd/dockerd
 
 ifeq ($(BR2_PACKAGE_LIBAPPARMOR),y)
@@ -57,16 +60,6 @@ DOCKER_ENGINE_TAGS += exclude_graphdriver_vfs
 endif
 
 DOCKER_ENGINE_INSTALL_BINS = $(notdir $(DOCKER_ENGINE_BUILD_TARGETS))
-
-define DOCKER_ENGINE_RUN_AUTOGEN
-	cd $(@D) && \
-		BUILDTIME="$$(date)" \
-		VERSION="$(patsubst v%,%,$(DOCKER_ENGINE_VERSION))" \
-		PKG_CONFIG="$(PKG_CONFIG_HOST_BINARY)" $(TARGET_MAKE_ENV) \
-		bash ./hack/make/.go-autogen
-endef
-
-DOCKER_ENGINE_POST_CONFIGURE_HOOKS += DOCKER_ENGINE_RUN_AUTOGEN
 
 define DOCKER_ENGINE_INSTALL_INIT_SYSTEMD
 	$(INSTALL) -D -m 0644 $(@D)/contrib/init/systemd/docker.service \

@@ -9,6 +9,7 @@ LIBPLIST_SITE = $(call github,libimobiledevice,libplist,$(LIBPLIST_VERSION))
 LIBPLIST_INSTALL_STAGING = YES
 LIBPLIST_LICENSE = LGPL-2.1+
 LIBPLIST_LICENSE_FILES = COPYING
+LIBPLIST_CPE_ID_VENDOR = libimobiledevice
 # github tarball does not include configure
 LIBPLIST_AUTORECONF = YES
 

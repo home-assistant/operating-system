@@ -1,0 +1,186 @@
+From 6ef08914041b6166db6f77dd516ae8d66d0ecce6 Mon Sep 17 00:00:00 2001
+From: Sven Klemm <sven@timescale.com>
+Date: Wed, 30 Sep 2020 01:47:01 +0200
+Subject: [PATCH] Adjust code to PG13 command completion tag changes
+
+PG13 changes the representation of command completion tags to structs.
+
+https://github.com/postgres/postgres/commit/2f9661311b
+
+Signed-off-by: Maxim Kochetkov <fido_max@inbox.ru>
+Fetch from: https://github.com/timescale/timescaledb/pull/2498/commits/d37ec4e23bc678bc84f126c5b952fb1707ad7fe4.patch
+---
+ src/loader/loader.c          | 13 +++++++-
+ src/process_utility.c        | 59 +++++++++++++++++++++++++++---------
+ src/process_utility.h        |  4 +++
+ tsl/test/src/test_ddl_hook.c |  4 +++
+ 4 files changed, 65 insertions(+), 15 deletions(-)
+
+diff --git a/src/loader/loader.c b/src/loader/loader.c
+index f60f9e77..ed35f288 100644
+--- a/src/loader/loader.c
++++ b/src/loader/loader.c
+@@ -464,7 +464,14 @@ post_analyze_hook(ParseState *pstate, Query *query)
+ static void
+ loader_process_utility_hook(PlannedStmt *pstmt, const char *query_string,
+ 							ProcessUtilityContext context, ParamListInfo params,
+-							QueryEnvironment *queryEnv, DestReceiver *dest, char *completion_tag)
++							QueryEnvironment *queryEnv, DestReceiver *dest,
++#if PG13_GE
++							QueryCompletion *qc
++#else
++							char *completion_tag
++#endif
++
++)
+ {
+ 	bool is_distributed_database = false;
+ 	char *dist_uuid = NULL;
+@@ -500,7 +507,11 @@ loader_process_utility_hook(PlannedStmt *pstmt, const char *query_string,
+ 	else
+ 		process_utility = standard_ProcessUtility;
+ 
++#if PG13_GE
++	process_utility(pstmt, query_string, context, params, queryEnv, dest, qc);
++#else
+ 	process_utility(pstmt, query_string, context, params, queryEnv, dest, completion_tag);
++#endif
+ 
+ 	/*
+ 	 * Show a NOTICE warning message in case of dropping a
+diff --git a/src/process_utility.c b/src/process_utility.c
+index 0f76f141..d9d7514d 100644
+--- a/src/process_utility.c
++++ b/src/process_utility.c
+@@ -91,7 +91,12 @@ prev_ProcessUtility(ProcessUtilityArgs *args)
+ 								   args->params,
+ 								   args->queryEnv,
+ 								   args->dest,
+-								   args->completion_tag);
++#if PG13_GE
++								   args->qc
++#else
++								   args->completion_tag
++#endif
++		);
+ 	}
+ 	else
+ 	{
+@@ -102,7 +107,12 @@ prev_ProcessUtility(ProcessUtilityArgs *args)
+ 								args->params,
+ 								args->queryEnv,
+ 								args->dest,
+-								args->completion_tag);
++#if PG13_GE
++								args->qc
++#else
++								args->completion_tag
++#endif
++		);
+ 	}
+ }
+ 
+@@ -493,8 +503,13 @@ process_copy(ProcessUtilityArgs *args)
+ 	/* Performs acl check in here inside `copy_security_check` */
+ 	timescaledb_DoCopy(stmt, args->query_string, &processed, ht);
+ 
++#if PG13_GE
++	args->qc->commandTag = CMDTAG_COPY;
++	args->qc->nprocessed = processed;
++#else
+ 	if (args->completion_tag)
+ 		snprintf(args->completion_tag, COMPLETION_TAG_BUFSIZE, "COPY " UINT64_FORMAT, processed);
++#endif
+ 
+ 	process_add_hypertable(args, ht);
+ 
+@@ -3646,7 +3661,11 @@ process_ddl_command_start(ProcessUtilityArgs *args)
+ 		return false;
+ 
+ 	if (check_read_only)
++#if PG13_GE
++		PreventCommandIfReadOnly(CreateCommandName(args->parsetree));
++#else
+ 		PreventCommandIfReadOnly(CreateCommandTag(args->parsetree));
++#endif
+ 
+ 	return handler(args);
+ }
+@@ -3845,18 +3864,30 @@ process_ddl_sql_drop(EventTriggerDropObject *obj)
+ static void
+ timescaledb_ddl_command_start(PlannedStmt *pstmt, const char *query_string,
+ 							  ProcessUtilityContext context, ParamListInfo params,
+-							  QueryEnvironment *queryEnv, DestReceiver *dest, char *completion_tag)
+-{
+-	ProcessUtilityArgs args = { .query_string = query_string,
+-								.context = context,
+-								.params = params,
+-								.dest = dest,
+-								.completion_tag = completion_tag,
+-								.pstmt = pstmt,
+-								.parsetree = pstmt->utilityStmt,
+-								.queryEnv = queryEnv,
+-								.parse_state = make_parsestate(NULL),
+-								.hypertable_list = NIL };
++							  QueryEnvironment *queryEnv, DestReceiver *dest,
++#if PG13_GE
++							  QueryCompletion *qc
++#else
++							  char *completion_tag
++#endif
++)
++{
++	ProcessUtilityArgs args = {
++		.query_string = query_string,
++		.context = context,
++		.params = params,
++		.dest = dest,
++#if PG13_GE
++		.qc = qc,
++#else
++		.completion_tag = completion_tag,
++#endif
++		.pstmt = pstmt,
++		.parsetree = pstmt->utilityStmt,
++		.queryEnv = queryEnv,
++		.parse_state = make_parsestate(NULL),
++		.hypertable_list = NIL
++	};
+ 
+ 	bool altering_timescaledb = false;
+ 	DDLResult result;
+diff --git a/src/process_utility.h b/src/process_utility.h
+index ac5519f4..f66448fb 100644
+--- a/src/process_utility.h
++++ b/src/process_utility.h
+@@ -24,7 +24,11 @@ typedef struct ProcessUtilityArgs
+ 	ParamListInfo params;
+ 	DestReceiver *dest;
+ 	List *hypertable_list;
++#if PG13_GE
++	QueryCompletion *qc;
++#else
+ 	char *completion_tag;
++#endif
+ } ProcessUtilityArgs;
+ 
+ typedef enum
+diff --git a/tsl/test/src/test_ddl_hook.c b/tsl/test/src/test_ddl_hook.c
+index 4fb58f02..d01e6114 100644
+--- a/tsl/test/src/test_ddl_hook.c
++++ b/tsl/test/src/test_ddl_hook.c
+@@ -80,7 +80,11 @@ test_ddl_command_end(EventTriggerData *command)
+ 	ListCell *cell;
+ 	Hypertable *ht;
+ 
++#if PG13_GE
++	elog(NOTICE, "test_ddl_command_end: %s", GetCommandTagName(command->tag));
++#else
+ 	elog(NOTICE, "test_ddl_command_end: %s", command->tag);
++#endif
+ 
+ 	if (tsl_delayed_execution_list == NIL)
+ 		return;
+-- 
+2.29.2
+

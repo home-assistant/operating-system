@@ -1,6 +1,7 @@
 config BR2_PACKAGE_LIBGPHOTO2
 	bool "libgphoto2"
 	depends on BR2_TOOLCHAIN_HAS_THREADS # libusb
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # libusb
 	select BR2_PACKAGE_LIBTOOL
 	select BR2_PACKAGE_LIBUSB
 	select BR2_PACKAGE_LIBXML2
@@ -10,5 +11,6 @@ config BR2_PACKAGE_LIBGPHOTO2
 
 	  http://gphoto.org/proj/libgphoto2/
 
-comment "libgphoto needs a toolchain w/ threads"
-	depends on !BR2_TOOLCHAIN_HAS_THREADS
+comment "libgphoto needs a toolchain w/ threads, gcc >= 4.9"
+	depends on !BR2_TOOLCHAIN_HAS_THREADS || \
+		!BR2_TOOLCHAIN_GCC_AT_LEAST_4_9

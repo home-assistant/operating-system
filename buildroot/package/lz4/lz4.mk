@@ -4,11 +4,12 @@
 #
 ################################################################################
 
-LZ4_VERSION = 1.9.2
+LZ4_VERSION = 1.9.3
 LZ4_SITE = $(call github,lz4,lz4,v$(LZ4_VERSION))
 LZ4_INSTALL_STAGING = YES
 LZ4_LICENSE = BSD-2-Clause (library), GPL-2.0+ (programs)
 LZ4_LICENSE_FILES = lib/LICENSE programs/COPYING
+LZ4_CPE_ID_VENDOR = yann_collet
 
 # CVE-2014-4715 is misclassified (by our CVE tracker) as affecting version
 # 1.9.2, while in fact this issue has been fixed since lz4-r130:

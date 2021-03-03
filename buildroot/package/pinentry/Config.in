@@ -15,6 +15,17 @@ menuconfig BR2_PACKAGE_PINENTRY
 
 if BR2_PACKAGE_PINENTRY
 
+config BR2_PACKAGE_PINENTRY_EFL
+	bool "pinentry-efl"
+	depends on BR2_PACKAGE_EFL
+	depends on BR2_PACKAGE_XORG7
+	select BR2_PACKAGE_EFL_X_XLIB
+	help
+	  The pinentry-efl tool
+
+comment "pinentry-efl needs efl and X"
+	depends on !BR2_PACKAGE_EFL || !BR2_PACKAGE_XORG7
+
 config BR2_PACKAGE_PINENTRY_FLTK
 	bool "pinentry-fltk"
 	depends on BR2_USE_MMU # fltk

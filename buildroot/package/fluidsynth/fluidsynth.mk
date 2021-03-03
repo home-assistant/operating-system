@@ -66,4 +66,18 @@ else
 FLUIDSYNTH_CONF_OPTS += -Denable-readline=0
 endif
 
+ifeq ($(BR2_PACKAGE_FLUIDSYNTH_SDL2),y)
+FLUIDSYNTH_CONF_OPTS += -Denable-sdl2=1
+FLUIDSYNTH_DEPENDENCIES += sdl2
+else
+FLUIDSYNTH_CONF_OPTS += -Denable-sdl2=0
+endif
+
+ifeq ($(BR2_PACKAGE_SYSTEMD),y)
+FLUIDSYNTH_CONF_OPTS += -Denable-systemd=1
+FLUIDSYNTH_DEPENDENCIES += systemd
+else
+FLUIDSYNTH_CONF_OPTS += -Denable-systemd=0
+endif
+
 $(eval $(cmake-package))

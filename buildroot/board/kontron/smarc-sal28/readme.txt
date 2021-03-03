@@ -72,9 +72,17 @@ You will see something like this at boot time:
 [    4.569596] GPT:266272 != 7864319
 [    4.572925] GPT: Use GNU Parted to correct GPT errors.
 
-What does not work
-==================
+Updating the bootloader
+=======================
 
-For reasons unknown, the network card doesn't work if you use the original
-vendor bootloader. Board support patches for upstream u-boot are currently
-pending. Stay tuned.
+Buildroot will automatically build the u-boot bootloader. The resulting
+image is called u-boot.rom and you can find it in the images/ directory.
+
+To update the bootloader on the board you could either copy it to an
+USB thumb drive or you could put it on a TFTP server. The following
+example assumes you have the bootloader image copied to the root of
+a thumb drive:
+
+  # usb start
+  # load usb 0:1 $loadaddr u-boot.rom
+  # sf probe 0 && sf update $fileaddr 0x210000 $filesize

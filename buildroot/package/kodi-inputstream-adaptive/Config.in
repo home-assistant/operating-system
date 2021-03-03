@@ -6,4 +6,4 @@ config BR2_PACKAGE_KODI_INPUTSTREAM_ADAPTIVE
 	help
 	  Kodi inputstream addon for several manifest types
 
-	  https://github.com/peak3d/inputstream.adaptive
+	  https://github.com/xbmc/inputstream.adaptive

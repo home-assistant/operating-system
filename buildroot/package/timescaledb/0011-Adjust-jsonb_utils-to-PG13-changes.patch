@@ -1,0 +1,39 @@
+From aef77c6cf3bac36f93ba44244ecd8a23de701896 Mon Sep 17 00:00:00 2001
+From: Sven Klemm <sven@timescale.com>
+Date: Sat, 26 Sep 2020 02:14:28 +0200
+Subject: [PATCH] Adjust jsonb_utils to PG13 changes
+
+PG13 moved jsonapi.h from utils to common.
+
+https://github.com/postgres/postgres/commit/beb4699091
+
+Signed-off-by: Maxim Kochetkov <fido_max@inbox.ru>
+Fetch from: https://github.com/timescale/timescaledb/pull/2787/commits/aa1e0c8ac78ca109994269c659d52983fe49db7f.patch
+---
+ src/jsonb_utils.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/src/jsonb_utils.c b/src/jsonb_utils.c
+index 46173871..dd901a38 100644
+--- a/src/jsonb_utils.c
++++ b/src/jsonb_utils.c
+@@ -9,9 +9,15 @@
+ #include <utils/builtins.h>
+ #include <utils/json.h>
+ #include <utils/jsonb.h>
+-#include <utils/jsonapi.h>
+ 
+ #include "compat.h"
++
++#if PG13_LT
++#include <utils/jsonapi.h>
++#else
++#include <common/jsonapi.h>
++#endif
++
+ #include "export.h"
+ 
+ #include "jsonb_utils.h"
+-- 
+2.29.2
+

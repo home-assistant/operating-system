@@ -1,0 +1,12 @@
+config BR2_PACKAGE_DATATABLES_BUTTONS
+	bool "datatables-buttons"
+	depends on BR2_PACKAGE_DATATABLES
+	select BR2_PACKAGE_JSZIP
+	help
+	  The Buttons library for DataTables provides a framework with
+	  common options and API that can be used with DataTables, but
+	  is also very extensible, recognising that you will likely want
+	  to use buttons which perform an action unique to your
+	  applications.
+
+	  https://datatables.net/extensions/buttons

@@ -1,6 +1,7 @@
 config BR2_PACKAGE_HOST_SUNXI_TOOLS
 	bool "host sunxi-tools"
 	depends on BR2_arm
+	depends on BR2_HOST_GCC_AT_LEAST_4_9 # host-libusb
 	help
 	  Tools for Allwinner A10 (aka sun4i) and A13 (aka sun5i)
 	  based devices. This includes fex2bin which can be used to
@@ -10,3 +11,7 @@ config BR2_PACKAGE_HOST_SUNXI_TOOLS
 	  mainline Linux kernel version.
 
 	  http://linux-sunxi.org/Sunxi-tools
+
+comment "host sunxi-tools needs a toolchain w/ host gcc >= 4.9"
+	depends on BR2_arm
+	depends on !BR2_HOST_GCC_AT_LEAST_4_9

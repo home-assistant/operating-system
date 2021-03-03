@@ -92,9 +92,9 @@ all:
 .PHONY: all
 
 # Set and export the version string
-export BR2_VERSION := 2020.11.2
+export BR2_VERSION := 2021.02-rc3
 # Actual time the release is cut (for reproducible builds)
-BR2_VERSION_EPOCH = 1612125000
+BR2_VERSION_EPOCH = 1614447000
 
 # Save running make version since it's clobbered by the make package
 RUNNING_MAKE_VERSION := $(MAKE_VERSION)
@@ -1223,7 +1223,7 @@ check-flake8:
 	| xargs file \
 	| grep 'Python script' \
 	| cut -d':' -f1 \
-	| xargs -- python3 -m flake8 --statistics --max-line-length=132
+	| xargs -- python3 -m flake8 --statistics
 
 check-package:
 	find $(TOPDIR) -type f \( -name '*.mk' -o -name '*.hash' -o -name 'Config.*' \) \

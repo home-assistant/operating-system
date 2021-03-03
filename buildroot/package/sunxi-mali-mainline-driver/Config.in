@@ -22,4 +22,8 @@ config BR2_PACKAGE_SUNXI_MALI_MAINLINE_DRIVER
 	  - CONFIG_CMA
 	  - CONFIG_DMA_CMA
 
+	  starting from Linux Kernel >= 4.20 following options must be
+	  enabled:
+	  - CONFIG_DRM_FBDEV_LEAK_PHYS_SMEM
+
 	  https://github.com/mripard/sunxi-mali/blob/master/README.md

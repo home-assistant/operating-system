@@ -1,6 +1,5 @@
-# From https://sourceforge.net/projects/rhash/files/rhash/1.3.5/
-md5 f586644019c10c83c6b6835de4b99e74  rhash-1.3.5-src.tar.gz
-sha1 990c9a0135afe48dee4ce1dbf83578e44735f302  rhash-1.3.5-src.tar.gz
+# From https://sourceforge.net/projects/rhash/files/rhash/1.4.1/
+sha1  e1f559d060fd07bfca854c8ae3384798bd2ef266  rhash-1.4.1-src.tar.gz
 # Locally calculated
-sha256 98e0688acae29e68c298ffbcdbb0f838864105f9b2bd8857980664435b1f1f2e  rhash-1.3.5-src.tar.gz
-sha256 8cf876d3406a2eed6c17ae804c8958bd78d3a0f63c30d6e2e789ab575e9fde40  COPYING
+sha256  430c812733e69b78f07ce30a05db69563450e41e217ae618507a4ce2e144a297  rhash-1.4.1-src.tar.gz
+sha256  953e55838353335148c90b5a38a4894292680b1d4c37228ffddddbf18ce54bf5  COPYING

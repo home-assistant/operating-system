@@ -3,8 +3,6 @@ Modify the default lighttpd configuration file to have one a starting conf
   * Changed the log path to /var/log and logs filenames
   * Disable IPv6
   * Do not setuid to a user that doesn't exist on the system
-  * Disable pdf ranges fix for Adobe Reader since it uses regex and we
-    don't always have pcre support
   * Change the network backend to writev since linux-sendfile fails on buildroot
 
 Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
@@ -35,7 +33,7 @@ diff -Nura lighttpd-1.4.37.orig/doc/config/lighttpd.conf lighttpd-1.4.37/doc/con
 -var.server_root = "/srv/www"
 +var.log_root    = "/var/log"
 +var.server_root = "/var/www"
- var.state_dir   = "/var/run"
+ var.state_dir   = "/run"
  var.home_dir    = "/var/lib/lighttpd"
  var.conf_dir    = "/etc/lighttpd"
 @@ -90,7 +90,7 @@
@@ -56,9 +54,9 @@ diff -Nura lighttpd-1.4.37.orig/doc/config/lighttpd.conf lighttpd-1.4.37/doc/con
 +server.username  = "www-data"
 +server.groupname = "www-data"
  
- ## 
- ## enable core files.
-@@ -112,7 +112,7 @@
+ ##
+ ## Enable lighttpd to serve requests on sockets received from systemd
+@@ -118,7 +118,7 @@
  ##
  ## Document root
  ##
@@ -67,7 +65,7 @@ diff -Nura lighttpd-1.4.37.orig/doc/config/lighttpd.conf lighttpd-1.4.37/doc/con
  
  ##
  ## The value for the "Server:" response field.
-@@ -138,7 +138,7 @@
+@@ -144,7 +144,7 @@
  ##
  ## Path to the error log file
  ##
@@ -76,7 +74,7 @@ diff -Nura lighttpd-1.4.37.orig/doc/config/lighttpd.conf lighttpd-1.4.37/doc/con
  
  ##
  ## If you want to log to syslog you have to unset the 
-@@ -188,7 +188,7 @@
+@@ -195,7 +195,7 @@
  ## sendfile       - is recommended for small files.
  ## writev         - is recommended for sending many large files
  ##
@@ -85,16 +83,3 @@ diff -Nura lighttpd-1.4.37.orig/doc/config/lighttpd.conf lighttpd-1.4.37/doc/con
  
  ##
  ## As lighttpd is a single-threaded server, its main resource limit is
-@@ -311,9 +311,9 @@
- ## disable range requests for pdf files
- ## workaround for a bug in the Acrobat Reader plugin.
- ##
--$HTTP["url"] =~ "\.pdf$" {
--  server.range-requests = "disable"
--}
-+# $HTTP["url"] =~ "\.pdf$" {
-+#  server.range-requests = "disable"
-+# }
- 
- ##
- ## url handling modules (rewrite, redirect)

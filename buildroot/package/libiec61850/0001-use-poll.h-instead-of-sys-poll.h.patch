@@ -1,0 +1,33 @@
+From 4cad505fc98240eb66eaabfae61a9694f8158dda Mon Sep 17 00:00:00 2001
+From: Romain Naour <romain.naour@smile.fr>
+Date: Tue, 7 Apr 2020 20:58:37 +0200
+Subject: [PATCH] use <poll.h> instead of <sys/poll.h>
+
+The manpage of poll(2) states that the prototype of poll is defined
+in <poll.h>. Use that header file instead of <sys/poll.h> to allow
+compilation against musl-libc.
+
+Upstream status: Pending
+https://github.com/mz-automation/libiec61850/pull/228
+
+Signed-off-by: Romain Naour <romain.naour@smile.fr>
+---
+ hal/ethernet/linux/ethernet_linux.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/hal/ethernet/linux/ethernet_linux.c b/hal/ethernet/linux/ethernet_linux.c
+index c3ab2e2..9aa5c28 100644
+--- a/hal/ethernet/linux/ethernet_linux.c
++++ b/hal/ethernet/linux/ethernet_linux.c
+@@ -23,7 +23,7 @@
+ 
+ #include <sys/socket.h>
+ #include <sys/ioctl.h>
+-#include <sys/poll.h>
++#include <poll.h>
+ #include <linux/if_packet.h>
+ #include <linux/if_ether.h>
+ #include <linux/if_arp.h>
+-- 
+2.21.1
+

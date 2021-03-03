@@ -10,6 +10,7 @@ MARIADB_LICENSE = GPL-2.0 (server), GPL-2.0 with FLOSS exception (GPL client lib
 # Tarball no longer contains LGPL license text
 # https://jira.mariadb.org/browse/MDEV-12297
 MARIADB_LICENSE_FILES = README.md COPYING
+MARIADB_CPE_ID_VENDOR = mariadb
 MARIADB_INSTALL_STAGING = YES
 MARIADB_PROVIDES = mysql
 

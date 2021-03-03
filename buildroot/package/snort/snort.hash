@@ -1,8 +1,8 @@
 # From https://www.snort.org/downloads/snort/md5s
-md5  ec148a494cde9095fb590a51efa306de  snort-2.9.16.1.tar.gz
+md5  3fe89f22def4e9ffda01f07f816e666d  snort-2.9.17.tar.gz
 
 # Locally computed:
-sha256  e3ac45a1a3cc2c997d52d19cd92f1adf5641c3a919387adab47a4d13a9dc9f8e  snort-2.9.16.1.tar.gz
+sha256  c3b234c3922a09b0368b847ddb8d1fa371b741f032f42aa9ab53d67b428dc648  snort-2.9.17.tar.gz
 
 # Hash for license files:
 sha256  f98260a6d3e5ef4ede8a2a6b698e5ac91d64c09243f7171e1c5b17b920a835c7  LICENSE
