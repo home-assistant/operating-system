@@ -1,0 +1,4 @@
+config BR2_PACKAGE_OS_AGENT
+	bool "Home Assistant OS Agent"
+	help
+	  Install the Home Assistant OS Agent
