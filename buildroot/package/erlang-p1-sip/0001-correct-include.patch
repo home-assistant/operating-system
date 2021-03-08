@@ -1,0 +1,31 @@
+From 5ad4f871df7cbbc973708cb7380c3410b20bde1c Mon Sep 17 00:00:00 2001
+From: Philipp Huebner <debalance@debian.org>
+Date: Tue, 1 Dec 2020 23:07:51 +0100
+Subject: [PATCH] correct include
+
+This part of the code was moved into it's own project and was packaged
+separately by me. To make the build process work, this small fix is
+necessary.
+
+Author: Philipp Huebner <debalance@debian.org>
+Signed-off-by: Johan Oudinet <johan.oudinet@gmail.com>
+---
+ src/esip_socket.erl | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/esip_socket.erl b/src/esip_socket.erl
+index 4154faa..db5fa92 100644
+--- a/src/esip_socket.erl
++++ b/src/esip_socket.erl
+@@ -37,7 +37,7 @@
+ 
+ -include("esip.hrl").
+ -include("esip_lib.hrl").
+--include_lib("stun/include/stun.hrl").
++-include_lib("p1_stun/include/stun.hrl").
+ 
+ -define(TCP_SEND_TIMEOUT, 15000).
+ -define(CONNECT_TIMEOUT, 20000).
+-- 
+2.28.0
+

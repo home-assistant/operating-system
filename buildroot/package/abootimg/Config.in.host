@@ -1,0 +1,8 @@
+config BR2_PACKAGE_HOST_ABOOTIMG
+	bool "host abootimg"
+	select BR2_PACKAGE_HOST_UTIL_LINUX
+	help
+	  Tool to manipulate Android Boot Images, either on files
+	  or directly on /dev block devices.
+
+	  https://github.com/ggrandou/abootimg

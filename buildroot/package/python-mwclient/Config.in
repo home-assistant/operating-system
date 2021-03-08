@@ -3,6 +3,6 @@ config BR2_PACKAGE_PYTHON_MWCLIENT
 	select BR2_PACKAGE_PYTHON_REQUESTS_OAUTHLIB # runtime
 	select BR2_PACKAGE_PYTHON_SIX # runtime
 	help
-	  MediaWiki API client.
+	  Python client library to interface with the MediaWiki API
 
-	  https://github.com/btongminh/mwclient
+	  https://github.com/mwclient/mwclient

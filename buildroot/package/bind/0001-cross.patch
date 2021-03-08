@@ -1,15 +1,24 @@
-Use host compiler to build 'gen' since it's run when building.
+From 505cc9fcadda5607dc4c5bacb03928c0b35162a8 Mon Sep 17 00:00:00 2001
+From: Gustavo Zacarias <gustavo@zacarias.com.ar>
+Date: Wed, 4 Nov 2020 17:51:38 +0100
+Subject: [PATCH] Use host compiler to build 'gen' since it's run when
+ building.
 
 Signed-off-by: Gustavo Zacarias <gustavo@zacarias.com.ar>
 [Fabrice: updated for 9.11.10]
 Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Signed-off-by: Petr Vorel <petr.vorel@gmail.com>
+---
+ lib/dns/Makefile.in | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff -Nura bind-9.5.1-P1/lib/dns/Makefile.in bind-9.5.1-P1.gencross/lib/dns/Makefile.in
---- bind-9.5.1-P1/lib/dns/Makefile.in	2007-09-11 22:09:08.000000000 -0300
-+++ bind-9.5.1-P1.gencross/lib/dns/Makefile.in	2009-03-04 16:35:23.000000000 -0200
-@@ -160,10 +160,8 @@
+diff --git a/lib/dns/Makefile.in b/lib/dns/Makefile.in
+index 8fc4e94f26..4ac92857e0 100644
+--- a/lib/dns/Makefile.in
++++ b/lib/dns/Makefile.in
+@@ -184,10 +184,8 @@ code.h:	gen
  	./gen -s ${srcdir} > code.h || { rm -f $@ ; exit 1; }
-
+ 
  gen: gen.c
 -	${BUILD_CC} ${BUILD_CFLAGS} -I${top_srcdir}/lib/isc/include \
 -	${LFS_CFLAGS} ${LFS_LDFLAGS} \
@@ -17,7 +26,9 @@ diff -Nura bind-9.5.1-P1/lib/dns/Makefile.in bind-9.5.1-P1.gencross/lib/dns/Make
 -	${BUILD_LIBS} ${LFS_LIBS}
 +	${HOSTCC} ${HOST_CFLAGS} -I${top_srcdir}/lib/isc/include \
 +	${HOST_LDFLAGS} -o $@ ${srcdir}/gen.c
-
+ 
  timestamp: include libdns.@A@
  	touch timestamp
+-- 
+2.29.1
 

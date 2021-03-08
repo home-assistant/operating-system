@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-EJABBERD_VERSION = 19.09.1
+EJABBERD_VERSION = 20.07
 EJABBERD_SOURCE = ejabberd-$(EJABBERD_VERSION).tgz
-EJABBERD_SITE = https://www.process-one.net/downloads/ejabberd/$(EJABBERD_VERSION)
+EJABBERD_SITE = https://static.process-one.net/ejabberd/downloads/$(EJABBERD_VERSION)
 EJABBERD_LICENSE = GPL-2.0+ with OpenSSL exception
 EJABBERD_LICENSE_FILES = COPYING
 EJABBERD_DEPENDENCIES = getent openssl erlang-eimp host-erlang-lager \

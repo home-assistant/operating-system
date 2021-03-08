@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-CZMQ_VERSION = 4.2.0
+CZMQ_VERSION = 4.2.1
 CZMQ_SITE = https://github.com/zeromq/czmq/releases/download/v$(CZMQ_VERSION)
 
 CZMQ_INSTALL_STAGING = YES

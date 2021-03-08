@@ -1,0 +1,74 @@
+From 2230740c7f74678ca80da55f74ccc24f5aa6bd35 Mon Sep 17 00:00:00 2001
+Message-Id: <2230740c7f74678ca80da55f74ccc24f5aa6bd35.1614676528.git.stefan@agner.ch>
+From: Pascal Vizeli <pvizeli@syshack.ch>
+Date: Tue, 2 Jun 2020 21:20:08 +0000
+Subject: [PATCH] ARM: dts: bcm283x: add compatible picked up by U-Boot
+
+Without brcm,bcm2835-pl011 in compatible U-Boot uses the regular PL011
+driver which seems to crash when enable_uart=1 is not used. Using
+brcm,bcm2835-pl011 works around that and does not affect Linux since its
+not using that compatible string.
+
+Signed-off-by: Pascal Vizeli <pvizeli@syshack.ch>
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+---
+ arch/arm/boot/dts/bcm2711.dtsi | 8 ++++----
+ arch/arm/boot/dts/bcm283x.dtsi | 2 +-
+ 2 files changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/arch/arm/boot/dts/bcm2711.dtsi b/arch/arm/boot/dts/bcm2711.dtsi
+index b4bca5af95e1..c31b87b5bb3a 100644
+--- a/arch/arm/boot/dts/bcm2711.dtsi
++++ b/arch/arm/boot/dts/bcm2711.dtsi
+@@ -127,7 +127,7 @@ rng@7e104000 {
+ 		};
+ 
+ 		uart2: serial@7e201400 {
+-			compatible = "arm,pl011", "arm,primecell";
++			compatible = "brcm,bcm2835-pl011", "arm,pl011", "arm,primecell";
+ 			reg = <0x7e201400 0x200>;
+ 			interrupts = <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&clocks BCM2835_CLOCK_UART>,
+@@ -138,7 +138,7 @@ uart2: serial@7e201400 {
+ 		};
+ 
+ 		uart3: serial@7e201600 {
+-			compatible = "arm,pl011", "arm,primecell";
++			compatible = "brcm,bcm2835-pl011", "arm,pl011", "arm,primecell";
+ 			reg = <0x7e201600 0x200>;
+ 			interrupts = <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&clocks BCM2835_CLOCK_UART>,
+@@ -149,7 +149,7 @@ uart3: serial@7e201600 {
+ 		};
+ 
+ 		uart4: serial@7e201800 {
+-			compatible = "arm,pl011", "arm,primecell";
++			compatible = "brcm,bcm2835-pl011", "arm,pl011", "arm,primecell";
+ 			reg = <0x7e201800 0x200>;
+ 			interrupts = <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&clocks BCM2835_CLOCK_UART>,
+@@ -160,7 +160,7 @@ uart4: serial@7e201800 {
+ 		};
+ 
+ 		uart5: serial@7e201a00 {
+-			compatible = "arm,pl011", "arm,primecell";
++			compatible = "brcm,bcm2835-pl011", "arm,pl011", "arm,primecell";
+ 			reg = <0x7e201a00 0x200>;
+ 			interrupts = <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&clocks BCM2835_CLOCK_UART>,
+diff --git a/arch/arm/boot/dts/bcm283x.dtsi b/arch/arm/boot/dts/bcm283x.dtsi
+index 346838ee9d21..7f289fbca28c 100644
+--- a/arch/arm/boot/dts/bcm283x.dtsi
++++ b/arch/arm/boot/dts/bcm283x.dtsi
+@@ -300,7 +300,7 @@ uart1_ctsrts_gpio42: uart1_ctsrts_gpio42 {
+ 		};
+ 
+ 		uart0: serial@7e201000 {
+-			compatible = "arm,pl011", "arm,primecell";
++			compatible = "brcm,bcm2835-pl011", "arm,pl011", "arm,primecell";
+ 			reg = <0x7e201000 0x200>;
+ 			interrupts = <2 25>;
+ 			clocks = <&clocks BCM2835_CLOCK_UART>,
+-- 
+2.30.1
+

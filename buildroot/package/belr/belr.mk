@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-BELR_VERSION = 4.3.1
+BELR_VERSION = 4.4.8
 BELR_SITE = https://gitlab.linphone.org/BC/public/belr/-/archive/$(BELR_VERSION)
 BELR_LICENSE = GPL-3.0+
 BELR_LICENSE_FILES = LICENSE.txt

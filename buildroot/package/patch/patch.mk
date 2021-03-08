@@ -9,6 +9,7 @@ PATCH_SOURCE = patch-$(PATCH_VERSION).tar.xz
 PATCH_SITE = $(BR2_GNU_MIRROR)/patch
 PATCH_LICENSE = GPL-3.0+
 PATCH_LICENSE_FILES = COPYING
+PATCH_CPE_ID_VENDOR = gnu
 
 # 0001-Fix-segfault-with-mangled-rename-patch.patch
 PATCH_IGNORE_CVES += CVE-2018-6951

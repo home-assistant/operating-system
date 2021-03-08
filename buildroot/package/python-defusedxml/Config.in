@@ -1,0 +1,6 @@
+config BR2_PACKAGE_PYTHON_DEFUSEDXML
+	bool "python-defusedxml"
+	help
+	  XML bomb protection for Python stdlib modules
+
+	  https://pypi.org/project/defusedxml/

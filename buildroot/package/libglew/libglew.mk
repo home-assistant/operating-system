@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-LIBGLEW_VERSION = 2.1.0
+LIBGLEW_VERSION = 2.2.0
 LIBGLEW_SOURCE = glew-$(LIBGLEW_VERSION).tgz
-LIBGLEW_SITE = http://sourceforge.net/projects/glew/files/glew/$(LIBGLEW_VERSION)
+LIBGLEW_SITE = https://github.com/nigels-com/glew/releases/download/glew-$(LIBGLEW_VERSION)
 LIBGLEW_LICENSE = BSD-3-Clause, MIT
 LIBGLEW_LICENSE_FILES = LICENSE.txt
 LIBGLEW_INSTALL_STAGING = YES

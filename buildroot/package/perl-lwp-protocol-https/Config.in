@@ -8,7 +8,7 @@ config BR2_PACKAGE_PERL_LWP_PROTOCOL_HTTPS
 	help
 	  Provide https support for LWP::UserAgent.
 
-	  https://metacpan.org/release/LWP-Protocol-https
+	  https://github.com/libwww-perl/LWP-Protocol-https
 
 comment "perl-lwp-protocol-https needs a toolchain w/ dynamic library"
 	depends on BR2_STATIC_LIBS

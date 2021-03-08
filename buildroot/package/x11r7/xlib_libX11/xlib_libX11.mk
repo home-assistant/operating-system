@@ -4,11 +4,13 @@
 #
 ################################################################################
 
-XLIB_LIBX11_VERSION = 1.6.12
+XLIB_LIBX11_VERSION = 1.7.0
 XLIB_LIBX11_SOURCE = libX11-$(XLIB_LIBX11_VERSION).tar.bz2
 XLIB_LIBX11_SITE = https://xorg.freedesktop.org/archive/individual/lib
 XLIB_LIBX11_LICENSE = MIT
 XLIB_LIBX11_LICENSE_FILES = COPYING
+XLIB_LIBX11_CPE_ID_VENDOR = x.org
+XLIB_LIBX11_CPE_ID_PRODUCT = libx11
 XLIB_LIBX11_INSTALL_STAGING = YES
 XLIB_LIBX11_DEPENDENCIES = \
 	libxcb \

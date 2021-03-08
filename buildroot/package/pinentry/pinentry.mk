@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-PINENTRY_VERSION = 1.1.0
+PINENTRY_VERSION = 1.1.1
 PINENTRY_SOURCE = pinentry-$(PINENTRY_VERSION).tar.bz2
 PINENTRY_SITE = https://www.gnupg.org/ftp/gcrypt/pinentry
 PINENTRY_LICENSE = GPL-2.0+
@@ -22,18 +22,19 @@ ifeq ($(BR2_TOOLCHAIN_HAS_LIBATOMIC),y)
 PINENTRY_CONF_ENV += LIBS=-latomic
 endif
 
-# build with X if available
-ifeq ($(BR2_PACKAGE_XORG7),y)
-PINENTRY_CONF_OPTS += --with-x
-else
-PINENTRY_CONF_OPTS += --without-x
-endif
-
 ifeq ($(BR2_PACKAGE_LIBSECRET),y)
 PINENTRY_CONF_OPTS += --enable-libsecret
 PINENTRY_DEPENDENCIES += libsecret
 else
 PINENTRY_CONF_OPTS += --disable-libsecret
+endif
+
+# pinentry-efl backend
+ifeq ($(BR2_PACKAGE_PINENTRY_EFL),y)
+PINENTRY_CONF_OPTS += --enable-pinentry-efl
+PINENTRY_DEPENDENCIES += efl
+else
+PINENTRY_CONF_OPTS += --disable-pinentry-efl
 endif
 
 # pinentry-fltk backend

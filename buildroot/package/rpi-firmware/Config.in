@@ -58,7 +58,17 @@ config BR2_PACKAGE_RPI_FIRMWARE_CD
 	  The cut-down firmware, for emergency situations, with only
 	  features required to boot a Linux kernel.
 
+config BR2_PACKAGE_RPI_FIRMWARE_CUSTOM_LIST
+	bool "deploy firmware files from list"
+	help
+	  Deploy firmware files as listed.
+
 endchoice
+
+config BR2_PACKAGE_RPI_FIRMWARE_LIST
+	string
+	default "start.elf start_x.elf start_cd.elf fixup.dat fixup_x.dat fixup_cd.dat" if BR2_PACKAGE_RPI_FIRMWARE_VARIANT_PI
+	default "start4.elf start4x.elf start4cd.elf fixup4.dat fixup4x.dat fixup4cd.dat" if BR2_PACKAGE_RPI_FIRMWARE_VARIANT_PI4
 
 config BR2_PACKAGE_RPI_FIRMWARE_BOOT
 	string

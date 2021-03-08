@@ -1,6 +1,7 @@
 config BR2_PACKAGE_SISPMCTL
 	bool "sispmctl"
 	depends on BR2_TOOLCHAIN_HAS_THREADS # libusb
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # libusb
 	depends on BR2_USE_WCHAR
 	depends on BR2_USE_MMU # fork()
 	select BR2_PACKAGE_LIBUSB
@@ -13,6 +14,7 @@ config BR2_PACKAGE_SISPMCTL
 
 	  http://sispmctl.sourceforge.net/
 
-comment "sispmctl needs a toolchain w/ threads, wchar"
-	depends on !BR2_TOOLCHAIN_HAS_THREADS || !BR2_USE_WCHAR
+comment "sispmctl needs a toolchain w/ threads, wchar, gcc >= 4.9"
+	depends on !BR2_TOOLCHAIN_HAS_THREADS || !BR2_USE_WCHAR || \
+		!BR2_TOOLCHAIN_GCC_AT_LEAST_4_9
 	depends on BR2_USE_MMU

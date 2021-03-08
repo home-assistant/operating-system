@@ -4,12 +4,13 @@
 #
 ################################################################################
 
-LIBBLURAY_VERSION = 1.2.0
+LIBBLURAY_VERSION = 1.2.1
 LIBBLURAY_SITE = http://download.videolan.org/pub/videolan/libbluray/$(LIBBLURAY_VERSION)
 LIBBLURAY_SOURCE = libbluray-$(LIBBLURAY_VERSION).tar.bz2
 LIBBLURAY_INSTALL_STAGING = YES
 LIBBLURAY_LICENSE = LGPL-2.1+
 LIBBLURAY_LICENSE_FILES = COPYING
+LIBBLURAY_CPE_ID_VENDOR = videolan
 LIBBLURAY_DEPENDENCIES = host-pkgconf
 
 LIBBLURAY_CONF_OPTS = --disable-bdjava-jar

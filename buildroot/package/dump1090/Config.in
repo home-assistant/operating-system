@@ -1,11 +1,13 @@
 config BR2_PACKAGE_DUMP1090
 	bool "dump1090"
 	depends on BR2_TOOLCHAIN_HAS_THREADS # librtlsdr
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # librtlsdr -> libusb
 	select BR2_PACKAGE_LIBRTLSDR
 	help
 	  Dump1090 is a simple Mode S decoder for RTLSDR devices
 
 	  https://github.com/MalcolmRobb/dump1090
 
-comment "dump1090 needs a toolchain w/ threads"
-	depends on !BR2_TOOLCHAIN_HAS_THREADS
+comment "dump1090 needs a toolchain w/ threads, gcc >= 4.9"
+	depends on !BR2_TOOLCHAIN_HAS_THREADS || \
+		!BR2_TOOLCHAIN_GCC_AT_LEAST_4_9

@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-CLINFO_VERSION = 2.2.18.03.26
+CLINFO_VERSION = 3.0.20.11.20
 CLINFO_SITE = $(call github,Oblomov,clinfo,$(CLINFO_VERSION))
 CLINFO_LICENSE = CC0-1.0
 CLINFO_LICENSE_FILES = legalcode.txt LICENSE

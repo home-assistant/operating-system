@@ -1,0 +1,20 @@
+config BR2_PACKAGE_SSDP_RESPONDER
+	bool "ssdp-responder"
+	depends on BR2_USE_MMU
+	help
+	  Simple Service Discovery Protocol daemon (SSDP) for networked
+	  Linux and UNIX devices. Useful in any setup, big or small, but
+	  targeted more at embedded systems that need to announce
+	  themselves to Windows systems.
+
+	  ssdpd is a stand-alone UNIX, no external dependencies but the
+	  standard C library.  It has a built-in web server for serving
+	  the UPnP XML description which Windows use to present the
+	  icon, by default an InternetGatewayDevice is announced.
+
+	  Also included is ssdp-scan, a tool similar to mdns-scan, which
+	  continuously scans for SSDP capable hosts on the network.
+	  Take care only to use for debugging since it scans the network
+	  quite aggressively.
+
+	  https://github.com/troglobit/ssdp-responder/

@@ -5,7 +5,7 @@
 ################################################################################
 
 NCMPC_VERSION_MAJOR = 0
-NCMPC_VERSION = $(NCMPC_VERSION_MAJOR).39
+NCMPC_VERSION = $(NCMPC_VERSION_MAJOR).42
 NCMPC_SOURCE = ncmpc-$(NCMPC_VERSION).tar.xz
 NCMPC_SITE = http://www.musicpd.org/download/ncmpc/$(NCMPC_VERSION_MAJOR)
 NCMPC_DEPENDENCIES = \
@@ -16,6 +16,7 @@ NCMPC_DEPENDENCIES = \
 	$(TARGET_NLS_DEPENDENCIES)
 NCMPC_LICENSE = GPL-2.0+
 NCMPC_LICENSE_FILES = COPYING
+NCMPC_CPE_ID_VALID = YES
 
 NCMPC_CONF_OPTS = \
 	-Dcurses=ncurses \

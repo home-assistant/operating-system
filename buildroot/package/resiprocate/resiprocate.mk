@@ -9,6 +9,7 @@ RESIPROCATE_SITE =  https://www.resiprocate.org/files/pub/reSIProcate/releases
 # For complete details see https://www.resiprocate.org/License
 RESIPROCATE_LICENSE = VSL-1.0, BSD-3-Clause
 RESIPROCATE_LICENSE_FILES = COPYING
+RESIPROCATE_CPE_ID_VENDOR = resiprocate
 RESIPROCATE_INSTALL_STAGING = YES
 
 # Utilize c-ares from buildroot instead built in ARES library

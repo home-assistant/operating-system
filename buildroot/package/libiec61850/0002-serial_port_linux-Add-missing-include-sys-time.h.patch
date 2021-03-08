@@ -1,0 +1,32 @@
+From 661405eb6066b67dfe51d5ff9635e29f86bdd238 Mon Sep 17 00:00:00 2001
+From: Romain Naour <romain.naour@smile.fr>
+Date: Tue, 7 Apr 2020 21:02:54 +0200
+Subject: [PATCH] serial_port_linux: Add missing include sys/time.h
+
+POSIX says `struct timeval` is defined if <sys/time.h> is included.
+
+Adding this header allow to build against musl-libc.
+
+Upstream status: Pending
+https://github.com/mz-automation/libiec61850/pull/228
+
+Signed-off-by: Romain Naour <romain.naour@smile.fr>
+---
+ hal/serial/linux/serial_port_linux.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/hal/serial/linux/serial_port_linux.c b/hal/serial/linux/serial_port_linux.c
+index e6308c0..15e5794 100644
+--- a/hal/serial/linux/serial_port_linux.c
++++ b/hal/serial/linux/serial_port_linux.c
+@@ -29,6 +29,7 @@
+ #include <termios.h>
+ #include <fcntl.h>
+ #include <unistd.h>
++#include <sys/time.h>
+ 
+ #include "hal_serial.h"
+ #include "hal_time.h"
+-- 
+2.21.1
+

@@ -1,6 +1,7 @@
 config BR2_PACKAGE_LIBFTDI1
 	bool "libftdi1"
 	depends on BR2_TOOLCHAIN_HAS_THREADS # libusb
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # libusb
 	select BR2_PACKAGE_LIBUSB
 	help
 	  Userspace access to FTDI USB interface chips (version 1.x)
@@ -33,5 +34,6 @@ config BR2_PACKAGE_LIBFTDI1_FDTI_EEPROM
 
 endif # BR2_PACKAGE_LIBFTDI1
 
-comment "libftdi1 needs a toolchain w/ threads"
-	depends on !BR2_TOOLCHAIN_HAS_THREADS
+comment "libftdi1 needs a toolchain w/ threads, gcc >= 4.9"
+	depends on !BR2_TOOLCHAIN_HAS_THREADS || \
+		!BR2_TOOLCHAIN_GCC_AT_LEAST_4_9

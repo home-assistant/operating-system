@@ -15,7 +15,6 @@ QT5WEBENGINE_CHROMIUM_LICENSE_FILES = \
 	src/3rdparty/chromium/base/third_party/valgrind/LICENSE \
 	src/3rdparty/chromium/base/third_party/xdg_mime/LICENSE \
 	src/3rdparty/chromium/base/third_party/xdg_user_dirs/LICENSE \
-	src/3rdparty/chromium/build/fuchsia/fidlgen_js/third_party/enum34/LICENSE \
 	src/3rdparty/chromium/buildtools/LICENSE \
 	src/3rdparty/chromium/LICENSE \
 	src/3rdparty/chromium/LICENSE.chromium_os \
@@ -31,6 +30,7 @@ QT5WEBENGINE_CHROMIUM_LICENSE_FILES = \
 	src/3rdparty/chromium/third_party/angle/src/common/third_party/xxhash/LICENSE \
 	src/3rdparty/chromium/third_party/angle/src/third_party/compiler/LICENSE \
 	src/3rdparty/chromium/third_party/angle/src/third_party/libXNVCtrl/LICENSE \
+	src/3rdparty/chromium/third_party/angle/src/third_party/volk/LICENSE.md \
 	src/3rdparty/chromium/third_party/angle/third_party/rapidjson/src/bin/jsonschema/LICENSE \
 	src/3rdparty/chromium/third_party/angle/third_party/rapidjson/src/contrib/natvis/LICENSE \
 	src/3rdparty/chromium/third_party/angle/third_party/rapidjson/src/license.txt \
@@ -40,7 +40,6 @@ QT5WEBENGINE_CHROMIUM_LICENSE_FILES = \
 	src/3rdparty/chromium/third_party/angle/tools/flex-bison/third_party/m4sugar/LICENSE \
 	src/3rdparty/chromium/third_party/angle/tools/flex-bison/third_party/skeletons/LICENSE \
 	src/3rdparty/chromium/third_party/angle/util/windows/third_party/StackWalker/LICENSE \
-	src/3rdparty/chromium/third_party/apk-patch-size-estimator/LICENSE \
 	src/3rdparty/chromium/third_party/apple_apsl/LICENSE \
 	src/3rdparty/chromium/third_party/arcore-android-sdk-client/LICENSE \
 	src/3rdparty/chromium/third_party/arcore-android-sdk/LICENSE \
@@ -111,14 +110,17 @@ QT5WEBENGINE_CHROMIUM_LICENSE_FILES = \
 	src/3rdparty/chromium/third_party/dawn/LICENSE \
 	src/3rdparty/chromium/third_party/decklink/LICENSE \
 	src/3rdparty/chromium/third_party/devscripts/COPYING \
-	src/3rdparty/chromium/third_party/devtools-frontend/src/front_end/audits/lighthouse/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-frontend/src/front_end/audits_worker/lighthouse/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/front_end/cm/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/front_end/cm/LICENSE_python \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/front_end/cm_modes/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/front_end/dagre_layout/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/front_end/formatter_worker/acorn/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/front_end/sdk/wasm_source_map/LICENSES.deps \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/front_end/third_party/fabricjs/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/front_end/third_party/lighthouse/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/front_end/third_party/lit-html/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/front_end/third_party/lit-html/package/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/front_end/third_party/wasmparser/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/abbrev/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/accepts/LICENSE \
@@ -128,9 +130,9 @@ QT5WEBENGINE_CHROMIUM_LICENSE_FILES = \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/ajv/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/amdefine/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/ansi-colors/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/ansi-escapes/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/ansi-regex/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/ansi-styles/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/ansi-escapes/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/ansi-regex/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/ansi-styles/license \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/ansi-wrap/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/anymatch/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/append-transform/license \
@@ -142,6 +144,7 @@ QT5WEBENGINE_CHROMIUM_LICENSE_FILES = \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/assert/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/assign-symbols/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/astral-regex/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/ast-types/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/async/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/async-limiter/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/@babel/code-frame/LICENSE \
@@ -185,13 +188,13 @@ QT5WEBENGINE_CHROMIUM_LICENSE_FILES = \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/camelcase-keys/license \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/camelcase/license \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/chai/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/chalk/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/chalk/license \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/chardet/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/check-error/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/chokidar/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/chokidar/node_modules/glob-parent/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/cipher-base/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/cli-cursor/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/cli-cursor/license \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/cliui/LICENSE.txt \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/cli-width/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/clone/LICENSE \
@@ -240,6 +243,7 @@ QT5WEBENGINE_CHROMIUM_LICENSE_FILES = \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/dezalgo/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/diffie-hellman/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/diff/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/diff-match-patch/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/di/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/doctrine/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/doctrine/LICENSE.closure-compiler \
@@ -262,10 +266,12 @@ QT5WEBENGINE_CHROMIUM_LICENSE_FILES = \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/es6-promise/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/es-abstract/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/escape-html/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/escape-string-regexp/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/escape-string-regexp/license \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/escodegen/LICENSE.BSD \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/escodegen/node_modules/esprima/LICENSE.BSD \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/eslint/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/eslint-plugin-mocha/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/eslint-plugin-rulesdir/LICENSE.md \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/eslint-scope/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/eslint-utils/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/eslint-visitor-keys/LICENSE \
@@ -289,7 +295,7 @@ QT5WEBENGINE_CHROMIUM_LICENSE_FILES = \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/fast-json-stable-stringify/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/fast-levenshtein/LICENSE.md \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/fd-slicer/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/figures/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/figures/license \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/file-entry-cache/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/fileset/LICENSE-MIT \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/fill-range/LICENSE \
@@ -298,6 +304,7 @@ QT5WEBENGINE_CHROMIUM_LICENSE_FILES = \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/finalhandler/node_modules/ms/license.md \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/find-up/license \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/flat-cache/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/flat-cache/node_modules/rimraf/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/flat/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/flatted/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/follow-redirects/LICENSE \
@@ -310,14 +317,14 @@ QT5WEBENGINE_CHROMIUM_LICENSE_FILES = \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/get-caller-file/LICENSE.md \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/get-func-name/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/get-stream/license \
-	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/globals/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/globals/license \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/glob/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/glob-parent/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/glob-parent/node_modules/is-glob/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/graceful-fs/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/handlebars/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/has-binary2/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/has-flag/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/has-flag/license \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/hash-base/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/has/LICENSE-MIT \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/has-symbols/LICENSE \
@@ -352,7 +359,7 @@ QT5WEBENGINE_CHROMIUM_LICENSE_FILES = \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/is-extendable/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/is-extglob/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/is-finite/license \
-	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/is-fullwidth-code-point/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/is-fullwidth-code-point/license \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/is-generator-function/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/is-glob/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/is-nan/LICENSE \
@@ -364,6 +371,7 @@ QT5WEBENGINE_CHROMIUM_LICENSE_FILES = \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/is-stream/license \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/is-symbol/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/istanbul-api/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/istanbul-diff/node_modules/minimist/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/istanbul-lib-coverage/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/istanbul-lib-hook/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/istanbul-lib-instrument/LICENSE \
@@ -371,6 +379,7 @@ QT5WEBENGINE_CHROMIUM_LICENSE_FILES = \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/istanbul-lib-report/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/istanbul-lib-report/node_modules/supports-color/license \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/istanbul-lib-source-maps/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/istanbul-lib-source-maps/node_modules/rimraf/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/istanbul/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/istanbul/node_modules/async/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/istanbul/node_modules/escodegen/LICENSE.BSD \
@@ -402,11 +411,14 @@ QT5WEBENGINE_CHROMIUM_LICENSE_FILES = \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/karma/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/karma-mocha/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/karma-mocha/node_modules/minimist/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/karma/node_modules/rimraf/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/karma-sourcemap-loader/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/karma-typescript/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/karma-typescript/node_modules/acorn/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/karma-typescript/node_modules/async/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/karma-typescript/node_modules/source-map/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/karma-typescript/node_modules/tmp/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/karma-typescript/node_modules/tmp/node_modules/rimraf/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/lcid/license \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/levn/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/license-checker/bin/license-checker \
@@ -420,6 +432,7 @@ QT5WEBENGINE_CHROMIUM_LICENSE_FILES = \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/load-json-file/node_modules/strip-bom/license \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/locate-path/license \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/locate-path/node_modules/path-exists/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/lodash-deep/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/lodash/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/lodash.memoize/LICENSE.txt \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/log4js/LICENSE \
@@ -438,7 +451,7 @@ QT5WEBENGINE_CHROMIUM_LICENSE_FILES = \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/mime-db/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/mime/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/mime-types/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/mimic-fn/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/mimic-fn/license \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/minimalistic-assert/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/minimatch/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/minimist/LICENSE \
@@ -469,8 +482,9 @@ QT5WEBENGINE_CHROMIUM_LICENSE_FILES = \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/object-inspect/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/object-is/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/object-keys/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/omit-deep-lodash/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/once/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/onetime/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/onetime/license \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/on-finished/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/optimist/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/optimist/node_modules/wordwrap/LICENSE \
@@ -479,7 +493,7 @@ QT5WEBENGINE_CHROMIUM_LICENSE_FILES = \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/osenv/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/os-homedir/license \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/os-locale/license \
-	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/os-tmpdir/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/os-tmpdir/license \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/pad/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/pako/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/parent-module/license \
@@ -491,7 +505,7 @@ QT5WEBENGINE_CHROMIUM_LICENSE_FILES = \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/path-browserify/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/path-dirname/license \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/path-exists/license \
-	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/path-is-absolute/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/path-is-absolute/license \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/path-key/license \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/path-parse/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/path-type/license \
@@ -510,6 +524,7 @@ QT5WEBENGINE_CHROMIUM_LICENSE_FILES = \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/p-locate/license \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/plugin-error/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/prelude-ls/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/private/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/process/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/process-nextick-args/license.md \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/progress/LICENSE \
@@ -519,10 +534,12 @@ QT5WEBENGINE_CHROMIUM_LICENSE_FILES = \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/pump/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/punycode/LICENSE-MIT.txt \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/puppeteer/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/puppeteer/node_modules/rimraf/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/puppeteer/node_modules/ws/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/qs/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/querystring-es3/License.md \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/querystring/License.md \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/ramda/LICENSE.txt \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/randombytes/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/randomfill/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/range-parser/LICENSE \
@@ -534,6 +551,8 @@ QT5WEBENGINE_CHROMIUM_LICENSE_FILES = \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/read-package-json/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/read-pkg/license \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/read-pkg-up/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/recast/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/recast/node_modules/esprima/LICENSE.BSD \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/redent/license \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/regexpp/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/remap-istanbul/LICENSE \
@@ -541,9 +560,9 @@ QT5WEBENGINE_CHROMIUM_LICENSE_FILES = \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/require-directory/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/require-main-filename/LICENSE.txt \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/requires-port/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/resolve-from/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/resolve-from/license \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/resolve/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/restore-cursor/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/restore-cursor/license \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/rfdc/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/rimraf/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/ripemd160/LICENSE \
@@ -560,10 +579,10 @@ QT5WEBENGINE_CHROMIUM_LICENSE_FILES = \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/setimmediate/LICENSE.txt \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/setprototypeof/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/sha.js/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/shebang-command/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/shebang-regex/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/shebang-command/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/shebang-regex/license \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/signal-exit/LICENSE.txt \
-	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/slice-ansi/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/slice-ansi/license \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/slide/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/socket.io-adapter/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/socket.io-client/LICENSE \
@@ -593,13 +612,13 @@ QT5WEBENGINE_CHROMIUM_LICENSE_FILES = \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/string_decoder/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/string.prototype.trimleft/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/string.prototype.trimright/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/string-width/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/strip-ansi/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/string-width/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/strip-ansi/license \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/strip-bom/license \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/strip-eof/license \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/strip-indent/license \
-	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/strip-json-comments/LICENSE \
-	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/supports-color/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/strip-json-comments/license \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/supports-color/license \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/table/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/table/node_modules/ansi-regex/license \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/table/node_modules/string-width/license \
@@ -616,6 +635,7 @@ QT5WEBENGINE_CHROMIUM_LICENSE_FILES = \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/treeify/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/trim-newlines/license \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/tslib/LICENSE.txt \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/tsutils/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/tty-browserify/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/type-check/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/typedarray/LICENSE \
@@ -623,10 +643,22 @@ QT5WEBENGINE_CHROMIUM_LICENSE_FILES = \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/type-is/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/@types/chai/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/@types/color-name/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/@typescript-eslint/eslint-plugin/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/@typescript-eslint/eslint-plugin/node_modules/regexpp/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/@typescript-eslint/experimental-utils/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/@typescript-eslint/experimental-utils/node_modules/eslint-scope/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/@typescript-eslint/parser/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/@typescript-eslint/typescript-estree/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/@typescript-eslint/typescript-estree/node_modules/glob/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/@typescript-eslint/typescript-estree/node_modules/semver/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/typescript/LICENSE.txt \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/@types/eslint-visitor-keys/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/@types/estree/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/@types/filesystem/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/@types/json-schema/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/@types/mocha/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/@types/node/LICENSE \
+	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/@types/puppeteer/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/uglify-js/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/ultron/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/node_modules/universalify/LICENSE \
@@ -691,6 +723,7 @@ QT5WEBENGINE_CHROMIUM_LICENSE_FILES = \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/third_party/axe-core/LICENSE \
 	src/3rdparty/chromium/third_party/devtools-frontend/src/third_party/pyjson5/src/LICENSE \
 	src/3rdparty/chromium/third_party/dom_distiller_js/LICENSE \
+	src/3rdparty/chromium/third_party/dpkg-shlibdeps/LICENSE \
 	src/3rdparty/chromium/third_party/emoji-segmenter/LICENSE \
 	src/3rdparty/chromium/third_party/emoji-segmenter/src/LICENSE \
 	src/3rdparty/chromium/third_party/espresso/LICENSE \
@@ -715,8 +748,6 @@ QT5WEBENGINE_CHROMIUM_LICENSE_FILES = \
 	src/3rdparty/chromium/third_party/fontconfig/src/COPYING \
 	src/3rdparty/chromium/third_party/freetype/src/docs/LICENSE.TXT \
 	src/3rdparty/chromium/third_party/fuchsia-sdk/LICENSE \
-	src/3rdparty/chromium/third_party/gestures/gestures/LICENSE \
-	src/3rdparty/chromium/third_party/gestures/LICENSE \
 	src/3rdparty/chromium/third_party/gif_player/LICENSE \
 	src/3rdparty/chromium/third_party/glfw/src/LICENSE.md \
 	src/3rdparty/chromium/third_party/glslang/LICENSE \
@@ -726,12 +757,12 @@ QT5WEBENGINE_CHROMIUM_LICENSE_FILES = \
 	src/3rdparty/chromium/third_party/googletest/src/googletest/LICENSE \
 	src/3rdparty/chromium/third_party/googletest/src/LICENSE \
 	src/3rdparty/chromium/third_party/google-truth/LICENSE \
-	src/3rdparty/chromium/third_party/gson/LICENSE \
 	src/3rdparty/chromium/third_party/guava/LICENSE \
 	src/3rdparty/chromium/third_party/gvr-android-keyboard/LICENSE \
 	src/3rdparty/chromium/third_party/gvr-android-sdk/LICENSE \
 	src/3rdparty/chromium/third_party/hamcrest/LICENSE \
 	src/3rdparty/chromium/third_party/harfbuzz-ng/src/COPYING \
+	src/3rdparty/chromium/third_party/harfbuzz-ng/src/src/ms-use/COPYING \
 	src/3rdparty/chromium/third_party/hunspell/COPYING \
 	src/3rdparty/chromium/third_party/hunspell/COPYING.LESSER \
 	src/3rdparty/chromium/third_party/hunspell/COPYING.MPL \
@@ -744,10 +775,10 @@ QT5WEBENGINE_CHROMIUM_LICENSE_FILES = \
 	src/3rdparty/chromium/third_party/ijar/LICENSE \
 	src/3rdparty/chromium/third_party/ink/LICENSE \
 	src/3rdparty/chromium/third_party/inspector_protocol/LICENSE \
-	src/3rdparty/chromium/third_party/intellij/LICENSE \
 	src/3rdparty/chromium/third_party/isimpledom/LICENSE \
 	src/3rdparty/chromium/third_party/jacoco/LICENSE \
 	src/3rdparty/chromium/third_party/javalang/LICENSE \
+	src/3rdparty/chromium/third_party/jetifier_standalone/LICENSE \
 	src/3rdparty/chromium/third_party/jinja2/LICENSE \
 	src/3rdparty/chromium/third_party/jsoncpp/LICENSE \
 	src/3rdparty/chromium/third_party/jsoncpp/source/LICENSE \
@@ -764,11 +795,10 @@ QT5WEBENGINE_CHROMIUM_LICENSE_FILES = \
 	src/3rdparty/chromium/third_party/libaom/source/libaom/third_party/vector/LICENSE \
 	src/3rdparty/chromium/third_party/libaom/source/libaom/third_party/x86inc/LICENSE \
 	src/3rdparty/chromium/third_party/libcxx-pretty-printers/LICENSE \
-	src/3rdparty/chromium/third_party/libevdev/LICENSE \
+	src/3rdparty/chromium/third_party/libgav1/src/LICENSE \
 	src/3rdparty/chromium/third_party/libgifcodec/LICENSE.md \
 	src/3rdparty/chromium/third_party/libipp/LICENSE \
 	src/3rdparty/chromium/third_party/libjingle_xmpp/LICENSE \
-	src/3rdparty/chromium/third_party/libjpeg/LICENSE \
 	src/3rdparty/chromium/third_party/libjpeg_turbo/LICENSE.md \
 	src/3rdparty/chromium/third_party/libovr/LICENSE \
 	src/3rdparty/chromium/third_party/libpng/LICENSE \
@@ -817,6 +847,7 @@ QT5WEBENGINE_CHROMIUM_LICENSE_FILES = \
 	src/3rdparty/chromium/third_party/one_euro_filter/LICENSE \
 	src/3rdparty/chromium/third_party/openh264/src/LICENSE \
 	src/3rdparty/chromium/third_party/openscreen/src/LICENSE \
+	src/3rdparty/chromium/third_party/openscreen/src/third_party/mozilla/LICENSE.txt \
 	src/3rdparty/chromium/third_party/openvr/src/LICENSE \
 	src/3rdparty/chromium/third_party/opus/src/COPYING \
 	src/3rdparty/chromium/third_party/opus/src/LICENSE_PLEASE_READ.txt \
@@ -847,7 +878,7 @@ QT5WEBENGINE_CHROMIUM_LICENSE_FILES = \
 	src/3rdparty/chromium/third_party/pymock/LICENSE.txt \
 	src/3rdparty/chromium/third_party/pystache/LICENSE \
 	src/3rdparty/chromium/third_party/Python-Markdown/LICENSE.md \
-	src/3rdparty/chromium/third_party/pywebsocket/src/LICENSE \
+	src/3rdparty/chromium/third_party/pywebsocket3/src/LICENSE \
 	src/3rdparty/chromium/third_party/qcms/src/COPYING \
 	src/3rdparty/chromium/third_party/quic_trace/src/LICENSE \
 	src/3rdparty/chromium/third_party/quic_trace/src/third_party/fonts/LICENSE \
@@ -863,13 +894,14 @@ QT5WEBENGINE_CHROMIUM_LICENSE_FILES = \
 	src/3rdparty/chromium/third_party/robolectric/licenses/javolution.license.txt \
 	src/3rdparty/chromium/third_party/robolectric/licenses/pivotal.labs.license.txt \
 	src/3rdparty/chromium/third_party/s2cellid/LICENSE \
-	src/3rdparty/chromium/third_party/sfntly/COPYING.txt \
-	src/3rdparty/chromium/third_party/sfntly/src/cpp/COPYING.txt \
+	src/3rdparty/chromium/third_party/schema_org/LICENSE \
 	src/3rdparty/chromium/third_party/shaderc/src/LICENSE \
 	src/3rdparty/chromium/third_party/shaderc/src/third_party/LICENSE.glslang \
 	src/3rdparty/chromium/third_party/shaderc/src/third_party/LICENSE.spirv-tools \
 	src/3rdparty/chromium/third_party/simplejson/LICENSE.txt \
 	src/3rdparty/chromium/third_party/sinonjs/LICENSE \
+	src/3rdparty/chromium/third_party/six/LICENSE \
+	src/3rdparty/chromium/third_party/six/src/LICENSE \
 	src/3rdparty/chromium/third_party/skia/include/third_party/skcms/LICENSE \
 	src/3rdparty/chromium/third_party/skia/include/third_party/vulkan/LICENSE \
 	src/3rdparty/chromium/third_party/skia/LICENSE \
@@ -891,14 +923,16 @@ QT5WEBENGINE_CHROMIUM_LICENSE_FILES = \
 	src/3rdparty/chromium/third_party/SPIRV-Tools/src/utils/vscode/src/lsp/LICENSE \
 	src/3rdparty/chromium/third_party/sqlite4java/LICENSE \
 	src/3rdparty/chromium/third_party/sqlite/LICENSE \
-	src/3rdparty/chromium/third_party/sqlite/patched/autoconf/tea/license.terms \
-	src/3rdparty/chromium/third_party/sqlite/patched/LICENSE.md \
+	src/3rdparty/chromium/third_party/sqlite/src/autoconf/tea/license.terms \
+	src/3rdparty/chromium/third_party/sqlite/src/LICENSE.md \
+	src/3rdparty/chromium/third_party/subresource-filter-ruleset/LICENSE \
 	src/3rdparty/chromium/third_party/sudden_motion_sensor/LICENSE \
 	src/3rdparty/chromium/third_party/swiftshader/LICENSE.txt \
 	src/3rdparty/chromium/third_party/tcmalloc/LICENSE \
 	src/3rdparty/chromium/third_party/tcmalloc/vendor/COPYING \
 	src/3rdparty/chromium/third_party/test_fonts/LICENSE \
 	src/3rdparty/chromium/third_party/tlslite/LICENSE \
+	src/3rdparty/chromium/third_party/turbine/LICENSE \
 	src/3rdparty/chromium/third_party/ub-uiautomator/LICENSE \
 	src/3rdparty/chromium/third_party/unrar/LICENSE \
 	src/3rdparty/chromium/third_party/unrar/src/license.txt \
@@ -912,6 +946,8 @@ QT5WEBENGINE_CHROMIUM_LICENSE_FILES = \
 	src/3rdparty/chromium/third_party/web-animations-js/sources/COPYING \
 	src/3rdparty/chromium/third_party/webdriver/COPYING \
 	src/3rdparty/chromium/third_party/webdriver/LICENSE \
+	src/3rdparty/chromium/third_party/webgpu-cts/src/LICENSE.txt \
+	src/3rdparty/chromium/third_party/webgpu-cts/src/third_party/jquery/LICENSE.txt \
 	src/3rdparty/chromium/third_party/webrtc/common_audio/third_party/fft4g/LICENSE \
 	src/3rdparty/chromium/third_party/webrtc/common_audio/third_party/spl_sqrt_floor/LICENSE \
 	src/3rdparty/chromium/third_party/webrtc/examples/androidapp/third_party/autobanh/LICENSE \
@@ -930,6 +966,9 @@ QT5WEBENGINE_CHROMIUM_LICENSE_FILES = \
 	src/3rdparty/chromium/third_party/webxr_test_pages/webxr-samples/js/third-party/dat.gui/LICENSE \
 	src/3rdparty/chromium/third_party/webxr_test_pages/webxr-samples/js/third-party/gl-matrix/LICENSE \
 	src/3rdparty/chromium/third_party/webxr_test_pages/webxr-samples/LICENSE.md \
+	src/3rdparty/chromium/third_party/weston/LICENSE \
+	src/3rdparty/chromium/third_party/weston/src/COPYING \
+	src/3rdparty/chromium/third_party/weston/src/data/COPYING \
 	src/3rdparty/chromium/third_party/widevine/LICENSE \
 	src/3rdparty/chromium/third_party/woff2/LICENSE \
 	src/3rdparty/chromium/third_party/wuffs/LICENSE \
@@ -941,7 +980,6 @@ QT5WEBENGINE_CHROMIUM_LICENSE_FILES = \
 	src/3rdparty/chromium/tools/grit/third_party/six/LICENSE \
 	src/3rdparty/chromium/tools/origin_trials/third_party/ed25519/LICENSE \
 	src/3rdparty/chromium/tools/page_cycler/acid3/LICENSE \
-	src/3rdparty/chromium/tools/symsrc/COPYING-pefile \
 	src/3rdparty/chromium/tools/win/ChromeDebug/ChromeDebug/LICENSE \
 	src/3rdparty/chromium/url/third_party/mozilla/LICENSE.txt \
 	src/3rdparty/chromium/v8/LICENSE \

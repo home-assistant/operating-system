@@ -1,0 +1,42 @@
+#!/bin/sh
+
+NAME=ssdpd
+PIDFILE=/var/run/$NAME.pid
+DAEMON=/usr/sbin/$NAME
+CFGFILE=/etc/default/$NAME
+
+DAEMON_ARGS=""
+
+# Read configuration variable file if it is present
+[ -f $CFGFILE ] && . $CFGFILE
+
+start() {
+	printf 'Starting %s: ' "$NAME"
+	start-stop-daemon -S -q -p $PIDFILE -x $DAEMON -- $DAEMON_ARGS
+	[ $? = 0 ] && echo "OK" || echo "FAIL"
+}
+
+stop() {
+	printf 'Stopping %s: ' "$NAME"
+	start-stop-daemon -K -q -p $PIDFILE -x $DAEMON
+	[ $? = 0 ] && echo "OK" || echo "FAIL"
+}
+
+restart() {
+	stop
+	start
+}
+
+case "$1" in
+    start|stop|restart)
+	"$1"
+	;;
+    reload)
+	restart
+	;;
+    *)
+	echo "Usage: $0 {start|stop|restart|reload}"
+	exit 1
+esac
+
+exit $?

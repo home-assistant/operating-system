@@ -4,10 +4,11 @@
 #
 ################################################################################
 
-TOR_VERSION = 0.4.4.6
+TOR_VERSION = 0.4.4.7
 TOR_SITE = https://dist.torproject.org
 TOR_LICENSE = BSD-3-Clause
 TOR_LICENSE_FILES = LICENSE
+TOR_CPE_ID_VENDOR = torproject
 TOR_DEPENDENCIES = libevent openssl zlib
 TOR_AUTORECONF = YES
 

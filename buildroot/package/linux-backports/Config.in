@@ -9,7 +9,7 @@ config BR2_PACKAGE_LINUX_BACKPORTS
 	  recent kernels, backported to older ones.
 
 	  This version of linux-backports supports kernels starting
-	  from 3.0.
+	  from 3.10.
 
 	  https://backports.wiki.kernel.org
 

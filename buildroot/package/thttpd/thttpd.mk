@@ -8,6 +8,7 @@ THTTPD_VERSION = 2.29
 THTTPD_SITE = https://acme.com/software/thttpd
 THTTPD_LICENSE = BSD-2-Clause
 THTTPD_LICENSE_FILES = thttpd.c
+THTTPD_CPE_ID_VENDOR = acme
 
 THTTPD_MAKE = $(MAKE1)
 

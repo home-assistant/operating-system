@@ -18,10 +18,10 @@ Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/accel/tcg/user-exec.c b/accel/tcg/user-exec.c
-index 4be78eb9b3..0a690bec55 100644
+index 4ebe25461a..0496674fbd 100644
 --- a/accel/tcg/user-exec.c
 +++ b/accel/tcg/user-exec.c
-@@ -508,7 +508,7 @@ int cpu_signal_handler(int host_signum, void *pinfo,
+@@ -536,7 +536,7 @@ int cpu_signal_handler(int host_signum, void *pinfo,
  
  #if defined(__NetBSD__)
      pc = uc->uc_mcontext.__gregs[_REG_R15];

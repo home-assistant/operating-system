@@ -1,0 +1,48 @@
+From 8a2ed03f78601596e1f74fa2e75f9cdf52c4ff83 Mon Sep 17 00:00:00 2001
+From: Sven Klemm <sven@timescale.com>
+Date: Fri, 25 Sep 2020 14:31:55 +0200
+Subject: [PATCH] Handle AT_DropExpression in process_utility
+
+PG13 adds a new ALTER TABLE subcommand for dropping the generated
+property from a column.
+
+https://github.com/postgres/postgres/commit/f595117e24
+
+Signed-off-by: Maxim Kochetkov <fido_max@inbox.ru>
+Fetch from: https://github.com/timescale/timescaledb/pull/2498/commits/cdb29e2e61ec3f3b52fb8962d12a15727757e35b.patch
+---
+ src/process_utility.c | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
+
+diff --git a/src/process_utility.c b/src/process_utility.c
+index 8f915113..0f76f141 100644
+--- a/src/process_utility.c
++++ b/src/process_utility.c
+@@ -3266,6 +3266,9 @@ process_altertable_end_subcmd(Hypertable *ht, Node *parsetree, ObjectAddress *ob
+ 		case AT_AddColumnRecurse:
+ 		case AT_DropColumn:
+ 		case AT_DropColumnRecurse:
++#if PG13_GE
++		case AT_DropExpression:
++#endif
+ 
+ 			/*
+ 			 * adding and dropping columns handled in
+@@ -3276,9 +3279,11 @@ process_altertable_end_subcmd(Hypertable *ht, Node *parsetree, ObjectAddress *ob
+ 		case AT_DropConstraintRecurse:
+ 			/* drop constraints handled by process_ddl_sql_drop */
+ 			break;
+-		case AT_ProcessedConstraint:	   /* internal command never hit in our
+-											* test code, so don't know how to
+-											* handle */
++#if PG13_LT
++		case AT_ProcessedConstraint: /* internal command never hit in our
++									  * test code, so don't know how to
++									  * handle */
++#endif
+ 		case AT_ReAddComment:			   /* internal command never hit in our test
+ 											* code, so don't know how to handle */
+ 		case AT_AddColumnToView:		   /* only used with views */
+-- 
+2.29.2
+

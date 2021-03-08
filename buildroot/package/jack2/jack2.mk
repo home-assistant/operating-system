@@ -4,9 +4,11 @@
 #
 ################################################################################
 
-JACK2_VERSION = 1.9.14
+JACK2_VERSION = 1.9.17
 JACK2_SITE = $(call github,jackaudio,jack2,v$(JACK2_VERSION))
 JACK2_LICENSE = GPL-2.0+ (jack server), LGPL-2.1+ (jack library)
+JACK2_LICENSE_FILES = COPYING
+JACK2_CPE_ID_VENDOR = jackaudio
 JACK2_DEPENDENCIES = libsamplerate libsndfile alsa-lib
 JACK2_INSTALL_STAGING = YES
 

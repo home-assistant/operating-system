@@ -8,6 +8,7 @@ PROFTPD_VERSION = 1.3.6e
 PROFTPD_SITE = $(call github,proftpd,proftpd,v$(PROFTPD_VERSION))
 PROFTPD_LICENSE = GPL-2.0+
 PROFTPD_LICENSE_FILES = COPYING
+PROFTPD_CPE_ID_VENDOR = proftpd
 
 PROFTPD_CONF_ENV = \
 	ac_cv_func_setpgrp_void=yes \

@@ -8,6 +8,7 @@ RAPIDJSON_VERSION = 1.1.0
 RAPIDJSON_SITE = $(call github,miloyip,rapidjson,v$(RAPIDJSON_VERSION))
 RAPIDJSON_LICENSE = MIT
 RAPIDJSON_LICENSE_FILES = license.txt
+RAPIDJSON_CPE_ID_VENDOR = tencent
 
 # rapidjson is a header-only C++ library
 RAPIDJSON_INSTALL_TARGET = NO

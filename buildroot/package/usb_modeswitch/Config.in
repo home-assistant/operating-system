@@ -1,6 +1,7 @@
 config BR2_PACKAGE_USB_MODESWITCH
 	bool "usb_modeswitch"
 	depends on BR2_TOOLCHAIN_HAS_THREADS # libusb
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # libusb
 	select BR2_PACKAGE_JIMTCL if !BR2_PACKAGE_TCL || BR2_PACKAGE_TCL_SHLIB_ONLY
 	select BR2_PACKAGE_LIBUSB
 	help
@@ -20,5 +21,6 @@ config BR2_PACKAGE_USB_MODESWITCH
 
 	  http://www.draisberghof.de/usb_modeswitch/
 
-comment "usb_modeswitch needs a toolchain w/ threads"
-	depends on !BR2_TOOLCHAIN_HAS_THREADS
+comment "usb_modeswitch needs a toolchain w/ threads, gcc >= 4.9"
+	depends on !BR2_TOOLCHAIN_HAS_THREADS || \
+		!BR2_TOOLCHAIN_GCC_AT_LEAST_4_9

@@ -44,11 +44,10 @@ config BR2_PACKAGE_LINUX_FIRMWARE_QCOM_ADRENO
 	help
 	  Firmware files for Qualcomm Adreno GPU firmware
 
-
 config BR2_PACKAGE_LINUX_FIRMWARE_MFC_V8
-	bool "Samsung MFC video encoder/decoder driver v8"
+	bool "Samsung MFC video encoder/decoder v8 firmware"
 	help
-	  Firmware files for samsung MFC video encoder/decoder driver v8
+	  Firmware files for Samsung MFC video encoder/decoder driver v8
 
 endmenu # Video
 
@@ -381,6 +380,12 @@ endmenu
 
 menu "Ethernet firmware"
 
+config BR2_PACKAGE_LINUX_FIRMWARE_BROADCOM_TIGON3
+	bool "Broadcom NetXtreme/Tigon3"
+	help
+	  Firmware files for Broadcom Tigon3 ethernet cards
+	  (tigon)
+
 config BR2_PACKAGE_LINUX_FIRMWARE_BNX2X
 	bool "Broadcom NetXtremeII"
 	help
@@ -451,15 +456,6 @@ config BR2_PACKAGE_LINUX_FIRMWARE_XCx000
 	bool "Xceive/Cresta xc4000/xc5000/xc500c"
 	help
 	  Firmware file for xc4000/xc5000/xc5000c based DVB tuner driver
-
-endmenu
-
-menu "SoC Firmware"
-
-config BR2_PACKAGE_LINUX_FIRMWARE_IMX_SDMA
-	bool "Freescale i.MX SDMA"
-	help
-	  Firmware files for i.MX SDMA.
 
 endmenu
 

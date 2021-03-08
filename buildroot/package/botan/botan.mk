@@ -4,11 +4,12 @@
 #
 ################################################################################
 
-BOTAN_VERSION = 2.16.0
+BOTAN_VERSION = 2.17.3
 BOTAN_SOURCE = Botan-$(BOTAN_VERSION).tar.xz
 BOTAN_SITE = http://botan.randombit.net/releases
 BOTAN_LICENSE = BSD-2-Clause
 BOTAN_LICENSE_FILES = license.txt
+BOTAN_CPE_ID_VALID = YES
 
 BOTAN_INSTALL_STAGING = YES
 
@@ -17,14 +18,11 @@ BOTAN_CONF_OPTS = \
 	--os=linux \
 	--cc=gcc \
 	--cc-bin="$(TARGET_CXX)" \
-	--ldflags="$(BOTAN_LDFLAGS)" \
 	--prefix=/usr \
 	--without-documentation
 
-BOTAN_LDFLAGS = $(TARGET_LDFLAGS)
-
 ifeq ($(BR2_TOOLCHAIN_HAS_LIBATOMIC),y)
-BOTAN_LDFLAGS += -latomic
+BOTAN_CONF_OPTS += --extra-libs=atomic
 endif
 
 ifeq ($(BR2_SHARED_LIBS),y)

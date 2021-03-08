@@ -1,0 +1,149 @@
+From e68915d0aad6760c1feebb04219af9bfbccd71d7 Mon Sep 17 00:00:00 2001
+From: Sven Klemm <sven@timescale.com>
+Date: Sat, 26 Sep 2020 13:58:17 +0200
+Subject: [PATCH] Add missing utils/acl.h includes
+
+PG13 removed acl.h from objectaddress.h so the places that need it
+need to now include it explicitly if they got it indirectly this
+way previously.
+
+https://github.com/postgres/postgres/commit/3c173a53a8
+
+Signed-off-by: Maxim Kochetkov <fido_max@inbox.ru>
+Fetch from: https://github.com/timescale/timescaledb/commit/be8dd086a089f7419824bbc3b77182b95d0bbba7.patch
+---
+ src/bgw/job.c                                 | 1 +
+ src/bgw/scheduler.c                           | 1 +
+ src/chunk.c                                   | 1 +
+ src/chunk_adaptive.c                          | 1 +
+ src/extension_utils.c                         | 1 +
+ src/license_guc.c                             | 1 +
+ src/process_utility.c                         | 1 +
+ tsl/src/bgw_policy/continuous_aggregate_api.c | 1 +
+ tsl/src/bgw_policy/job_api.c                  | 1 +
+ tsl/src/continuous_aggs/refresh.c             | 1 +
+ 10 files changed, 10 insertions(+)
+
+diff --git a/src/bgw/job.c b/src/bgw/job.c
+index 313caa94..3ae8c9f7 100644
+--- a/src/bgw/job.c
++++ b/src/bgw/job.c
+@@ -19,6 +19,7 @@
+ #include <storage/proc.h>
+ #include <storage/procarray.h>
+ #include <storage/sinvaladt.h>
++#include <utils/acl.h>
+ #include <utils/elog.h>
+ #include <utils/jsonb.h>
+ 
+diff --git a/src/bgw/scheduler.c b/src/bgw/scheduler.c
+index 2d024317..7a7e360c 100644
+--- a/src/bgw/scheduler.c
++++ b/src/bgw/scheduler.c
+@@ -19,6 +19,7 @@
+ #include <storage/lwlock.h>
+ #include <storage/proc.h>
+ #include <storage/shmem.h>
++#include <utils/acl.h>
+ #include <utils/inval.h>
+ #include <utils/jsonb.h>
+ #include <utils/timestamp.h>
+diff --git a/src/chunk.c b/src/chunk.c
+index c2671885..e5ffc3fa 100644
+--- a/src/chunk.c
++++ b/src/chunk.c
+@@ -29,6 +29,7 @@
+ #include <fmgr.h>
+ #include <utils/datum.h>
+ #include <catalog/pg_type.h>
++#include <utils/acl.h>
+ #include <utils/timestamp.h>
+ #include <nodes/execnodes.h>
+ #include <executor/executor.h>
+diff --git a/src/chunk_adaptive.c b/src/chunk_adaptive.c
+index 470248ed..88e2910b 100644
+--- a/src/chunk_adaptive.c
++++ b/src/chunk_adaptive.c
+@@ -7,6 +7,7 @@
+ #include <postgres.h>
+ #include <catalog/pg_proc.h>
+ #include <catalog/pg_type.h>
++#include <utils/acl.h>
+ #include <utils/syscache.h>
+ #include <utils/lsyscache.h>
+ #include <utils/guc.h>
+diff --git a/src/extension_utils.c b/src/extension_utils.c
+index 3fac177b..3d72c5f0 100644
+--- a/src/extension_utils.c
++++ b/src/extension_utils.c
+@@ -18,6 +18,7 @@
+ #include <access/relscan.h>
+ #include <catalog/pg_extension.h>
+ #include <catalog/pg_authid.h>
++#include <utils/acl.h>
+ #include <utils/fmgroids.h>
+ #include <utils/builtins.h>
+ #include <utils/rel.h>
+diff --git a/src/license_guc.c b/src/license_guc.c
+index 32629ca9..baa49be5 100644
+--- a/src/license_guc.c
++++ b/src/license_guc.c
+@@ -5,6 +5,7 @@
+  */
+ #include <postgres.h>
+ #include <fmgr.h>
++#include <utils/acl.h>
+ #include <utils/builtins.h>
+ #include <utils/guc.h>
+ #include <miscadmin.h>
+diff --git a/src/process_utility.c b/src/process_utility.c
+index 3576cb97..8f915113 100644
+--- a/src/process_utility.c
++++ b/src/process_utility.c
+@@ -22,6 +22,7 @@
+ #include <access/htup_details.h>
+ #include <access/xact.h>
+ #include <storage/lmgr.h>
++#include <utils/acl.h>
+ #include <utils/rel.h>
+ #include <utils/inval.h>
+ #include <utils/lsyscache.h>
+diff --git a/tsl/src/bgw_policy/continuous_aggregate_api.c b/tsl/src/bgw_policy/continuous_aggregate_api.c
+index 1c18d2e0..596f3bf7 100644
+--- a/tsl/src/bgw_policy/continuous_aggregate_api.c
++++ b/tsl/src/bgw_policy/continuous_aggregate_api.c
+@@ -7,6 +7,7 @@
+ #include <postgres.h>
+ #include <miscadmin.h>
+ #include <parser/parse_coerce.h>
++#include <utils/acl.h>
+ 
+ #include <jsonb_utils.h>
+ #include <utils/builtins.h>
+diff --git a/tsl/src/bgw_policy/job_api.c b/tsl/src/bgw_policy/job_api.c
+index e1c24841..536ce692 100644
+--- a/tsl/src/bgw_policy/job_api.c
++++ b/tsl/src/bgw_policy/job_api.c
+@@ -7,6 +7,7 @@
+ #include <postgres.h>
+ #include <funcapi.h>
+ #include <miscadmin.h>
++#include <utils/acl.h>
+ #include <utils/builtins.h>
+ 
+ #include <bgw/job.h>
+diff --git a/tsl/src/continuous_aggs/refresh.c b/tsl/src/continuous_aggs/refresh.c
+index 71d5075f..46f83127 100644
+--- a/tsl/src/continuous_aggs/refresh.c
++++ b/tsl/src/continuous_aggs/refresh.c
+@@ -4,6 +4,7 @@
+  * LICENSE-TIMESCALE for a copy of the license.
+  */
+ #include <postgres.h>
++#include <utils/acl.h>
+ #include <utils/lsyscache.h>
+ #include <utils/fmgrprotos.h>
+ #include <utils/snapmgr.h>
+-- 
+2.29.2
+

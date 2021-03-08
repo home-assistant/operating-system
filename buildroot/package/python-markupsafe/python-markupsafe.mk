@@ -4,6 +4,7 @@
 #
 ################################################################################
 
+# Please keep in sync with package/python3-markupsafe/python3-markupsafe.mk
 PYTHON_MARKUPSAFE_VERSION = 1.1.1
 PYTHON_MARKUPSAFE_SOURCE = MarkupSafe-$(PYTHON_MARKUPSAFE_VERSION).tar.gz
 PYTHON_MARKUPSAFE_SITE = https://files.pythonhosted.org/packages/b9/2e/64db92e53b86efccfaea71321f597fa2e1b2bd3853d8ce658568f7a13094

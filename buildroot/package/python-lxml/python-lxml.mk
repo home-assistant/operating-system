@@ -15,6 +15,8 @@ PYTHON_LXML_LICENSE_FILES = \
 	doc/licenses/BSD.txt \
 	doc/licenses/elementtree.txt \
 	src/lxml/isoschematron/resources/rng/iso-schematron.rng
+PYTHON_LXML_CPE_ID_VENDOR = lxml
+PYTHON_LXML_CPE_ID_PRODUCT = lxml
 
 # python-lxml can use either setuptools, or distutils as a fallback.
 # So, we use setuptools.

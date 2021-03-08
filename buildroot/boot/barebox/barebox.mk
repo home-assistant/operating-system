@@ -28,7 +28,7 @@ $(1)_SITE_METHOD = git
 # Override the default value of _SOURCE to 'barebox-*' so that it is not
 # downloaded a second time for barebox-aux; also alows avoiding the hash
 # check:
-$(1)_SOURCE = barebox-$$($(1)_VERSION).tar.gz
+$(1)_SOURCE = barebox-$$($(1)_VERSION)$$(BR_FMT_VERSION_git).tar.gz
 else
 # Handle stable official Barebox versions
 $(1)_SOURCE = barebox-$$($(1)_VERSION).tar.bz2

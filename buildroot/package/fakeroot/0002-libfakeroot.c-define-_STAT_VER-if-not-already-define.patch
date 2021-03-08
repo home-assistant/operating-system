@@ -1,0 +1,45 @@
+From 03bc0ee07fb6e293d081ffd8af1654788b434f6a Mon Sep 17 00:00:00 2001
+From: Ilya Lipnitskiy <ilya.lipnitskiy@gmail.com>
+Date: Thu, 11 Feb 2021 20:59:25 -0800
+Subject: [PATCH] libfakeroot.c: define _STAT_VER if not already defined
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+glibc 2.33 does does declare `_STAT_VER` anymore.
+
+Based on patch from Jan Pazdziora:
+https://lists.fedoraproject.org/archives/list/devel@lists.fedoraproject.org/message/SMQ3RYXEYTVZH6PLQMKNB3NM4XLPMNZO/
+
+Backported from: feda578ca3608b7fc9a28a3a91293611c0ef47b7
+
+Signed-off-by: Ilya Lipnitskiy <ilya.lipnitskiy@gmail.com>
+Signed-off-by: Jörg Krause <joerg.krause@embedded.rocks>
+---
+ libfakeroot.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/libfakeroot.c b/libfakeroot.c
+index 3e80e38..14cdbc4 100644
+--- a/libfakeroot.c
++++ b/libfakeroot.c
+@@ -90,6 +90,16 @@
+ #define SEND_GET_XATTR64(a,b,c) send_get_xattr64(a,b)
+ #endif
+ 
++#ifndef _STAT_VER
++ #if defined (__aarch64__)
++  #define _STAT_VER 0
++ #elif defined (__x86_64__)
++  #define _STAT_VER 1
++ #else
++  #define _STAT_VER 3
++ #endif
++#endif
++
+ /*
+    These INT_* (which stands for internal) macros should always be used when
+    the fakeroot library owns the storage of the stat variable.
+-- 
+2.30.1
+

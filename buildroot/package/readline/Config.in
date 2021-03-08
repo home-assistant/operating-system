@@ -7,3 +7,21 @@ config BR2_PACKAGE_READLINE
 	  as they are typed in.
 
 	  https://tiswww.case.edu/php/chet/readline/rltop.html
+
+config BR2_PACKAGE_READLINE_BRACKETED_PASTE
+	bool "Enable bracketed paste"
+	depends on BR2_PACKAGE_READLINE
+	help
+	  Enable the "bracketed paste" feature in libreadline.
+
+	  Bracketed paste is helpful for interactive sessions when
+	  one wants to prevent pasted text from being interpreted
+	  as typed-in commands. However, it also causes control
+	  characters to show up in the raw output of a (telnet)
+	  session. This can cause issues and throw off pattern
+	  matching if the session output is being captured for
+	  automated processing.
+
+	  For further information on this feature and whether you
+	  may want it, see:
+	      https://cirw.in/blog/bracketed-paste

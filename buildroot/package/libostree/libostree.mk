@@ -4,13 +4,13 @@
 #
 ################################################################################
 
-LIBOSTREE_VERSION = 2020.6
+LIBOSTREE_VERSION = 2020.8
 LIBOSTREE_SOURCE = libostree-$(LIBOSTREE_VERSION).tar.xz
 LIBOSTREE_SITE = https://github.com/ostreedev/ostree/releases/download/v$(LIBOSTREE_VERSION)
 
 LIBOSTREE_LICENSE = LGPL-2.0+
 LIBOSTREE_LICENSE_FILES = COPYING
-LIBOSTREE_DEPENDENCIES = e2fsprogs host-bison host-pkgconf libfuse libglib2 libgpg-error libgpgme xz
+LIBOSTREE_DEPENDENCIES = e2fsprogs host-bison host-pkgconf libglib2 libgpg-error libgpgme xz
 LIBOSTREE_INSTALL_STAGING = YES
 
 LIBOSTREE_CONF_ENV = \
@@ -67,6 +67,13 @@ LIBOSTREE_CONF_OPTS += --with-libarchive
 LIBOSTREE_DEPENDENCIES += libarchive
 else
 LIBOSTREE_CONF_OPTS += --without-libarchive
+endif
+
+ifeq ($(BR2_PACKAGE_LIBFUSE),y)
+LIBOSTREE_CONF_OPTS += --enable-rofiles-fuse
+LIBOSTREE_DEPENDENCIES += libfuse
+else
+LIBOSTREE_CONF_OPTS += --disable-rofiles-fuse
 endif
 
 ifeq ($(BR2_PACKAGE_LIBSELINUX),y)

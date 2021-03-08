@@ -13,6 +13,8 @@ categories:
     label: 'board/odroid'
   - title: 'ASUS Tinker'
     label: 'board/tinker'
+filter-by-commitish: true
+commitish: dev
 template: |
   ## Changes
 

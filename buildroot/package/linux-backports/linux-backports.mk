@@ -4,12 +4,15 @@
 #
 ################################################################################
 
-LINUX_BACKPORTS_VERSION_MAJOR = 4.4.2
+LINUX_BACKPORTS_VERSION_MAJOR = 5.8
 LINUX_BACKPORTS_VERSION = $(LINUX_BACKPORTS_VERSION_MAJOR)-1
 LINUX_BACKPORTS_SOURCE = backports-$(LINUX_BACKPORTS_VERSION).tar.xz
 LINUX_BACKPORTS_SITE = $(BR2_KERNEL_MIRROR)/linux/kernel/projects/backports/stable/v$(LINUX_BACKPORTS_VERSION_MAJOR)
 LINUX_BACKPORTS_LICENSE = GPL-2.0
-LINUX_BACKPORTS_LICENSE_FILES = COPYING
+LINUX_BACKPORTS_LICENSE_FILES = \
+	COPYING \
+	LICENSES/exceptions/Linux-syscall-note \
+	LICENSES/preferred/GPL-2.0
 
 # flex and bison are needed to generate kconfig parser. We use the
 # same logic as the linux kernel (we add host dependencies only if
@@ -91,7 +94,7 @@ $(eval $(kconfig-package))
 # instead.
 #
 # Furthermore, we want to check the kernel version, since linux-backports
-# only supports kernels >= 3.0. To avoid overriding linux-backports'
+# only supports kernels >= 3.10. To avoid overriding linux-backports'
 # KCONFIG_STAMP_DOTCONFIG rule defined in the kconfig-package infra, we
 # use an intermediate stamp-file.
 #
@@ -103,10 +106,12 @@ $(LINUX_BACKPORTS_DIR)/$(LINUX_BACKPORTS_KCONFIG_STAMP_DOTCONFIG): $(LINUX_BACKP
 
 .SECONDEXPANSION:
 $(LINUX_BACKPORTS_DIR)/.stamp_check_kernel_version: $$(LINUX_DIR)/$$(LINUX_KCONFIG_STAMP_DOTCONFIG)
-	$(Q)LINUX_VERSION_PROBED=$(LINUX_VERSION_PROBED); \
-	if [ $${LINUX_VERSION_PROBED%%.*} -lt 3 ]; then \
-		printf "Linux version '%s' is too old for linux-backports (needs 3.0 or later)\n" \
-			"$${LINUX_VERSION_PROBED}"; \
+	$(Q)KVER=$(LINUX_VERSION_PROBED); \
+	KVER_MAJOR=`echo $${KVER} | sed 's/^\([0-9]*\)\..*/\1/'`; \
+	KVER_MINOR=`echo $${KVER} | sed 's/^[0-9]*\.\([0-9]*\).*/\1/'`; \
+	if [ $${KVER_MAJOR} -lt 3 -o \( $${KVER_MAJOR} -eq 3 -a $${KVER_MINOR} -lt 10 \) ]; then \
+		printf "Linux version '%s' is too old for linux-backports (needs 3.10 or later)\n" \
+			"$${KVER}"; \
 		exit 1; \
 	fi
 	$(Q)touch $(@)

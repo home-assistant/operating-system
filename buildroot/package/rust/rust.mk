@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-RUST_VERSION = 1.45.2
+RUST_VERSION = 1.48.0
 RUST_SOURCE = rustc-$(RUST_VERSION)-src.tar.xz
 RUST_SITE = https://static.rust-lang.org/dist
 RUST_LICENSE = Apache-2.0 or MIT
@@ -65,6 +65,8 @@ define HOST_RUST_CONFIGURE_CMDS
 		echo 'channel = "stable"'; \
 		echo '[target.$(RUSTC_TARGET_NAME)]'; \
 		echo 'cc = "$(TARGET_CROSS)gcc"'; \
+		echo '[llvm]'; \
+		echo 'ninja = false'; \
 	) > $(@D)/config.toml
 endef
 

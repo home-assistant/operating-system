@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-KMOD_VERSION = 27
+KMOD_VERSION = 28
 KMOD_SOURCE = kmod-$(KMOD_VERSION).tar.xz
 KMOD_SITE = $(BR2_KERNEL_MIRROR)/linux/utils/kernel/kmod
 KMOD_INSTALL_STAGING = YES
@@ -14,6 +14,8 @@ HOST_KMOD_DEPENDENCIES = host-pkgconf
 # license info for libkmod only, conditionally add more below
 KMOD_LICENSE = LGPL-2.1+ (library)
 KMOD_LICENSE_FILES = libkmod/COPYING
+
+KMOD_CPE_ID_VENDOR = kernel
 
 # --gc-sections triggers binutils ld segfault
 # https://sourceware.org/bugzilla/show_bug.cgi?id=21180

@@ -44,9 +44,6 @@ config BR2_powerpc_476fp
 config BR2_powerpc_505
 	bool "505"
 	depends on !BR2_ARCH_IS_64
-config BR2_powerpc_601
-	bool "601"
-	depends on !BR2_ARCH_IS_64
 config BR2_powerpc_602
 	bool "602"
 	depends on !BR2_ARCH_IS_64
@@ -176,7 +173,6 @@ config BR2_GCC_TARGET_CPU
 	default "476"		if BR2_powerpc_476
 	default "476fp"		if BR2_powerpc_476fp
 	default "505"		if BR2_powerpc_505
-	default "601"		if BR2_powerpc_601
 	default "602"		if BR2_powerpc_602
 	default "603"		if BR2_powerpc_603
 	default "603e"		if BR2_powerpc_603e

@@ -4,15 +4,15 @@
 #
 ################################################################################
 
-ZEROMQ_VERSION = 4.3.3
+ZEROMQ_VERSION = 4.3.4
 ZEROMQ_SITE = https://github.com/zeromq/libzmq/releases/download/v$(ZEROMQ_VERSION)
 ZEROMQ_INSTALL_STAGING = YES
 ZEROMQ_DEPENDENCIES = util-linux
 ZEROMQ_CONF_OPTS = --disable-Werror --without-documentation
 ZEROMQ_LICENSE = LGPL-3.0+ with exceptions
 ZEROMQ_LICENSE_FILES = COPYING COPYING.LESSER
-# We're patching configure.ac
-ZEROMQ_AUTORECONF = YES
+ZEROMQ_CPE_ID_VENDOR = zeromq
+ZEROMQ_CPE_ID_PRODUCT = libzmq
 
 # Assume these flags are always available. It is true, at least for
 # SOCK_CLOEXEC, since linux v2.6.27.
@@ -55,11 +55,31 @@ else
 ZEROMQ_CONF_OPTS += --disable-drafts
 endif
 
+ifeq ($(BR2_PACKAGE_ZEROMQ_WEBSOCKET),y)
+ZEROMQ_CONF_OPTS += --enable-ws
+else
+ZEROMQ_CONF_OPTS += --disable-ws
+endif
+
+ifeq ($(BR2_PACKAGE_GNUTLS),y)
+ZEROMQ_DEPENDENCIES += host-pkgconf gnutls
+ZEROMQ_CONF_OPTS += --with-tls
+else
+ZEROMQ_CONF_OPTS += --without-tls
+endif
+
 ifeq ($(BR2_PACKAGE_LIBBSD),y)
 ZEROMQ_DEPENDENCIES += host-pkgconf libbsd
 ZEROMQ_CONF_OPTS += --enable-libbsd
 else
 ZEROMQ_CONF_OPTS += --disable-libbsd
+endif
+
+ifeq ($(BR2_PACKAGE_LIBNSS),y)
+ZEROMQ_DEPENDENCIES += host-pkgconf libnss
+ZEROMQ_CONF_OPTS += --with-nss
+else
+ZEROMQ_CONF_OPTS += --without-nss
 endif
 
 # ZeroMQ uses libsodium if it's available.

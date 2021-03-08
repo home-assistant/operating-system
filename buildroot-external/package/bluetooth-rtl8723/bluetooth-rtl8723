@@ -18,4 +18,4 @@ echo -e "\tBluetooth chip power up..."
 sleep 1
 echo -e "\tResetting done"
 
-/usr/sbin/rtk_hciattach -s 115200 /dev/ttyS0 rtk_h5
+/usr/sbin/rtk_hciattach -s 115200 /dev/ttyS0 rtk_h5 115200 flow

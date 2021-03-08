@@ -1,5 +1,5 @@
-# From https://www.linuxtv.org/pipermail/vdr/2019-June/029497.html
-md5 b2897fe6b6e6711d512a69642b1b8ec1  vdr-2.4.1.tar.bz2
+# From https://www.linuxtv.org/pipermail/vdr/2020-December/029578.html
+md5  aa91614159ae2db45655d35918e2c24e  vdr-2.4.6.tar.bz2
 # Locally computed
-sha256 25c3f835c4f3ff92cd2db10c004439ef22c2e895193c77fbe8cc7eac4858a1dc  vdr-2.4.1.tar.bz2
-sha256 ddb9db7630752f8fdc6898f7c99a99eaeeac5213627ecb093df9c82f56175dc7  COPYING
+sha256  c8993babf2a878a0fba84558de1e35f042c3c66f7c1ec569eea00a3af1014e4b  vdr-2.4.6.tar.bz2
+sha256  ddb9db7630752f8fdc6898f7c99a99eaeeac5213627ecb093df9c82f56175dc7  COPYING

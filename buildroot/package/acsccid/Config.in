@@ -1,6 +1,7 @@
 config BR2_PACKAGE_ACSCCID
 	bool "acsccid"
 	depends on BR2_TOOLCHAIN_HAS_THREADS # pcsc-lite, libusb
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # libusb
 	depends on BR2_USE_MMU # pcsc-lite
 	depends on !BR2_STATIC_LIBS # pcsc-lite
 	select BR2_PACKAGE_LIBICONV if !BR2_ENABLE_LOCALE
@@ -14,7 +15,7 @@ config BR2_PACKAGE_ACSCCID
 
 	  http://acsccid.sourceforge.net/
 
-comment "acsccid needs a toolchain w/ threads, dynamic library"
+comment "acsccid needs a toolchain w/ threads, dynamic library, gcc >= 4.9"
 	depends on BR2_USE_MMU
-	depends on !BR2_TOOLCHAIN_HAS_THREADS || \
-		BR2_STATIC_LIBS
+	depends on !BR2_TOOLCHAIN_HAS_THREADS || BR2_STATIC_LIBS || \
+		!BR2_TOOLCHAIN_GCC_AT_LEAST_4_9

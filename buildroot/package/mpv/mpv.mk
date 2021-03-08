@@ -4,10 +4,10 @@
 #
 ################################################################################
 
-MPV_VERSION = 0.32.0
+MPV_VERSION = 0.33.0
 MPV_SITE = $(call github,mpv-player,mpv,v$(MPV_VERSION))
 MPV_DEPENDENCIES = \
-	host-pkgconf ffmpeg zlib \
+	host-pkgconf ffmpeg libass zlib \
 	$(if $(BR2_PACKAGE_LIBICONV),libiconv)
 MPV_LICENSE = GPL-2.0+
 MPV_LICENSE_FILES = LICENSE.GPL
@@ -23,7 +23,6 @@ MPV_CONF_OPTS = \
 	--disable-coreaudio \
 	--disable-cuda-hwaccel \
 	--disable-opensles \
-	--disable-rsound \
 	--disable-rubberband \
 	--disable-uchardet \
 	--disable-vapoursynth
@@ -75,14 +74,6 @@ MPV_CONF_OPTS += --enable-libarchive
 MPV_DEPENDENCIES += libarchive
 else
 MPV_CONF_OPTS += --disable-libarchive
-endif
-
-# libass subtitle support
-ifeq ($(BR2_PACKAGE_LIBASS),y)
-MPV_CONF_OPTS += --enable-libass
-MPV_DEPENDENCIES += libass
-else
-MPV_CONF_OPTS += --disable-libass
 endif
 
 # bluray support
@@ -148,14 +139,6 @@ MPV_CONF_OPTS += --enable-pulse
 MPV_DEPENDENCIES += pulseaudio
 else
 MPV_CONF_OPTS += --disable-pulse
-endif
-
-# samba support
-ifeq ($(BR2_PACKAGE_SAMBA4),y)
-MPV_CONF_OPTS += --enable-libsmbclient
-MPV_DEPENDENCIES += samba4
-else
-MPV_CONF_OPTS += --disable-libsmbclient
 endif
 
 # SDL support

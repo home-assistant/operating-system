@@ -1,4 +1,4 @@
-From bb04c220d82598066eeadf49defaec1157d4d206 Mon Sep 17 00:00:00 2001
+From b9af6f34e43bf5264d75933f2080f16b8741048d Mon Sep 17 00:00:00 2001
 From: Romain Naour <romain.naour@gmail.com>
 Date: Sat, 25 Jul 2020 11:46:01 +0200
 Subject: [PATCH] mips: Do not include hi and lo in clobber list for R6
@@ -31,10 +31,10 @@ Signed-off-by: Romain Naour <romain.naour@gmail.com>
  1 file changed, 45 insertions(+)
 
 diff --git a/arch/mips/include/asm/vdso/gettimeofday.h b/arch/mips/include/asm/vdso/gettimeofday.h
-index 0ae9b4cbc153..ea600e0ebfe7 100644
+index 2203e2d0ae2a..e28096faecf6 100644
 --- a/arch/mips/include/asm/vdso/gettimeofday.h
 +++ b/arch/mips/include/asm/vdso/gettimeofday.h
-@@ -36,12 +36,21 @@ static __always_inline long gettimeofday_fallback(
+@@ -30,12 +30,21 @@ static __always_inline long gettimeofday_fallback(
  	register long nr asm("v0") = __NR_gettimeofday;
  	register long error asm("a3");
  
@@ -56,7 +56,7 @@ index 0ae9b4cbc153..ea600e0ebfe7 100644
  
  	return error ? -ret : ret;
  }
-@@ -60,12 +69,21 @@ static __always_inline long clock_gettime_fallback(
+@@ -54,12 +63,21 @@ static __always_inline long clock_gettime_fallback(
  #endif
  	register long error asm("a3");
  
@@ -78,7 +78,7 @@ index 0ae9b4cbc153..ea600e0ebfe7 100644
  
  	return error ? -ret : ret;
  }
-@@ -84,12 +102,21 @@ static __always_inline int clock_getres_fallback(
+@@ -78,12 +96,21 @@ static __always_inline int clock_getres_fallback(
  #endif
  	register long error asm("a3");
  
@@ -100,7 +100,7 @@ index 0ae9b4cbc153..ea600e0ebfe7 100644
  
  	return error ? -ret : ret;
  }
-@@ -108,12 +135,21 @@ static __always_inline long clock_gettime32_fallback(
+@@ -100,12 +127,21 @@ static __always_inline long clock_gettime32_fallback(
  	register long nr asm("v0") = __NR_clock_gettime;
  	register long error asm("a3");
  
@@ -122,7 +122,7 @@ index 0ae9b4cbc153..ea600e0ebfe7 100644
  
  	return error ? -ret : ret;
  }
-@@ -128,12 +164,21 @@ static __always_inline int clock_getres32_fallback(
+@@ -120,12 +156,21 @@ static __always_inline int clock_getres32_fallback(
  	register long nr asm("v0") = __NR_clock_getres;
  	register long error asm("a3");
  
@@ -145,5 +145,5 @@ index 0ae9b4cbc153..ea600e0ebfe7 100644
  	return error ? -ret : ret;
  }
 -- 
-2.25.4
+2.17.1
 

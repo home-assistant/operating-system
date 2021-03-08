@@ -10,6 +10,8 @@ ANGULARJS_SITE = https://code.angularjs.org/$(ANGULARJS_VERSION)
 ANGULARJS_LICENSE = MIT
 # There's no separate license file in the archive, so use angular.js instead.
 ANGULARJS_LICENSE_FILES = angular.js
+ANGULARJS_CPE_ID_VENDOR = angularjs
+ANGULARJS_CPE_ID_PRODUCT = angular.js
 
 define ANGULARJS_EXTRACT_CMDS
 	unzip $(ANGULARJS_DL_DIR)/$(ANGULARJS_SOURCE) -d $(@D)

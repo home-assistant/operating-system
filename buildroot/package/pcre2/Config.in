@@ -1,4 +1,3 @@
-
 config BR2_PACKAGE_PCRE2
 	bool "pcre2"
 	help

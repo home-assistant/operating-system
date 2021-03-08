@@ -4,16 +4,18 @@
 #
 ################################################################################
 
-OPENSWAN_VERSION = 2.6.51.5
-OPENSWAN_SITE = https://download.openswan.org/openswan
+OPENSWAN_VERSION = 3.0.0
+OPENSWAN_SITE = $(call github,xelerance,Openswan,v$(OPENSWAN_VERSION))
 OPENSWAN_LICENSE = GPL-2.0+, BSD-3-Clause
 OPENSWAN_LICENSE_FILES = COPYING LICENSE
+OPENSWAN_CPE_ID_VENDOR = xelerance
 
 OPENSWAN_DEPENDENCIES = host-bison host-flex gmp iproute2
 OPENSWAN_MAKE_OPTS = ARCH=$(BR2_ARCH) CC="$(TARGET_CC)" POD2MAN="" XMLTO="" \
 	USERCOMPILE="$(TARGET_CFLAGS) $(if $(BR2_TOOLCHAIN_SUPPORTS_PIE),-fPIE)" \
 	USERLINK="$(TARGET_LDFLAGS) $(if $(BR2_TOOLCHAIN_SUPPORTS_PIE),-fPIE)" \
-	INC_USRLOCAL=/usr USE_KLIPS=false USE_MAST=false USE_NM=false
+	INC_USRLOCAL=/usr USE_KLIPS=false USE_MAST=false USE_NM=false \
+	USE_NOMANINSTALL=true
 
 ifeq ($(BR2_PACKAGE_LIBCURL),y)
 OPENSWAN_DEPENDENCIES += libcurl

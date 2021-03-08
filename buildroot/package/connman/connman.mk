@@ -4,13 +4,14 @@
 #
 ################################################################################
 
-CONNMAN_VERSION = 1.38
+CONNMAN_VERSION = 1.39
 CONNMAN_SOURCE = connman-$(CONNMAN_VERSION).tar.xz
 CONNMAN_SITE = $(BR2_KERNEL_MIRROR)/linux/network/connman
 CONNMAN_DEPENDENCIES = libglib2 dbus iptables
 CONNMAN_INSTALL_STAGING = YES
 CONNMAN_LICENSE = GPL-2.0
 CONNMAN_LICENSE_FILES = COPYING
+CONNMAN_CPE_ID_VENDOR = intel
 
 CONNMAN_CONF_OPTS = --with-dbusconfdir=/etc
 

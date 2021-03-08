@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBUDFREAD_VERSION = 1.1.0
+LIBUDFREAD_VERSION = 1.1.1
 LIBUDFREAD_SOURCE = libudfread-$(LIBUDFREAD_VERSION).tar.bz2
 LIBUDFREAD_SITE = https://code.videolan.org/videolan/libudfread/-/archive/$(LIBUDFREAD_VERSION)
 LIBUDFREAD_AUTORECONF = YES

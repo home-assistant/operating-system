@@ -15,4 +15,17 @@ config BR2_PACKAGE_EROFS_UTILS_LZ4
 	help
 	  Support LZ4 compression algorithm
 
+config BR2_PACKAGE_EROFS_UTILS_EROFSFUSE
+	bool "erofsfuse support"
+	depends on BR2_USE_MMU # libfuse
+	depends on !BR2_STATIC_LIBS # libfuse
+	depends on BR2_TOOLCHAIN_HAS_THREADS # libfuse
+	select BR2_PACKAGE_LIBFUSE
+	help
+	  FUSE file system client for EROFS
+
+comment "erofsfuse needs a toolchain w/ threads, dynamic library"
+	depends on BR2_USE_MMU
+	depends on !BR2_TOOLCHAIN_HAS_THREADS || BR2_STATIC_LIBS
+
 endif

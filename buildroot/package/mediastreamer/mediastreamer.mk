@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-MEDIASTREAMER_VERSION = 4.3.1
+MEDIASTREAMER_VERSION = 4.4.8
 MEDIASTREAMER_SITE = \
 	https://gitlab.linphone.org/BC/public/mediastreamer2/-/archive/$(MEDIASTREAMER_VERSION)
 MEDIASTREAMER_LICENSE = GPL-3.0+

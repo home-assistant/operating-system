@@ -11,15 +11,5 @@ config BR2_PACKAGE_TAGLIB
 
 	  http://taglib.org/
 
-if BR2_PACKAGE_TAGLIB
-
-config BR2_PACKAGE_TAGLIB_MP4
-	bool "taglib mp4 support"
-
-config BR2_PACKAGE_TAGLIB_ASF
-	bool "taglib wma support"
-
-endif
-
 comment "taglib needs a toolchain w/ C++, wchar"
 	depends on !BR2_INSTALL_LIBSTDCPP || !BR2_USE_WCHAR

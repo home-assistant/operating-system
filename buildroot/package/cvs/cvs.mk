@@ -10,6 +10,7 @@ CVS_PATCH = cvs_$(CVS_VERSION)-12+squeeze1.diff.gz
 CVS_SITE = http://snapshot.debian.org/archive/debian/20141023T043132Z/pool/main/c/cvs
 CVS_LICENSE = GPL-1.0+, LGPL-2.0+, LGPL-2.1+ (glob)
 CVS_LICENSE_FILES = COPYING COPYING.LIB lib/glob-libc.h
+CVS_CPE_ID_VENDOR = gnu
 CVS_DEPENDENCIES = ncurses
 
 CVS_CONF_ENV = \

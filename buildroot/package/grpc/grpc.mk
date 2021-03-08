@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-GRPC_VERSION = 1.33.2
+GRPC_VERSION = 1.35.0
 GRPC_SITE = $(call github,grpc,grpc,v$(GRPC_VERSION))
 GRPC_LICENSE = Apache-2.0
 GRPC_LICENSE_FILES = LICENSE
@@ -28,7 +28,13 @@ GRPC_CONF_OPTS = \
 	-DgRPC_RE2_PROVIDER=package \
 	-DgRPC_SSL_PROVIDER=package \
 	-DgRPC_ZLIB_PROVIDER=package \
-	-DgRPC_NATIVE_CPP_PLUGIN=$(HOST_DIR)/bin/grpc_cpp_plugin
+	-DgRPC_BUILD_GRPC_CPP_PLUGIN=OFF \
+	-DgRPC_BUILD_GRPC_CSHARP_PLUGIN=OFF \
+	-DgRPC_BUILD_GRPC_NODE_PLUGIN=OFF \
+	-DgRPC_BUILD_GRPC_OBJECTIVE_C_PLUGIN=OFF \
+	-DgRPC_BUILD_GRPC_PHP_PLUGIN=OFF \
+	-DgRPC_BUILD_GRPC_PYTHON_PLUGIN=OFF \
+	-DgRPC_BUILD_GRPC_RUBY_PLUGIN=OFF
 
 # grpc can use __atomic builtins, so we need to link with
 # libatomic when available
@@ -71,14 +77,6 @@ HOST_GRPC_CONF_OPTS = \
 	-DgRPC_RE2_PROVIDER=package \
 	-DgRPC_SSL_PROVIDER=package \
 	-DgRPC_ZLIB_PROVIDER=package
-
-# With gcc 4.8 (at least on ubuntu) there is a bug in LTO which breaks
-# the linkage of the grpc_cpp_plugin with libprotobuf and pthread. This
-# additional flag fixes this.
-ifeq ($(BR2_HOST_GCC_AT_LEAST_4_9),)
-HOST_GRPC_CONF_OPTS += \
-	-DCMAKE_EXE_LINKER_FLAGS="$(HOST_LDFLAGS) -Wl,--no-as-needed"
-endif
 
 $(eval $(cmake-package))
 $(eval $(host-cmake-package))

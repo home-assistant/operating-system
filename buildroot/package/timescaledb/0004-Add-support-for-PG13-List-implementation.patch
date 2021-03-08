@@ -1,0 +1,473 @@
+From 259ff80eb29c2c70e6afb77d266ce49cccbef223 Mon Sep 17 00:00:00 2001
+From: Sven Klemm <sven@timescale.com>
+Date: Sat, 19 Sep 2020 22:20:34 +0200
+Subject: [PATCH] Add support for PG13 List implementation
+
+PG13 changes the List implementation from a linked list to an array
+while most of the API functions did not change a few them have slightly
+different signature in PG13, additionally the list_make5 functions
+got removed.
+
+https://github.com/postgres/postgres/commit/1cff1b95ab
+
+Signed-off-by: Maxim Kochetkov <fido_max@inbox.ru>
+Fetch from: https://github.com/timescale/timescaledb/commit/b1a9c3b7b7d44ee78456931292655d52c252930d.patch
+---
+ .clang-format                                    |  1 +
+ src/bgw/scheduler.c                              | 12 ++++++------
+ src/cache.c                                      | 10 ++++++++--
+ src/chunk_append/chunk_append.c                  |  2 +-
+ src/chunk_append/exec.c                          |  4 ++--
+ src/compat.h                                     | 16 ++++++++++++++++
+ src/import/planner.c                             |  2 +-
+ src/plan_agg_bookend.c                           |  7 ++++---
+ src/plan_expand_hypertable.c                     | 13 +++++++++----
+ test/src/bgw/test_job_refresh.c                  |  3 ++-
+ tsl/src/continuous_aggs/create.c                 |  2 +-
+ tsl/src/debug.c                                  | 15 ++++++++++-----
+ tsl/src/fdw/deparse.c                            |  6 +++---
+ .../nodes/decompress_chunk/decompress_chunk.c    |  6 +++---
+ tsl/src/nodes/decompress_chunk/exec.c            |  3 ++-
+ tsl/src/nodes/gapfill/planner.c                  | 11 +++++++----
+ 16 files changed, 76 insertions(+), 37 deletions(-)
+
+diff --git a/.clang-format b/.clang-format
+index 5bb275cd..9aac7ef4 100644
+--- a/.clang-format
++++ b/.clang-format
+@@ -60,6 +60,7 @@ ForEachMacros:
+   - foreach
+   - forboth
+   - for_each_cell
++  - for_each_cell_compat
+   - for_both_cell
+   - forthree
+ IncludeBlocks:   Preserve # separate include blocks will not be merged
+diff --git a/src/bgw/scheduler.c b/src/bgw/scheduler.c
+index 7a7e360c..2630ff9f 100644
+--- a/src/bgw/scheduler.c
++++ b/src/bgw/scheduler.c
+@@ -456,7 +456,7 @@ ts_update_scheduled_jobs_list(List *cur_jobs_list, MemoryContext mctx)
+ 			 */
+ 			terminate_and_cleanup_job(cur_sjob);
+ 
+-			cur_ptr = lnext(cur_ptr);
++			cur_ptr = lnext_compat(cur_jobs_list, cur_ptr);
+ 			continue;
+ 		}
+ 		if (cur_sjob->job.fd.id == new_sjob->job.fd.id)
+@@ -472,15 +472,15 @@ ts_update_scheduled_jobs_list(List *cur_jobs_list, MemoryContext mctx)
+ 			if (cur_sjob->state == JOB_STATE_SCHEDULED)
+ 				scheduled_bgw_job_transition_state_to(new_sjob, JOB_STATE_SCHEDULED);
+ 
+-			cur_ptr = lnext(cur_ptr);
+-			new_ptr = lnext(new_ptr);
++			cur_ptr = lnext_compat(cur_jobs_list, cur_ptr);
++			new_ptr = lnext_compat(new_jobs, new_ptr);
+ 		}
+ 		else if (cur_sjob->job.fd.id > new_sjob->job.fd.id)
+ 		{
+ 			scheduled_bgw_job_transition_state_to(new_sjob, JOB_STATE_SCHEDULED);
+ 
+ 			/* Advance the new_job list until we catch up to cur_list */
+-			new_ptr = lnext(new_ptr);
++			new_ptr = lnext_compat(new_jobs, new_ptr);
+ 		}
+ 	}
+ 
+@@ -489,7 +489,7 @@ ts_update_scheduled_jobs_list(List *cur_jobs_list, MemoryContext mctx)
+ 	{
+ 		ListCell *ptr;
+ 
+-		for_each_cell (ptr, cur_ptr)
++		for_each_cell_compat (ptr, cur_jobs_list, cur_ptr)
+ 			terminate_and_cleanup_job(lfirst(ptr));
+ 	}
+ 
+@@ -498,7 +498,7 @@ ts_update_scheduled_jobs_list(List *cur_jobs_list, MemoryContext mctx)
+ 		/* Then there are more new jobs. Initialize all of them. */
+ 		ListCell *ptr;
+ 
+-		for_each_cell (ptr, new_ptr)
++		for_each_cell_compat (ptr, new_jobs, new_ptr)
+ 			scheduled_bgw_job_transition_state_to(lfirst(ptr), JOB_STATE_SCHEDULED);
+ 	}
+ 
+diff --git a/src/cache.c b/src/cache.c
+index cc6b2d07..3b53485a 100644
+--- a/src/cache.c
++++ b/src/cache.c
+@@ -7,6 +7,7 @@
+ #include <access/xact.h>
+ 
+ #include "cache.h"
++#include "compat.h"
+ 
+ /* List of pinned caches. A cache occurs once in this list for every pin
+  * taken */
+@@ -105,7 +106,10 @@ ts_cache_pin(Cache *cache)
+ static void
+ remove_pin(Cache *cache, SubTransactionId subtxnid)
+ {
+-	ListCell *lc, *prev = NULL;
++	ListCell *lc;
++#if PG13_LT
++	ListCell *prev = NULL;
++#endif
+ 
+ 	foreach (lc, pinned_caches)
+ 	{
+@@ -113,12 +117,14 @@ remove_pin(Cache *cache, SubTransactionId subtxnid)
+ 
+ 		if (cp->cache == cache && cp->subtxnid == subtxnid)
+ 		{
+-			pinned_caches = list_delete_cell(pinned_caches, lc, prev);
++			pinned_caches = list_delete_cell_compat(pinned_caches, lc, prev);
+ 			pfree(cp);
+ 			return;
+ 		}
+ 
++#if PG13_LT
+ 		prev = lc;
++#endif
+ 	}
+ 
+ 	/* should never reach here: there should always be a pin to remove */
+diff --git a/src/chunk_append/chunk_append.c b/src/chunk_append/chunk_append.c
+index fb1c87ff..ed91ff39 100644
+--- a/src/chunk_append/chunk_append.c
++++ b/src/chunk_append/chunk_append.c
+@@ -209,7 +209,7 @@ ts_chunk_append_path_create(PlannerInfo *root, RelOptInfo *rel, Hypertable *ht,
+ 				if (is_not_pruned)
+ 				{
+ 					merge_childs = lappend(merge_childs, child);
+-					flat = lnext(flat);
++					flat = lnext_compat(children, flat);
+ 					if (flat == NULL)
+ 						break;
+ 				}
+diff --git a/src/chunk_append/exec.c b/src/chunk_append/exec.c
+index 8f4dd5d6..84f79e23 100644
+--- a/src/chunk_append/exec.c
++++ b/src/chunk_append/exec.c
+@@ -344,8 +344,8 @@ initialize_runtime_exclusion(ChunkAppendState *state)
+ 				state->runtime_number_exclusions++;
+ 		}
+ 
+-		lc_clauses = lnext(lc_clauses);
+-		lc_constraints = lnext(lc_constraints);
++		lc_clauses = lnext_compat(state->filtered_ri_clauses, lc_clauses);
++		lc_constraints = lnext_compat(state->filtered_constraints, lc_constraints);
+ 	}
+ 
+ 	state->runtime_initialized = true;
+diff --git a/src/compat.h b/src/compat.h
+index d84f8754..51c1c181 100644
+--- a/src/compat.h
++++ b/src/compat.h
+@@ -358,4 +358,20 @@ get_vacuum_options(const VacuumStmt *stmt)
+ 	pg_b64_decode((src), (srclen), (dst), (dstlen))
+ #endif
+ 
++/* PG13 changes the List implementation from a linked list to an array
++ * while most of the API functions did not change a few them have slightly
++ * different signature in PG13, additionally the list_make5 functions
++ * got removed. */
++#if PG13_LT
++#define lnext_compat(l, lc) lnext((lc))
++#define list_delete_cell_compat(l, lc, prev) list_delete_cell((l), (lc), (prev))
++#define for_each_cell_compat(cell, list, initcell) for_each_cell ((cell), (initcell))
++#else
++#define lnext_compat(l, lc) lnext((l), (lc))
++#define list_delete_cell_compat(l, lc, prev) list_delete_cell((l), (lc))
++#define list_make5(x1, x2, x3, x4, x5) lappend(list_make4(x1, x2, x3, x4), x5)
++#define list_make5_oid(x1, x2, x3, x4, x5) lappend_oid(list_make4_oid(x1, x2, x3, x4), x5)
++#define for_each_cell_compat(cell, list, initcell) for_each_cell ((cell), (list), (initcell))
++#endif
++
+ #endif /* TIMESCALEDB_COMPAT_H */
+diff --git a/src/import/planner.c b/src/import/planner.c
+index 31a4889d..b907390d 100644
+--- a/src/import/planner.c
++++ b/src/import/planner.c
+@@ -196,7 +196,7 @@ ts_make_partial_grouping_target(struct PlannerInfo *root, PathTarget *grouping_t
+ 	struct List *non_group_cols;
+ 	struct List *non_group_exprs;
+ 	int i;
+-	struct ListCell *lc;
++	ListCell *lc;
+ 
+ 	partial_target = create_empty_pathtarget();
+ 	non_group_cols = NIL;
+diff --git a/src/plan_agg_bookend.c b/src/plan_agg_bookend.c
+index d4d06f5b..5394cf5d 100644
+--- a/src/plan_agg_bookend.c
++++ b/src/plan_agg_bookend.c
+@@ -696,13 +696,14 @@ build_first_last_path(PlannerInfo *root, FirstLastAggInfo *fl_info, Oid eqop, Oi
+ 					if (app->parent_reloid == rte->relid)
+ 					{
+ 						subroot->append_rel_list =
+-							list_delete_cell(subroot->append_rel_list, next, prev);
+-						next = prev != NULL ? prev->next : list_head(subroot->append_rel_list);
++							list_delete_cell_compat(subroot->append_rel_list, next, prev);
++						next = prev != NULL ? lnext_compat(subroot->append_rel_list, next) :
++											  list_head(subroot->append_rel_list);
+ 					}
+ 					else
+ 					{
+ 						prev = next;
+-						next = next->next;
++						next = lnext_compat(subroot->append_rel_list, next);
+ 					}
+ 				}
+ 			}
+diff --git a/src/plan_expand_hypertable.c b/src/plan_expand_hypertable.c
+index 37282ce4..2b99c93b 100644
+--- a/src/plan_expand_hypertable.c
++++ b/src/plan_expand_hypertable.c
+@@ -581,7 +581,8 @@ process_quals(Node *quals, CollectQualCtx *ctx, bool is_outer_join)
+ 	ListCell *prev pg_attribute_unused() = NULL;
+ 	List *additional_quals = NIL;
+ 
+-	for (lc = list_head((List *) quals); lc != NULL; prev = lc, lc = lnext(lc))
++	for (lc = list_head((List *) quals); lc != NULL;
++		 prev = lc, lc = lnext_compat((List *) quals, lc))
+ 	{
+ 		Expr *qual = lfirst(lc);
+ 		Relids relids = pull_varnos((Node *) qual);
+@@ -611,7 +612,7 @@ process_quals(Node *quals, CollectQualCtx *ctx, bool is_outer_join)
+ 			 * is called, so we can remove the functions from that directly
+ 			 */
+ #if PG12_LT
+-			quals = (Node *) list_delete_cell((List *) quals, lc, prev);
++			quals = (Node *) list_delete_cell_compat((List *) quals, lc, prev);
+ #endif
+ 			return quals;
+ 		}
+@@ -663,7 +664,9 @@ process_quals(Node *quals, CollectQualCtx *ctx, bool is_outer_join)
+ static List *
+ remove_exclusion_fns(List *restrictinfo)
+ {
++#if PG13_LT
+ 	ListCell *prev = NULL;
++#endif
+ 	ListCell *lc = list_head(restrictinfo);
+ 
+ 	while (lc != NULL)
+@@ -682,11 +685,13 @@ remove_exclusion_fns(List *restrictinfo)
+ 						(errcode(ERRCODE_INVALID_PARAMETER_VALUE),
+ 						 errmsg("first parameter for chunks_in function needs to be record")));
+ 
+-			restrictinfo = list_delete_cell((List *) restrictinfo, lc, prev);
++			restrictinfo = list_delete_cell_compat((List *) restrictinfo, lc, prev);
+ 			return restrictinfo;
+ 		}
++#if PG13_LT
+ 		prev = lc;
+-		lc = lnext(lc);
++#endif
++		lc = lnext_compat(restrictinfo, lc);
+ 	}
+ 	return restrictinfo;
+ }
+diff --git a/test/src/bgw/test_job_refresh.c b/test/src/bgw/test_job_refresh.c
+index 51a3b0d7..d51415d4 100644
+--- a/test/src/bgw/test_job_refresh.c
++++ b/test/src/bgw/test_job_refresh.c
+@@ -13,6 +13,7 @@
+ #include <access/htup_details.h>
+ #include <utils/memutils.h>
+ 
++#include "compat.h"
+ #include "export.h"
+ #include "bgw/scheduler.h"
+ 
+@@ -70,7 +71,7 @@ ts_test_job_refresh(PG_FUNCTION_ARGS)
+ 		memset(nulls, 0, sizeof(*nulls) * funcctx->tuple_desc->natts);
+ 		tuple = heap_form_tuple(funcctx->tuple_desc, values, nulls);
+ 
+-		funcctx->user_fctx = lnext(lc);
++		funcctx->user_fctx = lnext_compat(cur_scheduled_jobs, lc);
+ 		SRF_RETURN_NEXT(funcctx, HeapTupleGetDatum(tuple));
+ 	}
+ 
+diff --git a/tsl/src/continuous_aggs/create.c b/tsl/src/continuous_aggs/create.c
+index bdf4470a..f767dabb 100644
+--- a/tsl/src/continuous_aggs/create.c
++++ b/tsl/src/continuous_aggs/create.c
+@@ -1566,7 +1566,7 @@ fixup_userview_query_tlist(Query *userquery, List *tlist_aliases)
+ 			if (tle->resjunk)
+ 				continue;
+ 			tle->resname = pstrdup(strVal(lfirst(alist_item)));
+-			alist_item = lnext(alist_item);
++			alist_item = lnext_compat(tlist_aliases, alist_item);
+ 			if (alist_item == NULL)
+ 				break; /* done assigning aliases */
+ 		}
+diff --git a/tsl/src/debug.c b/tsl/src/debug.c
+index 697bfc0b..023097ee 100644
+--- a/tsl/src/debug.c
++++ b/tsl/src/debug.c
+@@ -168,7 +168,7 @@ append_func_expr(StringInfo buf, const Node *expr, const List *rtable)
+ 	foreach (l, e->args)
+ 	{
+ 		append_expr(buf, lfirst(l), rtable);
+-		if (lnext(l))
++		if (lnext_compat(e->args, l))
+ 			appendStringInfoString(buf, ", ");
+ 	}
+ 	appendStringInfoChar(buf, ')');
+@@ -217,7 +217,7 @@ append_restrict_clauses(StringInfo buf, PlannerInfo *root, List *clauses)
+ 		RestrictInfo *c = lfirst(cell);
+ 
+ 		append_expr(buf, (Node *) c->clause, root->parse->rtable);
+-		if (lnext(cell))
++		if (lnext_compat(clauses, cell))
+ 			appendStringInfoString(buf, ", ");
+ 	}
+ }
+@@ -270,7 +270,7 @@ append_pathkeys(StringInfo buf, const List *pathkeys, const List *rtable)
+ 			append_expr(buf, (Node *) mem->em_expr, rtable);
+ 		}
+ 		appendStringInfoChar(buf, ')');
+-		if (lnext(i))
++		if (lnext_compat(pathkeys, i))
+ 			appendStringInfoString(buf, ", ");
+ 	}
+ 	appendStringInfoChar(buf, ')');
+@@ -601,7 +601,10 @@ tsl_debug_append_pruned_pathlist(StringInfo buf, PlannerInfo *root, RelOptInfo *
+ 	foreach (lc1, rel->pathlist)
+ 	{
+ 		Path *p1 = (Path *) lfirst(lc1);
+-		ListCell *lc2, *prev = NULL;
++		ListCell *lc2;
++#if PG13_LT
++		ListCell *prev = NULL;
++#endif
+ 
+ 		foreach (lc2, fdw_info->considered_paths)
+ 		{
+@@ -610,11 +613,13 @@ tsl_debug_append_pruned_pathlist(StringInfo buf, PlannerInfo *root, RelOptInfo *
+ 			if (path_is_origin(p1, p2))
+ 			{
+ 				fdw_info->considered_paths =
+-					list_delete_cell(fdw_info->considered_paths, lc2, prev);
++					list_delete_cell_compat(fdw_info->considered_paths, lc2, prev);
+ 				fdw_utils_free_path(p2);
+ 				break;
+ 			}
++#if PG13_LT
+ 			prev = lc2;
++#endif
+ 		}
+ 	}
+ 
+diff --git a/tsl/src/fdw/deparse.c b/tsl/src/fdw/deparse.c
+index d90636b5..efd7debb 100644
+--- a/tsl/src/fdw/deparse.c
++++ b/tsl/src/fdw/deparse.c
+@@ -2211,7 +2211,7 @@ deparseSubscriptingRef(SubscriptingRef *node, deparse_expr_cxt *context)
+ 		{
+ 			deparseExpr(lfirst(lowlist_item), context);
+ 			appendStringInfoChar(buf, ':');
+-			lowlist_item = lnext(lowlist_item);
++			lowlist_item = lnext_compat(node->reflowerindexpr, lowlist_item);
+ 		}
+ 		deparseExpr(lfirst(uplist_item), context);
+ 		appendStringInfoChar(buf, ']');
+@@ -2273,7 +2273,7 @@ deparseFuncExpr(FuncExpr *node, deparse_expr_cxt *context)
+ 	{
+ 		if (!first)
+ 			appendStringInfoString(buf, ", ");
+-		if (use_variadic && lnext(arg) == NULL)
++		if (use_variadic && lnext_compat(node->args, arg) == NULL)
+ 			appendStringInfoString(buf, "VARIADIC ");
+ 		deparseExpr((Expr *) lfirst(arg), context);
+ 		first = false;
+@@ -2601,7 +2601,7 @@ deparseAggref(Aggref *node, deparse_expr_cxt *context)
+ 				first = false;
+ 
+ 				/* Add VARIADIC */
+-				if (use_variadic && lnext(arg) == NULL)
++				if (use_variadic && lnext_compat(node->args, arg) == NULL)
+ 					appendStringInfoString(buf, "VARIADIC ");
+ 
+ 				deparseExpr((Expr *) n, context);
+diff --git a/tsl/src/nodes/decompress_chunk/decompress_chunk.c b/tsl/src/nodes/decompress_chunk/decompress_chunk.c
+index 90b6c7c3..1e36f5dc 100644
+--- a/tsl/src/nodes/decompress_chunk/decompress_chunk.c
++++ b/tsl/src/nodes/decompress_chunk/decompress_chunk.c
+@@ -182,7 +182,7 @@ build_compressed_scan_pathkeys(SortInfo *sort_info, PlannerInfo *root, List *chu
+ 
+ 		for (lc = list_head(chunk_pathkeys);
+ 			 lc != NULL && bms_num_members(segmentby_columns) < info->num_segmentby_columns;
+-			 lc = lnext(lc))
++			 lc = lnext_compat(chunk_pathkeys, lc))
+ 		{
+ 			PathKey *pk = lfirst(lc);
+ 			var = (Var *) ts_find_em_expr_for_rel(pk->pk_eclass, info->chunk_rel);
+@@ -1210,7 +1210,7 @@ build_sortinfo(RelOptInfo *chunk_rel, CompressionInfo *info, List *pathkeys)
+ 		 * we keep looping even if we found all segmentby columns in case a
+ 		 * columns appears both in baserestrictinfo and in ORDER BY clause
+ 		 */
+-		for (; lc != NULL; lc = lnext(lc))
++		for (; lc != NULL; lc = lnext_compat(pathkeys, lc))
+ 		{
+ 			Assert(bms_num_members(segmentby_columns) <= info->num_segmentby_columns);
+ 			pk = lfirst(lc);
+@@ -1250,7 +1250,7 @@ build_sortinfo(RelOptInfo *chunk_rel, CompressionInfo *info, List *pathkeys)
+ 	 * loop over the rest of pathkeys
+ 	 * this needs to exactly match the configured compress_orderby
+ 	 */
+-	for (pk_index = 1; lc != NULL; lc = lnext(lc), pk_index++)
++	for (pk_index = 1; lc != NULL; lc = lnext_compat(pathkeys, lc), pk_index++)
+ 	{
+ 		bool reverse = false;
+ 		pk = lfirst(lc);
+diff --git a/tsl/src/nodes/decompress_chunk/exec.c b/tsl/src/nodes/decompress_chunk/exec.c
+index 035f2de4..f58e6f6c 100644
+--- a/tsl/src/nodes/decompress_chunk/exec.c
++++ b/tsl/src/nodes/decompress_chunk/exec.c
+@@ -121,7 +121,8 @@ initialize_column_state(DecompressChunkState *state)
+ 
+ 	state->columns = palloc0(state->num_columns * sizeof(DecompressChunkColumnState));
+ 
+-	for (i = 0, lc = list_head(state->varattno_map); i < state->num_columns; lc = lnext(lc), i++)
++	for (i = 0, lc = list_head(state->varattno_map); i < state->num_columns;
++		 lc = lnext_compat(state->varattno_map, lc), i++)
+ 	{
+ 		DecompressChunkColumnState *column = &state->columns[i];
+ 		column->attno = lfirst_int(lc);
+diff --git a/tsl/src/nodes/gapfill/planner.c b/tsl/src/nodes/gapfill/planner.c
+index 56bdffd5..765a14ce 100644
+--- a/tsl/src/nodes/gapfill/planner.c
++++ b/tsl/src/nodes/gapfill/planner.c
+@@ -295,8 +295,10 @@ gapfill_build_pathtarget(PathTarget *pt_upper, PathTarget *pt_path, PathTarget *
+ 				/*
+ 				 * check arguments past first argument dont have Vars
+ 				 */
+-				for (lc_arg = lnext(list_head(context.call.window->args)); lc_arg != NULL;
+-					 lc_arg = lnext(lc_arg))
++				for (lc_arg = lnext_compat(context.call.window->args,
++										   list_head(context.call.window->args));
++					 lc_arg != NULL;
++					 lc_arg = lnext_compat(context.call.window->args, lc_arg))
+ 				{
+ 					if (contain_var_clause(lfirst(lc_arg)))
+ 						ereport(ERROR,
+@@ -553,9 +555,10 @@ gapfill_adjust_window_targetlist(PlannerInfo *root, RelOptInfo *input_rel, RelOp
+ 								/*
+ 								 * check arguments past first argument dont have Vars
+ 								 */
+-								for (lc_arg = lnext(list_head(context.call.window->args));
++								for (lc_arg = lnext_compat(context.call.window->args,
++														   list_head(context.call.window->args));
+ 									 lc_arg != NULL;
+-									 lc_arg = lnext(lc_arg))
++									 lc_arg = lnext_compat(context.call.window->args, lc_arg))
+ 								{
+ 									if (contain_var_clause(lfirst(lc_arg)))
+ 										ereport(ERROR,
+-- 
+2.29.2
+

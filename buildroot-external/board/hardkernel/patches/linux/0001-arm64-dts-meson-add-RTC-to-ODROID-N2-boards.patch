@@ -1,0 +1,50 @@
+From 516c081bcdd8f248982588aa8ca5bd8d24b2e7ef Mon Sep 17 00:00:00 2001
+Message-Id: <516c081bcdd8f248982588aa8ca5bd8d24b2e7ef.1612541102.git.stefan@agner.ch>
+From: Stefan Agner <stefan@agner.ch>
+Date: Mon, 16 Nov 2020 23:11:02 +0100
+Subject: [PATCH 1/4] arm64: dts: meson: add RTC to ODROID-N2 boards
+
+All ODROID-N2 boards come with a NXP PCF8563TS RTC connected to I2C bus
+3. This is the RTC which is connected to the on-board RTC backup battery.
+Use it as primary RTC.
+
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+---
+ .../boot/dts/amlogic/meson-g12b-odroid-n2.dtsi     | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi
+index 39a09661c5f6..445d90d25aa3 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi
+@@ -13,6 +13,8 @@ / {
+ 	aliases {
+ 		serial0 = &uart_AO;
+ 		ethernet0 = &ethmac;
++		rtc0 = &board_rtc;
++		rtc1 = &vrtc;
+ 	};
+ 
+ 	dioo2133: audio-amplifier-0 {
+@@ -471,6 +473,18 @@ hdmi_tx_tmds_out: endpoint {
+ 	};
+ };
+ 
++&i2c3 {
++	status = "okay";
++	pinctrl-0 = <&i2c3_sda_a_pins>, <&i2c3_sck_a_pins>;
++	pinctrl-names = "default";
++	clock-frequency = <400000>;
++
++	board_rtc: rtc@51 {
++		compatible = "nxp,pcf8563";
++		reg = <0x51>;
++	};
++};
++
+ &ir {
+ 	status = "okay";
+ 	pinctrl-0 = <&remote_input_ao_pins>;
+-- 
+2.30.0
+

@@ -8,6 +8,7 @@ THRIFT_VERSION = 0.13.0
 THRIFT_SITE = http://www.us.apache.org/dist/thrift/$(THRIFT_VERSION)
 THRIFT_LICENSE = Apache-2.0
 THRIFT_LICENSE_FILES = LICENSE
+THRIFT_CPE_ID_VENDOR = apache
 
 THRIFT_DEPENDENCIES = host-pkgconf host-thrift boost \
 	libevent openssl zlib

@@ -1,5 +1,5 @@
-# From: http://www.haproxy.org/download/2.2/src/haproxy-2.2.6.tar.gz.sha256
-sha256  be1c6754cbaceafc4837e0c6036c7f81027a3992516435cbbbc5dc749bf5a087  haproxy-2.2.6.tar.gz
+# From: http://www.haproxy.org/download/2.2/src/haproxy-2.2.8.tar.gz.sha256
+sha256  61f90e3e2a36bd8800a5bee31cba7eef37c9aa8a353b6c741edaa411510b14be  haproxy-2.2.8.tar.gz
 # Locally computed:
 sha256  0717ca51fceaa25ac9e5ccc62e0c727dcf27796057201fb5fded56a25ff6ca28  LICENSE
 sha256  5df07007198989c622f5d41de8d703e7bef3d0e79d62e24332ee739a452af62a  doc/lgpl.txt

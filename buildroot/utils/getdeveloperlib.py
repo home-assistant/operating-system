@@ -56,17 +56,6 @@ def fname_get_package_infra(fname):
     return None
 
 
-def get_infras(files):
-    """Search in the list of files for .mk files, and collect the package
-    infrastructures used by those .mk files."""
-    infras = set()
-    for fname in files:
-        infra = fname_get_package_infra(fname)
-        if infra:
-            infras.add(infra)
-    return infras
-
-
 def analyze_patches(patches):
     """Parse a list of patches and returns the list of files modified,
     added or removed by the patches, as well as the list of package
@@ -77,7 +66,6 @@ def analyze_patches(patches):
         (files, infras) = analyze_patch(patch)
         allfiles = allfiles | files
         allinfras = allinfras | infras
-    allinfras = allinfras | get_infras(allfiles)
     return (allfiles, allinfras)
 
 

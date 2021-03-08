@@ -10,6 +10,7 @@ MII_DIAG_PATCH = mii-diag_$(MII_DIAG_VERSION)-3.diff.gz
 MII_DIAG_SITE = http://snapshot.debian.org/archive/debian/20141023T043132Z/pool/main/m/mii-diag
 MII_DIAG_LICENSE = GPL # No version specified
 MII_DIAG_LICENSE_FILES = mii-diag.c
+MII_DIAG_CPE_ID_VENDOR = debian
 
 MII_DIAG_MAKE_OPTS = $(TARGET_CONFIGURE_OPTS)
 

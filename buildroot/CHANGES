@@ -1,3 +1,130 @@
+2021.02-rc3, released February 27th, 2021
+
+	Fixes all over the tree.
+
+	utils/scanpypi: Explicitly use python3 to ensure compatiblity
+	with packages having python3-only code in setup.py
+
+	support/download: Ensure sub-second timestamp precision is
+	dropped when creating a tarball from a (subversion) repo, as
+	that is not representable in the PAX tar format
+
+	Updated/fixed packages: babeltrace2, bind, botan, brltty,
+	cegui, elfutils, fakeroot, imagemagick, intel-mediasdk,
+	irqbalance, libglib2, libselinux, libusb, libuwsc, nodejs,
+	open62541, openldap, ply, python-aiohttp, python-django,
+	python3, qemu, readline, rust, screen, taglib, unbound, xterm
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#13516: utils/scanpypi: Failure when parsing diffoscope
+	#13541: 2021.02.rc2: irqbalance: Daemon couldn't be bound to...
+	#13561: Create a new user defining users-table.txt not working..
+
+2021.02-rc2, released February 16th, 2021
+
+	Fixes all over the tree.
+
+	Vulnerability scanning: cpedb.py: Drop CPE XML database
+	caching, as it did not speed up processing much and uses a lot
+	of additional memory.
+	pkg-stats: include information about ignored CVEs in JSON
+	output
+
+	Fakeroot: Fix compatibility issue with glibc 2.33
+
+	Updated/fixed packages: can-utils, collectd, dnsmaqs,
+	docker-cli, docker-engine, ebtables, fakeroot, flashrom,
+	gdk-pixbuf, go, gst1-python, jasper, kodi,
+	kodi-inputstream-adaptive, lcms2, libgeos, libgpg-error,
+	libopenssl, mongoose, mpd, ne10, netopeer2, openblas, orc,
+	perl-gd, ply, postgresql, protobuf, subversion, tcpdump,
+	tzdate, uboot-tools, wireshark, webkitgtk, wpewebkit, xterm
+
+	New packages: perl-extutils-pkgconfig
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#11706: binman (U-boot tool) cannot find libfdt "binman: No mod..
+
+2021.02-rc1, released February 9th, 2021
+
+	Fixes all over the tree and new features.
+
+	Toolchain: Default to binutils 2.35.2, add 2.36.1, drop
+	2.33.x. Fix GCC 10.x ARC adc/sbc pattern handling, Update ARM
+	toolchains to 10.2-2020.11 release.
+
+	Architectures: ARC: add support for generic HS48 processor,
+	PPC: drop PPC601 support, which was removed from Linux 5.10.
+
+	Vulnerability scanning: The CVE checking logic has been
+	extended to match packages based on CPE (Common Platform
+	Enumeration) IDs for more accurate matching, and CPE
+	identifiers have been added for a large amount of packages.
+
+	Download: Rework the tarball creation logic (E.G. when a
+	package is fetched from a git/svn repo) to no longer require a
+	host-tar <= 1.29. To differ between the old and the new
+	format, the new tarballs have gained a -br1 suffix
+	(<pkg>-<version>-br1.tar.gz).
+
+	SELinux support: A significant number of packages now pull in
+	the relevant refpolicy modules when enabled.
+
+	New defconfigs: arrow avenger96, bananapi M1+, microchip
+	sam9x60ek, pine64 rock64
+
+	Removed defconfigs: QEMU ppc virtex-ml507
+
+	New packages: balena-engine, casync, coremark, coremark-pro,
+	datatables, datatables-buttons, datatables-fixedcolumns,
+	datatables-responsive, delve, frotz, gkrellm, inih, jszip,
+	libgeos, libiec61850, libmdbx, lualdap, neofetch,
+	nvidia-modprobe, open62541, perl-devel-cycle, perl-devel-size,
+	perl-math-int64, ply, popperjs, python-bleak,
+	python-defusedxml, python-pycups, python-pytest-asyncio,
+	python-typing-extensions, qcom-db410c-firmware, qt5coap,
+	qt5knx, qt5mqtt, quickjs, rcw-smarc-sal28, screenfetch,
+	ssdp-responder, tpm2-pkcs11, wqy-zenhei, xorcurses
+
+	Removed packages: audiofile, boa, ipsec-tools, libupnp18,
+	ti-sgx-libgdbm
+
+	Renamed rcw package to qoriq-rcw
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#13316: beaglebone_qt5_defconfig: PowerVR fails to start
+	#13416: dhcpcd start warning message: no such user dhcpcd
+	#13456: ccache prevents build
+	#13471: package/mpd/mpd.conf make use of path not created
+	#13506: BR2_PACKAGE_DHCPCD missing directory creation
+
+2020.11.3, released February 17th, 2021
+
+	meson: Fix ccache detection handling when per-package builds
+	are used.
+
+	Fakeroot: Fix compatibility issue with glibc 2.33
+
+	Updated/fixed packages: atftp, binutils, busybox, cereal,
+	chartjs, connman, dhcpcd, dnsmasq, docker-cli, docker-engine,
+	ebtables, fakeroot, flashrom, go, gst1-python, guile,
+	intel-mediadriver, intel-microcode, jasper,
+	kodi-inputstream-adaptive, lcms2, libbsd, libopenssl,
+	makedumpfile, memtester, mosquitto, ne10, openblas, orc, php,
+	postgresql, privoxy, pugixml, python-bottle, python-django,
+	python3, rauc, sox, stress-ng, subversion, tzdata,
+	uboot-tools, uclibc, webkitgtk, wireguard-linux-compat,
+	wireshark, wpa_supplicant, wpewebkit, xenomai,
+	xserver_xorg-server, xterm
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#11706: binman (U-boot tool) cannot find libfdt "binman: No mod..
+	#13506: BR2_PACKAGE_DHCPCD missing directory creation
+
 2020.11.2, released January 31st, 2021
 
 	Important / security related fixes.
@@ -204,6 +331,42 @@
 	#12911: usb_modeswitch installation race condition
 	#13236: Can't compile linux 5.4.8 (with gcc 10 on host)
 	#13286: The system hangs in vmware workstation on the line..
+
+2020.08.3, released December 27th, 2020
+
+	Important / security related fixes.
+
+	Infrastructure:
+	- cmake: fix host ccache handling for CMake 3.19
+	- meson: Forcibly disable binary stripping for
+	  target builds, enable for host builds
+	- golang: Fix HOST / TARGET directories for per-package builds
+
+	Defconfigs: Beaglebone Qt5: Fix ti-sgx related issues
+
+	Updated/fixed packages: apitrace, arm-trusted-firmware,
+	bustle, c-ares, ca-certificates, cage, cdrkit, cryptopp,
+	dhcpcd, docker-containerd, dtv-scan-tables, flare-engine,
+	ghostscript, gvfs, haproxy, imagemagick, imx-gpu-viv, jasper,
+	jemalloc, jpeg-turbo, libcamera, libcap, libcurl, libglib2,
+	libgpiod, libkrb5, libopenssl, libplist, libressl, libuv,
+	libuvw, lynx, mariadb, mbedtls, minidlna, mongodb, monkey,
+	musl, mutt, ncurses, netsnmp, netsurf, nodejs, opencv3,
+	openldap, openrc, opkg-utils, paho-mqtt-c, php, privoxy,
+	proftpd, python-crc16, python-flask-cors, python-lxml,
+	python-pip, python-pyparsing, python-pyqt5, qemu, qt5base,
+	raptor, rauc, ruby, setserial, shadowsocks-libev, slirp,
+	sqlcipher, thermald, ti-sgx-demos, tinycbor, unbound, vsftpd,
+	wireless-regdb, wireshark, wlroots, x11vnc, xen, xinetd,
+	xserver_xorg-server
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#13276: libcap builds libcap.pc incorrectly
+	#13316: beaglebone_qt5_defconfig: PowerVR fails to start
+	#13336: thermald-1.9.1 compilation failure with musl 1.2.1
+	#13341: Mistake in /etc/init.d/S70vsftpd
+	#13416: dhcpcd start warning message: no such user dhcpcd
 
 2020.08.2, released November 16th, 2020
 
@@ -738,6 +901,97 @@
 	#12751: OpenJdk package installation issues on	target
 	#12796: Update OpenSSL to Version 1.1.1g to patch  CVE-2020-1967
 	#12811: bootstrap stuck and no login prompt
+
+2020.02.11, released February 17, 2021
+
+	Important / security related fixes.
+
+	meson: Fix ccache detection handling when per-package builds
+	are used.
+
+	Fakeroot: Fix compatibility issue with glibc 2.33
+
+	Updated/fixed packages: atftp, busybox, cereal, connman,
+	dhcpcd, dnsmasq, docker-cli, docker-engine, fakeroot,
+	intel-mediadriver, intel-microcode, jasper,
+	kodi-inputstream-adaptive, libbsd, libopenssl, linux-headers,
+	mosquitto, orc, php, postgresql, privoxy, pugixml,
+	python-bottle, python-django, python3, rauc, sox, subversion,
+	tzdata, wireguard-linux-compat, wpa_supplicant, xenomai, xterm
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#13506: BR2_PACKAGE_DHCPCD missing directory creation
+
+2020.02.10, released January 31st, 2021
+
+	Important / security related fixes.
+
+	Download: Ensure git submodules are correctly fetched if
+	enabled for a package with <pkg>_GIT_SUBMODULES = YES and the
+	host variant is downloaded first.
+
+	Toolchain: Mark CodeSourcery Aarch64 2014.11 toolchain as not
+	having libatomic.
+
+	pkg-stats: Fix python 3.8+ deprecation warning.
+
+	meson: Ensure ccache is not detected and used, as it may
+	conflict with the ccache handling in Buildroot.
+
+	New packages: libnpupnp
+
+	Updated/fixed packages: bctoolbox, brltty, dbus, dovecot,
+	dovecot-pigeonhole, gcc, gerbera, gmrender-resurrect, gst-omx,
+	gst1-plugins-bad, gst1-plugins-base, gst1-plugins-good,
+	gst1-plugins-ugly, gst1-rtsp-server, gst1-vaapi,
+	gst1-validate, gstreamer1, gstreamer1-editing-services,
+	igd2-for-linux, libclc, libllcp, libtorrent-rasterbar,
+	libupnp, libupnpp, lpc32xxcdl, luarocks, mpd, nfs-utils,
+	nodejs, openjpeg, openldap, opentracing-cpp, openvpn, p11-kit,
+	paho-mqtt-c, php, poppler, postgresql, python3, runc, sudo,
+	syslog-ng, systemd, tini, trace-cmd, tzdata, ushare, vlc,
+	wavpack, wireguard-linux-compat, wolfssl, xapp_xload, xorriso,
+	zic
+
+	Removed packages: libupnp18
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#13471: package/mpd/mpd.conf make use of path not created
+
+2020.02.9, released December 27th, 2020
+
+	Important / security related fixes.
+
+	Infrastructure:
+	- cmake: fix host ccache handling for CMake 3.19
+	- meson: Forcibly disable binary stripping for
+	  target builds, enable for host builds
+	- golang: Fix HOST / TARGET directories for per-package builds
+
+	Defconfigs: Beaglebone Qt5: Fix ti-sgx related issues
+
+	Updated/fixed packages: apitrace, arm-trusted-firmware,
+	bustle, c-ares, ca-certificates, cdrkit, cryptopp, dhcpcd,
+	docker-containerd, dtv-scan-tables, flare-engine, ghostscript,
+	haproxy, imagemagick, imx-gpu-viv, jasper, jemalloc,
+	jpeg-turbo, libcap, libcurl, libglib2, libgpiod, libkrb5,
+	libopenssl, libplist, libressl, libuv, libuvw, lynx, mariadb,
+	mbedtls, minidlna, monkey, musl, mutt, ncurses, netsnmp,
+	nodejs, opencv3, openldap, openrc, opkg-utils, paho-mqtt-c,
+	php, privoxy, proftpd, python-crc16, python-flask-cors,
+	python-lxml, python-pip, python-pyparsing, python-pyqt5, qemu,
+	qt5base, raptor, rauc, ruby, setserial, shadowsocks-libev,
+	slirp, sqlcipher, ti-sgx-demos, tinycbor, vsftpd,
+	wireless-regdb, wireshark, x11vnc, xen, xinetd,
+	xserver_xorg-server
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#13276: libcap builds libcap.pc incorrectly
+	#13316: beaglebone_qt5_defconfig: PowerVR fails to start
+	#13341: Mistake in /etc/init.d/S70vsftpd
 
 2020.02.8, released November 16th, 2020
 

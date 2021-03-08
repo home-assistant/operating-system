@@ -21,7 +21,7 @@
       <Product>Home Assistant Operating System</Product>
       <ProductUrl>https://www.home-assistant.io</ProductUrl>
     </ProductSection>
-    <OperatingSystemSection ovf:id="100" vmw:osType="other4xLinux64Guest">
+    <OperatingSystemSection ovf:id="102" vmw:osType="otherGuest64">
       <Info>The kind of installed guest operating system</Info>
       <Description>Linux</Description>
     </OperatingSystemSection>

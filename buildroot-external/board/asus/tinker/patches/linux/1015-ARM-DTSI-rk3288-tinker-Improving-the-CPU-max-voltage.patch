@@ -18,7 +18,7 @@ index aa107ee41..3da1c830f 100644
  				regulator-always-on;
  				regulator-boot-on;
  				regulator-min-microvolt = <750000>;
--				regulator-max-microvolt = <1350000>;
+-				regulator-max-microvolt = <1400000>;
 +				regulator-max-microvolt = <1450000>;
  				regulator-name = "vdd_arm";
  				regulator-ramp-delay = <6000>;

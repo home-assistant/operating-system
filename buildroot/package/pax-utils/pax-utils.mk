@@ -9,6 +9,7 @@ PAX_UTILS_SITE = http://distfiles.gentoo.org/distfiles
 PAX_UTILS_SOURCE = pax-utils-$(PAX_UTILS_VERSION).tar.xz
 PAX_UTILS_LICENSE = GPL-2.0
 PAX_UTILS_LICENSE_FILES = COPYING
+PAX_UTILS_CPE_ID_VENDOR = gentoo
 
 PAX_UTILS_DEPENDENCIES = host-pkgconf
 PAX_UTILS_CONF_OPTS = --without-python

@@ -1,0 +1,37 @@
+From a312e82124fb8c9f139d5a40fa5a28123bb77a33 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sun, 10 Jan 2021 14:25:56 +0100
+Subject: [PATCH] arch/posix/CMakeLists.txt: fix build without threads
+
+Fix the following build failure without threads:
+
+[100%] Linking C shared library bin/libopen62541.so
+/home/buildroot/autobuild/instance-3/output-1/host/opt/ext-toolchain/bin/../lib/gcc/arm-buildroot-linux-uclibcgnueabihf/8.3.0/../../../../arm-buildroot-linux-uclibcgnueabihf/bin/ld: cannot find -lpthread
+collect2: error: ld returned 1 exit status
+CMakeFiles/open62541.dir/build.make:192: recipe for target 'bin/libopen62541.so.0.0.0' failed
+make[3]: *** [bin/libopen62541.so.0.0.0] Error 1
+
+Fixes:
+ - http://autobuild.buildroot.org/results/87ec3c987c991f790757276316d6caf81e635fa2
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ arch/posix/CMakeLists.txt | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/arch/posix/CMakeLists.txt b/arch/posix/CMakeLists.txt
+index bb24757c..a53c9f2c 100644
+--- a/arch/posix/CMakeLists.txt
++++ b/arch/posix/CMakeLists.txt
+@@ -20,8 +20,6 @@ if (${_index} GREATER -1 OR "${UA_ARCHITECTURE}" STREQUAL "posix")
+           ua_architecture_append_to_library(netdb ndblib socket)
+         else()
+           ua_architecture_append_to_library(m)
+-          #TODO - Error on first make run if pthread is included conditional?
+-          ua_architecture_append_to_library(pthread)
+           if(UA_ENABLE_MULTITHREADING OR UA_BUILD_UNIT_TESTS)
+             ua_architecture_append_to_library(pthread)
+           endif()
+-- 
+2.29.2
+

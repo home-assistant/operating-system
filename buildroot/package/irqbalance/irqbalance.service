@@ -3,6 +3,7 @@ Description=irqbalance daemon
 After=syslog.target
 
 [Service]
+RuntimeDirectory=irqbalance
 ExecStart=/usr/sbin/irqbalance --foreground
 
 [Install]

@@ -4,19 +4,17 @@
 #
 ################################################################################
 
-OPENVPN_VERSION = 2.4.9
+OPENVPN_VERSION = 2.5.0
 OPENVPN_SOURCE = openvpn-$(OPENVPN_VERSION).tar.xz
 OPENVPN_SITE = http://swupdate.openvpn.net/community/releases
 OPENVPN_DEPENDENCIES = host-pkgconf
 OPENVPN_LICENSE = GPL-2.0
 OPENVPN_LICENSE_FILES = COPYRIGHT.GPL
+OPENVPN_CPE_ID_VENDOR = openvpn
 OPENVPN_CONF_OPTS = \
-	--enable-iproute2 \
+	--disable-unit-tests \
 	$(if $(BR2_STATIC_LIBS),--disable-plugins)
-OPENVPN_CONF_ENV = IFCONFIG=/sbin/ifconfig \
-	NETSTAT=/bin/netstat \
-	ROUTE=/sbin/route \
-	IPROUTE=/sbin/ip
+OPENVPN_CONF_ENV = NETSTAT=/bin/netstat
 
 ifeq ($(BR2_PACKAGE_OPENVPN_SMALL),y)
 OPENVPN_CONF_OPTS += \

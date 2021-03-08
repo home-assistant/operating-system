@@ -1,0 +1,26 @@
+From a2422fdf4097d1f5f8c8f88bbe08b9a0f3c35fe6 Mon Sep 17 00:00:00 2001
+From: Johan Oudinet <johan.oudinet@gmail.com>
+Date: Wed, 25 Nov 2020 22:38:22 +0100
+Subject: [PATCH] rebar.config.script: remove extra dependency to base64url
+
+Signed-off-by: Johan Oudinet <johan.oudinet@gmail.com>
+---
+ rebar.config.script | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/rebar.config.script b/rebar.config.script
+index a63895e..41b2970 100644
+--- a/rebar.config.script
++++ b/rebar.config.script
+@@ -62,7 +62,7 @@ Cfg2 = case IsRebar3 of
+                [{plugin_dir, filename:join([filename:dirname(SCRIPT),"plugins"])},
+                 {plugins, [override_deps_versions]}] ++
+                 ModCfg(CONFIG, [deps], fun(V) ->
+-                   V ++ [{base64url, ".*", {git, "git://github.com/dvv/base64url.git", {tag, "v1.0"}}}]
++                   V
+                 end, [])
+        end,
+ 
+-- 
+2.29.2
+

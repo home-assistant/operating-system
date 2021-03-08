@@ -1,0 +1,100 @@
+From 07d66af3b0800764087c4151d4f6562d4f8cce05 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Mon, 14 Dec 2020 23:00:33 +0100
+Subject: [PATCH] Fix build without threads
+
+Build without threads is broken since version 2.29.0 and
+https://github.com/git/git/commit/15b52a44e0c92a0658e891194a5b0610d1f53afc:
+
+In file included from cache.h:4,
+                 from blame.c:1:
+git-compat-util.h:1238:20: error: static declaration of 'flockfile' follows non-static declaration
+ static inline void flockfile(FILE *fh)
+                    ^~~~~~~~~
+In file included from git-compat-util.h:168,
+                 from cache.h:4,
+                 from blame.c:1:
+/nvme/rc-buildroot-test/scripts/instance-0/output-1/host/arm-buildroot-linux-uclibcgnueabihf/sysroot/usr/include/stdio.h:806:13: note: previous declaration of 'flockfile' was here
+ extern void flockfile (FILE *__stream) __THROW;
+             ^~~~~~~~~
+In file included from cache.h:4,
+                 from blame.c:1:
+git-compat-util.h:1242:20: error: static declaration of 'funlockfile' follows non-static declaration
+ static inline void funlockfile(FILE *fh)
+                    ^~~~~~~~~~~
+In file included from git-compat-util.h:168,
+                 from cache.h:4,
+                 from blame.c:1:
+/nvme/rc-buildroot-test/scripts/instance-0/output-1/host/arm-buildroot-linux-uclibcgnueabihf/sysroot/usr/include/stdio.h:813:13: note: previous declaration of 'funlockfile' was here
+ extern void funlockfile (FILE *__stream) __THROW;
+             ^~~~~~~~~~~
+
+To avoid this build failure, check if flockfile is available before
+defining flockfile, funlockfile and getc_unlocked
+
+Fixes:
+ - http://autobuild.buildroot.org/results/d41638d1ad8e78dd6f654367c905996b838ee649
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ Makefile          | 5 +++++
+ configure.ac      | 6 ++++++
+ git-compat-util.h | 2 +-
+ 3 files changed, 12 insertions(+), 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+index 6fb86c5862..58d0893a12 100644
+--- a/Makefile
++++ b/Makefile
+@@ -232,6 +232,8 @@ all::
+ # Define NO_STRUCT_ITIMERVAL if you don't have struct itimerval
+ # This also implies NO_SETITIMER
+ #
++# Define NO_FLOCKFILE if you don't have flockfile()
++#
+ # Define NO_FAST_WORKING_DIRECTORY if accessing objects in pack files is
+ # generally faster on your platform than accessing the working directory.
+ #
+@@ -1638,6 +1640,9 @@ endif
+ ifdef NO_SETITIMER
+ 	COMPAT_CFLAGS += -DNO_SETITIMER
+ endif
++ifdef NO_FLOCKFILE
++	COMPAT_CFLAGS += -DNO_FLOCKFILE
++endif
+ ifdef NO_PREAD
+ 	COMPAT_CFLAGS += -DNO_PREAD
+ 	COMPAT_OBJS += compat/pread.o
+diff --git a/configure.ac b/configure.ac
+index 66aedb9288..d4295b5c69 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -1132,6 +1132,12 @@ GIT_CHECK_FUNC(setitimer,
+ [NO_SETITIMER=YesPlease])
+ GIT_CONF_SUBST([NO_SETITIMER])
+ #
++# Define NO_FLOCKFILE if you don't have flockfile.
++GIT_CHECK_FUNC(flockfile,
++[NO_FLOCKFILE=],
++[NO_FLOCKFILE=YesPlease])
++GIT_CONF_SUBST([NO_FLOCKFILE])
++#
+ # Define NO_STRCASESTR if you don't have strcasestr.
+ GIT_CHECK_FUNC(strcasestr,
+ [NO_STRCASESTR=],
+diff --git a/git-compat-util.h b/git-compat-util.h
+index 7d509c5022..279cdd941e 100644
+--- a/git-compat-util.h
++++ b/git-compat-util.h
+@@ -1236,7 +1236,7 @@ int warn_on_fopen_errors(const char *path);
+ # define SHELL_PATH "/bin/sh"
+ #endif
+ 
+-#ifndef _POSIX_THREAD_SAFE_FUNCTIONS
++#if !defined(_POSIX_THREAD_SAFE_FUNCTIONS) && defined(NO_FLOCKFILE)
+ static inline void flockfile(FILE *fh)
+ {
+ 	; /* nothing */
+-- 
+2.29.2
+

@@ -11,6 +11,7 @@ GZIP_SITE = $(BR2_GNU_MIRROR)/gzip
 GZIP_CONF_OPTS = --exec-prefix=/
 GZIP_LICENSE = GPL-3.0+
 GZIP_LICENSE_FILES = COPYING
+GZIP_CPE_ID_VENDOR = gnu
 GZIP_CONF_ENV += gl_cv_func_fflush_stdin=yes
 HOST_GZIP_CONF_ENV += gl_cv_func_fflush_stdin=yes
 # configure substitutes $(SHELL) for the shell shebang in scripts like

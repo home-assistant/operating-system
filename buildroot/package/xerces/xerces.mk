@@ -4,11 +4,13 @@
 #
 ################################################################################
 
-XERCES_VERSION = 3.2.2
+XERCES_VERSION = 3.2.3
 XERCES_SOURCE = xerces-c-$(XERCES_VERSION).tar.xz
 XERCES_SITE = http://archive.apache.org/dist/xerces/c/3/sources
 XERCES_LICENSE = Apache-2.0
 XERCES_LICENSE_FILES = LICENSE
+XERCES_CPE_ID_VENDOR = apache
+XERCES_CPE_ID_PRODUCT = xerces-c\+\+
 XERCES_INSTALL_STAGING = YES
 
 define XERCES_DISABLE_SAMPLES
@@ -16,11 +18,6 @@ define XERCES_DISABLE_SAMPLES
 endef
 
 XERCES_POST_PATCH_HOOKS += XERCES_DISABLE_SAMPLES
-
-# Before CMake 3.10, passing THREADS_PTHREAD_ARG=OFF was needed to
-# disable a try_run() call in the FindThreads tests, which caused a
-# build failure when cross-compiling.
-XERCES_CONF_OPTS += -DTHREADS_PTHREAD_ARG=OFF
 
 ifeq ($(BR2_PACKAGE_ICU),y)
 XERCES_DEPENDENCIES += icu

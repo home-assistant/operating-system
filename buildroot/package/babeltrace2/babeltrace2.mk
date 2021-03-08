@@ -27,5 +27,9 @@ else
 BABELTRACE2_CONF_OPTS += --disable-debug-info
 endif
 
+ifeq ($(BR2_TOOLCHAIN_HAS_LIBATOMIC),y)
+BABELTRACE2_CONF_ENV += LIBS=-latomic
+endif
+
 $(eval $(autotools-package))
 $(eval $(host-autotools-package))

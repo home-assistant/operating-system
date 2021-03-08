@@ -1,0 +1,26 @@
+From 9badb73425a67768c09bcaed1a9c26c684af6c30 Mon Sep 17 00:00:00 2001
+From: Howard Chu <hyc@openldap.org>
+Date: Sat, 6 Feb 2021 20:52:06 +0000
+Subject: [PATCH] ITS#9454 fix issuerAndThisUpdateCheck
+
+Signed-off-by: Peter Korsgaard <peter@korsgaard.com>
+---
+ servers/slapd/schema_init.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/servers/slapd/schema_init.c b/servers/slapd/schema_init.c
+index 31be1154e..8b1e25539 100644
+--- a/servers/slapd/schema_init.c
++++ b/servers/slapd/schema_init.c
+@@ -3900,6 +3900,8 @@ issuerAndThisUpdateCheck(
+ 					break;
+ 				}
+ 			}
++			if ( tu->bv_len < STRLENOF("YYYYmmddHHmmssZ") ) return LDAP_INVALID_SYNTAX;
++
+ 			x.bv_val += tu->bv_len + 1;
+ 			x.bv_len -= tu->bv_len + 1;
+ 
+-- 
+2.20.1
+
