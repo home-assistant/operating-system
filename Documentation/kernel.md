@@ -16,4 +16,4 @@ Default Kernel tree: 5.4
 | Odroid-C4 | 5.10.17 |
 | Odroid-N2 | 5.10.17 |
 | Odroid-XU4 | 5.10.17 |
-| Intel NUC | 5.10.17 |
+| Generic x86-64 | 5.10.17 |
