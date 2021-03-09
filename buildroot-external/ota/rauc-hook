@@ -16,7 +16,7 @@ case "$1" in
          fi
          # generic-x86-64: Be compatible with intel-nuc
          # shellcheck disable=SC2039
-         rauc_board_compatible=${RAUC_MF_COMPATIBLE/generic-x86-64/intel-nuc}
+         rauc_board_compatible=${rauc_os_compatible/generic-x86-64/intel-nuc}
          if [ "${rauc_board_compatible}" = "$RAUC_SYSTEM_COMPATIBLE" ]; then
              exit 0
          fi
