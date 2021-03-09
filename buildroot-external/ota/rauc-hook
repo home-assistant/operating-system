@@ -2,7 +2,28 @@
 
 ##
 # Hooks
-env
+
+case "$1" in
+     install-check)
+         if [ "$RAUC_MF_COMPATIBLE" = "$RAUC_SYSTEM_COMPATIBLE" ]; then
+             exit 0
+         fi
+         # Be compatible with hassos OS ID
+         # shellcheck disable=SC2039
+         rauc_os_compatible=${RAUC_MF_COMPATIBLE/haos-/hassos-}
+         if [ "$rauc_os_compatible" = "$RAUC_SYSTEM_COMPATIBLE" ]; then
+             exit 0
+         fi
+         echo "Compatible does not match!" 1>&2
+         exit 10
+         ;;
+    slot-install)
+        # Use install handlers below
+        ;;
+    *)
+        exit 1
+        ;;
+esac
 
 # Handle boot hocks
 if [ "${RAUC_SLOT_CLASS}" = "boot" ]; then
