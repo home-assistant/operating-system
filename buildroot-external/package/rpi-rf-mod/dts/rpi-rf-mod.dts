@@ -1,0 +1,74 @@
+/dts-v1/;
+/plugin/;
+
+/*
+** Device Tree Overlay for eQ-3 RPI-RF-MOD and
+** HM-MOD-RPI-PCB for RaspberryPi
+**
+** Copyright (c) 2018-2019 Jens Maus <mail@jens-maus.de>
+** Licensed under Apache 2.0
+**
+*/
+
+/ {
+    compatible = "brcm,bcm2708";
+
+    // fragment to ensure we have the correct gpio pin
+    // setup for the RPI-RF-MOD
+    fragment@0 {
+        target = <&gpio>;
+        __overlay__ {
+            rpi_rf_mod_pins: rpi_rf_mod_pins {
+                brcm,pins = <19 18 12 16 20 21>; // 19=reset, 18=reset (HM-MOD), 12=button, 16=red, 20=green, 21=blue
+                brcm,pull = <0 0 2 0 0 0>; // 19,18=no-pullup, 12=pullup, 16,20,21=no-pullup
+                brcm,function = <0 0 0 1 1 1>; // 19,18,12=input, 16,20,21=output
+            };
+        };
+    };
+
+    // fragment to define dedicated led nodes for
+    // each separate led supported by the RPI-RF-MOD
+    fragment@1 {
+        target = <&leds>;
+        __overlay__ {
+            pinctrl-names = "default";
+            pinctrl-0 = <&rpi_rf_mod_pins>;
+            rpi_rf_mod_red: rpi_rf_mod_red {
+                label = "rpi_rf_mod:red";
+                gpios = <&gpio 16 0>;
+                default-state = "keep";
+                linux,default-trigger = "none";
+            };
+            rpi_rf_mod_green: rpi_rf_mod_green {
+                label = "rpi_rf_mod:green";
+                gpios = <&gpio 20 0>;
+                default-state = "keep";
+                linux,default-trigger = "none";
+            };
+            rpi_rf_mod_blue: rpi_rf_mod_blue {
+                label = "rpi_rf_mod:blue";
+                gpios = <&gpio 21 0>;
+                default-state = "keep";
+                linux,default-trigger = "none";
+            };
+        };
+    };
+
+    // fragment to define settings for the rx8130 RTC clock
+    // of the RPI-RF-MOD
+    fragment@2 {
+        target = <&i2c1>;
+        __overlay__ {
+            #address-cells = <1>;
+            #size-cells = <0>;
+            status = "okay";
+
+            rx8130@32 {
+                compatible = "epson,rx8130-legacy";
+                reg = <0x32>;
+                status = "okay";
+                enable-external-capacitor;
+            };
+        };
+    };
+};

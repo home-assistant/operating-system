@@ -1,0 +1,104 @@
+/dts-v1/;
+/plugin/;
+
+/*
+** Device Tree Overlay for eQ-3 RPI-RF-MOD and
+** HM-MOD-RPI-PCB for ASUS Tinkerboard
+**
+** Copyright (c) 2019-2020 Jens Maus <mail@jens-maus.de>
+** Licensed under Apache 2.0
+**
+*/
+
+/ {
+    compatible = "asus,rk3288-tinker", "rockchip,rk3288";
+
+    // fragment to ensure we have the correct gpio pin
+    // setup for the RPI-RF-MOD and HM-MOD-RPI-PCB
+    fragment@0 {
+        target = <&pinctrl>;
+        __overlay__ {
+            rpi_rf_mod {
+                rpi_rf_mod_pins: rpi-rf-mod-pins {
+                    rockchip,pins = <6 1  0 &pcfg_pull_none>,  // GPIO6A1: reset
+                                    <7 23 0 &pcfg_pull_up>,    // GPIO7C7: button
+                                    <7 7  0 &pcfg_output_low>, // GPIO7A7: red LED
+                                    <6 3  0 &pcfg_output_low>, // GPIO6A3: green LED
+                                    <6 4  0 &pcfg_output_low>; // GPIO6A4: blue LED
+                };
+            };
+            hm_mod_rpi_pcb {
+                hm_mod_rpi_pcb_pins: hm-mod-rpi-pcb-pins {
+                    rockchip,pins = <6 0 0 &pcfg_pull_none>; // GPIO6A0: reset
+                };
+            };
+        };
+    };
+
+    // fragment to define dedicated led nodes for
+    // each separate led supported by the RPI-RF-MOD
+    fragment@1 {
+        target-path = "/gpio-leds";
+        __overlay__ {
+            pinctrl-names = "default";
+            pinctrl-0 = <&rpi_rf_mod_pins>, <&hm_mod_rpi_pcb_pins>;
+            rpi-rf-mod-red {
+                label = "rpi_rf_mod:red";
+                gpios = <&gpio7 7 0>;
+                default-state = "keep";
+                linux,default-trigger = "none";
+            };
+            rpi-rf-mod-green {
+                label = "rpi_rf_mod:green";
+                gpios = <&gpio6 3 0>;
+                default-state = "keep";
+                linux,default-trigger = "none";
+            };
+            rpi-rf-mod-blue {
+                label = "rpi_rf_mod:blue";
+                gpios = <&gpio6 4 0>;
+                default-state = "keep";
+                linux,default-trigger = "none";
+            };
+        };
+    };
+
+    // fragment to define settings for the rx8130 RTC clock
+    // of the RPI-RF-MOD
+    fragment@2 {
+        target = <&i2c1>;
+        __overlay__ {
+            #address-cells = <1>;
+            #size-cells = <0>;
+            status = "okay";
+
+            rx8130@32 {
+                compatible = "epson,rx8130-legacy";
+                reg = <0x32>;
+                status = "okay";
+                enable-external-capacitor;
+            };
+        };
+    };
+
+    // we have to disable uart2,uart3,i2s on the Tinkerboard or
+    // otherwise the gpio-leds cannot use the pins for the RPI-RF-MOD
+    fragment@3 {
+        target = <&uart2>;
+        __overlay__ {
+          status = "disabled";
+        };
+    };
+    fragment@4 {
+        target = <&uart3>;
+        __overlay__ {
+          status = "disabled";
+        };
+    };
+    fragment@5 {
+        target = <&i2s>;
+        __overlay__ {
+          status = "disabled";
+        };
+    };
+};
