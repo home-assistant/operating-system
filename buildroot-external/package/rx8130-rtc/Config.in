@@ -1,0 +1,2 @@
+config BR2_PACKAGE_RX8130_RTC
+	bool "Support for Epson RX8130CE real time clock"
