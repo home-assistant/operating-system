@@ -1,0 +1,2 @@
+SUBSYSTEM=="net",KERNEL=="eth0",RUN+="/usr/lib/jethome/jsetmac %k"
+SUBSYSTEM=="net",KERNEL=="wlan0",RUN+="/usr/lib/jethome/jsetmac %k"

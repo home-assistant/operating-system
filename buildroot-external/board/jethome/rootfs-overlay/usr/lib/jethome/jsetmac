@@ -1,0 +1,15 @@
+#!/bin/bash
+
+INT="$1"
+
+if [ "$INT" = "eth0" ]; then
+  ADDR=$(fw_printenv mac | cut -d "=" -f 2)
+fi
+
+if [ "$INT" = "wlan0" ]; then
+  ADDR=$(fw_printenv macwifi | cut -d "=" -f 2)
+fi
+
+if [ -n "$ADDR" ]; then
+  ip link set dev "$INT" address "$ADDR"
+fi
