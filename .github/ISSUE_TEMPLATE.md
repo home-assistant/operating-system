@@ -17,7 +17,7 @@ Describe the Homme Assistant image you are using and the hardare environemnt
 - [ ] Raspberry Pi [1/2/3/4]
 - [ ] ODROID [C2/C4/N2(+)/XU4]
 - [ ] ASUS Tinker [S]
-- [ ] Intel NUC (or compatible)
+- [ ] Generic x86-64 (like Intel NUC)
 - [ ] OVA (Open Virtualization Applicance, on Intel NUC or any other hardware, please add the Hypervisor you are using)
 
 **Home Assistant OS release:**

@@ -28,12 +28,14 @@ if [ "${1}" = "move" ] && [ -e "${2}" ]; then
     fi
 
     # Flag device
-    echo "WARNING: All partitions on ${NEW_DEVICE_ROOT} will be deleted!"
-    printf "Enter \"yes\" to confirm: "
-    read -r confirm
-    if [ "${confirm}" != "yes" ]; then
-        echo "Aborting."
-        exit 1
+    if [ -z "${DATACTL_NOCONFIRM}" ]; then
+        echo "WARNING: All partitions on ${NEW_DEVICE_ROOT} will be deleted!"
+        printf "Enter \"yes\" to confirm: "
+        read -r confirm
+        if [ "${confirm}" != "yes" ]; then
+            echo "Aborting."
+            exit 1
+        fi
     fi
 
     # Create GPT partition table with a single data partition
