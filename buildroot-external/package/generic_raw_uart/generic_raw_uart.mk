@@ -21,13 +21,11 @@ GENERIC_RAW_UART_DEPENDENCIES = host-dtc
 GENERIC_RAW_UART_MODULE_SUBDIRS = kernel
 GENERIC_RAW_UART_INSTALL_IMAGES = YES
 
-# RaspberryPi DTS file
-ifneq (,$(findstring raspberrypi,$(BR2_PACKAGE_HASSIO_MACHINE)))
+ifeq ($(BR2_PACKAGE_GENERIC_RAW_UART_DTS_RPI),y)
+  # RaspberryPi DTS file
   GENERIC_RAW_UART_DTS_FILE = pivccu-raspberrypi
-endif
-
-# Tinkerboard DTS file
-ifneq (,$(findstring tinker,$(BR2_PACKAGE_HASSIO_MACHINE)))
+else ifeq ($(BR2_PACKAGE_GENERIC_RAW_UART_DTS_TINKER),y)
+  # ASUS Tinkerboard DTS file
   GENERIC_RAW_UART_DTS_FILE = pivccu-tinkerboard
 endif
 
