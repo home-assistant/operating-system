@@ -492,8 +492,8 @@ F:	board/friendlyarm/nanopi-m1
 F:	board/friendlyarm/nanopi-m1-plus
 F:	board/olimex/a13_olinuxino
 F:	board/orangepi/orangepi-plus
-F:	configs/nanopi_m1_defconfig
-F:	configs/nanopi_m1_plus_defconfig
+F:	configs/friendlyarm_nanopi_m1_defconfig
+F:	configs/friendlyarm_nanopi_m1_plus_defconfig
 F:	configs/olimex_a13_olinuxino_defconfig
 F:	configs/orangepi_plus_defconfig
 
@@ -662,7 +662,7 @@ F:	package/ev3dev-linux-drivers/
 
 N:	Davide Viti <zinosat@gmail.com>
 F:	board/friendlyarm/nanopi-r1/
-F:	configs/nanopi_r1_defconfig
+F:	configs/friendlyarm_nanopi_r1_defconfig
 F:	package/flann/
 F:	package/python-paho-mqtt/
 F:	package/qhull/
@@ -1642,7 +1642,7 @@ F:	utils/diffconfig
 
 N:	Marek Belisko <marek.belisko@open-nandra.com>
 F:	board/friendlyarm/nanopi-neo4/
-F:	configs/nanopi_neo4_defconfig
+F:	configs/friendlyarm_nanopi_neo4_defconfig
 F:	package/libatasmart/
 F:	package/polkit/
 F:	package/sg3_utils/
@@ -2483,8 +2483,8 @@ F:	board/pine64/rockpro64
 F:	board/radxa/rockpi-4
 F:	board/radxa/rockpi-n8
 F:	board/radxa/rockpi-n10
-F: 	configs/nanopc_t4_defconfig
-F: 	configs/nanopi_m4_defconfig
+F: 	configs/friendlyarm_nanopc_t4_defconfig
+F: 	configs/friendlyarm_nanopi_m4_defconfig
 F:	configs/orangepi_rk3399_defconfig
 F:	configs/roc_pc_rk3399_defconfig
 F:	configs/rock_pi_4_defconfig
@@ -2722,7 +2722,7 @@ F:	package/open62541/
 
 N:	Yann E. MORIN <yann.morin.1998@free.fr>
 F:	board/friendlyarm/nanopi-neo/
-F:	configs/nanopi_neo_defconfig
+F:	configs/friendlyarm_nanopi_neo_defconfig
 F:	fs/squashfs/
 F:	package/asterisk/
 F:	package/cegui/

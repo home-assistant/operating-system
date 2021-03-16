@@ -1,0 +1,27 @@
+From 59f67be640881eaf56cc30c304362af00523ff5d Mon Sep 17 00:00:00 2001
+From: Roy Marples <roy@marples.name>
+Date: Sun, 31 Jan 2021 10:08:11 +0000
+Subject: [PATCH] Typo with prior
+
+(cherry picked from commit d8d7f68001db3f084dfbb6e5b8ea4491088b55ba)
+Signed-off-by: Arnout Vandecappelle (Essensium/Mind) <arnout@mind.be>
+---
+ src/privsep-linux.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/privsep-linux.c b/src/privsep-linux.c
+index 04950ed2..1660447c 100644
+--- a/src/privsep-linux.c
++++ b/src/privsep-linux.c
+@@ -185,7 +185,7 @@ ps_root_sendnetlink(struct dhcpcd_ctx *ctx, int protocol, struct msghdr *msg)
+ #elif defined(__nds32__)
+ #  if (BYTE_ORDER == LITTLE_ENDIAN)
+ #    define SECCOMP_AUDIT_ARCH AUDIT_ARCH_NDS32
+-#ele
++#else
+ #    define SECCOMP_AUDIT_ARCH AUDIT_ARCH_NDS32BE
+ #endif
+ #elif defined(__powerpc64__)
+-- 
+2.29.2
+

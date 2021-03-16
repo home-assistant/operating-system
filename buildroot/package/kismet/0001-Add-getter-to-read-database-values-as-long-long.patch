@@ -1,0 +1,28 @@
+From 1d36faad18e34b43ac8ea3e7f6a44315f827a2db Mon Sep 17 00:00:00 2001
+From: George Hopkins <george-hopkins@null.net>
+Date: Mon, 4 Jan 2021 13:59:41 +0100
+Subject: [PATCH] Add getter to read database values as long long
+
+[Retrieved from:
+https://github.com/kismetwireless/kismet/commit/1d36faad18e34b43ac8ea3e7f6a44315f827a2db]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ sqlite3_cpp11.cc | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/sqlite3_cpp11.cc b/sqlite3_cpp11.cc
+index 7974bde8c..5c92dfa87 100644
+--- a/sqlite3_cpp11.cc
++++ b/sqlite3_cpp11.cc
+@@ -411,6 +411,11 @@ namespace kissqlite3 {
+         return (unsigned long) sqlite3_column_int64(stmt.get(), column);
+     }
+ 
++    template<>
++    long long sqlite3_column_as(std::shared_ptr<sqlite3_stmt> stmt, unsigned int column) {
++        return (long long) sqlite3_column_int64(stmt.get(), column);
++    }
++
+     template<>
+     unsigned long long sqlite3_column_as(std::shared_ptr<sqlite3_stmt> stmt, unsigned int column) {
+         return (unsigned long long) sqlite3_column_int64(stmt.get(), column);

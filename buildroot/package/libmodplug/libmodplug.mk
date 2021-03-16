@@ -9,5 +9,6 @@ LIBMODPLUG_SITE = http://downloads.sourceforge.net/project/modplug-xmms/libmodpl
 LIBMODPLUG_INSTALL_STAGING = YES
 LIBMODPLUG_LICENSE = Public Domain
 LIBMODPLUG_LICENSE_FILES = COPYING
+LIBMODPLUG_CPE_ID_VENDOR = konstanty_bialkowski
 
 $(eval $(autotools-package))

@@ -9,6 +9,8 @@ LIBOSIP2_SITE = $(BR2_GNU_MIRROR)/osip
 LIBOSIP2_INSTALL_STAGING = YES
 LIBOSIP2_LICENSE = LGPL-2.1+
 LIBOSIP2_LICENSE_FILES = COPYING
+LIBOSIP2_CPE_ID_VENDOR = gnu
+LIBOSIP2_CPE_ID_PRODUCT = osip
 
 ifeq ($(BR2_arc),y)
 # toolchain __arc__ define conflicts with libosip2 source

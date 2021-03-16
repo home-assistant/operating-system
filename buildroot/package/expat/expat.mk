@@ -12,7 +12,8 @@ EXPAT_DEPENDENCIES = host-pkgconf
 HOST_EXPAT_DEPENDENCIES = host-pkgconf
 EXPAT_LICENSE = MIT
 EXPAT_LICENSE_FILES = COPYING
-EXPAT_CPE_ID_VENDOR = libexpat
+EXPAT_CPE_ID_VENDOR = libexpat_project
+EXPAT_CPE_ID_PRODUCT = libexpat
 
 EXPAT_CONF_OPTS = --without-docbook
 HOST_EXPAT_CONF_OPTS = --without-docbook

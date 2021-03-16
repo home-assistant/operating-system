@@ -3,7 +3,7 @@ FriendlyARM NANOPI-M4
 
 Build:
 
-  $ make nanopi_m4_defconfig
+  $ make friendlyarm_nanopi_m4_defconfig
   $ make
 
 Files created in output directory

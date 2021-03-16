@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-OPENSSH_VERSION = 8.3p1
-OPENSSH_CPE_ID_VERSION = 8.3
+OPENSSH_VERSION = 8.4p1
+OPENSSH_CPE_ID_VERSION = 8.4
 OPENSSH_CPE_ID_UPDATE = p1
 OPENSSH_SITE = http://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable
 OPENSSH_LICENSE = BSD-3-Clause, BSD-2-Clause, Public Domain

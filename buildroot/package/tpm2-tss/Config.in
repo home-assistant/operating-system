@@ -1,6 +1,7 @@
 config BR2_PACKAGE_TPM2_TSS
 	bool "tpm2-tss"
 	depends on !BR2_STATIC_LIBS # dlfcn.h
+	depends on BR2_PACKAGE_LIBOPENSSL_ARCH_SUPPORTS
 	select BR2_PACKAGE_LIBURIPARSER
 	select BR2_PACKAGE_OPENSSL
 	select BR2_PACKAGE_OPENSSL_FORCE_LIBOPENSSL
@@ -55,4 +56,5 @@ config BR2_PACKAGE_TPM2_TSS_FAPI
 endif
 
 comment "tpm2-tss needs a toolchain w/ dynamic library"
+	depends on BR2_PACKAGE_LIBOPENSSL_ARCH_SUPPORTS
 	depends on BR2_STATIC_LIBS

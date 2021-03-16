@@ -9,6 +9,7 @@ LIBSNDFILE_SITE = http://www.mega-nerd.com/libsndfile/files
 LIBSNDFILE_INSTALL_STAGING = YES
 LIBSNDFILE_LICENSE = LGPL-2.1+
 LIBSNDFILE_LICENSE_FILES = COPYING
+LIBSNDFILE_CPE_ID_VENDOR = libsndfile_project
 
 # 0001-double64_init-Check-psf-sf.channels-against-upper-bo.patch
 LIBSNDFILE_IGNORE_CVES += CVE-2017-14634

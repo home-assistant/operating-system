@@ -1,0 +1,42 @@
+From 24ca5bdd409dd811a088bc702a2b6f99ea05ad19 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sun, 31 Jan 2021 11:12:21 +0100
+Subject: [PATCH]  src/privsep-linux.c: add support for nios2 (#23)
+
+Fix the following build failure:
+
+privsep-linux.c:206:4: error: #error "Platform does not support seccomp filter yet"
+ #  error "Platform does not support seccomp filter yet"
+    ^~~~~
+In file included from privsep-linux.c:36:
+privsep-linux.c:213:38: error: 'SECCOMP_AUDIT_ARCH' undeclared here (not in a function); did you mean 'SECCOMP_ALLOW_ARG'?
+  BPF_JUMP(BPF_JMP + BPF_JEQ + BPF_K, SECCOMP_AUDIT_ARCH, 1, 0),
+                                      ^~~~~~~~~~~~~~~~~~
+
+It should be noted that AUDIT_ARCH_NIOS2 is only defined since kernel
+5.2 and
+https://github.com/torvalds/linux/commit/1660aac45e5b49a5ace29fb5b73254617533fcbd
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+(cherry picked from commit d670866ce008c21cbf6d5b20c4d4af6460ec35d2)
+Signed-off-by: Arnout Vandecappelle (Essensium/Mind) <arnout@mind.be>
+---
+ src/privsep-linux.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/src/privsep-linux.c b/src/privsep-linux.c
+index 1660447c..e374c068 100644
+--- a/src/privsep-linux.c
++++ b/src/privsep-linux.c
+@@ -188,6 +188,8 @@ ps_root_sendnetlink(struct dhcpcd_ctx *ctx, int protocol, struct msghdr *msg)
+ #else
+ #    define SECCOMP_AUDIT_ARCH AUDIT_ARCH_NDS32BE
+ #endif
++#elif defined(__nios2__)
++#  define SECCOMP_AUDIT_ARCH AUDIT_ARCH_NIOS2
+ #elif defined(__powerpc64__)
+ #  define SECCOMP_AUDIT_ARCH AUDIT_ARCH_PPC64
+ #elif defined(__powerpc__)
+-- 
+2.29.2
+

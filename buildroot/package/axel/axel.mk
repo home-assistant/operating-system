@@ -9,7 +9,7 @@ AXEL_SITE = https://github.com/axel-download-accelerator/axel/releases/download/
 AXEL_SOURCE = axel-$(AXEL_VERSION).tar.xz
 AXEL_LICENSE = GPL-2.0+
 AXEL_LICENSE_FILES = COPYING
-AXEL_CPE_ID_VALID = YES
+AXEL_CPE_ID_VENDOR = axel_project
 AXEL_DEPENDENCIES = host-pkgconf $(TARGET_NLS_DEPENDENCIES)
 
 # ac_cv_prog_cc_c99 is required for BR2_USE_WCHAR=n because the C99 test

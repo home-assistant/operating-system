@@ -12,7 +12,7 @@ How to build it
 
 Configure Buildroot:
 
-    $ make nanopi_r1_defconfig
+    $ make friendlyarm_nanopi_r1_defconfig
 
 Compile everything and build the SD card image:
 

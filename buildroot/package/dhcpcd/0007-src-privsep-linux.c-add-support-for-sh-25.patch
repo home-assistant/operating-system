@@ -1,0 +1,54 @@
+From 10acecc0583b7301cb539ba6875618956fa3d13b Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Fri, 5 Feb 2021 09:05:54 +0100
+Subject: [PATCH] src/privsep-linux.c: add support for sh (#25)
+
+Fix the following build failure:
+
+privsep-linux.c:206:4: error: #error "Platform does not support seccomp filter yet"
+ #  error "Platform does not support seccomp filter yet"
+    ^~~~~
+In file included from privsep-linux.c:36:
+privsep-linux.c:213:38: error: 'SECCOMP_AUDIT_ARCH' undeclared here (not in a function); did you mean 'SECCOMP_ALLOW_ARG'?
+  BPF_JUMP(BPF_JMP + BPF_JEQ + BPF_K, SECCOMP_AUDIT_ARCH, 1, 0),
+                                      ^~~~~~~~~~~~~~~~~~
+
+It should be noted that AUDIT_ARCH_{SH,SHEL,SH64,SHEL64} are defined at
+least since kernel 3.7 and
+https://github.com/torvalds/linux/commit/607ca46e97a1b6594b29647d98a32d545c24bdff
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+(cherry picked from commit 166491c2953546a677073694036f43a65fc25063)
+Signed-off-by: Arnout Vandecappelle (Essensium/Mind) <arnout@mind.be>
+---
+ src/privsep-linux.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+
+diff --git a/src/privsep-linux.c b/src/privsep-linux.c
+index a861a836..428ea4b0 100644
+--- a/src/privsep-linux.c
++++ b/src/privsep-linux.c
+@@ -206,6 +206,20 @@ ps_root_sendnetlink(struct dhcpcd_ctx *ctx, int protocol, struct msghdr *msg)
+ #  define SECCOMP_AUDIT_ARCH AUDIT_ARCH_S390X
+ #elif defined(__s390__)
+ #  define SECCOMP_AUDIT_ARCH AUDIT_ARCH_S390
++#elif defined(__sh__)
++#  if defined(__LP64__)
++#    if (BYTE_ORDER == LITTLE_ENDIAN)
++#      define SECCOMP_AUDIT_ARCH AUDIT_ARCH_SHEL64
++#    else
++#      define SECCOMP_AUDIT_ARCH AUDIT_ARCH_SH64
++#    endif
++#  else
++#    if (BYTE_ORDER == LITTLE_ENDIAN)
++#      define SECCOMP_AUDIT_ARCH AUDIT_ARCH_SHEL
++#    else
++#      define SECCOMP_AUDIT_ARCH AUDIT_ARCH_SH
++#    endif
++#  endif
+ #elif defined(__sparc__)
+ #  if defined(__arch64__)
+ #    define AUDIT_ARCH_SPARC64
+-- 
+2.29.2
+
