@@ -4,11 +4,25 @@ Home Assistant Operating System uses NetworkManager to control the host network.
 
 ## Configure network
 
-Only a manual configuration using NetworkManager connection files is supported. Without a configuration file, the device will use DHCP by default. These network connection files can be placed on a USB drive and imported to the host as described in [Configuration][configuration-usb].
+By default the device will be in DHCP state.
+
+Basic network settings can be set through the Supervisor frontend in the System
+tab. A bit more advanced configurations such as VLAN are also available through
+the `ha network` CLI command.
+
+If more advanced network settings are required network connection files can be
+placed on a USB drive and imported to the host as described in
+[Configuration][configuration-usb].
 
 ## Configuration examples
 
-You can read the [NetworkManager manual][nm-manual] or find many configuration examples across the internet. Keep in mind that the system is read-only. If you don't want the IP address to change on every boot, you should modify the UUID property to a generic [UUID4][uuid]. Inside the `\CONFIG\network\` directory on the USB drive or SD card, create a file called `my-network` and add the appropriate contents below:
+You can read the [NetworkManager manual][nm-manual] or find many configuration
+examples across the internet. Note that changes to `NetworkManager.conf` are
+not supported currently, only connection keyfiles are supported. Keep in mind
+that the system is read-only. If you don't want the IP address to change on
+every boot, you should modify the UUID property to a generic [UUID4][uuid].
+Inside the `\CONFIG\network\` directory on the USB drive or SD card, create a
+file called `my-network` and add the appropriate contents below:
 
 **NOTE: Please make sure to save this file with UNIX line endings (LF, and not Windows' default CRLF endings). You can do this using Notepad these days!**
 
@@ -152,6 +166,6 @@ If you now view the default connection `cat /etc/NetworkManager/system-connectio
 
 Doing a `nmcli con reload` does not always work, so restart the virtual machine or the physical system.
 
-[nm-manual]: https://developer.gnome.org/NetworkManager/stable/NetworkManager.conf.html
+[nm-manual]: https://developer.gnome.org/NetworkManager/stable/manpages.html
 [configuration-usb]: configuration.md
 [uuid]: https://www.uuidgenerator.net/
