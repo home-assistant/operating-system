@@ -1,0 +1,42 @@
+From 1a77d82b0020ff4c71ffe55262676c3403978bd5 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sun, 31 Jan 2021 03:35:10 +0100
+Subject: [PATCH]  src/privsep-linux.c: add support for xtensa (#22)
+
+Fix the following build failure:
+
+privsep-linux.c:206:4: error: #error "Platform does not support seccomp filter yet"
+ #  error "Platform does not support seccomp filter yet"
+    ^~~~~
+In file included from privsep-linux.c:36:
+privsep-linux.c:213:38: error: 'SECCOMP_AUDIT_ARCH' undeclared here (not in a function); did you mean 'SECCOMP_ALLOW_ARG'?
+  BPF_JUMP(BPF_JMP + BPF_JEQ + BPF_K, SECCOMP_AUDIT_ARCH, 1, 0),
+                                      ^~~~~~~~~~~~~~~~~~
+
+It should be noted that AUDIT_ARCH_XTENSA is only defined since kernel
+5.0 and
+https://github.com/torvalds/linux/commit/98c3115a4ec56f03056efd9295e0fcb4c5c57a85
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+(cherry picked from commit 19c3d9209a834e02918a17e011afd9da3e5be38d)
+Signed-off-by: Arnout Vandecappelle (Essensium/Mind) <arnout@mind.be>
+---
+ src/privsep-linux.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/src/privsep-linux.c b/src/privsep-linux.c
+index 8716032c..f1b33f91 100644
+--- a/src/privsep-linux.c
++++ b/src/privsep-linux.c
+@@ -204,6 +204,8 @@ ps_root_sendnetlink(struct dhcpcd_ctx *ctx, int protocol, struct msghdr *msg)
+ #  else
+ #    define AUDIT_ARCH_SPARC
+ #  endif
++#elif defined(__xtensa__)
++#  define SECCOMP_AUDIT_ARCH AUDIT_ARCH_XTENSA
+ #else
+ #  error "Platform does not support seccomp filter yet"
+ #endif
+-- 
+2.29.2
+

@@ -1,5 +1,11 @@
+config BR2_PACKAGE_LIBOPENSSL_ARCH_SUPPORTS
+	bool
+	default y
+	depends on !BR2_RISCV_32
+
 config BR2_PACKAGE_OPENSSL_FORCE_LIBOPENSSL
 	bool
+	depends on BR2_PACKAGE_LIBOPENSSL_ARCH_SUPPORTS
 
 config BR2_PACKAGE_OPENSSL
 	bool "openssl support"
@@ -11,12 +17,12 @@ if BR2_PACKAGE_OPENSSL
 
 choice
 	prompt "ssl library"
-	default BR2_PACKAGE_LIBOPENSSL
 	help
 	  Select OpenSSL or LibreSSL.
 
 config BR2_PACKAGE_LIBOPENSSL
 	bool "openssl"
+	depends on BR2_PACKAGE_LIBOPENSSL_ARCH_SUPPORTS
 	select BR2_PACKAGE_ZLIB
 	help
 	  A collaborative effort to develop a robust, commercial-grade,

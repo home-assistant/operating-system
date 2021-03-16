@@ -13,6 +13,8 @@ LIVE555_SITE = http://www.live555.com/liveMedia/public
 # http://live555.com/liveMedia/faq.html#copyright-and-license
 LIVE555_LICENSE = LGPL-3.0+
 LIVE555_LICENSE_FILES = COPYING.LESSER
+LIVE555_CPE_ID_VENDOR = live555
+LIVE555_CPE_ID_PRODUCT = streaming_media
 LIVE555_INSTALL_STAGING = YES
 
 LIVE555_CFLAGS = $(TARGET_CFLAGS)

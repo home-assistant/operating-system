@@ -1,0 +1,45 @@
+From be36eccb1ae53422f2aa9b42f257baeb21bd8be7 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Fri, 5 Feb 2021 09:25:12 +0100
+Subject: [PATCH] src/privsep-linux: fix build on sparc (#26)
+
+Fix the following build failure:
+
+privsep-linux.c:203: warning: "AUDIT_ARCH_SPARC64" redefined
+  203 | #    define AUDIT_ARCH_SPARC64
+      |
+In file included from privsep-linux.c:35:
+/srv/storage/autobuild/run/instance-0/output-1/host/sparc64-buildroot-linux-gnu/sysroot/usr/include/linux/audit.h:392: note: this is the location of the previous definition
+  392 | #define AUDIT_ARCH_SPARC64 (EM_SPARCV9|__AUDIT_ARCH_64BIT)
+      |
+In file included from privsep-linux.c:36:
+privsep-linux.c:215:38: error: 'SECCOMP_AUDIT_ARCH' undeclared here (not in a function); did you mean 'SECCOMP_ALLOW_ARG'?
+  215 |  BPF_JUMP(BPF_JMP + BPF_JEQ + BPF_K, SECCOMP_AUDIT_ARCH, 1, 0),
+      |                                      ^~~~~~~~~~~~~~~~~~
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+(cherry picked from commit dcfd7a23f002793a855156255e81662ef84064d3)
+Signed-off-by: Arnout Vandecappelle (Essensium/Mind) <arnout@mind.be>
+---
+ src/privsep-linux.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/privsep-linux.c b/src/privsep-linux.c
+index 428ea4b0..8093740a 100644
+--- a/src/privsep-linux.c
++++ b/src/privsep-linux.c
+@@ -222,9 +222,9 @@ ps_root_sendnetlink(struct dhcpcd_ctx *ctx, int protocol, struct msghdr *msg)
+ #  endif
+ #elif defined(__sparc__)
+ #  if defined(__arch64__)
+-#    define AUDIT_ARCH_SPARC64
++#    define SECCOMP_AUDIT_ARCH AUDIT_ARCH_SPARC64
+ #  else
+-#    define AUDIT_ARCH_SPARC
++#    define SECCOMP_AUDIT_ARCH AUDIT_ARCH_SPARC
+ #  endif
+ #elif defined(__xtensa__)
+ #  define SECCOMP_AUDIT_ARCH AUDIT_ARCH_XTENSA
+-- 
+2.29.2
+

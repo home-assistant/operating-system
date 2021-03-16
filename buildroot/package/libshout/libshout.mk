@@ -10,7 +10,11 @@ LIBSHOUT_LICENSE = LGPL-2.0+
 LIBSHOUT_LICENSE_FILES = COPYING
 LIBSHOUT_INSTALL_STAGING = YES
 LIBSHOUT_DEPENDENCIES = host-pkgconf libogg libvorbis
-LIBSHOUT_CONF_OPTS = --disable-examples
+# We're patching configure.ac
+LIBSHOUT_AUTORECONF = YES
+LIBSHOUT_CONF_OPTS = \
+	--disable-examples \
+	--disable-tools
 
 ifeq ($(BR2_PACKAGE_LIBTHEORA),y)
 LIBSHOUT_CONF_OPTS += --enable-theora

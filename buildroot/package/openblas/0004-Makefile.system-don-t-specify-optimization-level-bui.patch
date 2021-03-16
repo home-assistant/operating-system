@@ -1,0 +1,40 @@
+From 6d1c1350977d74fb2239f765bd92a5763cd3bb73 Mon Sep 17 00:00:00 2001
+From: Thomas De Schampheleire <thomas.de_schampheleire@nokia.com>
+Date: Fri, 5 Mar 2021 14:09:23 +0100
+Subject: [PATCH] Makefile.system: don't specify optimization level
+ [buildroot-specific]
+
+Buildroot will pass an optimization level, but it is ignored because the
+openblas makefiles _append_ to the flags passed on the command-line.
+
+The CFLAGS/FFLAGS would e.g. contain '-Os -O2' in which -O2 survives.
+
+Remove the optimization level specified in openblas itself.
+
+Signed-off-by: Thomas De Schampheleire <thomas.de_schampheleire@nokia.com>
+
+---
+ Makefile.system | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/Makefile.system b/Makefile.system
+index 1e30d05a..04b0be16 100644
+--- a/Makefile.system
++++ b/Makefile.system
+@@ -1216,11 +1216,11 @@ FCOMMON_OPT += -g
+ endif
+ 
+ ifndef COMMON_OPT
+-COMMON_OPT = -O2
++COMMON_OPT =
+ endif
+ 
+ ifndef FCOMMON_OPT
+-FCOMMON_OPT = -O2 -frecursive
++FCOMMON_OPT = -frecursive
+ endif
+ 
+ override CFLAGS     += $(COMMON_OPT) $(CCOMMON_OPT) -I$(TOPDIR)
+-- 
+2.26.2
+

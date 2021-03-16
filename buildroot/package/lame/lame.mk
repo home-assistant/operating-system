@@ -12,6 +12,7 @@ LAME_CONF_ENV = GTK_CONFIG=/bin/false
 LAME_CONF_OPTS = --enable-dynamic-frontends
 LAME_LICENSE = LGPL-2.0+
 LAME_LICENSE_FILES = COPYING
+LAME_CPE_ID_VENDOR = lame_project
 
 ifeq ($(BR2_PACKAGE_LIBSNDFILE),y)
 LAME_DEPENDENCIES += libsndfile

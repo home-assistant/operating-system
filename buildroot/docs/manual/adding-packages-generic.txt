@@ -528,14 +528,8 @@ LIBFOO_IGNORE_CVES += CVE-2020-54321
 +
 If any of those variables is defined, then the generic package
 infrastructure assumes the package provides valid CPE information. In
-this case, +LIBFOO_CPE_ID_VALID = YES+ will be set, and the generic
-package infrastructure will define +LIBFOO_CPE_ID+.
-+
-Alternatively, a package can also explicitly set +LIBFOO_CPE_ID_VALID
-= YES+ if the default values for +LIBFOO_CPE_ID_PREFIX+,
-+LIBFOO_CPE_ID_VENDOR+, +LIBFOO_CPE_ID_PRODUCT+,
-+LIBFOO_CPE_ID_VERSION+, +LIBFOO_CPE_ID_UPDATE+ are all correct for
-this package and don't need to be explicitly overridden.
+this case, the generic package infrastructure will define
++LIBFOO_CPE_ID+.
 +
 For a host package, if its +LIBFOO_CPE_ID_*+ variables are not
 defined, it inherits the value of those variables from the

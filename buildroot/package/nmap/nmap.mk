@@ -12,6 +12,7 @@ NMAP_CONF_OPTS = --without-liblua --without-zenmap \
 	--with-libdnet=included
 NMAP_LICENSE = nmap license
 NMAP_LICENSE_FILES = LICENSE
+NMAP_CPE_ID_VENDOR = nmap
 NMAP_SELINUX_MODULES = netutils
 
 # needed by libpcap

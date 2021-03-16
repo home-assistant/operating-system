@@ -4,10 +4,11 @@
 #
 ################################################################################
 
-PROSODY_VERSION = 0.11.7
+PROSODY_VERSION = 0.11.8
 PROSODY_SITE = https://prosody.im/downloads/source
 PROSODY_LICENSE = MIT
 PROSODY_LICENSE_FILES = COPYING
+PROSODY_CPE_ID_VENDOR = prosody
 PROSODY_DEPENDENCIES = host-luainterpreter luainterpreter libidn openssl
 
 PROSODY_CFLAGS = $(TARGET_CFLAGS) -fPIC -std=c99 \

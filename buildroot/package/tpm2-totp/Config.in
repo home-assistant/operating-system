@@ -1,5 +1,6 @@
 config BR2_PACKAGE_TPM2_TOTP
 	bool "tpm2-totp"
+	depends on BR2_PACKAGE_LIBOPENSSL_ARCH_SUPPORTS # tpm2-tss
 	depends on !BR2_STATIC_LIBS # tpm2-tss
 	depends on !BR2_TOOLCHAIN_EXTERNAL_CODESOURCERY_ARM # glibc < 2.20
 	select BR2_PACKAGE_LIBQRENCODE
@@ -19,5 +20,6 @@ config BR2_PACKAGE_TPM2_TOTP
 	  https://github.com/tpm2-software/tpm2-totp
 
 comment "tpm2-totp needs a toolchain w/ dynamic library"
+	depends on BR2_PACKAGE_LIBOPENSSL_ARCH_SUPPORTS
 	depends on BR2_STATIC_LIBS
 	depends on !BR2_TOOLCHAIN_EXTERNAL_CODESOURCERY_ARM

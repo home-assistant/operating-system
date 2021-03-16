@@ -10,6 +10,7 @@ SDL_IMAGE_SITE = http://www.libsdl.org/projects/SDL_image/release
 SDL_IMAGE_INSTALL_STAGING = YES
 SDL_IMAGE_LICENSE = Zlib
 SDL_IMAGE_LICENSE_FILES = COPYING
+SDL_IMAGE_CPE_ID_VENDOR = libsdl
 
 SDL_IMAGE_CONF_OPTS = \
 	--with-sdl-prefix=$(STAGING_DIR)/usr \

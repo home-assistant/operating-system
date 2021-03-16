@@ -691,6 +691,16 @@ else
 GST1_PLUGINS_BAD_CONF_OPTS += -Dsbc=disabled
 endif
 
+ifeq ($(BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_SCTP),y)
+GST1_PLUGINS_BAD_CONF_OPTS += \
+	-Dsctp=enabled \
+	-Dsctp-internal-usrsctp=enabled
+else
+GST1_PLUGINS_BAD_CONF_OPTS += \
+	-Dsctp=disabled \
+	-Dsctp-internal-usrsctp=disabled
+endif
+
 ifeq ($(BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_SHM),y)
 GST1_PLUGINS_BAD_CONF_OPTS += -Dshm=enabled
 else
