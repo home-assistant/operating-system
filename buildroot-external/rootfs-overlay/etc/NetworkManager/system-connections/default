@@ -1,5 +1,5 @@
 [connection]
-id=HassOS default
+id=Home Assistant OS default
 uuid=f62bf7c2-e565-49ff-bbfc-a4cf791e6add
 type=802-3-ethernet
 llmnr=2

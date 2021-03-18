@@ -28,13 +28,15 @@ file called `my-network` and add the appropriate contents below:
 
 ### Default
 
-A preinstalled connection profile is provided by default:
+A preinstalled connection profile for wired network is active by default:
 
 ```ini
 [connection]
-id=my-network
+id=Home Assistant OS default
 uuid=f62bf7c2-e565-49ff-bbfc-a4cf791e6add
 type=802-3-ethernet
+llmnr=2
+mdns=2
 
 [ipv4]
 method=auto
@@ -51,6 +53,8 @@ method=auto
 id=my-network
 uuid=d55162b4-6152-4310-9312-8f4c54d86afa
 type=802-3-ethernet
+llmnr=2
+mdns=2
 
 [ipv4]
 method=auto
@@ -89,8 +93,6 @@ method=auto
 
 ### Static IP
 
-*Since Supervisor 2020.12 and newer network settings can be edited in the Supervisor UI web frontend, click change next to ip address then select static, review all values and click save.
-
 Replace the following configuration:
 
 ```ini
@@ -106,13 +108,15 @@ For `address`, the value before the semicolon is the IP address and subnet prefi
 
 ### Reset network
 
-If you want to reset the network configuration back to the default DHCP settings, use the following commands on the host:
+If you want to reset the network configuration back to the default connection
+profile using DHCP, use the following commands on the host console:
 
 ```bash
-# rm /etc/NetworkManager/system-connections/*
-# cp /usr/share/system-connections/* /etc/NetworkManager/system-connections/
-# nmcli con reload
+# rm -r /mnt/overlay/etc/NetworkManager/system-connections
+# reboot
 ```
+
+Home Assistant OS will recreate the default connection profile during boot.
 
 ### Powersave
 
@@ -126,7 +130,7 @@ powersave=0
 
 ## Using `nmcli` to set a static IPv4 address
 
-Log into the the HassOS base system via a console:
+Log into the the Home Assistant OS base system via a console:
 
 ```bash
 Welcome to Home Assistant
@@ -137,13 +141,13 @@ homeassistant login:
 
 From there you use the `nmcli` configuration tool.
 
-- `# nmcli con show` will list the "HassOS default" connection in use.
-- `# nmcli con show "HassOS default"` will list all the properties of the connection.
+- `# nmcli con show` will list the "Home Assistant OS default" connection in use.
+- `# nmcli con show "Home Assistant OS default"` will list all the properties of the connection.
 
-To start editing the configuration setting for "HassOS default":
+To start editing the configuration setting for "Home Assistant OS default":
 
 ```bash
-# nmcli con edit "HassOS default"
+# nmcli con edit "Home Assistant OS default"
 ```
 
 To add your static IP address (select 'yes' for manual method);
