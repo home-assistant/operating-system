@@ -1,2 +1,22 @@
 config BR2_PACKAGE_RPI_RF_MOD
 	bool "Support for RPI-RF-MOD/HM-MOD-RPI-PCB GPIO HAT"
+
+if BR2_PACKAGE_RPI_RF_MOD
+
+choice
+  prompt "For Target"
+  default BR2_PACKAGE_RPI_RF_MOD_TARGET_RPI
+
+config BR2_PACKAGE_RPI_RF_MOD_TARGET_RPI
+  bool "RaspberryPi"
+  help
+    For the RaspberryPi
+
+config BR2_PACKAGE_RPI_RF_MOD_TARGET_TINKER
+  bool "ASUS Tinkerboard"
+  help
+    For the ASUS Tinkerboard
+
+endchoice
+
+endif

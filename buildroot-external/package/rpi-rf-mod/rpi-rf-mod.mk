@@ -14,14 +14,12 @@ RPI_RF_MOD_SITE_METHOD = local
 RPI_RF_MOD_LICENSE = Apache-2.0
 #RPI_RF_MOD_LICENSE_FILES = LICENSE
 
-# RaspberryPi DTS file
-ifneq (,$(findstring raspberrypi,$(BR2_PACKAGE_HASSIO_MACHINE)))
-   RPI_RF_MOD_DTS_FILE = rpi-rf-mod
-endif
-
-# Tinkerboard DTS file
-ifneq (,$(findstring tinker,$(BR2_PACKAGE_HASSIO_MACHINE)))
-   RPI_RF_MOD_DTS_FILE = rpi-rf-mod-tinker
+ifeq ($(BR2_PACKAGE_RPI_RF_MOD_TARGET_RPI),y)
+  # RaspberryPi DTS file
+  RPI_RF_MOD_DTS_FILE = rpi-rf-mod
+else ifeq ($(BR2_PACKAGE_RPI_RF_MOD_TARGET_TINKER),y)
+  # ASUS Tinkerboard DTS file
+  RPI_RF_MOD_DTS_FILE = rpi-rf-mod-tinker
 endif
 
 define RPI_RF_MOD_BUILD_CMDS
