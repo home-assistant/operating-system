@@ -9,7 +9,7 @@ IPMITOOL_SOURCE = ipmitool-$(IPMITOOL_VERSION).tar.bz2
 IPMITOOL_SITE = http://downloads.sourceforge.net/project/ipmitool/ipmitool/$(IPMITOOL_VERSION)
 IPMITOOL_LICENSE = BSD-3-Clause
 IPMITOOL_LICENSE_FILES = COPYING
-IPMITOOL_CPE_ID_VALID = YES
+IPMITOOL_CPE_ID_VENDOR = ipmitool_project
 
 # 0008-fru-Fix-buffer-overflow-vulnerabilities.patch
 # 0009-fru-Fix-buffer-overflow-in-ipmi_spd_print_fru.patch

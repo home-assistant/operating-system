@@ -10,6 +10,8 @@ LIBMODSECURITY_SITE = https://github.com/SpiderLabs/ModSecurity/releases/downloa
 LIBMODSECURITY_INSTALL_STAGING = YES
 LIBMODSECURITY_LICENSE = Apache-2.0
 LIBMODSECURITY_LICENSE_FILES = LICENSE
+LIBMODSECURITY_CPE_ID_VENDOR = trustwave
+LIBMODSECURITY_CPE_ID_PRODUCT = modsecurity
 # 0002-test-for-uClinux-in-configure-script.patch
 LIBMODSECURITY_AUTORECONF = YES
 # libinjection uses AC_CHECK_FILE, not available in cross-compile

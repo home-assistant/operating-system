@@ -3,7 +3,7 @@ FriendlyARM NANOPC-T4
 
 Build:
 
-  $ make nanopc_t4_defconfig
+  $ make friendlyarm_nanopc_t4_defconfig
   $ make
 
 Files created in output directory

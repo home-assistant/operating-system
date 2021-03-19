@@ -577,6 +577,10 @@ config BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_SBC
 	bool "sbc"
 	select BR2_PACKAGE_SBC
 
+config BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_SCTP
+	bool "sctp"
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4 # __sync_*_4 intrinsics
+
 config BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_SHM
 	bool "shm"
 	help

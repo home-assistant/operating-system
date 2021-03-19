@@ -1,12 +1,18 @@
 #!/bin/sh
 set -e
 
+APPARMOR_URL="https://version.home-assistant.io/apparmor.txt"
 PROFILES_DIR="/mnt/data/supervisor/apparmor"
 CACHE_DIR="${PROFILES_DIR}/cache"
 REMOVE_DIR="${PROFILES_DIR}/remove"
 
 # Check folder structure
-mkdir -p "${PROFILES_DIR}"
+if [ ! -d "${PROFILES_DIR}" ]; then
+    echo "[INFO]: AppArmor profile missing, downloading..."
+    mkdir -p "${PROFILES_DIR}"
+    systemctl start network-online.target
+    curl -sL -o "${PROFILES_DIR}"/hassio-supervisor "${APPARMOR_URL}"
+fi
 mkdir -p "${CACHE_DIR}"
 mkdir -p "${REMOVE_DIR}"
 

@@ -2567,7 +2567,8 @@ class TestExternalToolchainBootlinX86i686UclibcStable(TestExternalToolchain):
 class TestExternalToolchainBootlinXtensalx60UclibcBleedingEdge(TestExternalToolchain):
     config = """
         BR2_xtensa=y
-        BR2_xtensa_fsf=y
+        BR2_XTENSA_CUSTOM=y
+        BR2_XTENSA_LITTLE_ENDIAN=y
         BR2_TOOLCHAIN_EXTERNAL=y
         BR2_TOOLCHAIN_EXTERNAL_BOOTLIN=y
         BR2_TOOLCHAIN_EXTERNAL_BOOTLIN_XTENSA_LX60_UCLIBC_BLEEDING_EDGE=y
@@ -2582,7 +2583,8 @@ class TestExternalToolchainBootlinXtensalx60UclibcBleedingEdge(TestExternalToolc
 class TestExternalToolchainBootlinXtensalx60UclibcStable(TestExternalToolchain):
     config = """
         BR2_xtensa=y
-        BR2_xtensa_fsf=y
+        BR2_XTENSA_CUSTOM=y
+        BR2_XTENSA_LITTLE_ENDIAN=y
         BR2_TOOLCHAIN_EXTERNAL=y
         BR2_TOOLCHAIN_EXTERNAL_BOOTLIN=y
         BR2_TOOLCHAIN_EXTERNAL_BOOTLIN_XTENSA_LX60_UCLIBC_STABLE=y

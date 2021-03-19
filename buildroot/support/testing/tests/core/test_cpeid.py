@@ -47,7 +47,7 @@ class CpeIdTest(infra.basetest.BRConfigTest):
         self.assertNotIn("cpe-id", pkg_json['host-cpe-id-pkg2'])
 
     def test_pkg3(self):
-        # this package has just <pkg>_CPE_ID_VALID defined, so verify
+        # this package has just <pkg>_CPE_ID_VENDOR defined, so verify
         # it has the default CPE_ID value, and that inheritance of the
         # values for the host package is working
         pkg_vars = self.get_vars("CPE_ID_PKG3_CPE_ID")

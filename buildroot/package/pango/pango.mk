@@ -11,6 +11,7 @@ PANGO_SITE = http://ftp.gnome.org/pub/GNOME/sources/pango/$(PANGO_VERSION_MAJOR)
 PANGO_INSTALL_STAGING = YES
 PANGO_LICENSE = LGPL-2.0+
 PANGO_LICENSE_FILES = COPYING
+PANGO_CPE_ID_VENDOR = pango
 
 PANGO_CONF_OPTS = -Duse_fontconfig=true
 HOST_PANGO_CONF_OPTS = -Duse_fontconfig=true -Dintrospection=disabled

@@ -12,7 +12,7 @@ Build
 
 Run NanoPi Neo4 configuration
 
-  $ make nanopi_neo4_defconfig
+  $ make friendlyarm_nanopi_neo4_defconfig
 
 To build, run make comamnd.
 

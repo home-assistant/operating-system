@@ -24,7 +24,7 @@ yet upstream, but are being actively worked on.
 How to build
 ============
 
-    $ make nanopi_neo_defconfig
+    $ make friendlyarm_nanopi_neo_defconfig
     $ make
 
 Note: you will need access to the internet to download the required

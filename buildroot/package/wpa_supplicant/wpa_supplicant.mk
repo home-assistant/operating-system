@@ -7,7 +7,8 @@
 WPA_SUPPLICANT_VERSION = 2.9
 WPA_SUPPLICANT_SITE = http://w1.fi/releases
 WPA_SUPPLICANT_PATCH = \
-	https://w1.fi/security/2020-2/0001-P2P-Fix-copying-of-secondary-device-types-for-P2P-gr.patch
+	https://w1.fi/security/2020-2/0001-P2P-Fix-copying-of-secondary-device-types-for-P2P-gr.patch \
+	https://w1.fi/security/2021-1/0001-P2P-Fix-a-corner-case-in-peer-addition-based-on-PD-R.patch
 WPA_SUPPLICANT_LICENSE = BSD-3-Clause
 WPA_SUPPLICANT_LICENSE_FILES = README
 WPA_SUPPLICANT_CPE_ID_VENDOR = w1.fi

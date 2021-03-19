@@ -11,6 +11,7 @@ IRSSI_SOURCE = irssi-$(IRSSI_VERSION).tar.xz
 IRSSI_SITE = https://github.com/irssi/irssi/releases/download/$(IRSSI_VERSION)
 IRSSI_LICENSE = GPL-2.0+
 IRSSI_LICENSE_FILES = COPYING
+IRSSI_CPE_ID_VENDOR = irssi
 IRSSI_DEPENDENCIES = host-pkgconf libglib2 ncurses openssl
 
 IRSSI_CONF_OPTS = \

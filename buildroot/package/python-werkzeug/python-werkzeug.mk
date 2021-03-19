@@ -10,5 +10,7 @@ PYTHON_WERKZEUG_SITE = https://files.pythonhosted.org/packages/10/27/a3332915014
 PYTHON_WERKZEUG_SETUP_TYPE = setuptools
 PYTHON_WERKZEUG_LICENSE = BSD-3-Clause
 PYTHON_WERKZEUG_LICENSE_FILES = LICENSE.rst
+PYTHON_WERKZEUG_CPE_ID_VENDOR = palletsprojects
+PYTHON_WERKZEUG_CPE_ID_PRODUCT = werkzeug
 
 $(eval $(python-package))

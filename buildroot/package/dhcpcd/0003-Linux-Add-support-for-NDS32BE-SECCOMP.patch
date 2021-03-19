@@ -1,0 +1,31 @@
+From 4d2ef61b8b4abcb446699b9d3c29b422f2cf9826 Mon Sep 17 00:00:00 2001
+From: Roy Marples <roy@marples.name>
+Date: Sun, 31 Jan 2021 07:37:03 +0000
+Subject: [PATCH] Linux: Add support for NDS32BE SECCOMP
+
+(cherry picked from commit 8253ef16e11db8b52af1ed8021cd2517046165d6)
+Signed-off-by: Arnout Vandecappelle (Essensium/Mind) <arnout@mind.be>
+---
+ src/privsep-linux.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/src/privsep-linux.c b/src/privsep-linux.c
+index f1b33f91..04950ed2 100644
+--- a/src/privsep-linux.c
++++ b/src/privsep-linux.c
+@@ -183,7 +183,11 @@ ps_root_sendnetlink(struct dhcpcd_ctx *ctx, int protocol, struct msghdr *msg)
+ #    define SECCOMP_AUDIT_ARCH AUDIT_ARCH_MIPS
+ #  endif
+ #elif defined(__nds32__)
+-#  define SECCOMP_AUDIT_ARCH AUDIT_ARCH_NDS32
++#  if (BYTE_ORDER == LITTLE_ENDIAN)
++#    define SECCOMP_AUDIT_ARCH AUDIT_ARCH_NDS32
++#ele
++#    define SECCOMP_AUDIT_ARCH AUDIT_ARCH_NDS32BE
++#endif
+ #elif defined(__powerpc64__)
+ #  define SECCOMP_AUDIT_ARCH AUDIT_ARCH_PPC64
+ #elif defined(__powerpc__)
+-- 
+2.29.2
+

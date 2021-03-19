@@ -10,7 +10,7 @@ SDL2_SITE = http://www.libsdl.org/release
 SDL2_LICENSE = Zlib
 SDL2_LICENSE_FILES = COPYING.txt
 SDL2_CPE_ID_VENDOR = libsdl
-SDL2_CPE_ID_PRODUCT = sdl
+SDL2_CPE_ID_PRODUCT = simple_directmedia_layer
 SDL2_INSTALL_STAGING = YES
 SDL2_CONFIG_SCRIPTS = sdl2-config
 

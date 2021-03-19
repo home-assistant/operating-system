@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-USHARE_VERSION = 2.0
+USHARE_VERSION = 2.1
 USHARE_SITE = $(call github,ddugovic,uShare,v$(USHARE_VERSION))
 USHARE_DEPENDENCIES = host-pkgconf libupnp $(TARGET_NLS_DEPENDENCIES)
 USHARE_LICENSE = GPL-2.0+

@@ -15,6 +15,7 @@ HOST_FONTCONFIG_DEPENDENCIES = \
 	host-freetype host-expat host-pkgconf host-gperf host-util-linux
 FONTCONFIG_LICENSE = fontconfig license
 FONTCONFIG_LICENSE_FILES = COPYING
+FONTCONFIG_CPE_ID_VENDOR = fontconfig_project
 
 FONTCONFIG_CONF_OPTS = \
 	--with-arch=$(GNU_TARGET_NAME) \

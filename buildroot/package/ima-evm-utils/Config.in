@@ -1,6 +1,7 @@
 config BR2_PACKAGE_IMA_EVM_UTILS
 	bool "ima-evm-utils"
 	depends on BR2_USE_MMU # keyutils
+	depends on BR2_PACKAGE_LIBOPENSSL_ARCH_SUPPORTS # tpm2-tss
 	depends on !BR2_STATIC_LIBS # keyutils, tpm2-tss
 	select BR2_PACKAGE_OPENSSL
 	select BR2_PACKAGE_KEYUTILS
@@ -13,4 +14,5 @@ config BR2_PACKAGE_IMA_EVM_UTILS
 
 comment "ima-evm-utils needs dynamic library support"
 	depends on BR2_USE_MMU
+	depends on BR2_PACKAGE_LIBOPENSSL_ARCH_SUPPORTS
 	depends on BR2_STATIC_LIBS

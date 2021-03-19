@@ -1,5 +1,6 @@
 config BR2_PACKAGE_TPM2_TOOLS
 	bool "tpm2-tools"
+	depends on BR2_PACKAGE_LIBOPENSSL_ARCH_SUPPORTS # tpm2-tss
 	depends on !BR2_STATIC_LIBS # tpm2-tss
 	select BR2_PACKAGE_LIBCURL
 	select BR2_PACKAGE_OPENSSL
@@ -19,4 +20,5 @@ config BR2_PACKAGE_TPM2_TOOLS
 	  https://github.com/tpm2-software/tpm2-tools
 
 comment "tpm2-tools needs a toolchain w/ dynamic library"
+	depends on BR2_PACKAGE_LIBOPENSSL_ARCH_SUPPORTS
 	depends on BR2_STATIC_LIBS

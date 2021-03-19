@@ -1,3 +1,23 @@
+2021.02, released March 6th, 2021
+
+	Various fixes.
+
+	Toolchain: Correct Bootlin xtensa-lx60 dependencies
+
+	Updated/fixed packages: asterisk, belle-sip, bustle, dhcpcd,
+	dovecot, dovecot-pigeonhole, gnuchess, gnuradio,
+	gst1-plugins-bad, haproxy, jasper, kismet, libebml,
+	libeXosip2, libgeos, libhtp, libjpeg, libopenssl, libshout,
+	libstrophe, mosquitto, openblas, openssh, perl, privoxy,
+	prosody, python-pyyaml, python3-pyyaml, quagga, redis,
+	rust-bin, sox, suricata, tpm2-pkcs11, uclibc-ng-test, ushare,
+	util-linux, wolfssl, wpa_supplicant
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#13501: 2021.02.rc2: Unicode not work on qt 5.15.2
+	#13581: jpegsrc.v9d.tar.gz has changed hash
+
 2021.02-rc3, released February 27th, 2021
 
 	Fixes all over the tree.

@@ -12,6 +12,8 @@ ERLANG_DEPENDENCIES = host-erlang
 
 ERLANG_LICENSE = Apache-2.0
 ERLANG_LICENSE_FILES = LICENSE.txt
+ERLANG_CPE_ID_VENDOR = erlang
+ERLANG_CPE_ID_PRODUCT = erlang\/otp
 ERLANG_INSTALL_STAGING = YES
 
 # Remove the leftover deps directory from the ssl app
