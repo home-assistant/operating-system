@@ -73,10 +73,10 @@
             status = "okay";
 
             rx8130@32 {
-                compatible = "epson,rx8130-legacy";
+                compatible = "epson,rx8130";
                 reg = <0x32>;
                 status = "okay";
-                enable-external-capacitor;
+                aux-voltage-chargeable = <1>;
             };
         };
     };

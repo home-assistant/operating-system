@@ -1,3 +1,2 @@
 config BR2_PACKAGE_RPI_RF_MOD
-  select BR2_PACKAGE_RX8130_RTC
 	bool "Support for RPI-RF-MOD/HM-MOD-RPI-PCB GPIO HAT"
