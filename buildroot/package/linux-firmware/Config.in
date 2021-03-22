@@ -79,6 +79,16 @@ config BR2_PACKAGE_LINUX_FIRMWARE_AR3012_USB
 	help
 	  Firmware files for Atheros bluetooth chipset AR3012 on USB.
 
+config BR2_PACKAGE_LINUX_FIRMWARE_RTL_87XX_BT
+	bool "Realtek 87xx Bluetooth"
+	help
+	  Realtek 8723a/8723b/8723bs/8723d/8723ds/8761a
+
+config BR2_PACKAGE_LINUX_FIRMWARE_RTL_88XX_BT
+	bool "Realtek 88xx Bluetooth"
+	help
+	  Realtek 8821a/8821c/8822b/8822cs/8822cu/8852au
+
 config BR2_PACKAGE_LINUX_FIRMWARE_TI_CC2560
 	bool "TI CC2560"
 	help
