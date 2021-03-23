@@ -5,7 +5,7 @@
 ** Device Tree Overlay for eQ-3 RPI-RF-MOD and
 ** HM-MOD-RPI-PCB for ASUS Tinkerboard
 **
-** Copyright (c) 2019-2020 Jens Maus <mail@jens-maus.de>
+** Copyright (c) 2019-2021 Jens Maus <mail@jens-maus.de>
 ** Licensed under Apache 2.0
 **
 */
@@ -81,21 +81,35 @@
         };
     };
 
+    // fragment to define uart/serial dependencies for
+    // generic_raw_uart
+    fragment@3 {
+        target = <&uart1>;
+        __overlay__ {
+            compatible = "pivccu,dw_apb";
+            status = "okay";
+            pivccu,reset_pin = <&gpio6 0 0>;
+            pivccu,red_pin = <&gpio7 7 0>;
+            pivccu,green_pin = <&gpio6 3 0>;
+            pivccu,blue_pin = <&gpio6 4 0>;
+        };
+    };
+
     // we have to disable uart2,uart3,i2s on the Tinkerboard or
     // otherwise the gpio-leds cannot use the pins for the RPI-RF-MOD
-    fragment@3 {
+    fragment@4 {
         target = <&uart2>;
         __overlay__ {
           status = "disabled";
         };
     };
-    fragment@4 {
+    fragment@5 {
         target = <&uart3>;
         __overlay__ {
           status = "disabled";
         };
     };
-    fragment@5 {
+    fragment@6 {
         target = <&i2s>;
         __overlay__ {
           status = "disabled";

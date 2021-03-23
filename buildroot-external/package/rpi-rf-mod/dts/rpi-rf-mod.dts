@@ -5,7 +5,7 @@
 ** Device Tree Overlay for eQ-3 RPI-RF-MOD and
 ** HM-MOD-RPI-PCB for RaspberryPi
 **
-** Copyright (c) 2018-2019 Jens Maus <mail@jens-maus.de>
+** Copyright (c) 2018-2021 Jens Maus <mail@jens-maus.de>
 ** Licensed under Apache 2.0
 **
 */
@@ -69,6 +69,19 @@
                 status = "okay";
                 aux-voltage-chargeable = <1>;
             };
+        };
+    };
+
+    // fragment to define uart/serial dependencies for
+    // generic_raw_uart
+    fragment@3 {
+        target = <&uart0>;
+        __overlay__ {
+            compatible = "pivccu,pl011";
+            pivccu,reset_pin = <&gpio 18 0>;
+            pivccu,red_pin = <&gpio 16 0>;
+            pivccu,green_pin = <&gpio 20 0>;
+            pivccu,blue_pin = <&gpio 21 0>;
         };
     };
 };

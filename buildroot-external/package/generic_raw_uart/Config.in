@@ -5,30 +5,3 @@ config BR2_PACKAGE_GENERIC_RAW_UART
 
     Alexander Reinert <alex@areinert.de>
     https://github.com/alexreinert/piVCCU/tree/master/kernel
-
-if BR2_PACKAGE_GENERIC_RAW_UART
-
-config BR2_PACKAGE_GENERIC_RAW_UART_DTS
-  bool "Compile Device Tree Overlay"
-
-if BR2_PACKAGE_GENERIC_RAW_UART_DTS
-
-choice
-  prompt "For Target"
-  default BR2_PACKAGE_GENERIC_RAW_UART_DTS_RPI
-
-config BR2_PACKAGE_GENERIC_RAW_UART_DTS_RPI
-  bool "RaspberryPi"
-  help
-    For the RaspberryPi
-
-config BR2_PACKAGE_GENERIC_RAW_UART_DTS_TINKER
-  bool "ASUS Tinkerboard"
-  help
-    For the ASUS Tinkerboard
-
-endchoice
-
-endif
-
-endif

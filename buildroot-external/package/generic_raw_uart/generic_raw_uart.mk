@@ -16,30 +16,8 @@
 GENERIC_RAW_UART_VERSION = 0fc14a2131da3b14d91407ef803ded5dc3a9ff80
 GENERIC_RAW_UART_SITE = $(call github,alexreinert,piVCCU,$(GENERIC_RAW_UART_VERSION))
 GENERIC_RAW_UART_LICENSE = GPL2
-GENERIC_RAW_UART_DEPENDENCIES = host-dtc
 #GENERIC_RAW_UART_LICENSE_FILES = LICENSE
 GENERIC_RAW_UART_MODULE_SUBDIRS = kernel
-GENERIC_RAW_UART_INSTALL_IMAGES = YES
-
-ifeq ($(BR2_PACKAGE_GENERIC_RAW_UART_DTS_RPI),y)
-  # RaspberryPi DTS file
-  GENERIC_RAW_UART_DTS_FILE = pivccu-raspberrypi
-else ifeq ($(BR2_PACKAGE_GENERIC_RAW_UART_DTS_TINKER),y)
-  # ASUS Tinkerboard DTS file
-  GENERIC_RAW_UART_DTS_FILE = pivccu-tinkerboard
-endif
-
-define GENERIC_RAW_UART_BUILD_CMDS
-  if [[ -n "$(GENERIC_RAW_UART_DTS_FILE)" ]]; then \
-    $(HOST_DIR)/bin/dtc -@ -I dts -O dtb -W no-unit_address_vs_reg -o $(@D)/dts/$(GENERIC_RAW_UART_DTS_FILE).dtbo $(@D)/dts/$(GENERIC_RAW_UART_DTS_FILE).dts; \
-  fi
-endef
-
-define GENERIC_RAW_UART_INSTALL_IMAGES_CMDS
-  if [[ -n "$(GENERIC_RAW_UART_DTS_FILE)" ]]; then \
-    $(INSTALL) -D -m 0644 $(@D)/dts/$(GENERIC_RAW_UART_DTS_FILE).dtbo $(BINARIES_DIR)/; \
-  fi
-endef
 
 $(eval $(kernel-module))
 $(eval $(generic-package))

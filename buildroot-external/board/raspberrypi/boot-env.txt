@@ -64,7 +64,6 @@ kernel=u-boot.bin
 #enable_uart=1
 #dtparam=i2c_arm=on
 #dtoverlay=miniuart-bt
-#dtoverlay=pivccu-raspberrypi
 #dtoverlay=rpi-rf-mod
 
 # Additional overlays and parameters are documented /boot/overlays/README
