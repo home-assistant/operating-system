@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-OS_AGENT_VERSION = 0cb548c6acfb7e0a9542e6c85ffbce626af04cce
+OS_AGENT_VERSION = 7bff7f5cd223ad439b738cea513cb558a18155c9
 OS_AGENT_SITE = $(call github,home-assistant,os-agent,$(OS_AGENT_VERSION))
 OS_AGENT_LICENSE = Apache License 2.0
 OS_AGENT_LICENSE_FILES = LICENSE

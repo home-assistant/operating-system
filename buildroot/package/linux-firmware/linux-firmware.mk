@@ -64,6 +64,27 @@ LINUX_FIRMWARE_FILES += qca/rampatch_usb_00000302.bin qca/nvm_usb_00000302.bin
 LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENSE.qcom
 endif
 
+# Realtek 87xx Bluetooth
+ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_RTL_87XX_BT),y)
+LINUX_FIRMWARE_FILES += \
+	rtl_bt/rtl8723a_fw.bin rtl_bt/rtl8723b_fw.bin \
+	rtl_bt/rtl8723bs_config-OBDA8723.bin \
+	rtl_bt/rtl8723bs_fw.bin rtl_bt/rtl8723d_config.bin \
+	rtl_bt/rtl8723d_fw.bin rtl_bt/rtl8761a_fw.bin
+LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.rtlwifi_firmware.txt
+endif
+
+# Realtek 88xx Bluetooth
+ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_RTL_88XX_BT),y)
+LINUX_FIRMWARE_FILES += \
+	rtl_bt/rtl8812ae_fw.bin rtl_bt/rtl8821a_fw.bin \
+	rtl_bt/rtl8821c_config.bin rtl_bt/rtl8821c_fw.bin \
+	rtl_bt/rtl8822b_config.bin rtl_bt/rtl8822b_fw.bin \
+	rtl_bt/rtl8822cs_config.bin rtl_bt/rtl8822cs_fw.bin \
+	rtl_bt/rtl8822cu_config.bin rtl_bt/rtl8822cu_fw.bin
+LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.rtlwifi_firmware.txt
+endif
+
 # rt2501/rt61
 ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_RALINK_RT61),y)
 LINUX_FIRMWARE_FILES += rt2561.bin rt2561s.bin rt2661.bin
