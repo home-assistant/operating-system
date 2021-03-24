@@ -9,12 +9,17 @@ if [ "${TERM}" = "vt220" ] || [ "${TERM}" = "vt102" ] || \
 	resize
 fi
 
-# Run CLI container
+if [ "$(systemctl is-active default.target)" != "active" ]; then
+    echo "[INFO] System not in default.target! Jump into emergency console..."
+    exec /bin/ash -l
+fi
+
 if [ ! "$(findmnt /mnt/data)" ]; then
     echo "[WARN] Data partition not mounted! Jump into emergency console..."
     exec /bin/ash -l
 fi
 
+# Run CLI container
 if [ "$(docker ps -q -f name=hassio_cli)" ]; then
     docker container exec \
         -ti hassio_cli \
