@@ -72,7 +72,7 @@
             #size-cells = <0>;
             status = "okay";
 
-            rx8130@32 {
+            rpi_rf_mod_rtc: rx8130@32 {
                 compatible = "epson,rx8130";
                 reg = <0x32>;
                 status = "okay";
@@ -88,10 +88,12 @@
         __overlay__ {
             compatible = "pivccu,dw_apb";
             status = "okay";
-            pivccu,reset_pin = <&gpio6 0 0>;
-            pivccu,red_pin = <&gpio7 7 0>;
-            pivccu,green_pin = <&gpio6 3 0>;
-            pivccu,blue_pin = <&gpio6 4 0>;
+            pivccu,reset_pin = <&gpio6 0 0>;    // HM-MOD-RPI-PCB
+            pivccu,alt_reset_pin = <&gpio6 1 0>;// RPI-RF-MOD
+            pivccu,red_pin = <&gpio7 7 0>;      // RPI-RF-MOD
+            pivccu,green_pin = <&gpio6 3 0>;    // RPI-RF-MOD
+            pivccu,blue_pin = <&gpio6 4 0>;     // RPI-RF-MOD
+            pivccu,rtc = <&rpi_rf_mod_rtc>;     // RPI-RF-MOD
         };
     };
 
