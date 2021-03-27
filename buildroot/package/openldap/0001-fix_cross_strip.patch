@@ -44,7 +44,7 @@ diff -rupN openldap-2.4.40/clients/tools/Makefile.in openldap-2.4.40-br/clients/
 diff -rupN openldap-2.4.40/configure.in openldap-2.4.40-br/configure.in
 --- openldap-2.4.40/configure.in	2014-09-18 21:48:49.000000000 -0400
 +++ openldap-2.4.40-br/configure.in	2015-01-16 15:50:48.874816786 -0500
-@@ -669,6 +669,15 @@ if test -z "${AR}"; then
+@@ -668,6 +668,15 @@ if test -z "${AR}"; then
  	fi
  fi
  

@@ -9,6 +9,8 @@ Signed-off-by: Ryan Barnett <ryanbarnett3@gmail.com>
 
 [rebased on openssl-1.1.0h]
 Signed-off-by: Peter Seiderer <ps.report@gmx.net>
+[rebased on openssl-1.1.1i]
+Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
 ---
  Configurations/unix-Makefile.tmpl | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
@@ -17,7 +19,7 @@ diff --git a/Configurations/unix-Makefile.tmpl b/Configurations/unix-Makefile.tm
 index 40cf2c3..777d9ca 100644
 --- a/Configurations/unix-Makefile.tmpl
 +++ b/Configurations/unix-Makefile.tmpl
-@@ -268,7 +268,7 @@ list-tests:
+@@ -491,7 +491,7 @@ list-tests:
  	@echo "Tests are not supported with your chosen Configure options"
  	@ : {- output_on() if !$disabled{tests}; "" -}
  

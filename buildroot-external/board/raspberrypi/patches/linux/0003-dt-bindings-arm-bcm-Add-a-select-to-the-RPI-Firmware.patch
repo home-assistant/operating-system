@@ -1,7 +1,7 @@
 From 305aeb868929695699e04e26dd590e64ad3c42dd Mon Sep 17 00:00:00 2001
-Message-Id: <305aeb868929695699e04e26dd590e64ad3c42dd.1605346684.git.stefan@agner.ch>
-In-Reply-To: <3651b4af52d63d4e37f40c7a6d0809b0a6c9dd73.1605346684.git.stefan@agner.ch>
-References: <3651b4af52d63d4e37f40c7a6d0809b0a6c9dd73.1605346684.git.stefan@agner.ch>
+Message-Id: <305aeb868929695699e04e26dd590e64ad3c42dd.1609281882.git.stefan@agner.ch>
+In-Reply-To: <3651b4af52d63d4e37f40c7a6d0809b0a6c9dd73.1609281882.git.stefan@agner.ch>
+References: <3651b4af52d63d4e37f40c7a6d0809b0a6c9dd73.1609281882.git.stefan@agner.ch>
 From: Maxime Ripard <maxime@cerno.tech>
 Date: Fri, 26 Jun 2020 13:54:33 +0200
 Subject: [PATCH 3/8] dt-bindings: arm: bcm: Add a select to the RPI Firmware

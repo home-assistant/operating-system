@@ -10,3 +10,17 @@
 | ODROID-N2      | 2019          | yes          | [odroid_n2](../../../buildroot-external/configs/odroid_n2_defconfig) |
 
 See separate documentation for each board.
+
+## Connectivity devices
+
+### Wi-Fi
+
+The following devices have been tested on Home Assistant OS 5.8:
+
+- [Bluetooth Module 2](https://www.hardkernel.com/shop/bluetooth-module-2/)
+- [WiFi Module 3](https://www.hardkernel.com/shop/wifi-module-3/)
+
+The [WiFi Module 5A](https://www.hardkernel.com/shop/wifi-module-5a/) is not
+recommended as there is no upstream driver support available. The driver
+currently compatible with recent Linux kernel version seems to have issues
+connecting to 5GHz networks.

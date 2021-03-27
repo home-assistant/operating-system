@@ -1,0 +1,10 @@
+comment "RTL8812AU needs a Linux kernel to be built"
+	depends on !BR2_LINUX_KERNEL
+
+config BR2_PACKAGE_RTL8812AU
+	bool "Realtek RTL8812AU Wi-Fi driver"
+	depends on BR2_LINUX_KERNEL
+	help
+          Install Realtek RTL8812AU Wi-Fi driver as a kernel module.
+
+          https://github.com/gnab/rtl8812au/

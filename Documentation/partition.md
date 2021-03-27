@@ -34,7 +34,9 @@ A visual representation looks like this:
 
 Sometime the bootloader part can look different because there can be firmware or SPLs for boot the CPU on the SoC.
 
-## Data
+## Data disk
+
+![Data-Disk preview](./usb-disk.png)
 
 The data partition is the only partition with real I/O. It will be expanded automatically at boot to the full size of the disk.
 
@@ -58,6 +60,18 @@ $ datactl move /dev/sdx
 ```
 
 Enter "yes" to confirm the operation. This will prepare the disk, however, the
-actual move will be running on next reboot. Once complete, the external drive
+actual move will be running on next reboot. Rebbot with:
+
+```sh
+$ ha host reboot
+```
+Once complete, the external drive
 will contain the data and will need to be plugged in to successfully boot Home
 Assistant OS.
+
+## Check if the move was succesful.
+Within the Home Assistant interface you won't see if the move was succesful. To check this, go to your host console again (as described above) and enter:
+```sh
+$ systemctl status mnt-data.mount
+```
+If the data partition was moved to your USB drive you should see ```sh Active: active (mounted)  ``` in the output. Also, it will show, which drive got mounted as /mnt/data (```sh Where ``` and ```sh what ``` section of the output)

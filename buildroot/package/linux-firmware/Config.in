@@ -491,4 +491,13 @@ config BR2_PACKAGE_LINUX_FIRMWARE_QAT_C62X
 
 endmenu
 
+menu "USB to Serial Firmware"
+
+config BR2_PACKAGE_LINUX_FIRMWARE_USB_SERIAL_TI
+	bool "USB TI 3410/5052 Serial Firmware"
+	help
+	  Firmware files for TI 3410/5052
+
+endmenu
+
 endif

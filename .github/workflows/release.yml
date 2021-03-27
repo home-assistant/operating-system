@@ -69,7 +69,7 @@ jobs:
           docker run --rm --privileged -v "${GITHUB_WORKSPACE}:/build" \
             -e BUILDER_UID="${BUILDER_UID}" -e BUILDER_GID="${BUILDER_GID}" \
             -v "${{ matrix.board.runner }}-build-cache:/cache" \
-            haos-builder make VERSION_DEV="" ${{ matrix.board.name }}
+            haos-builder make BUILDDIR=/build VERSION_DEV="" ${{ matrix.board.name }}
 
       - name: Upload disk image
         if: ${{ matrix.board.name != 'ova' }}
@@ -91,6 +91,17 @@ jobs:
           asset_path: ${{ github.workspace }}/release/hassos_${{ matrix.board.output }}-${{ needs.validate_release.outputs.version }}.raucb
           asset_name: hassos_${{ matrix.board.output }}-${{ needs.validate_release.outputs.version }}.raucb
           asset_content_type: application/octet-stream
+
+      - name: Upload ova image
+        if: ${{ matrix.board.name == 'ova' }}
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ${{ github.workspace }}/release/hassos_${{ matrix.board.output }}-${{ needs.validate_release.outputs.version }}.ova
+          asset_name: hassos_${{ matrix.board.output }}-${{ needs.validate_release.outputs.version }}.ova
+          asset_content_type: application/x-tar
 
       - name: Upload qcow2 image
         if: ${{ matrix.board.name == 'ova' }}

@@ -1,7 +1,8 @@
-RELEASE_DIR = /build/release
+BUILDDIR:=$(shell pwd)
+RELEASE_DIR = $(BUILDDIR)/release
 
-BUILDROOT=/build/buildroot
-BUILDROOT_EXTERNAL=/build/buildroot-external
+BUILDROOT=$(BUILDDIR)/buildroot
+BUILDROOT_EXTERNAL=$(BUILDDIR)/buildroot-external
 DEFCONFIG_DIR = $(BUILDROOT_EXTERNAL)/configs
 VERSION_DATE := $(shell date --utc +'%Y%m%d')
 VERSION_DEV := "dev$(VERSION_DATE)"

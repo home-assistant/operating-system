@@ -1960,9 +1960,6 @@ F:	package/openjpeg/
 N:	Olivier Singla <olivier.singla@gmail.com>
 F:	package/shellinabox/
 
-N:	Owen Walpole <owen@walpole.dev>
-F:	package/parprouted/
-
 N:	Parnell Springmeyer <parnell@digitalmentat.com>
 F:	package/scrypt/
 
@@ -2495,9 +2492,6 @@ F:	package/x265/
 N:	Thomas Claveirole <thomas.claveirole@green-communications.fr>
 F:	package/fcgiwrap/
 F:	package/openlayers/
-
-N:	Thomas Davis <sunsetbrew@sunsetbrew.com>
-F:	package/civetweb/
 
 N:	Thomas De Schampheleire <thomas.de_schampheleire@nokia.com>
 F:	docs/manual/
