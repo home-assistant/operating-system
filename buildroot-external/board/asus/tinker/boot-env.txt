@@ -1,0 +1,2 @@
+# add device tree overlay for RPI-RF-MOD/HM-MOD-RPI-PCB
+#overlays=rpi-rf-mod

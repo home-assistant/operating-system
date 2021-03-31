@@ -1,0 +1,13 @@
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index 8a23c76d..bb1e3cb7 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -1321,6 +1321,8 @@ config ARCH_ROCKCHIP
+ 	select DM_SPI_FLASH
+ 	select DM_USB if USB
+ 	select ENABLE_ARM_SOC_BOOT0_HOOK
++	select OF_LIBFDT
++	select OF_LIBFDT_OVERLAY
+ 	select OF_CONTROL
+ 	select SPI
+ 	select SPL_DM if SPL
