@@ -60,6 +60,18 @@ $ datactl move /dev/sdx
 ```
 
 Enter "yes" to confirm the operation. This will prepare the disk, however, the
-actual move will be running on next reboot. Once complete, the external drive
+actual move will be running on next reboot. This will make the first boot significantly longer than usual; please be patient. Reboot with the following command:
+```sh
+$ ha host reboot
+```
+
+Once complete, the external drive
 will contain the data and will need to be plugged in to successfully boot Home
-Assistant OS.
+Assistant.
+
+## Check if the move was succesful.
+Within the Home Assistant interface you won't see if the move was succesful. To check this, go to your host console again (as described above) and enter:
+```sh
+$ systemctl status mnt-data.mount
+```
+If the data partition was moved to your USB drive you should see ```sh Active: active (mounted)  ``` in the output. Also, it will show, which drive got mounted as /mnt/data (```sh Where ``` and ```sh what ``` section of the output)
