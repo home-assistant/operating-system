@@ -25,7 +25,7 @@ UDISKS2_DEPENDENCIES = \
 	parted \
 	udev
 
-UDISKS2_CONF_OPTS = --disable-polkit --disable-man
+UDISKS2_CONF_OPTS = --disable-polkit --disable-man --disable-libsystemd-login
 
 ifeq ($(BR2_PACKAGE_GOBJECT_INTROSPECTION),y)
 UDISKS2_CONF_OPTS += --enable-introspection
