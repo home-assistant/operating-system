@@ -1,0 +1,18 @@
+[Unit]
+Description=Home Assistant OS Device Wipe Service
+DefaultDependencies=no
+RefuseManualStart=true
+RefuseManualStop=true
+Wants=mnt-boot.mount
+Requires=haos-agent.service
+After=haos-agent.service mnt-boot.mount
+Before=mnt-data.mount mnt-overlay.mount
+ConditionKernelCommandLine=haos.wipe=1
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/busctl --verbose --timeout=1h call io.homeassistant.os /io/homeassistant/os/System io.homeassistant.os.System WipeDevice
+ExecStartPost=/usr/bin/sed -i 's/\s*haos.wipe=1//g' /mnt/boot/cmdline.txt
+
+[Install]
+WantedBy=sysinit.target

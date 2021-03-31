@@ -1,10 +1,10 @@
 ################################################################################
 #
-# foo
+# Home Assistant OS Agent
 #
 ################################################################################
 
-OS_AGENT_VERSION = 7bff7f5cd223ad439b738cea513cb558a18155c9
+OS_AGENT_VERSION = 8ce70291d410b2d32bac5057e1ada70e8c49bf12
 OS_AGENT_SITE = $(call github,home-assistant,os-agent,$(OS_AGENT_VERSION))
 OS_AGENT_LICENSE = Apache License 2.0
 OS_AGENT_LICENSE_FILES = LICENSE
