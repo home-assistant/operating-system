@@ -10,13 +10,13 @@ case "$1" in
          fi
          # Be compatible with upcomming releases using haos OS ID
          # shellcheck disable=SC2039
-         rauc_new_os_compatible=${RAUC_SYSTEM_COMPATIBLE/hassos-/haos-}
+         rauc_new_os_compatible=${RAUC_SYSTEM_COMPATIBLE/haos-/hassos-}
          if [ "$RAUC_MF_COMPATIBLE" = "${rauc_new_os_compatible}" ]; then
              exit 0
          fi
          # intel-nuc: Be compatible with upcomming generic-x86-64
          # shellcheck disable=SC2039
-         rauc_new_board_compatible=${rauc_new_os_compatible/intel-nuc/generic-x86-64}
+         rauc_new_board_compatible=${rauc_new_os_compatible/generic-x86-64/intel-nuc}
          if [ "$RAUC_MF_COMPATIBLE" = "${rauc_new_board_compatible}" ]; then
              exit 0
          fi
