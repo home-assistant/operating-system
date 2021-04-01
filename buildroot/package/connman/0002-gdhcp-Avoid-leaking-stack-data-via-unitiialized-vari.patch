@@ -1,0 +1,27 @@
+From a74524b3e3fad81b0fd1084ffdf9f2ea469cd9b1 Mon Sep 17 00:00:00 2001
+From: Colin Wee <cwee@tesla.com>
+Date: Thu, 28 Jan 2021 19:41:09 +0100
+Subject: [PATCH] gdhcp: Avoid leaking stack data via unitiialized variable
+
+Fixes: CVE-2021-26676
+Signed-off-by: Peter Korsgaard <peter@korsgaard.com>
+---
+ gdhcp/client.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/gdhcp/client.c b/gdhcp/client.c
+index 6a5613e7..c7b85e58 100644
+--- a/gdhcp/client.c
++++ b/gdhcp/client.c
+@@ -2270,7 +2270,7 @@ static gboolean listener_event(GIOChannel *channel, GIOCondition condition,
+ {
+ 	GDHCPClient *dhcp_client = user_data;
+ 	struct sockaddr_in dst_addr = { 0 };
+-	struct dhcp_packet packet;
++	struct dhcp_packet packet = { 0 };
+ 	struct dhcpv6_packet *packet6 = NULL;
+ 	uint8_t *message_type = NULL, *client_id = NULL, *option,
+ 		*server_id = NULL;
+-- 
+2.20.1
+

@@ -1,5 +1,5 @@
 # md5, sha256 from https://pypi.org/pypi/bottle/json
-md5	c7d8a42dbc6955593e5b9f957e650a60  bottle-0.12.17.tar.gz
-sha256	e9eaa412a60cc3d42ceb42f58d15864d9ed1b92e9d630b8130c871c5bb16107c  bottle-0.12.17.tar.gz
+md5  50075544706b5e662a3fbd9a98e24b07  bottle-0.12.19.tar.gz
+sha256	a9d73ffcbc6a1345ca2d7949638db46349f5b2b77dac65d6494d45c23628da2c  bottle-0.12.19.tar.gz
 # Locally computed sha256 checksums
 sha256	d0e7211f1c3c1a1c56f39d18bcb07f27f480c8a9552617756dda3a335933b8a6  LICENSE

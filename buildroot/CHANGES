@@ -1,3 +1,27 @@
+2020.11.3, released February 17th, 2021
+
+	meson: Fix ccache detection handling when per-package builds
+	are used.
+
+	Fakeroot: Fix compatibility issue with glibc 2.33
+
+	Updated/fixed packages: atftp, binutils, busybox, cereal,
+	chartjs, connman, dhcpcd, dnsmasq, docker-cli, docker-engine,
+	ebtables, fakeroot, flashrom, go, gst1-python, guile,
+	intel-mediadriver, intel-microcode, jasper,
+	kodi-inputstream-adaptive, lcms2, libbsd, libopenssl,
+	makedumpfile, memtester, mosquitto, ne10, openblas, orc, php,
+	postgresql, privoxy, pugixml, python-bottle, python-django,
+	python3, rauc, sox, stress-ng, subversion, tzdate,
+	uboot-tools, uclibc, webkitgtk, wireguard-linux-compat,
+	wireshark, wpa_supplicant, wpewebkit, xenomai,
+	xserver_xorg-server, xterm
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#11706: binman (U-boot tool) cannot find libfdt "binman: No mod..
+	#13506: BR2_PACKAGE_DHCPCD missing directory creation
+
 2020.11.2, released January 31st, 2021
 
 	Important / security related fixes.

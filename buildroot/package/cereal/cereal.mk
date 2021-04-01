@@ -15,4 +15,7 @@ CEREAL_CONF_OPTS = \
 	-DTHREAD_SAFE=ON \
 	-DJUST_INSTALL_CEREAL=ON
 
+# 0001-Store-a-copy-of-each-serialized-shared_ptr-within-the-archive.patch
+CEREAL_IGNORE_CVES += CVE-2020-11105
+
 $(eval $(cmake-package))

@@ -12,6 +12,7 @@ GST1_PYTHON_LICENSE_FILES = COPYING
 GST1_PYTHON_LICENSE = LGPL-2.1+
 
 GST1_PYTHON_DEPENDENCIES = \
+	gst1-plugins-base \
 	gstreamer1 \
 	python-gobject
 

@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-DNSMASQ_VERSION = 2.81
+DNSMASQ_VERSION = 2.84
 DNSMASQ_SOURCE = dnsmasq-$(DNSMASQ_VERSION).tar.xz
 DNSMASQ_SITE = http://thekelleys.org.uk/dnsmasq
 DNSMASQ_MAKE_ENV = $(TARGET_MAKE_ENV) CC="$(TARGET_CC)"
@@ -77,13 +77,7 @@ DNSMASQ_DEPENDENCIES += ubus
 DNSMASQ_COPTS += -DHAVE_UBUS
 endif
 
-define DNSMASQ_FIX_PKGCONFIG
-	$(SED) 's^PKG_CONFIG = pkg-config^PKG_CONFIG = $(PKG_CONFIG_HOST_BINARY)^' \
-		$(DNSMASQ_DIR)/Makefile
-endef
-
 define DNSMASQ_BUILD_CMDS
-	$(DNSMASQ_FIX_PKGCONFIG)
 	$(DNSMASQ_TWEAK_LIBLUA)
 	$(DNSMASQ_MAKE_ENV) $(MAKE) -C $(@D) $(DNSMASQ_MAKE_OPTS) all$(DNSMASQ_I18N)
 endef
