@@ -1,0 +1,68 @@
+From 68014c109ce917c2d3f6e204dd160dfc350ae7e7 Mon Sep 17 00:00:00 2001
+Message-Id: <68014c109ce917c2d3f6e204dd160dfc350ae7e7.1615892095.git.stefan@agner.ch>
+In-Reply-To: <2f197db1961f09dd264770ef081280a44a1a4809.1615892095.git.stefan@agner.ch>
+References: <2f197db1961f09dd264770ef081280a44a1a4809.1615892095.git.stefan@agner.ch>
+From: Pascal Vizeli <pvizeli@syshack.ch>
+Date: Fri, 24 Apr 2020 11:37:55 +0000
+Subject: [PATCH 2/2] pmic: enable LDO2 vcc33_mipi at bootup
+
+Signed-off-by: Pascal Vizeli <pvizeli@syshack.ch>
+---
+ board/rockchip/tinker_rk3288/tinker-rk3288.c | 37 ++++++++++++++++++++
+ 1 file changed, 37 insertions(+)
+
+diff --git a/board/rockchip/tinker_rk3288/tinker-rk3288.c b/board/rockchip/tinker_rk3288/tinker-rk3288.c
+index f85209c649..6fa1bb0c66 100644
+--- a/board/rockchip/tinker_rk3288/tinker-rk3288.c
++++ b/board/rockchip/tinker_rk3288/tinker-rk3288.c
+@@ -13,6 +13,7 @@
+ #include <netdev.h>
+ #include <asm/arch-rockchip/bootrom.h>
+ #include <asm/io.h>
++#include <power/regulator.h>
+ 
+ static int get_ethaddr_from_eeprom(u8 *addr)
+ {
+@@ -48,3 +49,39 @@ int mmc_get_env_dev(void)
+ 
+ 	return 1;
+ }
++
++
++#ifdef CONFIG_DM_PMIC
++static int rockchip_set_regulator_on(const char *name, uint uv)
++{
++	struct udevice *dev;
++	int ret;
++
++	ret = regulator_get_by_platname(name, &dev);
++	if (ret) {
++		debug("%s: Cannot find regulator %s\n", __func__, name);
++		return ret;
++	}
++	ret = regulator_set_value(dev, uv);
++	if (ret) {
++		debug("%s: Cannot set regulator %s\n", __func__, name);
++		return ret;
++	}
++	ret = regulator_set_enable(dev, 1);
++	if (ret) {
++		debug("%s: Cannot enable regulator %s\n", __func__, name);
++		return ret;
++	}
++
++	return 0;
++}
++
++int power_init_board(void)
++{
++	int ret = rockchip_set_regulator_on("vcc33_mipi", 3300000);
++	if (ret)
++		return ret;
++
++	return 0;
++}
++#endif
+-- 
+2.30.2
+
