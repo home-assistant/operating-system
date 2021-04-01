@@ -44,11 +44,10 @@ config BR2_PACKAGE_LINUX_FIRMWARE_QCOM_ADRENO
 	help
 	  Firmware files for Qualcomm Adreno GPU firmware
 
-
 config BR2_PACKAGE_LINUX_FIRMWARE_MFC_V8
-	bool "Samsung MFC video encoder/decoder driver v8"
+	bool "Samsung MFC video encoder/decoder v8 firmware"
 	help
-	  Firmware files for samsung MFC video encoder/decoder driver v8
+	  Firmware files for Samsung MFC video encoder/decoder driver v8
 
 endmenu # Video
 

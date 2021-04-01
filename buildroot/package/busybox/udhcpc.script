@@ -18,7 +18,7 @@ fi
 wait_for_ipv6_default_route() {
 	printf "Waiting for IPv6 default route to appear"
 	while [ $IF_WAIT_DELAY -gt 0 ]; do
-		if [ -z "$(ip -6 route list | grep default)" ]; then
+		if ip -6 route list | grep -q default; then
 			printf "\n"
 			return
 		fi

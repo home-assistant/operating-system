@@ -41,6 +41,7 @@ endef
 
 define DHCPCD_INSTALL_TARGET_CMDS
 	$(TARGET_MAKE_ENV) $(MAKE) -C $(@D) install DESTDIR=$(TARGET_DIR)
+	mkdir -p $(TARGET_DIR)/var/db/dhcpcd
 endef
 
 # When network-manager is enabled together with dhcpcd, it will use

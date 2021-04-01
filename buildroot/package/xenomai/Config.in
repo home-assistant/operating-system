@@ -1,8 +1,9 @@
 config BR2_PACKAGE_XENOMAI_COBALT_ARCH_SUPPORTS
 	bool
-	default y
-	depends on BR2_i386 || BR2_x86_64 || (BR2_arm && !BR2_ARM_CPU_ARMV7M) || \
-		BR2_powerpc
+	default y if BR2_i386
+	default y if BR2_x86_64
+	default y if BR2_powerpc
+	default y if BR2_arm && !BR2_ARM_CPU_ARMV7M && !BR2_ARM_CPU_ARMV8A
 
 comment "xenomai needs a glibc or uClibc toolchain w/ threads"
 	depends on BR2_USE_MMU
@@ -69,9 +70,11 @@ config BR2_PACKAGE_XENOMAI_REPOSITORY
 	depends on BR2_PACKAGE_XENOMAI_CUSTOM_GIT
 
 config BR2_PACKAGE_XENOMAI_VERSION
-	string "Custom Xenomai version" if !BR2_PACKAGE_XENOMAI_LATEST_VERSION
+	string "Custom Xenomai version" if \
+		!BR2_PACKAGE_XENOMAI_LATEST_VERSION && \
+		!BR2_PACKAGE_XENOMAI_CUSTOM_TARBALL
 	default "3.0.10" if BR2_PACKAGE_XENOMAI_LATEST_VERSION
-	depends on !BR2_PACKAGE_XENOMAI_CUSTOM_TARBALL
+	default "custom" if BR2_PACKAGE_XENOMAI_CUSTOM_TARBALL
 
 config BR2_PACKAGE_XENOMAI_CUSTOM_TARBALL_URL
 	string "URL of custom tarball"
@@ -108,6 +111,8 @@ endchoice
 config BR2_PACKAGE_XENOMAI_ENABLE_SMP
 	bool "Enable SMP support"
 	default y
+	# SMP not supported below armv6
+	depends on !BR2_ARM_CPU_ARMV4 && !BR2_ARM_CPU_ARMV5
 	help
 	  This option enables SMP support in Xenomai userspace.
 
