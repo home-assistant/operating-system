@@ -75,8 +75,6 @@ if [ -z "${SUPERVISOR_CONTAINER_ID}" ]; then
         -v /run/udev:/run/udev:ro \
         -v /etc/machine-id:/etc/machine-id:ro \
         -v ${SUPERVISOR_DATA}:/data:rw \
-        -v /mnt/overlay:/os/overlay:rw \
-        -v /mnt/boot:/os/boot:rw \
         -e SUPERVISOR_SHARE=${SUPERVISOR_DATA} \
         -e SUPERVISOR_NAME=hassio_supervisor \
         -e SUPERVISOR_CPU_RT=1 \
