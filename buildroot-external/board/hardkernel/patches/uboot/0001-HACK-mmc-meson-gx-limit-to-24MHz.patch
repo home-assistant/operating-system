@@ -1,5 +1,5 @@
-From 1e68d462712e0d534059b09d41090c69d20807e0 Mon Sep 17 00:00:00 2001
-Message-Id: <1e68d462712e0d534059b09d41090c69d20807e0.1615894477.git.stefan@agner.ch>
+From 8511fa06c13a9761e53ed72fe7111f5c3e3514a0 Mon Sep 17 00:00:00 2001
+Message-Id: <8511fa06c13a9761e53ed72fe7111f5c3e3514a0.1617731946.git.stefan@agner.ch>
 From: Neil Armstrong <narmstrong@baylibre.com>
 Date: Mon, 2 Sep 2019 15:42:04 +0200
 Subject: [PATCH] HACK: mmc: meson-gx: limit to 24MHz
@@ -23,5 +23,5 @@ index fcf4f03d1e..6ded4b619b 100644
  	cfg->name = dev->name;
  
 -- 
-2.30.2
+2.31.1
 
