@@ -1,5 +1,5 @@
-From 2f197db1961f09dd264770ef081280a44a1a4809 Mon Sep 17 00:00:00 2001
-Message-Id: <2f197db1961f09dd264770ef081280a44a1a4809.1615892095.git.stefan@agner.ch>
+From 983121a741192153492a61befc0e0fc61b9f8b14 Mon Sep 17 00:00:00 2001
+Message-Id: <983121a741192153492a61befc0e0fc61b9f8b14.1617731428.git.stefan@agner.ch>
 From: Pascal Vizeli <pvizeli@syshack.ch>
 Date: Fri, 24 Apr 2020 12:41:50 +0000
 Subject: [PATCH 1/2] SPL: modify load address of U-Boot
@@ -33,5 +33,5 @@ index 22714833cc..f5dd23577c 100644
  CONFIG_ERRNO_STR=y
 +CONFIG_SYS_MMCSD_RAW_MODE_U_BOOT_SECTOR=0x2000
 -- 
-2.30.2
+2.31.1
 
