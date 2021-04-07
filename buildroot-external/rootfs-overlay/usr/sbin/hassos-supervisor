@@ -9,9 +9,10 @@ set -e
 . /etc/os-release
 
 # Init supervisor
+SUPERVISOR_DATA=/mnt/data/supervisor
 SUPERVISOR_STARTUP_MARKER="/run/supervisor/startup-marker"
 SUPERVISOR_IMAGE="homeassistant/${SUPERVISOR_ARCH}-hassio-supervisor"
-SUPERVISOR_DATA=/mnt/data/supervisor
+
 SUPERVISOR_IMAGE_ID=$(docker images --no-trunc --filter "reference=${SUPERVISOR_IMAGE}:latest" --format "{{.ID}}" || echo "")
 SUPERVISOR_CONTAINER_ID=$(docker inspect --format='{{.Image}}' hassio_supervisor || echo "")
 
@@ -35,8 +36,7 @@ if [ -z "${SUPERVISOR_IMAGE_ID}" ]; then
     # Get the latest from update information
     # Using updater information instead of config. If the config version is
     # broken, this creates a way (e.g., bad release).
-    SUPERVISOR_VERSION_UPDATER=$(jq -r '.version // empty' "${SUPERVISOR_DATA}/config.json" || echo "")
-    SUPERVISOR_VERSION="${SUPERVISOR_VERSION_UPDATER:-latest}"
+    SUPERVISOR_VERSION=$(jq -r '.supervisor // "latest"' "${SUPERVISOR_DATA}/updater.json" || echo "latest")
 
     echo "[WARNING] Supervisor image missing, downloading a fresh one: ${SUPERVISOR_VERSION}"
 
