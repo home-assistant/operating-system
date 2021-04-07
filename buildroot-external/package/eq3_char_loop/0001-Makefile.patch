@@ -1,0 +1,4 @@
+--- ./KernelDrivers/Makefile.orig	2021-04-02 17:01:07.029932165 +0200
++++ ./KernelDrivers/Makefile	2020-06-04 14:36:10.188174788 +0200
+@@ -0,0 +1 @@
++obj-m += eq3_char_loop.o

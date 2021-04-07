@@ -10,6 +10,10 @@ function hassos_pre_image() {
         "${BINARIES_DIR}/rk3288-tinker.dtb" \
         "${BINARIES_DIR}/rk3288-tinker-s.dtb"
 
+    mkdir -p "${BOOT_DATA}/overlays"
+    cp "${BINARIES_DIR}"/*.dtbo "${BOOT_DATA}/overlays/"
+    cp "${BOARD_DIR}/boot-env.txt" "${BOOT_DATA}/haos-config.txt"
+
     echo "console=tty1" > "${BOOT_DATA}/cmdline.txt"
 
     # SPL

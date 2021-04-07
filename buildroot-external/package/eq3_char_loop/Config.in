@@ -1,0 +1,2 @@
+config BR2_PACKAGE_EQ3_CHAR_LOOP
+	bool "Support for eq3 char loop kernel module"

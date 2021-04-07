@@ -1,0 +1,31 @@
+config BR2_PACKAGE_RPI_RF_MOD
+  select BR2_PACKAGE_EQ3_CHAR_LOOP
+  select BR2_PACKAGE_GENERIC_RAW_UART
+  bool "Support for RPI-RF-MOD/HM-MOD-RPI-PCB GPIO HAT"
+
+if BR2_PACKAGE_RPI_RF_MOD
+
+config BR2_PACKAGE_RPI_RF_MOD_DTS
+  bool "Compile Device Tree Overlay"
+
+if BR2_PACKAGE_RPI_RF_MOD_DTS
+
+choice
+  prompt "For Target"
+  default BR2_PACKAGE_RPI_RF_MOD_DTS_RPI
+
+config BR2_PACKAGE_RPI_RF_MOD_DTS_RPI
+  bool "RaspberryPi"
+  help
+    For the RaspberryPi
+
+config BR2_PACKAGE_RPI_RF_MOD_DTS_TINKER
+  bool "ASUS Tinkerboard"
+  help
+    For the ASUS Tinkerboard
+
+endchoice
+
+endif
+
+endif

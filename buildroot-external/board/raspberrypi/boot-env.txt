@@ -60,6 +60,12 @@ kernel=u-boot.bin
 # Uncomment this to enable the lirc-rpi module
 #dtoverlay=lirc-rpi
 
+# Uncomment this to enable GPIO support for RPI-RF-MOD/HM-MOD-RPI-PCB
+#enable_uart=1
+#dtparam=i2c_arm=on
+#dtoverlay=miniuart-bt
+#dtoverlay=rpi-rf-mod
+
 # Additional overlays and parameters are documented /boot/overlays/README
 
 # Enable audio (loads snd_bcm2835)

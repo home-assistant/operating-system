@@ -1,0 +1,109 @@
+--- ./KernelDrivers/eq3_char_loop.c.orig	2017-05-14 22:57:19.109181928 +0200
++++ ./KernelDrivers/eq3_char_loop.c	2020-06-04 14:36:10.188174788 +0200
+@@ -48,8 +48,8 @@
+ /* Use 'L' as magic number */
+ #define EQ3LOOP_IOC_MAGIC  'L'
+ 
+-#define EQ3LOOP_IOCSCREATESLAVE _IOW(EQ3LOOP_IOC_MAGIC,  1, unsigned long)
+-#define EQ3LOOP_IOCGEVENTS _IOR(EQ3LOOP_IOC_MAGIC,  2, unsigned long)
++#define EQ3LOOP_IOCSCREATESLAVE _IOW(EQ3LOOP_IOC_MAGIC,  1, uint32_t)
++#define EQ3LOOP_IOCGEVENTS _IOR(EQ3LOOP_IOC_MAGIC,  2, uint32_t)
+ 
+ #define EVENT_BIT_SLAVE_OPENED 0
+ #define EVENT_BIT_SLAVE_CLOSED 1
+@@ -62,6 +62,12 @@
+ 
+ #define DUMP_READWRITE 0
+ 
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5,0,0))
++  #define _access_ok(__type, __addr, __size) access_ok(__addr, __size)
++#else
++  #define _access_ok(__type, __addr, __size) access_ok(__type, __addr, __size)
++#endif
++
+ struct eq3loop_channel_data
+ {
+ 	struct circ_buf master2slave_buf;
+@@ -353,7 +359,7 @@
+ 	{
+ 		ret=-EFAULT;
+ 		count_to_end = CIRC_SPACE( head, channel->master2slave_buf.tail, BUFSIZE);
+-		printk( KERN_ERR EQ3LOOP_DRIVER_NAME ": eq3loop_write_master() %s: not enought space in the buffers. free space = %i, required space = %i", channel->name,count_to_end,count );
++		printk( KERN_ERR EQ3LOOP_DRIVER_NAME ": eq3loop_write_master() %s: not enough space in buffers. free space = %zu, required space = %zu", channel->name,count_to_end,count );
+ 		goto out;
+ 	}
+ 	/* ok, space is free, write something */
+@@ -389,7 +395,7 @@
+ 	up (&channel->sem);
+ 	if(ret < 0)
+ 	{
+-		printk( KERN_INFO EQ3LOOP_DRIVER_NAME ": eq3loop_write_master() retrun error:");
++		printk( KERN_INFO EQ3LOOP_DRIVER_NAME ": eq3loop_write_master() return error: %d", ret);
+ 	}
+ 	if( ret > 0 || CIRC_CNT(channel->master2slave_buf.head,channel->master2slave_buf.tail,BUFSIZE) )
+ 	{
+@@ -456,9 +462,9 @@
+ 	* "write" is reversed
+ 	*/
+ 	if (_IOC_DIR(cmd) & _IOC_READ)
+-	ret = !access_ok(VERIFY_WRITE, (void *)arg, _IOC_SIZE(cmd));
++	  ret = !_access_ok(VERIFY_WRITE, (void *)arg, _IOC_SIZE(cmd));
+ 	else if (_IOC_DIR(cmd) & _IOC_WRITE)
+-	ret =  !access_ok(VERIFY_READ, (void *)arg, _IOC_SIZE(cmd));
++	  ret =  !_access_ok(VERIFY_READ, (void *)arg, _IOC_SIZE(cmd));
+ 	if (ret) return -EFAULT;
+ 
+ 	switch(cmd) {
+@@ -500,7 +506,7 @@
+ 	switch(cmd) {
+ 
+ 	case TCGETS:
+-		if( access_ok(VERIFY_READ, (void *)arg, sizeof(struct termios) ) )
++		if( _access_ok(VERIFY_READ, (void *)arg, sizeof(struct termios) ) )
+ 		{
+ 			ret = copy_to_user( (void*)arg, &channel->termios, sizeof(struct termios) );
+ 		} else {
+@@ -508,7 +514,7 @@
+ 		}
+ 		break;
+ 	case TCSETS:
+-		if( access_ok(VERIFY_WRITE, (void *)arg, sizeof(struct termios) ) )
++		if( _access_ok(VERIFY_WRITE, (void *)arg, sizeof(struct termios) ) )
+ 		{
+ 			ret = copy_from_user( &channel->termios, (void*)arg, sizeof(struct termios) );
+ 		} else {
+@@ -533,6 +539,12 @@
+ 		break;
+ 	case TIOCMSET:
+ 		break;
++	case TIOCSERGETLSR:
++		ret = -ENOIOCTLCMD;
++		break;
++	case TIOCGICOUNT:
++		ret = -ENOIOCTLCMD;
++		break;
+ 	default:
+ 		ret = -ENOTTY;
+ 		break;
+@@ -541,6 +553,7 @@
+ 	if( ret == -ENOTTY )
+ 	{
+ 		printk( KERN_NOTICE EQ3LOOP_DRIVER_NAME ": eq3loop_ioctl_slave() %s: unhandled ioctl 0x%04X\n", channel->name, cmd );
++		ret = -ENOIOCTLCMD;
+ 	}
+ 	return ret;
+ }
+@@ -908,6 +921,7 @@
+ 	.ioctl      = eq3loop_ioctl,
+ #else
+ 	.unlocked_ioctl = eq3loop_ioctl,
++	.compat_ioctl = eq3loop_ioctl,
+ #endif
+ };
+ 
+@@ -979,4 +993,4 @@
+ module_exit(eq3loop_exit);
+ MODULE_DESCRIPTION("eQ-3 IPC loopback char driver");
+ MODULE_LICENSE("GPL");
+-
++MODULE_VERSION("1.1");
