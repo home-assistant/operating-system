@@ -50,5 +50,5 @@ Describe the Homme Assistant image you are using and the hardare environemnt
 <!--
 - Is the problem reproducible?
 - Has this been working before (is this a regression?)
-- Has there been attempt to rule out harware issues? (different SD card etc.)
+- Has there been attempt to rule out hardware issues? (different SD card etc.)
 -->
