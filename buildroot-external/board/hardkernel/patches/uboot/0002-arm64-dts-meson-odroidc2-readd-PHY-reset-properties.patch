@@ -1,0 +1,38 @@
+From e194459c7459a1c6f9d1183e05186d164f0c6715 Mon Sep 17 00:00:00 2001
+Message-Id: <e194459c7459a1c6f9d1183e05186d164f0c6715.1617807077.git.stefan@agner.ch>
+In-Reply-To: <8511fa06c13a9761e53ed72fe7111f5c3e3514a0.1617807077.git.stefan@agner.ch>
+References: <8511fa06c13a9761e53ed72fe7111f5c3e3514a0.1617807077.git.stefan@agner.ch>
+From: Stefan Agner <stefan@agner.ch>
+Date: Thu, 1 Apr 2021 14:33:57 +0200
+Subject: [PATCH 2/2] arm64: dts: meson: odroidc2: readd PHY reset properties
+
+The sync of the device tree and dt-bindings from Linux v5.6-rc2
+11a48a5a18c6 ("Linux 5.6-rc2") causes Ethernet to break on some
+ODROID-C2. The PHY seems to need proper reset timing to be functional
+in U-Boot and Linux afterwards. Readd the old PHY reset bindings for
+dwmac until we support the new bindings in the PHY node.
+
+Fixes: dd5f2351e99a ("arm64: dts: meson: sync dt and bindings from v5.6-rc2")
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+---
+ arch/arm/dts/meson-gxbb-odroidc2.dts | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/arch/arm/dts/meson-gxbb-odroidc2.dts b/arch/arm/dts/meson-gxbb-odroidc2.dts
+index 70fcfb7b06..8b80bbc90b 100644
+--- a/arch/arm/dts/meson-gxbb-odroidc2.dts
++++ b/arch/arm/dts/meson-gxbb-odroidc2.dts
+@@ -188,6 +188,10 @@
+ 	phy-handle = <&eth_phy0>;
+ 	phy-mode = "rgmii";
+ 
++	snps,reset-gpio = <&gpio GPIOZ_14 0>;
++	snps,reset-delays-us = <0 10000 1000000>;
++	snps,reset-active-low;
++
+ 	amlogic,tx-delay-ns = <2>;
+ 
+ 	mdio {
+-- 
+2.31.1
+
