@@ -2,7 +2,7 @@
 # http://rpf.io/configtxt
 # Some settings may impact device functionality. See link above for details
 
-# HassOS - don't change it!
+# HAOS - don't change it!
 disable_splash=1
 kernel=u-boot.bin
 
