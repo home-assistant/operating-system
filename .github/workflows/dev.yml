@@ -87,3 +87,23 @@ jobs:
           target: ${{ secrets.DEV_TARGET_PATH }}/${{ needs.version.outputs.version_main }}.${{ needs.version.outputs.version_dev }}/
           strip_components: 1
 
+  bump_version:
+    name: Bump dev version to ${{ needs.version.outputs.version_main }}.${{ needs.version.outputs.version_dev }}
+    needs: [ build, version ]
+    runs-on: [ "ubuntu-20.04" ]
+
+    steps:
+    - name: Initialize git
+      uses: home-assistant/actions/helpers/git-init@master
+      with:
+        name: ${{ secrets.GIT_NAME }}
+        email: ${{ secrets.GIT_EMAIL }}
+        token: ${{ secrets.GIT_TOKEN }}
+
+    - name: Bump Home Assistant OS dev version
+      uses: home-assistant/actions/helpers/version-push@master
+      with:
+        key: "hassos[]"
+        key-description: "Home Assistant OS"
+        version: ${{ needs.version.outputs.version_main }}.${{ needs.version.outputs.version_dev }}
+        channel: "dev"
