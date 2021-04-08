@@ -160,10 +160,10 @@ jobs:
         email: ${{ secrets.GIT_EMAIL }}
         token: ${{ secrets.GIT_TOKEN }}
 
-    - name: Bump Home Assistant OS dev version
+    - name: Bump Home Assistant OS beta version
       uses: home-assistant/actions/helpers/version-push@master
       with:
         key: "hassos[]"
         key-description: "Home Assistant OS"
         version: ${{ needs.validate_release.outputs.version }}
-        channel: "dev"
+        channel: "beta"
