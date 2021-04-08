@@ -1,0 +1,90 @@
+From 7c1d3d8116b78bf096b7b8c6da5486f37efeb75f Mon Sep 17 00:00:00 2001
+From: Peter Jones <pjones@redhat.com>
+Date: Mon, 13 May 2019 16:34:35 -0400
+Subject: [PATCH] Work around stuff -Waddress-of-packed-member finds.
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+In MokManager we get a lot of these:
+
+../src/MokManager.c:1063:19: error: taking address of packed member of ‘struct <anonymous>’ may result in an unaligned pointer value [-Werror=address-of-packed-member]
+ 1063 |   if (CompareGuid(&(list[i].Type), &X509_GUID) == 0)
+      |                   ^~~~~~~~~~~~~~~
+
+The reason for this is that gnu-efi takes EFI_GUID * as its argument
+instead of VOID *, and there's nothing telling the compiler that it
+doesn't have alignment constraints on the input, so the compiler wants
+it to have 16-byte alignment.
+
+Just use CompareMem() for these, as that's all CompareGuid is calling
+anyway.
+
+Signed-off-by: Peter Jones <pjones@redhat.com>
+Upstream: 2cbf56b82a5102777b37c4f7f47c8cf058cea027
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ MokManager.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
+
+diff --git a/MokManager.c b/MokManager.c
+index 7e40a38..5d0a979 100644
+--- a/MokManager.c
++++ b/MokManager.c
+@@ -22,6 +22,8 @@
+ #define CERT_STRING L"Select an X509 certificate to enroll:\n\n"
+ #define HASH_STRING L"Select a file to trust:\n\n"
+ 
++#define CompareMemberGuid(x, y) CompareMem(x, y, sizeof(EFI_GUID))
++
+ typedef struct {
+ 	UINT32 MokSize;
+ 	UINT8 *Mok;
+@@ -1078,7 +1080,7 @@ static EFI_STATUS write_back_mok_list(MokListNode * list, INTN key_num,
+ 			continue;
+ 
+ 		DataSize += sizeof(EFI_SIGNATURE_LIST);
+-		if (CompareGuid(&(list[i].Type), &X509_GUID) == 0)
++		if (CompareMemberGuid(&(list[i].Type), &X509_GUID) == 0)
+ 			DataSize += sizeof(EFI_GUID);
+ 		DataSize += list[i].MokSize;
+ 	}
+@@ -1100,7 +1102,7 @@ static EFI_STATUS write_back_mok_list(MokListNode * list, INTN key_num,
+ 		CertList->SignatureType = list[i].Type;
+ 		CertList->SignatureHeaderSize = 0;
+ 
+-		if (CompareGuid(&(list[i].Type), &X509_GUID) == 0) {
++		if (CompareMemberGuid(&(list[i].Type), &X509_GUID) == 0) {
+ 			CertList->SignatureListSize = list[i].MokSize +
+ 			    sizeof(EFI_SIGNATURE_LIST) + sizeof(EFI_GUID);
+ 			CertList->SignatureSize =
+@@ -1141,7 +1143,7 @@ static void delete_cert(void *key, UINT32 key_size,
+ 	int i;
+ 
+ 	for (i = 0; i < mok_num; i++) {
+-		if (CompareGuid(&(mok[i].Type), &X509_GUID) != 0)
++		if (CompareMemberGuid(&(mok[i].Type), &X509_GUID) != 0)
+ 			continue;
+ 
+ 		if (mok[i].MokSize == key_size &&
+@@ -1192,7 +1194,7 @@ static void delete_hash_in_list(EFI_GUID Type, UINT8 * hash, UINT32 hash_size,
+ 	sig_size = hash_size + sizeof(EFI_GUID);
+ 
+ 	for (i = 0; i < mok_num; i++) {
+-		if ((CompareGuid(&(mok[i].Type), &Type) != 0) ||
++		if ((CompareMemberGuid(&(mok[i].Type), &Type) != 0) ||
+ 		    (mok[i].MokSize < sig_size))
+ 			continue;
+ 
+@@ -1356,7 +1358,7 @@ static EFI_STATUS delete_keys(void *MokDel, UINTN MokDelSize, BOOLEAN MokX)
+ 
+ 	/* Search and destroy */
+ 	for (i = 0; i < del_num; i++) {
+-		if (CompareGuid(&(del_key[i].Type), &X509_GUID) == 0) {
++		if (CompareMemberGuid(&(del_key[i].Type), &X509_GUID) == 0) {
+ 			delete_cert(del_key[i].Mok, del_key[i].MokSize,
+ 				    mok, mok_num);
+ 		} else if (is_sha2_hash(del_key[i].Type)) {
+-- 
+2.30.2
+

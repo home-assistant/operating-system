@@ -6,7 +6,7 @@
 
 FROTZ_VERSION = 2.51
 FROTZ_SOURCE = frotz-$(FROTZ_VERSION).tar.bz2
-FROTZ_SITE = https://gitlab.com/DavidGriffith/frotz/-/archive/$(FROTZ_VERSION)
+FROTZ_SITE = $(call gitlab,DavidGriffith,frotz,$(FROTZ_VERSION))
 FROTZ_DEPENDENCIES = host-pkgconf ncurses
 FROTZ_LICENSE = GPL-2.0+
 FROTZ_LICENSE_FILES = COPYING

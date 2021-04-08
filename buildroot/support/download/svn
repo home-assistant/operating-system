@@ -43,14 +43,16 @@ _svn() {
     eval ${SVN} "${@}"
 }
 
-_svn export ${verbose} "${@}" "'${uri}@${rev}'" "'${basename}'"
+_svn export --ignore-keywords ${verbose} "${@}" "'${uri}@${rev}'" "'${basename}'"
 
 # Get the date of the revision, to generate reproducible archives.
 # The output format is YYYY-MM-DDTHH:MM:SS.mmmuuuZ (i.e. always in the
 # UTC timezone), which we can feed as-is to the --mtime option for tar.
 # In case there is a redirection (e.g. http -> https), just keep the
 # last line (svn outputs everything on stdout)
-date="$( _svn info --show-item last-changed-date "'${uri}@${rev}'" |tail -n 1 )"
+date="$( _svn info "'${uri}@${rev}'" \
+        |sed -r -e '/^Last Changed Date: /!d; s///'
+       )"
 
 # Generate the archive.
 # We did a 'svn export' above, so it's not a working copy (there is no .svn

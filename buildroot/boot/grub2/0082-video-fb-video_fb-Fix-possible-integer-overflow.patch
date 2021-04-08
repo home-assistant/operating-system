@@ -1,0 +1,40 @@
+From 08413f2f4edec0e2d9bf15f836f6ee5ca2e379cb Mon Sep 17 00:00:00 2001
+From: Darren Kenny <darren.kenny@oracle.com>
+Date: Fri, 4 Dec 2020 14:51:30 +0000
+Subject: [PATCH] video/fb/video_fb: Fix possible integer overflow
+
+It is minimal possibility that the values being used here will overflow.
+So, change the code to use the safemath function grub_mul() to ensure
+that doesn't happen.
+
+Fixes: CID 73761
+
+Signed-off-by: Darren Kenny <darren.kenny@oracle.com>
+Reviewed-by: Daniel Kiper <daniel.kiper@oracle.com>
+Signed-off-by: Stefan Sørensen <stefan.sorensen@spectralink.com>
+---
+ grub-core/video/fb/video_fb.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/grub-core/video/fb/video_fb.c b/grub-core/video/fb/video_fb.c
+index 1c9a138..ae6b89f 100644
+--- a/grub-core/video/fb/video_fb.c
++++ b/grub-core/video/fb/video_fb.c
+@@ -1537,7 +1537,13 @@ doublebuf_pageflipping_init (struct grub_video_mode_info *mode_info,
+ 			     volatile void *page1_ptr)
+ {
+   grub_err_t err;
+-  grub_size_t page_size = mode_info->pitch * mode_info->height;
++  grub_size_t page_size = 0;
++
++  if (grub_mul (mode_info->pitch, mode_info->height, &page_size))
++    {
++      /* Shouldn't happen, but if it does we've a bug. */
++      return GRUB_ERR_BUG;
++    }
+ 
+   framebuffer.offscreen_buffer = grub_malloc (page_size);
+   if (! framebuffer.offscreen_buffer)
+-- 
+2.14.2
+

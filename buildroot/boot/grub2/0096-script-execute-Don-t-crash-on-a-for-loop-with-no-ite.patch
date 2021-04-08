@@ -1,0 +1,40 @@
+From 0a05f88e2bb33ed2a0cfd93f481f471efb7791aa Mon Sep 17 00:00:00 2001
+From: Daniel Axtens <dja@axtens.net>
+Date: Fri, 22 Jan 2021 16:18:26 +1100
+Subject: [PATCH] script/execute: Don't crash on a "for" loop with no items
+
+The following crashes the parser:
+
+  for x in; do
+  0
+  done
+
+This is because grub_script_arglist_to_argv() doesn't consider the
+possibility that arglist is NULL. Catch that explicitly.
+
+This avoids a NULL pointer dereference.
+
+Signed-off-by: Daniel Axtens <dja@axtens.net>
+Reviewed-by: Daniel Kiper <daniel.kiper@oracle.com>
+Signed-off-by: Stefan Sørensen <stefan.sorensen@spectralink.com>
+---
+ grub-core/script/execute.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/grub-core/script/execute.c b/grub-core/script/execute.c
+index 23d34bd..31dac25 100644
+--- a/grub-core/script/execute.c
++++ b/grub-core/script/execute.c
+@@ -624,6 +624,9 @@ grub_script_arglist_to_argv (struct grub_script_arglist *arglist,
+   struct grub_script_arg *arg = 0;
+   struct grub_script_argv result = { 0, 0, 0 };
+ 
++  if (arglist == NULL)
++    return 1;
++
+   for (; arglist && arglist->arg; arglist = arglist->next)
+     {
+       if (grub_script_argv_next (&result))
+-- 
+2.14.2
+

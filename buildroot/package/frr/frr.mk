@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-FRR_VERSION = 7.5
+FRR_VERSION = 7.5.1
 FRR_SITE = $(call github,FRRouting,frr,frr-$(FRR_VERSION))
 FRR_LICENSE = GPL-2.0
 FRR_LICENSE_FILES = COPYING

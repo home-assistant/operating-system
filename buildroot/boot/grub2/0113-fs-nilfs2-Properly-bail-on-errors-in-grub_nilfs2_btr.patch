@@ -1,0 +1,68 @@
+From ca5d9ac206043b1fb4cb06259272fb1c5946bb6d Mon Sep 17 00:00:00 2001
+From: Daniel Axtens <dja@axtens.net>
+Date: Mon, 18 Jan 2021 17:06:19 +1100
+Subject: [PATCH] fs/nilfs2: Properly bail on errors in
+ grub_nilfs2_btree_node_lookup()
+
+We just introduced an error return in grub_nilfs2_btree_node_lookup().
+Make sure the callers catch it.
+
+At the same time, make sure that grub_nilfs2_btree_node_lookup() always
+inits the index pointer passed to it.
+
+Signed-off-by: Daniel Axtens <dja@axtens.net>
+Reviewed-by: Daniel Kiper <daniel.kiper@oracle.com>
+Signed-off-by: Stefan Sørensen <stefan.sorensen@spectralink.com>
+---
+ grub-core/fs/nilfs2.c | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
+
+diff --git a/grub-core/fs/nilfs2.c b/grub-core/fs/nilfs2.c
+index 43ac1ad..aaba002 100644
+--- a/grub-core/fs/nilfs2.c
++++ b/grub-core/fs/nilfs2.c
+@@ -433,7 +433,7 @@ grub_nilfs2_btree_node_lookup (struct grub_nilfs2_data *data,
+ 			       grub_uint64_t key, int *indexp)
+ {
+   grub_uint64_t nkey;
+-  int index, low, high, s;
++  int index = 0, low, high, s;
+ 
+   low = 0;
+ 
+@@ -441,10 +441,10 @@ grub_nilfs2_btree_node_lookup (struct grub_nilfs2_data *data,
+   if (high >= grub_nilfs2_btree_node_nchildren_max (data, node))
+     {
+       grub_error (GRUB_ERR_BAD_FS, "too many children");
++      *indexp = index;
+       return 0;
+     }
+ 
+-  index = 0;
+   s = 0;
+   while (low <= high)
+     {
+@@ -526,6 +526,10 @@ grub_nilfs2_btree_lookup (struct grub_nilfs2_data *data,
+   level = grub_nilfs2_btree_get_level (node);
+ 
+   found = grub_nilfs2_btree_node_lookup (data, node, key, &index);
++
++  if (grub_errno != GRUB_ERR_NONE)
++    goto fail;
++
+   ptr = grub_nilfs2_btree_node_get_ptr (data, node, index);
+   if (need_translate)
+     ptr = grub_nilfs2_dat_translate (data, ptr);
+@@ -550,7 +554,8 @@ grub_nilfs2_btree_lookup (struct grub_nilfs2_data *data,
+       else
+ 	index = 0;
+ 
+-      if (index < grub_nilfs2_btree_node_nchildren_max (data, node))
++      if (index < grub_nilfs2_btree_node_nchildren_max (data, node) &&
++	  grub_errno == GRUB_ERR_NONE)
+ 	{
+ 	  ptr = grub_nilfs2_btree_node_get_ptr (data, node, index);
+ 	  if (need_translate)
+-- 
+2.14.2
+

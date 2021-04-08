@@ -1,0 +1,53 @@
+From 9213575b7a95b514bce80be5964a28d407d7d56d Mon Sep 17 00:00:00 2001
+From: Darren Kenny <darren.kenny@oracle.com>
+Date: Fri, 4 Dec 2020 18:56:48 +0000
+Subject: [PATCH] normal/completion: Fix leaking of memory when processing a
+ completion
+
+It is possible for the code to reach the end of the function without
+freeing the memory allocated to argv and argc still to be 0.
+
+We should always call grub_free(argv). The grub_free() will handle
+a NULL argument correctly if it reaches that code without the memory
+being allocated.
+
+Fixes: CID 96672
+
+Signed-off-by: Darren Kenny <darren.kenny@oracle.com>
+Reviewed-by: Daniel Kiper <daniel.kiper@oracle.com>
+Signed-off-by: Stefan Sørensen <stefan.sorensen@spectralink.com>
+---
+ grub-core/normal/completion.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
+
+diff --git a/grub-core/normal/completion.c b/grub-core/normal/completion.c
+index 5961028..46e473c 100644
+--- a/grub-core/normal/completion.c
++++ b/grub-core/normal/completion.c
+@@ -400,8 +400,8 @@ char *
+ grub_normal_do_completion (char *buf, int *restore,
+ 			   void (*hook) (const char *, grub_completion_type_t, int))
+ {
+-  int argc;
+-  char **argv;
++  int argc = 0;
++  char **argv = NULL;
+ 
+   /* Initialize variables.  */
+   match = 0;
+@@ -516,10 +516,8 @@ grub_normal_do_completion (char *buf, int *restore,
+ 
+  fail:
+   if (argc != 0)
+-    {
+-      grub_free (argv[0]);
+-      grub_free (argv);
+-    }
++    grub_free (argv[0]);
++  grub_free (argv);
+   grub_free (match);
+   grub_errno = GRUB_ERR_NONE;
+ 
+-- 
+2.14.2
+

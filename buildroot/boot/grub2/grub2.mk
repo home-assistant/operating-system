@@ -13,10 +13,13 @@ GRUB2_DEPENDENCIES = host-bison host-flex host-grub2
 HOST_GRUB2_DEPENDENCIES = host-bison host-flex
 GRUB2_INSTALL_IMAGES = YES
 
-# 0001-build-Fix-GRUB-i386-pc-build-with-Ubuntu-gcc.patch
+# 0001-build-Fix-GRUB-i386-pc-build-with-Ubuntu-gcc.patch and 2021/03/02
+# security fixes (patches 0029-0149)
 define GRUB2_AVOID_AUTORECONF
 	$(Q)touch $(@D)/Makefile.util.am
+	$(Q)touch $(@D)/aclocal.m4
 	$(Q)touch $(@D)/Makefile.in
+	$(Q)touch $(@D)/configure
 endef
 GRUB2_POST_PATCH_HOOKS += GRUB2_AVOID_AUTORECONF
 HOST_GRUB2_POST_PATCH_HOOKS += GRUB2_AVOID_AUTORECONF
@@ -31,6 +34,21 @@ GRUB2_IGNORE_CVES += CVE-2020-14309 CVE-2020-14310 CVE-2020-14311
 GRUB2_IGNORE_CVES += CVE-2020-15706
 # 0028-linux-Fix-integer-overflows-in-initrd-size-handling.patch
 GRUB2_IGNORE_CVES += CVE-2020-15707
+# 2021/03/02 security fixes - patches 0029-0149
+GRUB2_IGNORE_CVES += CVE-2020-25632 CVE-2020-25647 CVE-2020-27749 \
+	CVE-2020-27779 CVE-2021-3418 CVE-2021-20225 CVE-2021-20233
+# 0039-acpi-Don-t-register-the-acpi-command-when-locked-dow.patch
+GRUB2_IGNORE_CVES += CVE-2020-14372
+# CVE-2019-14865 is about a flaw in the grub2-set-bootflag tool, which
+# doesn't exist upstream, but is added by the Redhat/Fedora
+# packaging. Not applicable to Buildroot.
+GRUB2_IGNORE_CVES += CVE-2019-14865
+# CVE-2020-15705 is related to a flaw in the use of the
+# grub_linuxefi_secure_validate(), which was added by Debian/Ubuntu
+# patches. The issue doesn't affect upstream Grub, and
+# grub_linuxefi_secure_validate() is not implemented in the grub2
+# version available in Buildroot.
+GRUB2_IGNORE_CVES += CVE-2020-15705
 
 ifeq ($(BR2_TARGET_GRUB2_INSTALL_TOOLS),y)
 GRUB2_INSTALL_TARGET = YES

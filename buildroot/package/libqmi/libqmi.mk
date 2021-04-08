@@ -13,8 +13,7 @@ LIBQMI_INSTALL_STAGING = YES
 
 LIBQMI_DEPENDENCIES = libglib2
 
-# we don't want -Werror
-LIBQMI_CONF_OPTS = --enable-more-warnings=no
+LIBQMI_CONF_OPTS = --disable-Werror
 
 # if libgudev available, request udev support for a better
 # qmi-firmware-update experience

@@ -1,0 +1,116 @@
+From 128c16a682034263eb519c89bc0934eeb6fa8cfa Mon Sep 17 00:00:00 2001
+From: Javier Martinez Canillas <javierm@redhat.com>
+Date: Fri, 11 Dec 2020 19:19:21 +0100
+Subject: [PATCH] usb: Avoid possible out-of-bound accesses caused by malicious
+ devices
+
+The maximum number of configurations and interfaces are fixed but there is
+no out-of-bound checking to prevent a malicious USB device to report large
+values for these and cause accesses outside the arrays' memory.
+
+Fixes: CVE-2020-25647
+
+Reported-by: Joseph Tartaro <joseph.tartaro@ioactive.com>
+Reported-by: Ilja Van Sprundel <ivansprundel@ioactive.com>
+Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
+Reviewed-by: Daniel Kiper <daniel.kiper@oracle.com>
+Signed-off-by: Stefan Sørensen <stefan.sorensen@spectralink.com>
+---
+ grub-core/bus/usb/usb.c | 15 ++++++++++++---
+ include/grub/usb.h      | 10 +++++++---
+ 2 files changed, 19 insertions(+), 6 deletions(-)
+
+diff --git a/grub-core/bus/usb/usb.c b/grub-core/bus/usb/usb.c
+index 8da5e4c..7cb3cc2 100644
+--- a/grub-core/bus/usb/usb.c
++++ b/grub-core/bus/usb/usb.c
+@@ -75,6 +75,9 @@ grub_usb_controller_iterate (grub_usb_controller_iterate_hook_t hook,
+ grub_usb_err_t
+ grub_usb_clear_halt (grub_usb_device_t dev, int endpoint)
+ {
++  if (endpoint >= GRUB_USB_MAX_TOGGLE)
++    return GRUB_USB_ERR_BADDEVICE;
++
+   dev->toggle[endpoint] = 0;
+   return grub_usb_control_msg (dev, (GRUB_USB_REQTYPE_OUT
+ 				     | GRUB_USB_REQTYPE_STANDARD
+@@ -134,10 +137,10 @@ grub_usb_device_initialize (grub_usb_device_t dev)
+     return err;
+   descdev = &dev->descdev;
+ 
+-  for (i = 0; i < 8; i++)
++  for (i = 0; i < GRUB_USB_MAX_CONF; i++)
+     dev->config[i].descconf = NULL;
+ 
+-  if (descdev->configcnt == 0)
++  if (descdev->configcnt == 0 || descdev->configcnt > GRUB_USB_MAX_CONF)
+     {
+       err = GRUB_USB_ERR_BADDEVICE;
+       goto fail;
+@@ -172,6 +175,12 @@ grub_usb_device_initialize (grub_usb_device_t dev)
+       /* Skip the configuration descriptor.  */
+       pos = dev->config[i].descconf->length;
+ 
++      if (dev->config[i].descconf->numif > GRUB_USB_MAX_IF)
++        {
++          err = GRUB_USB_ERR_BADDEVICE;
++          goto fail;
++        }
++
+       /* Read all interfaces.  */
+       for (currif = 0; currif < dev->config[i].descconf->numif; currif++)
+ 	{
+@@ -217,7 +226,7 @@ grub_usb_device_initialize (grub_usb_device_t dev)
+ 
+  fail:
+ 
+-  for (i = 0; i < 8; i++)
++  for (i = 0; i < GRUB_USB_MAX_CONF; i++)
+     grub_free (dev->config[i].descconf);
+ 
+   return err;
+diff --git a/include/grub/usb.h b/include/grub/usb.h
+index 512ae1d..6475c55 100644
+--- a/include/grub/usb.h
++++ b/include/grub/usb.h
+@@ -23,6 +23,10 @@
+ #include <grub/usbdesc.h>
+ #include <grub/usbtrans.h>
+ 
++#define GRUB_USB_MAX_CONF    8
++#define GRUB_USB_MAX_IF      32
++#define GRUB_USB_MAX_TOGGLE  256
++
+ typedef struct grub_usb_device *grub_usb_device_t;
+ typedef struct grub_usb_controller *grub_usb_controller_t;
+ typedef struct grub_usb_controller_dev *grub_usb_controller_dev_t;
+@@ -167,7 +171,7 @@ struct grub_usb_configuration
+   struct grub_usb_desc_config *descconf;
+ 
+   /* Interfaces associated to this configuration.  */
+-  struct grub_usb_interface interf[32];
++  struct grub_usb_interface interf[GRUB_USB_MAX_IF];
+ };
+ 
+ struct grub_usb_hub_port
+@@ -191,7 +195,7 @@ struct grub_usb_device
+   struct grub_usb_controller controller;
+ 
+   /* Device configurations (after opening the device).  */
+-  struct grub_usb_configuration config[8];
++  struct grub_usb_configuration config[GRUB_USB_MAX_CONF];
+ 
+   /* Device address.  */
+   int addr;
+@@ -203,7 +207,7 @@ struct grub_usb_device
+   int initialized;
+ 
+   /* Data toggle values (used for bulk transfers only).  */
+-  int toggle[256];
++  int toggle[GRUB_USB_MAX_TOGGLE];
+ 
+   /* Used by libusb wrapper.  Schedulded for removal. */
+   void *data;
+-- 
+2.14.2
+

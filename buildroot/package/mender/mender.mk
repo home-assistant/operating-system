@@ -35,7 +35,7 @@ MENDER_LICENSE_FILES = \
 
 MENDER_DEPENDENCIES = xz
 
-MENDER_LDFLAGS = -X main.Version=$(MENDER_VERSION)
+MENDER_LDFLAGS = -X github.com/mendersoftware/mender/conf.Version=$(MENDER_VERSION)
 
 MENDER_UPDATE_MODULES_FILES = \
 	directory \
@@ -60,10 +60,10 @@ define MENDER_INSTALL_CONFIG_FILES
 			$(TARGET_DIR)/usr/share/mender/inventory/mender-inventory-$(f)
 	)
 
-	$(INSTALL) -D -m 0755 package/mender/artifact_info \
+	$(INSTALL) -D -m 0755 $(MENDER_PKGDIR)/artifact_info \
 			$(TARGET_DIR)/etc/mender/artifact_info
 
-	$(INSTALL) -D -m 0755 package/mender/device_type \
+	$(INSTALL) -D -m 0755 $(MENDER_PKGDIR)/device_type \
 			$(TARGET_DIR)/etc/mender/device_type
 
 	mkdir -p $(TARGET_DIR)/var/lib
@@ -76,13 +76,21 @@ endef
 
 MENDER_POST_INSTALL_TARGET_HOOKS += MENDER_INSTALL_CONFIG_FILES
 
+ifeq ($(BR2_PACKAGE_DBUS),y)
+define MENDER_INSTALL_DBUS_AUTHENTICATION_MANAGER_CONF
+	$(INSTALL) -D -m 0755 $(@D)/support/dbus/io.mender.AuthenticationManager.conf \
+		      $(TARGET_DIR)/etc/dbus-1/system.d/io.mender.AuthenticationManager.conf
+endef
+MENDER_POST_INSTALL_TARGET_HOOKS += MENDER_INSTALL_DBUS_AUTHENTICATION_MANAGER_CONF
+endif
+
 define MENDER_INSTALL_INIT_SYSTEMD
 	$(INSTALL) -D -m 0644 $(MENDER_PKGDIR)/mender-client.service \
 		$(TARGET_DIR)/usr/lib/systemd/system/mender-client.service
 endef
 
 define MENDER_INSTALL_INIT_SYSV
-	$(INSTALL) -D -m 755 package/mender/S42mender \
+	$(INSTALL) -D -m 755 $(MENDER_PKGDIR)/S42mender \
 		$(TARGET_DIR)/etc/init.d/S42mender
 endef
 

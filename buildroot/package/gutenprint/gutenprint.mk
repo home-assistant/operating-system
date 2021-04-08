@@ -10,6 +10,7 @@ GUTENPRINT_SITE = http://downloads.sourceforge.net/project/gimp-print/gutenprint
 GUTENPRINT_SOURCE = gutenprint-$(GUTENPRINT_VERSION).tar.bz2
 GUTENPRINT_LICENSE = GPL-2.0+
 GUTENPRINT_LICENSE_FILES = COPYING
+GUTENPRINT_CPE_ID_VENDOR = gutenprint_project
 
 # Needed, as we touch Makefile.am
 GUTENPRINT_AUTORECONF = YES

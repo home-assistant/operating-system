@@ -1,0 +1,85 @@
+From bb51ee2b49fbda0f66c1fa580a33442ff578f110 Mon Sep 17 00:00:00 2001
+From: Dimitri John Ledkov <xnox@ubuntu.com>
+Date: Mon, 22 Feb 2021 17:05:25 +0000
+Subject: [PATCH] grub-install-common: Add --sbat option
+
+Signed-off-by: Dimitri John Ledkov <xnox@ubuntu.com>
+Reviewed-by: Daniel Kiper <daniel.kiper@oracle.com>
+Signed-off-by: Stefan Sørensen <stefan.sorensen@spectralink.com>
+---
+ include/grub/util/install.h |  5 ++++-
+ util/grub-install-common.c  | 12 ++++++++++--
+ 2 files changed, 14 insertions(+), 3 deletions(-)
+
+diff --git a/include/grub/util/install.h b/include/grub/util/install.h
+index c03befd..8cb5056 100644
+--- a/include/grub/util/install.h
++++ b/include/grub/util/install.h
+@@ -63,6 +63,8 @@
+     /* TRANSLATORS: "embed" is a verb (command description).  "*/	\
+   { "pubkey",   'k', N_("FILE"), 0,					\
+       N_("embed FILE as public key for signature checking"), 0},	\
++  { "sbat", GRUB_INSTALL_OPTIONS_SBAT, N_("FILE"), 0,			\
++      N_("SBAT metadata"), 0 },						\
+   { "verbose", 'v', 0, 0,						\
+     N_("print verbose messages."), 1 }
+ 
+@@ -122,7 +124,8 @@ enum grub_install_options {
+   GRUB_INSTALL_OPTIONS_THEMES_DIRECTORY,
+   GRUB_INSTALL_OPTIONS_GRUB_MKIMAGE,
+   GRUB_INSTALL_OPTIONS_INSTALL_CORE_COMPRESS,
+-  GRUB_INSTALL_OPTIONS_DTB
++  GRUB_INSTALL_OPTIONS_DTB,
++  GRUB_INSTALL_OPTIONS_SBAT
+ };
+ 
+ extern char *grub_install_source_directory;
+diff --git a/util/grub-install-common.c b/util/grub-install-common.c
+index 5d43ed1..1fcccd2 100644
+--- a/util/grub-install-common.c
++++ b/util/grub-install-common.c
+@@ -307,6 +307,7 @@ handle_install_list (struct install_list *il, const char *val,
+ 
+ static char **pubkeys;
+ static size_t npubkeys;
++static char *sbat;
+ static grub_compression_t compression;
+ 
+ int
+@@ -337,6 +338,12 @@ grub_install_parse (int key, char *arg)
+ 			  * (npubkeys + 1));
+       pubkeys[npubkeys++] = xstrdup (arg);
+       return 1;
++    case GRUB_INSTALL_OPTIONS_SBAT:
++      if (sbat)
++	free (sbat);
++
++      sbat = xstrdup (arg);
++      return 1;
+ 
+     case GRUB_INSTALL_OPTIONS_VERBOSITY:
+       verbosity++;
+@@ -498,9 +505,10 @@ grub_install_make_image_wrap_file (const char *dir, const char *prefix,
+   grub_util_info ("grub-mkimage --directory '%s' --prefix '%s'"
+ 		  " --output '%s' "
+ 		  " --dtb '%s' "
++		  "--sbat '%s' "
+ 		  "--format '%s' --compression '%s' %s %s\n",
+ 		  dir, prefix,
+-		  outname, dtb ? : "", mkimage_target,
++		  outname, dtb ? : "", sbat ? : "", mkimage_target,
+ 		  compnames[compression], note ? "--note" : "", s);
+   free (s);
+ 
+@@ -511,7 +519,7 @@ grub_install_make_image_wrap_file (const char *dir, const char *prefix,
+   grub_install_generate_image (dir, prefix, fp, outname,
+ 			       modules.entries, memdisk_path,
+ 			       pubkeys, npubkeys, config_path, tgt,
+-			       note, compression, dtb, NULL);
++			       note, compression, dtb, sbat);
+   while (dc--)
+     grub_install_pop_module ();
+ }
+-- 
+2.14.2
+

@@ -1,0 +1,29 @@
+From 41ae93b2e6c75453514629bcfe684300e3aec0ce Mon Sep 17 00:00:00 2001
+From: Daniel Axtens <dja@axtens.net>
+Date: Fri, 3 Apr 2020 23:05:13 +1100
+Subject: [PATCH] script/execute: Fix NULL dereference in
+ grub_script_execute_cmdline()
+
+Signed-off-by: Daniel Axtens <dja@axtens.net>
+Reviewed-by: Daniel Kiper <daniel.kiper@oracle.com>
+Signed-off-by: Stefan Sørensen <stefan.sorensen@spectralink.com>
+---
+ grub-core/script/execute.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/grub-core/script/execute.c b/grub-core/script/execute.c
+index 7e028e1..5ea2aef 100644
+--- a/grub-core/script/execute.c
++++ b/grub-core/script/execute.c
+@@ -940,7 +940,7 @@ grub_script_execute_cmdline (struct grub_script_cmd *cmd)
+   struct grub_script_argv argv = { 0, 0, 0 };
+ 
+   /* Lookup the command.  */
+-  if (grub_script_arglist_to_argv (cmdline->arglist, &argv) || ! argv.args[0])
++  if (grub_script_arglist_to_argv (cmdline->arglist, &argv) || ! argv.args || ! argv.args[0])
+     return grub_errno;
+ 
+   for (i = 0; i < argv.argc; i++)
+-- 
+2.14.2
+

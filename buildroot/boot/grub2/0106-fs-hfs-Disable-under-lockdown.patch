@@ -1,0 +1,47 @@
+From 1c15848838d924552611247110723e2a1c17a5a1 Mon Sep 17 00:00:00 2001
+From: Daniel Axtens <dja@axtens.net>
+Date: Mon, 18 Jan 2021 12:19:07 +1100
+Subject: [PATCH] fs/hfs: Disable under lockdown
+
+HFS has issues such as infinite mutual recursion that are simply too
+complex to fix for such a legacy format. So simply do not permit
+it to be loaded under lockdown.
+
+Signed-off-by: Daniel Axtens <dja@axtens.net>
+Reviewed-by: Daniel Kiper <daniel.kiper@oracle.com>
+Signed-off-by: Stefan Sørensen <stefan.sorensen@spectralink.com>
+---
+ grub-core/fs/hfs.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/grub-core/fs/hfs.c b/grub-core/fs/hfs.c
+index 3fe842b..9a5b7bb 100644
+--- a/grub-core/fs/hfs.c
++++ b/grub-core/fs/hfs.c
+@@ -30,6 +30,7 @@
+ #include <grub/hfs.h>
+ #include <grub/i18n.h>
+ #include <grub/fshelp.h>
++#include <grub/lockdown.h>
+ 
+ GRUB_MOD_LICENSE ("GPLv3+");
+ 
+@@ -1433,11 +1434,13 @@ static struct grub_fs grub_hfs_fs =
+ 
+ GRUB_MOD_INIT(hfs)
+ {
+-  grub_fs_register (&grub_hfs_fs);
++  if (!grub_is_lockdown ())
++    grub_fs_register (&grub_hfs_fs);
+   my_mod = mod;
+ }
+ 
+ GRUB_MOD_FINI(hfs)
+ {
+-  grub_fs_unregister (&grub_hfs_fs);
++  if (!grub_is_lockdown())
++    grub_fs_unregister (&grub_hfs_fs);
+ }
+-- 
+2.14.2
+

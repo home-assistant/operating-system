@@ -71,15 +71,11 @@ source "package/gdb/Config.in.host"
 
 comment "Toolchain Generic Options"
 
-# https://sourceware.org/bugzilla/show_bug.cgi?id=19615
-# Affect toolchains built with binutils 2.26 (fixed in binutils 2.26.1).
-config BR2_TOOLCHAIN_HAS_BINUTILS_BUG_19615
+# https://sourceware.org/bugzilla/show_bug.cgi?id=21464
+# Affect toolchains built with binutils 2.31.1, still not fixed.
+config BR2_TOOLCHAIN_HAS_BINUTILS_BUG_21464
 	bool
-
-# https://sourceware.org/bugzilla/show_bug.cgi?id=20006
-# Affect toolchains built with binutils 2.26 (fixed in binutils 2.26.1).
-config BR2_TOOLCHAIN_HAS_BINUTILS_BUG_20006
-	bool
+	default y if BR2_or1k
 
 # Atomic types can be:
 #  - never lock-free
@@ -154,10 +150,11 @@ config BR2_TOOLCHAIN_HAS_GCC_BUG_85862
 
 # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=90620
 # ICE: in do_output_reload, at reload1.c:7978 on microblaze.
-# It's still not fixed in gcc 9.x
+# This bug no longer exists in gcc 10.x
 config BR2_TOOLCHAIN_HAS_GCC_BUG_90620
 	bool
 	default y if BR2_microblaze
+	depends on !BR2_TOOLCHAIN_GCC_AT_LEAST_10
 
 # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=93847
 # ICE: compiler error: Segmentation fault on Nios II. This bug

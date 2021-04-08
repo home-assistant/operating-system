@@ -4,10 +4,11 @@
 #
 ################################################################################
 
-HASERL_VERSION = 0.9.35
+HASERL_VERSION = 0.9.36
 HASERL_SITE = http://downloads.sourceforge.net/project/haserl/haserl-devel
 HASERL_LICENSE = GPL-2.0
 HASERL_LICENSE_FILES = COPYING
+HASERL_CPE_ID_VENDOR = haserl_project
 HASERL_DEPENDENCIES = host-pkgconf
 
 ifeq ($(BR2_PACKAGE_HASERL_WITH_LUA),y)

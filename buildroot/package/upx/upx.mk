@@ -11,6 +11,9 @@ UPX_LICENSE = GPL-2.0+
 UPX_LICENSE_FILES = COPYING
 UPX_CPE_ID_VENDOR = upx_project
 
+# 0001-Check-DT_REL-DT_RELA-DT_RELSZ-DT_RELASZ.patch
+UPX_IGNORE_CVES += CVE-2021-20285
+
 HOST_UPX_DEPENDENCIES = host-ucl host-zlib
 
 # We need to specify all, otherwise the default target only prints a message

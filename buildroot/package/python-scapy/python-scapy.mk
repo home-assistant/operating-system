@@ -10,5 +10,7 @@ PYTHON_SCAPY_SITE = https://files.pythonhosted.org/packages/c6/8f/438d4d0bab4c8e
 PYTHON_SCAPY_SETUP_TYPE = setuptools
 PYTHON_SCAPY_LICENSE = GPL-2.0
 PYTHON_SCAPY_LICENSE_FILES = LICENSE
+PYTHON_SCAPY_CPE_ID_VENDOR = scapy
+PYTHON_SCAPY_CPE_ID_PRODUCT = scapy
 
 $(eval $(python-package))

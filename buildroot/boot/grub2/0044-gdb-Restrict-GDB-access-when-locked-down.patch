@@ -1,0 +1,62 @@
+From 508270838998f151a82e9c13e7cb8a470a2dc23d Mon Sep 17 00:00:00 2001
+From: Javier Martinez Canillas <javierm@redhat.com>
+Date: Wed, 24 Feb 2021 15:03:26 +0100
+Subject: [PATCH] gdb: Restrict GDB access when locked down
+
+The gdbstub* commands allow to start and control a GDB stub running on
+local host that can be used to connect from a remote debugger. Restrict
+this functionality when the GRUB is locked down.
+
+Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
+Reviewed-by: Daniel Kiper <daniel.kiper@oracle.com>
+Signed-off-by: Stefan Sørensen <stefan.sorensen@spectralink.com>
+---
+ grub-core/gdb/gdb.c | 32 ++++++++++++++++++--------------
+ 1 file changed, 18 insertions(+), 14 deletions(-)
+
+diff --git a/grub-core/gdb/gdb.c b/grub-core/gdb/gdb.c
+index 847a1e1..1818cb6 100644
+--- a/grub-core/gdb/gdb.c
++++ b/grub-core/gdb/gdb.c
+@@ -75,20 +75,24 @@ static grub_command_t cmd, cmd_stop, cmd_break;
+ GRUB_MOD_INIT (gdb)
+ {
+   grub_gdb_idtinit ();
+-  cmd = grub_register_command ("gdbstub", grub_cmd_gdbstub,
+-			       N_("PORT"), 
+-			       /* TRANSLATORS: GDB stub is a small part of
+-				  GDB functionality running on local host
+-				  which allows remote debugger to
+-				  connect to it.  */
+-			       N_("Start GDB stub on given port"));
+-  cmd_break = grub_register_command ("gdbstub_break", grub_cmd_gdb_break,
+-				     /* TRANSLATORS: this refers to triggering
+-					a breakpoint so that the user will land
+-					into GDB.  */
+-				     0, N_("Break into GDB"));
+-  cmd_stop = grub_register_command ("gdbstub_stop", grub_cmd_gdbstop,
+-				    0, N_("Stop GDB stub"));
++  cmd = grub_register_command_lockdown ("gdbstub", grub_cmd_gdbstub,
++					N_("PORT"),
++					/*
++					 * TRANSLATORS: GDB stub is a small part of
++					 * GDB functionality running on local host
++					 * which allows remote debugger to
++					 * connect to it.
++					 */
++					N_("Start GDB stub on given port"));
++  cmd_break = grub_register_command_lockdown ("gdbstub_break", grub_cmd_gdb_break,
++					      /*
++					       * TRANSLATORS: this refers to triggering
++					       * a breakpoint so that the user will land
++					       * into GDB.
++					       */
++					      0, N_("Break into GDB"));
++  cmd_stop = grub_register_command_lockdown ("gdbstub_stop", grub_cmd_gdbstop,
++					     0, N_("Stop GDB stub"));
+ }
+ 
+ GRUB_MOD_FINI (gdb)
+-- 
+2.14.2
+

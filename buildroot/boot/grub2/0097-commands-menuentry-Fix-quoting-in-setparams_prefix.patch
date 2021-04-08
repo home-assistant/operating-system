@@ -1,0 +1,48 @@
+From 2f533a89a8dfcacbf2c9dbc77d910f111f24bf33 Mon Sep 17 00:00:00 2001
+From: Daniel Axtens <dja@axtens.net>
+Date: Fri, 22 Jan 2021 17:10:48 +1100
+Subject: [PATCH] commands/menuentry: Fix quoting in setparams_prefix()
+
+Commit 9acdcbf32542 (use single quotes in menuentry setparams command)
+says that expressing a quoted single quote will require 3 characters. It
+actually requires (and always did require!) 4 characters:
+
+  str: a'b => a'\''b
+  len:  3  => 6 (2 for the letters + 4 for the quote)
+
+This leads to not allocating enough memory and thus out of bounds writes
+that have been observed to cause heap corruption.
+
+Allocate 4 bytes for each single quote.
+
+Commit 22e7dbb2bb81 (Fix quoting in legacy parser.) does the same
+quoting, but it adds 3 as extra overhead on top of the single byte that
+the quote already needs. So it's correct.
+
+Fixes: 9acdcbf32542 (use single quotes in menuentry setparams command)
+Fixes: CVE-2021-20233
+
+Reported-by: Daniel Axtens <dja@axtens.net>
+Signed-off-by: Daniel Axtens <dja@axtens.net>
+Reviewed-by: Daniel Kiper <daniel.kiper@oracle.com>
+Signed-off-by: Stefan Sørensen <stefan.sorensen@spectralink.com>
+---
+ grub-core/commands/menuentry.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/grub-core/commands/menuentry.c b/grub-core/commands/menuentry.c
+index 9164df7..720e6d8 100644
+--- a/grub-core/commands/menuentry.c
++++ b/grub-core/commands/menuentry.c
+@@ -230,7 +230,7 @@ setparams_prefix (int argc, char **args)
+       len += 3; /* 3 = 1 space + 2 quotes */
+       p = args[i];
+       while (*p)
+-	len += (*p++ == '\'' ? 3 : 1);
++	len += (*p++ == '\'' ? 4 : 1);
+     }
+ 
+   result = grub_malloc (len + 2);
+-- 
+2.14.2
+

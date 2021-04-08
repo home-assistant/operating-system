@@ -1,0 +1,466 @@
+From 133d73079c5771bbf3d8311281b6772846357ec1 Mon Sep 17 00:00:00 2001
+From: Chris Coulson <chris.coulson@canonical.com>
+Date: Tue, 1 Dec 2020 23:03:39 +0000
+Subject: [PATCH] kern/efi: Add initial stack protector implementation
+
+It works only on UEFI platforms but can be quite easily extended to
+others architectures and platforms if needed.
+
+Signed-off-by: Chris Coulson <chris.coulson@canonical.com>
+Signed-off-by: Daniel Kiper <daniel.kiper@oracle.com>
+Reviewed-by: Marco A Benatto <mbenatto@redhat.com>
+Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
+Signed-off-by: Stefan Sørensen <stefan.sorensen@spectralink.com>
+---
+ acinclude.m4                   | 38 ++++++++++++++++-
+ configure                      | 97 +++++++++++++++++++++++++++++++++++++++---
+ configure.ac                   | 44 ++++++++++++++++---
+ grub-core/Makefile.am          |  1 +
+ grub-core/Makefile.in          |  1 +
+ grub-core/kern/efi/init.c      | 54 +++++++++++++++++++++++
+ include/grub/efi/api.h         | 19 +++++++++
+ include/grub/stack_protector.h | 30 +++++++++++++
+ po/POTFILES.in                 |  1 +
+ 9 files changed, 272 insertions(+), 13 deletions(-)
+ create mode 100644 include/grub/stack_protector.h
+
+diff --git a/acinclude.m4 b/acinclude.m4
+index 78cdf6e..6e14bb5 100644
+--- a/acinclude.m4
++++ b/acinclude.m4
+@@ -305,9 +305,9 @@ fi
+ ])
+ 
+ 
+-dnl Check if the C compiler supports `-fstack-protector'.
++dnl Check if the C compiler supports the stack protector
+ AC_DEFUN([grub_CHECK_STACK_PROTECTOR],[
+-[# Smashing stack protector.
++[# Stack smashing protector.
+ ssp_possible=yes]
+ AC_MSG_CHECKING([whether `$CC' accepts `-fstack-protector'])
+ # Is this a reliable test case?
+@@ -324,6 +324,40 @@ else
+   ssp_possible=no]
+   AC_MSG_RESULT([no])
+ [fi]
++[# Strong stack smashing protector.
++ssp_strong_possible=yes]
++AC_MSG_CHECKING([whether `$CC' accepts `-fstack-protector-strong'])
++# Is this a reliable test case?
++AC_LANG_CONFTEST([AC_LANG_SOURCE([[
++void foo (void) { volatile char a[8]; a[3]; }
++]])])
++[# `$CC -c -o ...' might not be portable.  But, oh, well...  Is calling
++# `ac_compile' like this correct, after all?
++if eval "$ac_compile -S -fstack-protector-strong -o conftest.s" 2> /dev/null; then]
++  AC_MSG_RESULT([yes])
++  [# Should we clear up other files as well, having called `AC_LANG_CONFTEST'?
++  rm -f conftest.s
++else
++  ssp_strong_possible=no]
++  AC_MSG_RESULT([no])
++[fi]
++[# Global stack smashing protector.
++ssp_global_possible=yes]
++AC_MSG_CHECKING([whether `$CC' accepts `-mstack-protector-guard=global'])
++# Is this a reliable test case?
++AC_LANG_CONFTEST([AC_LANG_SOURCE([[
++void foo (void) { volatile char a[8]; a[3]; }
++]])])
++[# `$CC -c -o ...' might not be portable.  But, oh, well...  Is calling
++# `ac_compile' like this correct, after all?
++if eval "$ac_compile -S -fstack-protector -mstack-protector-guard=global -o conftest.s" 2> /dev/null; then]
++  AC_MSG_RESULT([yes])
++  [# Should we clear up other files as well, having called `AC_LANG_CONFTEST'?
++  rm -f conftest.s
++else
++  ssp_global_possible=no]
++  AC_MSG_RESULT([no])
++[fi]
+ ])
+ 
+ dnl Check if the C compiler supports `-mstack-arg-probe' (Cygwin).
+diff --git a/configure b/configure
+index 9290ae8..973f702 100755
+--- a/configure
++++ b/configure
+@@ -1778,6 +1778,7 @@ with_libintl_prefix
+ with_libpth_prefix
+ with_included_regex
+ enable_efiemu
++enable_stack_protector
+ enable_mm_debug
+ enable_cache_stats
+ enable_boot_time
+@@ -2459,6 +2460,8 @@ Optional Features:
+   --disable-rpath         do not hardcode runtime library paths
+   --enable-efiemu         build and install the efiemu runtimes
+                           (default=guessed)
++  --enable-stack-protector
++                          enable the stack protector
+   --enable-mm-debug       include memory manager debugging
+   --enable-cache-stats    enable disk cache statistics collection
+   --enable-boot-time      enable boot time statistics collection
+@@ -32348,9 +32351,9 @@ fi
+ 
+ CFLAGS="$TARGET_CFLAGS"
+ 
+-# Smashing stack protector.
++# Stack smashing protector.
+ 
+-# Smashing stack protector.
++# Stack smashing protector.
+ ssp_possible=yes
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether \`$CC' accepts \`-fstack-protector'" >&5
+ $as_echo_n "checking whether \`$CC' accepts \`-fstack-protector'... " >&6; }
+@@ -32373,11 +32376,88 @@ else
+   { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+ $as_echo "no" >&6; }
+ fi
++# Strong stack smashing protector.
++ssp_strong_possible=yes
++{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether \`$CC' accepts \`-fstack-protector-strong'" >&5
++$as_echo_n "checking whether \`$CC' accepts \`-fstack-protector-strong'... " >&6; }
++# Is this a reliable test case?
++cat confdefs.h - <<_ACEOF >conftest.$ac_ext
++/* end confdefs.h.  */
+ 
+-# Need that, because some distributions ship compilers that include
+-# `-fstack-protector' in the default specs.
+-if test "x$ssp_possible" = xyes; then
+-  TARGET_CFLAGS="$TARGET_CFLAGS -fno-stack-protector"
++void foo (void) { volatile char a[8]; a[3]; }
++
++_ACEOF
++# `$CC -c -o ...' might not be portable.  But, oh, well...  Is calling
++# `ac_compile' like this correct, after all?
++if eval "$ac_compile -S -fstack-protector-strong -o conftest.s" 2> /dev/null; then
++  { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
++$as_echo "yes" >&6; }
++  # Should we clear up other files as well, having called `AC_LANG_CONFTEST'?
++  rm -f conftest.s
++else
++  ssp_strong_possible=no
++  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
++$as_echo "no" >&6; }
++fi
++# Global stack smashing protector.
++ssp_global_possible=yes
++{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether \`$CC' accepts \`-mstack-protector-guard=global'" >&5
++$as_echo_n "checking whether \`$CC' accepts \`-mstack-protector-guard=global'... " >&6; }
++# Is this a reliable test case?
++cat confdefs.h - <<_ACEOF >conftest.$ac_ext
++/* end confdefs.h.  */
++
++void foo (void) { volatile char a[8]; a[3]; }
++
++_ACEOF
++# `$CC -c -o ...' might not be portable.  But, oh, well...  Is calling
++# `ac_compile' like this correct, after all?
++if eval "$ac_compile -S -fstack-protector -mstack-protector-guard=global -o conftest.s" 2> /dev/null; then
++  { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
++$as_echo "yes" >&6; }
++  # Should we clear up other files as well, having called `AC_LANG_CONFTEST'?
++  rm -f conftest.s
++else
++  ssp_global_possible=no
++  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
++$as_echo "no" >&6; }
++fi
++
++# Check whether --enable-stack-protector was given.
++if test "${enable_stack_protector+set}" = set; then :
++  enableval=$enable_stack_protector;
++else
++  enable_stack_protector=no
++fi
++
++if test "x$enable_stack_protector" = xno; then
++  if test "x$ssp_possible" = xyes; then
++    # Need that, because some distributions ship compilers that include
++    # `-fstack-protector' in the default specs.
++    TARGET_CFLAGS="$TARGET_CFLAGS -fno-stack-protector"
++  fi
++elif test "x$platform" != xefi; then
++  as_fn_error $? "--enable-stack-protector is only supported on EFI platforms" "$LINENO" 5
++elif test "x$ssp_global_possible" != xyes; then
++  as_fn_error $? "--enable-stack-protector is not supported (compiler doesn't support -mstack-protector-guard=global)" "$LINENO" 5
++else
++  TARGET_CFLAGS="$TARGET_CFLAGS -mstack-protector-guard=global"
++  if test "x$enable_stack_protector" = xyes; then
++    if test "x$ssp_possible" != xyes; then
++      as_fn_error $? "--enable-stack-protector is not supported (compiler doesn't support -fstack-protector)" "$LINENO" 5
++    fi
++    TARGET_CFLAGS="$TARGET_CFLAGS -fstack-protector"
++  elif test "x$enable_stack_protector" = xstrong; then
++    if test "x$ssp_strong_possible" != xyes; then
++      as_fn_error $? "--enable-stack-protector=strong is not supported (compiler doesn't support -fstack-protector-strong)" "$LINENO" 5
++    fi
++    TARGET_CFLAGS="$TARGET_CFLAGS -fstack-protector-strong"
++  else
++    # Note, -fstack-protector-all requires that the protector is disabled for
++    # functions that appear in the call stack when the canary is initialized.
++    as_fn_error $? "invalid value $enable_stack_protector for --enable-stack-protector" "$LINENO" 5
++  fi
++  TARGET_CPPFLAGS="$TARGET_CPPFLAGS -DGRUB_STACK_PROTECTOR=1"
+ fi
+ 
+ CFLAGS="$TARGET_CFLAGS"
+@@ -37054,5 +37134,10 @@ echo "Without liblzma (no support for XZ-compressed mips images) ($liblzma_excus
+ else
+ echo "With liblzma from $LIBLZMA (support for XZ-compressed mips images)"
+ fi
++if test "x$enable_stack_protector" != xno; then
++echo "With stack smashing protector: Yes"
++else
++echo "With stack smashing protector: No"
++fi
+ echo "*******************************************************"
+ 
+diff --git a/configure.ac b/configure.ac
+index 7656f24..bb6b02a 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -1285,12 +1285,41 @@ fi]
+ 
+ CFLAGS="$TARGET_CFLAGS"
+ 
+-# Smashing stack protector.
++# Stack smashing protector.
+ grub_CHECK_STACK_PROTECTOR
+-# Need that, because some distributions ship compilers that include
+-# `-fstack-protector' in the default specs.
+-if test "x$ssp_possible" = xyes; then
+-  TARGET_CFLAGS="$TARGET_CFLAGS -fno-stack-protector"
++AC_ARG_ENABLE([stack-protector],
++	      AS_HELP_STRING([--enable-stack-protector],
++			     [enable the stack protector]),
++	      [],
++	      [enable_stack_protector=no])
++if test "x$enable_stack_protector" = xno; then
++  if test "x$ssp_possible" = xyes; then
++    # Need that, because some distributions ship compilers that include
++    # `-fstack-protector' in the default specs.
++    TARGET_CFLAGS="$TARGET_CFLAGS -fno-stack-protector"
++  fi
++elif test "x$platform" != xefi; then
++  AC_MSG_ERROR([--enable-stack-protector is only supported on EFI platforms])
++elif test "x$ssp_global_possible" != xyes; then
++  AC_MSG_ERROR([--enable-stack-protector is not supported (compiler doesn't support -mstack-protector-guard=global)])
++else
++  TARGET_CFLAGS="$TARGET_CFLAGS -mstack-protector-guard=global"
++  if test "x$enable_stack_protector" = xyes; then
++    if test "x$ssp_possible" != xyes; then
++      AC_MSG_ERROR([--enable-stack-protector is not supported (compiler doesn't support -fstack-protector)])
++    fi
++    TARGET_CFLAGS="$TARGET_CFLAGS -fstack-protector"
++  elif test "x$enable_stack_protector" = xstrong; then
++    if test "x$ssp_strong_possible" != xyes; then
++      AC_MSG_ERROR([--enable-stack-protector=strong is not supported (compiler doesn't support -fstack-protector-strong)])
++    fi
++    TARGET_CFLAGS="$TARGET_CFLAGS -fstack-protector-strong"
++  else
++    # Note, -fstack-protector-all requires that the protector is disabled for
++    # functions that appear in the call stack when the canary is initialized.
++    AC_MSG_ERROR([invalid value $enable_stack_protector for --enable-stack-protector])
++  fi
++  TARGET_CPPFLAGS="$TARGET_CPPFLAGS -DGRUB_STACK_PROTECTOR=1"
+ fi
+ 
+ CFLAGS="$TARGET_CFLAGS"
+@@ -2103,5 +2132,10 @@ echo "Without liblzma (no support for XZ-compressed mips images) ($liblzma_excus
+ else
+ echo "With liblzma from $LIBLZMA (support for XZ-compressed mips images)"
+ fi
++if test "x$enable_stack_protector" != xno; then
++echo "With stack smashing protector: Yes"
++else
++echo "With stack smashing protector: No"
++fi
+ echo "*******************************************************"
+ ]
+diff --git a/grub-core/Makefile.am b/grub-core/Makefile.am
+index 30e23ad..ee88e44 100644
+--- a/grub-core/Makefile.am
++++ b/grub-core/Makefile.am
+@@ -90,6 +90,7 @@ endif
+ KERNEL_HEADER_FILES += $(top_srcdir)/include/grub/mm.h
+ KERNEL_HEADER_FILES += $(top_srcdir)/include/grub/parser.h
+ KERNEL_HEADER_FILES += $(top_srcdir)/include/grub/partition.h
++KERNEL_HEADER_FILES += $(top_srcdir)/include/grub/stack_protector.h
+ KERNEL_HEADER_FILES += $(top_srcdir)/include/grub/term.h
+ KERNEL_HEADER_FILES += $(top_srcdir)/include/grub/time.h
+ KERNEL_HEADER_FILES += $(top_srcdir)/include/grub/verify.h
+diff --git a/grub-core/Makefile.in b/grub-core/Makefile.in
+index 1f8133b..50c70b5 100644
+--- a/grub-core/Makefile.in
++++ b/grub-core/Makefile.in
+@@ -16425,6 +16425,7 @@ KERNEL_HEADER_FILES = $(top_srcdir)/include/grub/cache.h \
+ 	$(am__append_5795) $(top_srcdir)/include/grub/mm.h \
+ 	$(top_srcdir)/include/grub/parser.h \
+ 	$(top_srcdir)/include/grub/partition.h \
++	$(top_srcdir)/include/grub/stack_protector.h \
+ 	$(top_srcdir)/include/grub/term.h \
+ 	$(top_srcdir)/include/grub/time.h \
+ 	$(top_srcdir)/include/grub/verify.h \
+diff --git a/grub-core/kern/efi/init.c b/grub-core/kern/efi/init.c
+index 1333465..7facacf 100644
+--- a/grub-core/kern/efi/init.c
++++ b/grub-core/kern/efi/init.c
+@@ -27,6 +27,58 @@
+ #include <grub/env.h>
+ #include <grub/mm.h>
+ #include <grub/kernel.h>
++#include <grub/stack_protector.h>
++
++#ifdef GRUB_STACK_PROTECTOR
++
++static grub_efi_guid_t rng_protocol_guid = GRUB_EFI_RNG_PROTOCOL_GUID;
++
++/*
++ * Don't put this on grub_efi_init()'s local stack to avoid it
++ * getting a stack check.
++ */
++static grub_efi_uint8_t stack_chk_guard_buf[32];
++
++grub_addr_t __stack_chk_guard;
++
++void __attribute__ ((noreturn))
++__stack_chk_fail (void)
++{
++  /*
++   * Assume it's not safe to call into EFI Boot Services. Sorry, that
++   * means no console message here.
++   */
++  do
++    {
++      /* Do not optimize out the loop. */
++      asm volatile ("");
++    }
++  while (1);
++}
++
++static void
++stack_protector_init (void)
++{
++  grub_efi_rng_protocol_t *rng;
++
++  /* Set up the stack canary. Make errors here non-fatal for now. */
++  rng = grub_efi_locate_protocol (&rng_protocol_guid, NULL);
++  if (rng != NULL)
++    {
++      grub_efi_status_t status;
++
++      status = efi_call_4 (rng->get_rng, rng, NULL, sizeof (stack_chk_guard_buf),
++			   stack_chk_guard_buf);
++      if (status == GRUB_EFI_SUCCESS)
++	grub_memcpy (&__stack_chk_guard, stack_chk_guard_buf, sizeof (__stack_chk_guard));
++    }
++}
++#else
++static void
++stack_protector_init (void)
++{
++}
++#endif
+ 
+ grub_addr_t grub_modbase;
+ 
+@@ -38,6 +90,8 @@ grub_efi_init (void)
+      messages.  */
+   grub_console_init ();
+ 
++  stack_protector_init ();
++
+   /* Initialize the memory management system.  */
+   grub_efi_mm_init ();
+ 
+diff --git a/include/grub/efi/api.h b/include/grub/efi/api.h
+index 13e5715..5517f7e 100644
+--- a/include/grub/efi/api.h
++++ b/include/grub/efi/api.h
+@@ -339,6 +339,11 @@
+     { 0xab, 0xb6, 0x3d, 0xd8, 0x10, 0xdd, 0x8b, 0x23 } \
+   }
+ 
++#define GRUB_EFI_RNG_PROTOCOL_GUID \
++  { 0x3152bca5, 0xeade, 0x433d, \
++    { 0x86, 0x2e, 0xc0, 0x1c, 0xdc, 0x29, 0x1f, 0x44 } \
++  }
++
+ struct grub_efi_sal_system_table
+ {
+   grub_uint32_t signature;
+@@ -1700,6 +1705,20 @@ struct grub_efi_shim_lock_protocol
+ };
+ typedef struct grub_efi_shim_lock_protocol grub_efi_shim_lock_protocol_t;
+ 
++typedef grub_efi_guid_t grub_efi_rng_algorithm_t;
++
++struct grub_efi_rng_protocol
++{
++  grub_efi_status_t (*get_info) (struct grub_efi_rng_protocol *this,
++				 grub_efi_uintn_t *rng_algorithm_list_size,
++				 grub_efi_rng_algorithm_t *rng_algorithm_list);
++  grub_efi_status_t (*get_rng) (struct grub_efi_rng_protocol *this,
++				grub_efi_rng_algorithm_t *rng_algorithm,
++				grub_efi_uintn_t rng_value_length,
++				grub_efi_uint8_t *rng_value);
++};
++typedef struct grub_efi_rng_protocol grub_efi_rng_protocol_t;
++
+ #if (GRUB_TARGET_SIZEOF_VOID_P == 4) || defined (__ia64__) \
+   || defined (__aarch64__) || defined (__MINGW64__) || defined (__CYGWIN__) \
+   || defined(__riscv)
+diff --git a/include/grub/stack_protector.h b/include/grub/stack_protector.h
+new file mode 100644
+index 0000000..c88dc00
+--- /dev/null
++++ b/include/grub/stack_protector.h
+@@ -0,0 +1,30 @@
++/*
++ *  GRUB  --  GRand Unified Bootloader
++ *  Copyright (C) 2021  Free Software Foundation, Inc.
++ *
++ *  GRUB is free software: you can redistribute it and/or modify
++ *  it under the terms of the GNU General Public License as published by
++ *  the Free Software Foundation, either version 3 of the License, or
++ *  (at your option) any later version.
++ *
++ *  GRUB is distributed in the hope that it will be useful,
++ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ *  GNU General Public License for more details.
++ *
++ *  You should have received a copy of the GNU General Public License
++ *  along with GRUB.  If not, see <http://www.gnu.org/licenses/>.
++ */
++
++#ifndef GRUB_STACK_PROTECTOR_H
++#define GRUB_STACK_PROTECTOR_H	1
++
++#include <grub/symbol.h>
++#include <grub/types.h>
++
++#ifdef GRUB_STACK_PROTECTOR
++extern grub_addr_t EXPORT_VAR (__stack_chk_guard);
++extern void __attribute__ ((noreturn)) EXPORT_FUNC (__stack_chk_fail) (void);
++#endif
++
++#endif /* GRUB_STACK_PROTECTOR_H */
+diff --git a/po/POTFILES.in b/po/POTFILES.in
+index 7753ab4..ef42c7d 100644
+--- a/po/POTFILES.in
++++ b/po/POTFILES.in
+@@ -1319,6 +1319,7 @@
+ ./include/grub/sparc64/time.h
+ ./include/grub/sparc64/types.h
+ ./include/grub/speaker.h
++./include/grub/stack_protector.h
+ ./include/grub/symbol.h
+ ./include/grub/syslinux_parse.h
+ ./include/grub/term.h
+-- 
+2.14.2
+

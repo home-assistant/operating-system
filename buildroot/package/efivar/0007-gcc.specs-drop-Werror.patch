@@ -1,0 +1,44 @@
+From 8d5cf3347cce9d644f670ffd1d48e71d74635481 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Mon, 22 Mar 2021 07:52:34 +0100
+Subject: [PATCH] gcc.specs: drop -Werror
+
+Build with -Werror raises the following build failure with gcc 10:
+
+/home/buildroot/autobuild/run/instance-1/output-1/host/bin/aarch64-none-linux-gnu-gcc -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64  -O2   -I/home/buildroot/autobuild/run/instance-1/output-1/build/efivar-37/src/include/   -specs=/home/buildroot/autobuild/run/instance-1/output-1/build/efivar-37/gcc.specs  -L.  -fPIC -Wl,-z,muldefs     -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 -o efivar efivar.c -lefivar -ldl
+In file included from efivar.h:28,
+                 from efivar.c:40:
+In function 'text_to_guid',
+    inlined from 'parse_name.constprop' at efivar.c:157:8:
+guid.h:106:2: error: 'strncpy' output may be truncated copying 8 bytes from a string of length 38 [-Werror=stringop-truncation]
+  106 |  strncpy(eightbytes, text, 8);
+      |  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+cc1: all warnings being treated as errors
+
+Fixes:
+ - http://autobuild.buildroot.org/results/fcba72d359f4128515560e9105384cd4deff5043
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: not upstreamable as Makefiles were reworked and a new
+ERRORS parameter was added:
+https://github.com/rhboot/efivar/commit/998f617cec92d526e1fadb745673ceef63fa1483]
+---
+ gcc.specs | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/gcc.specs b/gcc.specs
+index 45d43d1..1baf11a 100644
+--- a/gcc.specs
++++ b/gcc.specs
+@@ -2,7 +2,7 @@
+ + -D_GNU_SOURCE
+ 
+ *efivar_cpp_options:
+- -Werror -Wall -std=gnu11 -Wextra
++ -Wall -std=gnu11 -Wextra
+ 
+ *cpp_options:
+ + %(efivar_cpp_options)
+-- 
+2.30.1
+

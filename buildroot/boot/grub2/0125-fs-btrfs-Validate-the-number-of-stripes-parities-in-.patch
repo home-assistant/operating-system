@@ -1,0 +1,33 @@
+From b88a82e78cdd0ab8e0339c1c3f9564c4d8c0c969 Mon Sep 17 00:00:00 2001
+From: Daniel Axtens <dja@axtens.net>
+Date: Mon, 18 Jan 2021 17:17:16 +1100
+Subject: [PATCH] fs/btrfs: Validate the number of stripes/parities in RAID5/6
+
+This prevents a divide by zero if nstripes == nparities, and
+also prevents propagation of invalid values if nstripes ends up
+less than nparities.
+
+Signed-off-by: Daniel Axtens <dja@axtens.net>
+Reviewed-by: Daniel Kiper <daniel.kiper@oracle.com>
+Signed-off-by: Stefan Sørensen <stefan.sorensen@spectralink.com>
+---
+ grub-core/fs/btrfs.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/grub-core/fs/btrfs.c b/grub-core/fs/btrfs.c
+index 2b65bd5..e4e87ba 100644
+--- a/grub-core/fs/btrfs.c
++++ b/grub-core/fs/btrfs.c
+@@ -1076,6 +1076,9 @@ grub_btrfs_read_logical (struct grub_btrfs_data *data, grub_disk_addr_t addr,
+ 	       * stripen is computed without the parities
+ 	       * (0 for A0, A1, A2, 1 for B0, B1, B2, etc.).
+ 	       */
++	      if (nparities >= nstripes)
++		return grub_error (GRUB_ERR_BAD_FS,
++				   "invalid RAID5/6: nparities >= nstripes");
+ 	      high = grub_divmod64 (stripe_nr, nstripes - nparities, &stripen);
+ 
+ 	      /*
+-- 
+2.14.2
+

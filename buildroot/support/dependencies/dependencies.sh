@@ -2,6 +2,9 @@
 # vi: set sw=4 ts=4:
 
 export LC_ALL=C
+TAB="$(printf '\t')"
+NL="
+"
 
 # Verify that grep works
 echo "WORKS" | grep "WORKS" >/dev/null 2>&1
@@ -35,9 +38,9 @@ case ":${PATH:-unset}:" in
 	echo "PATH environment variable. This doesn't work."
 	exit 1
 	;;
-(*"
-"*)	printf "\n"
-	printf "Your PATH contains a newline (\\\n) character.\n"
+(*" "*|*"${TAB}"*|*"${NL}"*)
+	printf "\n"
+	printf "Your PATH contains spaces, TABs, and/or newline (\\\n) characters.\n"
 	printf "This doesn't work. Fix you PATH.\n"
 	exit 1
 	;;

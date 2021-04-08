@@ -1,0 +1,41 @@
+From 701293684742d00133b39bf957d3642c81dc83f4 Mon Sep 17 00:00:00 2001
+From: Daniel Axtens <dja@axtens.net>
+Date: Fri, 22 Jan 2021 14:43:58 +1100
+Subject: [PATCH] disk/lvm: Sanitize rlocn->offset to prevent wild read
+
+rlocn->offset is read directly from disk and added to the metadatabuf
+pointer to create a pointer to a block of metadata. It's a 64-bit
+quantity so as long as you don't overflow you can set subsequent
+pointers to point anywhere in memory.
+
+Require that rlocn->offset fits within the metadata buffer size.
+
+Signed-off-by: Daniel Axtens <dja@axtens.net>
+Reviewed-by: Daniel Kiper <daniel.kiper@oracle.com>
+Signed-off-by: Stefan Sørensen <stefan.sorensen@spectralink.com>
+---
+ grub-core/disk/lvm.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/grub-core/disk/lvm.c b/grub-core/disk/lvm.c
+index 742ecd6..ed0712f 100644
+--- a/grub-core/disk/lvm.c
++++ b/grub-core/disk/lvm.c
+@@ -211,6 +211,14 @@ grub_lvm_detect (grub_disk_t disk,
+     }
+ 
+   rlocn = mdah->raw_locns;
++  if (grub_le_to_cpu64 (rlocn->offset) >= grub_le_to_cpu64 (mda_size))
++    {
++#ifdef GRUB_UTIL
++      grub_util_info ("metadata offset is beyond end of metadata area");
++#endif
++      goto fail2;
++    }
++
+   if (grub_le_to_cpu64 (rlocn->offset) + grub_le_to_cpu64 (rlocn->size) >
+       grub_le_to_cpu64 (mdah->size))
+     {
+-- 
+2.14.2
+

@@ -1,0 +1,35 @@
+From 4a1aa5917595650efbd46b581368c470ebee42ab Mon Sep 17 00:00:00 2001
+From: Darren Kenny <darren.kenny@oracle.com>
+Date: Mon, 7 Dec 2020 14:44:47 +0000
+Subject: [PATCH] gfxmenu/gui_list: Remove code that coverity is flagging as
+ dead
+
+The test of value for NULL before calling grub_strdup() is not required,
+since the if condition prior to this has already tested for value being
+NULL and cannot reach this code if it is.
+
+Fixes: CID 73659
+
+Signed-off-by: Darren Kenny <darren.kenny@oracle.com>
+Reviewed-by: Daniel Kiper <daniel.kiper@oracle.com>
+Signed-off-by: Stefan Sørensen <stefan.sorensen@spectralink.com>
+---
+ grub-core/gfxmenu/gui_list.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/grub-core/gfxmenu/gui_list.c b/grub-core/gfxmenu/gui_list.c
+index 01477cd..df334a6 100644
+--- a/grub-core/gfxmenu/gui_list.c
++++ b/grub-core/gfxmenu/gui_list.c
+@@ -771,7 +771,7 @@ list_set_property (void *vself, const char *name, const char *value)
+         {
+           self->need_to_recreate_boxes = 1;
+           grub_free (self->selected_item_box_pattern);
+-          self->selected_item_box_pattern = value ? grub_strdup (value) : 0;
++          self->selected_item_box_pattern = grub_strdup (value);
+           self->selected_item_box_pattern_inherit = 0;
+         }
+     }
+-- 
+2.14.2
+

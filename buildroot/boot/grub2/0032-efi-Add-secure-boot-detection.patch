@@ -1,0 +1,541 @@
+From d7e54b2e5feee95d2f83058ed30d883c450d1473 Mon Sep 17 00:00:00 2001
+From: Daniel Kiper <daniel.kiper@oracle.com>
+Date: Thu, 3 Dec 2020 16:01:48 +0100
+Subject: [PATCH] efi: Add secure boot detection
+
+Introduce grub_efi_get_secureboot() function which returns whether
+UEFI Secure Boot is enabled or not on UEFI systems.
+
+Signed-off-by: Ignat Korchagin <ignat@cloudflare.com>
+Signed-off-by: Daniel Kiper <daniel.kiper@oracle.com>
+Signed-off-by: Marco A Benatto <mbenatto@redhat.com>
+Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
+Reviewed-by: Daniel Kiper <daniel.kiper@oracle.com>
+[Add changes to generated files]
+Signed-off-by: Stefan Sørensen <stefan.sorensen@spectralink.com>
+---
+ grub-core/Makefile.am       |   1 +
+ grub-core/Makefile.core.am  |  14 +++---
+ grub-core/Makefile.core.def |   1 +
+ grub-core/Makefile.in       | 102 ++++++++++++++++++++++++++---------------
+ grub-core/kern/efi/sb.c     | 109 ++++++++++++++++++++++++++++++++++++++++++++
+ include/grub/efi/sb.h       |  40 ++++++++++++++++
+ po/POTFILES.in              |   2 +
+ 7 files changed, 225 insertions(+), 44 deletions(-)
+ create mode 100644 grub-core/kern/efi/sb.c
+ create mode 100644 include/grub/efi/sb.h
+
+diff --git a/grub-core/Makefile.am b/grub-core/Makefile.am
+index 3ea8e7f..c6ba5b2 100644
+--- a/grub-core/Makefile.am
++++ b/grub-core/Makefile.am
+@@ -71,6 +71,7 @@ KERNEL_HEADER_FILES += $(top_srcdir)/include/grub/command.h
+ KERNEL_HEADER_FILES += $(top_srcdir)/include/grub/device.h
+ KERNEL_HEADER_FILES += $(top_srcdir)/include/grub/disk.h
+ KERNEL_HEADER_FILES += $(top_srcdir)/include/grub/dl.h
++KERNEL_HEADER_FILES += $(top_srcdir)/include/grub/efi/sb.h
+ KERNEL_HEADER_FILES += $(top_srcdir)/include/grub/env.h
+ KERNEL_HEADER_FILES += $(top_srcdir)/include/grub/env_private.h
+ KERNEL_HEADER_FILES += $(top_srcdir)/include/grub/err.h
+diff --git a/grub-core/Makefile.core.am b/grub-core/Makefile.core.am
+index a217716..f28b753 100644
+--- a/grub-core/Makefile.core.am
++++ b/grub-core/Makefile.core.am
+@@ -22421,7 +22421,7 @@ endif
+ if COND_i386_efi
+ platform_PROGRAMS += kernel.exec
+ kernel_exec_SOURCES  = kern/i386/efi/startup.S 
+-kernel_exec_SOURCES += kern/i386/efi/tsc.c kern/i386/tsc_pmtimer.c kern/i386/efi/init.c bus/pci.c kern/i386/dl.c kern/i386/tsc.c kern/i386/tsc_pit.c disk/efi/efidisk.c kern/efi/efi.c kern/efi/init.c kern/efi/mm.c term/efi/console.c kern/acpi.c kern/efi/acpi.c kern/compiler-rt.c kern/mm.c kern/time.c kern/generic/millisleep.c kern/command.c kern/corecmd.c kern/device.c kern/disk.c kern/dl.c kern/env.c kern/err.c kern/file.c kern/fs.c kern/list.c kern/main.c kern/misc.c kern/parser.c kern/partition.c kern/rescue_parser.c kern/rescue_reader.c kern/term.c 
++kernel_exec_SOURCES += kern/i386/efi/tsc.c kern/i386/tsc_pmtimer.c kern/i386/efi/init.c bus/pci.c kern/i386/dl.c kern/i386/tsc.c kern/i386/tsc_pit.c disk/efi/efidisk.c kern/efi/efi.c kern/efi/init.c kern/efi/mm.c term/efi/console.c kern/acpi.c kern/efi/acpi.c kern/efi/sb.c kern/compiler-rt.c kern/mm.c kern/time.c kern/generic/millisleep.c kern/command.c kern/corecmd.c kern/device.c kern/disk.c kern/dl.c kern/env.c kern/err.c kern/file.c kern/fs.c kern/list.c kern/main.c kern/misc.c kern/parser.c kern/partition.c kern/rescue_parser.c kern/rescue_reader.c kern/term.c 
+ nodist_kernel_exec_SOURCES  = symlist.c  ## platform nodist sources
+ kernel_exec_LDADD  = 
+ kernel_exec_CFLAGS  = $(AM_CFLAGS) $(CFLAGS_KERNEL) 
+@@ -22531,7 +22531,7 @@ endif
+ if COND_x86_64_efi
+ platform_PROGRAMS += kernel.exec
+ kernel_exec_SOURCES  = kern/x86_64/efi/startup.S 
+-kernel_exec_SOURCES += kern/i386/efi/tsc.c kern/i386/tsc_pmtimer.c kern/x86_64/efi/callwrap.S kern/i386/efi/init.c bus/pci.c kern/x86_64/dl.c kern/i386/tsc.c kern/i386/tsc_pit.c disk/efi/efidisk.c kern/efi/efi.c kern/efi/init.c kern/efi/mm.c term/efi/console.c kern/acpi.c kern/efi/acpi.c kern/compiler-rt.c kern/mm.c kern/time.c kern/generic/millisleep.c kern/command.c kern/corecmd.c kern/device.c kern/disk.c kern/dl.c kern/env.c kern/err.c kern/file.c kern/fs.c kern/list.c kern/main.c kern/misc.c kern/parser.c kern/partition.c kern/rescue_parser.c kern/rescue_reader.c kern/term.c 
++kernel_exec_SOURCES += kern/i386/efi/tsc.c kern/i386/tsc_pmtimer.c kern/x86_64/efi/callwrap.S kern/i386/efi/init.c bus/pci.c kern/x86_64/dl.c kern/i386/tsc.c kern/i386/tsc_pit.c disk/efi/efidisk.c kern/efi/efi.c kern/efi/init.c kern/efi/mm.c term/efi/console.c kern/acpi.c kern/efi/acpi.c kern/efi/sb.c kern/compiler-rt.c kern/mm.c kern/time.c kern/generic/millisleep.c kern/command.c kern/corecmd.c kern/device.c kern/disk.c kern/dl.c kern/env.c kern/err.c kern/file.c kern/fs.c kern/list.c kern/main.c kern/misc.c kern/parser.c kern/partition.c kern/rescue_parser.c kern/rescue_reader.c kern/term.c 
+ nodist_kernel_exec_SOURCES  = symlist.c  ## platform nodist sources
+ kernel_exec_LDADD  = 
+ kernel_exec_CFLAGS  = $(AM_CFLAGS) $(CFLAGS_KERNEL) 
+@@ -22707,7 +22707,7 @@ endif
+ if COND_ia64_efi
+ platform_PROGRAMS += kernel.exec
+ kernel_exec_SOURCES  = 
+-kernel_exec_SOURCES += kern/ia64/efi/startup.S kern/ia64/efi/init.c kern/ia64/dl.c kern/ia64/dl_helper.c kern/ia64/cache.c lib/division.c disk/efi/efidisk.c kern/efi/efi.c kern/efi/init.c kern/efi/mm.c term/efi/console.c kern/acpi.c kern/efi/acpi.c kern/compiler-rt.c kern/mm.c kern/time.c kern/generic/millisleep.c kern/command.c kern/corecmd.c kern/device.c kern/disk.c kern/dl.c kern/env.c kern/err.c kern/file.c kern/fs.c kern/list.c kern/main.c kern/misc.c kern/parser.c kern/partition.c kern/rescue_parser.c kern/rescue_reader.c kern/term.c 
++kernel_exec_SOURCES += kern/ia64/efi/startup.S kern/ia64/efi/init.c kern/ia64/dl.c kern/ia64/dl_helper.c kern/ia64/cache.c lib/division.c disk/efi/efidisk.c kern/efi/efi.c kern/efi/init.c kern/efi/mm.c term/efi/console.c kern/acpi.c kern/efi/acpi.c kern/efi/sb.c kern/compiler-rt.c kern/mm.c kern/time.c kern/generic/millisleep.c kern/command.c kern/corecmd.c kern/device.c kern/disk.c kern/dl.c kern/env.c kern/err.c kern/file.c kern/fs.c kern/list.c kern/main.c kern/misc.c kern/parser.c kern/partition.c kern/rescue_parser.c kern/rescue_reader.c kern/term.c 
+ nodist_kernel_exec_SOURCES  = symlist.c  ## platform nodist sources
+ kernel_exec_LDADD  = 
+ kernel_exec_CFLAGS  = $(AM_CFLAGS) $(CFLAGS_KERNEL) -fno-builtin -fpic -minline-int-divide-max-throughput 
+@@ -22773,7 +22773,7 @@ endif
+ if COND_arm_efi
+ platform_PROGRAMS += kernel.exec
+ kernel_exec_SOURCES  = kern/arm/efi/startup.S 
+-kernel_exec_SOURCES += kern/arm/efi/init.c kern/efi/fdt.c kern/arm/dl.c kern/arm/dl_helper.c kern/arm/cache_armv6.S kern/arm/cache_armv7.S kern/arm/cache.c kern/arm/compiler-rt.S lib/division.c disk/efi/efidisk.c kern/efi/efi.c kern/efi/init.c kern/efi/mm.c term/efi/console.c kern/acpi.c kern/efi/acpi.c kern/compiler-rt.c kern/mm.c kern/time.c kern/generic/millisleep.c kern/command.c kern/corecmd.c kern/device.c kern/disk.c kern/dl.c kern/env.c kern/err.c kern/file.c kern/fs.c kern/list.c kern/main.c kern/misc.c kern/parser.c kern/partition.c kern/rescue_parser.c kern/rescue_reader.c kern/term.c 
++kernel_exec_SOURCES += kern/arm/efi/init.c kern/efi/fdt.c kern/arm/dl.c kern/arm/dl_helper.c kern/arm/cache_armv6.S kern/arm/cache_armv7.S kern/arm/cache.c kern/arm/compiler-rt.S lib/division.c disk/efi/efidisk.c kern/efi/efi.c kern/efi/init.c kern/efi/mm.c term/efi/console.c kern/acpi.c kern/efi/acpi.c kern/efi/sb.c kern/compiler-rt.c kern/mm.c kern/time.c kern/generic/millisleep.c kern/command.c kern/corecmd.c kern/device.c kern/disk.c kern/dl.c kern/env.c kern/err.c kern/file.c kern/fs.c kern/list.c kern/main.c kern/misc.c kern/parser.c kern/partition.c kern/rescue_parser.c kern/rescue_reader.c kern/term.c 
+ nodist_kernel_exec_SOURCES  = symlist.c  ## platform nodist sources
+ kernel_exec_LDADD  = 
+ kernel_exec_CFLAGS  = $(AM_CFLAGS) $(CFLAGS_KERNEL) 
+@@ -22795,7 +22795,7 @@ endif
+ if COND_arm64_efi
+ platform_PROGRAMS += kernel.exec
+ kernel_exec_SOURCES  = kern/arm64/efi/startup.S 
+-kernel_exec_SOURCES += kern/arm64/efi/init.c kern/efi/fdt.c kern/arm64/cache.c kern/arm64/cache_flush.S kern/arm64/dl.c kern/arm64/dl_helper.c disk/efi/efidisk.c kern/efi/efi.c kern/efi/init.c kern/efi/mm.c term/efi/console.c kern/acpi.c kern/efi/acpi.c kern/compiler-rt.c kern/mm.c kern/time.c kern/generic/millisleep.c kern/command.c kern/corecmd.c kern/device.c kern/disk.c kern/dl.c kern/env.c kern/err.c kern/file.c kern/fs.c kern/list.c kern/main.c kern/misc.c kern/parser.c kern/partition.c kern/rescue_parser.c kern/rescue_reader.c kern/term.c 
++kernel_exec_SOURCES += kern/arm64/efi/init.c kern/efi/fdt.c kern/arm64/cache.c kern/arm64/cache_flush.S kern/arm64/dl.c kern/arm64/dl_helper.c disk/efi/efidisk.c kern/efi/efi.c kern/efi/init.c kern/efi/mm.c term/efi/console.c kern/acpi.c kern/efi/acpi.c kern/efi/sb.c kern/compiler-rt.c kern/mm.c kern/time.c kern/generic/millisleep.c kern/command.c kern/corecmd.c kern/device.c kern/disk.c kern/dl.c kern/env.c kern/err.c kern/file.c kern/fs.c kern/list.c kern/main.c kern/misc.c kern/parser.c kern/partition.c kern/rescue_parser.c kern/rescue_reader.c kern/term.c 
+ nodist_kernel_exec_SOURCES  = symlist.c  ## platform nodist sources
+ kernel_exec_LDADD  = 
+ kernel_exec_CFLAGS  = $(AM_CFLAGS) $(CFLAGS_KERNEL) 
+@@ -22839,7 +22839,7 @@ endif
+ if COND_riscv32_efi
+ platform_PROGRAMS += kernel.exec
+ kernel_exec_SOURCES  = kern/riscv/efi/startup.S 
+-kernel_exec_SOURCES += kern/riscv/efi/init.c kern/efi/fdt.c kern/riscv/cache.c kern/riscv/cache_flush.S kern/riscv/dl.c lib/division.c disk/efi/efidisk.c kern/efi/efi.c kern/efi/init.c kern/efi/mm.c term/efi/console.c kern/acpi.c kern/efi/acpi.c kern/compiler-rt.c kern/mm.c kern/time.c kern/generic/millisleep.c kern/command.c kern/corecmd.c kern/device.c kern/disk.c kern/dl.c kern/env.c kern/err.c kern/file.c kern/fs.c kern/list.c kern/main.c kern/misc.c kern/parser.c kern/partition.c kern/rescue_parser.c kern/rescue_reader.c kern/term.c 
++kernel_exec_SOURCES += kern/riscv/efi/init.c kern/efi/fdt.c kern/riscv/cache.c kern/riscv/cache_flush.S kern/riscv/dl.c lib/division.c disk/efi/efidisk.c kern/efi/efi.c kern/efi/init.c kern/efi/mm.c term/efi/console.c kern/acpi.c kern/efi/acpi.c kern/efi/sb.c kern/compiler-rt.c kern/mm.c kern/time.c kern/generic/millisleep.c kern/command.c kern/corecmd.c kern/device.c kern/disk.c kern/dl.c kern/env.c kern/err.c kern/file.c kern/fs.c kern/list.c kern/main.c kern/misc.c kern/parser.c kern/partition.c kern/rescue_parser.c kern/rescue_reader.c kern/term.c 
+ nodist_kernel_exec_SOURCES  = symlist.c  ## platform nodist sources
+ kernel_exec_LDADD  = 
+ kernel_exec_CFLAGS  = $(AM_CFLAGS) $(CFLAGS_KERNEL) 
+@@ -22861,7 +22861,7 @@ endif
+ if COND_riscv64_efi
+ platform_PROGRAMS += kernel.exec
+ kernel_exec_SOURCES  = kern/riscv/efi/startup.S 
+-kernel_exec_SOURCES += kern/riscv/efi/init.c kern/efi/fdt.c kern/riscv/cache.c kern/riscv/cache_flush.S kern/riscv/dl.c disk/efi/efidisk.c kern/efi/efi.c kern/efi/init.c kern/efi/mm.c term/efi/console.c kern/acpi.c kern/efi/acpi.c kern/compiler-rt.c kern/mm.c kern/time.c kern/generic/millisleep.c kern/command.c kern/corecmd.c kern/device.c kern/disk.c kern/dl.c kern/env.c kern/err.c kern/file.c kern/fs.c kern/list.c kern/main.c kern/misc.c kern/parser.c kern/partition.c kern/rescue_parser.c kern/rescue_reader.c kern/term.c 
++kernel_exec_SOURCES += kern/riscv/efi/init.c kern/efi/fdt.c kern/riscv/cache.c kern/riscv/cache_flush.S kern/riscv/dl.c disk/efi/efidisk.c kern/efi/efi.c kern/efi/init.c kern/efi/mm.c term/efi/console.c kern/acpi.c kern/efi/acpi.c kern/efi/sb.c kern/compiler-rt.c kern/mm.c kern/time.c kern/generic/millisleep.c kern/command.c kern/corecmd.c kern/device.c kern/disk.c kern/dl.c kern/env.c kern/err.c kern/file.c kern/fs.c kern/list.c kern/main.c kern/misc.c kern/parser.c kern/partition.c kern/rescue_parser.c kern/rescue_reader.c kern/term.c 
+ nodist_kernel_exec_SOURCES  = symlist.c  ## platform nodist sources
+ kernel_exec_LDADD  = 
+ kernel_exec_CFLAGS  = $(AM_CFLAGS) $(CFLAGS_KERNEL) 
+diff --git a/grub-core/Makefile.core.def b/grub-core/Makefile.core.def
+index 474a63e..abd26cf 100644
+--- a/grub-core/Makefile.core.def
++++ b/grub-core/Makefile.core.def
+@@ -203,6 +203,7 @@ kernel = {
+   efi = term/efi/console.c;
+   efi = kern/acpi.c;
+   efi = kern/efi/acpi.c;
++  efi = kern/efi/sb.c;
+   i386_coreboot = kern/i386/pc/acpi.c;
+   i386_multiboot = kern/i386/pc/acpi.c;
+   i386_coreboot = kern/acpi.c;
+diff --git a/grub-core/Makefile.in b/grub-core/Makefile.in
+index d287607..8fb81ee 100644
+--- a/grub-core/Makefile.in
++++ b/grub-core/Makefile.in
+@@ -10468,32 +10468,33 @@ am__kernel_exec_SOURCES_DIST = kern/arm64/efi/startup.S \
+ 	kern/arm64/cache_flush.S kern/arm64/dl.c \
+ 	kern/arm64/dl_helper.c disk/efi/efidisk.c kern/efi/efi.c \
+ 	kern/efi/init.c kern/efi/mm.c term/efi/console.c kern/acpi.c \
+-	kern/efi/acpi.c kern/compiler-rt.c kern/mm.c kern/time.c \
+-	kern/generic/millisleep.c kern/command.c kern/corecmd.c \
+-	kern/device.c kern/disk.c kern/dl.c kern/env.c kern/err.c \
+-	kern/file.c kern/fs.c kern/list.c kern/main.c kern/misc.c \
+-	kern/parser.c kern/partition.c kern/rescue_parser.c \
+-	kern/rescue_reader.c kern/term.c kern/arm/startup.S \
+-	kern/arm/coreboot/init.c kern/arm/coreboot/timer.c \
+-	kern/arm/coreboot/coreboot.S lib/fdt.c bus/fdt.c term/ps2.c \
+-	term/arm/pl050.c term/arm/cros.c term/arm/cros_ec.c \
+-	bus/spi/rk3288_spi.c commands/keylayouts.c \
+-	kern/arm/coreboot/dma.c kern/arm/coreboot/cbtable.c \
+-	video/coreboot/cbfb.c kern/coreboot/mmap.c \
+-	kern/coreboot/cbtable.c term/gfxterm.c font/font.c \
+-	font/font_cmd.c io/bufio.c video/fb/fbblit.c video/fb/fbfill.c \
+-	video/fb/fbutil.c video/fb/video_fb.c video/video.c \
+-	kern/arm/dl.c kern/arm/dl_helper.c kern/arm/cache_armv6.S \
+-	kern/arm/cache_armv7.S kern/arm/cache.c kern/arm/compiler-rt.S \
+-	lib/division.c kern/arm/efi/startup.S kern/arm/efi/init.c \
+-	kern/arm/uboot/init.c kern/arm/uboot/uboot.S \
+-	disk/uboot/ubootdisk.c kern/uboot/uboot.c kern/uboot/init.c \
+-	kern/uboot/hw.c term/uboot/console.c term/terminfo.c \
+-	term/tparm.c commands/extcmd.c lib/arg.c disk/host.c \
+-	kern/emu/cache_s.S kern/emu/hostdisk.c osdep/unix/hostdisk.c \
+-	osdep/exec.c osdep/devmapper/hostdisk.c osdep/hostdisk.c \
+-	kern/emu/hostfs.c kern/emu/main.c kern/emu/argp_common.c \
+-	kern/emu/misc.c kern/emu/mm.c kern/emu/time.c kern/emu/cache.c \
++	kern/efi/acpi.c kern/efi/sb.c kern/compiler-rt.c kern/mm.c \
++	kern/time.c kern/generic/millisleep.c kern/command.c \
++	kern/corecmd.c kern/device.c kern/disk.c kern/dl.c kern/env.c \
++	kern/err.c kern/file.c kern/fs.c kern/list.c kern/main.c \
++	kern/misc.c kern/parser.c kern/partition.c \
++	kern/rescue_parser.c kern/rescue_reader.c kern/term.c \
++	kern/arm/startup.S kern/arm/coreboot/init.c \
++	kern/arm/coreboot/timer.c kern/arm/coreboot/coreboot.S \
++	lib/fdt.c bus/fdt.c term/ps2.c term/arm/pl050.c \
++	term/arm/cros.c term/arm/cros_ec.c bus/spi/rk3288_spi.c \
++	commands/keylayouts.c kern/arm/coreboot/dma.c \
++	kern/arm/coreboot/cbtable.c video/coreboot/cbfb.c \
++	kern/coreboot/mmap.c kern/coreboot/cbtable.c term/gfxterm.c \
++	font/font.c font/font_cmd.c io/bufio.c video/fb/fbblit.c \
++	video/fb/fbfill.c video/fb/fbutil.c video/fb/video_fb.c \
++	video/video.c kern/arm/dl.c kern/arm/dl_helper.c \
++	kern/arm/cache_armv6.S kern/arm/cache_armv7.S kern/arm/cache.c \
++	kern/arm/compiler-rt.S lib/division.c kern/arm/efi/startup.S \
++	kern/arm/efi/init.c kern/arm/uboot/init.c \
++	kern/arm/uboot/uboot.S disk/uboot/ubootdisk.c \
++	kern/uboot/uboot.c kern/uboot/init.c kern/uboot/hw.c \
++	term/uboot/console.c term/terminfo.c term/tparm.c \
++	commands/extcmd.c lib/arg.c disk/host.c kern/emu/cache_s.S \
++	kern/emu/hostdisk.c osdep/unix/hostdisk.c osdep/exec.c \
++	osdep/devmapper/hostdisk.c osdep/hostdisk.c kern/emu/hostfs.c \
++	kern/emu/main.c kern/emu/argp_common.c kern/emu/misc.c \
++	kern/emu/mm.c kern/emu/time.c kern/emu/cache.c \
+ 	osdep/emuconsole.c osdep/dl.c osdep/sleep.c osdep/init.c \
+ 	osdep/emunet.c osdep/cputime.c kern/i386/coreboot/startup.S \
+ 	kern/i386/coreboot/init.c kern/i386/pc/acpi.c \
+@@ -10580,6 +10581,7 @@ am__kernel_exec_SOURCES_DIST = kern/arm64/efi/startup.S \
+ @COND_arm64_efi_FALSE@@COND_arm_coreboot_FALSE@@COND_arm_efi_FALSE@@COND_arm_uboot_FALSE@@COND_emu_FALSE@@COND_i386_coreboot_FALSE@@COND_i386_efi_FALSE@@COND_i386_ieee1275_FALSE@@COND_i386_multiboot_FALSE@@COND_i386_pc_FALSE@@COND_i386_qemu_FALSE@@COND_i386_xen_FALSE@@COND_i386_xen_pvh_FALSE@@COND_ia64_efi_FALSE@@COND_mips_arc_FALSE@@COND_mips_loongson_FALSE@@COND_mips_qemu_mips_FALSE@@COND_powerpc_ieee1275_FALSE@@COND_riscv32_efi_FALSE@@COND_riscv64_efi_FALSE@@COND_sparc64_ieee1275_FALSE@@COND_x86_64_efi_TRUE@	term/efi/kernel_exec-console.$(OBJEXT) \
+ @COND_arm64_efi_FALSE@@COND_arm_coreboot_FALSE@@COND_arm_efi_FALSE@@COND_arm_uboot_FALSE@@COND_emu_FALSE@@COND_i386_coreboot_FALSE@@COND_i386_efi_FALSE@@COND_i386_ieee1275_FALSE@@COND_i386_multiboot_FALSE@@COND_i386_pc_FALSE@@COND_i386_qemu_FALSE@@COND_i386_xen_FALSE@@COND_i386_xen_pvh_FALSE@@COND_ia64_efi_FALSE@@COND_mips_arc_FALSE@@COND_mips_loongson_FALSE@@COND_mips_qemu_mips_FALSE@@COND_powerpc_ieee1275_FALSE@@COND_riscv32_efi_FALSE@@COND_riscv64_efi_FALSE@@COND_sparc64_ieee1275_FALSE@@COND_x86_64_efi_TRUE@	kern/kernel_exec-acpi.$(OBJEXT) \
+ @COND_arm64_efi_FALSE@@COND_arm_coreboot_FALSE@@COND_arm_efi_FALSE@@COND_arm_uboot_FALSE@@COND_emu_FALSE@@COND_i386_coreboot_FALSE@@COND_i386_efi_FALSE@@COND_i386_ieee1275_FALSE@@COND_i386_multiboot_FALSE@@COND_i386_pc_FALSE@@COND_i386_qemu_FALSE@@COND_i386_xen_FALSE@@COND_i386_xen_pvh_FALSE@@COND_ia64_efi_FALSE@@COND_mips_arc_FALSE@@COND_mips_loongson_FALSE@@COND_mips_qemu_mips_FALSE@@COND_powerpc_ieee1275_FALSE@@COND_riscv32_efi_FALSE@@COND_riscv64_efi_FALSE@@COND_sparc64_ieee1275_FALSE@@COND_x86_64_efi_TRUE@	kern/efi/kernel_exec-acpi.$(OBJEXT) \
++@COND_arm64_efi_FALSE@@COND_arm_coreboot_FALSE@@COND_arm_efi_FALSE@@COND_arm_uboot_FALSE@@COND_emu_FALSE@@COND_i386_coreboot_FALSE@@COND_i386_efi_FALSE@@COND_i386_ieee1275_FALSE@@COND_i386_multiboot_FALSE@@COND_i386_pc_FALSE@@COND_i386_qemu_FALSE@@COND_i386_xen_FALSE@@COND_i386_xen_pvh_FALSE@@COND_ia64_efi_FALSE@@COND_mips_arc_FALSE@@COND_mips_loongson_FALSE@@COND_mips_qemu_mips_FALSE@@COND_powerpc_ieee1275_FALSE@@COND_riscv32_efi_FALSE@@COND_riscv64_efi_FALSE@@COND_sparc64_ieee1275_FALSE@@COND_x86_64_efi_TRUE@	kern/efi/kernel_exec-sb.$(OBJEXT) \
+ @COND_arm64_efi_FALSE@@COND_arm_coreboot_FALSE@@COND_arm_efi_FALSE@@COND_arm_uboot_FALSE@@COND_emu_FALSE@@COND_i386_coreboot_FALSE@@COND_i386_efi_FALSE@@COND_i386_ieee1275_FALSE@@COND_i386_multiboot_FALSE@@COND_i386_pc_FALSE@@COND_i386_qemu_FALSE@@COND_i386_xen_FALSE@@COND_i386_xen_pvh_FALSE@@COND_ia64_efi_FALSE@@COND_mips_arc_FALSE@@COND_mips_loongson_FALSE@@COND_mips_qemu_mips_FALSE@@COND_powerpc_ieee1275_FALSE@@COND_riscv32_efi_FALSE@@COND_riscv64_efi_FALSE@@COND_sparc64_ieee1275_FALSE@@COND_x86_64_efi_TRUE@	kern/kernel_exec-compiler-rt.$(OBJEXT) \
+ @COND_arm64_efi_FALSE@@COND_arm_coreboot_FALSE@@COND_arm_efi_FALSE@@COND_arm_uboot_FALSE@@COND_emu_FALSE@@COND_i386_coreboot_FALSE@@COND_i386_efi_FALSE@@COND_i386_ieee1275_FALSE@@COND_i386_multiboot_FALSE@@COND_i386_pc_FALSE@@COND_i386_qemu_FALSE@@COND_i386_xen_FALSE@@COND_i386_xen_pvh_FALSE@@COND_ia64_efi_FALSE@@COND_mips_arc_FALSE@@COND_mips_loongson_FALSE@@COND_mips_qemu_mips_FALSE@@COND_powerpc_ieee1275_FALSE@@COND_riscv32_efi_FALSE@@COND_riscv64_efi_FALSE@@COND_sparc64_ieee1275_FALSE@@COND_x86_64_efi_TRUE@	kern/kernel_exec-mm.$(OBJEXT) \
+ @COND_arm64_efi_FALSE@@COND_arm_coreboot_FALSE@@COND_arm_efi_FALSE@@COND_arm_uboot_FALSE@@COND_emu_FALSE@@COND_i386_coreboot_FALSE@@COND_i386_efi_FALSE@@COND_i386_ieee1275_FALSE@@COND_i386_multiboot_FALSE@@COND_i386_pc_FALSE@@COND_i386_qemu_FALSE@@COND_i386_xen_FALSE@@COND_i386_xen_pvh_FALSE@@COND_ia64_efi_FALSE@@COND_mips_arc_FALSE@@COND_mips_loongson_FALSE@@COND_mips_qemu_mips_FALSE@@COND_powerpc_ieee1275_FALSE@@COND_riscv32_efi_FALSE@@COND_riscv64_efi_FALSE@@COND_sparc64_ieee1275_FALSE@@COND_x86_64_efi_TRUE@	kern/kernel_exec-time.$(OBJEXT) \
+@@ -10651,6 +10653,7 @@ am__kernel_exec_SOURCES_DIST = kern/arm64/efi/startup.S \
+ @COND_arm64_efi_FALSE@@COND_arm_coreboot_FALSE@@COND_arm_efi_FALSE@@COND_arm_uboot_FALSE@@COND_emu_FALSE@@COND_i386_coreboot_FALSE@@COND_i386_efi_FALSE@@COND_i386_ieee1275_FALSE@@COND_i386_multiboot_FALSE@@COND_i386_pc_FALSE@@COND_i386_qemu_FALSE@@COND_i386_xen_FALSE@@COND_i386_xen_pvh_FALSE@@COND_ia64_efi_FALSE@@COND_mips_arc_FALSE@@COND_mips_loongson_FALSE@@COND_mips_qemu_mips_FALSE@@COND_powerpc_ieee1275_FALSE@@COND_riscv32_efi_FALSE@@COND_riscv64_efi_TRUE@	term/efi/kernel_exec-console.$(OBJEXT) \
+ @COND_arm64_efi_FALSE@@COND_arm_coreboot_FALSE@@COND_arm_efi_FALSE@@COND_arm_uboot_FALSE@@COND_emu_FALSE@@COND_i386_coreboot_FALSE@@COND_i386_efi_FALSE@@COND_i386_ieee1275_FALSE@@COND_i386_multiboot_FALSE@@COND_i386_pc_FALSE@@COND_i386_qemu_FALSE@@COND_i386_xen_FALSE@@COND_i386_xen_pvh_FALSE@@COND_ia64_efi_FALSE@@COND_mips_arc_FALSE@@COND_mips_loongson_FALSE@@COND_mips_qemu_mips_FALSE@@COND_powerpc_ieee1275_FALSE@@COND_riscv32_efi_FALSE@@COND_riscv64_efi_TRUE@	kern/kernel_exec-acpi.$(OBJEXT) \
+ @COND_arm64_efi_FALSE@@COND_arm_coreboot_FALSE@@COND_arm_efi_FALSE@@COND_arm_uboot_FALSE@@COND_emu_FALSE@@COND_i386_coreboot_FALSE@@COND_i386_efi_FALSE@@COND_i386_ieee1275_FALSE@@COND_i386_multiboot_FALSE@@COND_i386_pc_FALSE@@COND_i386_qemu_FALSE@@COND_i386_xen_FALSE@@COND_i386_xen_pvh_FALSE@@COND_ia64_efi_FALSE@@COND_mips_arc_FALSE@@COND_mips_loongson_FALSE@@COND_mips_qemu_mips_FALSE@@COND_powerpc_ieee1275_FALSE@@COND_riscv32_efi_FALSE@@COND_riscv64_efi_TRUE@	kern/efi/kernel_exec-acpi.$(OBJEXT) \
++@COND_arm64_efi_FALSE@@COND_arm_coreboot_FALSE@@COND_arm_efi_FALSE@@COND_arm_uboot_FALSE@@COND_emu_FALSE@@COND_i386_coreboot_FALSE@@COND_i386_efi_FALSE@@COND_i386_ieee1275_FALSE@@COND_i386_multiboot_FALSE@@COND_i386_pc_FALSE@@COND_i386_qemu_FALSE@@COND_i386_xen_FALSE@@COND_i386_xen_pvh_FALSE@@COND_ia64_efi_FALSE@@COND_mips_arc_FALSE@@COND_mips_loongson_FALSE@@COND_mips_qemu_mips_FALSE@@COND_powerpc_ieee1275_FALSE@@COND_riscv32_efi_FALSE@@COND_riscv64_efi_TRUE@	kern/efi/kernel_exec-sb.$(OBJEXT) \
+ @COND_arm64_efi_FALSE@@COND_arm_coreboot_FALSE@@COND_arm_efi_FALSE@@COND_arm_uboot_FALSE@@COND_emu_FALSE@@COND_i386_coreboot_FALSE@@COND_i386_efi_FALSE@@COND_i386_ieee1275_FALSE@@COND_i386_multiboot_FALSE@@COND_i386_pc_FALSE@@COND_i386_qemu_FALSE@@COND_i386_xen_FALSE@@COND_i386_xen_pvh_FALSE@@COND_ia64_efi_FALSE@@COND_mips_arc_FALSE@@COND_mips_loongson_FALSE@@COND_mips_qemu_mips_FALSE@@COND_powerpc_ieee1275_FALSE@@COND_riscv32_efi_FALSE@@COND_riscv64_efi_TRUE@	kern/kernel_exec-compiler-rt.$(OBJEXT) \
+ @COND_arm64_efi_FALSE@@COND_arm_coreboot_FALSE@@COND_arm_efi_FALSE@@COND_arm_uboot_FALSE@@COND_emu_FALSE@@COND_i386_coreboot_FALSE@@COND_i386_efi_FALSE@@COND_i386_ieee1275_FALSE@@COND_i386_multiboot_FALSE@@COND_i386_pc_FALSE@@COND_i386_qemu_FALSE@@COND_i386_xen_FALSE@@COND_i386_xen_pvh_FALSE@@COND_ia64_efi_FALSE@@COND_mips_arc_FALSE@@COND_mips_loongson_FALSE@@COND_mips_qemu_mips_FALSE@@COND_powerpc_ieee1275_FALSE@@COND_riscv32_efi_FALSE@@COND_riscv64_efi_TRUE@	kern/kernel_exec-mm.$(OBJEXT) \
+ @COND_arm64_efi_FALSE@@COND_arm_coreboot_FALSE@@COND_arm_efi_FALSE@@COND_arm_uboot_FALSE@@COND_emu_FALSE@@COND_i386_coreboot_FALSE@@COND_i386_efi_FALSE@@COND_i386_ieee1275_FALSE@@COND_i386_multiboot_FALSE@@COND_i386_pc_FALSE@@COND_i386_qemu_FALSE@@COND_i386_xen_FALSE@@COND_i386_xen_pvh_FALSE@@COND_ia64_efi_FALSE@@COND_mips_arc_FALSE@@COND_mips_loongson_FALSE@@COND_mips_qemu_mips_FALSE@@COND_powerpc_ieee1275_FALSE@@COND_riscv32_efi_FALSE@@COND_riscv64_efi_TRUE@	kern/kernel_exec-time.$(OBJEXT) \
+@@ -10686,6 +10689,7 @@ am__kernel_exec_SOURCES_DIST = kern/arm64/efi/startup.S \
+ @COND_arm64_efi_FALSE@@COND_arm_coreboot_FALSE@@COND_arm_efi_FALSE@@COND_arm_uboot_FALSE@@COND_emu_FALSE@@COND_i386_coreboot_FALSE@@COND_i386_efi_FALSE@@COND_i386_ieee1275_FALSE@@COND_i386_multiboot_FALSE@@COND_i386_pc_FALSE@@COND_i386_qemu_FALSE@@COND_i386_xen_FALSE@@COND_i386_xen_pvh_FALSE@@COND_ia64_efi_FALSE@@COND_mips_arc_FALSE@@COND_mips_loongson_FALSE@@COND_mips_qemu_mips_FALSE@@COND_powerpc_ieee1275_FALSE@@COND_riscv32_efi_TRUE@	term/efi/kernel_exec-console.$(OBJEXT) \
+ @COND_arm64_efi_FALSE@@COND_arm_coreboot_FALSE@@COND_arm_efi_FALSE@@COND_arm_uboot_FALSE@@COND_emu_FALSE@@COND_i386_coreboot_FALSE@@COND_i386_efi_FALSE@@COND_i386_ieee1275_FALSE@@COND_i386_multiboot_FALSE@@COND_i386_pc_FALSE@@COND_i386_qemu_FALSE@@COND_i386_xen_FALSE@@COND_i386_xen_pvh_FALSE@@COND_ia64_efi_FALSE@@COND_mips_arc_FALSE@@COND_mips_loongson_FALSE@@COND_mips_qemu_mips_FALSE@@COND_powerpc_ieee1275_FALSE@@COND_riscv32_efi_TRUE@	kern/kernel_exec-acpi.$(OBJEXT) \
+ @COND_arm64_efi_FALSE@@COND_arm_coreboot_FALSE@@COND_arm_efi_FALSE@@COND_arm_uboot_FALSE@@COND_emu_FALSE@@COND_i386_coreboot_FALSE@@COND_i386_efi_FALSE@@COND_i386_ieee1275_FALSE@@COND_i386_multiboot_FALSE@@COND_i386_pc_FALSE@@COND_i386_qemu_FALSE@@COND_i386_xen_FALSE@@COND_i386_xen_pvh_FALSE@@COND_ia64_efi_FALSE@@COND_mips_arc_FALSE@@COND_mips_loongson_FALSE@@COND_mips_qemu_mips_FALSE@@COND_powerpc_ieee1275_FALSE@@COND_riscv32_efi_TRUE@	kern/efi/kernel_exec-acpi.$(OBJEXT) \
++@COND_arm64_efi_FALSE@@COND_arm_coreboot_FALSE@@COND_arm_efi_FALSE@@COND_arm_uboot_FALSE@@COND_emu_FALSE@@COND_i386_coreboot_FALSE@@COND_i386_efi_FALSE@@COND_i386_ieee1275_FALSE@@COND_i386_multiboot_FALSE@@COND_i386_pc_FALSE@@COND_i386_qemu_FALSE@@COND_i386_xen_FALSE@@COND_i386_xen_pvh_FALSE@@COND_ia64_efi_FALSE@@COND_mips_arc_FALSE@@COND_mips_loongson_FALSE@@COND_mips_qemu_mips_FALSE@@COND_powerpc_ieee1275_FALSE@@COND_riscv32_efi_TRUE@	kern/efi/kernel_exec-sb.$(OBJEXT) \
+ @COND_arm64_efi_FALSE@@COND_arm_coreboot_FALSE@@COND_arm_efi_FALSE@@COND_arm_uboot_FALSE@@COND_emu_FALSE@@COND_i386_coreboot_FALSE@@COND_i386_efi_FALSE@@COND_i386_ieee1275_FALSE@@COND_i386_multiboot_FALSE@@COND_i386_pc_FALSE@@COND_i386_qemu_FALSE@@COND_i386_xen_FALSE@@COND_i386_xen_pvh_FALSE@@COND_ia64_efi_FALSE@@COND_mips_arc_FALSE@@COND_mips_loongson_FALSE@@COND_mips_qemu_mips_FALSE@@COND_powerpc_ieee1275_FALSE@@COND_riscv32_efi_TRUE@	kern/kernel_exec-compiler-rt.$(OBJEXT) \
+ @COND_arm64_efi_FALSE@@COND_arm_coreboot_FALSE@@COND_arm_efi_FALSE@@COND_arm_uboot_FALSE@@COND_emu_FALSE@@COND_i386_coreboot_FALSE@@COND_i386_efi_FALSE@@COND_i386_ieee1275_FALSE@@COND_i386_multiboot_FALSE@@COND_i386_pc_FALSE@@COND_i386_qemu_FALSE@@COND_i386_xen_FALSE@@COND_i386_xen_pvh_FALSE@@COND_ia64_efi_FALSE@@COND_mips_arc_FALSE@@COND_mips_loongson_FALSE@@COND_mips_qemu_mips_FALSE@@COND_powerpc_ieee1275_FALSE@@COND_riscv32_efi_TRUE@	kern/kernel_exec-mm.$(OBJEXT) \
+ @COND_arm64_efi_FALSE@@COND_arm_coreboot_FALSE@@COND_arm_efi_FALSE@@COND_arm_uboot_FALSE@@COND_emu_FALSE@@COND_i386_coreboot_FALSE@@COND_i386_efi_FALSE@@COND_i386_ieee1275_FALSE@@COND_i386_multiboot_FALSE@@COND_i386_pc_FALSE@@COND_i386_qemu_FALSE@@COND_i386_xen_FALSE@@COND_i386_xen_pvh_FALSE@@COND_ia64_efi_FALSE@@COND_mips_arc_FALSE@@COND_mips_loongson_FALSE@@COND_mips_qemu_mips_FALSE@@COND_powerpc_ieee1275_FALSE@@COND_riscv32_efi_TRUE@	kern/kernel_exec-time.$(OBJEXT) \
+@@ -10881,6 +10885,7 @@ am__kernel_exec_SOURCES_DIST = kern/arm64/efi/startup.S \
+ @COND_arm64_efi_FALSE@@COND_arm_coreboot_FALSE@@COND_arm_efi_FALSE@@COND_arm_uboot_FALSE@@COND_emu_FALSE@@COND_i386_coreboot_FALSE@@COND_i386_efi_FALSE@@COND_i386_ieee1275_FALSE@@COND_i386_multiboot_FALSE@@COND_i386_pc_FALSE@@COND_i386_qemu_FALSE@@COND_i386_xen_FALSE@@COND_i386_xen_pvh_FALSE@@COND_ia64_efi_TRUE@	term/efi/kernel_exec-console.$(OBJEXT) \
+ @COND_arm64_efi_FALSE@@COND_arm_coreboot_FALSE@@COND_arm_efi_FALSE@@COND_arm_uboot_FALSE@@COND_emu_FALSE@@COND_i386_coreboot_FALSE@@COND_i386_efi_FALSE@@COND_i386_ieee1275_FALSE@@COND_i386_multiboot_FALSE@@COND_i386_pc_FALSE@@COND_i386_qemu_FALSE@@COND_i386_xen_FALSE@@COND_i386_xen_pvh_FALSE@@COND_ia64_efi_TRUE@	kern/kernel_exec-acpi.$(OBJEXT) \
+ @COND_arm64_efi_FALSE@@COND_arm_coreboot_FALSE@@COND_arm_efi_FALSE@@COND_arm_uboot_FALSE@@COND_emu_FALSE@@COND_i386_coreboot_FALSE@@COND_i386_efi_FALSE@@COND_i386_ieee1275_FALSE@@COND_i386_multiboot_FALSE@@COND_i386_pc_FALSE@@COND_i386_qemu_FALSE@@COND_i386_xen_FALSE@@COND_i386_xen_pvh_FALSE@@COND_ia64_efi_TRUE@	kern/efi/kernel_exec-acpi.$(OBJEXT) \
++@COND_arm64_efi_FALSE@@COND_arm_coreboot_FALSE@@COND_arm_efi_FALSE@@COND_arm_uboot_FALSE@@COND_emu_FALSE@@COND_i386_coreboot_FALSE@@COND_i386_efi_FALSE@@COND_i386_ieee1275_FALSE@@COND_i386_multiboot_FALSE@@COND_i386_pc_FALSE@@COND_i386_qemu_FALSE@@COND_i386_xen_FALSE@@COND_i386_xen_pvh_FALSE@@COND_ia64_efi_TRUE@	kern/efi/kernel_exec-sb.$(OBJEXT) \
+ @COND_arm64_efi_FALSE@@COND_arm_coreboot_FALSE@@COND_arm_efi_FALSE@@COND_arm_uboot_FALSE@@COND_emu_FALSE@@COND_i386_coreboot_FALSE@@COND_i386_efi_FALSE@@COND_i386_ieee1275_FALSE@@COND_i386_multiboot_FALSE@@COND_i386_pc_FALSE@@COND_i386_qemu_FALSE@@COND_i386_xen_FALSE@@COND_i386_xen_pvh_FALSE@@COND_ia64_efi_TRUE@	kern/kernel_exec-compiler-rt.$(OBJEXT) \
+ @COND_arm64_efi_FALSE@@COND_arm_coreboot_FALSE@@COND_arm_efi_FALSE@@COND_arm_uboot_FALSE@@COND_emu_FALSE@@COND_i386_coreboot_FALSE@@COND_i386_efi_FALSE@@COND_i386_ieee1275_FALSE@@COND_i386_multiboot_FALSE@@COND_i386_pc_FALSE@@COND_i386_qemu_FALSE@@COND_i386_xen_FALSE@@COND_i386_xen_pvh_FALSE@@COND_ia64_efi_TRUE@	kern/kernel_exec-mm.$(OBJEXT) \
+ @COND_arm64_efi_FALSE@@COND_arm_coreboot_FALSE@@COND_arm_efi_FALSE@@COND_arm_uboot_FALSE@@COND_emu_FALSE@@COND_i386_coreboot_FALSE@@COND_i386_efi_FALSE@@COND_i386_ieee1275_FALSE@@COND_i386_multiboot_FALSE@@COND_i386_pc_FALSE@@COND_i386_qemu_FALSE@@COND_i386_xen_FALSE@@COND_i386_xen_pvh_FALSE@@COND_ia64_efi_TRUE@	kern/kernel_exec-time.$(OBJEXT) \
+@@ -11109,6 +11114,7 @@ am__kernel_exec_SOURCES_DIST = kern/arm64/efi/startup.S \
+ @COND_arm64_efi_FALSE@@COND_arm_coreboot_FALSE@@COND_arm_efi_FALSE@@COND_arm_uboot_FALSE@@COND_emu_FALSE@@COND_i386_coreboot_FALSE@@COND_i386_efi_TRUE@	term/efi/kernel_exec-console.$(OBJEXT) \
+ @COND_arm64_efi_FALSE@@COND_arm_coreboot_FALSE@@COND_arm_efi_FALSE@@COND_arm_uboot_FALSE@@COND_emu_FALSE@@COND_i386_coreboot_FALSE@@COND_i386_efi_TRUE@	kern/kernel_exec-acpi.$(OBJEXT) \
+ @COND_arm64_efi_FALSE@@COND_arm_coreboot_FALSE@@COND_arm_efi_FALSE@@COND_arm_uboot_FALSE@@COND_emu_FALSE@@COND_i386_coreboot_FALSE@@COND_i386_efi_TRUE@	kern/efi/kernel_exec-acpi.$(OBJEXT) \
++@COND_arm64_efi_FALSE@@COND_arm_coreboot_FALSE@@COND_arm_efi_FALSE@@COND_arm_uboot_FALSE@@COND_emu_FALSE@@COND_i386_coreboot_FALSE@@COND_i386_efi_TRUE@	kern/efi/kernel_exec-sb.$(OBJEXT) \
+ @COND_arm64_efi_FALSE@@COND_arm_coreboot_FALSE@@COND_arm_efi_FALSE@@COND_arm_uboot_FALSE@@COND_emu_FALSE@@COND_i386_coreboot_FALSE@@COND_i386_efi_TRUE@	kern/kernel_exec-compiler-rt.$(OBJEXT) \
+ @COND_arm64_efi_FALSE@@COND_arm_coreboot_FALSE@@COND_arm_efi_FALSE@@COND_arm_uboot_FALSE@@COND_emu_FALSE@@COND_i386_coreboot_FALSE@@COND_i386_efi_TRUE@	kern/kernel_exec-mm.$(OBJEXT) \
+ @COND_arm64_efi_FALSE@@COND_arm_coreboot_FALSE@@COND_arm_efi_FALSE@@COND_arm_uboot_FALSE@@COND_emu_FALSE@@COND_i386_coreboot_FALSE@@COND_i386_efi_TRUE@	kern/kernel_exec-time.$(OBJEXT) \
+@@ -11271,6 +11277,7 @@ am__kernel_exec_SOURCES_DIST = kern/arm64/efi/startup.S \
+ @COND_arm64_efi_FALSE@@COND_arm_coreboot_FALSE@@COND_arm_efi_TRUE@	term/efi/kernel_exec-console.$(OBJEXT) \
+ @COND_arm64_efi_FALSE@@COND_arm_coreboot_FALSE@@COND_arm_efi_TRUE@	kern/kernel_exec-acpi.$(OBJEXT) \
+ @COND_arm64_efi_FALSE@@COND_arm_coreboot_FALSE@@COND_arm_efi_TRUE@	kern/efi/kernel_exec-acpi.$(OBJEXT) \
++@COND_arm64_efi_FALSE@@COND_arm_coreboot_FALSE@@COND_arm_efi_TRUE@	kern/efi/kernel_exec-sb.$(OBJEXT) \
+ @COND_arm64_efi_FALSE@@COND_arm_coreboot_FALSE@@COND_arm_efi_TRUE@	kern/kernel_exec-compiler-rt.$(OBJEXT) \
+ @COND_arm64_efi_FALSE@@COND_arm_coreboot_FALSE@@COND_arm_efi_TRUE@	kern/kernel_exec-mm.$(OBJEXT) \
+ @COND_arm64_efi_FALSE@@COND_arm_coreboot_FALSE@@COND_arm_efi_TRUE@	kern/kernel_exec-time.$(OBJEXT) \
+@@ -11360,6 +11367,7 @@ am__kernel_exec_SOURCES_DIST = kern/arm64/efi/startup.S \
+ @COND_arm64_efi_TRUE@	term/efi/kernel_exec-console.$(OBJEXT) \
+ @COND_arm64_efi_TRUE@	kern/kernel_exec-acpi.$(OBJEXT) \
+ @COND_arm64_efi_TRUE@	kern/efi/kernel_exec-acpi.$(OBJEXT) \
++@COND_arm64_efi_TRUE@	kern/efi/kernel_exec-sb.$(OBJEXT) \
+ @COND_arm64_efi_TRUE@	kern/kernel_exec-compiler-rt.$(OBJEXT) \
+ @COND_arm64_efi_TRUE@	kern/kernel_exec-mm.$(OBJEXT) \
+ @COND_arm64_efi_TRUE@	kern/kernel_exec-time.$(OBJEXT) \
+@@ -16380,6 +16388,7 @@ KERNEL_HEADER_FILES = $(top_srcdir)/include/grub/cache.h \
+ 	$(top_srcdir)/include/grub/device.h \
+ 	$(top_srcdir)/include/grub/disk.h \
+ 	$(top_srcdir)/include/grub/dl.h \
++	$(top_srcdir)/include/grub/efi/sb.h \
+ 	$(top_srcdir)/include/grub/env.h \
+ 	$(top_srcdir)/include/grub/env_private.h \
+ 	$(top_srcdir)/include/grub/err.h \
+@@ -25612,7 +25621,7 @@ gcry_whirlpool_module_DEPENDENCIES = $(TARGET_OBJ2ELF)
+ @COND_arm64_efi_TRUE@	kern/arm64/dl_helper.c disk/efi/efidisk.c \
+ @COND_arm64_efi_TRUE@	kern/efi/efi.c kern/efi/init.c \
+ @COND_arm64_efi_TRUE@	kern/efi/mm.c term/efi/console.c \
+-@COND_arm64_efi_TRUE@	kern/acpi.c kern/efi/acpi.c \
++@COND_arm64_efi_TRUE@	kern/acpi.c kern/efi/acpi.c kern/efi/sb.c \
+ @COND_arm64_efi_TRUE@	kern/compiler-rt.c kern/mm.c kern/time.c \
+ @COND_arm64_efi_TRUE@	kern/generic/millisleep.c kern/command.c \
+ @COND_arm64_efi_TRUE@	kern/corecmd.c kern/device.c kern/disk.c \
+@@ -25661,8 +25670,8 @@ gcry_whirlpool_module_DEPENDENCIES = $(TARGET_OBJ2ELF)
+ @COND_arm_efi_TRUE@	disk/efi/efidisk.c kern/efi/efi.c \
+ @COND_arm_efi_TRUE@	kern/efi/init.c kern/efi/mm.c \
+ @COND_arm_efi_TRUE@	term/efi/console.c kern/acpi.c \
+-@COND_arm_efi_TRUE@	kern/efi/acpi.c kern/compiler-rt.c \
+-@COND_arm_efi_TRUE@	kern/mm.c kern/time.c \
++@COND_arm_efi_TRUE@	kern/efi/acpi.c kern/efi/sb.c \
++@COND_arm_efi_TRUE@	kern/compiler-rt.c kern/mm.c kern/time.c \
+ @COND_arm_efi_TRUE@	kern/generic/millisleep.c kern/command.c \
+ @COND_arm_efi_TRUE@	kern/corecmd.c kern/device.c kern/disk.c \
+ @COND_arm_efi_TRUE@	kern/dl.c kern/env.c kern/err.c kern/file.c \
+@@ -25739,7 +25748,7 @@ gcry_whirlpool_module_DEPENDENCIES = $(TARGET_OBJ2ELF)
+ @COND_i386_efi_TRUE@	kern/i386/tsc_pit.c disk/efi/efidisk.c \
+ @COND_i386_efi_TRUE@	kern/efi/efi.c kern/efi/init.c \
+ @COND_i386_efi_TRUE@	kern/efi/mm.c term/efi/console.c \
+-@COND_i386_efi_TRUE@	kern/acpi.c kern/efi/acpi.c \
++@COND_i386_efi_TRUE@	kern/acpi.c kern/efi/acpi.c kern/efi/sb.c \
+ @COND_i386_efi_TRUE@	kern/compiler-rt.c kern/mm.c kern/time.c \
+ @COND_i386_efi_TRUE@	kern/generic/millisleep.c kern/command.c \
+ @COND_i386_efi_TRUE@	kern/corecmd.c kern/device.c kern/disk.c \
+@@ -25851,7 +25860,7 @@ gcry_whirlpool_module_DEPENDENCIES = $(TARGET_OBJ2ELF)
+ @COND_ia64_efi_TRUE@	lib/division.c disk/efi/efidisk.c \
+ @COND_ia64_efi_TRUE@	kern/efi/efi.c kern/efi/init.c \
+ @COND_ia64_efi_TRUE@	kern/efi/mm.c term/efi/console.c \
+-@COND_ia64_efi_TRUE@	kern/acpi.c kern/efi/acpi.c \
++@COND_ia64_efi_TRUE@	kern/acpi.c kern/efi/acpi.c kern/efi/sb.c \
+ @COND_ia64_efi_TRUE@	kern/compiler-rt.c kern/mm.c kern/time.c \
+ @COND_ia64_efi_TRUE@	kern/generic/millisleep.c kern/command.c \
+ @COND_ia64_efi_TRUE@	kern/corecmd.c kern/device.c kern/disk.c \
+@@ -25959,9 +25968,9 @@ gcry_whirlpool_module_DEPENDENCIES = $(TARGET_OBJ2ELF)
+ @COND_riscv32_efi_TRUE@	disk/efi/efidisk.c kern/efi/efi.c \
+ @COND_riscv32_efi_TRUE@	kern/efi/init.c kern/efi/mm.c \
+ @COND_riscv32_efi_TRUE@	term/efi/console.c kern/acpi.c \
+-@COND_riscv32_efi_TRUE@	kern/efi/acpi.c kern/compiler-rt.c \
+-@COND_riscv32_efi_TRUE@	kern/mm.c kern/time.c \
+-@COND_riscv32_efi_TRUE@	kern/generic/millisleep.c \
++@COND_riscv32_efi_TRUE@	kern/efi/acpi.c kern/efi/sb.c \
++@COND_riscv32_efi_TRUE@	kern/compiler-rt.c kern/mm.c \
++@COND_riscv32_efi_TRUE@	kern/time.c kern/generic/millisleep.c \
+ @COND_riscv32_efi_TRUE@	kern/command.c kern/corecmd.c \
+ @COND_riscv32_efi_TRUE@	kern/device.c kern/disk.c kern/dl.c \
+ @COND_riscv32_efi_TRUE@	kern/env.c kern/err.c kern/file.c \
+@@ -25977,8 +25986,9 @@ gcry_whirlpool_module_DEPENDENCIES = $(TARGET_OBJ2ELF)
+ @COND_riscv64_efi_TRUE@	kern/efi/efi.c kern/efi/init.c \
+ @COND_riscv64_efi_TRUE@	kern/efi/mm.c term/efi/console.c \
+ @COND_riscv64_efi_TRUE@	kern/acpi.c kern/efi/acpi.c \
+-@COND_riscv64_efi_TRUE@	kern/compiler-rt.c kern/mm.c \
+-@COND_riscv64_efi_TRUE@	kern/time.c kern/generic/millisleep.c \
++@COND_riscv64_efi_TRUE@	kern/efi/sb.c kern/compiler-rt.c \
++@COND_riscv64_efi_TRUE@	kern/mm.c kern/time.c \
++@COND_riscv64_efi_TRUE@	kern/generic/millisleep.c \
+ @COND_riscv64_efi_TRUE@	kern/command.c kern/corecmd.c \
+ @COND_riscv64_efi_TRUE@	kern/device.c kern/disk.c kern/dl.c \
+ @COND_riscv64_efi_TRUE@	kern/env.c kern/err.c kern/file.c \
+@@ -26022,7 +26032,8 @@ gcry_whirlpool_module_DEPENDENCIES = $(TARGET_OBJ2ELF)
+ @COND_x86_64_efi_TRUE@	kern/efi/efi.c kern/efi/init.c \
+ @COND_x86_64_efi_TRUE@	kern/efi/mm.c term/efi/console.c \
+ @COND_x86_64_efi_TRUE@	kern/acpi.c kern/efi/acpi.c \
+-@COND_x86_64_efi_TRUE@	kern/compiler-rt.c kern/mm.c kern/time.c \
++@COND_x86_64_efi_TRUE@	kern/efi/sb.c kern/compiler-rt.c \
++@COND_x86_64_efi_TRUE@	kern/mm.c kern/time.c \
+ @COND_x86_64_efi_TRUE@	kern/generic/millisleep.c kern/command.c \
+ @COND_x86_64_efi_TRUE@	kern/corecmd.c kern/device.c kern/disk.c \
+ @COND_x86_64_efi_TRUE@	kern/dl.c kern/env.c kern/err.c \
+@@ -27989,6 +28000,8 @@ kern/kernel_exec-acpi.$(OBJEXT): kern/$(am__dirstamp) \
+ 	kern/$(DEPDIR)/$(am__dirstamp)
+ kern/efi/kernel_exec-acpi.$(OBJEXT): kern/efi/$(am__dirstamp) \
+ 	kern/efi/$(DEPDIR)/$(am__dirstamp)
++kern/efi/kernel_exec-sb.$(OBJEXT): kern/efi/$(am__dirstamp) \
++	kern/efi/$(DEPDIR)/$(am__dirstamp)
+ kern/kernel_exec-compiler-rt.$(OBJEXT): kern/$(am__dirstamp) \
+ 	kern/$(DEPDIR)/$(am__dirstamp)
+ kern/kernel_exec-mm.$(OBJEXT): kern/$(am__dirstamp) \
+@@ -30994,6 +31007,7 @@ distclean-compile:
+ @AMDEP_TRUE@@am__include@ @am__quote@kern/efi/$(DEPDIR)/kernel_exec-fdt.Po@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@kern/efi/$(DEPDIR)/kernel_exec-init.Po@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@kern/efi/$(DEPDIR)/kernel_exec-mm.Po@am__quote@
++@AMDEP_TRUE@@am__include@ @am__quote@kern/efi/$(DEPDIR)/kernel_exec-sb.Po@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@kern/emu/$(DEPDIR)/grub_emu-full.Po@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@kern/emu/$(DEPDIR)/grub_emu_lite-lite.Po@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@kern/emu/$(DEPDIR)/kernel_exec-argp_common.Po@am__quote@
+@@ -35285,6 +35299,20 @@ kern/efi/kernel_exec-acpi.obj: kern/efi/acpi.c
+ @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+ @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(kernel_exec_CPPFLAGS) $(CPPFLAGS) $(kernel_exec_CFLAGS) $(CFLAGS) -c -o kern/efi/kernel_exec-acpi.obj `if test -f 'kern/efi/acpi.c'; then $(CYGPATH_W) 'kern/efi/acpi.c'; else $(CYGPATH_W) '$(srcdir)/kern/efi/acpi.c'; fi`
+ 
++kern/efi/kernel_exec-sb.o: kern/efi/sb.c
++@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(kernel_exec_CPPFLAGS) $(CPPFLAGS) $(kernel_exec_CFLAGS) $(CFLAGS) -MT kern/efi/kernel_exec-sb.o -MD -MP -MF kern/efi/$(DEPDIR)/kernel_exec-sb.Tpo -c -o kern/efi/kernel_exec-sb.o `test -f 'kern/efi/sb.c' || echo '$(srcdir)/'`kern/efi/sb.c
++@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) kern/efi/$(DEPDIR)/kernel_exec-sb.Tpo kern/efi/$(DEPDIR)/kernel_exec-sb.Po
++@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='kern/efi/sb.c' object='kern/efi/kernel_exec-sb.o' libtool=no @AMDEPBACKSLASH@
++@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
++@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(kernel_exec_CPPFLAGS) $(CPPFLAGS) $(kernel_exec_CFLAGS) $(CFLAGS) -c -o kern/efi/kernel_exec-sb.o `test -f 'kern/efi/sb.c' || echo '$(srcdir)/'`kern/efi/sb.c
++
++kern/efi/kernel_exec-sb.obj: kern/efi/sb.c
++@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(kernel_exec_CPPFLAGS) $(CPPFLAGS) $(kernel_exec_CFLAGS) $(CFLAGS) -MT kern/efi/kernel_exec-sb.obj -MD -MP -MF kern/efi/$(DEPDIR)/kernel_exec-sb.Tpo -c -o kern/efi/kernel_exec-sb.obj `if test -f 'kern/efi/sb.c'; then $(CYGPATH_W) 'kern/efi/sb.c'; else $(CYGPATH_W) '$(srcdir)/kern/efi/sb.c'; fi`
++@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) kern/efi/$(DEPDIR)/kernel_exec-sb.Tpo kern/efi/$(DEPDIR)/kernel_exec-sb.Po
++@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='kern/efi/sb.c' object='kern/efi/kernel_exec-sb.obj' libtool=no @AMDEPBACKSLASH@
++@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
++@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(kernel_exec_CPPFLAGS) $(CPPFLAGS) $(kernel_exec_CFLAGS) $(CFLAGS) -c -o kern/efi/kernel_exec-sb.obj `if test -f 'kern/efi/sb.c'; then $(CYGPATH_W) 'kern/efi/sb.c'; else $(CYGPATH_W) '$(srcdir)/kern/efi/sb.c'; fi`
++
+ kern/kernel_exec-compiler-rt.o: kern/compiler-rt.c
+ @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(kernel_exec_CPPFLAGS) $(CPPFLAGS) $(kernel_exec_CFLAGS) $(CFLAGS) -MT kern/kernel_exec-compiler-rt.o -MD -MP -MF kern/$(DEPDIR)/kernel_exec-compiler-rt.Tpo -c -o kern/kernel_exec-compiler-rt.o `test -f 'kern/compiler-rt.c' || echo '$(srcdir)/'`kern/compiler-rt.c
+ @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) kern/$(DEPDIR)/kernel_exec-compiler-rt.Tpo kern/$(DEPDIR)/kernel_exec-compiler-rt.Po
+diff --git a/grub-core/kern/efi/sb.c b/grub-core/kern/efi/sb.c
+new file mode 100644
+index 0000000..19658d9
+--- /dev/null
++++ b/grub-core/kern/efi/sb.c
+@@ -0,0 +1,109 @@
++/*
++ *  GRUB  --  GRand Unified Bootloader
++ *  Copyright (C) 2020  Free Software Foundation, Inc.
++ *
++ *  GRUB is free software: you can redistribute it and/or modify
++ *  it under the terms of the GNU General Public License as published by
++ *  the Free Software Foundation, either version 3 of the License, or
++ *  (at your option) any later version.
++ *
++ *  GRUB is distributed in the hope that it will be useful,
++ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ *  GNU General Public License for more details.
++ *
++ *  You should have received a copy of the GNU General Public License
++ *  along with GRUB.  If not, see <http://www.gnu.org/licenses/>.
++ *
++ *  UEFI Secure Boot related checkings.
++ */
++
++#include <grub/efi/efi.h>
++#include <grub/efi/pe32.h>
++#include <grub/efi/sb.h>
++#include <grub/err.h>
++#include <grub/i386/linux.h>
++#include <grub/mm.h>
++#include <grub/types.h>
++
++/*
++ * Determine whether we're in secure boot mode.
++ *
++ * Please keep the logic in sync with the Linux kernel,
++ * drivers/firmware/efi/libstub/secureboot.c:efi_get_secureboot().
++ */
++grub_uint8_t
++grub_efi_get_secureboot (void)
++{
++  static grub_efi_guid_t efi_variable_guid = GRUB_EFI_GLOBAL_VARIABLE_GUID;
++  static grub_efi_guid_t efi_shim_lock_guid = GRUB_EFI_SHIM_LOCK_GUID;
++  grub_efi_status_t status;
++  grub_efi_uint32_t attr = 0;
++  grub_size_t size = 0;
++  grub_uint8_t *secboot = NULL;
++  grub_uint8_t *setupmode = NULL;
++  grub_uint8_t *moksbstate = NULL;
++  grub_uint8_t secureboot = GRUB_EFI_SECUREBOOT_MODE_UNKNOWN;
++  const char *secureboot_str = "UNKNOWN";
++
++  status = grub_efi_get_variable ("SecureBoot", &efi_variable_guid,
++				  &size, (void **) &secboot);
++
++  if (status == GRUB_EFI_NOT_FOUND)
++    {
++      secureboot = GRUB_EFI_SECUREBOOT_MODE_DISABLED;
++      goto out;
++    }
++
++  if (status != GRUB_EFI_SUCCESS)
++    goto out;
++
++  status = grub_efi_get_variable ("SetupMode", &efi_variable_guid,
++				  &size, (void **) &setupmode);
++
++  if (status != GRUB_EFI_SUCCESS)
++    goto out;
++
++  if ((*secboot == 0) || (*setupmode == 1))
++    {
++      secureboot = GRUB_EFI_SECUREBOOT_MODE_DISABLED;
++      goto out;
++    }
++
++  /*
++   * See if a user has put the shim into insecure mode. If so, and if the
++   * variable doesn't have the runtime attribute set, we might as well
++   * honor that.
++   */
++  status = grub_efi_get_variable_with_attributes ("MokSBState", &efi_shim_lock_guid,
++						  &size, (void **) &moksbstate, &attr);
++
++  /* If it fails, we don't care why. Default to secure. */
++  if (status != GRUB_EFI_SUCCESS)
++    {
++      secureboot = GRUB_EFI_SECUREBOOT_MODE_ENABLED;
++      goto out;
++    }
++
++  if (!(attr & GRUB_EFI_VARIABLE_RUNTIME_ACCESS) && *moksbstate == 1)
++    {
++      secureboot = GRUB_EFI_SECUREBOOT_MODE_DISABLED;
++      goto out;
++    }
++
++  secureboot = GRUB_EFI_SECUREBOOT_MODE_ENABLED;
++
++ out:
++  grub_free (moksbstate);
++  grub_free (setupmode);
++  grub_free (secboot);
++
++  if (secureboot == GRUB_EFI_SECUREBOOT_MODE_DISABLED)
++    secureboot_str = "Disabled";
++  else if (secureboot == GRUB_EFI_SECUREBOOT_MODE_ENABLED)
++    secureboot_str = "Enabled";
++
++  grub_dprintf ("efi", "UEFI Secure Boot state: %s\n", secureboot_str);
++
++  return secureboot;
++}
+diff --git a/include/grub/efi/sb.h b/include/grub/efi/sb.h
+new file mode 100644
+index 0000000..a33d985
+--- /dev/null
++++ b/include/grub/efi/sb.h
+@@ -0,0 +1,40 @@
++/*
++ *  GRUB  --  GRand Unified Bootloader
++ *  Copyright (C) 2020  Free Software Foundation, Inc.
++ *
++ *  GRUB is free software: you can redistribute it and/or modify
++ *  it under the terms of the GNU General Public License as published by
++ *  the Free Software Foundation, either version 3 of the License, or
++ *  (at your option) any later version.
++ *
++ *  GRUB is distributed in the hope that it will be useful,
++ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ *  GNU General Public License for more details.
++ *
++ *  You should have received a copy of the GNU General Public License
++ *  along with GRUB.  If not, see <http://www.gnu.org/licenses/>.
++ */
++
++#ifndef GRUB_EFI_SB_H
++#define GRUB_EFI_SB_H     1
++
++#include <grub/types.h>
++#include <grub/dl.h>
++
++#define GRUB_EFI_SECUREBOOT_MODE_UNSET	0
++#define GRUB_EFI_SECUREBOOT_MODE_UNKNOWN	1
++#define GRUB_EFI_SECUREBOOT_MODE_DISABLED	2
++#define GRUB_EFI_SECUREBOOT_MODE_ENABLED	3
++
++#ifdef GRUB_MACHINE_EFI
++extern grub_uint8_t
++EXPORT_FUNC (grub_efi_get_secureboot) (void);
++#else
++static inline grub_uint8_t
++grub_efi_get_secureboot (void)
++{
++  return GRUB_EFI_SECUREBOOT_MODE_UNSET;
++}
++#endif
++#endif /* GRUB_EFI_SB_H */
+diff --git a/po/POTFILES.in b/po/POTFILES.in
+index 5574cbe..22543be 100644
+--- a/po/POTFILES.in
++++ b/po/POTFILES.in
+@@ -266,6 +266,7 @@
+ ./grub-core/kern/efi/fdt.c
+ ./grub-core/kern/efi/init.c
+ ./grub-core/kern/efi/mm.c
++./grub-core/kern/efi/sb.c
+ ./grub-core/kern/elf.c
+ ./grub-core/kern/elfXX.c
+ ./grub-core/kern/emu/argp_common.c
+@@ -1053,6 +1054,7 @@
+ ./include/grub/efi/memory.h
+ ./include/grub/efi/pci.h
+ ./include/grub/efi/pe32.h
++./include/grub/efi/sb.h
+ ./include/grub/efi/tpm.h
+ ./include/grub/efi/uga_draw.h
+ ./include/grub/efiemu/efiemu.h
+-- 
+2.14.2
+

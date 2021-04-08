@@ -6,6 +6,8 @@ config BR2_PACKAGE_BATMAN_ADV
 	depends on BR2_LINUX_KERNEL
 	help
 	  batman-adv mesh networking kernel module
+	  Note: batman-adv is part of the linux mainline
+	  kernel since version 2.6.38
 
 	  https://www.open-mesh.org/projects/batman-adv/
 

@@ -1,5 +1,5 @@
-# From https://www.python.org/downloads/release/python-392/
-md5  f0dc9000312abeb16de4eccce9a870ab  Python-3.9.2.tar.xz
+# From https://www.python.org/downloads/release/python-394/
+md5  2a3dba5fc75b695c45cf1806156e1a97  Python-3.9.4.tar.xz
 # Locally computed
-sha256  3c2034c54f811448f516668dce09d24008a0716c3a794dd8639b5388cbde247d  Python-3.9.2.tar.xz
+sha256  4b0e6644a76f8df864ae24ac500a51bbf68bd098f6a173e27d3b61cdca9aa134  Python-3.9.4.tar.xz
 sha256  599826df92bfdcd2702eac691072498bb096c55af04ee984cf90f70ed77b5a70  LICENSE

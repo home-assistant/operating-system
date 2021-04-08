@@ -21,6 +21,11 @@ ifeq ($(BR2_i386)$(BR2_x86_64)$(BR2_arm)$(BR2_armeb),)
 MICROPYTHON_CFLAGS = -DMICROPY_GCREGS_SETJMP=1
 endif
 
+# xtensa has problems with nlr_push, use setjmp based implementation instead
+ifeq ($(BR2_xtensa),y)
+MICROPYTHON_CFLAGS = -DMICROPY_NLR_SETJMP=1
+endif
+
 # When building from a tarball we don't have some of the dependencies that are in
 # the git repository as submodules
 MICROPYTHON_MAKE_OPTS += \

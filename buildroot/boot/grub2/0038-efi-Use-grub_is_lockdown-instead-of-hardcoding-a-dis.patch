@@ -1,0 +1,232 @@
+From 8f73052885892bc0dbc01e297f79d7cf4925e491 Mon Sep 17 00:00:00 2001
+From: Javier Martinez Canillas <javierm@redhat.com>
+Date: Mon, 28 Sep 2020 20:08:33 +0200
+Subject: [PATCH] efi: Use grub_is_lockdown() instead of hardcoding a disabled
+ modules list
+
+Now the GRUB can check if it has been locked down and this can be used to
+prevent executing commands that can be utilized to circumvent the UEFI
+Secure Boot mechanisms. So, instead of hardcoding a list of modules that
+have to be disabled, prevent the usage of commands that can be dangerous.
+
+This not only allows the commands to be disabled on other platforms, but
+also properly separate the concerns. Since the shim_lock verifier logic
+should be only about preventing to run untrusted binaries and not about
+defining these kind of policies.
+
+Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
+Reviewed-by: Daniel Kiper <daniel.kiper@oracle.com>
+Signed-off-by: Stefan Sørensen <stefan.sorensen@spectralink.com>
+---
+ docs/grub.texi                  | 15 +++++++++------
+ grub-core/commands/i386/wrmsr.c |  5 +++--
+ grub-core/commands/iorw.c       | 19 ++++++++++---------
+ grub-core/commands/memrw.c      | 19 ++++++++++---------
+ grub-core/kern/efi/sb.c         | 41 -----------------------------------------
+ 5 files changed, 32 insertions(+), 67 deletions(-)
+
+diff --git a/docs/grub.texi b/docs/grub.texi
+index bdbb329..bbe60a4 100644
+--- a/docs/grub.texi
++++ b/docs/grub.texi
+@@ -5256,6 +5256,9 @@ only applies to the particular cpu/core/thread that runs the command.
+ Also, if you specify a reserved or unimplemented MSR address, it will
+ cause a general protection exception (which is not currently being handled)
+ and the system will reboot.
++
++Note: The command is not allowed when lockdown is enforced (@pxref{Lockdown}).
++      This is done to prevent subverting various security mechanisms.
+ @end deffn
+ 
+ @node xen_hypervisor
+@@ -5752,12 +5755,12 @@ boot and the shim. This functionality is provided by the shim_lock verifier. It
+ is built into the @file{core.img} and is registered if the UEFI secure boot is
+ enabled.
+ 
+-All modules not stored in the @file{core.img} and the ACPI tables for the
+-@command{acpi} command have to be signed, e.g. using PGP. Additionally, the
+-@command{iorw}, the @command{memrw} and the @command{wrmsr} commands are
+-prohibited if the UEFI secure boot is enabled. This is done due to
+-security reasons. All above mentioned requirements are enforced by the
+-shim_lock verifier logic.
++All GRUB modules not stored in the @file{core.img}, OS kernels, ACPI tables,
++Device Trees, etc. have to be signed, e.g, using PGP. Additionally, the commands
++that can be used to subvert the UEFI secure boot mechanism, such as @command{iorw}
++and @command{memrw} will not be available when the UEFI secure boot is enabled.
++This is done for security reasons and are enforced by the GRUB Lockdown mechanism
++(@pxref{Lockdown}).
+ 
+ @node Measured Boot
+ @section Measuring boot components
+diff --git a/grub-core/commands/i386/wrmsr.c b/grub-core/commands/i386/wrmsr.c
+index 9c5e510..56a29c2 100644
+--- a/grub-core/commands/i386/wrmsr.c
++++ b/grub-core/commands/i386/wrmsr.c
+@@ -24,6 +24,7 @@
+ #include <grub/env.h>
+ #include <grub/command.h>
+ #include <grub/extcmd.h>
++#include <grub/lockdown.h>
+ #include <grub/i18n.h>
+ #include <grub/i386/cpuid.h>
+ #include <grub/i386/wrmsr.h>
+@@ -83,8 +84,8 @@ grub_cmd_msr_write (grub_command_t cmd __attribute__ ((unused)), int argc, char
+ 
+ GRUB_MOD_INIT(wrmsr)
+ {
+-  cmd_write = grub_register_command ("wrmsr", grub_cmd_msr_write, N_("ADDR VALUE"),
+-				     N_("Write a value to a CPU model specific register."));
++  cmd_write = grub_register_command_lockdown ("wrmsr", grub_cmd_msr_write, N_("ADDR VALUE"),
++                                              N_("Write a value to a CPU model specific register."));
+ }
+ 
+ GRUB_MOD_FINI(wrmsr)
+diff --git a/grub-core/commands/iorw.c b/grub-core/commands/iorw.c
+index a0c164e..584baec 100644
+--- a/grub-core/commands/iorw.c
++++ b/grub-core/commands/iorw.c
+@@ -23,6 +23,7 @@
+ #include <grub/env.h>
+ #include <grub/cpu/io.h>
+ #include <grub/i18n.h>
++#include <grub/lockdown.h>
+ 
+ GRUB_MOD_LICENSE ("GPLv3+");
+ 
+@@ -131,17 +132,17 @@ GRUB_MOD_INIT(memrw)
+ 			  N_("PORT"), N_("Read 32-bit value from PORT."),
+ 			  options);
+   cmd_write_byte =
+-    grub_register_command ("outb", grub_cmd_write,
+-			   N_("PORT VALUE [MASK]"),
+-			   N_("Write 8-bit VALUE to PORT."));
++    grub_register_command_lockdown ("outb", grub_cmd_write,
++                                    N_("PORT VALUE [MASK]"),
++                                    N_("Write 8-bit VALUE to PORT."));
+   cmd_write_word =
+-    grub_register_command ("outw", grub_cmd_write,
+-			   N_("PORT VALUE [MASK]"),
+-			   N_("Write 16-bit VALUE to PORT."));
++    grub_register_command_lockdown ("outw", grub_cmd_write,
++                                    N_("PORT VALUE [MASK]"),
++                                    N_("Write 16-bit VALUE to PORT."));
+   cmd_write_dword =
+-    grub_register_command ("outl", grub_cmd_write,
+-			   N_("ADDR VALUE [MASK]"),
+-			   N_("Write 32-bit VALUE to PORT."));
++    grub_register_command_lockdown ("outl", grub_cmd_write,
++                                    N_("ADDR VALUE [MASK]"),
++                                    N_("Write 32-bit VALUE to PORT."));
+ }
+ 
+ GRUB_MOD_FINI(memrw)
+diff --git a/grub-core/commands/memrw.c b/grub-core/commands/memrw.c
+index 98769ea..d401a6d 100644
+--- a/grub-core/commands/memrw.c
++++ b/grub-core/commands/memrw.c
+@@ -22,6 +22,7 @@
+ #include <grub/extcmd.h>
+ #include <grub/env.h>
+ #include <grub/i18n.h>
++#include <grub/lockdown.h>
+ 
+ GRUB_MOD_LICENSE ("GPLv3+");
+ 
+@@ -133,17 +134,17 @@ GRUB_MOD_INIT(memrw)
+ 			  N_("ADDR"), N_("Read 32-bit value from ADDR."),
+ 			  options);
+   cmd_write_byte =
+-    grub_register_command ("write_byte", grub_cmd_write,
+-			   N_("ADDR VALUE [MASK]"),
+-			   N_("Write 8-bit VALUE to ADDR."));
++    grub_register_command_lockdown ("write_byte", grub_cmd_write,
++                                    N_("ADDR VALUE [MASK]"),
++                                    N_("Write 8-bit VALUE to ADDR."));
+   cmd_write_word =
+-    grub_register_command ("write_word", grub_cmd_write,
+-			   N_("ADDR VALUE [MASK]"),
+-			   N_("Write 16-bit VALUE to ADDR."));
++    grub_register_command_lockdown ("write_word", grub_cmd_write,
++                                    N_("ADDR VALUE [MASK]"),
++                                    N_("Write 16-bit VALUE to ADDR."));
+   cmd_write_dword =
+-    grub_register_command ("write_dword", grub_cmd_write,
+-			   N_("ADDR VALUE [MASK]"),
+-			   N_("Write 32-bit VALUE to ADDR."));
++    grub_register_command_lockdown ("write_dword", grub_cmd_write,
++                                    N_("ADDR VALUE [MASK]"),
++                                    N_("Write 32-bit VALUE to ADDR."));
+ }
+ 
+ GRUB_MOD_FINI(memrw)
+diff --git a/grub-core/kern/efi/sb.c b/grub-core/kern/efi/sb.c
+index ce3b7f6..5d7210a 100644
+--- a/grub-core/kern/efi/sb.c
++++ b/grub-core/kern/efi/sb.c
+@@ -30,9 +30,6 @@
+ 
+ static grub_efi_guid_t shim_lock_guid = GRUB_EFI_SHIM_LOCK_GUID;
+ 
+-/* List of modules which cannot be loaded if UEFI secure boot mode is enabled. */
+-static const char * const disabled_mods[] = {"iorw", "memrw", NULL};
+-
+ /*
+  * Determine whether we're in secure boot mode.
+  *
+@@ -121,53 +118,15 @@ shim_lock_verifier_init (grub_file_t io __attribute__ ((unused)),
+ 			 void **context __attribute__ ((unused)),
+ 			 enum grub_verify_flags *flags)
+ {
+-  const char *b, *e;
+-  int i;
+-
+   *flags = GRUB_VERIFY_FLAGS_SKIP_VERIFICATION;
+ 
+   switch (type & GRUB_FILE_TYPE_MASK)
+     {
+-    case GRUB_FILE_TYPE_GRUB_MODULE:
+-      /* Establish GRUB module name. */
+-      b = grub_strrchr (io->name, '/');
+-      e = grub_strrchr (io->name, '.');
+-
+-      b = b ? (b + 1) : io->name;
+-      e = e ? e : io->name + grub_strlen (io->name);
+-      e = (e > b) ? e : io->name + grub_strlen (io->name);
+-
+-      for (i = 0; disabled_mods[i]; i++)
+-	if (!grub_strncmp (b, disabled_mods[i], grub_strlen (b) - grub_strlen (e)))
+-	  {
+-	    grub_error (GRUB_ERR_ACCESS_DENIED,
+-			N_("module cannot be loaded in UEFI secure boot mode: %s"),
+-			io->name);
+-	    return GRUB_ERR_ACCESS_DENIED;
+-	  }
+-
+-      /* Fall through. */
+-
+-    case GRUB_FILE_TYPE_ACPI_TABLE:
+-    case GRUB_FILE_TYPE_DEVICE_TREE_IMAGE:
+-      *flags = GRUB_VERIFY_FLAGS_DEFER_AUTH;
+-
+-      return GRUB_ERR_NONE;
+-
+     case GRUB_FILE_TYPE_LINUX_KERNEL:
+     case GRUB_FILE_TYPE_MULTIBOOT_KERNEL:
+     case GRUB_FILE_TYPE_BSD_KERNEL:
+     case GRUB_FILE_TYPE_XNU_KERNEL:
+     case GRUB_FILE_TYPE_PLAN9_KERNEL:
+-      for (i = 0; disabled_mods[i]; i++)
+-	if (grub_dl_get (disabled_mods[i]))
+-	  {
+-	    grub_error (GRUB_ERR_ACCESS_DENIED,
+-			N_("cannot boot due to dangerous module in memory: %s"),
+-			disabled_mods[i]);
+-	    return GRUB_ERR_ACCESS_DENIED;
+-	  }
+-
+       *flags = GRUB_VERIFY_FLAGS_SINGLE_CHUNK;
+ 
+       /* Fall through. */
+-- 
+2.14.2
+

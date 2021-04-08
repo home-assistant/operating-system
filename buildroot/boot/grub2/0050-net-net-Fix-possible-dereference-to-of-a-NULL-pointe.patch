@@ -1,0 +1,40 @@
+From 03f2515ae0c503406f1a99a2178405049c6555db Mon Sep 17 00:00:00 2001
+From: Darren Kenny <darren.kenny@oracle.com>
+Date: Fri, 27 Nov 2020 15:10:26 +0000
+Subject: [PATCH] net/net: Fix possible dereference to of a NULL pointer
+
+It is always possible that grub_zalloc() could fail, so we should check for
+a NULL return. Otherwise we run the risk of dereferencing a NULL pointer.
+
+Fixes: CID 296221
+
+Signed-off-by: Darren Kenny <darren.kenny@oracle.com>
+Reviewed-by: Daniel Kiper <daniel.kiper@oracle.com>
+Signed-off-by: Stefan Sørensen <stefan.sorensen@spectralink.com>
+---
+ grub-core/net/net.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/grub-core/net/net.c b/grub-core/net/net.c
+index 38f19df..7c2cdf2 100644
+--- a/grub-core/net/net.c
++++ b/grub-core/net/net.c
+@@ -86,8 +86,13 @@ grub_net_link_layer_add_address (struct grub_net_card *card,
+ 
+   /* Add sender to cache table.  */
+   if (card->link_layer_table == NULL)
+-    card->link_layer_table = grub_zalloc (LINK_LAYER_CACHE_SIZE
+-					  * sizeof (card->link_layer_table[0]));
++    {
++      card->link_layer_table = grub_zalloc (LINK_LAYER_CACHE_SIZE
++					    * sizeof (card->link_layer_table[0]));
++      if (card->link_layer_table == NULL)
++	return;
++    }
++
+   entry = &(card->link_layer_table[card->new_ll_entry]);
+   entry->avail = 1;
+   grub_memcpy (&entry->ll_address, ll, sizeof (entry->ll_address));
+-- 
+2.14.2
+

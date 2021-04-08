@@ -1,0 +1,73 @@
+From ba44c87e56a8bccde235ebb7d41d5aa54604d241 Mon Sep 17 00:00:00 2001
+From: Peter Jones <pjones@redhat.com>
+Date: Mon, 15 Feb 2021 14:21:48 +0100
+Subject: [PATCH] util/mkimage: Reorder PE optional header fields set-up
+
+This makes the PE32 and PE32+ header fields set-up easier to follow by
+setting them closer to the initialization of their related sections.
+
+Signed-off-by: Peter Jones <pjones@redhat.com>
+Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
+Reviewed-by: Daniel Kiper <daniel.kiper@oracle.com>
+Signed-off-by: Stefan Sørensen <stefan.sorensen@spectralink.com>
+---
+ util/mkimage.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/util/mkimage.c b/util/mkimage.c
+index a039039..deaef56 100644
+--- a/util/mkimage.c
++++ b/util/mkimage.c
+@@ -1332,16 +1332,12 @@ grub_install_generate_image (const char *dir, const char *prefix,
+ 	    sections = o64 + 1;
+ 	  }
+ 
+-	PE_OHDR (o32, o64, code_size) = grub_host_to_target32 (layout.exec_size);
+-	PE_OHDR (o32, o64, data_size) = grub_host_to_target32 (reloc_addr - layout.exec_size - header_size);
++	PE_OHDR (o32, o64, header_size) = grub_host_to_target32 (header_size);
+ 	PE_OHDR (o32, o64, entry_addr) = grub_host_to_target32 (layout.start_address);
+-	PE_OHDR (o32, o64, code_base) = grub_host_to_target32 (header_size);
+-
+ 	PE_OHDR (o32, o64, image_base) = 0;
++	PE_OHDR (o32, o64, image_size) = grub_host_to_target32 (pe_size);
+ 	PE_OHDR (o32, o64, section_alignment) = grub_host_to_target32 (image_target->section_align);
+ 	PE_OHDR (o32, o64, file_alignment) = grub_host_to_target32 (GRUB_PE32_FILE_ALIGNMENT);
+-	PE_OHDR (o32, o64, image_size) = grub_host_to_target32 (pe_size);
+-	PE_OHDR (o32, o64, header_size) = grub_host_to_target32 (header_size);
+ 	PE_OHDR (o32, o64, subsystem) = grub_host_to_target16 (GRUB_PE32_SUBSYSTEM_EFI_APPLICATION);
+ 
+ 	/* Do these really matter? */
+@@ -1351,10 +1347,10 @@ grub_install_generate_image (const char *dir, const char *prefix,
+ 	PE_OHDR (o32, o64, heap_commit_size) = grub_host_to_target32 (0x10000);
+ 
+ 	PE_OHDR (o32, o64, num_data_directories) = grub_host_to_target32 (GRUB_PE32_NUM_DATA_DIRECTORIES);
+-	PE_OHDR (o32, o64, base_relocation_table.rva) = grub_host_to_target32 (reloc_addr);
+-	PE_OHDR (o32, o64, base_relocation_table.size) = grub_host_to_target32 (layout.reloc_size);
+ 
+ 	/* The sections.  */
++	PE_OHDR (o32, o64, code_base) = grub_host_to_target32 (header_size);
++	PE_OHDR (o32, o64, code_size) = grub_host_to_target32 (layout.exec_size);
+ 	text_section = sections;
+ 	strcpy (text_section->name, ".text");
+ 	text_section->virtual_size = grub_host_to_target32 (layout.exec_size);
+@@ -1366,6 +1362,8 @@ grub_install_generate_image (const char *dir, const char *prefix,
+ 						| GRUB_PE32_SCN_MEM_EXECUTE
+ 						| GRUB_PE32_SCN_MEM_READ);
+ 
++	PE_OHDR (o32, o64, data_size) = grub_host_to_target32 (reloc_addr - layout.exec_size - header_size);
++
+ 	data_section = text_section + 1;
+ 	strcpy (data_section->name, ".data");
+ 	data_section->virtual_size = grub_host_to_target32 (layout.kernel_size - layout.exec_size);
+@@ -1388,6 +1386,8 @@ grub_install_generate_image (const char *dir, const char *prefix,
+ 			      | GRUB_PE32_SCN_MEM_READ
+ 			      | GRUB_PE32_SCN_MEM_WRITE);
+ 
++	PE_OHDR (o32, o64, base_relocation_table.rva) = grub_host_to_target32 (reloc_addr);
++	PE_OHDR (o32, o64, base_relocation_table.size) = grub_host_to_target32 (layout.reloc_size);
+ 	reloc_section = mods_section + 1;
+ 	strcpy (reloc_section->name, ".reloc");
+ 	reloc_section->virtual_size = grub_host_to_target32 (layout.reloc_size);
+-- 
+2.14.2
+

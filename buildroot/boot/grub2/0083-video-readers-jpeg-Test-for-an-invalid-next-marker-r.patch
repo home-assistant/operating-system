@@ -1,0 +1,39 @@
+From 5f5eb7ca8e971227e95745abe541df3e1509360e Mon Sep 17 00:00:00 2001
+From: Darren Kenny <darren.kenny@oracle.com>
+Date: Fri, 4 Dec 2020 15:39:00 +0000
+Subject: [PATCH] video/readers/jpeg: Test for an invalid next marker reference
+ from a jpeg file
+
+While it may never happen, and potentially could be caught at the end of
+the function, it is worth checking up front for a bad reference to the
+next marker just in case of a maliciously crafted file being provided.
+
+Fixes: CID 73694
+
+Signed-off-by: Darren Kenny <darren.kenny@oracle.com>
+Reviewed-by: Daniel Kiper <daniel.kiper@oracle.com>
+Signed-off-by: Stefan Sørensen <stefan.sorensen@spectralink.com>
+---
+ grub-core/video/readers/jpeg.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/grub-core/video/readers/jpeg.c b/grub-core/video/readers/jpeg.c
+index 31359a4..0b6ce3c 100644
+--- a/grub-core/video/readers/jpeg.c
++++ b/grub-core/video/readers/jpeg.c
+@@ -253,6 +253,12 @@ grub_jpeg_decode_quan_table (struct grub_jpeg_data *data)
+   next_marker = data->file->offset;
+   next_marker += grub_jpeg_get_word (data);
+ 
++  if (next_marker > data->file->size)
++    {
++      /* Should never be set beyond the size of the file. */
++      return grub_error (GRUB_ERR_BAD_FILE_TYPE, "jpeg: invalid next reference");
++    }
++
+   while (data->file->offset + sizeof (data->quan_table[id]) + 1
+ 	 <= next_marker)
+     {
+-- 
+2.14.2
+

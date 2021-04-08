@@ -509,9 +509,6 @@ N:	Christian Kellermann <christian.kellermann@solectrix.de>
 F:	package/python-pylibftdi/
 
 N:	Christian Stewart <christian@paral.in>
-F:	linux/linux-ext-aufs.mk
-F:	package/aufs/
-F:	package/aufs-util/
 F:	package/batman-adv/
 F:	package/delve/
 F:	package/docker-cli/
@@ -1283,6 +1280,7 @@ F:	board/globalscale/espressobin/
 F:	package/mg/
 F:	package/netcalc/
 F:	package/ssdp-responder/
+F:	package/sysklogd/
 
 N:	Joao Pinto <jpinto@synopsys.com>
 F:	board/synopsys/vdk/
@@ -1943,7 +1941,7 @@ F:	package/php-xdebug/
 N:	Nicolas Cavallari <nicolas.cavallari@green-communications.fr>
 F:	package/libgit2/
 
-N:	Nicolas Serafini <nicolas.serafini@sensefly.com>
+N:	Nicolas Serafini <nicolas.serafini@ik.me>
 F:	package/exiv2/
 F:	package/ofono/
 
@@ -2309,6 +2307,8 @@ N:	Ryan Barnett <ryan.barnett@rockwellcollins.com>
 F:	package/atftp/
 F:	package/c-periphery/
 F:	package/miraclecast/
+F:	package/opkg/
+F:	package/opkg-utils/
 F:	package/python-pysnmp/
 F:	package/python-pysnmp-mibs/
 F:	package/python-tornado/

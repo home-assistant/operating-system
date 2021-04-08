@@ -1,0 +1,37 @@
+From 6b61b55807fdce5d09ea470e7b5c8ca1e40f724f Mon Sep 17 00:00:00 2001
+From: Peter Seiderer <ps.report@gmx.net>
+Date: Wed, 12 Aug 2020 21:10:36 +0200
+Subject: [PATCH] util: add fiemap fallback for errno ENOTTY
+
+On WSL-1, genimage fails with (see [1] for details):
+
+  ERROR: hdimage(sdcard.img): fiemap .../boot.vfat: 25 Inappropriate ioctl for device
+
+This is because WSL-1 is a limited Linux emulation layer, where the fiemap
+ioctl incorrectly returns ENOTTY instead of the expected EOPNOTSUPP.
+
+[1] https://bugs.busybox.net/show_bug.cgi?id=13146
+
+Signed-off-by: Peter Seiderer <ps.report@gmx.net>
+[From https://github.com/pengutronix/genimage/commit/4c2b02df0861e06ca9320d80ad60994d4a239ad6.patch]
+Signed-off-by: Peter Seiderer <ps.report@gmx.net>
+---
+ util.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/util.c b/util.c
+index 381c5d9..2dcf396 100644
+--- a/util.c
++++ b/util.c
+@@ -387,7 +387,7 @@ err_out:
+ 	free(fiemap);
+ 
+ 	/* If failure is due to no filesystem support, return a single extent */
+-	if (ret == -EOPNOTSUPP)
++	if (ret == -EOPNOTSUPP || ret == -ENOTTY)
+ 		return whole_file_exent(size, extents, extent_count);
+ 
+ 	image_error(image, "fiemap %s: %d %s\n", filename, errno, strerror(errno));
+-- 
+2.30.1
+

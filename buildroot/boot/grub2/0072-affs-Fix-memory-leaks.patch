@@ -1,0 +1,83 @@
+From 178ac5107389f8e5b32489d743d6824a5ebf342a Mon Sep 17 00:00:00 2001
+From: Darren Kenny <darren.kenny@oracle.com>
+Date: Thu, 26 Nov 2020 12:48:07 +0000
+Subject: [PATCH] affs: Fix memory leaks
+
+The node structure reference is being allocated but not freed if it
+reaches the end of the function. If any of the hooks had returned
+a non-zero value, then node would have been copied in to the context
+reference, but otherwise node is not stored and should be freed.
+
+Similarly, the call to grub_affs_create_node() replaces the allocated
+memory in node with a newly allocated structure, leaking the existing
+memory pointed by node.
+
+Finally, when dir->parent is set, then we again replace node with newly
+allocated memory, which seems unnecessary when we copy in the values
+from dir->parent immediately after.
+
+Fixes: CID 73759
+
+Signed-off-by: Darren Kenny <darren.kenny@oracle.com>
+Reviewed-by: Daniel Kiper <daniel.kiper@oracle.com>
+Signed-off-by: Stefan Sørensen <stefan.sorensen@spectralink.com>
+---
+ grub-core/fs/affs.c | 18 ++++++++----------
+ 1 file changed, 8 insertions(+), 10 deletions(-)
+
+diff --git a/grub-core/fs/affs.c b/grub-core/fs/affs.c
+index 220b371..230e26a 100644
+--- a/grub-core/fs/affs.c
++++ b/grub-core/fs/affs.c
+@@ -400,12 +400,12 @@ grub_affs_iterate_dir (grub_fshelp_node_t dir,
+ {
+   unsigned int i;
+   struct grub_affs_file file;
+-  struct grub_fshelp_node *node = 0;
++  struct grub_fshelp_node *node, *orig_node;
+   struct grub_affs_data *data = dir->data;
+   grub_uint32_t *hashtable;
+ 
+   /* Create the directory entries for `.' and `..'.  */
+-  node = grub_zalloc (sizeof (*node));
++  node = orig_node = grub_zalloc (sizeof (*node));
+   if (!node)
+     return 1;
+     
+@@ -414,9 +414,6 @@ grub_affs_iterate_dir (grub_fshelp_node_t dir,
+     return 1;
+   if (dir->parent)
+     {
+-      node = grub_zalloc (sizeof (*node));
+-      if (!node)
+-	return 1;
+       *node = *dir->parent;
+       if (hook ("..", GRUB_FSHELP_DIR, node, hook_data))
+ 	return 1;
+@@ -456,17 +453,18 @@ grub_affs_iterate_dir (grub_fshelp_node_t dir,
+ 
+ 	  if (grub_affs_create_node (dir, hook, hook_data, &node, &hashtable,
+ 				     next, &file))
+-	    return 1;
++	    {
++	      /* Node has been replaced in function. */
++	      grub_free (orig_node);
++	      return 1;
++	    }
+ 
+ 	  next = grub_be_to_cpu32 (file.next);
+ 	}
+     }
+ 
+-  grub_free (hashtable);
+-  return 0;
+-
+  fail:
+-  grub_free (node);
++  grub_free (orig_node);
+   grub_free (hashtable);
+   return 0;
+ }
+-- 
+2.14.2
+

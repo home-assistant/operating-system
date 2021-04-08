@@ -1,0 +1,34 @@
+From 0cb838b281a68b536a09681f9557ea6a7ac5da7a Mon Sep 17 00:00:00 2001
+From: Darren Kenny <darren.kenny@oracle.com>
+Date: Fri, 19 Feb 2021 17:12:23 +0000
+Subject: [PATCH] net/tftp: Fix dangling memory pointer
+
+The static code analysis tool, Parfait, reported that the valid of
+file->data was left referencing memory that was freed by the call to
+grub_free(data) where data was initialized from file->data.
+
+To ensure that there is no unintentional access to this memory
+referenced by file->data we should set the pointer to NULL.
+
+Signed-off-by: Darren Kenny <darren.kenny@oracle.com>
+Reviewed-by: Daniel Kiper <daniel.kiper@oracle.com>
+Signed-off-by: Stefan Sørensen <stefan.sorensen@spectralink.com>
+---
+ grub-core/net/tftp.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/grub-core/net/tftp.c b/grub-core/net/tftp.c
+index b4297bc..c106704 100644
+--- a/grub-core/net/tftp.c
++++ b/grub-core/net/tftp.c
+@@ -406,6 +406,7 @@ tftp_close (struct grub_file *file)
+       grub_net_udp_close (data->sock);
+     }
+   grub_free (data);
++  file->data = NULL;
+   return GRUB_ERR_NONE;
+ }
+ 
+-- 
+2.14.2
+
