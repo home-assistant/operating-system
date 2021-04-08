@@ -1,0 +1,51 @@
+From d06161b035dde4769199ad65aa0a587a5920012b Mon Sep 17 00:00:00 2001
+From: Darren Kenny <darren.kenny@oracle.com>
+Date: Fri, 22 Jan 2021 12:32:41 +0000
+Subject: [PATCH] kern/parser: Fix resource leak if argc == 0
+
+After processing the command-line yet arriving at the point where we are
+setting argv, we are allocating memory, even if argc == 0, which makes
+no sense since we never put anything into the allocated argv.
+
+The solution is to simply return that we've successfully processed the
+arguments but that argc == 0, and also ensure that argv is NULL when
+we're not allocating anything in it.
+
+There are only 2 callers of this function, and both are handling a zero
+value in argc assuming nothing is allocated in argv.
+
+Fixes: CID 96680
+
+Signed-off-by: Darren Kenny <darren.kenny@oracle.com>
+Reviewed-by: Daniel Kiper <daniel.kiper@oracle.com>
+Signed-off-by: Stefan Sørensen <stefan.sorensen@spectralink.com>
+---
+ grub-core/kern/parser.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/grub-core/kern/parser.c b/grub-core/kern/parser.c
+index 619db31..d1cf061 100644
+--- a/grub-core/kern/parser.c
++++ b/grub-core/kern/parser.c
+@@ -146,6 +146,7 @@ grub_parser_split_cmdline (const char *cmdline,
+   int i;
+ 
+   *argc = 0;
++  *argv = NULL;
+   do
+     {
+       if (!rd || !*rd)
+@@ -207,6 +208,10 @@ grub_parser_split_cmdline (const char *cmdline,
+       (*argc)++;
+     }
+ 
++  /* If there are no args, then we're done. */
++  if (!*argc)
++    return 0;
++
+   /* Reserve memory for the return values.  */
+   args = grub_malloc (bp - buffer);
+   if (!args)
+-- 
+2.14.2
+

@@ -10,6 +10,8 @@ PYTHON_ENUM34_SITE = https://files.pythonhosted.org/packages/11/c4/2da1f4952ba47
 PYTHON_ENUM34_SETUP_TYPE = setuptools
 PYTHON_ENUM34_LICENSE = BSD-3-Clause
 PYTHON_ENUM34_LICENSE_FILES = enum/LICENSE
+PYTHON_ENUM34_CPE_ID_VENDOR = python
+PYTHON_ENUM34_CPE_ID_PRODUCT = enum34
 
 $(eval $(python-package))
 $(eval $(host-python-package))

@@ -1,0 +1,33 @@
+From a9d8de960834f376087856f9d60a214b47c76f61 Mon Sep 17 00:00:00 2001
+From: Marco A Benatto <mbenatto@redhat.com>
+Date: Tue, 9 Feb 2021 12:33:06 -0300
+Subject: [PATCH] kern/mm: Fix grub_debug_calloc() compilation error
+
+Fix compilation error due to missing parameter to
+grub_printf() when MM_DEBUG is defined.
+
+Fixes: 64e26162e (calloc: Make sure we always have an overflow-checking calloc() available)
+
+Signed-off-by: Marco A Benatto <mbenatto@redhat.com>
+Reviewed-by: Daniel Kiper <daniel.kiper@oracle.com>
+Signed-off-by: Stefan Sørensen <stefan.sorensen@spectralink.com>
+---
+ grub-core/kern/mm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/grub-core/kern/mm.c b/grub-core/kern/mm.c
+index f2822a8..c070afc 100644
+--- a/grub-core/kern/mm.c
++++ b/grub-core/kern/mm.c
+@@ -594,7 +594,7 @@ grub_debug_calloc (const char *file, int line, grub_size_t nmemb, grub_size_t si
+ 
+   if (grub_mm_debug)
+     grub_printf ("%s:%d: calloc (0x%" PRIxGRUB_SIZE ", 0x%" PRIxGRUB_SIZE ") = ",
+-		 file, line, size);
++		 file, line, nmemb, size);
+   ptr = grub_calloc (nmemb, size);
+   if (grub_mm_debug)
+     grub_printf ("%p\n", ptr);
+-- 
+2.14.2
+

@@ -1,0 +1,6 @@
+config BR2_PACKAGE_PERL_PARSE_YAPP
+	bool "perl-parse-yapp"
+	help
+	  A perl frontend to the Parse::Yapp module.
+
+	  https://metacpan.org/release/Parse-Yapp

@@ -1,0 +1,67 @@
+From 18490336d91da2b532277cba56473bfed1376fc4 Mon Sep 17 00:00:00 2001
+From: Daniel Axtens <dja@axtens.net>
+Date: Thu, 21 Jan 2021 00:05:58 +1100
+Subject: [PATCH] io/gzio: Add init_dynamic_block() clean up if unpacking codes
+ fails
+
+init_dynamic_block() didn't clean up gzio->tl and td in some error
+paths. This left td pointing to part of tl. Then in grub_gzio_close(),
+when tl was freed the storage for td would also be freed. The code then
+attempts to free td explicitly, performing a UAF and then a double free.
+
+Explicitly clean up tl and td in the error paths.
+
+Signed-off-by: Daniel Axtens <dja@axtens.net>
+Reviewed-by: Daniel Kiper <daniel.kiper@oracle.com>
+Signed-off-by: Stefan Sørensen <stefan.sorensen@spectralink.com>
+---
+ grub-core/io/gzio.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
+
+diff --git a/grub-core/io/gzio.c b/grub-core/io/gzio.c
+index 4a8eaea..4236f0f 100644
+--- a/grub-core/io/gzio.c
++++ b/grub-core/io/gzio.c
+@@ -953,7 +953,7 @@ init_dynamic_block (grub_gzio_t gzio)
+ 	  if ((unsigned) i + j > n)
+ 	    {
+ 	      grub_error (GRUB_ERR_BAD_COMPRESSED_DATA, "too many codes found");
+-	      return;
++	      goto fail;
+ 	    }
+ 	  while (j--)
+ 	    ll[i++] = l;
+@@ -966,7 +966,7 @@ init_dynamic_block (grub_gzio_t gzio)
+ 	  if ((unsigned) i + j > n)
+ 	    {
+ 	      grub_error (GRUB_ERR_BAD_COMPRESSED_DATA, "too many codes found");
+-	      return;
++	      goto fail;
+ 	    }
+ 	  while (j--)
+ 	    ll[i++] = 0;
+@@ -981,7 +981,7 @@ init_dynamic_block (grub_gzio_t gzio)
+ 	  if ((unsigned) i + j > n)
+ 	    {
+ 	      grub_error (GRUB_ERR_BAD_COMPRESSED_DATA, "too many codes found");
+-	      return;
++	      goto fail;
+ 	    }
+ 	  while (j--)
+ 	    ll[i++] = 0;
+@@ -1019,6 +1019,12 @@ init_dynamic_block (grub_gzio_t gzio)
+   /* indicate we're now working on a block */
+   gzio->code_state = 0;
+   gzio->block_len++;
++  return;
++
++ fail:
++  huft_free (gzio->tl);
++  gzio->td = NULL;
++  gzio->tl = NULL;
+ }
+ 
+ 
+-- 
+2.14.2
+

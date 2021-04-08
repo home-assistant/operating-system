@@ -1,0 +1,78 @@
+From 4b4027b6b1c877d7ab467896b04c7bd1aadcfa15 Mon Sep 17 00:00:00 2001
+From: Marco A Benatto <mbenatto@redhat.com>
+Date: Mon, 30 Nov 2020 12:18:24 -0300
+Subject: [PATCH] loader/xnu: Free driverkey data when an error is detected in
+ grub_xnu_writetree_toheap()
+
+... to avoid memory leaks.
+
+Fixes: CID 96640
+
+Signed-off-by: Marco A Benatto <mbenatto@redhat.com>
+Reviewed-by: Daniel Kiper <daniel.kiper@oracle.com>
+Signed-off-by: Stefan Sørensen <stefan.sorensen@spectralink.com>
+---
+ grub-core/loader/xnu.c | 24 ++++++++++++++++++++----
+ 1 file changed, 20 insertions(+), 4 deletions(-)
+
+diff --git a/grub-core/loader/xnu.c b/grub-core/loader/xnu.c
+index eb14462..1a590db 100644
+--- a/grub-core/loader/xnu.c
++++ b/grub-core/loader/xnu.c
+@@ -227,26 +227,33 @@ grub_xnu_writetree_toheap (grub_addr_t *target, grub_size_t *size)
+   if (! memorymap)
+     return grub_errno;
+ 
+-  driverkey = (struct grub_xnu_devtree_key *) grub_malloc (sizeof (*driverkey));
++  driverkey = (struct grub_xnu_devtree_key *) grub_zalloc (sizeof (*driverkey));
+   if (! driverkey)
+     return grub_errno;
+   driverkey->name = grub_strdup ("DeviceTree");
+   if (! driverkey->name)
+-    return grub_errno;
++    {
++      err = grub_errno;
++      goto fail;
++    }
++
+   driverkey->datasize = sizeof (*extdesc);
+   driverkey->next = memorymap->first_child;
+   memorymap->first_child = driverkey;
+   driverkey->data = extdesc
+     = (struct grub_xnu_extdesc *) grub_malloc (sizeof (*extdesc));
+   if (! driverkey->data)
+-    return grub_errno;
++    {
++      err = grub_errno;
++      goto fail;
++    }
+ 
+   /* Allocate the space based on the size with dummy value. */
+   *size = grub_xnu_writetree_get_size (grub_xnu_devtree_root, "/");
+   err = grub_xnu_heap_malloc (ALIGN_UP (*size + 1, GRUB_XNU_PAGESIZE),
+ 			      &src, target);
+   if (err)
+-    return err;
++    goto fail;
+ 
+   /* Put real data in the dummy. */
+   extdesc->addr = *target;
+@@ -255,6 +262,15 @@ grub_xnu_writetree_toheap (grub_addr_t *target, grub_size_t *size)
+   /* Write the tree to heap. */
+   grub_xnu_writetree_toheap_real (src, grub_xnu_devtree_root, "/");
+   return GRUB_ERR_NONE;
++
++ fail:
++  memorymap->first_child = NULL;
++
++  grub_free (driverkey->data);
++  grub_free (driverkey->name);
++  grub_free (driverkey);
++
++  return err;
+ }
+ 
+ /* Find a key or value in parent key. */
+-- 
+2.14.2
+

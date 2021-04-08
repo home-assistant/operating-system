@@ -1,0 +1,47 @@
+From f41f0af48ab7f7c135aac17ac862c30bde0bbab7 Mon Sep 17 00:00:00 2001
+From: Daniel Axtens <dja@axtens.net>
+Date: Wed, 13 Jan 2021 22:19:01 +1100
+Subject: [PATCH] kern/misc: Always set *end in grub_strtoull()
+
+Currently, if there is an error in grub_strtoull(), *end is not set.
+This differs from the usual behavior of strtoull(), and also means that
+some callers may use an uninitialized value for *end.
+
+Set *end unconditionally.
+
+Signed-off-by: Daniel Axtens <dja@axtens.net>
+Reviewed-by: Daniel Kiper <daniel.kiper@oracle.com>
+Signed-off-by: Stefan Sørensen <stefan.sorensen@spectralink.com>
+---
+ grub-core/kern/misc.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/grub-core/kern/misc.c b/grub-core/kern/misc.c
+index a7abd36..b02693b 100644
+--- a/grub-core/kern/misc.c
++++ b/grub-core/kern/misc.c
+@@ -406,6 +406,10 @@ grub_strtoull (const char *str, char **end, int base)
+ 	{
+ 	  grub_error (GRUB_ERR_OUT_OF_RANGE,
+ 		      N_("overflow is detected"));
++
++          if (end)
++            *end = (char *) str;
++
+ 	  return ~0ULL;
+ 	}
+ 
+@@ -417,6 +421,10 @@ grub_strtoull (const char *str, char **end, int base)
+     {
+       grub_error (GRUB_ERR_BAD_NUMBER,
+ 		  N_("unrecognized number"));
++
++      if (end)
++        *end = (char *) str;
++
+       return 0;
+     }
+ 
+-- 
+2.14.2
+

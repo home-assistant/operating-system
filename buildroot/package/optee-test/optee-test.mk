@@ -11,6 +11,10 @@ OPTEE_TEST_LICENSE_FILES = LICENSE.md
 
 OPTEE_TEST_DEPENDENCIES = optee-client optee-os
 
+ifeq ($(BR2_PACKAGE_LIBOPENSSL),y)
+OPTEE_TEST_DEPENDENCIES += libopenssl
+endif
+
 OPTEE_TEST_CONF_OPTS = -DOPTEE_TEST_SDK=$(OPTEE_OS_SDK)
 
 # Trusted Application are not built from CMake due to ta_dev_kit

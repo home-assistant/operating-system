@@ -10,5 +10,7 @@ PYTHON_DOCKER_SITE = https://files.pythonhosted.org/packages/de/54/a822d7116ff2f
 PYTHON_DOCKER_SETUP_TYPE = setuptools
 PYTHON_DOCKER_LICENSE = Apache-2.0
 PYTHON_DOCKER_LICENSE_FILES = LICENSE
+PYTHON_DOCKER_CPE_ID_VENDOR = docker
+PYTHON_DOCKER_CPE_ID_PRODUCT = docker-py
 
 $(eval $(python-package))

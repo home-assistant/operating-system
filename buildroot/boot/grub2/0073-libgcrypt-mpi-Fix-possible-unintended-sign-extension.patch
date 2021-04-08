@@ -1,0 +1,50 @@
+From e8814c811132a70f9b55418f7567378a34ad3883 Mon Sep 17 00:00:00 2001
+From: Darren Kenny <darren.kenny@oracle.com>
+Date: Tue, 3 Nov 2020 16:43:37 +0000
+Subject: [PATCH] libgcrypt/mpi: Fix possible unintended sign extension
+
+The array of unsigned char gets promoted to a signed 32-bit int before
+it is finally promoted to a size_t. There is the possibility that this
+may result in the signed-bit being set for the intermediate signed
+32-bit int. We should ensure that the promotion is to the correct type
+before we bitwise-OR the values.
+
+Fixes: CID 96697
+
+Signed-off-by: Darren Kenny <darren.kenny@oracle.com>
+Reviewed-by: Daniel Kiper <daniel.kiper@oracle.com>
+Signed-off-by: Stefan Sørensen <stefan.sorensen@spectralink.com>
+---
+ grub-core/lib/libgcrypt-grub/mpi/mpicoder.c | 2 +-
+ grub-core/lib/libgcrypt/mpi/mpicoder.c      | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/grub-core/lib/libgcrypt-grub/mpi/mpicoder.c b/grub-core/lib/libgcrypt-grub/mpi/mpicoder.c
+index 3d55dfc..faf1cd6 100644
+--- a/grub-core/lib/libgcrypt-grub/mpi/mpicoder.c
++++ b/grub-core/lib/libgcrypt-grub/mpi/mpicoder.c
+@@ -460,7 +460,7 @@ gcry_mpi_scan (struct gcry_mpi **ret_mpi, enum gcry_mpi_format format,
+       if (len && len < 4)
+         return gcry_error (GPG_ERR_TOO_SHORT);
+ 
+-      n = (s[0] << 24 | s[1] << 16 | s[2] << 8 | s[3]);
++      n = ((size_t)s[0] << 24 | (size_t)s[1] << 16 | (size_t)s[2] << 8 | (size_t)s[3]);
+       s += 4;
+       if (len)
+         len -= 4;
+diff --git a/grub-core/lib/libgcrypt/mpi/mpicoder.c b/grub-core/lib/libgcrypt/mpi/mpicoder.c
+index a3435ed..7ecad27 100644
+--- a/grub-core/lib/libgcrypt/mpi/mpicoder.c
++++ b/grub-core/lib/libgcrypt/mpi/mpicoder.c
+@@ -458,7 +458,7 @@ gcry_mpi_scan (struct gcry_mpi **ret_mpi, enum gcry_mpi_format format,
+       if (len && len < 4)
+         return gcry_error (GPG_ERR_TOO_SHORT);
+ 
+-      n = (s[0] << 24 | s[1] << 16 | s[2] << 8 | s[3]);
++      n = ((size_t)s[0] << 24 | (size_t)s[1] << 16 | (size_t)s[2] << 8 | (size_t)s[3]);
+       s += 4;
+       if (len)
+         len -= 4;
+-- 
+2.14.2
+

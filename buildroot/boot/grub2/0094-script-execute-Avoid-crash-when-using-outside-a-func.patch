@@ -1,0 +1,38 @@
+From fe0586347ee46f927ae27bb9673532da9f5dead5 Mon Sep 17 00:00:00 2001
+From: Daniel Axtens <dja@axtens.net>
+Date: Mon, 11 Jan 2021 17:30:42 +1100
+Subject: [PATCH] script/execute: Avoid crash when using "$#" outside a
+ function scope
+
+"$#" represents the number of arguments to a function. It is only
+defined in a function scope, where "scope" is non-NULL. Currently,
+if we attempt to evaluate "$#" outside a function scope, "scope" will
+be NULL and we will crash with a NULL pointer dereference.
+
+Do not attempt to count arguments for "$#" if "scope" is NULL. This
+will result in "$#" being interpreted as an empty string if evaluated
+outside a function scope.
+
+Signed-off-by: Daniel Axtens <dja@axtens.net>
+Reviewed-by: Daniel Kiper <daniel.kiper@oracle.com>
+Signed-off-by: Stefan Sørensen <stefan.sorensen@spectralink.com>
+---
+ grub-core/script/execute.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/grub-core/script/execute.c b/grub-core/script/execute.c
+index 5ea2aef..23d34bd 100644
+--- a/grub-core/script/execute.c
++++ b/grub-core/script/execute.c
+@@ -485,7 +485,7 @@ gettext_putvar (const char *str, grub_size_t len,
+     return 0;
+ 
+   /* Enough for any number.  */
+-  if (len == 1 && str[0] == '#')
++  if (len == 1 && str[0] == '#' && scope != NULL)
+     {
+       grub_snprintf (*ptr, 30, "%u", scope->argv.argc);
+       *ptr += grub_strlen (*ptr);
+-- 
+2.14.2
+

@@ -1,0 +1,57 @@
+From 302c12ff5714bc455949117c1c9548ccb324d55b Mon Sep 17 00:00:00 2001
+From: Darren Kenny <darren.kenny@oracle.com>
+Date: Tue, 8 Dec 2020 22:17:04 +0000
+Subject: [PATCH] zfs: Fix possible integer overflows
+
+In all cases the problem is that the value being acted upon by
+a left-shift is a 32-bit number which is then being used in the
+context of a 64-bit number.
+
+To avoid overflow we ensure that the number being shifted is 64-bit
+before the shift is done.
+
+Fixes: CID 73684, CID 73695, CID 73764
+
+Signed-off-by: Darren Kenny <darren.kenny@oracle.com>
+Reviewed-by: Daniel Kiper <daniel.kiper@oracle.com>
+Signed-off-by: Stefan Sørensen <stefan.sorensen@spectralink.com>
+---
+ grub-core/fs/zfs/zfs.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/grub-core/fs/zfs/zfs.c b/grub-core/fs/zfs/zfs.c
+index 9087a72..b078ccc 100644
+--- a/grub-core/fs/zfs/zfs.c
++++ b/grub-core/fs/zfs/zfs.c
+@@ -564,7 +564,7 @@ find_bestub (uberblock_phys_t * ub_array,
+       ubptr = (uberblock_phys_t *) ((grub_properly_aligned_t *) ub_array
+ 				    + ((i << ub_shift)
+ 				       / sizeof (grub_properly_aligned_t)));
+-      err = uberblock_verify (ubptr, offset, 1 << ub_shift);
++      err = uberblock_verify (ubptr, offset, (grub_size_t) 1 << ub_shift);
+       if (err)
+ 	{
+ 	  grub_errno = GRUB_ERR_NONE;
+@@ -1543,7 +1543,7 @@ read_device (grub_uint64_t offset, struct grub_zfs_device_desc *desc,
+ 
+ 	    high = grub_divmod64 ((offset >> desc->ashift) + c,
+ 				  desc->n_children, &devn);
+-	    csize = bsize << desc->ashift;
++	    csize = (grub_size_t) bsize << desc->ashift;
+ 	    if (csize > len)
+ 	      csize = len;
+ 
+@@ -1635,8 +1635,8 @@ read_device (grub_uint64_t offset, struct grub_zfs_device_desc *desc,
+ 
+ 	    while (len > 0)
+ 	      {
+-		grub_size_t csize;
+-		csize = ((s / (desc->n_children - desc->nparity))
++		grub_size_t csize = s;
++		csize = ((csize / (desc->n_children - desc->nparity))
+ 			 << desc->ashift);
+ 		if (csize > len)
+ 		  csize = len;
+-- 
+2.14.2
+

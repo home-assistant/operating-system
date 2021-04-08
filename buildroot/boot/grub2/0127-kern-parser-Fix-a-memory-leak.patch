@@ -1,0 +1,77 @@
+From c6c426e5ab6ea715153b72584de6bd8c82f698ec Mon Sep 17 00:00:00 2001
+From: Chris Coulson <chris.coulson@canonical.com>
+Date: Wed, 18 Nov 2020 00:59:24 +0000
+Subject: [PATCH] kern/parser: Fix a memory leak
+
+The getline() function supplied to grub_parser_split_cmdline() returns
+a newly allocated buffer and can be called multiple times, but the
+returned buffer is never freed.
+
+Signed-off-by: Chris Coulson <chris.coulson@canonical.com>
+Reviewed-by: Daniel Kiper <daniel.kiper@oracle.com>
+Signed-off-by: Stefan Sørensen <stefan.sorensen@spectralink.com>
+---
+ grub-core/kern/parser.c | 20 ++++++++++++++++----
+ 1 file changed, 16 insertions(+), 4 deletions(-)
+
+diff --git a/grub-core/kern/parser.c b/grub-core/kern/parser.c
+index d1cf061..39e4df6 100644
+--- a/grub-core/kern/parser.c
++++ b/grub-core/kern/parser.c
+@@ -140,6 +140,7 @@ grub_parser_split_cmdline (const char *cmdline,
+   char buffer[1024];
+   char *bp = buffer;
+   char *rd = (char *) cmdline;
++  char *rp = rd;
+   char varname[200];
+   char *vp = varname;
+   char *args;
+@@ -149,10 +150,18 @@ grub_parser_split_cmdline (const char *cmdline,
+   *argv = NULL;
+   do
+     {
+-      if (!rd || !*rd)
++      if (rp == NULL || *rp == '\0')
+ 	{
++	  if (rd != cmdline)
++	    {
++	      grub_free (rd);
++	      rd = rp = NULL;
++	    }
+ 	  if (getline)
+-	    getline (&rd, 1, getline_data);
++	    {
++	      getline (&rd, 1, getline_data);
++	      rp = rd;
++	    }
+ 	  else
+ 	    break;
+ 	}
+@@ -160,12 +169,12 @@ grub_parser_split_cmdline (const char *cmdline,
+       if (!rd)
+ 	break;
+ 
+-      for (; *rd; rd++)
++      for (; *rp != '\0'; rp++)
+ 	{
+ 	  grub_parser_state_t newstate;
+ 	  char use;
+ 
+-	  newstate = grub_parser_cmdline_state (state, *rd, &use);
++	  newstate = grub_parser_cmdline_state (state, *rp, &use);
+ 
+ 	  /* If a variable was being processed and this character does
+ 	     not describe the variable anymore, write the variable to
+@@ -198,6 +207,9 @@ grub_parser_split_cmdline (const char *cmdline,
+     }
+   while (state != GRUB_PARSER_STATE_TEXT && !check_varstate (state));
+ 
++  if (rd != cmdline)
++    grub_free (rd);
++
+   /* A special case for when the last character was part of a
+      variable.  */
+   add_var (varname, &bp, &vp, state, GRUB_PARSER_STATE_TEXT);
+-- 
+2.14.2
+

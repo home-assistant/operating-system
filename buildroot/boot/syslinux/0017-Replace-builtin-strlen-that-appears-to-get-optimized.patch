@@ -1,0 +1,42 @@
+From 698a6ce88524b727d265b204d648e78d8acb485c Mon Sep 17 00:00:00 2001
+From: Merlin Mathesius <mmathesi@redhat.com>
+Date: Wed, 13 May 2020 11:58:37 -0500
+Subject: [PATCH] Replace builtin strlen that appears to get optimized away
+
+[From https://src.fedoraproject.org/rpms/syslinux/raw/rawhide/f/0006-Replace-builtin-strlen-that-appears-to-get-optimized.patch]
+Signed-off-by: Peter Seiderer <ps.report@gmx.net>
+---
+ dos/string.h | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
+
+diff --git a/dos/string.h b/dos/string.h
+index f648de2d..407d0233 100644
+--- a/dos/string.h
++++ b/dos/string.h
+@@ -5,12 +5,22 @@
+ #ifndef _STRING_H
+ #define _STRING_H
+ 
++#include <stddef.h>
++
+ /* Standard routines */
+ #define memcpy(a,b,c)	__builtin_memcpy(a,b,c)
+ #define memmove(a,b,c)	__builtin_memmove(a,b,c)
+ #define memset(a,b,c)	__builtin_memset(a,b,c)
+ #define strcpy(a,b)	__builtin_strcpy(a,b)
+-#define strlen(a)	__builtin_strlen(a)
++#define strlen(a)	inline_strlen(a)
++
++/* replacement for builtin strlen that appears to get optimized away */
++static inline size_t inline_strlen(const char *str)
++{
++    size_t l;
++    for (l = 0; *str++; l++);
++    return l;
++}
+ 
+ /* This only returns true or false */
+ static inline int memcmp(const void *__m1, const void *__m2, unsigned int __n)
+-- 
+2.30.1
+

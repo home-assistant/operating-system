@@ -1,0 +1,49 @@
+From 98b00a403cbf2ba6833d1ac0499871b27a08eb77 Mon Sep 17 00:00:00 2001
+From: Javier Martinez Canillas <javierm@redhat.com>
+Date: Mon, 28 Sep 2020 20:08:29 +0200
+Subject: [PATCH] efi: Lockdown the GRUB when the UEFI Secure Boot is enabled
+
+If the UEFI Secure Boot is enabled then the GRUB must be locked down
+to prevent executing code that can potentially be used to subvert its
+verification mechanisms.
+
+Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
+Reviewed-by: Daniel Kiper <daniel.kiper@oracle.com>
+Signed-off-by: Stefan Sørensen <stefan.sorensen@spectralink.com>
+---
+ grub-core/kern/efi/init.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
+
+diff --git a/grub-core/kern/efi/init.c b/grub-core/kern/efi/init.c
+index b683bec..1333465 100644
+--- a/grub-core/kern/efi/init.c
++++ b/grub-core/kern/efi/init.c
+@@ -21,6 +21,7 @@
+ #include <grub/efi/console.h>
+ #include <grub/efi/disk.h>
+ #include <grub/efi/sb.h>
++#include <grub/lockdown.h>
+ #include <grub/term.h>
+ #include <grub/misc.h>
+ #include <grub/env.h>
+@@ -40,8 +41,15 @@ grub_efi_init (void)
+   /* Initialize the memory management system.  */
+   grub_efi_mm_init ();
+ 
+-  /* Register the shim_lock verifier if UEFI Secure Boot is enabled. */
+-  grub_shim_lock_verifier_setup ();
++  /*
++   * Lockdown the GRUB and register the shim_lock verifier
++   * if the UEFI Secure Boot is enabled.
++   */
++  if (grub_efi_get_secureboot () == GRUB_EFI_SECUREBOOT_MODE_ENABLED)
++    {
++      grub_lockdown ();
++      grub_shim_lock_verifier_setup ();
++    }
+ 
+   efi_call_4 (grub_efi_system_table->boot_services->set_watchdog_timer,
+ 	      0, 0, 0, NULL);
+-- 
+2.14.2
+

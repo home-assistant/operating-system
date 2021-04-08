@@ -10,5 +10,7 @@ PYTHON_FLASK_SITE = https://files.pythonhosted.org/packages/4e/0b/cb02268c90e675
 PYTHON_FLASK_SETUP_TYPE = setuptools
 PYTHON_FLASK_LICENSE = BSD-3-Clause
 PYTHON_FLASK_LICENSE_FILES = LICENSE.rst docs/license.rst
+PYTHON_FLASK_CPE_ID_VENDOR = palletsprojects
+PYTHON_FLASK_CPE_ID_PRODUCT = flask
 
 $(eval $(python-package))

@@ -1,0 +1,105 @@
+From 468a5699b249fe6816b4e7e86c5dc9d325c9b09e Mon Sep 17 00:00:00 2001
+From: Javier Martinez Canillas <javierm@redhat.com>
+Date: Wed, 24 Feb 2021 09:00:05 +0100
+Subject: [PATCH] commands: Restrict commands that can load BIOS or DT blobs
+ when locked down
+
+There are some more commands that should be restricted when the GRUB is
+locked down. Following is the list of commands and reasons to restrict:
+
+  * fakebios:   creates BIOS-like structures for backward compatibility with
+                existing OSes. This should not be allowed when locked down.
+
+  * loadbios:   reads a BIOS dump from storage and loads it. This action
+                should not be allowed when locked down.
+
+  * devicetree: loads a Device Tree blob and passes it to the OS. It replaces
+                any Device Tree provided by the firmware. This also should
+                not be allowed when locked down.
+
+Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
+Reviewed-by: Daniel Kiper <daniel.kiper@oracle.com>
+Signed-off-by: Stefan Sørensen <stefan.sorensen@spectralink.com>
+---
+ docs/grub.texi                    |  3 +++
+ grub-core/commands/efi/loadbios.c | 16 ++++++++--------
+ grub-core/loader/arm/linux.c      |  6 +++---
+ grub-core/loader/efi/fdt.c        |  4 ++--
+ 4 files changed, 16 insertions(+), 13 deletions(-)
+
+diff --git a/docs/grub.texi b/docs/grub.texi
+index f2fe149..79f58c5 100644
+--- a/docs/grub.texi
++++ b/docs/grub.texi
+@@ -4235,6 +4235,9 @@ hour, minute, and second unchanged.
+ Load a device tree blob (.dtb) from a filesystem, for later use by a Linux
+ kernel. Does not perform merging with any device tree supplied by firmware,
+ but rather replaces it completely.
++
++Note: The command is not allowed when lockdown is enforced (@pxref{Lockdown}).
++      This is done to prevent subverting various security mechanisms.
+ @ref{GNU/Linux}.
+ @end deffn
+ 
+diff --git a/grub-core/commands/efi/loadbios.c b/grub-core/commands/efi/loadbios.c
+index d41d521..5c7725f 100644
+--- a/grub-core/commands/efi/loadbios.c
++++ b/grub-core/commands/efi/loadbios.c
+@@ -205,14 +205,14 @@ static grub_command_t cmd_fakebios, cmd_loadbios;
+ 
+ GRUB_MOD_INIT(loadbios)
+ {
+-  cmd_fakebios = grub_register_command ("fakebios", grub_cmd_fakebios,
+-					0, N_("Create BIOS-like structures for"
+-					      " backward compatibility with"
+-					      " existing OS."));
+-
+-  cmd_loadbios = grub_register_command ("loadbios", grub_cmd_loadbios,
+-					N_("BIOS_DUMP [INT10_DUMP]"),
+-					N_("Load BIOS dump."));
++  cmd_fakebios = grub_register_command_lockdown ("fakebios", grub_cmd_fakebios,
++						 0, N_("Create BIOS-like structures for"
++						       " backward compatibility with"
++						       " existing OS."));
++
++  cmd_loadbios = grub_register_command_lockdown ("loadbios", grub_cmd_loadbios,
++						 N_("BIOS_DUMP [INT10_DUMP]"),
++						 N_("Load BIOS dump."));
+ }
+ 
+ GRUB_MOD_FINI(loadbios)
+diff --git a/grub-core/loader/arm/linux.c b/grub-core/loader/arm/linux.c
+index d70c174..ed23dc7 100644
+--- a/grub-core/loader/arm/linux.c
++++ b/grub-core/loader/arm/linux.c
+@@ -493,9 +493,9 @@ GRUB_MOD_INIT (linux)
+ 				     0, N_("Load Linux."));
+   cmd_initrd = grub_register_command ("initrd", grub_cmd_initrd,
+ 				      0, N_("Load initrd."));
+-  cmd_devicetree = grub_register_command ("devicetree", grub_cmd_devicetree,
+-					  /* TRANSLATORS: DTB stands for device tree blob.  */
+-					  0, N_("Load DTB file."));
++  cmd_devicetree = grub_register_command_lockdown ("devicetree", grub_cmd_devicetree,
++						   /* TRANSLATORS: DTB stands for device tree blob. */
++						   0, N_("Load DTB file."));
+   my_mod = mod;
+   current_fdt = (const void *) grub_arm_firmware_get_boot_data ();
+   machine_type = grub_arm_firmware_get_machine_type ();
+diff --git a/grub-core/loader/efi/fdt.c b/grub-core/loader/efi/fdt.c
+index ee9c559..003d07c 100644
+--- a/grub-core/loader/efi/fdt.c
++++ b/grub-core/loader/efi/fdt.c
+@@ -165,8 +165,8 @@ static grub_command_t cmd_devicetree;
+ GRUB_MOD_INIT (fdt)
+ {
+   cmd_devicetree =
+-    grub_register_command ("devicetree", grub_cmd_devicetree, 0,
+-			   N_("Load DTB file."));
++    grub_register_command_lockdown ("devicetree", grub_cmd_devicetree, 0,
++				    N_("Load DTB file."));
+ }
+ 
+ GRUB_MOD_FINI (fdt)
+-- 
+2.14.2
+

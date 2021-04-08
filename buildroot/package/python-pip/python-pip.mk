@@ -10,5 +10,7 @@ PYTHON_PIP_SITE = https://files.pythonhosted.org/packages/8e/76/66066b7bc7181723
 PYTHON_PIP_SETUP_TYPE = setuptools
 PYTHON_PIP_LICENSE = MIT
 PYTHON_PIP_LICENSE_FILES = LICENSE.txt
+PYTHON_PIP_CPE_ID_VENDOR = pypa
+PYTHON_PIP_CPE_ID_PRODUCT = pip
 
 $(eval $(python-package))

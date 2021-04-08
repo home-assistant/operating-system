@@ -1,0 +1,56 @@
+From 2a330dba93ff11bc00eda76e9419bc52b0c7ead6 Mon Sep 17 00:00:00 2001
+From: Daniel Axtens <dja@axtens.net>
+Date: Fri, 22 Jan 2021 16:07:29 +1100
+Subject: [PATCH] lib/arg: Block repeated short options that require an
+ argument
+
+Fuzzing found the following crash:
+
+  search -hhhhhhhhhhhhhf
+
+We didn't allocate enough option space for 13 hints because the
+allocation code counts the number of discrete arguments (i.e. argc).
+However, the shortopt parsing code will happily keep processing
+a combination of short options without checking if those short
+options require an argument. This means you can easily end writing
+past the allocated option space.
+
+This fixes a OOB write which can cause heap corruption.
+
+Fixes: CVE-2021-20225
+
+Reported-by: Daniel Axtens <dja@axtens.net>
+Signed-off-by: Daniel Axtens <dja@axtens.net>
+Reviewed-by: Daniel Kiper <daniel.kiper@oracle.com>
+Signed-off-by: Stefan Sørensen <stefan.sorensen@spectralink.com>
+---
+ grub-core/lib/arg.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+diff --git a/grub-core/lib/arg.c b/grub-core/lib/arg.c
+index 3288609..537c5e9 100644
+--- a/grub-core/lib/arg.c
++++ b/grub-core/lib/arg.c
+@@ -299,6 +299,19 @@ grub_arg_parse (grub_extcmd_t cmd, int argc, char **argv,
+ 		 it can have an argument value.  */
+ 	      if (*curshort)
+ 		{
++		  /*
++		   * Only permit further short opts if this one doesn't
++		   * require a value.
++		   */
++		  if (opt->type != ARG_TYPE_NONE &&
++		      !(opt->flags & GRUB_ARG_OPTION_OPTIONAL))
++		    {
++		      grub_error (GRUB_ERR_BAD_ARGUMENT,
++				  N_("missing mandatory option for `%s'"),
++				  opt->longarg);
++		      goto fail;
++		    }
++
+ 		  if (parse_option (cmd, opt, 0, usr) || grub_errno)
+ 		    goto fail;
+ 		}
+-- 
+2.14.2
+

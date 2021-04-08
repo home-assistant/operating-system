@@ -8,6 +8,7 @@ DAVFS2_VERSION = 1.6.0
 DAVFS2_SITE = http://download.savannah.nongnu.org/releases/davfs2
 DAVFS2_LICENSE = GPL-3.0+
 DAVFS2_LICENSE_FILES = COPYING
+DAVFS2_CPE_ID_VENDOR = werner_baumann
 
 DAVFS2_DEPENDENCIES = \
 	neon \

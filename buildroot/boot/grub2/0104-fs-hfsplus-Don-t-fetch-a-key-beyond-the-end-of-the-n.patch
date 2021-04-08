@@ -1,0 +1,33 @@
+From 58ea11d5b9ca0966bd9c68d8ba5240cf7dc3ba83 Mon Sep 17 00:00:00 2001
+From: Daniel Axtens <dja@axtens.net>
+Date: Fri, 22 Jan 2021 18:13:56 +1100
+Subject: [PATCH] fs/hfsplus: Don't fetch a key beyond the end of the node
+
+Otherwise you get a wild pointer, leading to a bunch of invalid reads.
+Check it falls inside the given node.
+
+Signed-off-by: Daniel Axtens <dja@axtens.net>
+Reviewed-by: Daniel Kiper <daniel.kiper@oracle.com>
+Signed-off-by: Stefan Sørensen <stefan.sorensen@spectralink.com>
+---
+ grub-core/fs/hfsplus.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/grub-core/fs/hfsplus.c b/grub-core/fs/hfsplus.c
+index 8fe7c12..1c7791b 100644
+--- a/grub-core/fs/hfsplus.c
++++ b/grub-core/fs/hfsplus.c
+@@ -635,6 +635,10 @@ grub_hfsplus_btree_search (struct grub_hfsplus_btree *btree,
+ 	      pointer = ((char *) currkey
+ 			 + grub_be_to_cpu16 (currkey->keylen)
+ 			 + 2);
++
++	      if ((char *) pointer > node + btree->nodesize - 2)
++		return grub_error (GRUB_ERR_BAD_FS, "HFS+ key beyond end of node");
++
+ 	      currnode = grub_be_to_cpu32 (grub_get_unaligned32 (pointer));
+ 	      match = 1;
+ 	    }
+-- 
+2.14.2
+

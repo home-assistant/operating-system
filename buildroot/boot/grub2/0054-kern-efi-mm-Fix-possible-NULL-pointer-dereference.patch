@@ -1,0 +1,66 @@
+From 6aee4bfd6973c714056fb7b56890b8d524e94ee1 Mon Sep 17 00:00:00 2001
+From: Darren Kenny <darren.kenny@oracle.com>
+Date: Fri, 11 Dec 2020 15:03:13 +0000
+Subject: [PATCH] kern/efi/mm: Fix possible NULL pointer dereference
+
+The model of grub_efi_get_memory_map() is that if memory_map is NULL,
+then the purpose is to discover how much memory should be allocated to
+it for the subsequent call.
+
+The problem here is that with grub_efi_is_finished set to 1, there is no
+check at all that the function is being called with a non-NULL memory_map.
+
+While this MAY be true, we shouldn't assume it.
+
+The solution to this is to behave as expected, and if memory_map is NULL,
+then don't try to use it and allow memory_map_size to be filled in, and
+return 0 as is done later in the code if the buffer is too small (or NULL).
+
+Additionally, drop unneeded ret = 1.
+
+Fixes: CID 96632
+
+Signed-off-by: Darren Kenny <darren.kenny@oracle.com>
+Reviewed-by: Daniel Kiper <daniel.kiper@oracle.com>
+Signed-off-by: Stefan Sørensen <stefan.sorensen@spectralink.com>
+---
+ grub-core/kern/efi/mm.c | 19 ++++++++++++++-----
+ 1 file changed, 14 insertions(+), 5 deletions(-)
+
+diff --git a/grub-core/kern/efi/mm.c b/grub-core/kern/efi/mm.c
+index b02fab1..5afcef7 100644
+--- a/grub-core/kern/efi/mm.c
++++ b/grub-core/kern/efi/mm.c
+@@ -328,15 +328,24 @@ grub_efi_get_memory_map (grub_efi_uintn_t *memory_map_size,
+   if (grub_efi_is_finished)
+     {
+       int ret = 1;
+-      if (*memory_map_size < finish_mmap_size)
++
++      if (memory_map != NULL)
+ 	{
+-	  grub_memcpy (memory_map, finish_mmap_buf, *memory_map_size);
+-	  ret = 0;
++	  if (*memory_map_size < finish_mmap_size)
++	    {
++	      grub_memcpy (memory_map, finish_mmap_buf, *memory_map_size);
++	      ret = 0;
++	    }
++          else
++	    grub_memcpy (memory_map, finish_mmap_buf, finish_mmap_size);
+ 	}
+       else
+ 	{
+-	  grub_memcpy (memory_map, finish_mmap_buf, finish_mmap_size);
+-	  ret = 1;
++	  /*
++	   * Incomplete, no buffer to copy into, same as
++	   * GRUB_EFI_BUFFER_TOO_SMALL below.
++	   */
++	  ret = 0;
+ 	}
+       *memory_map_size = finish_mmap_size;
+       if (map_key)
+-- 
+2.14.2
+

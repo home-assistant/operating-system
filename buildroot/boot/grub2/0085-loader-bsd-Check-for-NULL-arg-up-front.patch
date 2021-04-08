@@ -1,0 +1,48 @@
+From 5d5391b0a05abe76e04c1eb68dcc6cbef5326c4a Mon Sep 17 00:00:00 2001
+From: Darren Kenny <darren.kenny@oracle.com>
+Date: Tue, 8 Dec 2020 21:47:13 +0000
+Subject: [PATCH] loader/bsd: Check for NULL arg up-front
+
+The code in the next block suggests that it is possible for .set to be
+true but .arg may still be NULL.
+
+This code assumes that it is never NULL, yet later is testing if it is
+NULL - that is inconsistent.
+
+So we should check first if .arg is not NULL, and remove this check that
+is being flagged by Coverity since it is no longer required.
+
+Fixes: CID 292471
+
+Signed-off-by: Darren Kenny <darren.kenny@oracle.com>
+Reviewed-by: Daniel Kiper <daniel.kiper@oracle.com>
+Signed-off-by: Stefan Sørensen <stefan.sorensen@spectralink.com>
+---
+ grub-core/loader/i386/bsd.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/grub-core/loader/i386/bsd.c b/grub-core/loader/i386/bsd.c
+index b92cbe9..8432283 100644
+--- a/grub-core/loader/i386/bsd.c
++++ b/grub-core/loader/i386/bsd.c
+@@ -1605,7 +1605,7 @@ grub_cmd_openbsd (grub_extcmd_context_t ctxt, int argc, char *argv[])
+   kernel_type = KERNEL_TYPE_OPENBSD;
+   bootflags = grub_bsd_parse_flags (ctxt->state, openbsd_flags);
+ 
+-  if (ctxt->state[OPENBSD_ROOT_ARG].set)
++  if (ctxt->state[OPENBSD_ROOT_ARG].set && ctxt->state[OPENBSD_ROOT_ARG].arg != NULL)
+     {
+       const char *arg = ctxt->state[OPENBSD_ROOT_ARG].arg;
+       unsigned type, unit, part;
+@@ -1622,7 +1622,7 @@ grub_cmd_openbsd (grub_extcmd_context_t ctxt, int argc, char *argv[])
+ 			   "unknown disk type name");
+ 
+       unit = grub_strtoul (arg, (char **) &arg, 10);
+-      if (! (arg && *arg >= 'a' && *arg <= 'z'))
++      if (! (*arg >= 'a' && *arg <= 'z'))
+ 	return grub_error (GRUB_ERR_BAD_ARGUMENT,
+ 			   "only device specifications of form "
+ 			   "<type><number><lowercase letter> are supported");
+-- 
+2.14.2
+

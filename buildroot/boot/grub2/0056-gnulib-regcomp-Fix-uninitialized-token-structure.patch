@@ -1,0 +1,82 @@
+From 75c3d3cec4f408848f575d6d5e30a95bd6313db0 Mon Sep 17 00:00:00 2001
+From: Darren Kenny <darren.kenny@oracle.com>
+Date: Thu, 22 Oct 2020 13:54:06 +0000
+Subject: [PATCH] gnulib/regcomp: Fix uninitialized token structure
+
+The code is assuming that the value of br_token.constraint was
+initialized to zero when it wasn't.
+
+While some compilers will ensure that, not all do, so it is better to
+fix this explicitly than leave it to chance.
+
+Fixes: CID 73749
+
+Signed-off-by: Darren Kenny <darren.kenny@oracle.com>
+Reviewed-by: Daniel Kiper <daniel.kiper@oracle.com>
+[Add changes to generated files]
+Signed-off-by: Stefan Sørensen <stefan.sorensen@spectralink.com>
+---
+ Makefile.in                                             |  1 +
+ conf/Makefile.extra-dist                                |  1 +
+ grub-core/lib/gnulib-patches/fix-uninit-structure.patch | 11 +++++++++++
+ grub-core/lib/gnulib/regcomp.c                          |  2 +-
+ 4 files changed, 14 insertions(+), 1 deletion(-)
+ create mode 100644 grub-core/lib/gnulib-patches/fix-uninit-structure.patch
+
+diff --git a/Makefile.in b/Makefile.in
+index e6b287b..d58a7d7 100644
+--- a/Makefile.in
++++ b/Makefile.in
+@@ -2742,6 +2742,7 @@ EXTRA_DIST = autogen.sh geninit.sh gentpl.py Makefile.util.def \
+ 	grub-core/gensyminfo.sh.in grub-core/gensymlist.sh \
+ 	grub-core/genemuinit.sh grub-core/genemuinitheader.sh \
+ 	grub-core/lib/gnulib-patches/fix-null-deref.patch \
++	grub-core/lib/gnulib-patches/fix-uninit-structure.patch \
+ 	grub-core/lib/gnulib-patches/fix-unused-value.patch \
+ 	grub-core/lib/gnulib-patches/fix-width.patch \
+ 	grub-core/lib/gnulib-patches/no-abort.patch \
+diff --git a/conf/Makefile.extra-dist b/conf/Makefile.extra-dist
+index 9b01152..9e55458 100644
+--- a/conf/Makefile.extra-dist
++++ b/conf/Makefile.extra-dist
+@@ -29,6 +29,7 @@ EXTRA_DIST += grub-core/genemuinit.sh
+ EXTRA_DIST += grub-core/genemuinitheader.sh
+ 
+ EXTRA_DIST += grub-core/lib/gnulib-patches/fix-null-deref.patch
++EXTRA_DIST += grub-core/lib/gnulib-patches/fix-uninit-structure.patch
+ EXTRA_DIST += grub-core/lib/gnulib-patches/fix-unused-value.patch
+ EXTRA_DIST += grub-core/lib/gnulib-patches/fix-width.patch
+ EXTRA_DIST += grub-core/lib/gnulib-patches/no-abort.patch
+diff --git a/grub-core/lib/gnulib-patches/fix-uninit-structure.patch b/grub-core/lib/gnulib-patches/fix-uninit-structure.patch
+new file mode 100644
+index 0000000..7b4d9f6
+--- /dev/null
++++ b/grub-core/lib/gnulib-patches/fix-uninit-structure.patch
+@@ -0,0 +1,11 @@
++--- a/lib/regcomp.c	2020-10-22 13:49:06.770168928 +0000
+++++ b/lib/regcomp.c	2020-10-22 13:50:37.026528298 +0000
++@@ -3662,7 +3662,7 @@
++   Idx alloc = 0;
++ #endif /* not RE_ENABLE_I18N */
++   reg_errcode_t ret;
++-  re_token_t br_token;
+++  re_token_t br_token = {0};
++   bin_tree_t *tree;
++ 
++   sbcset = (re_bitset_ptr_t) calloc (sizeof (bitset_t), 1);
+diff --git a/grub-core/lib/gnulib/regcomp.c b/grub-core/lib/gnulib/regcomp.c
+index fe7dfcb..2545d3e 100644
+--- a/grub-core/lib/gnulib/regcomp.c
++++ b/grub-core/lib/gnulib/regcomp.c
+@@ -3662,7 +3662,7 @@ build_charclass_op (re_dfa_t *dfa, RE_TRANSLATE_TYPE trans,
+   Idx alloc = 0;
+ #endif /* not RE_ENABLE_I18N */
+   reg_errcode_t ret;
+-  re_token_t br_token;
++  re_token_t br_token = {0};
+   bin_tree_t *tree;
+ 
+   sbcset = (re_bitset_ptr_t) calloc (sizeof (bitset_t), 1);
+-- 
+2.14.2
+

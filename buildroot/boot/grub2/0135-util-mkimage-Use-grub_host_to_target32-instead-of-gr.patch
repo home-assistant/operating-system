@@ -1,0 +1,113 @@
+From 1710452aca05ccdd21e74390ec08c63fdf0ee10a Mon Sep 17 00:00:00 2001
+From: Peter Jones <pjones@redhat.com>
+Date: Mon, 15 Feb 2021 13:59:21 +0100
+Subject: [PATCH] util/mkimage: Use grub_host_to_target32() instead of
+ grub_cpu_to_le32()
+
+The latter doesn't take into account the target image endianness. There is
+a grub_cpu_to_le32_compile_time() but no compile time variant for function
+grub_host_to_target32(). So, let's keep using the other one for this case.
+
+Signed-off-by: Peter Jones <pjones@redhat.com>
+Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
+Reviewed-by: Daniel Kiper <daniel.kiper@oracle.com>
+Signed-off-by: Stefan Sørensen <stefan.sorensen@spectralink.com>
+---
+ util/mkimage.c | 44 ++++++++++++++++++++++----------------------
+ 1 file changed, 22 insertions(+), 22 deletions(-)
+
+diff --git a/util/mkimage.c b/util/mkimage.c
+index 32bb8ea..02944f2 100644
+--- a/util/mkimage.c
++++ b/util/mkimage.c
+@@ -1302,10 +1302,10 @@ grub_install_generate_image (const char *dir, const char *prefix,
+ 	       + sizeof (struct grub_pe32_coff_header));
+ 	    o->magic = grub_host_to_target16 (GRUB_PE32_PE32_MAGIC);
+ 	    o->code_size = grub_host_to_target32 (layout.exec_size);
+-	    o->data_size = grub_cpu_to_le32 (reloc_addr - layout.exec_size
++	    o->data_size = grub_host_to_target32 (reloc_addr - layout.exec_size
+ 					     - header_size);
+-	    o->entry_addr = grub_cpu_to_le32 (layout.start_address);
+-	    o->code_base = grub_cpu_to_le32 (header_size);
++	    o->entry_addr = grub_host_to_target32 (layout.start_address);
++	    o->code_base = grub_host_to_target32 (header_size);
+ 
+ 	    o->data_base = grub_host_to_target32 (header_size + layout.exec_size);
+ 
+@@ -1339,10 +1339,10 @@ grub_install_generate_image (const char *dir, const char *prefix,
+ 	       + sizeof (struct grub_pe32_coff_header));
+ 	    o->magic = grub_host_to_target16 (GRUB_PE32_PE64_MAGIC);
+ 	    o->code_size = grub_host_to_target32 (layout.exec_size);
+-	    o->data_size = grub_cpu_to_le32 (reloc_addr - layout.exec_size
++	    o->data_size = grub_host_to_target32 (reloc_addr - layout.exec_size
+ 					     - header_size);
+-	    o->entry_addr = grub_cpu_to_le32 (layout.start_address);
+-	    o->code_base = grub_cpu_to_le32 (header_size);
++	    o->entry_addr = grub_host_to_target32 (layout.start_address);
++	    o->code_base = grub_host_to_target32 (header_size);
+ 	    o->image_base = 0;
+ 	    o->section_alignment = grub_host_to_target32 (image_target->section_align);
+ 	    o->file_alignment = grub_host_to_target32 (GRUB_PE32_FILE_ALIGNMENT);
+@@ -1366,10 +1366,10 @@ grub_install_generate_image (const char *dir, const char *prefix,
+ 	/* The sections.  */
+ 	text_section = sections;
+ 	strcpy (text_section->name, ".text");
+-	text_section->virtual_size = grub_cpu_to_le32 (layout.exec_size);
+-	text_section->virtual_address = grub_cpu_to_le32 (header_size);
+-	text_section->raw_data_size = grub_cpu_to_le32 (layout.exec_size);
+-	text_section->raw_data_offset = grub_cpu_to_le32 (header_size);
++	text_section->virtual_size = grub_host_to_target32 (layout.exec_size);
++	text_section->virtual_address = grub_host_to_target32 (header_size);
++	text_section->raw_data_size = grub_host_to_target32 (layout.exec_size);
++	text_section->raw_data_offset = grub_host_to_target32 (header_size);
+ 	text_section->characteristics = grub_cpu_to_le32_compile_time (
+ 						  GRUB_PE32_SCN_CNT_CODE
+ 						| GRUB_PE32_SCN_MEM_EXECUTE
+@@ -1377,10 +1377,10 @@ grub_install_generate_image (const char *dir, const char *prefix,
+ 
+ 	data_section = text_section + 1;
+ 	strcpy (data_section->name, ".data");
+-	data_section->virtual_size = grub_cpu_to_le32 (layout.kernel_size - layout.exec_size);
+-	data_section->virtual_address = grub_cpu_to_le32 (header_size + layout.exec_size);
+-	data_section->raw_data_size = grub_cpu_to_le32 (layout.kernel_size - layout.exec_size);
+-	data_section->raw_data_offset = grub_cpu_to_le32 (header_size + layout.exec_size);
++	data_section->virtual_size = grub_host_to_target32 (layout.kernel_size - layout.exec_size);
++	data_section->virtual_address = grub_host_to_target32 (header_size + layout.exec_size);
++	data_section->raw_data_size = grub_host_to_target32 (layout.kernel_size - layout.exec_size);
++	data_section->raw_data_offset = grub_host_to_target32 (header_size + layout.exec_size);
+ 	data_section->characteristics
+ 	  = grub_cpu_to_le32_compile_time (GRUB_PE32_SCN_CNT_INITIALIZED_DATA
+ 			      | GRUB_PE32_SCN_MEM_READ
+@@ -1388,10 +1388,10 @@ grub_install_generate_image (const char *dir, const char *prefix,
+     
+ 	mods_section = data_section + 1;
+ 	strcpy (mods_section->name, "mods");
+-	mods_section->virtual_size = grub_cpu_to_le32 (reloc_addr - layout.kernel_size - header_size);
+-	mods_section->virtual_address = grub_cpu_to_le32 (header_size + layout.kernel_size + layout.bss_size);
+-	mods_section->raw_data_size = grub_cpu_to_le32 (reloc_addr - layout.kernel_size - header_size);
+-	mods_section->raw_data_offset = grub_cpu_to_le32 (header_size + layout.kernel_size);
++	mods_section->virtual_size = grub_host_to_target32 (reloc_addr - layout.kernel_size - header_size);
++	mods_section->virtual_address = grub_host_to_target32 (header_size + layout.kernel_size + layout.bss_size);
++	mods_section->raw_data_size = grub_host_to_target32 (reloc_addr - layout.kernel_size - header_size);
++	mods_section->raw_data_offset = grub_host_to_target32 (header_size + layout.kernel_size);
+ 	mods_section->characteristics
+ 	  = grub_cpu_to_le32_compile_time (GRUB_PE32_SCN_CNT_INITIALIZED_DATA
+ 			      | GRUB_PE32_SCN_MEM_READ
+@@ -1399,10 +1399,10 @@ grub_install_generate_image (const char *dir, const char *prefix,
+ 
+ 	reloc_section = mods_section + 1;
+ 	strcpy (reloc_section->name, ".reloc");
+-	reloc_section->virtual_size = grub_cpu_to_le32 (layout.reloc_size);
+-	reloc_section->virtual_address = grub_cpu_to_le32 (reloc_addr + layout.bss_size);
+-	reloc_section->raw_data_size = grub_cpu_to_le32 (layout.reloc_size);
+-	reloc_section->raw_data_offset = grub_cpu_to_le32 (reloc_addr);
++	reloc_section->virtual_size = grub_host_to_target32 (layout.reloc_size);
++	reloc_section->virtual_address = grub_host_to_target32 (reloc_addr + layout.bss_size);
++	reloc_section->raw_data_size = grub_host_to_target32 (layout.reloc_size);
++	reloc_section->raw_data_offset = grub_host_to_target32 (reloc_addr);
+ 	reloc_section->characteristics
+ 	  = grub_cpu_to_le32_compile_time (GRUB_PE32_SCN_CNT_INITIALIZED_DATA
+ 			      | GRUB_PE32_SCN_MEM_DISCARDABLE
+-- 
+2.14.2
+

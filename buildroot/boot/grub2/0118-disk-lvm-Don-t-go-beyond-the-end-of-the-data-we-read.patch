@@ -1,0 +1,49 @@
+From a8cc95de74ccc3ad090e8062ac335c844f13c9f4 Mon Sep 17 00:00:00 2001
+From: Daniel Axtens <dja@axtens.net>
+Date: Thu, 21 Jan 2021 17:59:14 +1100
+Subject: [PATCH] disk/lvm: Don't go beyond the end of the data we read from
+ disk
+
+We unconditionally trusted offset_xl from the LVM label header, even if
+it told us that the PV header/disk locations were way off past the end
+of the data we read from disk.
+
+Require that the offset be sane, fixing an OOB read and crash.
+
+Fixes: CID 314367, CID 314371
+
+Signed-off-by: Daniel Axtens <dja@axtens.net>
+Reviewed-by: Daniel Kiper <daniel.kiper@oracle.com>
+Signed-off-by: Stefan Sørensen <stefan.sorensen@spectralink.com>
+---
+ grub-core/disk/lvm.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+
+diff --git a/grub-core/disk/lvm.c b/grub-core/disk/lvm.c
+index 139fafd..8136122 100644
+--- a/grub-core/disk/lvm.c
++++ b/grub-core/disk/lvm.c
+@@ -141,6 +141,20 @@ grub_lvm_detect (grub_disk_t disk,
+       goto fail;
+     }
+ 
++  /*
++   * We read a grub_lvm_pv_header and then 2 grub_lvm_disk_locns that
++   * immediately follow the PV header. Make sure we have space for both.
++   */
++  if (grub_le_to_cpu32 (lh->offset_xl) >=
++      GRUB_LVM_LABEL_SIZE - sizeof (struct grub_lvm_pv_header) -
++      2 * sizeof (struct grub_lvm_disk_locn))
++    {
++#ifdef GRUB_UTIL
++      grub_util_info ("LVM PV header/disk locations are beyond the end of the block");
++#endif
++      goto fail;
++    }
++
+   pvh = (struct grub_lvm_pv_header *) (buf + grub_le_to_cpu32(lh->offset_xl));
+ 
+   for (i = 0, j = 0; i < GRUB_LVM_ID_LEN; i++)
+-- 
+2.14.2
+

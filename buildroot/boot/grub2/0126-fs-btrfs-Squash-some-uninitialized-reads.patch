@@ -1,0 +1,43 @@
+From b911884dd707ba1e6f641eb17857df3155013a45 Mon Sep 17 00:00:00 2001
+From: Daniel Axtens <dja@axtens.net>
+Date: Mon, 18 Jan 2021 17:27:18 +1100
+Subject: [PATCH] fs/btrfs: Squash some uninitialized reads
+
+We need to check errors before calling into a function that uses the result.
+
+Signed-off-by: Daniel Axtens <dja@axtens.net>
+Reviewed-by: Daniel Kiper <daniel.kiper@oracle.com>
+Signed-off-by: Stefan Sørensen <stefan.sorensen@spectralink.com>
+---
+ grub-core/fs/btrfs.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/grub-core/fs/btrfs.c b/grub-core/fs/btrfs.c
+index e4e87ba..d489cb0 100644
+--- a/grub-core/fs/btrfs.c
++++ b/grub-core/fs/btrfs.c
+@@ -381,9 +381,9 @@ next (struct grub_btrfs_data *data,
+ 
+       err = grub_btrfs_read_logical (data, grub_le_to_cpu64 (node.addr),
+ 				     &head, sizeof (head), 0);
+-      check_btrfs_header (data, &head, grub_le_to_cpu64 (node.addr));
+       if (err)
+ 	return -err;
++      check_btrfs_header (data, &head, grub_le_to_cpu64 (node.addr));
+ 
+       save_ref (desc, grub_le_to_cpu64 (node.addr), 0,
+ 		grub_le_to_cpu32 (head.nitems), !head.level);
+@@ -443,9 +443,9 @@ lower_bound (struct grub_btrfs_data *data,
+       /* FIXME: preread few nodes into buffer. */
+       err = grub_btrfs_read_logical (data, addr, &head, sizeof (head),
+ 				     recursion_depth + 1);
+-      check_btrfs_header (data, &head, addr);
+       if (err)
+ 	return err;
++      check_btrfs_header (data, &head, addr);
+       addr += sizeof (head);
+       if (head.level)
+ 	{
+-- 
+2.14.2
+

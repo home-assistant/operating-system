@@ -1,0 +1,78 @@
+From ac5c9367548750e75ed1e7fc4354a3d20186d733 Mon Sep 17 00:00:00 2001
+From: Daniel Kiper <daniel.kiper@oracle.com>
+Date: Thu, 3 Dec 2020 16:01:47 +0100
+Subject: [PATCH] efi: Add a function to read EFI variables with attributes
+
+It will be used to properly detect and report UEFI Secure Boot status to
+the x86 Linux kernel. The functionality will be added by subsequent patches.
+
+Signed-off-by: Ignat Korchagin <ignat@cloudflare.com>
+Signed-off-by: Daniel Kiper <daniel.kiper@oracle.com>
+Signed-off-by: Marco A Benatto <mbenatto@redhat.com>
+Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
+Reviewed-by: Daniel Kiper <daniel.kiper@oracle.com>
+---
+ grub-core/kern/efi/efi.c | 16 +++++++++++++---
+ include/grub/efi/efi.h   |  5 +++++
+ 2 files changed, 18 insertions(+), 3 deletions(-)
+
+diff --git a/grub-core/kern/efi/efi.c b/grub-core/kern/efi/efi.c
+index 9403b12cd..2942b8e35 100644
+--- a/grub-core/kern/efi/efi.c
++++ b/grub-core/kern/efi/efi.c
+@@ -224,8 +224,11 @@ grub_efi_set_variable(const char *var, const grub_efi_guid_t *guid,
+ }
+ 
+ grub_efi_status_t
+-grub_efi_get_variable (const char *var, const grub_efi_guid_t *guid,
+-		       grub_size_t *datasize_out, void **data_out)
++grub_efi_get_variable_with_attributes (const char *var,
++				       const grub_efi_guid_t *guid,
++				       grub_size_t *datasize_out,
++				       void **data_out,
++				       grub_efi_uint32_t *attributes)
+ {
+   grub_efi_status_t status;
+   grub_efi_uintn_t datasize = 0;
+@@ -262,7 +265,7 @@ grub_efi_get_variable (const char *var, const grub_efi_guid_t *guid,
+       return GRUB_EFI_OUT_OF_RESOURCES;
+     }
+ 
+-  status = efi_call_5 (r->get_variable, var16, guid, NULL, &datasize, data);
++  status = efi_call_5 (r->get_variable, var16, guid, attributes, &datasize, data);
+   grub_free (var16);
+ 
+   if (status == GRUB_EFI_SUCCESS)
+@@ -276,6 +279,13 @@ grub_efi_get_variable (const char *var, const grub_efi_guid_t *guid,
+   return status;
+ }
+ 
++grub_efi_status_t
++grub_efi_get_variable (const char *var, const grub_efi_guid_t *guid,
++		       grub_size_t *datasize_out, void **data_out)
++{
++  return grub_efi_get_variable_with_attributes (var, guid, datasize_out, data_out, NULL);
++}
++
+ #pragma GCC diagnostic ignored "-Wcast-align"
+ 
+ /* Search the mods section from the PE32/PE32+ image. This code uses
+diff --git a/include/grub/efi/efi.h b/include/grub/efi/efi.h
+index 8b2a0f1f5..83d958f99 100644
+--- a/include/grub/efi/efi.h
++++ b/include/grub/efi/efi.h
+@@ -74,6 +74,11 @@ grub_err_t EXPORT_FUNC (grub_efi_set_virtual_address_map) (grub_efi_uintn_t memo
+ 							   grub_efi_uintn_t descriptor_size,
+ 							   grub_efi_uint32_t descriptor_version,
+ 							   grub_efi_memory_descriptor_t *virtual_map);
++grub_efi_status_t EXPORT_FUNC (grub_efi_get_variable_with_attributes) (const char *variable,
++								       const grub_efi_guid_t *guid,
++								       grub_size_t *datasize_out,
++								       void **data_out,
++								       grub_efi_uint32_t *attributes);
+ grub_efi_status_t EXPORT_FUNC (grub_efi_get_variable) (const char *variable,
+ 						       const grub_efi_guid_t *guid,
+ 						       grub_size_t *datasize_out,
+-- 
+2.29.2
+

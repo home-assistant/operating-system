@@ -1,0 +1,122 @@
+From 89bdab965805e8d54d7f75349024e1a11cbe2eb8 Mon Sep 17 00:00:00 2001
+From: Paulo Flabiano Smorigo <pfsmorigo@canonical.com>
+Date: Mon, 14 Dec 2020 18:54:49 -0300
+Subject: [PATCH] zfs: Fix resource leaks while constructing path
+
+There are several exit points in dnode_get_path() that are causing possible
+memory leaks.
+
+In the while(1) the correct exit mechanism should not be to do a direct return,
+but to instead break out of the loop, setting err first if it is not already set.
+
+The reason behind this is that the dnode_path is a linked list, and while doing
+through this loop, it is being allocated and built up - the only way to
+correctly unravel it is to traverse it, which is what is being done at the end
+of the function outside of the loop.
+
+Several of the existing exit points correctly did a break, but not all so this
+change makes that more consistent and should resolve the leaking of memory as
+found by Coverity.
+
+Fixes: CID 73741
+
+Signed-off-by: Paulo Flabiano Smorigo <pfsmorigo@canonical.com>
+Signed-off-by: Darren Kenny <darren.kenny@oracle.com>
+Reviewed-by: Daniel Kiper <daniel.kiper@oracle.com>
+Signed-off-by: Stefan Sørensen <stefan.sorensen@spectralink.com>
+---
+ grub-core/fs/zfs/zfs.c | 30 +++++++++++++++++++++---------
+ 1 file changed, 21 insertions(+), 9 deletions(-)
+
+diff --git a/grub-core/fs/zfs/zfs.c b/grub-core/fs/zfs/zfs.c
+index 0c42cba..9087a72 100644
+--- a/grub-core/fs/zfs/zfs.c
++++ b/grub-core/fs/zfs/zfs.c
+@@ -2836,8 +2836,8 @@ dnode_get_path (struct subvolume *subvol, const char *path_in, dnode_end_t *dn,
+ 
+       if (dnode_path->dn.dn.dn_type != DMU_OT_DIRECTORY_CONTENTS)
+ 	{
+-	  grub_free (path_buf);
+-	  return grub_error (GRUB_ERR_BAD_FILE_TYPE, N_("not a directory"));
++	  err = grub_error (GRUB_ERR_BAD_FILE_TYPE, N_("not a directory"));
++	  break;
+ 	}
+       err = zap_lookup (&(dnode_path->dn), cname, &objnum,
+ 			data, subvol->case_insensitive);
+@@ -2879,11 +2879,18 @@ dnode_get_path (struct subvolume *subvol, const char *path_in, dnode_end_t *dn,
+ 		       << SPA_MINBLOCKSHIFT);
+ 
+ 	      if (blksz == 0)
+-		return grub_error(GRUB_ERR_BAD_FS, "0-sized block");
++                {
++                  err = grub_error (GRUB_ERR_BAD_FS, "0-sized block");
++                  break;
++                }
+ 
+ 	      sym_value = grub_malloc (sym_sz);
+ 	      if (!sym_value)
+-		return grub_errno;
++		{
++		  err = grub_errno;
++		  break;
++		}
++
+ 	      for (block = 0; block < (sym_sz + blksz - 1) / blksz; block++)
+ 		{
+ 		  void *t;
+@@ -2893,7 +2900,7 @@ dnode_get_path (struct subvolume *subvol, const char *path_in, dnode_end_t *dn,
+ 		  if (err)
+ 		    {
+ 		      grub_free (sym_value);
+-		      return err;
++		      break;
+ 		    }
+ 
+ 		  movesize = sym_sz - block * blksz;
+@@ -2903,6 +2910,8 @@ dnode_get_path (struct subvolume *subvol, const char *path_in, dnode_end_t *dn,
+ 		  grub_memcpy (sym_value + block * blksz, t, movesize);
+ 		  grub_free (t);
+ 		}
++		if (err)
++		  break;
+ 	      free_symval = 1;
+ 	    }	    
+ 	  path = path_buf = grub_malloc (sym_sz + grub_strlen (oldpath) + 1);
+@@ -2911,7 +2920,8 @@ dnode_get_path (struct subvolume *subvol, const char *path_in, dnode_end_t *dn,
+ 	      grub_free (oldpathbuf);
+ 	      if (free_symval)
+ 		grub_free (sym_value);
+-	      return grub_errno;
++	      err = grub_errno;
++	      break;
+ 	    }
+ 	  grub_memcpy (path, sym_value, sym_sz);
+ 	  if (free_symval)
+@@ -2949,11 +2959,12 @@ dnode_get_path (struct subvolume *subvol, const char *path_in, dnode_end_t *dn,
+ 	      
+ 	      err = zio_read (bp, dnode_path->dn.endian, &sahdrp, NULL, data);
+ 	      if (err)
+-		return err;
++	        break;
+ 	    }
+ 	  else
+ 	    {
+-	      return grub_error (GRUB_ERR_BAD_FS, "filesystem is corrupt");
++	      err = grub_error (GRUB_ERR_BAD_FS, "filesystem is corrupt");
++	      break;
+ 	    }
+ 
+ 	  hdrsize = SA_HDR_SIZE (((sa_hdr_phys_t *) sahdrp));
+@@ -2974,7 +2985,8 @@ dnode_get_path (struct subvolume *subvol, const char *path_in, dnode_end_t *dn,
+ 	      if (!path_buf)
+ 		{
+ 		  grub_free (oldpathbuf);
+-		  return grub_errno;
++		  err = grub_errno;
++		  break;
+ 		}
+ 	      grub_memcpy (path, sym_value, sym_sz);
+ 	      path [sym_sz] = 0;
+-- 
+2.14.2
+

@@ -10,5 +10,7 @@ PYTHON_PYJWT_SITE = https://files.pythonhosted.org/packages/14/6d/096dc269d105ba
 PYTHON_PYJWT_SETUP_TYPE = setuptools
 PYTHON_PYJWT_LICENSE = MIT
 PYTHON_PYJWT_LICENSE_FILES = LICENSE
+PYTHON_PYJWT_CPE_ID_VENDOR = pyjwt_project
+PYTHON_PYJWT_CPE_ID_PRODUCT = pyjwt
 
 $(eval $(python-package))

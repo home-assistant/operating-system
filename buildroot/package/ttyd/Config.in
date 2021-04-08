@@ -1,6 +1,6 @@
 config BR2_PACKAGE_TTYD
 	bool "ttyd"
-	depends on !BR2_STATIC_LIBS # libuv
+	depends on !BR2_STATIC_LIBS # libuv, libwebsockets
 	depends on BR2_TOOLCHAIN_HAS_THREADS_NPTL # libuv
 	depends on BR2_TOOLCHAIN_HAS_SYNC_4 # libuv, json-c
 	depends on BR2_USE_MMU # libuv

@@ -1,0 +1,50 @@
+From 74ccbee0f798822041dba5c6564df62a0c60d86b Mon Sep 17 00:00:00 2001
+From: Ryan Barnett <ryanbarnett3@gmail.com>
+Date: Mon, 22 Feb 2021 07:09:34 -0600
+Subject: Makefile: separate manpages and utils install
+
+The installation of opkg-build man page introduces a host dependency
+on perl for the pod2man package to generate the man page.
+
+To allow the opkg-utils scripts to be installed separately from the
+manpages, break apart the install step into two install steps:
+install-utils and install-docs
+
+Backported from: 74ccbee0f798822041dba5c6564df62a0c60d86b
+
+CC: Christian Hermann <mail@hermannch.dev>
+Signed-off-by: Ryan Barnett <ryanbarnett3@gmail.com>
+Signed-off-by: Alex Stewart <alex.stewart@ni.com>
+Signed-off-by: Ryan Barnett <ryan.barnett@rockwellcollins.com>
+---
+ Makefile | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index 4049654..fe96d5a 100644
+--- a/Makefile
++++ b/Makefile
+@@ -27,9 +27,11 @@ mandir ?= $(PREFIX)/man
+ 
+ all: $(UTILS) $(MANPAGES)
+ 
+-install: all
++install-utils: $(UTILS)
+ 	install -d $(DESTDIR)$(bindir)
+ 	install -m 755 $(UTILS) $(DESTDIR)$(bindir)
++
++install-docs: $(MANPAGES)
+ 	install -d $(DESTDIR)$(mandir)
+ 	for m in $(MANPAGES); \
+ 	do \
+@@ -37,4 +39,6 @@ install: all
+ 		install -m 644 "$$m" $(DESTDIR)$(mandir)/man$${m##*.}; \
+ 	done
+ 
+-.PHONY: install all
++install: install-utils install-docs
++
++.PHONY: install install-utils install-docs all
+-- 
+cgit v1.2.2-1-g5e49
+

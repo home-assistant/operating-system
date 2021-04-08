@@ -1,0 +1,33 @@
+From 0759f3f9bb2850df455599e7c82eda4ec804e3b6 Mon Sep 17 00:00:00 2001
+From: Peter Seiderer <ps.report@gmx.net>
+Date: Wed, 10 Mar 2021 22:57:50 +0100
+Subject: [PATCH] Makefile: disable stack-protector-strong
+
+Fixes:
+
+  .../aarch64-buildroot-linux-uclibc/bin/ld: runlevel.o: in function `main':
+  runlevel.c:(.text.startup+0x4): undefined reference to `__stack_chk_guard'
+  .../aarch64-buildroot-linux-uclibc/bin/ld: cannot find -lssp_nonshared
+  .../aarch64-buildroot-linux-uclibc/bin/ld: cannot find -lssp
+
+Signed-off-by: Peter Seiderer <ps.report@gmx.net>
+---
+ src/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/Makefile b/src/Makefile
+index 1b368dc..1985929 100644
+--- a/src/Makefile
++++ b/src/Makefile
+@@ -10,7 +10,7 @@
+ 
+ CPPFLAGS =
+ CFLAGS  ?= -O2
+-override CFLAGS += -ansi -fomit-frame-pointer -fstack-protector-strong -W -Wall -Wunreachable-code -Wformat -Werror=format-security -D_FORTIFY_SOURCE=2 -D_XOPEN_SOURCE -D_GNU_SOURCE -DVERSION=\"$(VERSION)\"
++override CFLAGS += -ansi -fomit-frame-pointer -W -Wall -Wunreachable-code -Wformat -Werror=format-security -D_FORTIFY_SOURCE=2 -D_XOPEN_SOURCE -D_GNU_SOURCE -DVERSION=\"$(VERSION)\"
+ override CFLAGS += $(shell getconf LFS_CFLAGS)
+ STATIC	=
+ MANDB	:= s@^\('\\\\\"\)[^\*-]*-\*- coding: [^[:blank:]]\+ -\*-@\1@
+-- 
+2.30.1
+

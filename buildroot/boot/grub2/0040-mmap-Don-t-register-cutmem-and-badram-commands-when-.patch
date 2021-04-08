@@ -1,0 +1,70 @@
+From d298b41f90cbf1f2e5a10e29daa1fc92ddee52c9 Mon Sep 17 00:00:00 2001
+From: Javier Martinez Canillas <javierm@redhat.com>
+Date: Wed, 14 Oct 2020 16:33:42 +0200
+Subject: [PATCH] mmap: Don't register cutmem and badram commands when lockdown
+ is enforced
+
+The cutmem and badram commands can be used to remove EFI memory regions
+and potentially disable the UEFI Secure Boot. Prevent the commands to be
+registered if the GRUB is locked down.
+
+Fixes: CVE-2020-27779
+
+Reported-by: Teddy Reed <teddy.reed@gmail.com>
+Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
+Reviewed-by: Daniel Kiper <daniel.kiper@oracle.com>
+Signed-off-by: Stefan Sørensen <stefan.sorensen@spectralink.com>
+---
+ docs/grub.texi        |  4 ++++
+ grub-core/mmap/mmap.c | 13 +++++++------
+ 2 files changed, 11 insertions(+), 6 deletions(-)
+
+diff --git a/docs/grub.texi b/docs/grub.texi
+index 98592d3..f2fe149 100644
+--- a/docs/grub.texi
++++ b/docs/grub.texi
+@@ -4051,6 +4051,10 @@ this page is to be filtered.  This syntax makes it easy to represent patterns
+ that are often result of memory damage, due to physical distribution of memory
+ cells.
+ 
++Note: The command is not allowed when lockdown is enforced (@pxref{Lockdown}).
++      This prevents removing EFI memory regions to potentially subvert the
++      security mechanisms provided by the UEFI secure boot.
++
+ @node blocklist
+ @subsection blocklist
+ 
+diff --git a/grub-core/mmap/mmap.c b/grub-core/mmap/mmap.c
+index 57b4e9a..7ebf32e 100644
+--- a/grub-core/mmap/mmap.c
++++ b/grub-core/mmap/mmap.c
+@@ -20,6 +20,7 @@
+ #include <grub/memory.h>
+ #include <grub/machine/memory.h>
+ #include <grub/err.h>
++#include <grub/lockdown.h>
+ #include <grub/misc.h>
+ #include <grub/mm.h>
+ #include <grub/command.h>
+@@ -534,12 +535,12 @@ static grub_command_t cmd, cmd_cut;
+ 
+ GRUB_MOD_INIT(mmap)
+ {
+-  cmd = grub_register_command ("badram", grub_cmd_badram,
+-			       N_("ADDR1,MASK1[,ADDR2,MASK2[,...]]"),
+-			       N_("Declare memory regions as faulty (badram)."));
+-  cmd_cut = grub_register_command ("cutmem", grub_cmd_cutmem,
+-				   N_("FROM[K|M|G] TO[K|M|G]"),
+-				   N_("Remove any memory regions in specified range."));
++  cmd = grub_register_command_lockdown ("badram", grub_cmd_badram,
++                                        N_("ADDR1,MASK1[,ADDR2,MASK2[,...]]"),
++                                        N_("Declare memory regions as faulty (badram)."));
++  cmd_cut = grub_register_command_lockdown ("cutmem", grub_cmd_cutmem,
++                                            N_("FROM[K|M|G] TO[K|M|G]"),
++                                            N_("Remove any memory regions in specified range."));
+ 
+ }
+ 
+-- 
+2.14.2
+

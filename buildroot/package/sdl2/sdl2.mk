@@ -142,13 +142,6 @@ else
 SDL2_CONF_OPTS += --disable-video-opengles
 endif
 
-ifeq ($(BR2_PACKAGE_TSLIB),y)
-SDL2_DEPENDENCIES += tslib
-SDL2_CONF_OPTS += --enable-input-tslib
-else
-SDL2_CONF_OPTS += --disable-input-tslib
-endif
-
 ifeq ($(BR2_PACKAGE_ALSA_LIB),y)
 SDL2_DEPENDENCIES += alsa-lib
 SDL2_CONF_OPTS += --enable-alsa

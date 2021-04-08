@@ -1,0 +1,270 @@
+From 968de8c23c1cba0f18230f778ebcf6c412ec8ec5 Mon Sep 17 00:00:00 2001
+From: Dimitri John Ledkov <xnox@ubuntu.com>
+Date: Sat, 20 Feb 2021 17:10:34 +0000
+Subject: [PATCH] shim_lock: Only skip loading shim_lock verifier with explicit
+ consent
+
+Commit 32ddc42c (efi: Only register shim_lock verifier if shim_lock
+protocol is found and SB enabled) reintroduced CVE-2020-15705 which
+previously only existed in the out-of-tree linuxefi patches and was
+fixed as part of the BootHole patch series.
+
+Under Secure Boot enforce loading shim_lock verifier. Allow skipping
+shim_lock verifier if SecureBoot/MokSBState EFI variables indicate
+skipping validations, or if GRUB image is built with --disable-shim-lock.
+
+Fixes: 132ddc42c (efi: Only register shim_lock verifier if shim_lock
+       protocol is found and SB enabled)
+Fixes: CVE-2020-15705
+Fixes: CVE-2021-3418
+
+Reported-by: Dimitri John Ledkov <xnox@ubuntu.com>
+Signed-off-by: Dimitri John Ledkov <xnox@ubuntu.com>
+Reviewed-by: Daniel Kiper <daniel.kiper@oracle.com>
+Signed-off-by: Stefan Sørensen <stefan.sorensen@spectralink.com>
+---
+ docs/grub.texi              |  5 ++++-
+ grub-core/kern/efi/sb.c     | 17 ++++++++++++++++-
+ include/grub/kernel.h       |  3 ++-
+ include/grub/util/install.h |  7 +++++--
+ util/grub-install-common.c  | 12 +++++++++---
+ util/grub-mkimage.c         |  8 +++++++-
+ util/mkimage.c              | 15 ++++++++++++++-
+ 7 files changed, 57 insertions(+), 10 deletions(-)
+
+diff --git a/docs/grub.texi b/docs/grub.texi
+index bff6dfc..e302797 100644
+--- a/docs/grub.texi
++++ b/docs/grub.texi
+@@ -5787,7 +5787,10 @@ secure boot chain.
+ The GRUB, except the @command{chainloader} command, works with the UEFI secure
+ boot and the shim. This functionality is provided by the shim_lock verifier. It
+ is built into the @file{core.img} and is registered if the UEFI secure boot is
+-enabled.
++enabled. The @samp{shim_lock} variable is set to @samp{y} when shim_lock verifier
++is registered. If it is desired to use UEFI secure boot without shim, one can
++disable shim_lock by disabling shim verification with MokSbState UEFI variable
++or by building grub image with @samp{--disable-shim-lock} option.
+ 
+ All GRUB modules not stored in the @file{core.img}, OS kernels, ACPI tables,
+ Device Trees, etc. have to be signed, e.g, using PGP. Additionally, the commands
+diff --git a/grub-core/kern/efi/sb.c b/grub-core/kern/efi/sb.c
+index 5d7210a..41dadcd 100644
+--- a/grub-core/kern/efi/sb.c
++++ b/grub-core/kern/efi/sb.c
+@@ -21,9 +21,11 @@
+ #include <grub/efi/efi.h>
+ #include <grub/efi/pe32.h>
+ #include <grub/efi/sb.h>
++#include <grub/env.h>
+ #include <grub/err.h>
+ #include <grub/file.h>
+ #include <grub/i386/linux.h>
++#include <grub/kernel.h>
+ #include <grub/mm.h>
+ #include <grub/types.h>
+ #include <grub/verify.h>
+@@ -160,14 +162,27 @@ struct grub_file_verifier shim_lock_verifier =
+ void
+ grub_shim_lock_verifier_setup (void)
+ {
++  struct grub_module_header *header;
+   grub_efi_shim_lock_protocol_t *sl =
+     grub_efi_locate_protocol (&shim_lock_guid, 0);
+ 
++  /* shim_lock is missing, check if GRUB image is built with --disable-shim-lock. */
+   if (!sl)
+-    return;
++    {
++      FOR_MODULES (header)
++	{
++	  if (header->type == OBJ_TYPE_DISABLE_SHIM_LOCK)
++	    return;
++	}
++    }
+ 
++  /* Secure Boot is off. Do not load shim_lock. */
+   if (grub_efi_get_secureboot () != GRUB_EFI_SECUREBOOT_MODE_ENABLED)
+     return;
+ 
++  /* Enforce shim_lock_verifier. */
+   grub_verifier_register (&shim_lock_verifier);
++
++  grub_env_set ("shim_lock", "y");
++  grub_env_export ("shim_lock");
+ }
+diff --git a/include/grub/kernel.h b/include/grub/kernel.h
+index 133a37c..abbca5e 100644
+--- a/include/grub/kernel.h
++++ b/include/grub/kernel.h
+@@ -29,7 +29,8 @@ enum
+   OBJ_TYPE_CONFIG,
+   OBJ_TYPE_PREFIX,
+   OBJ_TYPE_PUBKEY,
+-  OBJ_TYPE_DTB
++  OBJ_TYPE_DTB,
++  OBJ_TYPE_DISABLE_SHIM_LOCK
+ };
+ 
+ /* The module header.  */
+diff --git a/include/grub/util/install.h b/include/grub/util/install.h
+index 8cb5056..11a8df8 100644
+--- a/include/grub/util/install.h
++++ b/include/grub/util/install.h
+@@ -65,6 +65,8 @@
+       N_("embed FILE as public key for signature checking"), 0},	\
+   { "sbat", GRUB_INSTALL_OPTIONS_SBAT, N_("FILE"), 0,			\
+       N_("SBAT metadata"), 0 },						\
++  { "disable-shim-lock", GRUB_INSTALL_OPTIONS_DISABLE_SHIM_LOCK, 0, 0,	\
++      N_("disable shim_lock verifier"), 0 },				\
+   { "verbose", 'v', 0, 0,						\
+     N_("print verbose messages."), 1 }
+ 
+@@ -125,7 +127,8 @@ enum grub_install_options {
+   GRUB_INSTALL_OPTIONS_GRUB_MKIMAGE,
+   GRUB_INSTALL_OPTIONS_INSTALL_CORE_COMPRESS,
+   GRUB_INSTALL_OPTIONS_DTB,
+-  GRUB_INSTALL_OPTIONS_SBAT
++  GRUB_INSTALL_OPTIONS_SBAT,
++  GRUB_INSTALL_OPTIONS_DISABLE_SHIM_LOCK
+ };
+ 
+ extern char *grub_install_source_directory;
+@@ -187,7 +190,7 @@ grub_install_generate_image (const char *dir, const char *prefix,
+ 			     const struct grub_install_image_target_desc *image_target,
+ 			     int note,
+ 			     grub_compression_t comp, const char *dtb_file,
+-			     const char *sbat_path);
++			     const char *sbat_path, const int disable_shim_lock);
+ 
+ const struct grub_install_image_target_desc *
+ grub_install_get_image_target (const char *arg);
+diff --git a/util/grub-install-common.c b/util/grub-install-common.c
+index 1fcccd2..13d9fe9 100644
+--- a/util/grub-install-common.c
++++ b/util/grub-install-common.c
+@@ -308,6 +308,7 @@ handle_install_list (struct install_list *il, const char *val,
+ static char **pubkeys;
+ static size_t npubkeys;
+ static char *sbat;
++static int disable_shim_lock;
+ static grub_compression_t compression;
+ 
+ int
+@@ -344,6 +345,9 @@ grub_install_parse (int key, char *arg)
+ 
+       sbat = xstrdup (arg);
+       return 1;
++    case GRUB_INSTALL_OPTIONS_DISABLE_SHIM_LOCK:
++      disable_shim_lock = 1;
++      return 1;
+ 
+     case GRUB_INSTALL_OPTIONS_VERBOSITY:
+       verbosity++;
+@@ -506,10 +510,11 @@ grub_install_make_image_wrap_file (const char *dir, const char *prefix,
+ 		  " --output '%s' "
+ 		  " --dtb '%s' "
+ 		  "--sbat '%s' "
+-		  "--format '%s' --compression '%s' %s %s\n",
++		  "--format '%s' --compression '%s' %s %s %s\n",
+ 		  dir, prefix,
+ 		  outname, dtb ? : "", sbat ? : "", mkimage_target,
+-		  compnames[compression], note ? "--note" : "", s);
++		  compnames[compression], note ? "--note" : "",
++		  disable_shim_lock ? "--disable-shim-lock" : "", s);
+   free (s);
+ 
+   tgt = grub_install_get_image_target (mkimage_target);
+@@ -519,7 +524,8 @@ grub_install_make_image_wrap_file (const char *dir, const char *prefix,
+   grub_install_generate_image (dir, prefix, fp, outname,
+ 			       modules.entries, memdisk_path,
+ 			       pubkeys, npubkeys, config_path, tgt,
+-			       note, compression, dtb, sbat);
++			       note, compression, dtb, sbat,
++			       disable_shim_lock);
+   while (dc--)
+     grub_install_pop_module ();
+ }
+diff --git a/util/grub-mkimage.c b/util/grub-mkimage.c
+index 75b8847..c0d5599 100644
+--- a/util/grub-mkimage.c
++++ b/util/grub-mkimage.c
+@@ -82,6 +82,7 @@ static struct argp_option options[] = {
+   {"format",  'O', N_("FORMAT"), 0, 0, 0},
+   {"compression",  'C', "(xz|none|auto)", 0, N_("choose the compression to use for core image"), 0},
+   {"sbat", 's', N_("FILE"), 0, N_("SBAT metadata"), 0},
++  {"disable-shim-lock", GRUB_INSTALL_OPTIONS_DISABLE_SHIM_LOCK, 0, 0, N_("disable shim_lock verifier"), 0},
+   {"verbose",     'v', 0,      0, N_("print verbose messages."), 0},
+   { 0, 0, 0, 0, 0, 0 }
+ };
+@@ -126,6 +127,7 @@ struct arguments
+   char *config;
+   char *sbat;
+   int note;
++  int disable_shim_lock;
+   const struct grub_install_image_target_desc *image_target;
+   grub_compression_t comp;
+ };
+@@ -233,6 +235,10 @@ argp_parser (int key, char *arg, struct argp_state *state)
+       arguments->sbat = xstrdup (arg);
+       break;
+ 
++    case GRUB_INSTALL_OPTIONS_DISABLE_SHIM_LOCK:
++      arguments->disable_shim_lock = 1;
++      break;
++
+     case 'v':
+       verbosity++;
+       break;
+@@ -319,7 +325,7 @@ main (int argc, char *argv[])
+ 			       arguments.npubkeys, arguments.config,
+ 			       arguments.image_target, arguments.note,
+ 			       arguments.comp, arguments.dtb,
+-			       arguments.sbat);
++			       arguments.sbat, arguments.disable_shim_lock);
+ 
+   if (grub_util_file_sync (fp) < 0)
+     grub_util_error (_("cannot sync `%s': %s"), arguments.output ? : "stdout",
+diff --git a/util/mkimage.c b/util/mkimage.c
+index b354ec1..a26cf76 100644
+--- a/util/mkimage.c
++++ b/util/mkimage.c
+@@ -870,7 +870,7 @@ grub_install_generate_image (const char *dir, const char *prefix,
+ 			     size_t npubkeys, char *config_path,
+ 			     const struct grub_install_image_target_desc *image_target,
+ 			     int note, grub_compression_t comp, const char *dtb_path,
+-			     const char *sbat_path)
++			     const char *sbat_path, int disable_shim_lock)
+ {
+   char *kernel_img, *core_img;
+   size_t total_module_size, core_size;
+@@ -929,6 +929,9 @@ grub_install_generate_image (const char *dir, const char *prefix,
+   if (sbat_path != NULL && image_target->id != IMAGE_EFI)
+     grub_util_error (_(".sbat section can be embedded into EFI images only"));
+ 
++  if (disable_shim_lock)
++    total_module_size += sizeof (struct grub_module_header);
++
+   if (config_path)
+     {
+       config_size = ALIGN_ADDR (grub_util_get_image_size (config_path) + 1);
+@@ -1065,6 +1068,16 @@ grub_install_generate_image (const char *dir, const char *prefix,
+       offset += dtb_size;
+     }
+ 
++  if (disable_shim_lock)
++    {
++      struct grub_module_header *header;
++
++      header = (struct grub_module_header *) (kernel_img + offset);
++      header->type = grub_host_to_target32 (OBJ_TYPE_DISABLE_SHIM_LOCK);
++      header->size = grub_host_to_target32 (sizeof (*header));
++      offset += sizeof (*header);
++    }
++
+   if (config_path)
+     {
+       struct grub_module_header *header;
+-- 
+2.14.2
+

@@ -1,0 +1,97 @@
+From f76a27996c34900f2c369a8a0d6ac72ae2faa988 Mon Sep 17 00:00:00 2001
+From: Daniel Kiper <daniel.kiper@oracle.com>
+Date: Thu, 3 Dec 2020 16:01:45 +0100
+Subject: [PATCH] efi: Make shim_lock GUID and protocol type public
+
+The GUID will be used to properly detect and report UEFI Secure Boot
+status to the x86 Linux kernel. The functionality will be added by
+subsequent patches. The shim_lock protocol type is made public for
+completeness.
+
+Additionally, fix formatting of four preceding GUIDs.
+
+Signed-off-by: Daniel Kiper <daniel.kiper@oracle.com>
+Signed-off-by: Marco A Benatto <mbenatto@redhat.com>
+Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
+Reviewed-by: Daniel Kiper <daniel.kiper@oracle.com>
+Signed-off-by: Stefan Sørensen <stefan.sorensen@spectralink.com>
+---
+ grub-core/commands/efi/shim_lock.c | 12 ------------
+ include/grub/efi/api.h             | 19 +++++++++++++++----
+ 2 files changed, 15 insertions(+), 16 deletions(-)
+
+diff --git a/grub-core/commands/efi/shim_lock.c b/grub-core/commands/efi/shim_lock.c
+index 764098c..d8f52d7 100644
+--- a/grub-core/commands/efi/shim_lock.c
++++ b/grub-core/commands/efi/shim_lock.c
+@@ -27,18 +27,6 @@
+ 
+ GRUB_MOD_LICENSE ("GPLv3+");
+ 
+-#define GRUB_EFI_SHIM_LOCK_GUID \
+-  { 0x605dab50, 0xe046, 0x4300, \
+-    { 0xab, 0xb6, 0x3d, 0xd8, 0x10, 0xdd, 0x8b, 0x23 } \
+-  }
+-
+-struct grub_efi_shim_lock_protocol
+-{
+-  grub_efi_status_t
+-  (*verify) (void *buffer, grub_uint32_t size);
+-};
+-typedef struct grub_efi_shim_lock_protocol grub_efi_shim_lock_protocol_t;
+-
+ static grub_efi_guid_t shim_lock_guid = GRUB_EFI_SHIM_LOCK_GUID;
+ static grub_efi_shim_lock_protocol_t *sl;
+ 
+diff --git a/include/grub/efi/api.h b/include/grub/efi/api.h
+index cf1355a..13e5715 100644
+--- a/include/grub/efi/api.h
++++ b/include/grub/efi/api.h
+@@ -316,22 +316,27 @@
+ 
+ #define GRUB_EFI_SAL_TABLE_GUID \
+   { 0xeb9d2d32, 0x2d88, 0x11d3, \
+-      { 0x9a, 0x16, 0x0, 0x90, 0x27, 0x3f, 0xc1, 0x4d } \
++    { 0x9a, 0x16, 0x0, 0x90, 0x27, 0x3f, 0xc1, 0x4d } \
+   }
+ 
+ #define GRUB_EFI_HCDP_TABLE_GUID \
+   { 0xf951938d, 0x620b, 0x42ef, \
+-      { 0x82, 0x79, 0xa8, 0x4b, 0x79, 0x61, 0x78, 0x98 } \
++    { 0x82, 0x79, 0xa8, 0x4b, 0x79, 0x61, 0x78, 0x98 } \
+   }
+ 
+ #define GRUB_EFI_DEVICE_TREE_GUID \
+   { 0xb1b621d5, 0xf19c, 0x41a5, \
+-      { 0x83, 0x0b, 0xd9, 0x15, 0x2c, 0x69, 0xaa, 0xe0 } \
++    { 0x83, 0x0b, 0xd9, 0x15, 0x2c, 0x69, 0xaa, 0xe0 } \
+   }
+ 
+ #define GRUB_EFI_VENDOR_APPLE_GUID \
+   { 0x2B0585EB, 0xD8B8, 0x49A9,	\
+-      { 0x8B, 0x8C, 0xE2, 0x1B, 0x01, 0xAE, 0xF2, 0xB7 } \
++    { 0x8B, 0x8C, 0xE2, 0x1B, 0x01, 0xAE, 0xF2, 0xB7 } \
++  }
++
++#define GRUB_EFI_SHIM_LOCK_GUID \
++  { 0x605dab50, 0xe046, 0x4300, \
++    { 0xab, 0xb6, 0x3d, 0xd8, 0x10, 0xdd, 0x8b, 0x23 } \
+   }
+ 
+ struct grub_efi_sal_system_table
+@@ -1689,6 +1694,12 @@ struct grub_efi_block_io
+ };
+ typedef struct grub_efi_block_io grub_efi_block_io_t;
+ 
++struct grub_efi_shim_lock_protocol
++{
++  grub_efi_status_t (*verify) (void *buffer, grub_uint32_t size);
++};
++typedef struct grub_efi_shim_lock_protocol grub_efi_shim_lock_protocol_t;
++
+ #if (GRUB_TARGET_SIZEOF_VOID_P == 4) || defined (__ia64__) \
+   || defined (__aarch64__) || defined (__MINGW64__) || defined (__CYGWIN__) \
+   || defined(__riscv)
+-- 
+2.14.2
+

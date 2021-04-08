@@ -1,0 +1,46 @@
+From 20ab8cb44bc140a1dedda82a3fccdd45e9bc6929 Mon Sep 17 00:00:00 2001
+From: Daniel Axtens <dja@axtens.net>
+Date: Mon, 18 Jan 2021 16:49:09 +1100
+Subject: [PATCH] fs/nilfs2: Reject too-large keys
+
+NILFS2 has up to 7 keys, per the data structure. Do not permit array
+indices in excess of that.
+
+This catches some OOB reads. I don't know how controllable the invalidly
+read data is or if that could be used later in the program.
+
+Signed-off-by: Daniel Axtens <dja@axtens.net>
+Reviewed-by: Daniel Kiper <daniel.kiper@oracle.com>
+Signed-off-by: Stefan Sørensen <stefan.sorensen@spectralink.com>
+---
+ grub-core/fs/nilfs2.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/grub-core/fs/nilfs2.c b/grub-core/fs/nilfs2.c
+index 7ed148d..fee2242 100644
+--- a/grub-core/fs/nilfs2.c
++++ b/grub-core/fs/nilfs2.c
+@@ -569,6 +569,11 @@ grub_nilfs2_btree_lookup (struct grub_nilfs2_data *data,
+ static inline grub_uint64_t
+ grub_nilfs2_direct_lookup (struct grub_nilfs2_inode *inode, grub_uint64_t key)
+ {
++  if (1 + key > 6)
++    {
++      grub_error (GRUB_ERR_BAD_FS, "key is too large");
++      return 0xffffffffffffffff;
++    }
+   return grub_le_to_cpu64 (inode->i_bmap[1 + key]);
+ }
+ 
+@@ -584,7 +589,7 @@ grub_nilfs2_bmap_lookup (struct grub_nilfs2_data *data,
+     {
+       grub_uint64_t ptr;
+       ptr = grub_nilfs2_direct_lookup (inode, key);
+-      if (need_translate)
++      if (ptr != ((grub_uint64_t) 0xffffffffffffffff) && need_translate)
+ 	ptr = grub_nilfs2_dat_translate (data, ptr);
+       return ptr;
+     }
+-- 
+2.14.2
+

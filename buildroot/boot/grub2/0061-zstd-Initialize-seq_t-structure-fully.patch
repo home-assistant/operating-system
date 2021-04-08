@@ -1,0 +1,35 @@
+From 2777cf4466719921dbe4b30af358a75e7d76f217 Mon Sep 17 00:00:00 2001
+From: Darren Kenny <darren.kenny@oracle.com>
+Date: Thu, 5 Nov 2020 10:29:59 +0000
+Subject: [PATCH] zstd: Initialize seq_t structure fully
+
+While many compilers will initialize this to zero, not all will, so it
+is better to be sure that fields not being explicitly set are at known
+values, and there is code that checks this fields value elsewhere in the
+code.
+
+Fixes: CID 292440
+
+Signed-off-by: Darren Kenny <darren.kenny@oracle.com>
+Reviewed-by: Daniel Kiper <daniel.kiper@oracle.com>
+Signed-off-by: Stefan Sørensen <stefan.sorensen@spectralink.com>
+---
+ grub-core/lib/zstd/zstd_decompress.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/grub-core/lib/zstd/zstd_decompress.c b/grub-core/lib/zstd/zstd_decompress.c
+index 711b5b6..e4b5670 100644
+--- a/grub-core/lib/zstd/zstd_decompress.c
++++ b/grub-core/lib/zstd/zstd_decompress.c
+@@ -1325,7 +1325,7 @@ typedef enum { ZSTD_lo_isRegularOffset, ZSTD_lo_isLongOffset=1 } ZSTD_longOffset
+ FORCE_INLINE_TEMPLATE seq_t
+ ZSTD_decodeSequence(seqState_t* seqState, const ZSTD_longOffset_e longOffsets)
+ {
+-    seq_t seq;
++    seq_t seq = {0};
+     U32 const llBits = seqState->stateLL.table[seqState->stateLL.state].nbAdditionalBits;
+     U32 const mlBits = seqState->stateML.table[seqState->stateML.state].nbAdditionalBits;
+     U32 const ofBits = seqState->stateOffb.table[seqState->stateOffb.state].nbAdditionalBits;
+-- 
+2.14.2
+

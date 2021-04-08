@@ -11,11 +11,10 @@ LTTNG_LIBUST_LICENSE = LGPL-2.1, MIT (system headers), GPL-2.0 (liblttng-ust-ctl
 LTTNG_LIBUST_LICENSE_FILES = COPYING
 LTTNG_LIBUST_INSTALL_STAGING = YES
 LTTNG_LIBUST_DEPENDENCIES = liburcu util-linux
-LTTNG_LIBUST_CONF_OPTS += --disable-man-pages --disable-examples
-
-ifeq ($(BR2_INIT_SYSTEMD),y)
-LTTNG_LIBUST_CONF_OPTS += --with-lttng-system-rundir=/run/lttng
-endif
+LTTNG_LIBUST_CONF_OPTS = \
+	--disable-man-pages \
+	--disable-examples \
+	--with-lttng-system-rundir=/run/lttng
 
 ifeq ($(BR2_PACKAGE_PYTHON),y)
 LTTNG_LIBUST_DEPENDENCIES += python

@@ -11,5 +11,7 @@ PYTHON_PSUTIL_SITE = https://files.pythonhosted.org/packages/aa/3e/d18f2c04cf2b5
 PYTHON_PSUTIL_SETUP_TYPE = setuptools
 PYTHON_PSUTIL_LICENSE = BSD-3-Clause
 PYTHON_PSUTIL_LICENSE_FILES = LICENSE
+PYTHON_PSUTIL_CPE_ID_VENDOR = psutil_project
+PYTHON_PSUTIL_CPE_ID_PRODUCT = psutil
 
 $(eval $(python-package))

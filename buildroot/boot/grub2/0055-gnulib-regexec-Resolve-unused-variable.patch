@@ -1,0 +1,90 @@
+From a983d36bd9178d377d2072fd4b11c635fdc404b4 Mon Sep 17 00:00:00 2001
+From: Darren Kenny <darren.kenny@oracle.com>
+Date: Wed, 21 Oct 2020 14:41:27 +0000
+Subject: [PATCH] gnulib/regexec: Resolve unused variable
+
+This is a really minor issue where a variable is being assigned to but
+not checked before it is overwritten again.
+
+The reason for this issue is that we are not building with DEBUG set and
+this in turn means that the assert() that reads the value of the
+variable match_last is being processed out.
+
+The solution, move the assignment to match_last in to an ifdef DEBUG too.
+
+Fixes: CID 292459
+
+Signed-off-by: Darren Kenny <darren.kenny@oracle.com>
+Reviewed-by: Daniel Kiper <daniel.kiper@oracle.com>
+[Add changes to generated files]
+Signed-off-by: Stefan Sørensen <stefan.sorensen@spectralink.com>
+---
+ Makefile.in                                         |  1 +
+ conf/Makefile.extra-dist                            |  1 +
+ grub-core/lib/gnulib-patches/fix-unused-value.patch | 14 ++++++++++++++
+ grub-core/lib/gnulib/regexec.c                      |  4 ++++
+ 4 files changed, 20 insertions(+)
+ create mode 100644 grub-core/lib/gnulib-patches/fix-unused-value.patch
+
+diff --git a/Makefile.in b/Makefile.in
+index ecb3278..e6b287b 100644
+--- a/Makefile.in
++++ b/Makefile.in
+@@ -2742,6 +2742,7 @@ EXTRA_DIST = autogen.sh geninit.sh gentpl.py Makefile.util.def \
+ 	grub-core/gensyminfo.sh.in grub-core/gensymlist.sh \
+ 	grub-core/genemuinit.sh grub-core/genemuinitheader.sh \
+ 	grub-core/lib/gnulib-patches/fix-null-deref.patch \
++	grub-core/lib/gnulib-patches/fix-unused-value.patch \
+ 	grub-core/lib/gnulib-patches/fix-width.patch \
+ 	grub-core/lib/gnulib-patches/no-abort.patch \
+ 	grub-core/lib/libgcrypt \
+diff --git a/conf/Makefile.extra-dist b/conf/Makefile.extra-dist
+index 46c4e95..9b01152 100644
+--- a/conf/Makefile.extra-dist
++++ b/conf/Makefile.extra-dist
+@@ -29,6 +29,7 @@ EXTRA_DIST += grub-core/genemuinit.sh
+ EXTRA_DIST += grub-core/genemuinitheader.sh
+ 
+ EXTRA_DIST += grub-core/lib/gnulib-patches/fix-null-deref.patch
++EXTRA_DIST += grub-core/lib/gnulib-patches/fix-unused-value.patch
+ EXTRA_DIST += grub-core/lib/gnulib-patches/fix-width.patch
+ EXTRA_DIST += grub-core/lib/gnulib-patches/no-abort.patch
+ 
+diff --git a/grub-core/lib/gnulib-patches/fix-unused-value.patch b/grub-core/lib/gnulib-patches/fix-unused-value.patch
+new file mode 100644
+index 0000000..ba51f1b
+--- /dev/null
++++ b/grub-core/lib/gnulib-patches/fix-unused-value.patch
+@@ -0,0 +1,14 @@
++--- a/lib/regexec.c	2020-10-21 14:25:35.310195912 +0000
+++++ b/lib/regexec.c	2020-10-21 14:32:07.961765604 +0000
++@@ -828,7 +828,11 @@
++ 		    break;
++ 		  if (__glibc_unlikely (err != REG_NOMATCH))
++ 		    goto free_return;
+++#ifdef DEBUG
+++		  /* Only used for assertion below when DEBUG is set, otherwise
+++		     it will be over-written when we loop around.  */
++ 		  match_last = -1;
+++#endif
++ 		}
++ 	      else
++ 		break; /* We found a match.  */
+diff --git a/grub-core/lib/gnulib/regexec.c b/grub-core/lib/gnulib/regexec.c
+index 21cf791..98a25f5 100644
+--- a/grub-core/lib/gnulib/regexec.c
++++ b/grub-core/lib/gnulib/regexec.c
+@@ -828,6 +828,10 @@ re_search_internal (const regex_t *preg, const char *string, Idx length,
+ 		    break;
+ 		  if (__glibc_unlikely (err != REG_NOMATCH))
+ 		    goto free_return;
++#ifdef DEBUG
++		  /* Only used for assertion below when DEBUG is set, otherwise
++		     it will be over-written when we loop around.  */
++#endif
+ 		  match_last = -1;
+ 		}
+ 	      else
+-- 
+2.14.2
+

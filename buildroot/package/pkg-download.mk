@@ -20,7 +20,7 @@ export LOCALFILES := $(call qstrip,$(BR2_LOCALFILES))
 # Version of the format of the archives we generate in the corresponding
 # download backend:
 BR_FMT_VERSION_git = -br1
-BR_FMT_VERSION_svn = -br1
+BR_FMT_VERSION_svn = -br2
 
 DL_WRAPPER = support/download/dl-wrapper
 
@@ -60,6 +60,9 @@ domainseparator = $(if $(1),$(1),/)
 
 # github(user,package,version): returns site of GitHub repository
 github = https://github.com/$(1)/$(2)/archive/$(3)
+
+# gitlab(user,package,version): returns site of Gitlab-generated tarball
+gitlab = https://gitlab.com/$(1)/$(2)/-/archive/$(3)
 
 # Expressly do not check hashes for those files
 # Exported variables default to immediately expanded in some versions of

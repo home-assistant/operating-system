@@ -11,6 +11,8 @@ GETTEXT_GNU_SOURCE = gettext-$(GETTEXT_GNU_VERSION).tar.xz
 GETTEXT_GNU_INSTALL_STAGING = YES
 GETTEXT_GNU_LICENSE = LGPL-2.1+ (libintl), GPL-3.0+ (the rest)
 GETTEXT_GNU_LICENSE_FILES = COPYING gettext-runtime/intl/COPYING.LIB
+GETTEXT_GNU_CPE_ID_VENDOR = gnu
+GETTEXT_GNU_CPE_ID_PRODUCT = gettext
 # 0002-restore-the-ability-to-buld-gettext-tools-seperately-part1.patch
 GETTEXT_GNU_AUTORECONF = YES
 GETTEXT_GNU_PROVIDES = gettext
