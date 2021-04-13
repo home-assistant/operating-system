@@ -24,6 +24,11 @@ config BR2_PACKAGE_RPI_RF_MOD_DTS_TINKER
   help
     For the ASUS Tinkerboard
 
+config BR2_PACKAGE_RPI_RF_MOD_DTS_ODROID-C4
+  bool "Odroid-C4"
+  help
+    For the Odroid-C4
+
 endchoice
 
 endif

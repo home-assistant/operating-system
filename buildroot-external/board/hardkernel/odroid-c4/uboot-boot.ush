@@ -25,9 +25,33 @@ setenv bootargs_hassos "zram.enabled=1 zram.num_devices=3 apparmor=1 security=ap
 setenv bootargs_a "root=PARTUUID=48617373-06 rootfstype=squashfs ro rootwait"
 setenv bootargs_b "root=PARTUUID=48617373-08 rootfstype=squashfs ro rootwait"
 
+# Load environment from haos-config.txt
+if test -e mmc ${devnum}:1 haos-config.txt; then
+  fatload mmc ${devnum}:1 ${ramdisk_addr_r} haos-config.txt
+  env import -t ${ramdisk_addr_r} ${filesize}
+fi
+
 # Load extraargs
 fileenv mmc ${devnum}:1 ${ramdisk_addr_r} cmdline.txt cmdline
-fatload mmc ${devnum}:1 ${fdt_addr_r} meson-sm1-odroid-c4.dtb
+
+# Load device tree
+setenv fdtfile "meson-sm1-odroid-c4.dtb"
+echo "Loading standard device tree ${fdtfile}"
+fatload mmc ${devnum}:1 ${fdt_addr_r} ${fdtfile}
+fdt addr ${fdt_addr_r}
+
+# load dt overlays
+fdt resize 65536
+for overlay_file in ${overlays}; do
+  if fatload mmc ${devnum}:1 ${ramdisk_addr_r} overlays/${overlay_file}.dtbo; then
+    echo "Applying kernel provided DT overlay ${overlay_file}.dtbo"
+    fdt apply ${ramdisk_addr_r} || setenv overlay_error "true"
+  fi
+done
+if test "${overlay_error}" = "true"; then
+  echo "Error applying DT overlays, restoring original DT"
+  fatload mmc ${devnum}:1 ${fdt_addr_r} ${fdtfile}
+fi
 
 # logical volumes get numbered after physical ones.
 # 1. boot
