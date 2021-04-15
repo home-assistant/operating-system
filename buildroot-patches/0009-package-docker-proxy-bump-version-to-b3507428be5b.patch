@@ -1,28 +1,31 @@
-From 4264663b7fdb1379c10bd2b2844c32c617dfb9ec Mon Sep 17 00:00:00 2001
-Message-Id: <4264663b7fdb1379c10bd2b2844c32c617dfb9ec.1614713774.git.stefan@agner.ch>
-In-Reply-To: <f8074c7dbf7966fd15edd897130825684abe05e9.1614713774.git.stefan@agner.ch>
-References: <f8074c7dbf7966fd15edd897130825684abe05e9.1614713774.git.stefan@agner.ch>
-From: Pascal Vizeli <pvizeli@syshack.ch>
-Date: Thu, 7 May 2020 09:02:05 +0000
-Subject: [PATCH 4/5] docker-proxy: Bump version
+From f69e0329ecb778a680a7337024f49eda79bab5b8 Mon Sep 17 00:00:00 2001
+Message-Id: <f69e0329ecb778a680a7337024f49eda79bab5b8.1618500237.git.stefan@agner.ch>
+In-Reply-To: <9c98c07abbe9ee675ec588ad7c15f0285e8a0f07.1618500237.git.stefan@agner.ch>
+References: <9c98c07abbe9ee675ec588ad7c15f0285e8a0f07.1618500237.git.stefan@agner.ch>
+From: Stefan Agner <stefan@agner.ch>
+Date: Thu, 15 Apr 2021 17:22:59 +0200
+Subject: [PATCH 9/9] package/docker-proxy: bump version to b3507428be5b
 
-Signed-off-by: Pascal Vizeli <pvizeli@syshack.ch>
+Which is the version used by docker 20.10.6:
+https://github.com/moby/moby/commit/88470052e7d42f3dc774442241fd6bab817876f6
+
+Signed-off-by: Stefan Agner <stefan@agner.ch>
 ---
  package/docker-proxy/docker-proxy.hash | 2 +-
  package/docker-proxy/docker-proxy.mk   | 4 ++--
  2 files changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/package/docker-proxy/docker-proxy.hash b/package/docker-proxy/docker-proxy.hash
-index 58de697929..1416db4042 100644
+index 58de697929..13da06170c 100644
 --- a/package/docker-proxy/docker-proxy.hash
 +++ b/package/docker-proxy/docker-proxy.hash
 @@ -1,3 +1,3 @@
  # Locally calculated
 -sha256	866c8d196b9396a383b437b0d775476459ed7c11f527c4f6bbf1fd08524b461d	docker-proxy-55685ba49593e67f5e1c8180539379b16736c25e.tar.gz
-+sha256	2e1fdcc401a22d53103be6cfb5475c40af9f9a82a996ec6d508e0994dc2c5e4a	docker-proxy-1ea375d2b54d2e914e41970a04553ad55ef39b62.tar.gz
++sha256	90a8dc84bc5d2d74dee0b2c3544f8786598ff85e9fc9f6a55a15b60b7cd78d63	docker-proxy-b3507428be5b458cb0e2b4086b13531fb0706e46.tar.gz
  sha256  cb5e8e7e5f4a3988e1063c142c60dc2df75605f4c46515e776e3aca6df976e14	LICENSE
 diff --git a/package/docker-proxy/docker-proxy.mk b/package/docker-proxy/docker-proxy.mk
-index 6600b24ed9..d0e940db93 100644
+index 6600b24ed9..7270834119 100644
 --- a/package/docker-proxy/docker-proxy.mk
 +++ b/package/docker-proxy/docker-proxy.mk
 @@ -4,8 +4,8 @@
@@ -31,11 +34,11 @@ index 6600b24ed9..d0e940db93 100644
  
 -DOCKER_PROXY_VERSION = 55685ba49593e67f5e1c8180539379b16736c25e
 -DOCKER_PROXY_SITE = $(call github,docker,libnetwork,$(DOCKER_PROXY_VERSION))
-+DOCKER_PROXY_VERSION = 1ea375d2b54d2e914e41970a04553ad55ef39b62
++DOCKER_PROXY_VERSION = b3507428be5b458cb0e2b4086b13531fb0706e46
 +DOCKER_PROXY_SITE = $(call github,moby,libnetwork,$(DOCKER_PROXY_VERSION))
  
  DOCKER_PROXY_LICENSE = Apache-2.0
  DOCKER_PROXY_LICENSE_FILES = LICENSE
 -- 
-2.30.1
+2.31.1
 
