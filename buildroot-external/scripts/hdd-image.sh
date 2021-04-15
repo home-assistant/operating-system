@@ -56,7 +56,8 @@ function get_boot_size() {
 function create_spl_image() {
     local boot_img="$(path_spl_img)"
 
-    dd if=/dev/zero of="${boot_img}" bs=512 count=16382
+    rm -f "${boot_img}"
+    truncate --size=8M "${boot_img}"
 }
 
 
@@ -65,7 +66,8 @@ function create_boot_image() {
     local boot_img="$(path_boot_img)"
 
     echo "mtools_skip_check=1" > ~/.mtoolsrc
-    dd if=/dev/zero of="${boot_img}" bs="$(get_boot_size)" count=1
+    rm -f "${boot_img}"
+    truncate --size="$(get_boot_size)" "${boot_img}"
     mkfs.vfat -n "hassos-boot" "${boot_img}"
     mcopy -i "${boot_img}" -sv "${boot_data}"/* ::
 }
@@ -74,7 +76,8 @@ function create_boot_image() {
 function create_overlay_image() {
     local overlay_img="$(path_overlay_img)"
 
-    dd if=/dev/zero of="${overlay_img}" bs=${OVERLAY_SIZE} count=1
+    rm -f "${overlay_img}"
+    truncate --size="${OVERLAY_SIZE}" "${overlay_img}"
     mkfs.ext4 -L "hassos-overlay" -E lazy_itable_init=0,lazy_journal_init=0 "${overlay_img}"
 }
 
@@ -85,7 +88,8 @@ function create_kernel_image() {
     local kernel="${BINARIES_DIR}/${KERNEL_FILE}"
 
     # Make image
-    dd if=/dev/zero of="${kernel_img}" bs=${KERNEL_SIZE} count=1
+    rm -f "${kernel_img}"
+    truncate --size="${KERNEL_SIZE}" "${kernel_img}"
     mkfs.ext4 -L "hassos-kernel" -E lazy_itable_init=0,lazy_journal_init=0 -O ^extent,^64bit "${kernel_img}"
 
     # Mount / init file structs
@@ -131,7 +135,8 @@ function _create_disk_gpt() {
 
     ##
     # Write new image & GPT
-    dd if=/dev/zero of="${hdd_img}" bs=1G count="${hdd_count}"
+    rm -f "${hdd_img}"
+    truncate --size="${hdd_count}G" "${hdd_img}"
     sgdisk -o "${hdd_img}"
 
     ##
@@ -174,11 +179,11 @@ function _create_disk_gpt() {
     ##
     # Write Images
     sgdisk -v
-    dd if="${boot_img}" of"=${hdd_img}" conv=notrunc bs=512 seek="${boot_offset}"
-    dd if="${kernel_img}" of="${hdd_img}" conv=notrunc bs=512 seek="${kernel_offset}"
-    dd if="${rootfs_img}" of="${hdd_img}" conv=notrunc bs=512 seek="${rootfs_offset}"
-    dd if="${overlay_img}" of="${hdd_img}" conv=notrunc bs=512 seek="${overlay_offset}"
-    dd if="${data_img}" of="${hdd_img}" conv=notrunc bs=512 seek="${data_offset}"
+    dd if="${boot_img}" of"=${hdd_img}" conv=notrunc,sparse bs=512 seek="${boot_offset}"
+    dd if="${kernel_img}" of="${hdd_img}" conv=notrunc,sparse bs=512 seek="${kernel_offset}"
+    dd if="${rootfs_img}" of="${hdd_img}" conv=notrunc,sparse bs=512 seek="${rootfs_offset}"
+    dd if="${overlay_img}" of="${hdd_img}" conv=notrunc,sparse bs=512 seek="${overlay_offset}"
+    dd if="${data_img}" of="${hdd_img}" conv=notrunc,sparse bs=512 seek="${data_offset}"
 
     # Set Hyprid partition
     if [ "${BOOT_SYS}" == "hyprid" ]; then
@@ -230,7 +235,8 @@ function _create_disk_mbr() {
     local data_offset=${data_start}
 
     # Write new image & MBR
-    dd if=/dev/zero of="${hdd_img}" bs=1G count="${hdd_count}"
+    rm -f "${hdd_img}"
+    truncate --size="${hdd_count}G" "${hdd_img}"
 
     # Update disk layout
     (
@@ -252,11 +258,11 @@ function _create_disk_mbr() {
     sfdisk "${hdd_img}" < "${disk_layout}"
 
     # Write Images
-    dd if="${boot_img}" of="${hdd_img}" conv=notrunc bs=512 seek="${boot_offset}"
-    dd if="${kernel_img}" of="${hdd_img}" conv=notrunc bs=512 seek="${kernel_offset}"
-    dd if="${rootfs_img}" of="${hdd_img}" conv=notrunc bs=512 seek="${rootfs_offset}"
-    dd if="${overlay_img}" of="${hdd_img}" conv=notrunc bs=512 seek="${overlay_offset}"
-    dd if="${data_img}" of="${hdd_img}" conv=notrunc bs=512 seek="${data_offset}"
+    dd if="${boot_img}" of="${hdd_img}" conv=notrunc,sparse bs=512 seek="${boot_offset}"
+    dd if="${kernel_img}" of="${hdd_img}" conv=notrunc,sparse bs=512 seek="${kernel_offset}"
+    dd if="${rootfs_img}" of="${hdd_img}" conv=notrunc,sparse bs=512 seek="${rootfs_offset}"
+    dd if="${overlay_img}" of="${hdd_img}" conv=notrunc,sparse bs=512 seek="${overlay_offset}"
+    dd if="${data_img}" of="${hdd_img}" conv=notrunc,sparse bs=512 seek="${data_offset}"
 
     # Write SPL
     if [ "${BOOT_SPL}" == "true" ]; then
