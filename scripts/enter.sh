@@ -1,4 +1,6 @@
 #!/bin/bash
+set -e
+
 BUILDER_UID="$(id -u)"
 BUILDER_GID="$(id -g)"
 CACHE_DIR="${CACHE_DIR:-$HOME/hassos-cache}"
