@@ -1,0 +1,42 @@
+From 5cffe6f96bcab32bbe5019bc4426c1cbdd7f2593 Mon Sep 17 00:00:00 2001
+Message-Id: <5cffe6f96bcab32bbe5019bc4426c1cbdd7f2593.1618824199.git.stefan@agner.ch>
+In-Reply-To: <9c98c07abbe9ee675ec588ad7c15f0285e8a0f07.1618824199.git.stefan@agner.ch>
+References: <9c98c07abbe9ee675ec588ad7c15f0285e8a0f07.1618824199.git.stefan@agner.ch>
+From: Stefan Agner <stefan@agner.ch>
+Date: Mon, 19 Apr 2021 10:59:03 +0200
+Subject: [PATCH 11/11] package/rpi-firmware: bump version to 1.20210303
+
+Keep rpi-firmware up-to-date with the kernel version bump (tag
+1.20210303).
+
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+---
+ package/rpi-firmware/rpi-firmware.hash | 2 +-
+ package/rpi-firmware/rpi-firmware.mk   | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/package/rpi-firmware/rpi-firmware.hash b/package/rpi-firmware/rpi-firmware.hash
+index 691b200259..0fd7a87bea 100644
+--- a/package/rpi-firmware/rpi-firmware.hash
++++ b/package/rpi-firmware/rpi-firmware.hash
+@@ -1,3 +1,3 @@
+ # Locally computed
+-sha256  ae4e317681995e0f7becd7900ae667cba394e3a0b7ca93a267f3303df7284697  rpi-firmware-d016a6eb01c8c7326a89cb42809fed2a21525de5.tar.gz
++sha256  d996fd1a2d53f692bf036d25981ecc690c126c88c51f60165fc7a568ed128b8f  rpi-firmware-fcf8d2f7639ad8d0330db9c8db9b71bd33eaaa28.tar.gz
+ sha256  c7283ff51f863d93a275c66e3b4cb08021a5dd4d8c1e7acc47d872fbe52d3d6b  boot/LICENCE.broadcom
+diff --git a/package/rpi-firmware/rpi-firmware.mk b/package/rpi-firmware/rpi-firmware.mk
+index 58085a8ca8..ea82836900 100644
+--- a/package/rpi-firmware/rpi-firmware.mk
++++ b/package/rpi-firmware/rpi-firmware.mk
+@@ -4,7 +4,7 @@
+ #
+ ################################################################################
+ 
+-RPI_FIRMWARE_VERSION = d016a6eb01c8c7326a89cb42809fed2a21525de5
++RPI_FIRMWARE_VERSION = fcf8d2f7639ad8d0330db9c8db9b71bd33eaaa28
+ RPI_FIRMWARE_SITE = $(call github,raspberrypi,firmware,$(RPI_FIRMWARE_VERSION))
+ RPI_FIRMWARE_LICENSE = BSD-3-Clause
+ RPI_FIRMWARE_LICENSE_FILES = boot/LICENCE.broadcom
+-- 
+2.31.1
+
