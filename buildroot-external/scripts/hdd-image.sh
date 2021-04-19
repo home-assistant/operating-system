@@ -325,3 +325,11 @@ function convert_disk_image_xz() {
     rm -f "${hdd_img}.xz"
     xz -3 -T0 "${hdd_img}"
 }
+
+function convert_disk_image_zip() {
+    local hdd_ext=${1:-img}
+    local hdd_img="$(hassos_image_name "${hdd_ext}")"
+
+    rm -f "${hdd_img}.zip"
+    zip -r "${hdd_img}.zip" "${hdd_img}"
+}
