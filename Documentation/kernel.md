@@ -1,7 +1,7 @@
 
 # Kernel Version
 
-Default Kernel tree: 5.4
+Default Kernel tree: 5.10
 
 | Board | Version |
 |-------|---------|
