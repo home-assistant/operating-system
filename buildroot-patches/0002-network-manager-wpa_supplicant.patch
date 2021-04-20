@@ -1,10 +1,10 @@
-From b9f13255e5042fc4e8d64b73c2fccee6e7ca0674 Mon Sep 17 00:00:00 2001
-Message-Id: <b9f13255e5042fc4e8d64b73c2fccee6e7ca0674.1614713774.git.stefan@agner.ch>
-In-Reply-To: <f8074c7dbf7966fd15edd897130825684abe05e9.1614713774.git.stefan@agner.ch>
-References: <f8074c7dbf7966fd15edd897130825684abe05e9.1614713774.git.stefan@agner.ch>
+From dc4191d1393e2d25e1270d6b7c60d780b52f6179 Mon Sep 17 00:00:00 2001
+Message-Id: <dc4191d1393e2d25e1270d6b7c60d780b52f6179.1618500237.git.stefan@agner.ch>
+In-Reply-To: <9c98c07abbe9ee675ec588ad7c15f0285e8a0f07.1618500237.git.stefan@agner.ch>
+References: <9c98c07abbe9ee675ec588ad7c15f0285e8a0f07.1618500237.git.stefan@agner.ch>
 From: Pascal Vizeli <pvizeli@syshack.ch>
 Date: Thu, 16 Apr 2020 14:32:45 +0000
-Subject: [PATCH 2/5] network-manager: wpa_supplicant
+Subject: [PATCH 2/9] network-manager: wpa_supplicant
 
 Signed-off-by: Pascal Vizeli <pvizeli@syshack.ch>
 ---
@@ -29,7 +29,7 @@ index 7d44768460..218dc860ff 100644
  	select BR2_PACKAGE_LIBNDP
  	help
 diff --git a/package/network-manager/network-manager.mk b/package/network-manager/network-manager.mk
-index 4b2ade5b9b..ad170cbe6f 100644
+index 9402564cb4..79ae42e987 100644
 --- a/package/network-manager/network-manager.mk
 +++ b/package/network-manager/network-manager.mk
 @@ -10,7 +10,7 @@ NETWORK_MANAGER_SOURCE = NetworkManager-$(NETWORK_MANAGER_VERSION).tar.xz
@@ -40,7 +40,7 @@ index 4b2ade5b9b..ad170cbe6f 100644
 +	libgcrypt wpa_supplicant util-linux host-intltool readline libndp
  NETWORK_MANAGER_LICENSE = GPL-2.0+ (app), LGPL-2.1+ (libnm)
  NETWORK_MANAGER_LICENSE_FILES = COPYING COPYING.LGPL CONTRIBUTING
- NETWORK_MANAGER_SELINUX_MODULES = networkmanager
+ NETWORK_MANAGER_CPE_ID_VENDOR = gnome
 -- 
-2.30.1
+2.31.1
 

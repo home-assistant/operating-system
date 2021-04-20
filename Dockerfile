@@ -36,6 +36,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         rsync \
         sudo \
         unzip \
+        zip \
         wget \
         qemu-utils \
         openssh-client \
