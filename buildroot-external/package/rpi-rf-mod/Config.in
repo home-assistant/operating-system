@@ -34,6 +34,11 @@ config BR2_PACKAGE_RPI_RF_MOD_DTS_ODROID-N2
   help
     For the Odroid-N2
 
+config BR2_PACKAGE_RPI_RF_MOD_DTS_ODROID-C2
+  bool "Odroid-C2"
+  help
+    For the Odroid-C2
+
 endchoice
 
 endif

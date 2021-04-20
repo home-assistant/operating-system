@@ -11,7 +11,7 @@
 #
 #############################################################
 
-RPI_RF_MOD_VERSION = b0d6d9ce94accc6f94f5e448f76bf38a0f954463
+RPI_RF_MOD_VERSION = a983821a4e09375716f4016b38fdadc74670a87a
 RPI_RF_MOD_SITE = $(call github,jens-maus,RaspberryMatic,$(RPI_RF_MOD_VERSION))
 RPI_RF_MOD_LICENSE = Apache-2.0
 RPI_RF_MOD_DEPENDENCIES = host-dtc
@@ -29,6 +29,9 @@ else ifeq ($(BR2_PACKAGE_RPI_RF_MOD_DTS_ODROID-C4),y)
 else ifeq ($(BR2_PACKAGE_RPI_RF_MOD_DTS_ODROID-N2),y)
   # Odroid N2/N2+ DTS file
   RPI_RF_MOD_DTS_FILE = rpi-rf-mod-odroid-n2
+else ifeq ($(BR2_PACKAGE_RPI_RF_MOD_DTS_ODROID-C2),y)
+  # Odroid C2 DTS file
+  RPI_RF_MOD_DTS_FILE = rpi-rf-mod-odroid-c2
 endif
 
 define RPI_RF_MOD_BUILD_CMDS
