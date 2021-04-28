@@ -4,6 +4,11 @@ name: Development build
 
 on:
   workflow_dispatch:
+    inputs:
+      version_override:
+        description: Override build version
+        default:
+        required: true
 
 jobs:
   version:
@@ -18,7 +23,11 @@ jobs:
         shell: bash
         id: version_dev
         run: |
-          version_dev="dev$(date --utc +'%Y%m%d')"
+          if [ "" != "${{ github.event.inputs.version_override }}" ]; then
+            version_dev="${{ github.event.inputs.version_override }}"
+          else
+            version_dev="dev$(date --utc +'%Y%m%d')"
+          fi
           echo "Development version \"${version_dev}\""
           echo "::set-output name=version_dev::${version_dev}"
       - uses: actions/checkout@v2
