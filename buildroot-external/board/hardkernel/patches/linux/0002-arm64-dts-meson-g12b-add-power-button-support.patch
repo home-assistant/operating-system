@@ -1,10 +1,10 @@
-From 3a2086e15c0b121250dd4c48214cd0486a67fde1 Mon Sep 17 00:00:00 2001
-Message-Id: <3a2086e15c0b121250dd4c48214cd0486a67fde1.1612541102.git.stefan@agner.ch>
-In-Reply-To: <516c081bcdd8f248982588aa8ca5bd8d24b2e7ef.1612541102.git.stefan@agner.ch>
-References: <516c081bcdd8f248982588aa8ca5bd8d24b2e7ef.1612541102.git.stefan@agner.ch>
+From 22e84d9b5b5ed45ee67e8bfde9af7518bdbbbdf3 Mon Sep 17 00:00:00 2001
+Message-Id: <22e84d9b5b5ed45ee67e8bfde9af7518bdbbbdf3.1619651621.git.stefan@agner.ch>
+In-Reply-To: <bcbcd8967de78638e5b861ceb9caa73da003280a.1619651621.git.stefan@agner.ch>
+References: <bcbcd8967de78638e5b861ceb9caa73da003280a.1619651621.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Mon, 11 Jan 2021 11:20:48 +0100
-Subject: [PATCH 2/4] arm64: dts: meson: g12b: add power button support
+Subject: [PATCH 2/5] arm64: dts: meson: g12b: add power button support
 
 Add power button support on J2 pin 11 (GPIOX_3 on the SoC side). The
 GPIO is low active, e.g. when connecting with pin 9 (GND) a power
@@ -38,5 +38,5 @@ index 445d90d25aa3..ddc7ad9a7d8d 100644
  		compatible = "gpio-leds";
  
 -- 
-2.30.0
+2.31.1
 

@@ -1,10 +1,10 @@
-From 575ca5decaccee6cdea036ce88711dac6672cc4b Mon Sep 17 00:00:00 2001
-Message-Id: <575ca5decaccee6cdea036ce88711dac6672cc4b.1612541102.git.stefan@agner.ch>
-In-Reply-To: <516c081bcdd8f248982588aa8ca5bd8d24b2e7ef.1612541102.git.stefan@agner.ch>
-References: <516c081bcdd8f248982588aa8ca5bd8d24b2e7ef.1612541102.git.stefan@agner.ch>
+From 5df619f3887d30a74355ee62dca06d5e674e6463 Mon Sep 17 00:00:00 2001
+Message-Id: <5df619f3887d30a74355ee62dca06d5e674e6463.1619651621.git.stefan@agner.ch>
+In-Reply-To: <bcbcd8967de78638e5b861ceb9caa73da003280a.1619651621.git.stefan@agner.ch>
+References: <bcbcd8967de78638e5b861ceb9caa73da003280a.1619651621.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Mon, 11 Jan 2021 15:53:55 +0100
-Subject: [PATCH 4/4] arm64: dts: meson: g12b: odroid-n2: add fan as cooling
+Subject: [PATCH 4/5] arm64: dts: meson: g12b: odroid-n2: add fan as cooling
  device
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -70,5 +70,5 @@ index 4d96732d0613..30d79175fa3e 100644
  	cpu-supply = <&vddcpu_b>;
  	operating-points-v2 = <&cpu_opp_table_0>;
 -- 
-2.30.0
+2.31.1
 
