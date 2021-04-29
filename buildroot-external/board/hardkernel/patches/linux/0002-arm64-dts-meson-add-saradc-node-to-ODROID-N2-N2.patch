@@ -1,0 +1,37 @@
+From 8b2ab165b2ed529f74b242159648893d53272c24 Mon Sep 17 00:00:00 2001
+Message-Id: <8b2ab165b2ed529f74b242159648893d53272c24.1619725559.git.stefan@agner.ch>
+In-Reply-To: <cdfb8eea4103e537898073dc3f7bf8f75cec5efb.1619725559.git.stefan@agner.ch>
+References: <cdfb8eea4103e537898073dc3f7bf8f75cec5efb.1619725559.git.stefan@agner.ch>
+From: Hyeonki Hong <hhk7734@gmail.com>
+Date: Wed, 7 Apr 2021 04:26:08 +0000
+Subject: [PATCH 2/8] arm64: dts: meson: add saradc node to ODROID N2/N2+
+
+Add the meson saradc node to the ODROID N2/N2+ common dtsi.
+
+Signed-off-by: Hyeonki Hong <hhk7734@gmail.com>
+Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
+Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+Link: https://lore.kernel.org/r/20210407042609.9736-3-christianshewitt@gmail.com
+---
+ arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi
+index b78be3e6974d..8a5e132c4b79 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi
+@@ -508,6 +508,11 @@ &pwm_AO_cd {
+ 	status = "okay";
+ };
+ 
++&saradc {
++	status = "okay";
++	vref-supply = <&vddao_1v8>;
++};
++
+ /* SD card */
+ &sd_emmc_b {
+ 	status = "okay";
+-- 
+2.31.1
+
