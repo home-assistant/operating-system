@@ -27,7 +27,7 @@ setenv bootargs_b "root=PARTUUID=48617373-08 rootfstype=squashfs ro rootwait"
 
 # Load extraargs
 fileenv mmc ${devnum}:1 ${ramdisk_addr_r} cmdline.txt cmdline
-if test "${board_rev}" = "c"; then
+if test "${soc_rev}" = "c"; then
   fatload mmc ${devnum}:1 ${fdt_addr_r} meson-g12b-odroid-n2-plus.dtb
 else
   fatload mmc ${devnum}:1 ${fdt_addr_r} meson-g12b-odroid-n2.dtb
