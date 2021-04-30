@@ -9,13 +9,13 @@ case "$1" in
              exit 0
          fi
          # Be compatible with hassos OS ID
-         # shellcheck disable=SC2039
+         # shellcheck disable=SC3060
          rauc_os_compatible=${RAUC_MF_COMPATIBLE/haos-/hassos-}
          if [ "$rauc_os_compatible" = "$RAUC_SYSTEM_COMPATIBLE" ]; then
              exit 0
          fi
          # generic-x86-64: Be compatible with intel-nuc
-         # shellcheck disable=SC2039
+         # shellcheck disable=SC3060
          rauc_board_compatible=${rauc_os_compatible/generic-x86-64/intel-nuc}
          if [ "${rauc_board_compatible}" = "$RAUC_SYSTEM_COMPATIBLE" ]; then
              exit 0
