@@ -9,6 +9,10 @@ function hassos_pre_image() {
     cp "${BINARIES_DIR}/boot.scr" "${BOOT_DATA}/boot.scr"
     cp "${BINARIES_DIR}/meson-sm1-odroid-c4.dtb" "${BOOT_DATA}/meson-sm1-odroid-c4.dtb"
 
+    mkdir -p "${BOOT_DATA}/overlays"
+    cp "${BINARIES_DIR}"/*.dtbo "${BOOT_DATA}/overlays/"
+    cp "${BOARD_DIR}/boot-env.txt" "${BOOT_DATA}/haos-config.txt"
+
     echo "console=tty0 console=ttyAML0,115200n8" > "${BOOT_DATA}/cmdline.txt"
 
     # SPL

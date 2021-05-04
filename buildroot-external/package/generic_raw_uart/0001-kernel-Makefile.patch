@@ -12,7 +12,7 @@
 +ifeq ($(CONFIG_ARCH_ROCKCHIP),y)
  obj-m += dw_apb_raw_uart.o
 +endif
-+ifeq ($(CONFIG_ARCH_MESON64_ODROIDC2),y)
++ifeq ($(CONFIG_ARCH_MESON),y)
  obj-m += meson_raw_uart.o
 -obj-m += fake_hmrf.o
 +endif

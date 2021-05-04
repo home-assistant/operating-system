@@ -11,7 +11,7 @@
 #
 #############################################################
 
-RPI_RF_MOD_VERSION = 97bd31203445d14e3d97e1d6e7a0bcf93b400c2e
+RPI_RF_MOD_VERSION = 3b0311063973669d0b5310a3d3e4b6280ac4f438
 RPI_RF_MOD_SITE = $(call github,jens-maus,RaspberryMatic,$(RPI_RF_MOD_VERSION))
 RPI_RF_MOD_LICENSE = Apache-2.0
 RPI_RF_MOD_DEPENDENCIES = host-dtc
@@ -23,6 +23,15 @@ ifeq ($(BR2_PACKAGE_RPI_RF_MOD_DTS_RPI),y)
 else ifeq ($(BR2_PACKAGE_RPI_RF_MOD_DTS_TINKER),y)
   # ASUS Tinkerboard DTS file
   RPI_RF_MOD_DTS_FILE = rpi-rf-mod-tinker
+else ifeq ($(BR2_PACKAGE_RPI_RF_MOD_DTS_ODROID-C4),y)
+  # Odroid C4 DTS file
+  RPI_RF_MOD_DTS_FILE = rpi-rf-mod-odroid-c4
+else ifeq ($(BR2_PACKAGE_RPI_RF_MOD_DTS_ODROID-N2),y)
+  # Odroid N2/N2+ DTS file
+  RPI_RF_MOD_DTS_FILE = rpi-rf-mod-odroid-n2
+else ifeq ($(BR2_PACKAGE_RPI_RF_MOD_DTS_ODROID-C2),y)
+  # Odroid C2 DTS file
+  RPI_RF_MOD_DTS_FILE = rpi-rf-mod-odroid-c2
 endif
 
 define RPI_RF_MOD_BUILD_CMDS

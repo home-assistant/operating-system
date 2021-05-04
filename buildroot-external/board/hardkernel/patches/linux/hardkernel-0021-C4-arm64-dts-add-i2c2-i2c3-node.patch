@@ -1,0 +1,85 @@
+From 400645dd70ae5a0efbbce35067c8674d380ed2a7 Mon Sep 17 00:00:00 2001
+From: Hyeonki Hong <hhk7734@gmail.com>
+Date: Wed, 13 May 2020 10:37:28 +0900
+Subject: [PATCH 21/74] ODROID-C4: arm64/dts: add i2c2, i2c3 node
+
+Change-Id: Id75f935111744ff6945791deefef20f897dc98ac
+(cherry picked from commit 3f4b2ffd0905946175c478baa65361695e78e0de)
+---
+ .../boot/dts/amlogic/meson-sm1-odroid-c4.dts  | 53 +++++++++++++++++++
+ 1 file changed, 53 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-sm1-odroid-c4.dts b/arch/arm64/boot/dts/amlogic/meson-sm1-odroid-c4.dts
+index 831053aa6dff..5988dc5f34d0 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-sm1-odroid-c4.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-sm1-odroid-c4.dts
+@@ -16,6 +16,8 @@ / {
+ 
+ 	aliases {
+ 		ethernet0 = &ethmac;
++		i2c0 = &i2c2;
++		i2c1 = &i2c3;
+ 		serial0 = &uart_AO;
+ 		serial1 = &uart_A;
+ 		spi0 = &spicc0;
+@@ -434,6 +436,57 @@ &ir {
+ 	linux,rc-map-name = "rc-odroid";
+ };
+ 
++&i2c2 {
++	status = "okay";
++
++	/*
++	 * 40 Pin Header : SDA(GPIOX.17->3 Pin)
++	 *		   SCL(GPIOX.18->5 Pin)
++	 */
++	pinctrl-names = "default";
++	pinctrl-0 = <&i2c2_master_pins1>;
++
++	/* default 400k */
++	clock-frequency = <400000>;
++};
++
++&i2c3 {
++	/* default i2c clock-frequency is 100Khz */
++	status = "okay";
++
++	/*
++	 * 40 Pin Header : SDA(GPIOA.14->27 Pin)
++	 *		   SCL(GPIOA.15->28 Pin)
++	 */
++	pinctrl-names = "default";
++	pinctrl-0 = <&i2c3_master_pins2>;
++
++	/* default 100k */
++	clock-frequency = <100000>;
++};
++
++&periphs_pinctrl {
++	i2c2_master_pins1: i2c2-master-pins1 {
++		mux {
++			groups = "i2c2_sda_x",
++				"i2c2_sck_x";
++			function = "i2c2";
++			bias-pull-up;
++			drive-strength-microamp = <3000>;
++		};
++	};
++
++	i2c3_master_pins2: i2c3-master-pins2 {
++		mux {
++			groups = "i2c3_sda_a",
++				"i2c3_sck_a";
++			function = "i2c3";
++			bias-pull-up;
++			drive-strength-microamp = <3000>;
++		};
++	};
++};
++
+ &pwm_AO_cd {
+ 	pinctrl-0 = <&pwm_ao_d_e_pins>;
+ 	pinctrl-names = "default";
+-- 
+2.25.1
+
