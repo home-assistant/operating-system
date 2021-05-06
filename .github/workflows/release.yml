@@ -86,8 +86,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ${{ github.workspace }}/release/hassos_${{ matrix.board.output }}-${{ needs.validate_release.outputs.version }}.img.xz
-          asset_name: hassos_${{ matrix.board.output }}-${{ needs.validate_release.outputs.version }}.img.xz
+          asset_path: ${{ github.workspace }}/release/haos_${{ matrix.board.output }}-${{ needs.validate_release.outputs.version }}.img.xz
+          asset_name: haos_${{ matrix.board.output }}-${{ needs.validate_release.outputs.version }}.img.xz
           asset_content_type: application/x-xz
 
       - name: Upload rauc update
@@ -96,8 +96,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ${{ github.workspace }}/release/hassos_${{ matrix.board.output }}-${{ needs.validate_release.outputs.version }}.raucb
-          asset_name: hassos_${{ matrix.board.output }}-${{ needs.validate_release.outputs.version }}.raucb
+          asset_path: ${{ github.workspace }}/release/haos_${{ matrix.board.output }}-${{ needs.validate_release.outputs.version }}.raucb
+          asset_name: haos_${{ matrix.board.output }}-${{ needs.validate_release.outputs.version }}.raucb
           asset_content_type: application/octet-stream
 
       - name: Upload ova image
@@ -107,8 +107,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ${{ github.workspace }}/release/hassos_${{ matrix.board.output }}-${{ needs.validate_release.outputs.version }}.ova
-          asset_name: hassos_${{ matrix.board.output }}-${{ needs.validate_release.outputs.version }}.ova
+          asset_path: ${{ github.workspace }}/release/haos_${{ matrix.board.output }}-${{ needs.validate_release.outputs.version }}.ova
+          asset_name: haos_${{ matrix.board.output }}-${{ needs.validate_release.outputs.version }}.ova
           asset_content_type: application/x-tar
 
       - name: Upload qcow2 image
@@ -118,8 +118,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ${{ github.workspace }}/release/hassos_${{ matrix.board.output }}-${{ needs.validate_release.outputs.version }}.qcow2.xz
-          asset_name: hassos_${{ matrix.board.output }}-${{ needs.validate_release.outputs.version }}.qcow2.xz
+          asset_path: ${{ github.workspace }}/release/haos_${{ matrix.board.output }}-${{ needs.validate_release.outputs.version }}.qcow2.xz
+          asset_name: haos_${{ matrix.board.output }}-${{ needs.validate_release.outputs.version }}.qcow2.xz
           asset_content_type: application/x-xz
 
       - name: Upload vdi image
@@ -129,8 +129,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ${{ github.workspace }}/release/hassos_${{ matrix.board.output }}-${{ needs.validate_release.outputs.version }}.vdi.zip
-          asset_name: hassos_${{ matrix.board.output }}-${{ needs.validate_release.outputs.version }}.vdi.zip
+          asset_path: ${{ github.workspace }}/release/haos_${{ matrix.board.output }}-${{ needs.validate_release.outputs.version }}.vdi.zip
+          asset_name: haos_${{ matrix.board.output }}-${{ needs.validate_release.outputs.version }}.vdi.zip
           asset_content_type: application/zip
 
       - name: Upload vhdx image
@@ -140,8 +140,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ${{ github.workspace }}/release/hassos_${{ matrix.board.output }}-${{ needs.validate_release.outputs.version }}.vhdx.zip
-          asset_name: hassos_${{ matrix.board.output }}-${{ needs.validate_release.outputs.version }}.vhdx.zip
+          asset_path: ${{ github.workspace }}/release/haos_${{ matrix.board.output }}-${{ needs.validate_release.outputs.version }}.vhdx.zip
+          asset_name: haos_${{ matrix.board.output }}-${{ needs.validate_release.outputs.version }}.vhdx.zip
           asset_content_type: application/zip
 
       - name: Upload vmdk image
@@ -151,8 +151,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ${{ github.workspace }}/release/hassos_${{ matrix.board.output }}-${{ needs.validate_release.outputs.version }}.vmdk.zip
-          asset_name: hassos_${{ matrix.board.output }}-${{ needs.validate_release.outputs.version }}.vmdk.zip
+          asset_path: ${{ github.workspace }}/release/haos_${{ matrix.board.output }}-${{ needs.validate_release.outputs.version }}.vmdk.zip
+          asset_name: haos_${{ matrix.board.output }}-${{ needs.validate_release.outputs.version }}.vmdk.zip
           asset_content_type: application/zip
 
   bump_version:
