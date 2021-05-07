@@ -32,7 +32,7 @@ $ sudo systemctl --no-pager status docker -n0
 Now, change your working directory to your home-assistant/operating-system repository checkout (please adapt path names as needed), make sure your intended changes to the source tree are applied (and committed, ideally :)), and execute the `enter.sh` helper script:
 
 ```bash
-$ cd ~/codebase/hassos/
+$ cd ~/codebase/operating-system/
 $ sudo scripts/enter.sh
 Sending build context to Docker daemon  30.48MB
 Step 1/6 : FROM ubuntu:18.04
