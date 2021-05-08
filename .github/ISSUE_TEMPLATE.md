@@ -12,13 +12,13 @@
 
 **Hardware Environment**
 <!--
-Describe the Homme Assistant image you are using and the hardare environemnt
+Describe the Home Assistant image you are using and the hardware environment
 -->
 - [ ] Raspberry Pi [1/2/3/4]
 - [ ] ODROID [C2/C4/N2(+)/XU4]
 - [ ] ASUS Tinker [S]
 - [ ] Generic x86-64 (like Intel NUC)
-- [ ] OVA (Open Virtualization Applicance, on Intel NUC or any other hardware, please add the Hypervisor you are using)
+- [ ] OVA (Open Virtualization Appliance, on Intel NUC or any other hardware, please add the Hypervisor you are using)
 
 **Home Assistant OS release:**
 - [ ] Fresh installation of release x.y
