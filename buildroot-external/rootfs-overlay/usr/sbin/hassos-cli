@@ -3,35 +3,23 @@
 # Run logging cli
 # ==============================================================================
 
-# Setup terminal size on serial console
-if [ "${TERM}" = "vt220" ] || [ "${TERM}" = "vt102" ] || \
-   [ "${TERM}" = "vt100" ]; then
-	resize
-fi
+echo "Waiting for the Home Assistant CLI to be ready..."
 
-if [ "$(systemctl is-active default.target)" != "active" ]; then
-    echo "[INFO] System not in default.target! Jump into emergency console..."
-    exec /bin/ash -l
-fi
-
-if [ ! "$(findmnt /mnt/data)" ]; then
-    echo "[WARN] Data partition not mounted! Jump into emergency console..."
-    exec /bin/ash -l
-fi
-
-# Run CLI container
-if [ "$(docker ps -q -f name=hassio_cli)" ]; then
-    docker container exec \
-        -ti hassio_cli \
-        /usr/bin/cli.sh \
-
-    # Jump to root login shell
-    if [ $? -eq 10 ]; then
-        /bin/ash -l
+i=0
+while [ ! "$(docker ps -q -f name=hassio_cli)" ]; do
+    sleep 1
+    i=$((i+1))
+    if [ $i = 60 ]; then
+        echo "[WARN] Home Assistant CLI not starting! Jump into emergency console..."
+        exec /bin/ash -l
     fi
-else
-    echo "[WARN] Home Assistant CLI is not running! Jump into emergency console..."
+done
+
+docker container exec \
+    -ti hassio_cli \
+    /usr/bin/cli.sh
+
+# Jump to root login shell
+if [ $? -eq 10 ]; then
     exec /bin/ash -l
 fi
-
-exit
