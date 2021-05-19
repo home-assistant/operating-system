@@ -3,6 +3,8 @@ link readline directly to ncurses since it needs symbols from it
 upstream readline does this on purpose (no direct linking), but
 it doesn't make much sense in a Linux world
 
+Signed-off-by: Gustavo Zacarias <gustavo@zacarias.com.ar>
+
 --- a/support/shobj-conf
 +++ b/support/shobj-conf
 @@ -42,7 +42,7 @@

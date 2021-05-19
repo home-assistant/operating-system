@@ -1,0 +1,106 @@
+c-stack: stop using SIGSTKSZ
+
+It’s been proposed to stop making SIGSTKSZ an integer constant:
+https://sourceware.org/pipermail/libc-alpha/2020-September/118028.html
+Also, using SIGSTKSZ in #if did not conform to current POSIX.
+Also, avoiding SIGSTKSZ makes the code simpler and easier to grok.
+* lib/c-stack.c (SIGSTKSZ): Remove.
+(alternate_signal_stack): Now a 64 KiB array, for simplicity.
+All uses changed.
+
+[Retrieved (and backported) from:
+https://git.savannah.gnu.org/cgit/gnulib.git/patch/?id=f9e2b20a12a230efa30f1d479563ae07d276a94b]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+
+diff -Nura m4-1.4.18.orig/lib/c-stack.c m4-1.4.18/lib/c-stack.c
+--- m4-1.4.18.orig/lib/c-stack.c	2021-04-11 19:12:14.086494029 +0200
++++ m4-1.4.18/lib/c-stack.c	2021-04-11 19:48:46.316862760 +0200
+@@ -50,15 +50,16 @@
+ #if ! HAVE_STACK_T && ! defined stack_t
+ typedef struct sigaltstack stack_t;
+ #endif
+-#ifndef SIGSTKSZ
+-# define SIGSTKSZ 16384
+-#elif HAVE_LIBSIGSEGV && SIGSTKSZ < 16384
+-/* libsigsegv 2.6 through 2.8 have a bug where some architectures use
+-   more than the Linux default of an 8k alternate stack when deciding
+-   if a fault was caused by stack overflow.  */
+-# undef SIGSTKSZ
+-# define SIGSTKSZ 16384
+-#endif
++
++/* Storage for the alternate signal stack.
++   64 KiB is not too large for Gnulib-using apps, and is large enough
++   for all known platforms.  Smaller sizes may run into trouble.
++   For example, libsigsegv 2.6 through 2.8 have a bug where some
++   architectures use more than the Linux default of an 8 KiB alternate
++   stack when deciding if a fault was caused by stack overflow.  */
++static max_align_t alternate_signal_stack[(64 * 1024
++                                           + sizeof (max_align_t) - 1)
++                                          / sizeof (max_align_t)];
+ 
+ #include <stdlib.h>
+ #include <string.h>
+@@ -128,19 +129,6 @@
+ #if (HAVE_SIGALTSTACK && HAVE_DECL_SIGALTSTACK \
+      && HAVE_STACK_OVERFLOW_HANDLING) || HAVE_LIBSIGSEGV
+ 
+-/* Storage for the alternate signal stack.  */
+-static union
+-{
+-  char buffer[SIGSTKSZ];
+-
+-  /* These other members are for proper alignment.  There's no
+-     standard way to guarantee stack alignment, but this seems enough
+-     in practice.  */
+-  long double ld;
+-  long l;
+-  void *p;
+-} alternate_signal_stack;
+-
+ static void
+ null_action (int signo __attribute__ ((unused)))
+ {
+@@ -205,8 +193,8 @@
+ 
+   /* Always install the overflow handler.  */
+   if (stackoverflow_install_handler (overflow_handler,
+-                                     alternate_signal_stack.buffer,
+-                                     sizeof alternate_signal_stack.buffer))
++                                     alternate_signal_stack,
++                                     sizeof alternate_signal_stack))
+     {
+       errno = ENOTSUP;
+       return -1;
+@@ -279,14 +267,14 @@
+   stack_t st;
+   struct sigaction act;
+   st.ss_flags = 0;
++  st.ss_sp = alternate_signal_stack;
++  st.ss_size = sizeof alternate_signal_stack;
+ # if SIGALTSTACK_SS_REVERSED
+   /* Irix mistakenly treats ss_sp as the upper bound, rather than
+      lower bound, of the alternate stack.  */
+-  st.ss_sp = alternate_signal_stack.buffer + SIGSTKSZ - sizeof (void *);
+-  st.ss_size = sizeof alternate_signal_stack.buffer - sizeof (void *);
+-# else
+-  st.ss_sp = alternate_signal_stack.buffer;
+-  st.ss_size = sizeof alternate_signal_stack.buffer;
++  st.ss_size -= sizeof (void *);
++  char *ss_sp = st.ss_sp;
++  st.ss_sp = ss_sp + st.ss_size;
+ # endif
+   r = sigaltstack (&st, NULL);
+   if (r != 0)
+diff -Nura m4-1.4.18.orig/lib/c-stack.h m4-1.4.18/lib/c-stack.h
+--- m4-1.4.18.orig/lib/c-stack.h	2021-04-11 19:12:14.098494042 +0200
++++ m4-1.4.18/lib/c-stack.h	2021-04-11 19:17:42.138848378 +0200
+@@ -34,7 +34,7 @@
+    A null ACTION acts like an action that does nothing.
+ 
+    ACTION must be async-signal-safe.  ACTION together with its callees
+-   must not require more than SIGSTKSZ bytes of stack space.  Also,
++   must not require more than 64 KiB bytes of stack space.  Also,
+    ACTION should not call longjmp, because this implementation does
+    not guarantee that it is safe to return to the original stack.
+ 

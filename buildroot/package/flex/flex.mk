@@ -10,6 +10,9 @@ FLEX_INSTALL_STAGING = YES
 FLEX_LICENSE = FLEX
 FLEX_LICENSE_FILES = COPYING
 FLEX_CPE_ID_VENDOR = flex_project
+# bug does not cause stack overflows in the generated code and has been
+# noted upstream as a bug in the code generator
+FLEX_IGNORE_CVES = CVE-2019-6293
 FLEX_DEPENDENCIES = $(TARGET_NLS_DEPENDENCIES) host-m4
 HOST_FLEX_DEPENDENCIES = host-m4
 

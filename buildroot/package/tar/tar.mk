@@ -13,6 +13,11 @@ TAR_CONF_OPTS = --exec-prefix=/
 TAR_LICENSE = GPL-3.0+
 TAR_LICENSE_FILES = COPYING
 TAR_CPE_ID_VENDOR = gnu
+# only tar <= 1.16
+TAR_IGNORE_CVES += CVE-2007-4476
+
+# 0001-Fix-memory-leak-in-read_header.patch
+TAR_IGNORE_CVES += CVE-2021-20193
 
 ifeq ($(BR2_PACKAGE_ACL),y)
 TAR_DEPENDENCIES += acl

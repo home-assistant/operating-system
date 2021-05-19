@@ -32,6 +32,8 @@ config BR2_PACKAGE_SAMBA4_AD_DC
 	bool "AD DC"
 	depends on BR2_PACKAGE_PYTHON3
 	select BR2_PACKAGE_JANSSON
+	select BR2_PACKAGE_PYTHON_DNSPYTHON
+	select BR2_PACKAGE_PYTHON_MARKDOWN
 	select BR2_PACKAGE_SAMBA4_ADS
 	help
 	  Enable Active Directory Domain Controller functionality.

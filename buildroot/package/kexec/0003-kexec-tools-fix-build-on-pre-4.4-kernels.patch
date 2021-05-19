@@ -1,0 +1,34 @@
+From cbbe4c47cb2acae04083c510dbe0efc5f48f5bb6 Mon Sep 17 00:00:00 2001
+From: Federico Pellegrin <fede@evolware.org>
+Date: Wed, 3 Feb 2021 11:00:17 +0100
+Subject: [PATCH] kexec-tools: fix build on pre 4.4 kernels
+
+kexec build will fail on older kernels (pre 4.4) as the define
+VIDEO_CAPABILITY_64BIT_BASE was not present at that time.
+
+This patch adds it, as per linux/include/uapi/linux/screen_info.h,
+if not present.
+
+Signed-off-by: Federico Pellegrin <fede@evolware.org>
+---
+ kexec/arch/i386/x86-linux-setup.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/kexec/arch/i386/x86-linux-setup.c b/kexec/arch/i386/x86-linux-setup.c
+index 76e1185..ab54a4a 100644
+--- a/kexec/arch/i386/x86-linux-setup.c
++++ b/kexec/arch/i386/x86-linux-setup.c
+@@ -37,6 +37,10 @@
+ #include "x86-linux-setup.h"
+ #include "../../kexec/kexec-syscall.h"
+ 
++#ifndef VIDEO_CAPABILITY_64BIT_BASE
++#define VIDEO_CAPABILITY_64BIT_BASE (1 << 1)	/* Frame buffer base is 64-bit */
++#endif
++
+ void init_linux_parameters(struct x86_linux_param_header *real_mode)
+ {
+ 	/* Fill in the values that are usually provided by the kernel. */
+-- 
+2.26.2
+

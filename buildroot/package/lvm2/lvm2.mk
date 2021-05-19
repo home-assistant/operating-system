@@ -6,7 +6,7 @@
 
 LVM2_VERSION = 2.02.185
 LVM2_SOURCE = LVM2.$(LVM2_VERSION).tgz
-LVM2_SITE = ftp://sources.redhat.com/pub/lvm2
+LVM2_SITE = http://sources.redhat.com/pub/lvm2
 LVM2_INSTALL_STAGING = YES
 LVM2_LICENSE = GPL-2.0, LGPL-2.1
 LVM2_LICENSE_FILES = COPYING COPYING.LIB

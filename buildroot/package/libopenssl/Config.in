@@ -14,10 +14,6 @@ config BR2_PACKAGE_LIBOPENSSL_TARGET_ARCH_LINUX_PPC
 
 config BR2_PACKAGE_LIBOPENSSL_TARGET_ARCH
 	string
-	# Use "gcc" minimalistic target to disable DSO
-	# no-asm is needed with generic architectures such as gcc, see
-	# https://github.com/openssl/openssl/issues/9839
-	default "gcc no-asm"			if BR2_STATIC_LIBS
 	# Doesn't work for thumb-only (Cortex-M?)
 	default "linux-armv4"			if BR2_ARM_CPU_HAS_ARM
 	default "linux-aarch64"			if BR2_aarch64

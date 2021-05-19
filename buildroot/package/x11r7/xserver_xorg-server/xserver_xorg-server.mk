@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-XSERVER_XORG_SERVER_VERSION = 1.20.10
+XSERVER_XORG_SERVER_VERSION = 1.20.11
 XSERVER_XORG_SERVER_SOURCE = xorg-server-$(XSERVER_XORG_SERVER_VERSION).tar.bz2
 XSERVER_XORG_SERVER_SITE = https://xorg.freedesktop.org/archive/individual/xserver
 XSERVER_XORG_SERVER_LICENSE = MIT
@@ -90,35 +90,11 @@ endif
 ifeq ($(BR2_PACKAGE_XSERVER_XORG_SERVER_KDRIVE),y)
 XSERVER_XORG_SERVER_CONF_OPTS += \
 	--enable-kdrive \
-	--enable-xfbdev \
 	--disable-glx \
-	--disable-dri \
-	--disable-xsdl
-define XSERVER_CREATE_X_SYMLINK
-	ln -f -s Xfbdev $(TARGET_DIR)/usr/bin/X
-endef
-XSERVER_XORG_SERVER_POST_INSTALL_TARGET_HOOKS += XSERVER_CREATE_X_SYMLINK
-
-ifeq ($(BR2_PACKAGE_XSERVER_XORG_SERVER_KDRIVE_EVDEV),y)
-XSERVER_XORG_SERVER_CONF_OPTS += --enable-kdrive-evdev
-else
-XSERVER_XORG_SERVER_CONF_OPTS += --disable-kdrive-evdev
-endif
-
-ifeq ($(BR2_PACKAGE_XSERVER_XORG_SERVER_KDRIVE_KBD),y)
-XSERVER_XORG_SERVER_CONF_OPTS += --enable-kdrive-kbd
-else
-XSERVER_XORG_SERVER_CONF_OPTS += --disable-kdrive-kbd
-endif
-
-ifeq ($(BR2_PACKAGE_XSERVER_XORG_SERVER_KDRIVE_MOUSE),y)
-XSERVER_XORG_SERVER_CONF_OPTS += --enable-kdrive-mouse
-else
-XSERVER_XORG_SERVER_CONF_OPTS += --disable-kdrive-mouse
-endif
+	--disable-dri
 
 else # modular
-XSERVER_XORG_SERVER_CONF_OPTS += --disable-kdrive --disable-xfbdev
+XSERVER_XORG_SERVER_CONF_OPTS += --disable-kdrive
 endif
 
 ifeq ($(BR2_PACKAGE_HAS_LIBGL),y)
@@ -129,11 +105,6 @@ XSERVER_XORG_SERVER_CONF_OPTS += --disable-dri --disable-glx
 endif
 
 # Optional packages
-ifeq ($(BR2_PACKAGE_TSLIB),y)
-XSERVER_XORG_SERVER_DEPENDENCIES += tslib
-XSERVER_XORG_SERVER_CONF_OPTS += --enable-tslib LDFLAGS="-lts"
-endif
-
 ifeq ($(BR2_PACKAGE_HAS_UDEV),y)
 XSERVER_XORG_SERVER_DEPENDENCIES += udev
 XSERVER_XORG_SERVER_CONF_OPTS += --enable-config-udev

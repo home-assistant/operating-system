@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-OPENLDAP_VERSION = 2.4.57
+OPENLDAP_VERSION = 2.4.58
 OPENLDAP_SOURCE = openldap-$(OPENLDAP_VERSION).tgz
 OPENLDAP_SITE = https://www.openldap.org/software/download/OpenLDAP/openldap-release
 OPENLDAP_LICENSE = OpenLDAP Public License
@@ -12,9 +12,6 @@ OPENLDAP_LICENSE_FILES = LICENSE
 OPENLDAP_CPE_ID_VENDOR = openldap
 OPENLDAP_INSTALL_STAGING = YES
 OPENLDAP_DEPENDENCIES = host-pkgconf
-
-# 0005-ITS-9454-fix-issuerAndThisUpdateCheck.patch
-OPENLDAP_IGNORE_CVES += CVE-2021-27212
 
 ifeq ($(BR2_PACKAGE_OPENSSL),y)
 OPENLDAP_TLS = openssl

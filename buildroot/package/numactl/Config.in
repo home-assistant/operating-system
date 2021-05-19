@@ -1,15 +1,6 @@
-config BR2_PACKAGE_NUMACTL_ARCH_SUPPORTS
-	bool
-	# numactl uses some system calls that are not available on all
-	# architectures.
-	default y if BR2_aarch64
-	default y if BR2_i386 || BR2_x86_64
-	default y if BR2_mips || BR2_mipsel ||  BR2_mips64 || BR2_mips64el
-	default y if BR2_powerpc
-
 config BR2_PACKAGE_NUMACTL
 	bool "numactl"
-	depends on BR2_PACKAGE_NUMACTL_ARCH_SUPPORTS
+	depends on BR2_USE_MMU # madvise()
 	help
 	  numactl allows you to run your application on specific cpus
 	  and memory nodes. It does this by supplying a NUMA memory

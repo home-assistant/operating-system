@@ -14,10 +14,16 @@ SCONESERVER_DEPENDENCIES = \
 	host-pkgconf \
 	$(if $(BR2_PACKAGE_PCRE),pcre) \
 	zlib
+# disable image as it fails to build with ImageMagick
 # disable markdown module because its git submodule cmark
 # https://github.com/sconemad/sconeserver/tree/master/markdown
 # has no cross-compile support provided by the sconeserver build system
-SCONESERVER_CONF_OPTS += --with-ip --with-local --with-ip6 --without-markdown
+SCONESERVER_CONF_OPTS += \
+	--with-ip \
+	--with-local \
+	--with-ip6 \
+	--without-image \
+	--without-markdown
 
 # Sconeserver configure script fails to find the libxml2 headers.
 ifeq ($(BR2_PACKAGE_LIBXML2),y)
@@ -43,13 +49,6 @@ SCONESERVER_DEPENDENCIES += libxml2
 SCONESERVER_CONF_OPTS += --with-sconesite
 else
 SCONESERVER_CONF_OPTS += --without-sconesite
-endif
-
-ifeq ($(BR2_PACKAGE_SCONESERVER_HTTP_SCONESITE_IMAGE),y)
-SCONESERVER_DEPENDENCIES += imagemagick
-SCONESERVER_CONF_OPTS += --with-image
-else
-SCONESERVER_CONF_OPTS += --without-image
 endif
 
 ifeq ($(BR2_PACKAGE_SCONESERVER_MYSQL),y)

@@ -10,5 +10,6 @@ PYTHON_MARKDOWN2_SITE = https://files.pythonhosted.org/packages/14/69/c542025f80
 PYTHON_MARKDOWN2_SETUP_TYPE = setuptools
 PYTHON_MARKDOWN2_LICENSE = MIT
 PYTHON_MARKDOWN2_LICENSE_FILES = LICENSE.txt
+PYTHON_MARKDOWN2_CPE_ID_VENDOR = python-markdown2_project
 
 $(eval $(python-package))

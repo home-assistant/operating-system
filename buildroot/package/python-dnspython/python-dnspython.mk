@@ -17,4 +17,11 @@ define PYTHON_DNSPYTHON_EXTRACT_CMDS
 	$(RM) -r $(@D)/dnspython-$(PYTHON_DNSPYTHON_VERSION)
 endef
 
+define HOST_PYTHON_DNSPYTHON_EXTRACT_CMDS
+	$(UNZIP) -d $(@D) $(HOST_PYTHON_DNSPYTHON_DL_DIR)/$(HOST_PYTHON_DNSPYTHON_SOURCE)
+	mv $(@D)/dnspython-$(HOST_PYTHON_DNSPYTHON_VERSION)/* $(@D)
+	$(RM) -r $(@D)/dnspython-$(HOST_PYTHON_DNSPYTHON_VERSION)
+endef
+
 $(eval $(python-package))
+$(eval $(host-python-package))

@@ -67,7 +67,6 @@ KODI_DEPENDENCIES += host-automake host-autoconf host-libtool
 
 KODI_CONF_OPTS += \
 	-DCMAKE_C_FLAGS="$(TARGET_CFLAGS) $(KODI_C_FLAGS)" \
-	-DCMAKE_CXX_FLAGS="$(TARGET_CXXFLAGS) $(KODI_CXX_FLAGS)" \
 	-DENABLE_APP_AUTONAME=OFF \
 	-DENABLE_CCACHE=OFF \
 	-DENABLE_DVDCSS=ON \
@@ -165,7 +164,7 @@ endif
 
 # mips: uses __atomic_load_8
 ifeq ($(BR2_TOOLCHAIN_HAS_LIBATOMIC),y)
-KODI_CXX_FLAGS += -latomic
+KODI_CONF_OPTS += -DCMAKE_EXE_LINKER_FLAGS=-latomic
 endif
 
 ifeq ($(BR2_PACKAGE_KODI_PLATFORM_RBPI),y)

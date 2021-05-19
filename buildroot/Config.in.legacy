@@ -146,6 +146,31 @@ endif
 
 comment "Legacy options removed in 2021.02"
 
+config BR2_PACKAGE_SCONESERVER_HTTP_SCONESITE_IMAGE
+	bool "sconeserver http::sconesite::image removed"
+	select BR2_LEGACY
+	help
+	  Sconeserver cannot be built with ImageMagick - it uses the
+	  "transofrm" function which is removed from public API.
+
+config BR2_PACKAGE_XSERVER_XORG_SERVER_KDRIVE_EVDEV
+	bool "KDrive/TinyX evdev input driver removed"
+	select BR2_LEGACY
+	help
+	  The evdev input driver in KDrive was removed.
+
+config BR2_PACKAGE_XSERVER_XORG_SERVER_KDRIVE_KBD
+	bool "KDrive/TinyX kbd input driver removed"
+	select BR2_LEGACY
+	help
+	  The kbd input driver in KDrive was removed.
+
+config BR2_PACKAGE_XSERVER_XORG_SERVER_KDRIVE_MOUSE
+	bool "KDrive/TinyX mouse input driver removed"
+	select BR2_LEGACY
+	help
+	  The mouse input driver in KDrive was removed.
+
 config BR2_PACKAGE_MPD_AUDIOFILE
 	bool "mpd audiofile support removed"
 	select BR2_LEGACY

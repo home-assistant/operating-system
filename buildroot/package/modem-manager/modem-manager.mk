@@ -34,6 +34,13 @@ else
 MODEM_MANAGER_CONF_OPTS += --without-mbim
 endif
 
+ifeq ($(BR2_PACKAGE_GOBJECT_INTROSPECTION),y)
+MODEM_MANAGER_DEPENDENCIES += gobject-introspection
+MODEM_MANAGER_CONF_OPTS += --enable-introspection
+else
+MODEM_MANAGER_CONF_OPTS += --disable-introspection
+endif
+
 define MODEM_MANAGER_INSTALL_INIT_SYSV
 	$(INSTALL) -m 0755 -D package/modem-manager/S44modem-manager \
 		$(TARGET_DIR)/etc/init.d/S44modem-manager

@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-SAMBA4_VERSION = 4.14.2
+SAMBA4_VERSION = 4.14.4
 SAMBA4_SITE = https://download.samba.org/pub/samba/stable
 SAMBA4_SOURCE = samba-$(SAMBA4_VERSION).tar.gz
 SAMBA4_INSTALL_STAGING = YES
@@ -149,7 +149,15 @@ define SAMBA4_INSTALL_TARGET_CMDS
 endef
 
 ifeq ($(BR2_PACKAGE_SAMBA4_AD_DC),y)
-SAMBA4_DEPENDENCIES += jansson
+# host-python-dnspython and host-python-markdown are not strictly
+# needed on the host, but on the target. however, samba's configure
+# tests for their availability on the host.
+SAMBA4_DEPENDENCIES += \
+	jansson \
+	host-python-dnspython \
+	host-python-markdown \
+	python-dnspython \
+	python-markdown
 else
 SAMBA4_CONF_OPTS += --without-ad-dc --without-json
 endif

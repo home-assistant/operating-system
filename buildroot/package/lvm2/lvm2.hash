@@ -1,4 +1,4 @@
-# From ftp://sources.redhat.com/pub/lvm2/sha512.sum
+# From http://sources.redhat.com/pub/lvm2/sha512.sum
 sha512 f421505551aec2a09bc862f2fcc1ee825bc4d94c53a01d13265631e99308d60fbca40112be5bc7824cce3ef223c0775d2f6c345f6a3f227229a0566c903841bf  LVM2.2.02.185.tgz
 # Locally computed sha256 checksums
 sha256 e76fbcd2fb97cf202da330301327754d2db5c58b5b4bebd3a8a749393e7603d1  COPYING

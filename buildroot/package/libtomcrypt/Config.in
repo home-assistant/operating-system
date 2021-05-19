@@ -8,4 +8,4 @@ config BR2_PACKAGE_LIBTOMCRYPT
 	  functions, chaining modes, pseudo-random number generators,
 	  public key cryptography and a plethora of other routines.
 
-	  http://www.libtom.net
+	  https://www.libtom.net

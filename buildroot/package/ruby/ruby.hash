@@ -1,5 +1,5 @@
-# https://www.ruby-lang.org/en/news/2020/10/02/ruby-2-7-2-released/
-sha256  1b95ab193cc8f5b5e59d2686cb3d5dcf1ddf2a86cb6950e0b4bdaae5040ec0d6  ruby-2.7.2.tar.xz
+# https://www.ruby-lang.org/en/news/2021/04/05/ruby-2-7-3-released/
+sha256  5e91d1650857d43cd6852e05ac54683351e9c301811ee0bef43a67c4605e7db1  ruby-2.7.3.tar.xz
 # License files, Locally calculated
 sha256  b09ca195d2de08f0aacfa8793d0af62d7681c304b3ef714b75813721823295a6  LEGAL
 sha256  967586d538a28955ec2541910cf63c5ac345fcdea94bfb1f1705a1f6eb36bcbb  COPYING

@@ -7,4 +7,4 @@ config BR2_PACKAGE_NETTLE
 	  object-oriented languages, in applications like LSH or
 	  GNUPG, or even in kernel space
 
-	  http://www.lysator.liu.se/~nisse/nettle/
+	  https://www.lysator.liu.se/~nisse/nettle/

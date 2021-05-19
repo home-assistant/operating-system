@@ -2,6 +2,7 @@ config BR2_PACKAGE_PIPEWIRE
 	bool "pipewire"
 	depends on BR2_PACKAGE_HAS_UDEV # libudev
 	depends on BR2_TOOLCHAIN_HAS_THREADS # dbus, alsa-lib
+	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_18
 	depends on BR2_USE_MMU # dbus
 	select BR2_PACKAGE_ALSA_LIB
 	select BR2_PACKAGE_DBUS
@@ -30,6 +31,8 @@ comment "pipewire gstreamer support needs a toolchain w/ wchar, threads"
 
 endif
 
-comment "pipewire needs udev and a toolchain w/ threads"
+comment "pipewire needs udev and a toolchain w/ threads, headers >= 3.18"
 	depends on BR2_USE_MMU
-	depends on !BR2_PACKAGE_HAS_UDEV || !BR2_TOOLCHAIN_HAS_THREADS
+	depends on !BR2_PACKAGE_HAS_UDEV || \
+		!BR2_TOOLCHAIN_HAS_THREADS || \
+		!BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_18

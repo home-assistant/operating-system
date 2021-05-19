@@ -77,6 +77,12 @@ config BR2_TOOLCHAIN_HAS_BINUTILS_BUG_21464
 	bool
 	default y if BR2_or1k
 
+# https://sourceware.org/bugzilla/show_bug.cgi?id=27597
+# Affect toolchains built with binutils 2.36.1, still not fixed.
+config BR2_TOOLCHAIN_HAS_BINUTILS_BUG_27597
+	bool
+	default y if BR2_nios2
+
 # Atomic types can be:
 #  - never lock-free
 #  - sometimes lock-free

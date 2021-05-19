@@ -1,0 +1,25 @@
+From f96c96af7fbf2779b15f66f03b10315a24fb4f5a Mon Sep 17 00:00:00 2001
+From: Scott McMillan <smcmillan@nvidia.com>
+Date: Fri, 9 Oct 2020 08:56:52 -0500
+Subject: [PATCH] Do not stringify SYMVER symbols
+
+Upstream: f96c96af7fbf2779b15f66f03b10315a24fb4f5a
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ util.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/util.h b/util.h
+index 99ada33..f2a20ac 100644
+--- a/util.h
++++ b/util.h
+@@ -22,5 +22,5 @@ extern char *policy_name(int policy);
+ #if HAVE_ATTRIBUTE_SYMVER
+ #define SYMVER(a,b) __attribute__ ((symver (b)))
+ #else
+-#define SYMVER(a,b) __asm__ (".symver " #a "," #b);
++#define SYMVER(a,b) __asm__ (".symver " a "," b);
+ #endif
+-- 
+2.30.2
+

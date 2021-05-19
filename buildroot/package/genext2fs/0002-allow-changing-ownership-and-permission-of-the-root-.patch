@@ -1,0 +1,36 @@
+From 8e4b9ae6f051454953a80b8e64443bcea6c9cc46 Mon Sep 17 00:00:00 2001
+From: Johannes 'josch' Schauer <josch@mister-muffin.de>
+Date: Mon, 23 Mar 2020 11:59:25 +0100
+Subject: [PATCH] allow changing ownership and permission of the root node
+
+Signed-off-by: Peter Korsgaard <peter@korsgaard.com>
+---
+ genext2fs.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/genext2fs.c b/genext2fs.c
+index db936e4..af6f519 100644
+--- a/genext2fs.c
++++ b/genext2fs.c
+@@ -2193,6 +2193,18 @@ add2fs_from_file(filesystem *fs, uint32 this_nod, FILE * fh, uint32 fs_timestamp
+ 			continue;
+ 		}
+ 		mode &= FM_IMASK;
++		if (fs && strcmp(path, "/") == 0) {
++			// if the entry modifies the root node, don't call
++			// basename and dirname but chmod the root node
++			// directly
++			if (type != 'd') {
++				error_msg("device table line %d skipped: root node must be directory", lineno);
++				continue;
++			}
++			mode |= FM_IFDIR;
++			chmod_fs(fs, this_nod, mode, uid, gid);
++			continue;
++		}
+ 		path2 = strdup(path);
+ 		name = basename(path);
+ 		dir = dirname(path2);
+-- 
+2.20.1
+

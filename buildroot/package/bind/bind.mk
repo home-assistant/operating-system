@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-BIND_VERSION = 9.11.28
+BIND_VERSION = 9.11.31
 BIND_SITE = https://ftp.isc.org/isc/bind9/$(BIND_VERSION)
 # bind does not support parallel builds.
 BIND_MAKE = $(MAKE1)
@@ -13,6 +13,10 @@ BIND_CONFIG_SCRIPTS = bind9-config isc-config.sh
 BIND_LICENSE = MPL-2.0
 BIND_LICENSE_FILES = COPYRIGHT
 BIND_CPE_ID_VENDOR = isc
+# Only applies to RHEL6.x with DNSSEC validation on
+BIND_IGNORE_CVES = CVE-2017-3139
+# Library CVE and not used by bind but used by ISC DHCP
+BIND_IGNORE_CVES += CVE-2019-6470
 BIND_TARGET_SERVER_SBIN = arpaname ddns-confgen dnssec-checkds dnssec-coverage
 BIND_TARGET_SERVER_SBIN += dnssec-importkey dnssec-keygen dnssec-revoke
 BIND_TARGET_SERVER_SBIN += dnssec-settime dnssec-verify genrandom
