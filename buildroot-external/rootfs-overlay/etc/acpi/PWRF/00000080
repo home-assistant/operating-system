@@ -1,7 +1,0 @@
-#!/bin/sh
-
-# This script is exec()d by acpid when an ACPI event signals the power button
-# to have been pressed.
-
-echo "System power button was pressed - shutting down..."
-exec /bin/systemctl poweroff
