@@ -11,6 +11,7 @@ set -e
 # Init supervisor
 SUPERVISOR_DATA=/mnt/data/supervisor
 SUPERVISOR_STARTUP_MARKER="/run/supervisor/startup-marker"
+SUPERVISOR_STARTSCRIPT_VERSION="/mnt/data/.hassos-supervisor-version"
 SUPERVISOR_IMAGE="homeassistant/${SUPERVISOR_ARCH}-hassio-supervisor"
 
 SUPERVISOR_IMAGE_ID=$(docker images --no-trunc --filter "reference=${SUPERVISOR_IMAGE}:latest" --format "{{.ID}}" || echo "")
@@ -55,11 +56,21 @@ if [ -z "${SUPERVISOR_IMAGE_ID}" ]; then
     SUPERVISOR_IMAGE_ID=$(docker inspect --format='{{.Id}}' "${SUPERVISOR_IMAGE}" || echo "")
 fi
 
-# Image changed, remove previous container
-if [ -n "${SUPERVISOR_CONTAINER_ID}" ] && [ "${SUPERVISOR_IMAGE_ID}" != "${SUPERVISOR_CONTAINER_ID}" ]; then
-    echo "[INFO] Supervisor image has been updated, destroying previous container..."
-    docker container rm --force hassio_supervisor || true
-    SUPERVISOR_CONTAINER_ID=""
+if [ -n "${SUPERVISOR_CONTAINER_ID}" ]; then
+    # Image changed, remove previous container
+    if [ "${SUPERVISOR_IMAGE_ID}" != "${SUPERVISOR_CONTAINER_ID}" ]; then
+        echo "[INFO] Supervisor image has been updated, destroying previous container..."
+        docker container rm --force hassio_supervisor || true
+        SUPERVISOR_CONTAINER_ID=""
+    fi
+
+    # Start script changed, remove previous container
+    # shellcheck disable=SC3013
+    if [ ! -f "${SUPERVISOR_STARTSCRIPT_VERSION}" ] || [ "${SUPERVISOR_STARTSCRIPT_VERSION}" -nt "$0" ] || [ "${SUPERVISOR_STARTSCRIPT_VERSION}" -ot "$0" ]; then
+        echo "[INFO] Supervisor start script has changed, destroying previous container..."
+        docker container rm --force hassio_supervisor || true
+        SUPERVISOR_CONTAINER_ID=""
+    fi
 fi
 
 # If Supervisor container is missing, create it
@@ -80,6 +91,10 @@ if [ -z "${SUPERVISOR_CONTAINER_ID}" ]; then
         -e SUPERVISOR_CPU_RT=1 \
         -e SUPERVISOR_MACHINE=${SUPERVISOR_MACHINE} \
         "${SUPERVISOR_IMAGE}:latest"
+
+    # Store the timestamp of this script. If the script changed, let's
+    # recreate the container automatically.
+    touch --reference="$0" "${SUPERVISOR_STARTSCRIPT_VERSION}"
 fi
 
 # Run supervisor
