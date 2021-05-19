@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-TOR_VERSION = 0.4.5.7
+TOR_VERSION = 0.4.5.8
 TOR_SITE = https://dist.torproject.org
 TOR_LICENSE = BSD-3-Clause
 TOR_LICENSE_FILES = LICENSE
@@ -72,10 +72,5 @@ define TOR_INSTALL_CONF
 endef
 
 TOR_POST_INSTALL_TARGET_HOOKS += TOR_INSTALL_CONF
-
-define TOR_INSTALL_INIT_SYSTEMD
-	$(INSTALL) -D -m 644 $(@D)/contrib/dist/tor.service \
-		$(TARGET_DIR)/usr/lib/systemd/system/tor.service
-endef
 
 $(eval $(autotools-package))

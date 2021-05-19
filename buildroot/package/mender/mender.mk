@@ -76,14 +76,6 @@ endef
 
 MENDER_POST_INSTALL_TARGET_HOOKS += MENDER_INSTALL_CONFIG_FILES
 
-ifeq ($(BR2_PACKAGE_DBUS),y)
-define MENDER_INSTALL_DBUS_AUTHENTICATION_MANAGER_CONF
-	$(INSTALL) -D -m 0755 $(@D)/support/dbus/io.mender.AuthenticationManager.conf \
-		      $(TARGET_DIR)/etc/dbus-1/system.d/io.mender.AuthenticationManager.conf
-endef
-MENDER_POST_INSTALL_TARGET_HOOKS += MENDER_INSTALL_DBUS_AUTHENTICATION_MANAGER_CONF
-endif
-
 define MENDER_INSTALL_INIT_SYSTEMD
 	$(INSTALL) -D -m 0644 $(MENDER_PKGDIR)/mender-client.service \
 		$(TARGET_DIR)/usr/lib/systemd/system/mender-client.service

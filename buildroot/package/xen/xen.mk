@@ -4,26 +4,13 @@
 #
 ################################################################################
 
-XEN_VERSION = 4.14.1
+XEN_VERSION = 4.14.2
 XEN_SITE = https://downloads.xenproject.org/release/xen/$(XEN_VERSION)
 XEN_LICENSE = GPL-2.0
 XEN_LICENSE_FILES = COPYING
 XEN_CPE_ID_VENDOR = xen
 XEN_CPE_ID_PREFIX = cpe:2.3:o
 XEN_DEPENDENCIES = host-acpica host-python3
-XEN_PATCH = \
-	https://xenbits.xenproject.org/xsa/xsa360-4.14.patch \
-	https://xenbits.xenproject.org/xsa/xsa364.patch \
-	https://xenbits.xenproject.org/xsa/xsa368-4.14.patch
-
-# xsa360-4.14.patch
-XEN_IGNORE_CVES += CVE-2021-3308
-
-# xsa364.patch
-XEN_IGNORE_CVES += CVE-2021-26933
-
-# xsa368-4.14.patch
-XEN_IGNORE_CVES += CVE-2021-28687
 
 # Calculate XEN_ARCH
 ifeq ($(ARCH),aarch64)

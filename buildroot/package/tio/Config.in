@@ -1,8 +1,15 @@
 config BR2_PACKAGE_TIO
 	bool "tio"
+	depends on !BR2_sparc64 && !BR2_sparc
 	help
 	  "tio" is a simple TTY terminal application which features a
 	  straightforward commandline interface to easily connect to
 	  TTY devices for basic input/output.
 
 	  https://tio.github.io/
+
+# tio is disabled for sparc and sparc64 architectures because it fails
+# to build with a redefinition of 'struct termio' error, with no proper
+# fix or workaround for now
+comment "tio is disabled for sparc and sparc64 architectures"
+	depends on BR2_sparc64 || BR2_sparc

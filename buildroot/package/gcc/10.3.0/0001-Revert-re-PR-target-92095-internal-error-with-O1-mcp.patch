@@ -1,4 +1,4 @@
-From 472472ee0aaccb6389747d6281c34c558bcca7d8 Mon Sep 17 00:00:00 2001
+From 0824d6819857f306583592bce96315893f91bd84 Mon Sep 17 00:00:00 2001
 From: Romain Naour <romain.naour@gmail.com>
 Date: Wed, 20 Jan 2021 23:26:29 +0100
 Subject: [PATCH] Revert "re PR target/92095 (internal error with -O1
@@ -16,6 +16,9 @@ the commit that introcuce the regression.
 
 Reverting this patch allowed to produce a working rootfs.
 
+Reported to gcc:
+https://gcc.gnu.org/bugzilla/show_bug.cgi?id=98784
+
 Signed-off-by: Romain Naour <romain.naour@gmail.com>
 Cc: Eric Botcazou <ebotcazou@gcc.gnu.org>
 ---
@@ -30,7 +33,7 @@ Cc: Eric Botcazou <ebotcazou@gcc.gnu.org>
  delete mode 100644 gcc/testsuite/gcc.c-torture/compile/20191108-1.c
 
 diff --git a/gcc/config/sparc/sparc-protos.h b/gcc/config/sparc/sparc-protos.h
-index f525cd7a422..0d9f47af644 100644
+index 5f9999a669c..37452b06415 100644
 --- a/gcc/config/sparc/sparc-protos.h
 +++ b/gcc/config/sparc/sparc-protos.h
 @@ -69,7 +69,6 @@ extern void sparc_split_reg_mem (rtx, rtx, machine_mode);
@@ -42,10 +45,10 @@ index f525cd7a422..0d9f47af644 100644
  extern const char *output_cbranch (rtx, rtx, int, int, int, rtx_insn *);
  extern const char *output_return (rtx_insn *);
 diff --git a/gcc/config/sparc/sparc.c b/gcc/config/sparc/sparc.c
-index aefced85fe1..3ff6f9200f6 100644
+index d0843102148..14d112d8ca8 100644
 --- a/gcc/config/sparc/sparc.c
 +++ b/gcc/config/sparc/sparc.c
-@@ -4192,6 +4192,13 @@ eligible_for_sibcall_delay (rtx_insn *trial)
+@@ -4157,6 +4157,13 @@ eligible_for_sibcall_delay (rtx_insn *trial)
  static bool
  sparc_cannot_force_const_mem (machine_mode mode, rtx x)
  {
@@ -59,7 +62,7 @@ index aefced85fe1..3ff6f9200f6 100644
    switch (GET_CODE (x))
      {
      case CONST_INT:
-@@ -4227,11 +4234,9 @@ sparc_cannot_force_const_mem (machine_mode mode, rtx x)
+@@ -4192,11 +4199,9 @@ sparc_cannot_force_const_mem (machine_mode mode, rtx x)
  }
  
  /* Global Offset Table support.  */
@@ -73,7 +76,7 @@ index aefced85fe1..3ff6f9200f6 100644
  
  /* Return the SYMBOL_REF for the Global Offset Table.  */
  
-@@ -4244,6 +4249,27 @@ sparc_got (void)
+@@ -4209,6 +4214,27 @@ sparc_got (void)
    return got_symbol_rtx;
  }
  
@@ -101,7 +104,7 @@ index aefced85fe1..3ff6f9200f6 100644
  /* Wrapper around the load_pcrel_sym{si,di} patterns.  */
  
  static rtx
-@@ -4263,78 +4289,30 @@ gen_load_pcrel_sym (rtx op0, rtx op1, rtx op2)
+@@ -4228,78 +4254,30 @@ gen_load_pcrel_sym (rtx op0, rtx op1, rtx op2)
    return insn;
  }
  
@@ -186,7 +189,7 @@ index aefced85fe1..3ff6f9200f6 100644
  }
  
  /* Ensure that we are not using patterns that are not OK with PIC.  */
-@@ -5499,7 +5477,7 @@ save_local_or_in_reg_p (unsigned int regno, int leaf_function)
+@@ -5464,7 +5442,7 @@ save_local_or_in_reg_p (unsigned int regno, int leaf_function)
      return true;
  
    /* GOT register (%l7) if needed.  */
@@ -195,7 +198,7 @@ index aefced85fe1..3ff6f9200f6 100644
      return true;
  
    /* If the function accesses prior frames, the frame pointer and the return
-@@ -12542,9 +12520,10 @@ static void
+@@ -12507,9 +12485,10 @@ static void
  sparc_file_end (void)
  {
    /* If we need to emit the special GOT helper function, do so now.  */
@@ -207,7 +210,7 @@ index aefced85fe1..3ff6f9200f6 100644
  #ifdef DWARF2_UNWIND_INFO
        bool do_cfi;
  #endif
-@@ -12581,22 +12560,17 @@ sparc_file_end (void)
+@@ -12546,22 +12525,17 @@ sparc_file_end (void)
  #ifdef DWARF2_UNWIND_INFO
        do_cfi = dwarf2out_do_cfi_asm ();
        if (do_cfi)
@@ -236,7 +239,7 @@ index aefced85fe1..3ff6f9200f6 100644
  #endif
      }
  
-@@ -13091,10 +13065,7 @@ sparc_init_pic_reg (void)
+@@ -13056,10 +13030,7 @@ sparc_init_pic_reg (void)
    edge entry_edge;
    rtx_insn *seq;
  
@@ -249,10 +252,10 @@ index aefced85fe1..3ff6f9200f6 100644
  
    start_sequence ();
 diff --git a/gcc/config/sparc/sparc.md b/gcc/config/sparc/sparc.md
-index 231c0d84778..899804b80ae 100644
+index 6e9ccb4ecfd..8fb0fa11aed 100644
 --- a/gcc/config/sparc/sparc.md
 +++ b/gcc/config/sparc/sparc.md
-@@ -1604,7 +1604,10 @@
+@@ -1601,7 +1601,10 @@
     (clobber (reg:P O7_REG))]
    "REGNO (operands[0]) == INTVAL (operands[3])"
  {
@@ -321,5 +324,5 @@ index f00283f6e7b..67d4ac38095 100644
  #include <stdbool.h>
  #include <stdint.h>
 -- 
-2.25.4
+2.30.2
 

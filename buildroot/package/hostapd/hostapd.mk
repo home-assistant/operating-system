@@ -23,6 +23,9 @@ HOSTAPD_IGNORE_CVES += CVE-2019-16275
 # 0001-WPS-UPnP-Do-not-allow-event-subscriptions-with-URLs-.patch
 HOSTAPD_IGNORE_CVES += CVE-2020-12695
 
+# 0002-ASN.1-Validate-DigestAlgorithmIdentifier-parameters.patch
+HOSTAPD_IGNORE_CVES += CVE-2021-30004
+
 HOSTAPD_CPE_ID_VENDOR = w1.fi
 HOSTAPD_CONFIG_SET =
 

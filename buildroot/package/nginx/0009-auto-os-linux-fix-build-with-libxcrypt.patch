@@ -1,0 +1,38 @@
+From 79f1fe5251afc4e22a138b0c8f44fc9c94093b8b Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Fri, 2 Apr 2021 09:18:26 +0200
+Subject: [PATCH] auto/os/linux: fix build with libxcrypt
+
+If crypt_r is found in libcrypt, add -lcrypt to CORE_LIBS to avoid the
+following build failure with libxcrypt:
+
+objs/ngx_modules.o \
+-lpcre -L/home/giuliobenetti/autobuild/run/instance-3/output-1/host/bin/../xtensa-buildroot-linux-uclibc/sysroot/usr/lib -lssl -lcrypto -L/home/giuliobenetti/autobuild/run/instance-3/output-1/host/bin/../xtensa-buildroot-linux-uclibc/sysroot/usr/lib -lxslt -lxml2 -lGeoIP \
+-Wl,-E
+/home/giuliobenetti/autobuild/run/instance-3/output-1/host/lib/gcc/xtensa-buildroot-linux-uclibc/9.3.0/../../../../xtensa-buildroot-linux-uclibc/bin/ld: objs/src/os/unix/ngx_user.o:/home/giuliobenetti/autobuild/run/instance-3/output-1/build/nginx-1.18.0/src/os/unix/ngx_user.c:18: undefined reference to `crypt_r'
+
+Fixes:
+ - http://autobuild.buildroot.org/results/79a51b0d348e756517b5c9ce815a67f5c657e7e6
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ auto/os/linux | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/auto/os/linux b/auto/os/linux
+index 5e280eca..04682812 100644
+--- a/auto/os/linux
++++ b/auto/os/linux
+@@ -203,6 +203,9 @@ ngx_feature_test="struct crypt_data  cd;
+                   crypt_r(\"key\", \"salt\", &cd);"
+ . auto/feature
+ 
++if [ $ngx_found = yes ]; then
++    CORE_LIBS="$CORE_LIBS $ngx_feature_libs"
++fi
+ 
+ ngx_include="sys/vfs.h";     . auto/include
+ 
+-- 
+2.30.2
+

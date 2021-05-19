@@ -26,14 +26,6 @@ config BR2_PACKAGE_SCONESERVER_HTTP_SCONESITE
 	help
 	  http::sconesite module for Sconeserver
 
-config BR2_PACKAGE_SCONESERVER_HTTP_SCONESITE_IMAGE
-	bool "http::sconesite::image"
-	depends on BR2_PACKAGE_SCONESERVER_HTTP_SCONESITE
-	depends on BR2_USE_MMU # imagemagick
-	select BR2_PACKAGE_IMAGEMAGICK
-	help
-	  http::sconesite::image module for Sconeserver
-
 config BR2_PACKAGE_SCONESERVER_MYSQL
 	bool "mysql"
 	depends on BR2_USE_MMU # mysql
