@@ -1,0 +1,74 @@
+From eee30c74e72b6092b5e30c4744a4f1d7d9526403 Mon Sep 17 00:00:00 2001
+Message-Id: <eee30c74e72b6092b5e30c4744a4f1d7d9526403.1619725559.git.stefan@agner.ch>
+In-Reply-To: <cdfb8eea4103e537898073dc3f7bf8f75cec5efb.1619725559.git.stefan@agner.ch>
+References: <cdfb8eea4103e537898073dc3f7bf8f75cec5efb.1619725559.git.stefan@agner.ch>
+From: Stefan Agner <stefan@agner.ch>
+Date: Mon, 11 Jan 2021 15:53:55 +0100
+Subject: [PATCH 6/8] arm64: dts: meson: g12b: odroid-n2: add fan as cooling
+ device
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Add the GPIO fan as a cooling device for the CPU thermal zone. Since we
+have only full fan speed available with this, set the tripping point to
+65°C which is the highest tripping point which Hardkernel used in their
+downstream kernel.
+
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+---
+ .../dts/amlogic/meson-g12b-odroid-n2.dtsi     | 38 +++++++++++++++++++
+ 1 file changed, 38 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi
+index e8a3ede698b5..dd345c6aa4b5 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi
+@@ -388,6 +388,44 @@ &clkc_audio {
+ 	status = "okay";
+ };
+ 
++&cpu_thermal {
++	trips {
++		cpu_warm: cpu_warm {
++			hysteresis = <5000>;
++			temperature = <65000>;
++			type = "active";
++		};
++	};
++
++	cooling-maps {
++		map0 {
++			cooling-device =
++				<&fan0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
++			trip = <&cpu_warm>;
++		};
++		map1 {
++			trip = <&cpu_passive>;
++			cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++					 <&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++					 <&cpu100 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++					 <&cpu101 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++					 <&cpu102 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++					 <&cpu103 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++					 <&fan0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
++		};
++		map2 {
++			trip = <&cpu_hot>;
++			cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++					 <&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++					 <&cpu100 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++					 <&cpu101 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++					 <&cpu102 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++					 <&cpu103 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++					 <&fan0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
++		};
++	};
++};
++
+ &cpu0 {
+ 	cpu-supply = <&vddcpu_b>;
+ 	operating-points-v2 = <&cpu_opp_table_0>;
+-- 
+2.31.1
+
