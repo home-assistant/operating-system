@@ -1,0 +1,78 @@
+From 602012d9081be7a54d2d6cee59035ae019dd3bb4 Mon Sep 17 00:00:00 2001
+Message-Id: <602012d9081be7a54d2d6cee59035ae019dd3bb4.1619725559.git.stefan@agner.ch>
+In-Reply-To: <cdfb8eea4103e537898073dc3f7bf8f75cec5efb.1619725559.git.stefan@agner.ch>
+References: <cdfb8eea4103e537898073dc3f7bf8f75cec5efb.1619725559.git.stefan@agner.ch>
+From: Hyeonki Hong <hhk7734@gmail.com>
+Date: Wed, 7 Apr 2021 04:26:09 +0000
+Subject: [PATCH 3/8] arm64: dts: meson: add GPIO line names to ODROID N2/N2+
+
+Add GPIO line-name identifiers to the ODROID N2/N2+ common dtsi.
+
+Signed-off-by: Hyeonki Hong <hhk7734@gmail.com>
+Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
+Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
+Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+Link: https://lore.kernel.org/r/20210407042609.9736-4-christianshewitt@gmail.com
+---
+ .../dts/amlogic/meson-g12b-odroid-n2.dtsi     | 45 +++++++++++++++++++
+ 1 file changed, 45 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi
+index 8a5e132c4b79..41b2f9c96b5f 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi
+@@ -446,6 +446,51 @@ &frddr_c {
+ };
+ 
+ &gpio {
++	gpio-line-names =
++		/* GPIOZ */
++		"", "", "", "", "", "", "", "",
++		"", "", "", "", "", "", "", "",
++		/* GPIOH */
++		"", "", "", "", "", "", "", "",
++		"",
++		/* BOOT */
++		"", "", "", "", "", "", "", "",
++		"", "", "", "", "", "", "", "",
++		/* GPIOC */
++		"", "", "", "", "", "", "", "",
++		/* GPIOA */
++		"PIN_44", /* GPIOA_0 */
++		"PIN_46", /* GPIOA_1 */
++		"PIN_45", /* GPIOA_2 */
++		"PIN_47", /* GPIOA_3 */
++		"PIN_26", /* GPIOA_4 */
++		"", "", "", "", "", "",
++		"PIN_42", /* GPIOA_11 */
++		"PIN_32", /* GPIOA_12 */
++		"PIN_7",  /* GPIOA_13 */
++		"PIN_27", /* GPIOA_14 */
++		"PIN_28", /* GPIOA_15 */
++		/* GPIOX */
++		"PIN_16", /* GPIOX_0 */
++		"PIN_18", /* GPIOX_1 */
++		"PIN_22", /* GPIOX_2 */
++		"PIN_11", /* GPIOX_3 */
++		"PIN_13", /* GPIOX_4 */
++		"PIN_33", /* GPIOX_5 */
++		"PIN_35", /* GPIOX_6 */
++		"PIN_15", /* GPIOX_7 */
++		"PIN_19", /* GPIOX_8 */
++		"PIN_21", /* GPIOX_9 */
++		"PIN_24", /* GPIOX_10 */
++		"PIN_23", /* GPIOX_11 */
++		"PIN_8",  /* GPIOX_12 */
++		"PIN_10", /* GPIOX_13 */
++		"PIN_29", /* GPIOX_14 */
++		"PIN_31", /* GPIOX_15 */
++		"PIN_12", /* GPIOX_16 */
++		"PIN_3",  /* GPIOX_17 */
++		"PIN_5",  /* GPIOX_18 */
++		"PIN_36"; /* GPIOX_19 */
+ 	/*
+ 	 * WARNING: The USB Hub on the Odroid-N2 needs a reset signal
+ 	 * to be turned high in order to be detected by the USB Controller
+-- 
+2.31.1
+
