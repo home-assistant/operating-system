@@ -3,5 +3,9 @@ buildroot/
 buildroot-external/
 buildroot-patches/
 
-# Ignore too
+# Release directory gets created using build scripts
 release/
+
+# Ignore hidden directories as well
+.git/
+.github/
