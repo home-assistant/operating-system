@@ -22,7 +22,6 @@ Before=rescue.service
 # option to preserve environment (-p), followed by '--' for safety, and then
 # the entered username.
 ExecStart=/usr/sbin/hassos-cli
-RemainAfterExit=yes
 Type=idle
 Restart=always
 RestartSec=0
