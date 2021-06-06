@@ -78,4 +78,4 @@ If the data partition was moved to your USB drive you should see ```sh Active: a
 
 
 ## Verify Power Supply Size (3.5A strongly recommended)
-Using an attached SSD will most likely draw more power than the official Power supply that go with the Rpi can deliver. Advice is to use one that provides at least 3.5A These will not be available in every region. Alternative can be to use a powered USB hub. Connect the Hub to 1 of the USB slots of your Rpi, and connect the SSD to the Hub. The PS that came with the Hub will power the attached device(s), and the PS for the Pi will only have to take care of the Pi.
+Using an attached SSD will most likely draw more power than the official Power supply that comes with the Rpi can deliver. Advice is to use one that provides at least 3.5A These will not be available in every region. Alternative can be to use a powered USB hub. Connect the Hub to 1 of the USB slots of your Rpi, and connect the SSD to the Hub. The PS that came with the Hub will power the attached device(s), and the PS for the Pi will only have to take care of the Pi.
