@@ -75,3 +75,7 @@ Within the Home Assistant interface you won't see if the move was succesful. To 
 $ systemctl status mnt-data.mount
 ```
 If the data partition was moved to your USB drive you should see ```sh Active: active (mounted)  ``` in the output. Also, it will show, which drive got mounted as /mnt/data (```sh Where ``` and ```sh what ``` section of the output)
+
+
+## Check Power Supply Rating
+Using an USB attached SSD can draw quite some power. For instance on Raspberry Pi 3 the official Raspberry Pi power supply (PSU) only provides 2.5A which can be too tight. Use a power supply which can at least provide 3.5A. Alternatively use a powered USB hub. Connect the Hub to one of the USB slots of your Raspberry Pi, and connect the SSD to the Hub. The power supply that came with the Hub will power the attached device(s).
