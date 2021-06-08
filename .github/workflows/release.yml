@@ -29,8 +29,10 @@ jobs:
           fi
           if [ "" != "${tag_dev}" ]; then
             echo "Note: Release build with custom dev part: ${tag_dev}."
+            echo "::set-output name=version::${major}.${build}.${tag_dev}"
+          else
+            echo "::set-output name=version::${major}.${build}"
           fi
-          echo "::set-output name=version::${major}.${build}.${tag_dev}"
           echo "::set-output name=version_dev::${tag_dev}"
 
   build:
