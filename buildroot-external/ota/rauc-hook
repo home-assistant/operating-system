@@ -63,12 +63,14 @@ fi
 if [ "${RAUC_SLOT_CLASS}" = "spl" ]; then
     DEVICE_CHILD="$(findfs LABEL="hassos-boot")"
     DEVICE_ROOT="/dev/$(lsblk -no pkname "${DEVICE_CHILD}")"
+    PART_TABLE="$(sfdisk -lqJ "${DEVICE_ROOT}")"
+    PART_LABEL="$(echo "${PART_TABLE}" | jq -r '.partitiontable.label')"
 
-    if sfdisk -dq "${DEVICE_ROOT}" | grep -q 'label: gpt'; then
-        dd if="${RAUC_IMAGE_NAME}" of="${DEVICE_ROOT}" conv=notrunc bs=512 seek=2 skip=2
+    if [ "${PART_LABEL}" = "gpt" ]; then
+        dd if="${RAUC_IMAGE_NAME}" of="${DEVICE_ROOT}" conv=notrunc oflag=direct bs=512 seek=2 skip=2
     else
-        dd if="${RAUC_IMAGE_NAME}" of="${DEVICE_ROOT}" conv=notrunc bs=1 count=440
-        dd if="${RAUC_IMAGE_NAME}" of="${DEVICE_ROOT}" conv=notrunc bs=512 seek=1 skip=1
+        dd if="${RAUC_IMAGE_NAME}" of="${DEVICE_ROOT}" conv=notrunc oflag=direct bs=1 count=440
+        dd if="${RAUC_IMAGE_NAME}" of="${DEVICE_ROOT}" conv=notrunc oflag=direct bs=512 seek=1 skip=1
     fi
 fi
 
