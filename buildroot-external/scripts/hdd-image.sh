@@ -90,7 +90,7 @@ function create_kernel_image() {
     # Make image
     rm -f "${kernel_img}"
     truncate --size="${KERNEL_SIZE}" "${kernel_img}"
-    mkfs.ext4 -L "hassos-kernel" -E lazy_itable_init=0,lazy_journal_init=0 -O ^extent,^64bit "${kernel_img}"
+    mkfs.ext4 -L "hassos-kernel" -E lazy_itable_init=0,lazy_journal_init=0 -O ^64bit "${kernel_img}"
 
     # Mount / init file structs
     sudo mkdir -p /mnt/data/
