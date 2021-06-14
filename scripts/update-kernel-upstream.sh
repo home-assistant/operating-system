@@ -11,9 +11,4 @@ sed -i "s/BR2_LINUX_KERNEL_CUSTOM_VERSION_VALUE=\".*\"/BR2_LINUX_KERNEL_CUSTOM_V
 sed -i "s/| \(Open Virtual Appliance\|Generic x86-64\|Tinker Board\|Odroid-C.\|Odroid-XU4\) | .* |/| \1 | $1 |/g" Documentation/kernel.md
 git commit -m "Linux: Update kernel $1" "${defconfigs[@]}" Documentation/kernel.md
 
-kernel_patches_with_version=$(find buildroot-external -type d -regextype sed -regex ".*/linux/[0-9\.]*")
-
-if [ -n "$kernel_patches_with_version" ]; then
-	echo ""
-	echo "WARNING: Kernel patch directories with kernel version found! Check if updates are needed."
-fi
+./scripts/check-kernel-patches.sh
