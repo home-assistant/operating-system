@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-RTL8812AU_VERSION = cc4c64deef8090515a3dea8b709bfff0a1007d8b
+RTL8812AU_VERSION = 1c9d034b20aa5c15dbf5bb5dfcb83346a692f827
 RTL8812AU_SITE = $(call github,aircrack-ng,rtl8812au,$(RTL8812AU_VERSION))
 RTL8812AU_LICENSE = GPL-2.0
 RTL8812AU_LICENSE_FILES = COPYING
