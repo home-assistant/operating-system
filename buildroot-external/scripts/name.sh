@@ -21,7 +21,7 @@ function path_spl_img() {
 }
 
 function path_kernel_img() {
-    echo "${BINARIES_DIR}/kernel.ext4"
+    echo "${BINARIES_DIR}/kernel.img"
 }
 
 function path_boot_img() {
