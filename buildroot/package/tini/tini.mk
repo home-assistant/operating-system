@@ -8,6 +8,7 @@ TINI_VERSION = 0.19.0
 TINI_SITE = $(call github,krallin,tini,v$(TINI_VERSION))
 TINI_LICENSE = MIT
 TINI_LICENSE_FILES = LICENSE
+TINI_CPE_ID_VENDOR = tini_project
 
 TINI_CFLAGS = $(TARGET_CFLAGS) \
 	-static \

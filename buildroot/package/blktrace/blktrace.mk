@@ -9,6 +9,7 @@ BLKTRACE_SITE = http://brick.kernel.dk/snaps
 BLKTRACE_DEPENDENCIES = libaio
 BLKTRACE_LICENSE = GPL-2.0+
 BLKTRACE_LICENSE_FILES = COPYING
+BLKTRACE_CPE_ID_VENDOR = blktrace_project
 
 # 0001-btt-make-device-devno-use-PATH_MAX-to-avoid-overflow.patch
 BLKTRACE_IGNORE_CVES += CVE-2018-10689

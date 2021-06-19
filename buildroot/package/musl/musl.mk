@@ -8,6 +8,7 @@ MUSL_VERSION = 1.2.2
 MUSL_SITE = http://www.musl-libc.org/releases
 MUSL_LICENSE = MIT
 MUSL_LICENSE_FILES = COPYRIGHT
+MUSL_CPE_ID_VENDOR = musl-libc
 
 # Before musl is configured, we must have the first stage
 # cross-compiler and the kernel headers

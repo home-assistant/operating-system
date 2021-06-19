@@ -9,6 +9,7 @@ PYTHON_ENGINEIO_SITE = https://files.pythonhosted.org/packages/71/5d/620b75396ce
 PYTHON_ENGINEIO_SETUP_TYPE = setuptools
 PYTHON_ENGINEIO_LICENSE = MIT
 PYTHON_ENGINEIO_LICENSE_FILES = LICENSE
+PYTHON_ENGINEIO_CPE_ID_VENDOR = python-engineio_project
 
 ifeq ($(BR2_PACKAGE_PYTHON),y)
 # only needed/valid for python 3.x

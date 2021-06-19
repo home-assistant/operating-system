@@ -2,3 +2,8 @@ version: '3'
 services:
   busybox:
     image: "busybox:latest"
+    command: httpd -f -h /www/
+    ports:
+      - "80:80"
+    volumes:
+      - "/bin:/www"

@@ -4,13 +4,14 @@
 #
 ################################################################################
 
-MPV_VERSION = 0.33.0
+MPV_VERSION = 0.33.1
 MPV_SITE = $(call github,mpv-player,mpv,v$(MPV_VERSION))
 MPV_DEPENDENCIES = \
 	host-pkgconf ffmpeg libass zlib \
 	$(if $(BR2_PACKAGE_LIBICONV),libiconv)
 MPV_LICENSE = GPL-2.0+
 MPV_LICENSE_FILES = LICENSE.GPL
+MPV_CPE_ID_VENDOR = mpv
 
 MPV_NEEDS_EXTERNAL_WAF = YES
 
@@ -26,6 +27,12 @@ MPV_CONF_OPTS = \
 	--disable-rubberband \
 	--disable-uchardet \
 	--disable-vapoursynth
+
+ifeq ($(BR2_STATIC_LIBS),y)
+MPV_CONF_OPTS += --disable-libmpv-shared --enable-libmpv-static
+else
+MPV_CONF_OPTS += --enable-libmpv-shared --disable-libmpv-static
+endif
 
 # ALSA support requires pcm+mixer
 ifeq ($(BR2_PACKAGE_ALSA_LIB_MIXER)$(BR2_PACKAGE_ALSA_LIB_PCM),yy)
