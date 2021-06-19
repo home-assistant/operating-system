@@ -13,10 +13,12 @@ DMALLOC_LICENSE = MIT-like
 DMALLOC_LICENSE_FILES = dmalloc.h.1
 
 DMALLOC_INSTALL_STAGING = YES
-DMALLOC_CONF_OPTS = --enable-shlib
 DMALLOC_CFLAGS = $(TARGET_CFLAGS)
 
-ifeq ($(BR2_STATIC_LIBS),)
+ifeq ($(BR2_STATIC_LIBS),y)
+DMALLOC_CONF_OPTS += --disable-shlib
+else
+DMALLOC_CONF_OPTS += --enable-shlib
 DMALLOC_CFLAGS += -fPIC
 endif
 

@@ -2,6 +2,8 @@ config BR2_PACKAGE_STRACE
 	bool "strace"
 	# needs at least kernel headers 4.0 on nios2
 	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_0 || !BR2_nios2
+	# needs at least kernel headers 5.0 on xtensa
+	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_0 || !BR2_xtensa
 	depends on !BR2_nds32 && !BR2_RISCV_32
 	help
 	  A useful diagnostic, instructional, and debugging tool.
@@ -16,3 +18,7 @@ config BR2_PACKAGE_STRACE
 comment "strace needs a toolchain w/ headers >= 4.0 on nios2"
 	depends on BR2_nios2
 	depends on !BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_0
+
+comment "strace needs a toolchain w/ headers >= 5.0 on xtensa"
+	depends on BR2_xtensa
+	depends on !BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_0

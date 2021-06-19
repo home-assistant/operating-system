@@ -10,6 +10,8 @@ UCLIBC_SITE = https://downloads.uclibc-ng.org/releases/$(UCLIBC_VERSION)
 UCLIBC_LICENSE = LGPL-2.1+
 UCLIBC_LICENSE_FILES = COPYING.LIB
 UCLIBC_INSTALL_STAGING = YES
+UCLIBC_CPE_ID_VENDOR = uclibc-ng_project
+UCLIBC_CPE_ID_PRODUCT = uclibc-ng
 
 define UCLIBC_HELP_CMDS
 	@echo '  uclibc-menuconfig      - Run uClibc menuconfig'

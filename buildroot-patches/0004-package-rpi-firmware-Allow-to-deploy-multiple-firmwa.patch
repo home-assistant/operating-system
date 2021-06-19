@@ -1,10 +1,10 @@
-From d6d381417d7e1aa442b27a699e790572b2b233d2 Mon Sep 17 00:00:00 2001
-Message-Id: <d6d381417d7e1aa442b27a699e790572b2b233d2.1618500237.git.stefan@agner.ch>
-In-Reply-To: <9c98c07abbe9ee675ec588ad7c15f0285e8a0f07.1618500237.git.stefan@agner.ch>
-References: <9c98c07abbe9ee675ec588ad7c15f0285e8a0f07.1618500237.git.stefan@agner.ch>
+From 81093c8655737f9208df3b75371290600625bec8 Mon Sep 17 00:00:00 2001
+Message-Id: <81093c8655737f9208df3b75371290600625bec8.1624118991.git.stefan@agner.ch>
+In-Reply-To: <09f9b55b419ef01ad24998bbacb1a49976b58bfa.1624118991.git.stefan@agner.ch>
+References: <09f9b55b419ef01ad24998bbacb1a49976b58bfa.1624118991.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Mon, 8 Feb 2021 14:08:28 +0100
-Subject: [PATCH 4/9] package/rpi-firmware: Allow to deploy multiple firmware
+Subject: [PATCH 4/7] package/rpi-firmware: Allow to deploy multiple firmware
  files
 
 Add a new config option to allow a specific list of firmware files to be
@@ -72,5 +72,5 @@ index f3d28ef825..58085a8ca8 100644
  	$(RPI_FIRMWARE_INSTALL_DTB)
  	$(RPI_FIRMWARE_INSTALL_DTB_OVERLAYS)
 -- 
-2.31.1
+2.32.0
 

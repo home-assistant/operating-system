@@ -29,8 +29,8 @@ there is a good chance someone else has asked the same question before.
 
 IRC::
 +
-The Buildroot IRC channel irc://freenode.net/#buildroot[#buildroot] is
-hosted on http://webchat.freenode.net[Freenode]. It is a useful place to
+The Buildroot IRC channel irc://irc.oftc.net/#buildroot[#buildroot] is
+hosted on https://www.oftc.net/WebChat/[OFTC]. It is a useful place to
 ask quick questions or discuss on certain topics.
 +
 When asking for help on IRC, share relevant logs or pieces of code

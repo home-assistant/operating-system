@@ -4,17 +4,11 @@
 #
 ################################################################################
 
-LIBXML2_VERSION = 2.9.10
+LIBXML2_VERSION = 2.9.12
 LIBXML2_SITE = http://xmlsoft.org/sources
 LIBXML2_INSTALL_STAGING = YES
 LIBXML2_LICENSE = MIT
 LIBXML2_LICENSE_FILES = COPYING
-# 0001-Fix-infinite-loop-in-xmlStringLenDecodeEntities.patch
-LIBXML2_IGNORE_CVES += CVE-2020-7595
-# 0002-Fix-memory-leak-in-xmlSchemaValidateStream.patch
-LIBXML2_IGNORE_CVES += CVE-2019-20388
-# 0003-Fix-out-of-bounds-read-with-xmllint--htmlout.patch
-LIBXML2_IGNORE_CVES += CVE-2020-24977
 LIBXML2_CPE_ID_VENDOR = xmlsoft
 LIBXML2_CONFIG_SCRIPTS = xml2-config
 

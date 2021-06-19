@@ -1,10 +1,10 @@
-From de154cd65e16420abc726bd25b5a35c70b81623f Mon Sep 17 00:00:00 2001
-Message-Id: <de154cd65e16420abc726bd25b5a35c70b81623f.1618500237.git.stefan@agner.ch>
-In-Reply-To: <9c98c07abbe9ee675ec588ad7c15f0285e8a0f07.1618500237.git.stefan@agner.ch>
-References: <9c98c07abbe9ee675ec588ad7c15f0285e8a0f07.1618500237.git.stefan@agner.ch>
+From f93e6246fbc58814dd4547eade63102c7626b76b Mon Sep 17 00:00:00 2001
+Message-Id: <f93e6246fbc58814dd4547eade63102c7626b76b.1624118991.git.stefan@agner.ch>
+In-Reply-To: <09f9b55b419ef01ad24998bbacb1a49976b58bfa.1624118991.git.stefan@agner.ch>
+References: <09f9b55b419ef01ad24998bbacb1a49976b58bfa.1624118991.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Wed, 17 Mar 2021 14:48:43 +0100
-Subject: [PATCH 5/9] package/linux-firmware: add RTL87XX/RTL88XX Bluetooth
+Subject: [PATCH 5/7] package/linux-firmware: add RTL87XX/RTL88XX Bluetooth
  firmware
 
 Add firmware files for Realtek 87XX and 88XX Bluetooth chipsets. Those
@@ -70,5 +70,5 @@ index f23da171c6..9c512ab750 100644
  ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_RALINK_RT61),y)
  LINUX_FIRMWARE_FILES += rt2561.bin rt2561s.bin rt2661.bin
 -- 
-2.31.1
+2.32.0
 

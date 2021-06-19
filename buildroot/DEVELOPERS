@@ -309,6 +309,7 @@ F:	package/apache/
 F:	package/apr/
 F:	package/apr-util/
 F:	package/bcg729/
+F:	package/bitcoin/
 F:	package/bluez-tools/
 F:	package/boinc/
 F:	package/clamav/
@@ -331,8 +332,12 @@ F:	package/gkrellm/
 F:	package/gli/
 F:	package/glmark2/
 F:	package/gpsd/
+F:	package/gptfdisk/
 F:	package/hdparm/
 F:	package/inih/
+F:	package/intel-gmmlib/
+F:	package/intel-mediadriver/
+F:	package/intel-mediasdk/
 F:	package/jsoncpp/
 F:	package/kodi*
 F:	package/lame/
@@ -486,16 +491,6 @@ F:	package/libsvg-cairo/
 
 N:	Cédric Chépied <cedric.chepied@gmail.com>
 F:	package/znc/
-
-N:	Chakra Divi <chakra@openedev.com>
-F:	board/friendlyarm/nanopi-m1
-F:	board/friendlyarm/nanopi-m1-plus
-F:	board/olimex/a13_olinuxino
-F:	board/orangepi/orangepi-plus
-F:	configs/friendlyarm_nanopi_m1_defconfig
-F:	configs/friendlyarm_nanopi_m1_plus_defconfig
-F:	configs/olimex_a13_olinuxino_defconfig
-F:	configs/orangepi_plus_defconfig
 
 N:	Chris Packham <judge.packham@gmail.com>
 F:	package/coremark/
@@ -673,6 +668,7 @@ F:	package/ipcalc/
 
 N:	Dick Olsson <hi@senzilla.io>
 F:	package/bearssl/
+F:	package/bitcoin/
 F:	package/execline/
 F:	package/mdevd/
 F:	package/s6-dns/

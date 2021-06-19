@@ -129,9 +129,13 @@ comment "USB support needs a toolchain w/ gcc >= 4.9"
 
 config BR2_PACKAGE_UHD_USRP1
 	bool "USRP1 support"
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # libusb
 	select BR2_PACKAGE_UHD_USB
 	help
 	  enable USRP1 support
+
+comment "USRP1 support needs a toolchain w/ gcc >= 4.9"
+	depends on !BR2_TOOLCHAIN_GCC_AT_LEAST_4_9
 
 config BR2_PACKAGE_UHD_USRP2
 	bool "USRP2 support"

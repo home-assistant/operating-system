@@ -10,5 +10,6 @@ LIBMMS_INSTALL_STAGING = YES
 LIBMMS_DEPENDENCIES = host-pkgconf libglib2
 LIBMMS_LICENSE = LGPL-2.1+
 LIBMMS_LICENSE_FILES = COPYING.LIB
+LIBMMS_CPE_ID_VENDOR = libmms_project
 
 $(eval $(autotools-package))

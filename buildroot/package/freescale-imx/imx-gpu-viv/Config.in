@@ -83,10 +83,15 @@ config BR2_PACKAGE_PROVIDES_LIBOPENVG
 
 config BR2_PACKAGE_IMX_GPU_VIV_EXAMPLES
 	bool "install examples"
+	# example binaries are linked against libstdc++.so.6
+	depends on BR2_INSTALL_LIBSTDCPP
 	help
 	  Copy the Vivante examples to the target.
 
 	  Warning: examples take approximately 150 MB of disk space.
+
+comment "imx-gpu-viv-examples need a toolchain w/ C++ support"
+	depends on !BR2_INSTALL_LIBSTDCPP
 
 config BR2_PACKAGE_IMX_GPU_VIV_GMEM_INFO
 	bool "install gmem_info tool"

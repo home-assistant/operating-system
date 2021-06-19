@@ -9,6 +9,7 @@ LIBICAL_SITE = https://github.com/libical/libical/releases/download/v$(LIBICAL_V
 LIBICAL_INSTALL_STAGING = YES
 LIBICAL_LICENSE = MPL-1.0 or LGPL-2.1
 LIBICAL_LICENSE_FILES = LICENSE
+LIBICAL_CPE_ID_VENDOR = libical_project
 
 # 0002-icaltypes-c-icalreqstattype_from_string-copy-the-reqstattype.patch
 LIBICAL_IGNORE_CVES += CVE-2016-9584

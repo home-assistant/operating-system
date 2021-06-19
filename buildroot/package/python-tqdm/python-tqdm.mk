@@ -10,5 +10,7 @@ PYTHON_TQDM_SITE = https://files.pythonhosted.org/packages/4c/45/830c5c4bfaba60e
 PYTHON_TQDM_SETUP_TYPE = setuptools
 PYTHON_TQDM_LICENSE = MPL-2.0, MIT
 PYTHON_TQDM_LICENSE_FILES = LICENCE
+PYTHON_TQDM_CPE_ID_VENDOR = tqdm_project
+PYTHON_TQDM_CPE_ID_PRODUCT = tqdm
 
 $(eval $(python-package))

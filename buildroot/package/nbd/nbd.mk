@@ -11,6 +11,8 @@ NBD_CONF_OPTS = --enable-lfs
 NBD_DEPENDENCIES = host-pkgconf libglib2
 NBD_LICENSE = GPL-2.0
 NBD_LICENSE_FILES = COPYING
+NBD_CPE_ID_VENDOR = network_block_device_project
+NBD_CPE_ID_PRODUCT = network_block_device
 
 ifeq ($(BR2_TOOLCHAIN_USES_UCLIBC),y)
 # We have linux/falloc.h

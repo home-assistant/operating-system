@@ -1,10 +1,10 @@
-From 3ca46afd47a195d35bca247c75f02f3c95f1c1ef Mon Sep 17 00:00:00 2001
-Message-Id: <3ca46afd47a195d35bca247c75f02f3c95f1c1ef.1618500237.git.stefan@agner.ch>
-In-Reply-To: <9c98c07abbe9ee675ec588ad7c15f0285e8a0f07.1618500237.git.stefan@agner.ch>
-References: <9c98c07abbe9ee675ec588ad7c15f0285e8a0f07.1618500237.git.stefan@agner.ch>
+From 654f5326428f1f442369589ce74333a44293fac2 Mon Sep 17 00:00:00 2001
+Message-Id: <654f5326428f1f442369589ce74333a44293fac2.1624118991.git.stefan@agner.ch>
+In-Reply-To: <09f9b55b419ef01ad24998bbacb1a49976b58bfa.1624118991.git.stefan@agner.ch>
+References: <09f9b55b419ef01ad24998bbacb1a49976b58bfa.1624118991.git.stefan@agner.ch>
 From: Pascal Vizeli <pvizeli@syshack.ch>
 Date: Thu, 16 Apr 2020 12:01:44 +0000
-Subject: [PATCH 3/9] Fix dhcp client
+Subject: [PATCH 3/7] Fix dhcp client
 
 Signed-off-by: Pascal Vizeli <pvizeli@syshack.ch>
 ---
@@ -12,10 +12,10 @@ Signed-off-by: Pascal Vizeli <pvizeli@syshack.ch>
  1 file changed, 1 insertion(+), 2 deletions(-)
 
 diff --git a/package/dhcp/dhcp.mk b/package/dhcp/dhcp.mk
-index 988c7792dc..d8f331719a 100644
+index 1edb3c5e99..b945c46b18 100644
 --- a/package/dhcp/dhcp.mk
 +++ b/package/dhcp/dhcp.mk
-@@ -77,8 +77,7 @@ endif
+@@ -79,8 +79,7 @@ endif
  
  ifeq ($(BR2_PACKAGE_DHCP_CLIENT),y)
  define DHCP_INSTALL_CLIENT
@@ -26,5 +26,5 @@ index 988c7792dc..d8f331719a 100644
  		install-sbinPROGRAMS
  	$(INSTALL) -m 0644 -D package/dhcp/dhclient.conf \
 -- 
-2.31.1
+2.32.0
 

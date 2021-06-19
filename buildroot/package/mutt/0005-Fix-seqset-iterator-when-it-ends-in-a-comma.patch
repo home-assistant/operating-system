@@ -1,0 +1,40 @@
+From 7c4779ac24d2fb68a2a47b58c7904118f40965d5 Mon Sep 17 00:00:00 2001
+From: Kevin McCarthy <kevin@8t8.us>
+Date: Mon, 3 May 2021 13:11:30 -0700
+Subject: [PATCH] Fix seqset iterator when it ends in a comma.
+
+If the seqset ended with a comma, the substr_end marker would be just
+before the trailing nul.  In the next call, the loop to skip the
+marker would iterate right past the end of string too.
+
+The fix is simple: place the substr_end marker and skip past it
+immediately.
+
+Signed-off-by: Peter Korsgaard <peter@korsgaard.com>
+[Peter: fixes CVE-2021-32055]
+---
+ imap/util.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/imap/util.c b/imap/util.c
+index c529fd8f..488e8396 100644
+--- a/imap/util.c
++++ b/imap/util.c
+@@ -1036,13 +1036,11 @@ int mutt_seqset_iterator_next (SEQSET_ITERATOR *iter, unsigned int *next)
+     if (iter->substr_cur == iter->eostr)
+       return 1;
+ 
+-    while (!*(iter->substr_cur))
+-      iter->substr_cur++;
+     iter->substr_end = strchr (iter->substr_cur, ',');
+     if (!iter->substr_end)
+       iter->substr_end = iter->eostr;
+     else
+-      *(iter->substr_end) = '\0';
++      *(iter->substr_end++) = '\0';
+ 
+     range_sep = strchr (iter->substr_cur, ':');
+     if (range_sep)
+-- 
+2.20.1
+
