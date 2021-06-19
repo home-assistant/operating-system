@@ -1,10 +1,10 @@
 From 28a2450108743762b3b43629c86248f5fe45aa70 Mon Sep 17 00:00:00 2001
-Message-Id: <28a2450108743762b3b43629c86248f5fe45aa70.1624118991.git.stefan@agner.ch>
-In-Reply-To: <09f9b55b419ef01ad24998bbacb1a49976b58bfa.1624118991.git.stefan@agner.ch>
-References: <09f9b55b419ef01ad24998bbacb1a49976b58bfa.1624118991.git.stefan@agner.ch>
+Message-Id: <28a2450108743762b3b43629c86248f5fe45aa70.1624121036.git.stefan@agner.ch>
+In-Reply-To: <09f9b55b419ef01ad24998bbacb1a49976b58bfa.1624121036.git.stefan@agner.ch>
+References: <09f9b55b419ef01ad24998bbacb1a49976b58bfa.1624121036.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Thu, 15 Apr 2021 17:22:59 +0200
-Subject: [PATCH 6/7] package/docker-proxy: bump version to b3507428be5b
+Subject: [PATCH 6/8] package/docker-proxy: bump version to b3507428be5b
 
 Which is the version used by docker 20.10.6:
 https://github.com/moby/moby/commit/88470052e7d42f3dc774442241fd6bab817876f6
