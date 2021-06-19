@@ -1,10 +1,10 @@
 From 81093c8655737f9208df3b75371290600625bec8 Mon Sep 17 00:00:00 2001
-Message-Id: <81093c8655737f9208df3b75371290600625bec8.1624118991.git.stefan@agner.ch>
-In-Reply-To: <09f9b55b419ef01ad24998bbacb1a49976b58bfa.1624118991.git.stefan@agner.ch>
-References: <09f9b55b419ef01ad24998bbacb1a49976b58bfa.1624118991.git.stefan@agner.ch>
+Message-Id: <81093c8655737f9208df3b75371290600625bec8.1624121036.git.stefan@agner.ch>
+In-Reply-To: <09f9b55b419ef01ad24998bbacb1a49976b58bfa.1624121036.git.stefan@agner.ch>
+References: <09f9b55b419ef01ad24998bbacb1a49976b58bfa.1624121036.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Mon, 8 Feb 2021 14:08:28 +0100
-Subject: [PATCH 4/7] package/rpi-firmware: Allow to deploy multiple firmware
+Subject: [PATCH 4/8] package/rpi-firmware: Allow to deploy multiple firmware
  files
 
 Add a new config option to allow a specific list of firmware files to be

@@ -1,0 +1,55 @@
+From af2981f04e79fc5d4298e027d7a02ecfd3316bd7 Mon Sep 17 00:00:00 2001
+Message-Id: <af2981f04e79fc5d4298e027d7a02ecfd3316bd7.1624121036.git.stefan@agner.ch>
+In-Reply-To: <09f9b55b419ef01ad24998bbacb1a49976b58bfa.1624121036.git.stefan@agner.ch>
+References: <09f9b55b419ef01ad24998bbacb1a49976b58bfa.1624121036.git.stefan@agner.ch>
+From: Stefan Agner <stefan@agner.ch>
+Date: Sat, 19 Jun 2021 18:20:46 +0200
+Subject: [PATCH 8/8] package/linux-firmware: add rtl8761b/rtl8761bu firmware
+
+Bumpt to latest git hash and deploy rtl8761b/rtl8761bu firmwares as
+well.
+
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+---
+ package/linux-firmware/linux-firmware.hash | 2 +-
+ package/linux-firmware/linux-firmware.mk   | 6 ++++--
+ 2 files changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/package/linux-firmware/linux-firmware.hash b/package/linux-firmware/linux-firmware.hash
+index 12af68f2d3..df66b87c50 100644
+--- a/package/linux-firmware/linux-firmware.hash
++++ b/package/linux-firmware/linux-firmware.hash
+@@ -1,5 +1,5 @@
+ # Locally calculated
+-sha256  f97d6d884026c5e3641909946713dcfea580c307d47830d37d42bfcc9a93870a  linux-firmware-20201022-br1.tar.gz
++sha256  cfbacbadf8b7ad2fd8ce1198f3d923329777922e45ff3f9497a98c7f2e15c485  linux-firmware-64f02a260ef8bd9e0d1dad369ef376338045d15b-br1.tar.gz
+ sha256  8116433f4004fc0c24d72b3d9e497808b724aa0e5e1cd63fc1bf66b715b1e2e9  LICENCE.Abilis
+ sha256  8d5847d2971241d4d6a51c16e206379de53a6d4e203fa6f8e1c1e9279c7c4ad0  LICENSE.amdgpu
+ sha256  2d6062d63b91eb750bf741498691604f75184b9fee97608ec537cd09bd6a42b4  LICENCE.Marvell
+diff --git a/package/linux-firmware/linux-firmware.mk b/package/linux-firmware/linux-firmware.mk
+index 9c512ab750..96da50751b 100644
+--- a/package/linux-firmware/linux-firmware.mk
++++ b/package/linux-firmware/linux-firmware.mk
+@@ -4,7 +4,7 @@
+ #
+ ################################################################################
+ 
+-LINUX_FIRMWARE_VERSION = 20201022
++LINUX_FIRMWARE_VERSION = 64f02a260ef8bd9e0d1dad369ef376338045d15b
+ LINUX_FIRMWARE_SITE = http://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git
+ LINUX_FIRMWARE_SITE_METHOD = git
+ 
+@@ -70,7 +70,9 @@ LINUX_FIRMWARE_FILES += \
+ 	rtl_bt/rtl8723a_fw.bin rtl_bt/rtl8723b_fw.bin \
+ 	rtl_bt/rtl8723bs_config-OBDA8723.bin \
+ 	rtl_bt/rtl8723bs_fw.bin rtl_bt/rtl8723d_config.bin \
+-	rtl_bt/rtl8723d_fw.bin rtl_bt/rtl8761a_fw.bin
++	rtl_bt/rtl8723d_fw.bin rtl_bt/rtl8761a_fw.bin \
++	rtl_bt/rtl8761b_fw.bin rtl_bt/rtl8761b_config.bin \
++	rtl_bt/rtl8761bu_fw.bin rtl_bt/rtl8761bu_config.bin
+ LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.rtlwifi_firmware.txt
+ endif
+ 
+-- 
+2.32.0
+
