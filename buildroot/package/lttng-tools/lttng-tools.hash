@@ -1,5 +1,5 @@
-# From https://lttng.org/files/lttng-tools/lttng-tools-2.12.1.tar.bz2.sha256
-sha256  0de7afc1f40a5acbede933cdfd6cf47b32ff84d02e170a1321f7fc86141585b8  lttng-tools-2.12.1.tar.bz2
+# From https://lttng.org/files/lttng-tools/lttng-tools-2.12.3.tar.bz2.sha256
+sha256  2890da230edd523fcf497e9eb28133b7606d64fa01bcbffadbfcba42104db153  lttng-tools-2.12.3.tar.bz2
 
 # Locally computed
 sha256  068e55c7dbe597400199aee75ac5e71bdb2ca88c4c9a4cfa8e1fbc61f933eda5  LICENSE

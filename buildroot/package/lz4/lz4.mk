@@ -17,6 +17,9 @@ LZ4_CPE_ID_VENDOR = yann_collet
 # See https://github.com/lz4/lz4/issues/818
 LZ4_IGNORE_CVES += CVE-2014-4715
 
+# 0001-Fix-potential-memory-corruption-with-negative-memmov.patch
+LZ4_IGNORE_CVES += CVE-2021-3520
+
 ifeq ($(BR2_STATIC_LIBS),y)
 LZ4_MAKE_OPTS += BUILD_SHARED=no
 else ifeq ($(BR2_SHARED_LIBS),y)

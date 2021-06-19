@@ -1,0 +1,25 @@
+From fe18352a4bc9f0cf3b6cf63b8cc03c5d6e41863b Mon Sep 17 00:00:00 2001
+From: plprevost <plprevost@sii.fr>
+Date: Wed, 12 May 2021 16:46:16 +0200
+Subject: [PATCH] refs issue:#298 Fix mono compilation errors
+
+[Retrieved from:
+https://github.com/mono/gtk-sharp/pull/299/commits/fe18352a4bc9f0cf3b6cf63b8cc03c5d6e41863b]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ sample/test/TestRange.cs | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sample/test/TestRange.cs b/sample/test/TestRange.cs
+index 82fb81105..8727c9a77 100644
+--- a/sample/test/TestRange.cs
++++ b/sample/test/TestRange.cs
+@@ -8,7 +8,7 @@
+ 
+ using System;
+ 
+-using Gtk;
++using Gtk; using Range = Gtk.Range;
+ 
+ namespace WidgetViewer {
+ 

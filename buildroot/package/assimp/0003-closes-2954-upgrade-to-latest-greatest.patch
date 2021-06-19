@@ -1,0 +1,243 @@
+From bb3db0ebaffc6b76de256e597ec1d1e4d2a6663f Mon Sep 17 00:00:00 2001
+From: kimkulling <kim.kulling@googlemail.com>
+Date: Mon, 9 Mar 2020 10:51:26 +0100
+Subject: [PATCH] closes https://github.com/assimp/assimp/issues/2954: upgrade
+ to latest greatest.
+
+[Retrieved from:
+https://github.com/assimp/assimp/commit/bb3db0ebaffc6b76de256e597ec1d1e4d2a6663f]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ contrib/zip/CMakeLists.txt      |  8 ++----
+ contrib/zip/README.md           | 51 +++++++++++++++++++++++++++++++--
+ contrib/zip/src/zip.c           | 17 ++++++++++-
+ contrib/zip/src/zip.h           | 13 ++++++++-
+ contrib/zip/test/CMakeLists.txt |  5 ----
+ contrib/zip/test/test.c         |  4 ++-
+ 6 files changed, 81 insertions(+), 17 deletions(-)
+
+diff --git a/contrib/zip/CMakeLists.txt b/contrib/zip/CMakeLists.txt
+index 77916d2e14..f194649ede 100644
+--- a/contrib/zip/CMakeLists.txt
++++ b/contrib/zip/CMakeLists.txt
+@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.0)
+ 
+ project(zip
+   LANGUAGES C
+-  VERSION "0.1.15")
++  VERSION "0.1.18")
+ set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
+ 
+ option(CMAKE_DISABLE_TESTING "Disable test creation" OFF)
+@@ -16,10 +16,6 @@ elseif ("${CMAKE_C_COMPILER_ID}" STREQUAL "GNU" OR
+         "${CMAKE_C_COMPILER_ID}" STREQUAL "Clang" OR
+         "${CMAKE_C_COMPILER_ID}" STREQUAL "AppleClang")
+   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 -Wall -Wextra -Werror -pedantic")
+-  if(ENABLE_COVERAGE)
+-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -O0 -fprofile-arcs -ftest-coverage")
+-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --coverage")
+-  endif()
+ endif (MSVC)
+ 
+ # zip
+@@ -35,7 +31,7 @@ if (NOT CMAKE_DISABLE_TESTING)
+   enable_testing()
+   add_subdirectory(test)
+   find_package(Sanitizers)
+-  add_sanitizers(${PROJECT_NAME} ${test_out} ${test_miniz_out})
++  add_sanitizers(${PROJECT_NAME} ${test_out})
+ endif()
+ 
+ ####
+diff --git a/contrib/zip/README.md b/contrib/zip/README.md
+index 14eb9a34c8..bdd0822b67 100644
+--- a/contrib/zip/README.md
++++ b/contrib/zip/README.md
+@@ -1,10 +1,8 @@
+ ### A portable (OSX/Linux/Windows), simple zip library written in C
+ This is done by hacking awesome [miniz](https://code.google.com/p/miniz) library and layering functions on top of the miniz v1.15 API.
+ 
+-[![Windows](https://ci.appveyor.com/api/projects/status/bph8dr3jacgmjv32/branch/master?svg=true&label=windows)](https://ci.appveyor.com/project/kuba--/zip)
+-[![Linux](https://travis-ci.org/kuba--/zip.svg?branch=master&label=linux%2fosx)](https://travis-ci.org/kuba--/zip)
++[![Build](https://github.com/kuba--/zip/workflows/build/badge.svg)](https://github.com/kuba--/zip/actions?query=workflow%3Abuild)
+ [![Version](https://badge.fury.io/gh/kuba--%2Fzip.svg)](https://github.com/kuba--/zip/releases)
+-[![Codecov](https://codecov.io/gh/kuba--/zip/branch/master/graph/badge.svg)](https://codecov.io/gh/kuba--/zip)
+ 
+ 
+ # The Idea
+@@ -213,6 +211,53 @@ func main() {
+ }
+ ```
+ 
++### Rust (ffi)
++```rust
++extern crate libc;
++use std::ffi::CString;
++
++#[repr(C)]
++pub struct Zip {
++    _private: [u8; 0],
++}
++
++#[link(name = "zip")]
++extern "C" {
++    fn zip_open(path: *const libc::c_char, level: libc::c_int, mode: libc::c_char) -> *mut Zip;
++    fn zip_close(zip: *mut Zip) -> libc::c_void;
++
++    fn zip_entry_open(zip: *mut Zip, entryname: *const libc::c_char) -> libc::c_int;
++    fn zip_entry_close(zip: *mut Zip) -> libc::c_int;
++    fn zip_entry_write(
++        zip: *mut Zip,
++        buf: *const libc::c_void,
++        bufsize: libc::size_t,
++    ) -> libc::c_int;
++}
++
++fn main() {
++    let path = CString::new("/tmp/test.zip").unwrap();
++    let mode: libc::c_char = 'w' as libc::c_char;
++
++    let entryname = CString::new("test.txt").unwrap();
++    let content = "test content\0";
++
++    unsafe {
++        let zip: *mut Zip = zip_open(path.as_ptr(), 5, mode);
++        {
++            zip_entry_open(zip, entryname.as_ptr());
++            {
++                let buf = content.as_ptr() as *const libc::c_void;
++                let bufsize = content.len() as libc::size_t;
++                zip_entry_write(zip, buf, bufsize);
++            }
++            zip_entry_close(zip);
++        }
++        zip_close(zip);
++    }
++}
++```
++
+ ### Ruby (ffi)
+ Install _ffi_ gem.
+ ```shell
+diff --git a/contrib/zip/src/zip.c b/contrib/zip/src/zip.c
+index 1abcfd8fd1..3b2821e6a3 100644
+--- a/contrib/zip/src/zip.c
++++ b/contrib/zip/src/zip.c
+@@ -222,6 +222,20 @@ void zip_close(struct zip_t *zip) {
+   }
+ }
+ 
++int zip_is64(struct zip_t *zip) {
++  if (!zip) {
++    // zip_t handler is not initialized
++    return -1;
++  }
++
++  if (!zip->archive.m_pState) {
++    // zip state is not initialized
++    return -1;
++  }
++
++  return (int)zip->archive.m_pState->m_zip64;
++}
++
+ int zip_entry_open(struct zip_t *zip, const char *entryname) {
+   size_t entrylen = 0;
+   mz_zip_archive *pzip = NULL;
+@@ -794,7 +808,8 @@ int zip_create(const char *zipname, const char *filenames[], size_t len) {
+ 
+     if (MZ_FILE_STAT(name, &file_stat) != 0) {
+       // problem getting information - check errno
+-      return -1;
++      status = -1;
++      break;
+     }
+ 
+     if ((file_stat.st_mode & 0200) == 0) {
+diff --git a/contrib/zip/src/zip.h b/contrib/zip/src/zip.h
+index a48d64d6de..cd3ab5cd00 100644
+--- a/contrib/zip/src/zip.h
++++ b/contrib/zip/src/zip.h
+@@ -21,7 +21,7 @@ extern "C" {
+ 
+ #if !defined(_SSIZE_T_DEFINED) && !defined(_SSIZE_T_DEFINED_) &&               \
+     !defined(__DEFINED_ssize_t) && !defined(__ssize_t_defined) &&              \
+-    !defined(_SSIZE_T) && !defined(_SSIZE_T_)
++    !defined(_SSIZE_T) && !defined(_SSIZE_T_) && !defined(_SSIZE_T_DECLARED)
+ 
+ // 64-bit Windows is the only mainstream platform
+ // where sizeof(long) != sizeof(void*)
+@@ -37,6 +37,7 @@ typedef long ssize_t; /* byte count or error */
+ #define __ssize_t_defined
+ #define _SSIZE_T
+ #define _SSIZE_T_
++#define _SSIZE_T_DECLARED
+ 
+ #endif
+ 
+@@ -90,6 +91,16 @@ extern struct zip_t *zip_open(const char *zipname, int level, char mode);
+  */
+ extern void zip_close(struct zip_t *zip);
+ 
++/**
++ * Determines if the archive has a zip64 end of central directory headers.
++ *
++ * @param zip zip archive handler.
++ *
++ * @return the return code - 1 (true), 0 (false), negative number (< 0) on
++ *         error.
++ */
++extern int zip_is64(struct zip_t *zip);
++
+ /**
+  * Opens an entry by name in the zip archive.
+  *
+diff --git a/contrib/zip/test/CMakeLists.txt b/contrib/zip/test/CMakeLists.txt
+index cc060b00fe..1224115858 100644
+--- a/contrib/zip/test/CMakeLists.txt
++++ b/contrib/zip/test/CMakeLists.txt
+@@ -2,15 +2,10 @@ cmake_minimum_required(VERSION 2.8)
+ 
+ # test
+ set(test_out test.out)
+-set(test_miniz_out test_miniz.out)
+ 
+ add_executable(${test_out} test.c)
+ target_link_libraries(${test_out} zip)
+-add_executable(${test_miniz_out} test_miniz.c)
+-target_link_libraries(${test_miniz_out} zip)
+ 
+ add_test(NAME ${test_out} COMMAND ${test_out})
+-add_test(NAME ${test_miniz_out} COMMAND ${test_miniz_out})
+ 
+ set(test_out ${test_out} PARENT_SCOPE)
+-set(test_miniz_out ${test_miniz_out} PARENT_SCOPE)
+diff --git a/contrib/zip/test/test.c b/contrib/zip/test/test.c
+index a9b2ddab1e..9cc2248ac0 100644
+--- a/contrib/zip/test/test.c
++++ b/contrib/zip/test/test.c
+@@ -47,7 +47,7 @@ static void test_write(void) {
+   assert(CRC32DATA1 == zip_entry_crc32(zip));
+   ++total_entries;
+   assert(0 == zip_entry_close(zip));
+-
++  assert(0 == zip_is64(zip));
+   zip_close(zip);
+ }
+ 
+@@ -92,6 +92,7 @@ static void test_read(void) {
+   size_t buftmp;
+   struct zip_t *zip = zip_open(ZIPNAME, 0, 'r');
+   assert(zip != NULL);
++  assert(0 == zip_is64(zip));
+ 
+   assert(0 == zip_entry_open(zip, "test\\test-1.txt"));
+   assert(strlen(TESTDATA1) == zip_entry_size(zip));
+@@ -310,6 +311,7 @@ static void test_fwrite(void) {
+   assert(0 == zip_entry_open(zip, WFILE));
+   assert(0 == zip_entry_fwrite(zip, WFILE));
+   assert(0 == zip_entry_close(zip));
++  assert(0 == zip_is64(zip));
+ 
+   zip_close(zip);
+   remove(WFILE);

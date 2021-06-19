@@ -13,6 +13,9 @@ NGINX_DEPENDENCIES = \
 	host-pkgconf \
 	$(if $(BR2_PACKAGE_LIBXCRYPT),libxcrypt)
 
+# 0010-Resolver-fixed-off-by-one-write-in-ngx_resolver_copy.patch
+NGINX_IGNORE_CVES += CVE-2021-23017
+
 NGINX_CONF_OPTS = \
 	--crossbuild=Linux::$(BR2_ARCH) \
 	--with-cc="$(TARGET_CC)" \

@@ -26,8 +26,8 @@ define HOST_ENVIRONMENT_SETUP_INSTALL_CMDS
 	printf "alias cmake=\"cmake \
 		-DCMAKE_TOOLCHAIN_FILE=$(HOST_DIR)/share/buildroot/toolchainfile.cmake \
 		-DCMAKE_INSTALL_PREFIX=/usr\"\n" >> $(ENVIRONMENT_SETUP_FILE)
-	$(SED) 's%$(HOST_DIR)%\$$SDK_PATH%g' \
-		-e 's%$(HOST_DIR)/bin/%%g' \
+	$(SED) 's%$(HOST_DIR)/bin/%%g' \
+		-e 's%$(HOST_DIR)%\$$SDK_PATH%g' \
 		-e '/^export "PATH=/c\' \
 		$(ENVIRONMENT_SETUP_FILE)
 	printf "export \"PATH=\$$SDK_PATH/bin:\$$SDK_PATH/sbin:\$$PATH\"\n" \

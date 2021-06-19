@@ -1,0 +1,51 @@
+From ebf0236270b977a62c522bc32810bc9f8edc72d1 Mon Sep 17 00:00:00 2001
+From: Thomas De Schampheleire <thomas.de_schampheleire@nokia.com>
+Date: Wed, 24 Mar 2021 13:40:14 +0100
+Subject: [PATCH] configure.ac: add option --enable-kernel-64-userland-32
+
+The ebtables build system seems to assume that 'sparc64' is the
+only case where KERNEL_64_USERSPACE_32 is relevant, but this is not true.
+This situation can happen on many architectures, especially in embedded
+systems. For example, an Aarch64 processor with kernel in 64-bit but
+userland build for 32-bit Arm. Or a 64-bit MIPS Octeon III processor, with
+userland running in the 'n32' ABI.
+
+While it is possible to set CFLAGS in the environment when calling the
+configure script, the caller would need to know to not only specify
+KERNEL_64_USERSPACE_32 but also the EBT_MIN_ALIGN value.
+
+Instead, add a configure option. All internal details can then be handled by
+the configure script.
+
+Signed-off-by: Thomas De Schampheleire <thomas.de_schampheleire@nokia.com>
+Upstream-Status: http://patchwork.ozlabs.org/project/netfilter-devel/patch/20210518181730.13436-2-patrickdepinguin@gmail.com/
+---
+ configure.ac | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/configure.ac b/configure.ac
+index c24ede3..3e89c0c 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -15,10 +15,17 @@ AS_IF([test "x$LOCKFILE" = x], [LOCKFILE="/var/lib/ebtables/lock"])
+ 
+ regular_CFLAGS="-Wall -Wunused"
+ regular_CPPFLAGS=""
++
+ case "$host" in
+ 	sparc64-*)
+-		regular_CPPFLAGS="$regular_CPPFLAGS -DEBT_MIN_ALIGN=8 -DKERNEL_64_USERSPACE_32";;
++		enable_kernel_64_userland_32=yes ;;
+ esac
++AC_ARG_ENABLE([kernel-64-userland-32],
++    AC_HELP_STRING([--enable-kernel-64-userland-32], [indicate that ebtables will be built as a 32-bit application but run under a 64-bit kernel])
++)
++AS_IF([test "x$enable_kernel_64_userland_32" = xyes],
++    [regular_CPPFLAGS="$regular_CPPFLAGS -DEBT_MIN_ALIGN=8 -DKERNEL_64_USERSPACE_32"]
++)
+ 
+ AC_SUBST([regular_CFLAGS])
+ AC_SUBST([regular_CPPFLAGS])
+-- 
+2.26.2
+

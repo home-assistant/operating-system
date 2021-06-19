@@ -1,0 +1,32 @@
+From a03ea6223950002eba8b1ef0df3133c62f387d6b Mon Sep 17 00:00:00 2001
+From: Michael Forney <mforney@mforney.org>
+Date: Tue, 25 May 2021 23:42:07 -0700
+Subject: [PATCH] bearssl: remove incorrect const on variable that is modified
+
+hostname may be set to NULL later on in this function if it is an
+IP address.
+
+Closes #7133
+
+[peter@korsgaard.com: backported from upstream]
+Signed-off-by: Peter Korsgaard <peter@korsgaard.com>
+---
+ lib/vtls/bearssl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/lib/vtls/bearssl.c b/lib/vtls/bearssl.c
+index 7f729713d..40a5e7879 100644
+--- a/lib/vtls/bearssl.c
++++ b/lib/vtls/bearssl.c
+@@ -300,7 +300,7 @@ static CURLcode bearssl_connect_step1(struct Curl_easy *data,
+   struct ssl_connect_data *connssl = &conn->ssl[sockindex];
+   struct ssl_backend_data *backend = connssl->backend;
+   const char * const ssl_cafile = SSL_CONN_CONFIG(CAfile);
+-  const char * const hostname = SSL_HOST_NAME();
++  const char *hostname = SSL_HOST_NAME();
+   const bool verifypeer = SSL_CONN_CONFIG(verifypeer);
+   const bool verifyhost = SSL_CONN_CONFIG(verifyhost);
+   CURLcode ret;
+-- 
+2.20.1
+

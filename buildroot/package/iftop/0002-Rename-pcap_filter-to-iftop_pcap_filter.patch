@@ -1,0 +1,51 @@
+From 64a185ce2017e4523f4bc39a36c7aebd6d68549a Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Wed, 2 Jun 2021 08:21:04 +0200
+Subject: [PATCH] Rename pcap_filter to iftop_pcap_filter
+
+Rename pcap_filter to iftop_pcap_filter to fix the following static
+build failure:
+
+/home/buildroot/autobuild/run/instance-3/output-1/host/bin/riscv64-linux-gcc  -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64  -Os   -static   -static -o iftop addr_hash.o edline.o hash.o iftop.o ns_hash.o options.o resolver.o screenfilter.o serv_hash.o sorted_list.o threadprof.o ui_common.o ui.o tui.o util.o addrs_ioctl.o addrs_dlpi.o dlcommon.o stringmap.o cfgfile.o vector.o  -lpcap -lpcap -L/home/buildroot/autobuild/run/instance-3/output-1/host/riscv64-buildroot-linux-musl/sysroot/usr/bin/../../../../bin/../riscv64-buildroot-linux-musl/sysroot/usr/lib -lnl-genl-3 -lnl-3 -lpthread   -lcurses
+/home/buildroot/autobuild/run/instance-3/output-1/host/opt/ext-toolchain/bin/../lib/gcc/riscv64-buildroot-linux-musl/10.2.0/../../../../riscv64-buildroot-linux-musl/bin/ld: /home/buildroot/autobuild/run/instance-3/output-1/host/riscv64-buildroot-linux-musl/sysroot/usr/bin/../../../../bin/../riscv64-buildroot-linux-musl/sysroot/usr/lib/libpcap.a(bpf_filter.o): in function `pcap_filter':
+bpf_filter.c:(.text+0x4a8): multiple definition of `pcap_filter'; iftop.o:iftop.c:(.bss+0x1a8): first defined here
+
+Fixes:
+ - http://autobuild.buildroot.org/results/eb53ff6b031c654daec57050dec376b5c9134a81
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ iftop.c      | 6 +++---
+ 1 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/iftop.c b/iftop.c
+index aaec6aa..f89eee3 100644
+--- a/iftop.c
++++ b/iftop.c
+@@ -74,7 +74,7 @@ int history_len = 1;
+ pthread_mutex_t tick_mutex;
+ 
+ pcap_t* pd; /* pcap descriptor */
+-struct bpf_program pcap_filter;
++struct bpf_program iftop_pcap_filter;
+ pcap_handler packet_handler;
+ 
+ sig_atomic_t foad;
+@@ -679,12 +679,12 @@ char *set_filter_code(const char *filter) {
+         sprintf(x, "(%s) and (ip or ip6)", filter);
+     } else
+         x = xstrdup("ip or ip6");
+-    if (pcap_compile(pd, &pcap_filter, x, 1, 0) == -1) {
++    if (pcap_compile(pd, &iftop_pcap_filter, x, 1, 0) == -1) {
+         xfree(x);
+         return pcap_geterr(pd);
+     }
+     xfree(x);
+-    if (pcap_setfilter(pd, &pcap_filter) == -1)
++    if (pcap_setfilter(pd, &iftop_pcap_filter) == -1)
+         return pcap_geterr(pd);
+     else
+         return NULL;
+-- 
+2.30.2
+

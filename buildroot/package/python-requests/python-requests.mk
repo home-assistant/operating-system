@@ -11,5 +11,7 @@ PYTHON_REQUESTS_SITE = https://files.pythonhosted.org/packages/6b/47/c14abc08432
 PYTHON_REQUESTS_SETUP_TYPE = setuptools
 PYTHON_REQUESTS_LICENSE = Apache-2.0
 PYTHON_REQUESTS_LICENSE_FILES = LICENSE
+PYTHON_REQUESTS_CPE_ID_VENDOR = python
+PYTHON_REQUESTS_CPE_ID_PRODUCT = requests
 
 $(eval $(python-package))

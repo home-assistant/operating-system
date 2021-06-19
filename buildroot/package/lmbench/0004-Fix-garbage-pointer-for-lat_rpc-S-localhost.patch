@@ -1,0 +1,25 @@
+From 3830453a06269912d2772fe8c31bae44f27bb131 Mon Sep 17 00:00:00 2001
+From: Vineet Gupta <vgupta@synopsys.com>
+Date: Fri, 8 May 2015 11:35:58 +0530
+Subject: [PATCH] Fix garbage pointer for lat_rpc -S localhost
+
+Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
+---
+ src/lat_rpc.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/lat_rpc.c b/src/lat_rpc.c
+index 9c021926d761..ff4380ff38f3 100644
+--- a/src/lat_rpc.c
++++ b/src/lat_rpc.c
+@@ -101,6 +101,7 @@ main(int ac, char **av)
+ 	char	*usage = "-s\n OR [-p <tcp|udp>] [-P parallel] [-W <warmup>] [-N <repetitions>] serverhost\n OR -S serverhost\n";
+ 
+ 	state.msize = 1;
++	state.server = NULL;
+ 
+ 	while (( c = getopt(ac, av, "sS:m:p:P:W:N:")) != EOF) {
+ 		switch(c) {
+-- 
+2.25.1
+

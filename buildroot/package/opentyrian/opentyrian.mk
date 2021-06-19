@@ -4,9 +4,8 @@
 #
 ################################################################################
 
-OPENTYRIAN_VERSION = 9c9f0ec3532b
-OPENTYRIAN_SITE = https://bitbucket.org/opentyrian/opentyrian
-OPENTYRIAN_SITE_METHOD = hg
+OPENTYRIAN_VERSION = cf5dbeb69eebd9ef9afc4473088d9469b79589eb
+OPENTYRIAN_SITE = $(call github,opentyrian,opentyrian,$(OPENTYRIAN_VERSION))
 OPENTYRIAN_LICENSE = GPL-2.0+
 OPENTYRIAN_LICENSE_FILES = COPYING
 

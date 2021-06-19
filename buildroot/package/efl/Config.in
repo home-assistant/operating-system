@@ -258,6 +258,7 @@ config BR2_PACKAGE_EFL_WEBP
 
 config BR2_PACKAGE_EFL_LIBRAW
 	bool "libraw loader"
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4 # libraw
 	select BR2_PACKAGE_LIBRAW
 	help
 	  This option enables the Evas generic Libraw loader

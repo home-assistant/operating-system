@@ -11,6 +11,7 @@ MSMTP_DEPENDENCIES = host-pkgconf
 MSMTP_CONF_OPTS = --disable-gai-idn
 MSMTP_LICENSE = GPL-3.0+
 MSMTP_LICENSE_FILES = COPYING
+MSMTP_CPE_ID_VENDOR = marlam
 
 # msmtpd needs fork
 ifeq ($(BR2_USE_MMU),y)
