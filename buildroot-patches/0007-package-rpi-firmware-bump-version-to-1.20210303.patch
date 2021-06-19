@@ -1,10 +1,10 @@
 From 30030f11ea80bee5f25136a3caf070a9b97e8b10 Mon Sep 17 00:00:00 2001
-Message-Id: <30030f11ea80bee5f25136a3caf070a9b97e8b10.1624118991.git.stefan@agner.ch>
-In-Reply-To: <09f9b55b419ef01ad24998bbacb1a49976b58bfa.1624118991.git.stefan@agner.ch>
-References: <09f9b55b419ef01ad24998bbacb1a49976b58bfa.1624118991.git.stefan@agner.ch>
+Message-Id: <30030f11ea80bee5f25136a3caf070a9b97e8b10.1624121036.git.stefan@agner.ch>
+In-Reply-To: <09f9b55b419ef01ad24998bbacb1a49976b58bfa.1624121036.git.stefan@agner.ch>
+References: <09f9b55b419ef01ad24998bbacb1a49976b58bfa.1624121036.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Mon, 19 Apr 2021 10:59:03 +0200
-Subject: [PATCH 7/7] package/rpi-firmware: bump version to 1.20210303
+Subject: [PATCH 7/8] package/rpi-firmware: bump version to 1.20210303
 
 Keep rpi-firmware up-to-date with the kernel version bump (tag
 1.20210303).
