@@ -5,10 +5,10 @@
 The following boards/devices are supported:
 
 - Raspberry Pi
-  - Pi 4 Model B (1 GB, 2 GB and 4 GB model) 32-bit (recommended)
-  - Pi 4 Model B (1 GB, 2 GB and 4 GB model) 64-bit
-  - Pi 3 Model B and B+ 32-bit (recommended)
-  - Pi 3 Model B and B+ 64-bit
+  - Pi 4 Model B (1 GB, 2 GB and 4 GB model) 32-bit
+  - Pi 4 Model B (1 GB, 2 GB and 4 GB model) 64-bit (recommended)
+  - Pi 3 Model B and B+ 32-bit
+  - Pi 3 Model B and B+ 64-bit (recommended)
   - Pi 2 (not recommended)
   - Pi Zero-W (not recommended)
   - Pi (not recommended)
