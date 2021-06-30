@@ -26,13 +26,13 @@ while [[ $# -gt 0 ]]; do
     shift
 done
 
-SUPERVISOR="homeassistant/${ARCH}-hassio-supervisor"
-DNS="homeassistant/${ARCH}-hassio-dns"
-AUDIO="homeassistant/${ARCH}-hassio-audio"
-CLI="homeassistant/${ARCH}-hassio-cli"
-MULTICAST="homeassistant/${ARCH}-hassio-multicast"
-OBSERVER="homeassistant/${ARCH}-hassio-observer"
-LANDINGPAGE="homeassistant/${MACHINE}-homeassistant:landingpage"
+SUPERVISOR=$(curl -s ${VERSION_URL} | jq -e -r '.images.supervisor' | sed -r "s/\{arch\}/${ARCH}/g")
+DNS=$(curl -s ${VERSION_URL} | jq -e -r '.images.dns' | sed -r "s/\{arch\}/${ARCH}/g")
+AUDIO=$(curl -s ${VERSION_URL} | jq -e -r '.images.audio' | sed -r "s/\{arch\}/${ARCH}/g")
+CLI=$(curl -s ${VERSION_URL} | jq -e -r '.images.cli' | sed -r "s/\{arch\}/${ARCH}/g")
+MULTICAST=$(curl -s ${VERSION_URL} | jq -e -r '.images.multicast' | sed -r "s/\{arch\}/${ARCH}/g")
+OBSERVER=$(curl -s ${VERSION_URL} | jq -e -r '.images.observer' | sed -r "s/\{arch\}/${ARCH}/g")
+LANDINGPAGE=$(curl -s ${VERSION_URL} | jq -e -r '.images.core' | sed -r "s/\{machine\}/${MACHINE}/g")
 
 SUPERVISOR_VERSION=$(curl -s ${VERSION_URL} | jq -e -r '.supervisor')
 DNS_VERSION=$(curl -s ${VERSION_URL} | jq -e -r '.dns')
