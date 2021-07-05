@@ -33,6 +33,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         patch \
         perl \
         python \
+        python-matplotlib \
+        graphviz \
         rsync \
         sudo \
         unzip \
