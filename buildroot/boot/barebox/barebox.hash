@@ -1,8 +1,0 @@
-# From https://www.barebox.org/download/barebox-2020.11.0.tar.bz2.md5
-md5  1fc2c1a03d7b44dc12fbf4cf1fc6ffe0  barebox-2020.11.0.tar.bz2
-
-# Locally calculated
-sha256  049d2b1b887d0397f4b5390255459fb0240200b06a3276ffaefdeab7fb243554  barebox-2020.11.0.tar.bz2
-
-# License files, locally computed
-sha256  ab1122aa9f9073ad1ec824edcd970b16a6a7881a34a18fd56c080debb2dca5d4  COPYING

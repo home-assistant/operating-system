@@ -1,6 +1,0 @@
-config BR2_PACKAGE_LIBUEV
-	bool "libuev"
-	help
-	  Simple event loop for Linux.
-
-	  https://github.com/troglobit/libuev

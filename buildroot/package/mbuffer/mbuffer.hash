@@ -1,8 +1,0 @@
-# From http://www.maier-komor.de/mbuffer.html
-md5  e2b4f3b0d0944c08d52c167841bde3c0  mbuffer-20200929.tgz
-
-# Locally computed after checking signature upstream
-sha256  53a6e3c14e9a049f18a09840653dd84f18e7ec7560f2dcf2b61c0ab5f0ead4e8  mbuffer-20200929.tgz
-
-# Hash for license file
-sha256  8ceb4b9ee5adedde47b31e975c1d90c73ad27b6b165a1dcd80c7c545eb65b903  LICENSE

@@ -1,5 +1,0 @@
-# md5, sha256 from https://pypi.org/pypi/iso8601/json
-md5  df6e924305fd799d90be63336b2ab8b3  iso8601-0.1.13.tar.gz
-sha256  f7dec22af52025d4526be94cc1303c7d8f5379b746a3f54a8c8446384392eeb1  iso8601-0.1.13.tar.gz
-# Locally computed sha256 checksums
-sha256  116d368d14a8cf0061027c944c60ee20b476ce42814818a7d627396906761f16  LICENSE

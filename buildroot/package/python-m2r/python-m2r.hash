@@ -1,5 +1,0 @@
-# md5, sha256 from https://pypi.org/pypi/m2r/json
-md5	8bdb45c19e2b59bb5ffb9a0348e81ad8  m2r-0.2.1.tar.gz
-sha256	bf90bad66cda1164b17e5ba4a037806d2443f2a4d5ddc9f6a5554a0322aaed99  m2r-0.2.1.tar.gz
-# Locally computed sha256 checksums
-sha256	28728ec0ecbd8c171ebaeccebf69e3961282fd81f06abc7424c65546b6ae6f27  LICENSE

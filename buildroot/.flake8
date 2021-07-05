@@ -1,5 +1,0 @@
-[flake8]
-exclude=
-    # copied from the kernel sources
-    utils/diffconfig
-max-line-length=132

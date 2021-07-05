@@ -1,6 +1,0 @@
-config BR2_PACKAGE_LBASE64
-	bool "lbase64"
-	help
-	  A base64 library for Lua
-
-	  http://webserver2.tecgraf.puc-rio.br/~lhf/ftp/lua/#lbase64

@@ -1,5 +1,0 @@
-# https://github.com/SELinuxProject/selinux/wiki/Releases
-sha256 f4d0a1a030bc291a6af498b26e0676b745075dd289a8ba16cdec86c3ea8f2f02 selinux-python-3.1.tar.gz
-
-# Hash for license file
-sha256 204d8eff92f95aac4df6c8122bc1505f468f3a901e5a4cc08940e0ede1938994 COPYING

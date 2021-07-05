@@ -1,4 +1,0 @@
-# From https://www.kernel.org/pub/linux/network/connman/sha256sums.asc
-sha256  1a57ae7ce234aa3a1744aac3be5c2121d98dce999440ef8ab9cc4edfd5edcb12  connman-1.40.tar.xz
-# Locally computed
-sha256  b499eddebda05a8859e32b820a64577d91f1de2b52efa2a1575a2cb4000bc259  COPYING

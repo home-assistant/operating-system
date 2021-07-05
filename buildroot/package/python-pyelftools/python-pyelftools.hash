@@ -1,5 +1,0 @@
-# md5, sha256 from https://pypi.org/pypi/pyelftools/json
-md5	c5629b9a5d19c82107a946cce52eeec2  pyelftools-0.25.tar.gz
-sha256	89c6da6f56280c37a5ff33468591ba9a124e17d71fe42de971818cbff46c1b24  pyelftools-0.25.tar.gz
-# Locally computed sha256 checksums
-sha256	ae18bf4cb82f92af7547259177bc28bc48e4fc732518bcedfe690226288d3445  LICENSE

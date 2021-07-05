@@ -1,6 +1,0 @@
-config BR2_PACKAGE_PYTHON_ENTRYPOINTS
-	bool "python-entrypoints"
-	help
-	  Discover and load entry points from installed packages.
-
-	  https://github.com/takluyver/entrypoints

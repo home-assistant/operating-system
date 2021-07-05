@@ -1,5 +1,0 @@
-# md5, sha256 from https://pypi.org/pypi/pyserial-asyncio/json
-md5  64d15bfb20982b2129b02070321f49f3  pyserial-asyncio-0.5.tar.gz
-sha256  1641e5433a866eeaf6464b3ab88b741e7a89dd8cd0f851b3343b15f425138d33  pyserial-asyncio-0.5.tar.gz
-# Locally computed sha256 checksums
-sha256  ebc84abdbdec7f9fa6962612c110123897db47b79529d5ae41191ef584b88f2c  LICENSE.txt

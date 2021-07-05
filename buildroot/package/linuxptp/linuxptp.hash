@@ -1,9 +1,0 @@
-# From https://sourceforge.net/projects/linuxptp/files/v3.0/
-sha1  9a3869dbd322252c9a6bc0dbdfe8941586810a7f  linuxptp-3.1.tgz
-md5  2264cb69c9af947028835c12c89a7572  linuxptp-3.1.tgz
-
-# Locally computed:
-sha256  f58f5b11cf14dc7c4f7c9efdfb27190e43d02cf20c3525f6639edac10528ce7d  linuxptp-3.1.tgz
-
-# Hash for license file:
-sha256  8177f97513213526df2cf6184d8ff986c675afb514d4e68a404010521b880643  COPYING

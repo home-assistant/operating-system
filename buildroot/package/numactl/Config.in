@@ -1,9 +1,0 @@
-config BR2_PACKAGE_NUMACTL
-	bool "numactl"
-	depends on BR2_USE_MMU # madvise()
-	help
-	  numactl allows you to run your application on specific cpus
-	  and memory nodes. It does this by supplying a NUMA memory
-	  policy to the operating system before running your program.
-
-	  https://github.com/numactl/numactl

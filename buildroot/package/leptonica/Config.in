@@ -1,6 +1,0 @@
-config BR2_PACKAGE_LEPTONICA
-	bool "leptonica"
-	help
-	  Leptonica is an image processing and image analysis library.
-
-	  http://www.leptonica.org/

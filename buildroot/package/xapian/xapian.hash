@@ -1,5 +1,0 @@
-# From https://lists.xapian.org/pipermail/xapian-discuss/2021-January/009856.html
-sha256  196ddbb4ad10450100f0991a599e4ed944cbad92e4a6fe813be6dce160244b77  xapian-core-1.4.18.tar.xz
-
-# locally computed
-sha256  c38aee9e3c8c4d5d594ff548a1be05453023016d6286931f6512db215ec1fd42  COPYING

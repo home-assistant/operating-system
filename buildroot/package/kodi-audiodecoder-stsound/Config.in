@@ -1,6 +1,0 @@
-config BR2_PACKAGE_KODI_AUDIODECODER_STSOUND
-	bool "kodi-audiodecoder-stsound"
-	help
-	  YM decoder addon for Kodi
-
-	  https://github.com/xbmc/audiodecoder.stsound

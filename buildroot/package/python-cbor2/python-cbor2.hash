@@ -1,5 +1,0 @@
-# md5, sha256 from https://pypi.org/pypi/cbor2/json
-md5  0940aa8bfd1a07f06a983bb6dc78f1ca  cbor2-5.2.0.tar.gz
-sha256  a33aa2e5534fd74401ac95686886e655e3b2ce6383b3f958199b6e70a87c94bf  cbor2-5.2.0.tar.gz
-# Locally computed sha256 checksums
-sha256  a6afd126d8f545a15166a22f25fadff4b9fb4978bbdd17e97d97d950b66d2fef  LICENSE.txt

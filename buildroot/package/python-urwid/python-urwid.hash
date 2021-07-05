@@ -1,5 +1,0 @@
-# md5, sha256 from https://pypi.org/pypi/urwid/json
-md5	c70a7016fa1ad2c2a979dbebd4de78c2  urwid-2.0.1.tar.gz
-sha256	644d3e3900867161a2fc9287a9762753d66bd194754679adb26aede559bcccbc  urwid-2.0.1.tar.gz
-# Locally computed sha256
-sha256	36b6d3fa47916943fd5fec313c584784946047ec1337a78b440e5992cb595f89  COPYING

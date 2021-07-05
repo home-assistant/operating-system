@@ -1,7 +1,0 @@
-config BR2_PACKAGE_CHARTJS
-	bool "chartjs"
-	help
-	  Chart.js, a simple yet flexible JavaScript charting library
-	  for designers & developers
-
-	  https://www.chartjs.org/

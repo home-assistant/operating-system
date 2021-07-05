@@ -1,6 +1,0 @@
-# From https://sourceforge.net/projects/ipmiutil/files/
-md5  fab260bc834a0f3f9324a6365fc26eca  ipmiutil-3.1.7.tar.gz
-sha1  a0cd29820b15166120eb4a51e6239bfa6f9c65dd  ipmiutil-3.1.7.tar.gz
-# Locally computed
-sha256  911fd6f8b33651b98863d57e678d2fc593bc43fcd2a21f5dc7d5db8f92128a9a  ipmiutil-3.1.7.tar.gz
-sha256  7e0ec8238aa1431e95a4950032a4483fe33fec3fac348eaade5856cdc5ae3e39  COPYING

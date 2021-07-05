@@ -1,7 +1,0 @@
-# From https://lists.gnupg.org/pipermail/gnupg-announce/2020q4/000450.html
-sha1  074b21dd07419575fa31c0c5d3116596d5544cbd gnupg-2.2.25.tar.bz2
-# Calculated based on the hash above and signature
-# https://gnupg.org/ftp/gcrypt/gnupg/gnupg-2.2.25.tar.bz2.sig
-# using key D8692123C4065DEA5E0F3AB5249B39D24F25E3B6
-sha256  c55307b247af4b6f44d2916a25ffd1fb64ce2e509c3c3d028dbe7fbf309dc30a  gnupg-2.2.25.tar.bz2
-sha256  bc2d6664f6276fa0a72d57633b3ae68dc7dcb677b71018bf08c8e93e509f1357  COPYING

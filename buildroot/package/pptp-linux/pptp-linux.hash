@@ -1,7 +1,0 @@
-# From http://sourceforge.net/projects/pptpclient/files/pptp/pptp-1.10.0/
-md5 8d25341352fdae5ad5b36b9f18254908  pptp-1.10.0.tar.gz
-sha1 173c9b7d204c89fd1538116f165bba1e9101b51c  pptp-1.10.0.tar.gz
-
-# Locally calculated
-sha256 82492db8e487ce73b182ee7f444251d20c44f5c26d6e96c553ec7093aefb5af4  pptp-1.10.0.tar.gz
-sha256 8177f97513213526df2cf6184d8ff986c675afb514d4e68a404010521b880643  COPYING

@@ -1,5 +1,0 @@
-# md5, sha256 from https://pypi.org/pypi/brotli/json
-md5  08f1f098697c64aa4596468b556d0c94  Brotli-1.0.9.zip
-sha256  4d1b810aa0ed773f81dceda2cc7b403d01057458730e309856356d4ef4188438  Brotli-1.0.9.zip
-# Locally computed sha256 checksums
-sha256  3d180008e36922a4e8daec11c34c7af264fed5962d07924aea928c38e8663c94  LICENSE

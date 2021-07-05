@@ -1,9 +1,0 @@
-config BR2_PACKAGE_SKELETON
-	bool
-	default y
-
-config BR2_PACKAGE_HAS_SKELETON
-	bool
-
-config BR2_PACKAGE_PROVIDES_SKELETON
-	string

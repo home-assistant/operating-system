@@ -1,6 +1,0 @@
-config BR2_PACKAGE_LUA_ROTAS
-	bool "lua-rotas"
-	help
-	  a web server router.
-
-	  https://fperrad.frama.io/lua-Rotas

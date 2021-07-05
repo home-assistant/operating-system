@@ -1,7 +1,0 @@
-# From http://sourceforge.net/projects/liblo/files/liblo/0.31/
-sha1  d188a62df51e29fa98861daec1db0fdae400410d  liblo-0.31.tar.gz
-md5  14378c1e74c58e777fbb4fcf33ac5315  liblo-0.31.tar.gz
-
-# Locally computed
-sha256  2b4f446e1220dcd624ecd8405248b08b7601e9a0d87a0b94730c2907dbccc750  liblo-0.31.tar.gz
-sha256  5df07007198989c622f5d41de8d703e7bef3d0e79d62e24332ee739a452af62a  COPYING

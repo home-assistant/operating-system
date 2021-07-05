@@ -1,5 +1,0 @@
-# md5, sha256 from https://pypi.org/pypi/lmdb/json
-md5	507049767b995c3c6a93b3bd97567c71  lmdb-0.99.tar.gz
-sha256	f9eb844aaaacc8a4bc175e1c1f8a8fb538c330e378fd9eb40e8708d4dca7dc89  lmdb-0.99.tar.gz
-# Locally computed sha256 checksums
-sha256	310fe25c858a9515fc8c8d7d1f24a67c9496f84a91e0a0e41ea9975b1371e569  LICENSE

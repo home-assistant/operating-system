@@ -1,5 +1,0 @@
-# From https://www.gnupg.org/download/integrity_check.html
-sha1  b8b88cab4fd844e3616d55aeba8f084f2b98fb0f  pinentry-1.1.1.tar.bz2
-# Locally computed
-sha256  cd12a064013ed18e2ee8475e669b9f58db1b225a0144debdb85a68cecddba57f  pinentry-1.1.1.tar.bz2
-sha256  67f82e045cf7acfef853ea0f426575a8359161a0a325e19f02b529a87c4b6c34  COPYING

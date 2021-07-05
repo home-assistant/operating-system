@@ -1,5 +1,0 @@
-# md5, sha256 from https://pypi.org/pypi/PyYAML/json
-md5  46e25294c7efec23d4072ed6a7777f46  PyYAML-5.4.1.tar.gz
-sha256  607774cbba28732bfa802b54baa7484215f530991055bb562efbed5b2f20a45e  PyYAML-5.4.1.tar.gz
-# Locally computed sha256 checksums
-sha256  8d3928f9dc4490fd635707cb88eb26bd764102a7282954307d3e5167a577e8a4  LICENSE

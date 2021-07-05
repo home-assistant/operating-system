@@ -1,6 +1,0 @@
-# Hash from: http://download.qt.io/official_releases/qt/5.15/5.15.2/submodules/qtlottie-everywhere-src-5.15.2.tar.xz.sha256
-sha256  cec6095ab8f714e609d2ad3ea8c4fd819461ce8793adc42abe37d0f6dc432517  qtlottie-everywhere-src-5.15.2.tar.xz
-
-# Hashes for license files:
-sha256  8ceb4b9ee5adedde47b31e975c1d90c73ad27b6b165a1dcd80c7c545eb65b903  LICENSE.GPL3
-sha256  0dbe024961f6ab5c52689cbd036c977975d0d0f6a67ff97762d96cb819dd5652  LICENSE.GPL3-EXCEPT

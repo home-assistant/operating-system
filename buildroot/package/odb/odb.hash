@@ -1,6 +1,0 @@
-# From https://www.codesynthesis.com/products/odb/download.xhtml
-sha1	810fc02e591429ed19f5a2699d144fb611fb121b	odb-2.4.0.tar.bz2
-
-# Locally computed
-sha256	6785154fa98ea3977c8c2ab38cec16c4aa78c2c2039e80cd2908347b1c1d4198	odb-2.4.0.tar.bz2
-sha256	7983b82cb1f1686ac2b55420ded9c0f348f93dd17bf3e048ae3b25c1da51b80e	LICENSE

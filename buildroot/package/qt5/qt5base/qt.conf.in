@@ -1,7 +1,0 @@
-[Paths]
-Prefix=/usr
-HostPrefix=@@HOST_DIR@@
-Sysroot=@@STAGING_DIR@@
-Headers=/usr/include/qt5
-Plugins=/usr/lib/qt/plugins
-Examples=/usr/lib/qt/examples

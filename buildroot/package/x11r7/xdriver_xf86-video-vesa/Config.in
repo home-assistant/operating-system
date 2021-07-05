@@ -1,5 +1,0 @@
-config BR2_PACKAGE_XDRIVER_XF86_VIDEO_VESA
-	bool "xf86-video-vesa"
-	select BR2_PACKAGE_XORGPROTO
-	help
-	  Generic VESA video driver

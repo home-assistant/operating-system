@@ -1,6 +1,0 @@
-config BR2_PACKAGE_JO
-	bool "jo"
-	help
-	  Command-line processor to output JSON from a shell
-
-	  https://github.com/jpmens/jo

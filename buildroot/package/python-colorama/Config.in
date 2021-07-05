@@ -1,6 +1,0 @@
-config BR2_PACKAGE_PYTHON_COLORAMA
-	bool "python-colorama"
-	help
-	  Cross-platform colored terminal text.
-
-	  https://github.com/tartley/colorama

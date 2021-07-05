@@ -1,5 +1,0 @@
-# From https://lists.x.org/archives/xorg-announce/2020-August/003055.html
-sha256  698c0f6ddf9ca482250bdafa08293893148393bb9cb23e0a9ca313c6dbfc4ae0  font-misc-ethiopic-1.0.4.tar.bz2
-sha512  4fed9ff3782746898c56dac199e9ca89356f4967779937049b9ff4ffad202317c023859f92d44b371dfa5485d5368ccad648e64b12cde0ed21f7d4aee5affcd5  font-misc-ethiopic-1.0.4.tar.bz2
-# locally computed
-sha256  94835f274f1ddad34f8fd3a06b2c493222a68e4094f4097000d101f22ee0d0d5  COPYING

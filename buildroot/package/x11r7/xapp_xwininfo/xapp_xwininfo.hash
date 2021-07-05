@@ -1,7 +1,0 @@
-# From https://lists.x.org/archives/xorg-announce/2019-July/003012.html
-md5 26d46f7ef0588d3392da3ad5802be420  xwininfo-1.1.5.tar.bz2
-sha1 9f67b1eb07c5824d437bf577cf6198962af1aeb7  xwininfo-1.1.5.tar.bz2
-sha256 7a405441dfc476666c744f5fcd1bc8a75abf8b5b1d85db7b88b370982365080e  xwininfo-1.1.5.tar.bz2
-sha512 a3268bbeeeeafac94e589fdd47554a965910d40df7cc3d9c36c7c24fa4f5dd49615484d5916ccb41efca9cd4cf9d8981a4c60953b921220b3f4f57f9cce0e1a6  xwininfo-1.1.5.tar.bz2
-# Locally computed
-sha256 443d675237c023a47e4886506b72796afbb2633394812027f91d6e8fa433b2af COPYING

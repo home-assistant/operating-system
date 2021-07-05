@@ -1,8 +1,0 @@
-config BR2_PACKAGE_PYTHON_PORTEND
-	bool "python-portend"
-	depends on BR2_PACKAGE_PYTHON3 # python-tempora
-	select BR2_PACKAGE_PYTHON_TEMPORA # runtime
-	help
-	  TCP port monitoring utilities.
-
-	  https://github.com/jaraco/portend

@@ -1,5 +1,0 @@
-# From: https://github.com/SELinuxProject/selinux/wiki/Releases
-sha256 ae6778d01443fdd38cd30eeee846494e19f4d407b09872580372f4aa4bf8a3cc  libsepol-3.1.tar.gz
-
-# Hash for license file
-sha256 6095e9ffa777dd22839f7801aa845b31c9ed07f3d6bf8a26dc5d2dec8ccc0ef3  COPYING

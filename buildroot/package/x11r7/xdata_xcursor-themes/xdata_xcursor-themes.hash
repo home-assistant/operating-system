@@ -1,7 +1,0 @@
-# From https://lists.x.org/archives/xorg-announce/2019-February/002945.html
-md5 aea14eabf40528ec4db18f1cfcf5c458  xcursor-themes-1.0.6.tar.bz2
-sha1 b56fd5bf5b1ada0532a85c27db0d296e392168c5  xcursor-themes-1.0.6.tar.bz2
-sha256 ee1ec574741293abcf66ac14ce7e74add7ac6be7deb8b38179ef010d22354999  xcursor-themes-1.0.6.tar.bz2
-sha512 2ad3586a5571a5ddc0001187362b54b839644916164834213af98e58698044aec4392dd6e1e42f1794fda85c8fedf259b09214a9636bd0e71a1629c710f198d3  xcursor-themes-1.0.6.tar.bz2
-# Locally computed
-sha256 e437aed89c3440a9fe7e19968a3f2eeb97041ef6c9616837a3fd42d0874fc0e6 COPYING

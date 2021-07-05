@@ -1,5 +1,0 @@
-# md5, sha256 from https://pypi.org/pypi/flup/json
-md5	a64e7a6374e043480ee92534c735964e  flup-1.0.3.tar.gz
-sha256	5eb09f26eb0751f8380d8ac43d1dfb20e1d42eca0fa45ea9289fa532a79cd159  flup-1.0.3.tar.gz
-# Locally computed sha256 checksums
-sha256	66a60ebc732165d199ec018fb9876d9f8168a5a8575375e64cc1b3d78c32b481  PKG-INFO

@@ -1,5 +1,0 @@
-# md5, sha256 from https://pypi.org/pypi/pynacl/json
-md5  8c6c57893327a694c72510fb620e4744  PyNaCl-1.4.0.tar.gz
-sha256  54e9a2c849c742006516ad56a88f5c74bf2ce92c9f67435187c3c5953b346505  PyNaCl-1.4.0.tar.gz
-# Locally computed sha256 checksums
-sha256  d3174ad63e721d4c9dccb8ad4320848992d314369bc46319720b5802c9153fe9  LICENSE

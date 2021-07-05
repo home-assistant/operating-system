@@ -1,5 +1,0 @@
-# md5, sha256 from https://pypi.org/pypi/mistune/json
-md5	fb6ab174ece938dea09f8b2adad771e4  mistune-0.8.4.tar.gz
-sha256	59a3429db53c50b5c6bcc8a07f8848cb00d7dc8bdb431a4ab41920d201d4756e  mistune-0.8.4.tar.gz
-# Locally computed sha256 checksums
-sha256  0c5259c3dd0a7c46f4835221645f62a0638c9b9faa02af08676e8069e1ff964b  LICENSE

@@ -1,7 +1,0 @@
-config BR2_PACKAGE_LUA_LPEG_PATTERNS
-	bool "lua-lpeg-patterns"
-	select BR2_PACKAGE_LPEG # runtime
-	help
-	  a collection of LPEG patterns.
-
-	  https://github.com/daurnimator/lpeg_patterns

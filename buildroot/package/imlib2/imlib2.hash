@@ -1,8 +1,0 @@
-# From https://sourceforge.net/projects/enlightenment/files/imlib2-src/1.6.1/
-md5  7b3fbcb974b48822b32b326c6a47764b  imlib2-1.6.1.tar.bz2
-sha1  3b5f850e83cbb7481e33061348fb9c7a555c8c60  imlib2-1.6.1.tar.bz2
-
-# Locally computed
-sha256  4d393a77e13da883c8ee2da3b029da3570210fe37d000c9ac33d9fce751b166d  imlib2-1.6.1.tar.bz2
-sha256  fb70339dd33a77b6213c7ae067fccf93d04af44ff3f937c61f8863f7970e73f6  COPYING
-sha256  8c9a2e92ed4937e2d30c2ea95439c36ed3002fc47e34efee43455a460fee8ef5  COPYING-PLAIN

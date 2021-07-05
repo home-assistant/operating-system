@@ -1,6 +1,0 @@
-config BR2_PACKAGE_UTF8PROC
-	bool "utf8proc"
-	help
-	  A clean C library for processing UTF-8 Unicode data.
-
-	  https://juliastrings.github.io/utf8proc

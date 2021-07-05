@@ -1,5 +1,0 @@
-# md5, sha256 from https://pypi.org/pypi/ifaddr/json
-md5  97c4eb7505643b5f1fe17733cb42abd9  ifaddr-0.1.7.tar.gz
-sha256  1f9e8a6ca6f16db5a37d3356f07b6e52344f6f9f7e806d618537731669eb1a94  ifaddr-0.1.7.tar.gz
-# Locally computed sha256 checksums
-sha256  8700856576ae2bc80c63bc970250510d9213fb02fed006d5f22742c9ddde24d7  LICENSE.txt

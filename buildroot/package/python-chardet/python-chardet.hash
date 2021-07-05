@@ -1,5 +1,0 @@
-# md5, sha256 from https://pypi.org/pypi/chardet/json
-md5  bc9a5603d8d0994b2d4cbf255f99e654  chardet-4.0.0.tar.gz
-sha256  0d6f53a15db4120f2b08c94f11e7d93d2c911ee118b6b30a04ec3ee8310179fa  chardet-4.0.0.tar.gz
-# Locally computed
-sha256  6095e9ffa777dd22839f7801aa845b31c9ed07f3d6bf8a26dc5d2dec8ccc0ef3  LICENSE

@@ -1,7 +1,0 @@
-config BR2_PACKAGE_QCOM_DB410C_FIRMWARE
-	bool "qcom-db410c-firmware"
-	select BR2_PACKAGE_HOST_MTOOLS
-	help
-	  Wifi/BT firmware for Qualcomm Dragonboard 410c SBC.
-
-	  https://releases.linaro.org/96boards/dragonboard410c/qualcomm/firmware/

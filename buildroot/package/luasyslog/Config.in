@@ -1,7 +1,0 @@
-config BR2_PACKAGE_LUASYSLOG
-	bool "luasyslog"
-	select BR2_PACKAGE_LUALOGGING # runtime
-	help
-	  syslog appender for LuaLogging.
-
-	  https://github.com/ntd/luasyslog

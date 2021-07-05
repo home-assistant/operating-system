@@ -1,6 +1,0 @@
-config BR2_PACKAGE_KODI_AUDIODECODER_NOSEFART
-	bool "kodi-audiodecoder-nosefart"
-	help
-	  Nosefart decoder addon for Kodi
-
-	  https://github.com/xbmc/audiodecoder.nosefart

@@ -1,7 +1,0 @@
-# From https://sourceforge.net/projects/libjpeg-turbo/files/2.0.6/
-sha1  5406c7676d7df89fb4da791ad5af51202910fb25  libjpeg-turbo-2.0.6.tar.gz
-md5  4cada3f0bdc93d826fa31bf9e4469ef6  libjpeg-turbo-2.0.6.tar.gz
-# Locally computed
-sha256  d74b92ac33b0e3657123ddcf6728788c90dc84dcb6a52013d758af3c4af481bb  libjpeg-turbo-2.0.6.tar.gz
-sha256  0b7a24c3906d26dfbe24e96e9415549b387c3227140dc6b7ab2fb924254e37a1  LICENSE.md
-sha256  01ccef626ec864773c681d4a4056f72af9052d619e0609df0d369117f8b3efdf  README.ijg

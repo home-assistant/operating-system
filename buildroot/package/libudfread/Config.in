@@ -1,6 +1,0 @@
-config BR2_PACKAGE_LIBUDFREAD
-	bool "libudfread"
-	help
-	  UDF reader
-
-	  https://code.videolan.org/videolan/libudfread

@@ -1,5 +1,0 @@
-# md5, sha256 from https://pypi.org/pypi/webob/json
-md5  dc3cc8c317d4acd03a6fd97cb0a9121a  WebOb-1.8.6.tar.gz
-sha256  aa3a917ed752ba3e0b242234b2a373f9c4e2a75d35291dcbe977649bd21fd108  WebOb-1.8.6.tar.gz
-# Locally computed sha256 checksums
-sha256  27bc4919e7e9e6b6cda40644517ca74d32203e32fba89ef832aba1ed93e457b3  docs/license.txt

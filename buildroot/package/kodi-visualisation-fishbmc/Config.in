@@ -1,6 +1,0 @@
-config BR2_PACKAGE_KODI_VISUALISATION_FISHBMC
-	bool "kodi-visualisation-fishbmc"
-	help
-	  Fische visualiser for Kodi
-
-	  https://github.com/xbmc/visualization.fishbmc

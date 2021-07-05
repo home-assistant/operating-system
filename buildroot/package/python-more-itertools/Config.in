@@ -1,7 +1,0 @@
-config BR2_PACKAGE_PYTHON_MORE_ITERTOOLS
-	bool "python-more-itertools"
-	depends on BR2_PACKAGE_PYTHON3
-	help
-	  More routines for operating on iterables, beyond itertools.
-
-	  https://github.com/erikrose/more-itertools

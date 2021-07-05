@@ -1,4 +1,0 @@
-# Codescape toolchains from MIPS Tech LLC
-# From: https://codescape.mips.com/components/toolchain/nanomips/2018.09-02/downloads.html
-sha256 c883a404fd7ea5718e2249a530802e223381f2be52265f88e9b1ce7035c232f3  Codescape.GNU.Tools.Package.2018.09-02.for.MIPS.MTI.Linux.CentOS-6.x86.tar.gz
-sha256 d6310a970b0a8a19ad8e0a2b3ead8c38ee90d0e284a9b2511200ce447f460d2c  Codescape.GNU.Tools.Package.2018.09-02.for.MIPS.MTI.Linux.CentOS-6.x86_64.tar.gz

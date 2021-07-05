@@ -1,7 +1,0 @@
-config BR2_PACKAGE_PYTHON_PERIPHERY
-	bool "python-periphery"
-	help
-	  A pure Python 2/3 library for peripheral I/O (GPIO, LED,
-	  PWM, SPI, I2C, MMIO, Serial) in Linux.
-
-	  https://github.com/vsergeev/python-periphery

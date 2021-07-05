@@ -1,5 +1,0 @@
-# md5, sha256 from https://pypi.org/pypi/cssutils/json
-md5	dc66d96c2d78f1687f59ac412fe9d318  cssutils-1.0.2.tar.gz
-sha256	a2fcf06467553038e98fea9cfe36af2bf14063eb147a70958cfcaa8f5786acaf  cssutils-1.0.2.tar.gz
-# Locally computed sha256 checksums
-sha256	03c570a068086ee577dcd795519ea93462b2ed2fcb6dcc4dfce56a71a2fd6e5a  COPYING.LESSER

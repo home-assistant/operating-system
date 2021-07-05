@@ -1,5 +1,0 @@
-# From https://lists.x.org/archives/xorg-announce/2020-July/003048.html
-sha256  d700e08bfe751ed2dbf802baa204b056d0e49348b6eb3c6f9cb035d8ae4885e2  xev-1.2.4.tar.bz2
-sha512  383472ddbfad639ba46a69080ecdd11a514a0578fd32c463fae18da02e0265c944589eebf12a858994f5fd601c02a0d51517e9b3ff61c6afe740d374f02781ca  xev-1.2.4.tar.bz2
-# Locally computed
-sha256  9b840f2e1900889124cc999f3158da2b6b07bf6d0d77bdbb01ce65d2e702dc83  COPYING

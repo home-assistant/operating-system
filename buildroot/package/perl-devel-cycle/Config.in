@@ -1,6 +1,0 @@
-config BR2_PACKAGE_PERL_DEVEL_CYCLE
-	bool "perl-devel-cycle"
-	help
-	  Find memory cycles in objects.
-
-	  https://metacpan.org/release/Devel-Cycle

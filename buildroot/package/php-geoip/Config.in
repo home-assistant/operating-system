@@ -1,7 +1,0 @@
-config BR2_PACKAGE_PHP_GEOIP
-	bool "php-geoip"
-	select BR2_PACKAGE_GEOIP
-	help
-	  PHP GeoIP-based IP address mapper to geographical places.
-
-	  http://pecl.php.net/package/geoip

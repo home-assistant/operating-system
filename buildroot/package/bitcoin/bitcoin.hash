@@ -1,5 +1,0 @@
-# From https://bitcoincore.org/bin/bitcoin-core-0.21.1/SHA256SUMS.asc
-sha256  caff23449220cf45753f312cefede53a9eac64000bb300797916526236b6a1e0  bitcoin-0.21.1.tar.gz
-
-# Hash for license file
-sha256  96fe807030b21f88305adc32af62f9aa19915f2783509fd6f52aea02cf83f644  COPYING

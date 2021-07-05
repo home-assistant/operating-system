@@ -1,7 +1,0 @@
-# From https://lists.x.org/archives/xorg-announce/2019-July/003008.html
-md5 5b6405973db69c0443be2fba8e1a8ab7  xbacklight-1.2.3.tar.bz2
-sha1 f0a6163738143ec23542b459aef567309a119e0c  xbacklight-1.2.3.tar.bz2
-sha256 3a27f324777ae99fee476cfb2f064576fb8cba4eb77f97cda37adda1c1d39ade  xbacklight-1.2.3.tar.bz2
-sha512 717c87ce24634892fc4ac54fc59dcc0a5bc8f206aaf1d13410f95f7e4fe6e3dbc7ff8d951bcd8ea8c5e955357a00fea6ceadd4559e60b1a632e40f71290e12c7  xbacklight-1.2.3.tar.bz2
-# Locally computed
-sha256 c9fbf1f272215babef31808c1235de8e4f7641ca5edfc4fc615b6556054b2b04 COPYING

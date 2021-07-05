@@ -1,8 +1,0 @@
-config BR2_PACKAGE_PYTHON_MBSTRDECODER
-	bool "python-mbstrdecoder"
-	depends on BR2_PACKAGE_PYTHON3
-	select BR2_PACKAGE_PYTHON_CHARDET # runtime
-	help
-	  multi-byte character string decoder.
-
-	  https://github.com/thombashi/mbstrdecoder

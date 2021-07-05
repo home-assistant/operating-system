@@ -1,5 +1,0 @@
-# From: https://www.kernel.org/pub/software/scm/git/sha256sums.asc
-sha256  41f7d90c71f9476cd387673fcb10ce09ccbed67332436a4cc58d7af32c355faa  git-2.30.2.tar.xz
-# Locally calculated
-sha256  5b2198d1645f767585e8a88ac0499b04472164c0d2da22e75ecf97ef443ab32e  COPYING
-sha256  1922f45d2c49e390032c9c0ba6d7cac904087f7cec51af30c2b2ad022ce0e76a  LGPL-2.1

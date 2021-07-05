@@ -1,5 +1,0 @@
-# md5, sha256 from https://pypi.org/pypi/botocore/json
-md5  870be84c9b418430ad9d0cb5640e76ef  botocore-1.12.210.tar.gz
-sha256  b954c596f8bdf31d5fdf1eff8a2296bde8094e1e22961a79b83bb62ddeba8a49  botocore-1.19.48.tar.gz
-# Locally computed sha256 checksums
-sha256  0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594  LICENSE.txt

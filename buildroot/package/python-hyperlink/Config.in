@@ -1,7 +1,0 @@
-config BR2_PACKAGE_PYTHON_HYPERLINK
-	bool "python-hyperlink"
-	select BR2_PACKAGE_PYTHON_IDNA # runtime
-	help
-	  A featureful, correct URL for Python.
-
-	  https://github.com/python-hyper/hyperlink

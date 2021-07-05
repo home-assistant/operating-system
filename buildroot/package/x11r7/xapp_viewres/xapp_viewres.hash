@@ -1,7 +1,0 @@
-# From https://lists.x.org/archives/xorg-announce/2019-August/003020.html
-md5 38e6568271d8098327706c5cf855dbc7  viewres-1.0.6.tar.bz2
-sha1 f1d12e5b4e1180916edb44234599a486b025b480  viewres-1.0.6.tar.bz2
-sha256 11c15db02066c1d5fc3febf9b185d16c1112f87e37c4b101a484dcefffb80934  viewres-1.0.6.tar.bz2
-sha512 3f4cfc61608bc6c9b35ef66ceb473661ca01946d3306d54040d32803e8e0eec506a0ce37ea22bfe514544a6ba9645fd30f39b20c063aff696b3c0fda3fe95dff  viewres-1.0.6.tar.bz2
-# Locally computed
-sha256 aefb540c54bc95c68702cd2ae668c559e63cc1a84f55ae5c0e78547e7d75d2d5  COPYING

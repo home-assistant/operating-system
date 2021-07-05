@@ -1,5 +1,0 @@
-# Locally calculated after checking pgp signature
-# https://01.org/sites/default/files/downloads/powertop-2.13.tar.gz.asc.txt
-# using key 22E8F306C8FA4BAA2A5F36F3A0303B060918941C
-sha256  a65f992ca4a419bc73b623651060eb9fc00c5a86fa03556358cd9db011ef3178  powertop-2.13.tar.gz
-sha256  b499eddebda05a8859e32b820a64577d91f1de2b52efa2a1575a2cb4000bc259  COPYING

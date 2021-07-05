@@ -1,3 +1,0 @@
-config BR2_TARGET_AT91DATAFLASHBOOT
-	bool "AT91 DataFlashBoot"
-	depends on BR2_arm926t

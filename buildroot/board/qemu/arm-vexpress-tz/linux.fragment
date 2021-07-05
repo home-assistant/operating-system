@@ -1,3 +1,0 @@
-### Enable OP-TEE
-CONFIG_TEE=y
-CONFIG_OPTEE=y

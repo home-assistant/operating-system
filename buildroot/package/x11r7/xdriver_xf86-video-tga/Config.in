@@ -1,5 +1,0 @@
-config BR2_PACKAGE_XDRIVER_XF86_VIDEO_TGA
-	bool "xf86-video-tga"
-	select BR2_PACKAGE_XORGPROTO
-	help
-	  X.Org driver for tga cards

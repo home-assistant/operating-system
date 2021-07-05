@@ -1,6 +1,0 @@
-config BR2_PACKAGE_PYTHON_IPYTHON_GENUTILS
-	bool "python-ipython-genutils"
-	help
-	  IPython vestigial utilities
-
-	  https://pypi.python.org/pypi/ipython_genutils

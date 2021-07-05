@@ -1,5 +1,0 @@
-# md5, sha256 from https://pypi.org/pypi/defusedxml/json
-md5  a59741f675c4cba649de40a99f732897  defusedxml-0.6.0.tar.gz
-sha256  f684034d135af4c6cbb949b8a4d2ed61634515257a67299e5f940fbaa34377f5  defusedxml-0.6.0.tar.gz
-# Locally computed sha256 checksums
-sha256  b80ce9da8c42a1f91079627fbbe2bf27210ae108a0ffe5f077d5b08e076c24c8  LICENSE

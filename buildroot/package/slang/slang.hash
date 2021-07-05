@@ -1,6 +1,0 @@
-# sha1 from http://www.jedsoft.org/releases/slang/, sha256 locally computed
-sha1 bbf7f2dcc14e7c7fca40868fd4b411a2bd9e2655 slang-2.3.2.tar.bz2
-sha256 fc9e3b0fc4f67c3c1f6d43c90c16a5c42d117b8e28457c5b46831b8b5d3ae31a slang-2.3.2.tar.bz2
-
-# License file, locally computed
-sha256 ff05a90962e7773f8bdc47b2a9585130526039102759b524c1dffbd57cfe469b  COPYING

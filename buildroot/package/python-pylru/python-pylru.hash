@@ -1,5 +1,0 @@
-# md5, sha256 from https://pypi.org/pypi/pylru/json
-md5	8f0050f86d1fa68bb18673de37da543b  pylru-1.2.0.tar.gz
-sha256	492f934bb98dc6c8b2370c02c95c65516ddc08c8f64d27f70087eb038621d297  pylru-1.2.0.tar.gz
-# Locally computed sha256 checksums
-sha256	8177f97513213526df2cf6184d8ff986c675afb514d4e68a404010521b880643  LICENSE.txt

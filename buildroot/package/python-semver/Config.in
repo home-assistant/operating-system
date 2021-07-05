@@ -1,6 +1,0 @@
-config BR2_PACKAGE_PYTHON_SEMVER
-	bool "python-semver"
-	help
-	  Python helper for Semantic Versioning (http://semver.org/).
-
-	  https://github.com/k-bx/python-semver

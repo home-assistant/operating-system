@@ -1,6 +1,0 @@
-# From https://www.kernel.org/pub/linux/utils/fs/xfs/xfsprogs/sha256sums.asc
-sha256  e04017e46d43e4d54b9a560fd7cea922520f8f6ef882404969d20cd4e5c790e9  xfsprogs-5.10.0.tar.xz
-
-# Hash for license files
-sha256  f6b78c087c3ebdf0f3c13415070dd480a3f35d8fc76f3d02180a407c1c812f79  LICENSES/GPL-2.0
-sha256  0b9a4febcdee6de55872501d5c1a8f5d8b0d1650cd4d5351995ceb22e889f8ca  LICENSES/LGPL-2.1

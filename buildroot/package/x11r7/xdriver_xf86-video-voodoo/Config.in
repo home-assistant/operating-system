@@ -1,5 +1,0 @@
-config BR2_PACKAGE_XDRIVER_XF86_VIDEO_VOODOO
-	bool "xf86-video-voodoo"
-	select BR2_PACKAGE_XORGPROTO
-	help
-	  Voodoo video driver

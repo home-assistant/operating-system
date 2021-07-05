@@ -1,9 +1,0 @@
-config BR2_PACKAGE_MBPFAN
-	bool "mbpfan"
-	depends on BR2_USE_MMU
-	help
-	  Mbpfan is a daemon for MacBook laptops which monitors the
-	  CPU temperature with the coretemp module, and sets the fan
-	  speeds with the applesmc module.
-
-	  https://github.com/linux-on-mac/mbpfan

@@ -1,3 +1,0 @@
-#!/usr/bin/env bash
-
-${HOST_DIR}/sbin/prelink-rtld --root=$(dirname $0)/../../ "$@"

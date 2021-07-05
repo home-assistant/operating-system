@@ -1,9 +1,0 @@
-config BR2_PACKAGE_HOST_ODB
-	bool "host-odb"
-	select BR2_NEEDS_HOST_GCC_PLUGIN_SUPPORT
-	help
-	  This is a compiler that takes a specially crafted c++ header
-	  file and auto-generates a schema that works with libodb and
-	  the subsequent libodb-database library.
-
-	  https://www.codesynthesis.com/products/odb/

@@ -1,6 +1,0 @@
-# From https://valgrind.org/downloads/current.html
-md5  d1b153f1ab17cf1f311705e7a83ef589  valgrind-3.16.1.tar.bz2
-
-# License files
-sha256  8177f97513213526df2cf6184d8ff986c675afb514d4e68a404010521b880643  COPYING
-sha256  56976e64523fa1e68db4e6f464f5b2cb89d7d08f54b1d012e317b8db286b3faf  COPYING.DOCS

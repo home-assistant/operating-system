@@ -1,5 +1,0 @@
-# md5, sha256 from https://pypi.org/pypi/pyserial/json
-md5  1cf25a76da59b530dbfc2cf99392dc83  pyserial-3.5.tar.gz
-sha256  3c77e014170dfffbd816e6ffc205e9842efb10be9f58ec16d3e8675b4925cddb  pyserial-3.5.tar.gz
-# Locally computed sha256 checksums
-sha256  f91cb9813de6a5b142b8f7f2dede630b5134160aedaeaf55f4d6a7e2593ca3f3  LICENSE.txt

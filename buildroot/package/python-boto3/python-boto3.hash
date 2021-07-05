@@ -1,5 +1,0 @@
-# md5, sha256 from https://pypi.org/pypi/boto3/json
-md5  8cecdbf7ef6702837d7ddabaa3e39a89  boto3-1.16.50.tar.gz
-sha256  4d502a842b81fdac4b950d3b88a5b9067ce118213b122b20f4192003cb067986  boto3-1.16.50.tar.gz
-# Locally computed sha256 checksums
-sha256  0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594  LICENSE

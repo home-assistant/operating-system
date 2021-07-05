@@ -1,6 +1,0 @@
-config BR2_PACKAGE_PYTHON_WEBENCODINGS
-	bool "python-webencodings"
-	help
-	  Character encoding aliases for legacy web content.
-
-	  https://github.com/SimonSapin/python-webencodings
