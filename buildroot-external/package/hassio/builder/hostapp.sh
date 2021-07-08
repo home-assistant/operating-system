@@ -26,20 +26,22 @@ while [[ $# -gt 0 ]]; do
     shift
 done
 
-SUPERVISOR=$(curl -s ${VERSION_URL} | jq -e -r '.images.supervisor' | sed -r "s/\{arch\}/${ARCH}/g")
-DNS=$(curl -s ${VERSION_URL} | jq -e -r '.images.dns' | sed -r "s/\{arch\}/${ARCH}/g")
-AUDIO=$(curl -s ${VERSION_URL} | jq -e -r '.images.audio' | sed -r "s/\{arch\}/${ARCH}/g")
-CLI=$(curl -s ${VERSION_URL} | jq -e -r '.images.cli' | sed -r "s/\{arch\}/${ARCH}/g")
-MULTICAST=$(curl -s ${VERSION_URL} | jq -e -r '.images.multicast' | sed -r "s/\{arch\}/${ARCH}/g")
-OBSERVER=$(curl -s ${VERSION_URL} | jq -e -r '.images.observer' | sed -r "s/\{arch\}/${ARCH}/g")
-LANDINGPAGE=$(curl -s ${VERSION_URL} | jq -e -r '.images.core' | sed -r "s/\{machine\}/${MACHINE}/g")
+VERSION_JSON="$(curl -s ${VERSION_URL})"
 
-SUPERVISOR_VERSION=$(curl -s ${VERSION_URL} | jq -e -r '.supervisor')
-DNS_VERSION=$(curl -s ${VERSION_URL} | jq -e -r '.dns')
-CLI_VERSION=$(curl -s ${VERSION_URL} | jq -e -r '.cli')
-AUDIO_VERSION=$(curl -s ${VERSION_URL} | jq -e -r '.audio')
-MULTICAST_VERSION=$(curl -s ${VERSION_URL} | jq -e -r '.multicast')
-OBSERVER_VERSION=$(curl -s ${VERSION_URL} | jq -e -r '.observer')
+SUPERVISOR=$(echo "${VERSION_JSON}" | jq -e -r '.images.supervisor' | sed -r "s/\{arch\}/${ARCH}/g")
+DNS=$(echo "${VERSION_JSON}" | jq -e -r '.images.dns' | sed -r "s/\{arch\}/${ARCH}/g")
+AUDIO=$(echo "${VERSION_JSON}" | jq -e -r '.images.audio' | sed -r "s/\{arch\}/${ARCH}/g")
+CLI=$(echo "${VERSION_JSON}" | jq -e -r '.images.cli' | sed -r "s/\{arch\}/${ARCH}/g")
+MULTICAST=$(echo "${VERSION_JSON}" | jq -e -r '.images.multicast' | sed -r "s/\{arch\}/${ARCH}/g")
+OBSERVER=$(echo "${VERSION_JSON}" | jq -e -r '.images.observer' | sed -r "s/\{arch\}/${ARCH}/g")
+LANDINGPAGE=$(echo "${VERSION_JSON}" | jq -e -r '.images.core' | sed -r "s/\{machine\}/${MACHINE}/g")
+
+SUPERVISOR_VERSION=$(echo "${VERSION_JSON}" | jq -e -r '.supervisor')
+DNS_VERSION=$(echo "${VERSION_JSON}" | jq -e -r '.dns')
+CLI_VERSION=$(echo "${VERSION_JSON}" | jq -e -r '.cli')
+AUDIO_VERSION=$(echo "${VERSION_JSON}" | jq -e -r '.audio')
+MULTICAST_VERSION=$(echo "${VERSION_JSON}" | jq -e -r '.multicast')
+OBSERVER_VERSION=$(echo "${VERSION_JSON}" | jq -e -r '.observer')
 
 # Make image
 dd if=/dev/zero of=${DATA_IMG} bs=1G count=1
