@@ -28,13 +28,13 @@ done
 
 VERSION_JSON="$(curl -s ${VERSION_URL})"
 
-SUPERVISOR=$(echo "${VERSION_JSON}" | jq -e -r '.images.supervisor' | sed -r "s/\{arch\}/${ARCH}/g")
-DNS=$(echo "${VERSION_JSON}" | jq -e -r '.images.dns' | sed -r "s/\{arch\}/${ARCH}/g")
-AUDIO=$(echo "${VERSION_JSON}" | jq -e -r '.images.audio' | sed -r "s/\{arch\}/${ARCH}/g")
-CLI=$(echo "${VERSION_JSON}" | jq -e -r '.images.cli' | sed -r "s/\{arch\}/${ARCH}/g")
-MULTICAST=$(echo "${VERSION_JSON}" | jq -e -r '.images.multicast' | sed -r "s/\{arch\}/${ARCH}/g")
-OBSERVER=$(echo "${VERSION_JSON}" | jq -e -r '.images.observer' | sed -r "s/\{arch\}/${ARCH}/g")
-LANDINGPAGE=$(echo "${VERSION_JSON}" | jq -e -r '.images.core' | sed -r "s/\{machine\}/${MACHINE}/g")
+SUPERVISOR=$(echo "${VERSION_JSON}" | jq -e -r --arg arch "${ARCH}" '.images.supervisor | sub("{arch}"; $arch)')
+DNS=$(echo "${VERSION_JSON}" | jq -e -r --arg arch "${ARCH}" '.images.dns | sub("{arch}"; $arch)')
+AUDIO=$(echo "${VERSION_JSON}" | jq -e -r --arg arch "${ARCH}" '.images.audio | sub("{arch}"; $arch)')
+CLI=$(echo "${VERSION_JSON}" | jq -e -r --arg arch "${ARCH}" '.images.cli | sub("{arch}"; $arch)')
+MULTICAST=$(echo "${VERSION_JSON}" | jq -e -r --arg arch "${ARCH}" '.images.multicast | sub("{arch}"; $arch)')
+OBSERVER=$(echo "${VERSION_JSON}" | jq -e -r --arg arch "${ARCH}" '.images.observer | sub("{arch}"; $arch)')
+LANDINGPAGE=$(echo "${VERSION_JSON}" | jq -e -r --arg machine "${MACHINE}" '.images.core | sub("{machine}"; $machine)')
 
 SUPERVISOR_VERSION=$(echo "${VERSION_JSON}" | jq -e -r '.supervisor')
 DNS_VERSION=$(echo "${VERSION_JSON}" | jq -e -r '.dns')
