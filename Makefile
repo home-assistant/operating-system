@@ -12,9 +12,9 @@ TARGETS_CONFIG := $(notdir $(patsubst %_defconfig,%-config,$(wildcard $(DEFCONFI
 
 # Set O variable if not already done on the command line
 ifneq ("$(origin O)", "command line")
-O := $(BUILDROOT)/output
+O := $(BUILDDIR)/output
 else
-override O := $(BUILDROOT)/$(O)
+override O := $(BUILDDIR)/$(O)
 endif
 
 .NOTPARALLEL: $(TARGETS) $(TARGETS_CONFIG) all
