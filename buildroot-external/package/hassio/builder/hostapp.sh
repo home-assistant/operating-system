@@ -73,7 +73,9 @@ done
 
 # Install supervisor
 docker pull "${SUPERVISOR}:${SUPERVISOR_VERSION}"
-docker tag "${SUPERVISOR}:${SUPERVISOR_VERSION}" "${SUPERVISOR}:latest"
+
+# Need match with the tag used by OS
+docker tag "${SUPERVISOR}:${SUPERVISOR_VERSION}" "homeassistant/${ARCH}-hassio-supervisor:latest"
 
 # Install Plugins
 docker pull "${CLI}:${CLI_VERSION}"
