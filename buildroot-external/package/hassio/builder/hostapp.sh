@@ -26,20 +26,22 @@ while [[ $# -gt 0 ]]; do
     shift
 done
 
-SUPERVISOR="homeassistant/${ARCH}-hassio-supervisor"
-DNS="homeassistant/${ARCH}-hassio-dns"
-AUDIO="homeassistant/${ARCH}-hassio-audio"
-CLI="homeassistant/${ARCH}-hassio-cli"
-MULTICAST="homeassistant/${ARCH}-hassio-multicast"
-OBSERVER="homeassistant/${ARCH}-hassio-observer"
-LANDINGPAGE="homeassistant/${MACHINE}-homeassistant:landingpage"
+VERSION_JSON="$(curl -s ${VERSION_URL})"
 
-SUPERVISOR_VERSION=$(curl -s ${VERSION_URL} | jq -e -r '.supervisor')
-DNS_VERSION=$(curl -s ${VERSION_URL} | jq -e -r '.dns')
-CLI_VERSION=$(curl -s ${VERSION_URL} | jq -e -r '.cli')
-AUDIO_VERSION=$(curl -s ${VERSION_URL} | jq -e -r '.audio')
-MULTICAST_VERSION=$(curl -s ${VERSION_URL} | jq -e -r '.multicast')
-OBSERVER_VERSION=$(curl -s ${VERSION_URL} | jq -e -r '.observer')
+SUPERVISOR=$(echo "${VERSION_JSON}" | jq -e -r --arg arch "${ARCH}" '.images.supervisor | sub("{arch}"; $arch)')
+DNS=$(echo "${VERSION_JSON}" | jq -e -r --arg arch "${ARCH}" '.images.dns | sub("{arch}"; $arch)')
+AUDIO=$(echo "${VERSION_JSON}" | jq -e -r --arg arch "${ARCH}" '.images.audio | sub("{arch}"; $arch)')
+CLI=$(echo "${VERSION_JSON}" | jq -e -r --arg arch "${ARCH}" '.images.cli | sub("{arch}"; $arch)')
+MULTICAST=$(echo "${VERSION_JSON}" | jq -e -r --arg arch "${ARCH}" '.images.multicast | sub("{arch}"; $arch)')
+OBSERVER=$(echo "${VERSION_JSON}" | jq -e -r --arg arch "${ARCH}" '.images.observer | sub("{arch}"; $arch)')
+LANDINGPAGE=$(echo "${VERSION_JSON}" | jq -e -r --arg machine "${MACHINE}" '.images.core | sub("{machine}"; $machine)'):landingpage
+
+SUPERVISOR_VERSION=$(echo "${VERSION_JSON}" | jq -e -r '.supervisor')
+DNS_VERSION=$(echo "${VERSION_JSON}" | jq -e -r '.dns')
+CLI_VERSION=$(echo "${VERSION_JSON}" | jq -e -r '.cli')
+AUDIO_VERSION=$(echo "${VERSION_JSON}" | jq -e -r '.audio')
+MULTICAST_VERSION=$(echo "${VERSION_JSON}" | jq -e -r '.multicast')
+OBSERVER_VERSION=$(echo "${VERSION_JSON}" | jq -e -r '.observer')
 
 # Make image
 dd if=/dev/zero of=${DATA_IMG} bs=1G count=1
@@ -73,7 +75,9 @@ done
 
 # Install supervisor
 docker pull "${SUPERVISOR}:${SUPERVISOR_VERSION}"
-docker tag "${SUPERVISOR}:${SUPERVISOR_VERSION}" "${SUPERVISOR}:latest"
+
+# Need match with the tag used by OS
+docker tag "${SUPERVISOR}:${SUPERVISOR_VERSION}" "homeassistant/${ARCH}-hassio-supervisor:latest"
 
 # Install Plugins
 docker pull "${CLI}:${CLI_VERSION}"
