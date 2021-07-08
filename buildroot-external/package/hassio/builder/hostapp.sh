@@ -34,7 +34,7 @@ AUDIO=$(echo "${VERSION_JSON}" | jq -e -r --arg arch "${ARCH}" '.images.audio | 
 CLI=$(echo "${VERSION_JSON}" | jq -e -r --arg arch "${ARCH}" '.images.cli | sub("{arch}"; $arch)')
 MULTICAST=$(echo "${VERSION_JSON}" | jq -e -r --arg arch "${ARCH}" '.images.multicast | sub("{arch}"; $arch)')
 OBSERVER=$(echo "${VERSION_JSON}" | jq -e -r --arg arch "${ARCH}" '.images.observer | sub("{arch}"; $arch)')
-LANDINGPAGE=$(echo "${VERSION_JSON}" | jq -e -r --arg machine "${MACHINE}" '.images.core | sub("{machine}"; $machine)')
+LANDINGPAGE=$(echo "${VERSION_JSON}" | jq -e -r --arg machine "${MACHINE}" '.images.core | sub("{machine}"; $machine)'):landingpage
 
 SUPERVISOR_VERSION=$(echo "${VERSION_JSON}" | jq -e -r '.supervisor')
 DNS_VERSION=$(echo "${VERSION_JSON}" | jq -e -r '.dns')
