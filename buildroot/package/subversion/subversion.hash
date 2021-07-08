@@ -1,5 +1,0 @@
-# From https://www.apache.org/dist/subversion/subversion-1.14.1.tar.bz2.sha512
-sha512  0a70c7152b77cdbcb810a029263e4b3240b6ef41d1c19714e793594088d3cca758d40dfbc05622a806b06463becb73207df249393924ce591026b749b875fcdd  subversion-1.14.1.tar.bz2
-
-# Locally calculated
-sha256  484aff0cfbb81155a10f903ed756e27e9fc65578c245a295bae295c4bb51eaad  LICENSE

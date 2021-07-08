@@ -1,5 +1,0 @@
-# From https://lists.x.org/archives/xorg-announce/2020-September/003060.html
-sha256  1f1624f3c73906801ad1bc98335a2cb5676a7a4d18e5374d9a1d18464e54c659  xf86-video-vesa-2.5.0.tar.bz2
-sha512  36fd921f54f33eb25966b5f9ea1e1b3e9009965c012c8b9c676686b472111719921b80cf62dafc746058878253e21f0ef341a2ff2d650df22ca1e35e81716a8b  xf86-video-vesa-2.5.0.tar.bz2
-# Locally computed
-sha256  bda49ba1e860501c20fd444423bc790f6da4f769561b69acc0cbe5abff9409b6  COPYING

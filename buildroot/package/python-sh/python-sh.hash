@@ -1,5 +1,0 @@
-# md5, sha256 from https://pypi.org/pypi/sh/json
-md5  7e3dd3a6b49c06db93746994a68cb8cf  sh-1.13.1.tar.gz
-sha256  97a3d2205e3c6a842d87ebbc9ae93acae5a352b1bc4609b428d0fd5bb9e286a3  sh-1.13.1.tar.gz
-# Locally computed
-sha256  d8491c6e236568d04f7c8c07f2f1b8f5d142706dab6ab88f6e0d2dd476b6c706  LICENSE.txt

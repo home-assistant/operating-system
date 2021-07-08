@@ -1,5 +1,0 @@
-# md5, sha256 from https://pypi.org/pypi/python-xlib/json
-md5 3a87f81bff4cb4f8a52881097ba51a49 python-xlib-0.27.tar.bz2
-sha256 a90667c70905c6ef0754c8a09fa61acbc1e1b7ddb946d527831800d7cbfe9348 python-xlib-0.27.tar.bz2
-# Locally computed sha256 checksums
-sha256 06eb1c441443cf15ac84f309003f4c43c62246939d37c75fc3e056c2d34cd300 LICENSE

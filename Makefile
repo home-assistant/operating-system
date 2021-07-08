@@ -12,9 +12,9 @@ TARGETS_CONFIG := $(notdir $(patsubst %_defconfig,%-config,$(wildcard $(DEFCONFI
 
 # Set O variable if not already done on the command line
 ifneq ("$(origin O)", "command line")
-O := $(BUILDROOT)/output
+O := $(BUILDDIR)/output
 else
-override O := $(BUILDROOT)/$(O)
+override O := $(BUILDDIR)/$(O)
 endif
 
 .NOTPARALLEL: $(TARGETS) $(TARGETS_CONFIG) all
@@ -28,22 +28,22 @@ $(RELEASE_DIR):
 
 $(TARGETS_CONFIG): %-config:
 	@echo "config $*"
-	$(MAKE) -C $(BUILDROOT) BR2_EXTERNAL=$(BUILDROOT_EXTERNAL) "$*_defconfig"
+	$(MAKE) -C $(BUILDROOT) O=$(O) BR2_EXTERNAL=$(BUILDROOT_EXTERNAL) "$*_defconfig"
 
 $(TARGETS): %: $(RELEASE_DIR) %-config
 	@echo "build $@"
-	$(MAKE) -C $(BUILDROOT) BR2_EXTERNAL=$(BUILDROOT_EXTERNAL) VERSION_DEV=$(VERSION_DEV)
+	$(MAKE) -C $(BUILDROOT) O=$(O) BR2_EXTERNAL=$(BUILDROOT_EXTERNAL) VERSION_DEV=$(VERSION_DEV)
 	cp -f $(O)/images/haos_* $(RELEASE_DIR)/
 
 	# Do not clean when building for one target
 ifneq ($(words $(filter $(TARGETS),$(MAKECMDGOALS))), 1)
 	@echo "clean $@"
-	$(MAKE) -C $(BUILDROOT) BR2_EXTERNAL=$(BUILDROOT_EXTERNAL) clean
+	$(MAKE) -C $(BUILDROOT) O=$(O) BR2_EXTERNAL=$(BUILDROOT_EXTERNAL) clean
 endif
 	@echo "finished $@"
 
 clean:
-	$(MAKE) -C $(BUILDROOT) BR2_EXTERNAL=$(BUILDROOT_EXTERNAL) clean
+	$(MAKE) -C $(BUILDROOT) O=$(O) BR2_EXTERNAL=$(BUILDROOT_EXTERNAL) clean
 
 help:
 	@echo "Supported targets: $(TARGETS)"

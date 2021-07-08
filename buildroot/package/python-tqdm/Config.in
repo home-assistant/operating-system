@@ -1,6 +1,0 @@
-config BR2_PACKAGE_PYTHON_TQDM
-	bool "python-tqdm"
-	help
-	  A Fast, Extensible Progress Bar for Python and CLI.
-
-	  https://tqdm.github.io

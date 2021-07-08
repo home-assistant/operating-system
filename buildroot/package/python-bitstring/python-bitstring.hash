@@ -1,5 +1,0 @@
-# md5, sha256 from https://pypi.org/pypi/bitstring/json
-md5  18661a3e5c47c59bd926dd0fefae0baa  bitstring-3.1.7.tar.gz
-sha256  fdf3eb72b229d2864fb507f8f42b1b2c57af7ce5fec035972f9566de440a864a  bitstring-3.1.7.tar.gz
-# Locally computed sha256 checksums
-sha256  ea3c0e2288994d3dfeaac0fd2163f2cf5f9671c3ae70a9e9d563795e28cfb0b9  LICENSE

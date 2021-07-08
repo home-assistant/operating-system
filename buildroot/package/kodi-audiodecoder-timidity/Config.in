@@ -1,6 +1,0 @@
-config BR2_PACKAGE_KODI_AUDIODECODER_TIMIDITY
-	bool "kodi-audiodecoder-timidity"
-	help
-	  Timidity decoder addon for Kodi
-
-	  https://github.com/xbmc/audiodecoder.timidity

@@ -1,6 +1,0 @@
-# Locally calculated after checking pgp signature
-# https://www.thekelleys.org.uk/dnsmasq/dnsmasq-2.85.tar.xz.asc
-sha256  ad98d3803df687e5b938080f3d25c628fe41c878752d03fbc6199787fee312fa  dnsmasq-2.85.tar.xz
-# Locally calculated
-sha256  dcc100d4161cc0b7177545ab6e47216f84857cda3843847c792a25289852dcaa  COPYING
-sha256  8ceb4b9ee5adedde47b31e975c1d90c73ad27b6b165a1dcd80c7c545eb65b903  COPYING-v3

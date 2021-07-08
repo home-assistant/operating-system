@@ -1,5 +1,0 @@
-# md5, sha256 from https://pypi.org/pypi/pluggy/json
-md5  7f610e28b8b34487336b585a3dfb803d  pluggy-0.13.1.tar.gz
-sha256  15b2acde666561e1298d71b523007ed7364de07029219b604cf808bfa1c765b0  pluggy-0.13.1.tar.gz
-# Locally computed sha256 checksums
-sha256  d6b65e6c213a5d0b577911d34d6e5949b9f59d76c238c5071a2f3fc16cfb2606  LICENSE

@@ -1,5 +1,0 @@
-# from https://pypi.python.org/pypi/docker-compose/json
-sha256	a5d58e974fd717e24b0dda6669a46bc03548d9023ef38d965acdc32d4d5fa753  docker-compose-1.24.1.tar.gz
-
-# locally computed
-sha256	552a739c3b25792263f731542238b92f6f8d07e9a488eae27e6c4690038a8243  LICENSE

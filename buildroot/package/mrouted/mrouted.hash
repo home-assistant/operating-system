@@ -1,6 +1,0 @@
-# From https://github.com/troglobit/mrouted/releases/download/4.2/mrouted-4.2.tar.gz.md5
-md5  b921f9e152e039efdac745438ef8362c  mrouted-4.2.tar.gz
-
-# Locally calculated
-sha256  689541334ea951286054b771640e9d0f26b6a3242ff7f3894a3ef1b680811b34  mrouted-4.2.tar.gz
-sha256  834f45ed282fd010f354ecc0a50538af519a1cfcc4d2866de3be06982fa9ed29  LICENSE

@@ -1,9 +1,0 @@
-config BR2_PACKAGE_PERL_HTTP_DAEMON
-	bool "perl-http-daemon"
-	select BR2_PACKAGE_PERL_HTTP_DATE # runtime
-	select BR2_PACKAGE_PERL_HTTP_MESSAGE # runtime
-	select BR2_PACKAGE_PERL_LWP_MEDIATYPES # runtime
-	help
-	  A simple http server class.
-
-	  https://github.com/libwww-perl/HTTP-Daemon

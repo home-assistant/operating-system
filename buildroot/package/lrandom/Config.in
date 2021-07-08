@@ -1,7 +1,0 @@
-config BR2_PACKAGE_LRANDOM
-	bool "lrandom"
-	help
-	  A library for generating random numbers
-	  based on the Mersenne Twister
-
-	  http://www.tecgraf.puc-rio.br/~lhf/ftp/lua/#lrandom

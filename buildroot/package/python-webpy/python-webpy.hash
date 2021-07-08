@@ -1,5 +1,0 @@
-# md5, sha256 from https://pypi.org/pypi/web.py/json
-md5	4e7ec89e7ae1e938d01fff01ba752606  web.py-0.40.tar.gz
-sha256	dc5e42ffbc42d77d07f75b7acca9975a3368ae609774e49ddebb497a784131f3  web.py-0.40.tar.gz
-# Locally computed sha256 checksums
-sha256	791bf6e9419435f114a19fc6519ff33738021eb3c41b18490943230ab0894df9  LICENSE.txt

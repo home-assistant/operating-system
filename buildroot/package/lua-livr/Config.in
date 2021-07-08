@@ -1,7 +1,0 @@
-config BR2_PACKAGE_LUA_LIVR
-	bool "lua-livr"
-	help
-	  Lightweight validator supporting Language Independent
-	  Validation Rules Specification (LIVR).
-
-	  https://fperrad.frama.io/lua-LIVR

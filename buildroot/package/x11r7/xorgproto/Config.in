@@ -1,5 +1,0 @@
-config BR2_PACKAGE_XORGPROTO
-	bool "xorgproto"
-	help
-	  This package combines the protocol headers, which were
-	  formerly scattered in individual packages.

@@ -1,5 +1,0 @@
-# md5, sha256 from https://pypi.org/pypi/mako/json
-md5  184bb2ba4b937127e7c557b93db89377  Mako-1.1.3.tar.gz
-sha256  8195c8c1400ceb53496064314c6736719c6f25e7479cd24c77be3d9361cddc27  Mako-1.1.3.tar.gz
-# Locally computed sha256 checksums
-sha256  47cd0d41b1092f9161cfb629ed15e5cea185144710ff4633a4281ef088ff5de7  LICENSE

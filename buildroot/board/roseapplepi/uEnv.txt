@@ -1,3 +1,0 @@
-# no ramdisk
-ramdisk_addr_r=-
-bootargs=console=ttyOWL2,115200

@@ -1,7 +1,0 @@
-config BR2_PACKAGE_DATATABLES
-	bool "datatables"
-	help
-	  Javascript library providing advanced interaction controls
-	  for your HTML tables.
-
-	  https://datatables.net

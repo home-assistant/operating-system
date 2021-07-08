@@ -1,9 +1,0 @@
-# Locally calculated after checking signature
-# https://linuxtv.org/downloads/v4l-utils/v4l-utils-1.20.0.tar.bz2.asc
-# with key 05D0169C26E41593418129DF199A64FADFB500FF
-sha256 956118713f7ccb405c55c7088a6a2490c32d54300dd9a30d8d5008c28d3726f7  v4l-utils-1.20.0.tar.bz2
-
-# Locally calculated
-sha256  391e4da1c54a422a78d83be7bf84b2dfb8bacdd8ad256fa4374e128655584a8a  COPYING
-sha256  5a7f623a50e384aaf6d2ced068339ddf93d0a50d3a0ecbe86f125b07804ecc78  COPYING.libv4l
-sha256  34229b5aadfb768d0d083987cba54203a920904a3ec8320823c6125b9831acd1  lib/libv4l1/libv4l1-kernelcode-license.txt

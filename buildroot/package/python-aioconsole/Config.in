@@ -1,7 +1,0 @@
-config BR2_PACKAGE_PYTHON_AIOCONSOLE
-	bool "python-aioconsole"
-	depends on BR2_PACKAGE_PYTHON3
-	help
-	  Asynchronous console and interfaces for asyncio.
-
-	  https://github.com/vxgmichel/aioconsole

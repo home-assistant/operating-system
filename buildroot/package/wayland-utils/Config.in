@@ -1,8 +1,0 @@
-config BR2_PACKAGE_WAYLAND_UTILS
-	bool "wayland-utils"
-	depends on BR2_PACKAGE_WAYLAND # wayland-client, wayland-server
-	select BR2_PACKAGE_WAYLAND_PROTOCOLS
-	help
-	  Wayland utils (wayland-info).
-
-	  https://gitlab.freedesktop.org/ofourdan/wayland-utils

@@ -1,8 +1,0 @@
-config BR2_PACKAGE_ALTERA_STAPL
-	bool "altera-stapl"
-	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_8 # libgpiod
-	select BR2_PACKAGE_LIBGPIOD
-	help
-	  Altera Jam STAPL Bytecode Player.
-
-	  https://github.com/kontron/altera-stapl

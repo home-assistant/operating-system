@@ -1,5 +1,0 @@
-# From http://sourceforge.net/projects/pwgen/files/pwgen/2.08/
-md5	6cfba450ac6ff72d11e88a6b0b049165	pwgen-2.08.tar.gz
-sha1	6406deba61297784888c2ec0c14e3c735a85a2b6	pwgen-2.08.tar.gz
-# Locally computed:
-sha256 5d3e49e01ef782be5841d5d1f7fb64d290cd86459598a913818584a46a2f81a1 debian/copyright

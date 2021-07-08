@@ -1,5 +1,0 @@
-# md5, sha256 from https://pypi.org/pypi/aiohttp-jinja2/json
-md5  d474a6440ac906a9d818a03a540830ba  aiohttp-jinja2-1.4.2.tar.gz
-sha256  9c22a0e48e3b277fc145c67dd8c3b8f609dab36bce9eb337f70dfe716663c9a0  aiohttp-jinja2-1.4.2.tar.gz
-# Locally computed sha256 checksums
-sha256  d9d867affaeac220a60381cc544681dcd37c668ed6ea5ddbf9948617f828889a  LICENSE

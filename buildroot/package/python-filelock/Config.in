@@ -1,6 +1,0 @@
-config BR2_PACKAGE_PYTHON_FILELOCK
-	bool "python-filelock"
-	help
-	  A platform independent file lock.
-
-	  https://github.com/benediktschmitt/py-filelock

@@ -1,4 +1,0 @@
-# From https://ftp.mozilla.org/pub/nspr/releases/v4.29/src/SHA256SUMS
-sha256  22286bdb8059d74632cc7c2865c139e63953ecfb33bf4362ab58827e86e92582  nspr-4.29.tar.gz
-# Locally calculated
-sha256  fab3dd6bdab226f1c08630b1dd917e11fcb4ec5e1e020e2c16f83a0a13863e85  nspr/LICENSE

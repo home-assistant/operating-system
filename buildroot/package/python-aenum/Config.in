@@ -1,7 +1,0 @@
-config BR2_PACKAGE_PYTHON_AENUM
-	bool "python-aenum"
-	help
-	  Advanced Enumerations (compatible with Python's stdlib Enum),
-	  NamedTuples, and NamedConstants.
-
-	  https://pypi.org/project/aenum

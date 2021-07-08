@@ -1,5 +1,0 @@
-# md5, sha256 from https://pypi.org/pypi/semver/json
-md5  3e11ae9782121e8ffe9f8a8b763a8cb5  semver-2.10.2.tar.gz
-sha256  c0a4a9d1e45557297a722ee9bac3de2ec2ea79016b6ffcaca609b0bc62cf4276  semver-2.10.2.tar.gz
-# Locally computed
-sha256  cda490c32e61d3884dc17791fc8078f2a3e564fba98dd18b4dc64eb2720b2b6f  LICENSE.txt

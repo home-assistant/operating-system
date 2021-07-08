@@ -1,6 +1,0 @@
-config BR2_PACKAGE_PYTHON_YATL
-	bool "python-yatl"
-	help
-	  Yet Another Template Language.
-
-	  https://github.com/web2py/yatl

@@ -1,7 +1,0 @@
-config BR2_PACKAGE_INIH
-	bool "inih"
-	help
-	  inih (INI Not Invented Here) is a simple .INI file parser
-	  written in C.
-
-	  https://github.com/benhoyt/inih/

@@ -1,1 +1,0 @@
-from gitdb import *  # noqa

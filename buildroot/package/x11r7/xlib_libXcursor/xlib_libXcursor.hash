@@ -1,7 +1,0 @@
-# From https://lists.x.org/archives/xorg-announce/2019-March/002972.html
-md5 9b9be0e289130fb820aedf67705fc549  libXcursor-1.2.0.tar.bz2
-sha1 cca0b34955d3c2f657f05a2a2c40f75353ddd912  libXcursor-1.2.0.tar.bz2
-sha256 3ad3e9f8251094af6fe8cb4afcf63e28df504d46bfa5a5529db74a505d628782  libXcursor-1.2.0.tar.bz2
-sha512 2b12d0fd17e311ce269dbba58588698885815eb07aa44d48525ed5cd9e5f379bb90138a792a191e2f74888ab10b3ca9a4f507f21de0984ed79748973ab927a03  libXcursor-1.2.0.tar.bz2
-# Locally computed
-sha256 1f1588aff23eec0cb6bb9cfe02f8a75abbe43faf3d9b1eff54b7fbc42774b3ad  COPYING

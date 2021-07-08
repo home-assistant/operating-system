@@ -1,5 +1,0 @@
-# md5, sha256 from https://pypi.org/pypi/validators/json
-md5  2f0446f2a15aa694be0cfd8728eb4444  validators-0.15.0.tar.gz
-sha256  31e8bb01b48b48940a021b8a9576b840f98fa06b91762ef921d02cb96d38727a  validators-0.15.0.tar.gz
-# Locally computed sha256 checksums
-sha256  a7fd9d761c7ca1c6508b9baf030f6e21f5752d1caea3e49a270634aa9ef01e6f  LICENSE

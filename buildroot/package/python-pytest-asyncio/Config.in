@@ -1,8 +1,0 @@
-config BR2_PACKAGE_PYTHON_PYTEST_ASYNCIO
-	bool "python-pytest-asyncio"
-	depends on BR2_PACKAGE_PYTHON3 # pytest
-	select BR2_PACKAGE_PYTHON_PYTEST # runtime
-	help
-	  Pytest support for asyncio.
-
-	  https://github.com/pytest-dev/pytest-asyncio

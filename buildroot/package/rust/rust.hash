@@ -1,6 +1,0 @@
-# From https://static.rust-lang.org/dist/rustc-1.52.0-src.tar.xz.sha256
-# Verified using https://static.rust-lang.org/dist/rustc-1.52.0-src.tar.xz.asc
-sha256  2393e923087f3f8f98190eb0743f1b4a8956a35274ae5d3c0fae6e43238c6af8  rustc-1.52.0-src.tar.xz
-# Locally generated
-sha256  62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a  LICENSE-APACHE
-sha256  23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3  LICENSE-MIT

@@ -1,6 +1,0 @@
-config BR2_PACKAGE_LUA_BINARYHEAP
-	bool "lua-binaryheap"
-	help
-	  Binary heap implementation in pure Lua.
-
-	  https://github.com/Tieske/binaryheap.lua

@@ -1,7 +1,0 @@
-config BR2_PACKAGE_LUASQL_SQLITE3
-	bool "luasql-sqlite3"
-	select BR2_PACKAGE_SQLITE
-	help
-	  LuaSQL is a simple interface from Lua to a DBMS.
-
-	  http://keplerproject.github.io/luasql/

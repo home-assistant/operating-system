@@ -1,1 +1,0 @@
-root=PARTUUID=%U/PARTNROFF=1 rootwait rw noinitrd kern_guid=%U console=tty0

@@ -1,6 +1,0 @@
-config BR2_PACKAGE_PYTHON_LOGSTASH
-	bool "python-logstash"
-	help
-	  Python logging handler for Logstash.
-
-	  https://github.com/vklochan/python-logstash

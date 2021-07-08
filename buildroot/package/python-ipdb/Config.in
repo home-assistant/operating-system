@@ -1,9 +1,0 @@
-config BR2_PACKAGE_PYTHON_IPDB
-	bool "python-ipdb"
-	depends on BR2_PACKAGE_PYTHON3 # python-ipython
-	select BR2_PACKAGE_PYTHON_SETUPTOOLS # runtime
-	select BR2_PACKAGE_PYTHON_IPYTHON # runtime
-	help
-	  IPython-enabled pdb.
-
-	  https://github.com/gotcha/ipdb

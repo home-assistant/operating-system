@@ -1,6 +1,0 @@
-config BR2_PACKAGE_PERL_URI
-	bool "perl-uri"
-	help
-	  Uniform Resource Identifiers (absolute and relative).
-
-	  https://github.com/libwww-perl/URI

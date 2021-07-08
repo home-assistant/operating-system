@@ -1,6 +1,0 @@
-config BR2_PACKAGE_PYTHON_VISITOR
-	bool "python-visitor"
-	help
-	  A tiny pythonic visitor implementation.
-
-	  http://github.com/mbr/visitor

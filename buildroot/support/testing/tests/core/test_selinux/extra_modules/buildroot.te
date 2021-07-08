@@ -1,3 +1,0 @@
-policy_module(buildroot, 1.0.0)
-
-type buildroot_test_t;

@@ -1,6 +1,0 @@
-# From https://lists.freedesktop.org/archives/dri-devel/2021-January/293654.html
-sha256  d66ad8b5c2441015ac1333e40137bb803c3bde3612ff040286fcc12158ea1bcb  libdrm-2.4.104.tar.xz
-sha512  0fdbef53e0e7c441c805c95ac55ca2c94f11e8fa18e36b4dc7534c22e2b5bc8eca7283fdf41785da753f98d0b589023111abdba70db7e79837729b1540253d6e  libdrm-2.4.104.tar.xz
-
-# Hash for license file
-sha256  2ece103921b7b5619198b9572fb9242db7bbfa6d3b33f9f93f22e1fb738ed8ac  xf86drm.c

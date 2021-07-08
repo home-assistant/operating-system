@@ -1,8 +1,0 @@
-config BR2_PACKAGE_PYTHON_PYCUPS
-	bool "python-pycups"
-	depends on BR2_PACKAGE_CUPS
-	depends on BR2_PACKAGE_PYTHON3
-	help
-	  Python bindings for libcups.
-
-	  https://github.com/zdohnal/pycups

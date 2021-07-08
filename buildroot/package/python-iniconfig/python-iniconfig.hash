@@ -1,5 +1,0 @@
-# md5, sha256 from https://pypi.org/pypi/iniconfig/json
-md5  0b7f3be87481211c183eae095bcea6f1  iniconfig-1.1.1.tar.gz
-sha256  bc3af051d7d14b2ee5ef9969666def0cd1a000e121eaea580d4a313df4b37f32  iniconfig-1.1.1.tar.gz
-# Locally computed sha256 checksums
-sha256  2af680c39ef493fb82830356d1d3df1acb5a06033cba2dec7a19e21caa77a866  LICENSE

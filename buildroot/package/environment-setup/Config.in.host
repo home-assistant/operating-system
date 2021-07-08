@@ -1,6 +1,0 @@
-config BR2_PACKAGE_HOST_ENVIRONMENT_SETUP
-	bool "host environment-setup"
-	help
-	  Install an helper script to setup a build environment
-	  based on Buildroot. It's useful when you export an sdk
-	  and want to use Buildroot to build an external project.

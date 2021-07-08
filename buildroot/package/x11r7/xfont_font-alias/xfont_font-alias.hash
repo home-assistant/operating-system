@@ -1,5 +1,0 @@
-# From https://lists.x.org/archives/xorg-announce/2020-August/003054.html
-sha256  f3111ae8bf2e980f5f56af400e8eefe5fc9f4207f4a412ea79637fd66c945276  font-alias-1.0.4.tar.bz2
-sha512  c67ac2ee344a601fcc09471580214b30c3fd6acc4800702840de44f0733e6d18b3faeec2fa3f4e2314025cc1724d7d6796ebaf620398fe350710182fd2c4b07d  font-alias-1.0.4.tar.bz2
-# locally computed
-sha256  bdba5452fc080c0f1a56d66978ac4150d1d1a00a9cc0248bba4f0b76c80ad47e  COPYING

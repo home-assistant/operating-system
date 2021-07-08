@@ -1,6 +1,0 @@
-config BR2_PACKAGE_PERL_XML_NAMESPACESUPPORT
-	bool "perl-xml-namespacesupport"
-	help
-	  A simple generic namespace processor.
-
-	  https://github.com/perigrin/xml-namespacesupport

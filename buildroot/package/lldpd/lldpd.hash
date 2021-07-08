@@ -1,5 +1,0 @@
-# Locally computed after checking gpg key
-# https://media.luffy.cx/files/lldpd/lldpd-1.0.9.tar.gz.gpg
-# using key AEF2348766F371C689A7360095A42FE8353525F9
-sha256  6b64eb3125952b1e33472198b054e8aa0dee45f45d3d4be22789090a474949f5  lldpd-1.0.9.tar.gz
-sha256  0e96a5aea65f16e2239231ce4ab90497f8bc3bb8fe6abe9299aade4726ff7c8d  LICENSE

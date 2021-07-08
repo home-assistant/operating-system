@@ -1,5 +1,0 @@
-# md5, sha256 from https://pypi.org/pypi/markdown2/json
-md5  5c1f9002060cf534bde0bdd584d6b70a  markdown2-2.3.9.tar.gz
-sha256  89526090907ae5ece66d783c434b35c29ee500c1986309e306ce2346273ada6a  markdown2-2.3.9.tar.gz
-# Locally computed sha256 checksums
-sha256  f8c7c4d554409cf621b8d653dbfffb719745fd36f5c49b8305258649b403ef9c  LICENSE.txt

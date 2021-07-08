@@ -1,4 +1,0 @@
-# From https://developer.arm.com/-/media/Files/downloads/gnu-a/10.2-2020.11/binrel/gcc-arm-10.2-2020.11-x86_64-aarch64_be-none-linux-gnu.tar.xz.asc
-md5  5da75bca337de5adade5b339709f8b16  gcc-arm-10.2-2020.11-x86_64-aarch64_be-none-linux-gnu.tar.xz
-# locally calculated
-sha256  78a472aeb80f6ff56bfdef57ce165b233bac4af7aa2e12f454900518a30ddf20  gcc-arm-10.2-2020.11-x86_64-aarch64_be-none-linux-gnu.tar.xz

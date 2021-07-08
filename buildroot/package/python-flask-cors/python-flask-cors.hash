@@ -1,5 +1,0 @@
-# md5, sha256 from https://pypi.org/pypi/flask-cors/json
-md5  647ff0632b960ba063a077fb4063077e  Flask-Cors-3.0.10.tar.gz
-sha256  b60839393f3b84a0f3746f6cdca56c1ad7426aa738b70d6c61375857823181de  Flask-Cors-3.0.10.tar.gz
-# Locally computed sha256 checksums
-sha256  6e1a1bdc54834c1e0740cbce5d5f6f2cae1c846fd2a7f482b11649594fafbd5d  LICENSE

@@ -1,8 +1,0 @@
-# retrieved by scancpan from http://cpan.metacpan.org/
-md5  f1aa70ba570f03f14cd394096b9c6883  Params-Util-1.102.tar.gz
-sha256  499bb1b482db24fda277a51525596ad092c2bd51dd508fa8fec2e9f849097402  Params-Util-1.102.tar.gz
-
-# computed by scancpan
-sha256  08c2ed7589aff3b2076b48b792078d3479c2295559ee7bc4615e93abe0473939  ARTISTIC-1.0
-sha256  3d2fb9b42d1134f39c2e990d66b5e9b77005663fe956db526cc380eb3d9a77d8  GPL-1
-sha256  834c4ebff45be11f35f059b077fdd747dee4b8a747b95049d849fef1c0ccdc62  LICENSE

@@ -1,5 +1,0 @@
-# sha256 locally computed
-sha256 51de5c02ad511333f93ff585bca54c8784de35af4ff27b759d16b46c4402cdac  mono-6.12.0.90.tar.xz
-sha256 923c7053ad0d430cd9b0b69a0ccf3abb7170a1ce50ecbf01915b565a35823d10  LICENSE
-sha256 fc488f3ec9f36856bea8cce5cdde1449176341ef93a3962b691970f8981799f4  mcs/COPYING
-sha256 2c3c3ef532828bcd42bb3127349625a25291ff5ae7e6f8d42e0fe9b5be836a99  external/Newtonsoft.Json/Tools/7-zip/copying.txt

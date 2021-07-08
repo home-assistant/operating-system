@@ -1,4 +1,0 @@
-# From https://www.kernel.org/pub/linux/utils/nfs-utils/2.5.2/sha256sums.asc
-sha256  d493b81c9d3ffce5d10af701a63ed2b8a21768c23da4a2eceb4d708aea65d9de  nfs-utils-2.5.2.tar.xz
-# Locally computed
-sha256  576540abf5e95029ad4ad90e32071385a5e95b2c30708c706116f3eb87b9a3de  COPYING

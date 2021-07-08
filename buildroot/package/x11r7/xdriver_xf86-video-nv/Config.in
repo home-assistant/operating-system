@@ -1,5 +1,0 @@
-config BR2_PACKAGE_XDRIVER_XF86_VIDEO_NV
-	bool "xf86-video-nv"
-	select BR2_PACKAGE_XORGPROTO
-	help
-	  NVIDIA video driver

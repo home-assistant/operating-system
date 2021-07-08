@@ -1,6 +1,0 @@
-config BR2_PACKAGE_PYTHON_REGEX
-	bool "python-regex"
-	help
-	  Alternative regular expression module, to replace re.
-
-	  https://bitbucket.org/mrabarnett/mrab-regex

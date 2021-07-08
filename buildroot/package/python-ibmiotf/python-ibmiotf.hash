@@ -1,5 +1,0 @@
-# md5, sha256 from https://pypi.org/pypi/ibmiotf/json
-md5	a103427c15b2bc96d72de5e58975638c  ibmiotf-0.4.0.tar.gz
-sha256	753a29858d48ebd89aff8b73c207028814714d8a004a3c19b436c9bbeaa65ce6  ibmiotf-0.4.0.tar.gz
-# Locally computed sha256 checksums
-sha256	2c153c48f67e56031036fc28d12f76238a5151494bdfc24b6b81ec734c387a2d  LICENSE

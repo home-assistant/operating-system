@@ -1,6 +1,0 @@
-# From https://www.codesynthesis.com/projects/libcutl/
-sha1  f813702b2856732e199ae34e3393b8cecff878ef  libodb-boost-2.4.0.tar.bz2
-
-# Locally computed
-sha256  b41bd4aaa3f3c9563cfa41bae19bda1bbcc3652e4430b4ebb1819eef2ffcadf4  libodb-boost-2.4.0.tar.bz2
-sha256  841105a470fc283851c63941510ffd403c726d1910b688f7df95914ab8b1b5a3  LICENSE

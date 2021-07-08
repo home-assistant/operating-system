@@ -1,5 +1,0 @@
-# md5, sha256 from https://pypi.org/pypi/yarl/json
-md5  3b6f2da3db8c645a9440375fd6a414eb  yarl-1.6.3.tar.gz
-sha256  8a9066529240171b68893d60dca86a763eae2139dd42f42106b03cf4b426bf10  yarl-1.6.3.tar.gz
-# Locally computed sha256 checksums
-sha256  14c0820503ceef15e814a89b037d9efc066870087018294b6ae0f27163872cc5  LICENSE

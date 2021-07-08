@@ -1,6 +1,0 @@
-config BR2_PACKAGE_VUEJS
-	bool "vuejs"
-	help
-	  VueJS web application framework.
-
-	  http://vuejs.org

@@ -1,5 +1,0 @@
-# md5, sha256 from https://pypi.org/pypi/janus/json
-md5  dad6a03e7664cb800ce45ef8bcf12439  janus-0.6.1.tar.gz
-sha256  4712e0ef75711fe5947c2db855bc96221a9a03641b52e5ae8e25c2b705dd1d0c  janus-0.6.1.tar.gz
-# Locally computed sha256 checksums
-sha256  8b177cccb6ddec12a9fc97bd49e7e2bbcd92464625624bd8bdbfad799ae606e9  LICENSE

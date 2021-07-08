@@ -1,5 +1,0 @@
-# md5, sha256 from https://pypi.org/pypi/falcon/json
-md5	77c52c144dd284e6259d257c6f008072  falcon-2.0.0.tar.gz
-sha256	eea593cf466b9c126ce667f6d30503624ef24459f118c75594a69353b6c3d5fc  falcon-2.0.0.tar.gz
-# Locally computed sha256 checksums
-sha256	e9e7f1a7ba764f042e56afce6f3563c2be9c4fffbb1404b20f8050ae051f577c  LICENSE

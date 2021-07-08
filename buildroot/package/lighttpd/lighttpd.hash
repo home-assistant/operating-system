@@ -1,4 +1,0 @@
-# From https://download.lighttpd.net/lighttpd/releases-1.4.x/lighttpd-1.4.58.sha256sum
-sha256  267feffda13a190ebdce7b15172d8be16da98008457f30fddecd72832d126d0e  lighttpd-1.4.58.tar.xz
-# Locally calculated
-sha256  5c98cad2fbaf5c5e2562bcbab401a7c557c1bb1bac9914ecc63730925052fb13  COPYING

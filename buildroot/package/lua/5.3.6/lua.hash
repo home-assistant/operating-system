@@ -1,6 +1,0 @@
-# Hashes from: http://www.lua.org/ftp/
-md5  83f23dbd5230140a3770d5f54076948d  lua-5.3.6.tar.gz
-sha1  f27d20d6c81292149bc4308525a9d6733c224fa5  lua-5.3.6.tar.gz
-
-# Locally computed
-sha256  2ddff2161e0c4487d744943565538743c0721485873092f6809d072a983b06ef  doc/readme.html

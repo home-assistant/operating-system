@@ -1,7 +1,0 @@
-# From https://sourceforge.net/projects/pcmanfm/files/PCManFM%20%2B%20Libfm%20%28tarball%20release%29/LibFM/
-md5	c15ecd2c9317e2c385cd3f046d0b61ba	libfm-1.3.1.tar.xz
-sha1	29539f50acd5c00a00362adffd532053b0688e66	libfm-1.3.1.tar.xz
-
-# Hash for license files:
-sha256	d8c320ffc0030d1b096ae4732b50d2b811cf95e9a9b7377c1127b2563e0a0388	COPYING
-sha256	c3a3d93e111462f2b0292b56a6a7b87d342fd7156741d8b81b8b08723be4597e	src/extra/fm-xml-file.c

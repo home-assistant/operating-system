@@ -1,9 +1,0 @@
-config BR2_PACKAGE_LIBCLC
-	bool "libclc"
-	depends on BR2_PACKAGE_LLVM_ARCH_SUPPORTS
-	help
-	  libclc is an open source, BSD licensed implementation of
-	  the library requirements of the OpenCL C programming language,
-	  as specified by the OpenCL 1.1 Specification.
-
-	  http://libclc.llvm.org/

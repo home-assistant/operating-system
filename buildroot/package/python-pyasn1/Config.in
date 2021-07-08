@@ -1,6 +1,0 @@
-config BR2_PACKAGE_PYTHON_PYASN1
-	bool "python-pyasn1"
-	help
-	  ASN.1 types and codecs.
-
-	  https://github.com/etingof/pyasn1

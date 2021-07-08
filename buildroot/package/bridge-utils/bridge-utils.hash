@@ -1,5 +1,0 @@
-# From https://mirrors.edge.kernel.org/pub/linux/utils/net/bridge-utils/sha256sums.asc
-sha256  a61d8be4f1a1405c60c8ef38d544f0c18c05b33b9b07e5b4b31033536165e60e  bridge-utils-1.7.1.tar.xz
-
-# locally computed
-sha256  995a31f60a9ddb4c609214cc7d17ca94cc3cbc7f37e1e64dba81e7f8ea9d4f91  COPYING

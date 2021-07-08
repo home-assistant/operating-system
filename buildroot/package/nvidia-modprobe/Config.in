@@ -1,8 +1,0 @@
-config BR2_PACKAGE_NVIDIA_MODPROBE
-	bool "nvidia-modprobe"
-	depends on BR2_USE_MMU # fork()
-	help
-	  nvidia-modprobe package adds a utility and headers for
-	  probing the NVIDIA hardware at runtime.
-
-	  https://github.com/NVIDIA/nvidia-modprobe
