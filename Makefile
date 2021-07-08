@@ -28,7 +28,7 @@ $(RELEASE_DIR):
 
 $(TARGETS_CONFIG): %-config:
 	@echo "config $*"
-	$(MAKE) -C $(BUILDROOT) O=$(O) BR2_EXTERNAL=$(BUILDROOT_EXTERNAL) O=$(O) "$*_defconfig"
+	$(MAKE) -C $(BUILDROOT) O=$(O) BR2_EXTERNAL=$(BUILDROOT_EXTERNAL) "$*_defconfig"
 
 $(TARGETS): %: $(RELEASE_DIR) %-config
 	@echo "build $@"
