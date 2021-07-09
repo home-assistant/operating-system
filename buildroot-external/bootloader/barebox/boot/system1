@@ -3,6 +3,6 @@
 global linux.bootargs.dyn.root="root=PARTUUID=a3ec664e-32ce-4665-95ea-7ae90ce9aa20 rootfstype=squashfs ro"
 
 mkdir -p /mnt/system
-mount -t ext4 /dev/disk*.hassos-kernel1 /mnt/system
+mount /dev/disk*.hassos-kernel1 /mnt/system
 
 global bootm.image="/mnt/system/bzImage"

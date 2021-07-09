@@ -43,7 +43,7 @@ function _write_rauc_system() {
     (
         echo "[slot.kernel.${slot_num}]"
         echo "device=/dev/disk/by-partlabel/hassos-kernel${slot_num}"
-        echo "type=ext4"
+        echo "type=raw"
         echo "bootname=${slot_name}"
 
         echo "[slot.rootfs.${slot_num}]"
