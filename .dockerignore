@@ -3,7 +3,8 @@ buildroot/
 buildroot-external/
 buildroot-patches/
 
-# Release directory gets created using build scripts
+# Output/Release directory gets created using build scripts
+output*/
 release/
 
 # Ignore hidden directories as well
