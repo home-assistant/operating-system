@@ -44,7 +44,7 @@ MULTICAST_VERSION=$(echo "${VERSION_JSON}" | jq -e -r '.multicast')
 OBSERVER_VERSION=$(echo "${VERSION_JSON}" | jq -e -r '.observer')
 
 # Make image
-dd if=/dev/zero of=${DATA_IMG} bs=1G count=1
+truncate --size="1G" "${DATA_IMG}"
 mkfs.ext4 -L "hassos-data" -E lazy_itable_init=0,lazy_journal_init=0 ${DATA_IMG}
 
 # Setup local user
