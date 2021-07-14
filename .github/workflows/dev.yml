@@ -8,7 +8,7 @@ on:
     types: [opened,synchronize,labeled]
 
 jobs:
-  version:
+  prepare:
     if: ${{ github.event_name == 'workflow_dispatch' || contains(github.event.pull_request.labels.*.name, 'run-dev-build') }}
     name: Prepare build
     runs-on: [ "ubuntu-20.04" ]
@@ -60,10 +60,10 @@ jobs:
   build:
     if: ${{ github.event_name == 'workflow_dispatch' || contains(github.event.pull_request.labels.*.name, 'run-dev-build') }}
     name: Development build for ${{ matrix.board.id }}
-    needs: version
+    needs: prepare
     strategy:
       fail-fast: false
-      matrix: ${{ fromJson(needs.version.outputs.matrix) }}
+      matrix: ${{ fromJson(needs.prepare.outputs.matrix) }}
     runs-on: ${{ matrix.board.runner }}
 
     steps:
@@ -91,7 +91,7 @@ jobs:
           docker run --rm --privileged -v "${GITHUB_WORKSPACE}:/build" \
             -e BUILDER_UID="${BUILDER_UID}" -e BUILDER_GID="${BUILDER_GID}" \
             -v "${{ matrix.board.runner }}-build-cache:/cache" \
-            haos-builder make BUILDDIR=/build VERSION_DEV=${{ needs.version.outputs.version_dev }} ${{ matrix.board.defconfig }}
+            haos-builder make BUILDDIR=/build VERSION_DEV=${{ needs.prepare.outputs.version_dev }} ${{ matrix.board.defconfig }}
 
       - name: Upload images
         uses: burnett01/rsync-deployments@4.1
@@ -99,7 +99,7 @@ jobs:
           rsh: -q
           switches: -aW --ignore-existing
           path: release/
-          remote_path: ${{ secrets.DEV_TARGET_PATH }}/${{ needs.version.outputs.version_main }}.${{ needs.version.outputs.version_dev }}/
+          remote_path: ${{ secrets.DEV_TARGET_PATH }}/${{ needs.prepare.outputs.version_main }}.${{ needs.prepare.outputs.version_dev }}/
           remote_host: ${{ secrets.DEV_HOST }}
           remote_port: ${{ secrets.DEV_PORT }}
           remote_user: ${{ secrets.DEV_USERNAME }}
@@ -108,7 +108,7 @@ jobs:
   bump_version:
     name: Bump dev channel version
     if: ${{ github.event_name == 'workflow_dispatch' }}
-    needs: [ build, version ]
+    needs: [ build, prepare ]
     runs-on: [ "ubuntu-20.04" ]
 
     steps:
@@ -119,10 +119,10 @@ jobs:
         email: ${{ secrets.GIT_EMAIL }}
         token: ${{ secrets.GIT_TOKEN }}
 
-    - name: Bump Home Assistant OS dev channel version to ${{ needs.version.outputs.version_main }}.${{ needs.version.outputs.version_dev }}
+    - name: Bump Home Assistant OS dev channel version to ${{ needs.prepare.outputs.version_main }}.${{ needs.prepare.outputs.version_dev }}
       uses: home-assistant/actions/helpers/version-push@master
       with:
         key: "hassos[]"
         key-description: "Home Assistant OS"
-        version: ${{ needs.version.outputs.version_main }}.${{ needs.version.outputs.version_dev }}
+        version: ${{ needs.prepare.outputs.version_main }}.${{ needs.prepare.outputs.version_dev }}
         channel: "dev"
