@@ -17,4 +17,4 @@ jobs:
     - name: Check shell scripts
       uses: ludeeus/action-shellcheck@1.1.0
       with:
-        ignore: "buildroot" "buildroot-external/package/xe-guest-utilities/xe-linux-distribution"
+        ignore: buildroot buildroot-external/package/xe-guest-utilities
