@@ -79,15 +79,16 @@ jobs:
             haos-builder make BUILDDIR=/build VERSION_DEV=${{ needs.version.outputs.version_dev }} ${{ matrix.board.name }}
 
       - name: Upload images
-        uses: appleboy/scp-action@master
+        uses: burnett01/rsync-deployments@4.1
         with:
-          host: ${{ secrets.DEV_HOST }}
-          username: ${{ secrets.DEV_USERNAME }}
-          port: ${{ secrets.DEV_PORT }}
-          key: ${{ secrets.DEV_SCP_KEY }}
-          source: "release/*"
-          target: ${{ secrets.DEV_TARGET_PATH }}/${{ needs.version.outputs.version_main }}.${{ needs.version.outputs.version_dev }}/
-          strip_components: 1
+          rsh: -q
+          switches: -aW --ignore-existing
+          path: release/
+          remote_path: ${{ secrets.DEV_TARGET_PATH }}/${{ needs.version.outputs.version_main }}.${{ needs.version.outputs.version_dev }}/
+          remote_host: ${{ secrets.DEV_HOST }}
+          remote_port: ${{ secrets.DEV_PORT }}
+          remote_user: ${{ secrets.DEV_USERNAME }}
+          remote_key: ${{ secrets.DEV_SSH_KEY }}
 
   bump_version:
     name: Bump dev version to ${{ needs.version.outputs.version_main }}.${{ needs.version.outputs.version_dev }}
