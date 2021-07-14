@@ -324,5 +324,5 @@ function convert_disk_image_zip() {
     local hdd_img="$(hassos_image_name "${hdd_ext}")"
 
     rm -f "${hdd_img}.zip"
-    zip -j -q -r "${hdd_img}.zip" "${hdd_img}"
+    zip -j -m -q -r "${hdd_img}.zip" "${hdd_img}"
 }
