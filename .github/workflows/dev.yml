@@ -29,7 +29,7 @@ jobs:
         shell: bash
         id: version_pr
         run: |
-          version_pr="+${{ github.event.pull_request.number }}"
+          version_pr="+pr${{ github.event.pull_request.number }}"
           echo "Development build for PR \"${version_pr}\""
           echo "::set-output name=version_pr::${version_pr}"
       - uses: actions/checkout@v2
