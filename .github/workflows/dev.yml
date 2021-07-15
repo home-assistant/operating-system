@@ -75,7 +75,7 @@ jobs:
           script: |
             if (context.eventName == "workflow_dispatch")
               return { "ref": context.ref }
-            return { "ref": context.pull_request.head.sha }
+            return { "ref": context.payload.pull_request.head.sha }
 
       - name: Checkout source
         uses: actions/checkout@v2
