@@ -4,7 +4,7 @@ name: Development build
 
 on:
   workflow_dispatch:
-  pull_request:
+  pull_request_target:
     types: [opened,synchronize,labeled]
 
 jobs:
@@ -60,6 +60,7 @@ jobs:
   build:
     if: ${{ github.event_name == 'workflow_dispatch' || contains(github.event.pull_request.labels.*.name, 'run-dev-build') }}
     name: Development build for ${{ matrix.board.id }}
+    environment: "dev_build"
     needs: prepare
     strategy:
       fail-fast: false
@@ -67,11 +68,21 @@ jobs:
     runs-on: ${{ matrix.board.runner }}
 
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Define git reference
+        uses: actions/github-script@v4
+        id: generate_gitref
+        with:
+          script: |
+            if (context.eventName == "workflow_dispatch")
+              return { "ref": context.ref }
+            return { "ref": context.pull_request.head.sha }
+
       - name: Checkout source
         uses: actions/checkout@v2
         with:
           submodules: true
+          persist-credentials: false
+          ref: ${{ fromJSON(steps.generate_gitref.outputs.result).ref }}
 
       - name: Build container
         run: docker build -t haos-builder .
