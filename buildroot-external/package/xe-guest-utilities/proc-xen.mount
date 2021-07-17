@@ -1,0 +1,9 @@
+[Unit]
+Description=Mount /proc/xen files
+ConditionPathExists=/proc/xen
+RefuseManualStop=true
+
+[Mount]
+What=xenfs
+Where=/proc/xen
+Type=xenfs

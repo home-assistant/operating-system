@@ -1,0 +1,13 @@
+[Unit]
+Description=Xen guest utility daemon
+Requires=proc-xen.mount
+ConditionVirtualization=xen
+
+[Service]
+PIDFile=/run/xe-daemon.pid
+ExecStartPre=/usr/sbin/xe-linux-distribution /var/cache/xe-linux-distribution
+ExecStart=/usr/sbin/xe-daemon -p /run/xe-daemon.pid
+ExecStop=/usr/bin/pkill -TERM  -F /run/xe-daemon.pid
+
+[Install]
+WantedBy=multi-user.target
