@@ -1,10 +1,10 @@
-From d1735a6a414ff1119bf32b27c2bd607241e2152f Mon Sep 17 00:00:00 2001
-Message-Id: <d1735a6a414ff1119bf32b27c2bd607241e2152f.1623663122.git.stefan@agner.ch>
-In-Reply-To: <287005e14b9ba3a4c19f7b96a2011323e0f3f1bc.1623663122.git.stefan@agner.ch>
-References: <287005e14b9ba3a4c19f7b96a2011323e0f3f1bc.1623663122.git.stefan@agner.ch>
+From dcaf2dc71dd62487eb37561682934414a5795e0e Mon Sep 17 00:00:00 2001
+Message-Id: <dcaf2dc71dd62487eb37561682934414a5795e0e.1627311993.git.stefan@agner.ch>
+In-Reply-To: <c7825747afd8bb975dc918f28e4afe8058a518f3.1627311993.git.stefan@agner.ch>
+References: <c7825747afd8bb975dc918f28e4afe8058a518f3.1627311993.git.stefan@agner.ch>
 From: Hyeonki Hong <hhk7734@gmail.com>
 Date: Fri, 27 Mar 2020 17:05:22 +0900
-Subject: [PATCH 6/8] arm64: dts: meson: add uart_A node
+Subject: [PATCH 7/9] arm64: dts: meson: add uart_A node
 
 The UART_A is available through J3 pin 8/10 and documented to be
 available as UART by default.
@@ -15,7 +15,7 @@ Signed-off-by: Stefan Agner <stefan@agner.ch>
  1 file changed, 7 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi
-index 2a88a63883b4..4922841e4af4 100644
+index dd345c6aa4b5..cec346178e3d 100644
 --- a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi
 +++ b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi
 @@ -12,6 +12,7 @@

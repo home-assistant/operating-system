@@ -1,8 +1,10 @@
-From 287005e14b9ba3a4c19f7b96a2011323e0f3f1bc Mon Sep 17 00:00:00 2001
-Message-Id: <287005e14b9ba3a4c19f7b96a2011323e0f3f1bc.1623663122.git.stefan@agner.ch>
+From ec3b1240b428c5652ccb7fdadad217a2ff8ab4db Mon Sep 17 00:00:00 2001
+Message-Id: <ec3b1240b428c5652ccb7fdadad217a2ff8ab4db.1627311993.git.stefan@agner.ch>
+In-Reply-To: <c7825747afd8bb975dc918f28e4afe8058a518f3.1627311993.git.stefan@agner.ch>
+References: <c7825747afd8bb975dc918f28e4afe8058a518f3.1627311993.git.stefan@agner.ch>
 From: Hyeonki Hong <hhk7734@gmail.com>
 Date: Wed, 7 Apr 2021 04:26:08 +0000
-Subject: [PATCH 1/8] arm64: dts: meson: add saradc node to ODROID N2/N2+
+Subject: [PATCH 2/9] arm64: dts: meson: add saradc node to ODROID N2/N2+
 
 Add the meson saradc node to the ODROID N2/N2+ common dtsi.
 
@@ -15,7 +17,7 @@ Link: https://lore.kernel.org/r/20210407042609.9736-3-christianshewitt@gmail.com
  1 file changed, 5 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi
-index 58ce569b2ace..4f22d00756a9 100644
+index b78be3e6974d..8a5e132c4b79 100644
 --- a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi
 +++ b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi
 @@ -508,6 +508,11 @@ &pwm_AO_cd {

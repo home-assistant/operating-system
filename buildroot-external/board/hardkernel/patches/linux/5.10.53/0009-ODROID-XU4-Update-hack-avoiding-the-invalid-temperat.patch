@@ -1,0 +1,63 @@
+From 32e2bb9ac2f2a6e3c2d2536409fcae4e442b548a Mon Sep 17 00:00:00 2001
+Message-Id: <32e2bb9ac2f2a6e3c2d2536409fcae4e442b548a.1627311885.git.stefan@agner.ch>
+In-Reply-To: <c7825747afd8bb975dc918f28e4afe8058a518f3.1627311885.git.stefan@agner.ch>
+References: <c7825747afd8bb975dc918f28e4afe8058a518f3.1627311885.git.stefan@agner.ch>
+From: "charles.park" <charles.park@hardkernel.com>
+Date: Fri, 1 Jun 2018 18:12:01 +0900
+Subject: [PATCH 09/10] ODROID-XU4: Update hack avoiding the invalid
+ temperature by TMU broken
+
+Change-Id: I6092834427950a50746535458e99bf7089212044
+---
+ drivers/thermal/thermal_helpers.c | 28 ++++++++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
+
+diff --git a/drivers/thermal/thermal_helpers.c b/drivers/thermal/thermal_helpers.c
+index c94bc824e5d3..2880126c5861 100644
+--- a/drivers/thermal/thermal_helpers.c
++++ b/drivers/thermal/thermal_helpers.c
+@@ -75,6 +75,10 @@ EXPORT_SYMBOL(get_thermal_instance);
+  *
+  * Return: On success returns 0, an error code otherwise
+  */
++
++#define	CRITICAL_TEMP	120000
++int thermal_zone_data[4] = { 0, };
++
+ int thermal_zone_get_temp(struct thermal_zone_device *tz, int *temp)
+ {
+ 	int ret = -EINVAL;
+@@ -108,6 +112,30 @@ int thermal_zone_get_temp(struct thermal_zone_device *tz, int *temp)
+ 			*temp = tz->emul_temperature;
+ 	}
+ 
++	/* save thermal_zone data */
++	if (!ret)
++		thermal_zone_data[tz->id] = *temp;
++	/*
++	 * This case is that the thermal sensor is broken.
++	 * That's not real temperature. Set the fake temperature value in order to
++	 * avoid reaching the ciritical temperature.
++	 */
++	if ((thermal_zone_data[tz->id] > CRITICAL_TEMP) && (tz->id != 4)) {
++		int i, broken_sensor = 0, correct_temp = 0;
++		for (i = 0; i < 4; i++) {
++			if ((thermal_zone_data[i] <= CRITICAL_TEMP) &&
++			    (correct_temp <= thermal_zone_data[i]))
++				correct_temp = thermal_zone_data[i];
++			if (thermal_zone_data[i] > CRITICAL_TEMP)
++				broken_sensor++;
++		}
++		/*
++		 * if all thermal sensor broken then critical temperature data send
++		 * for system poweroff.
++		 */
++		*temp = (broken_sensor == 4) ? CRITICAL_TEMP : correct_temp;
++	}
++
+ 	mutex_unlock(&tz->lock);
+ exit:
+ 	return ret;
+-- 
+2.32.0
+
