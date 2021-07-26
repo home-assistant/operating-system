@@ -1,0 +1,54 @@
+From 295121994fc4413c7b2bcecb8ce4d076034d59a2 Mon Sep 17 00:00:00 2001
+Message-Id: <295121994fc4413c7b2bcecb8ce4d076034d59a2.1627298114.git.stefan@agner.ch>
+In-Reply-To: <8511fa06c13a9761e53ed72fe7111f5c3e3514a0.1627298114.git.stefan@agner.ch>
+References: <8511fa06c13a9761e53ed72fe7111f5c3e3514a0.1627298114.git.stefan@agner.ch>
+From: Stefan Agner <stefan@agner.ch>
+Date: Mon, 26 Jul 2021 13:05:50 +0200
+Subject: [PATCH 3/3] HACK: ARM: meson: don't add memory to memreserve
+
+With 8a5a75e5e9e55 ("of/fdt: Make sure no-map does not remove already
+reserved regions") a change got introduced which doesn't update the
+mapping of a reserved region to nomap if it already exists.
+
+Upstream Linux marks the secmon region as reserved memory in the device
+tree reserved-memory node. Adding it to the memreserve section too
+causes the mappping update to fail since the above change got introduced
+in Linux 5.10, causing the following message in the kernel log:
+...
+[    0.000000] OF: fdt: Reserved memory: failed to reserve memory for node 'secmon@5000000': base 0x0000000005000000, size 3 MiB
+...
+
+Don't add the regions to memreserve so that the memory gets reserved
+properly with the no-map flag. This fixes random crashes like:
+[129988.642342] SError Interrupt on CPU4, code 0xbf000000 -- SError
+
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+---
+ arch/arm/mach-meson/board-common.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/arch/arm/mach-meson/board-common.c b/arch/arm/mach-meson/board-common.c
+index 34b3c8f399..1d81be06f1 100644
+--- a/arch/arm/mach-meson/board-common.c
++++ b/arch/arm/mach-meson/board-common.c
+@@ -66,6 +66,7 @@ int ft_board_setup(void *blob, struct bd_info *bd)
+ 	return meson_ft_board_setup(blob, bd);
+ }
+ 
++#if 0
+ void meson_board_add_reserved_memory(void *fdt, u64 start, u64 size)
+ {
+ 	int ret;
+@@ -77,6 +78,9 @@ void meson_board_add_reserved_memory(void *fdt, u64 start, u64 size)
+ 	if (IS_ENABLED(CONFIG_EFI_LOADER))
+ 		efi_add_memory_map(start, size, EFI_RESERVED_MEMORY_TYPE);
+ }
++#else
++void meson_board_add_reserved_memory(void *fdt, u64 start, u64 size) {}
++#endif
+ 
+ int meson_generate_serial_ethaddr(void)
+ {
+-- 
+2.32.0
+
