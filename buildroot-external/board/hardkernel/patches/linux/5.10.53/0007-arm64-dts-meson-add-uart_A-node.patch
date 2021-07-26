@@ -1,3 +1,4 @@
+<<<<<<< HEAD:buildroot-external/board/hardkernel/patches/linux/5.9.16/0010-arm64-dts-meson-add-uart_A-node.patch
 From 1eeec94aa6dd6f9900e6213025916eb85f6b3b62 Mon Sep 17 00:00:00 2001
 Message-Id: <1eeec94aa6dd6f9900e6213025916eb85f6b3b62.1622055679.git.stefan@agner.ch>
 In-Reply-To: <0955f7e64f302c5c331b90fd07fc48dfb677eab5.1622055679.git.stefan@agner.ch>
@@ -5,6 +6,15 @@ References: <0955f7e64f302c5c331b90fd07fc48dfb677eab5.1622055679.git.stefan@agne
 From: Hyeonki Hong <hhk7734@gmail.com>
 Date: Fri, 27 Mar 2020 17:05:22 +0900
 Subject: [PATCH 10/11] arm64: dts: meson: add uart_A node
+=======
+From dcaf2dc71dd62487eb37561682934414a5795e0e Mon Sep 17 00:00:00 2001
+Message-Id: <dcaf2dc71dd62487eb37561682934414a5795e0e.1627311993.git.stefan@agner.ch>
+In-Reply-To: <c7825747afd8bb975dc918f28e4afe8058a518f3.1627311993.git.stefan@agner.ch>
+References: <c7825747afd8bb975dc918f28e4afe8058a518f3.1627311993.git.stefan@agner.ch>
+From: Hyeonki Hong <hhk7734@gmail.com>
+Date: Fri, 27 Mar 2020 17:05:22 +0900
+Subject: [PATCH 7/9] arm64: dts: meson: add uart_A node
+>>>>>>> be3afe8b (Update to Linux 5.10.53 (#1475)):buildroot-external/board/hardkernel/patches/linux/5.10.53/0007-arm64-dts-meson-add-uart_A-node.patch
 
 The UART_A is available through J3 pin 8/10 and documented to be
 available as UART by default.
@@ -15,7 +25,11 @@ Signed-off-by: Stefan Agner <stefan@agner.ch>
  1 file changed, 7 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi
+<<<<<<< HEAD:buildroot-external/board/hardkernel/patches/linux/5.9.16/0010-arm64-dts-meson-add-uart_A-node.patch
 index c4052293ea0d..38a996ed3e19 100644
+=======
+index dd345c6aa4b5..cec346178e3d 100644
+>>>>>>> be3afe8b (Update to Linux 5.10.53 (#1475)):buildroot-external/board/hardkernel/patches/linux/5.10.53/0007-arm64-dts-meson-add-uart_A-node.patch
 --- a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi
 +++ b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi
 @@ -12,6 +12,7 @@

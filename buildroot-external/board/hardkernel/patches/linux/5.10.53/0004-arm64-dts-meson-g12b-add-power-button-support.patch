@@ -1,3 +1,4 @@
+<<<<<<< HEAD:buildroot-external/board/hardkernel/patches/linux/5.9.16/0007-arm64-dts-meson-g12b-add-power-button-support.patch
 From 25cd545d370b67f5e5e19d93484d378571526da2 Mon Sep 17 00:00:00 2001
 Message-Id: <25cd545d370b67f5e5e19d93484d378571526da2.1622055679.git.stefan@agner.ch>
 In-Reply-To: <0955f7e64f302c5c331b90fd07fc48dfb677eab5.1622055679.git.stefan@agner.ch>
@@ -5,6 +6,15 @@ References: <0955f7e64f302c5c331b90fd07fc48dfb677eab5.1622055679.git.stefan@agne
 From: Stefan Agner <stefan@agner.ch>
 Date: Mon, 11 Jan 2021 11:20:48 +0100
 Subject: [PATCH 07/11] arm64: dts: meson: g12b: add power button support
+=======
+From 70e65f906389f7236fe9ad8e1c05dedac0d1988b Mon Sep 17 00:00:00 2001
+Message-Id: <70e65f906389f7236fe9ad8e1c05dedac0d1988b.1627311993.git.stefan@agner.ch>
+In-Reply-To: <c7825747afd8bb975dc918f28e4afe8058a518f3.1627311993.git.stefan@agner.ch>
+References: <c7825747afd8bb975dc918f28e4afe8058a518f3.1627311993.git.stefan@agner.ch>
+From: Stefan Agner <stefan@agner.ch>
+Date: Mon, 11 Jan 2021 11:20:48 +0100
+Subject: [PATCH 4/9] arm64: dts: meson: g12b: add power button support
+>>>>>>> be3afe8b (Update to Linux 5.10.53 (#1475)):buildroot-external/board/hardkernel/patches/linux/5.10.53/0004-arm64-dts-meson-g12b-add-power-button-support.patch
 
 Add power button support on J2 pin 11 (GPIOX_3 on the SoC side). The
 GPIO is low active, e.g. when connecting with pin 9 (GND) a power
@@ -16,7 +26,11 @@ Signed-off-by: Stefan Agner <stefan@agner.ch>
  1 file changed, 11 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi
+<<<<<<< HEAD:buildroot-external/board/hardkernel/patches/linux/5.9.16/0007-arm64-dts-meson-g12b-add-power-button-support.patch
 index fe85aa6da460..9b1541ee2273 100644
+=======
+index 41b2f9c96b5f..4b6bb7e74e25 100644
+>>>>>>> be3afe8b (Update to Linux 5.10.53 (#1475)):buildroot-external/board/hardkernel/patches/linux/5.10.53/0004-arm64-dts-meson-g12b-add-power-button-support.patch
 --- a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi
 +++ b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi
 @@ -39,6 +39,17 @@ emmc_pwrseq: emmc-pwrseq {
