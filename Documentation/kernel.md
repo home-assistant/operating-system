@@ -14,6 +14,6 @@ Default Kernel tree: 5.10
 | Tinker Board | 5.10.53 |
 | Odroid-C2 | 5.10.53 |
 | Odroid-C4 | 5.10.53 |
-| Odroid-N2 | 5.9.16 |
+| Odroid-N2 | 5.10.53 |
 | Odroid-XU4 | 5.10.53 |
 | Generic x86-64 | 5.10.53 |
