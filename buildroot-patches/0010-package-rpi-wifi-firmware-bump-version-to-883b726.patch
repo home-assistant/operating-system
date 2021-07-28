@@ -1,10 +1,10 @@
 From c8de13c1131adab0455eca939c4f168fd0ae30af Mon Sep 17 00:00:00 2001
-Message-Id: <c8de13c1131adab0455eca939c4f168fd0ae30af.1627482086.git.stefan@agner.ch>
-In-Reply-To: <09f9b55b419ef01ad24998bbacb1a49976b58bfa.1627482086.git.stefan@agner.ch>
-References: <09f9b55b419ef01ad24998bbacb1a49976b58bfa.1627482086.git.stefan@agner.ch>
+Message-Id: <c8de13c1131adab0455eca939c4f168fd0ae30af.1627492452.git.stefan@agner.ch>
+In-Reply-To: <09f9b55b419ef01ad24998bbacb1a49976b58bfa.1627492452.git.stefan@agner.ch>
+References: <09f9b55b419ef01ad24998bbacb1a49976b58bfa.1627492452.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Wed, 28 Jul 2021 15:52:18 +0200
-Subject: [PATCH 10/10] package/rpi-wifi-firmware: bump version to 883b726
+Subject: [PATCH 10/11] package/rpi-wifi-firmware: bump version to 883b726
 
 Signed-off-by: Stefan Agner <stefan@agner.ch>
 ---
