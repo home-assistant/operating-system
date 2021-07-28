@@ -53,6 +53,9 @@ LVM2_INSTALL_TARGET_OPTS += install_device-mapper
 else
 LVM2_INSTALL_STAGING_OPTS += install
 LVM2_INSTALL_TARGET_OPTS += install
+ifeq ($(BR2_INIT_SYSTEMD),y)
+LVM2_INSTALL_TARGET_OPTS += install_systemd_units install_systemd_generators
+endif
 endif
 
 ifeq ($(BR2_PACKAGE_LVM2_APP_LIBRARY),y)
@@ -65,10 +68,6 @@ ifeq ($(BR2_PACKAGE_LVM2_LVMETAD),y)
 LVM2_CONF_OPTS += --enable-lvmetad
 else
 LVM2_CONF_OPTS += --disable-lvmetad
-endif
-
-ifeq ($(BR2_INIT_SYSTEMD),y)
-LVM2_INSTALL_TARGET_OPTS += install_systemd_units install_systemd_generators
 endif
 
 ifeq ($(BR2_TOOLCHAIN_SUPPORTS_PIE),)
