@@ -43,6 +43,7 @@ jobs:
         board:
           - {"name": "ova", "output": "ova", "runner": "x86-64-runner"}
           - {"name": "generic_x86_64", "output": "generic-x86-64", "runner": "x86-64-runner"}
+          - {"name": "khadas_vim3", "output": "khadas-vim3", "runner": "aarch64-runner"}
           - {"name": "odroid_c2", "output": "odroid-c2", "runner": "aarch64-runner"}
           - {"name": "odroid_c4", "output": "odroid-c4", "runner": "aarch64-runner"}
           - {"name": "odroid_n2", "output": "odroid-n2", "runner": "aarch64-runner"}
