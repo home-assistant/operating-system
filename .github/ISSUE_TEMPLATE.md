@@ -19,6 +19,7 @@ Describe the Home Assistant image you are using and the hardware environment
 - [ ] ASUS Tinker [S]
 - [ ] Generic x86-64 (like Intel NUC)
 - [ ] OVA (Open Virtualization Appliance, on Intel NUC or any other hardware, please add the Hypervisor you are using)
+- [ ] Khadas VIM3
 
 **Home Assistant OS release:**
 - [ ] Fresh installation of release x.y
