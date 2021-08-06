@@ -22,7 +22,7 @@ The following boards/devices are supported:
   - Intel NUC6CAYH
   - Intel NUC10I3FNK2
   - Gigabyte GB-BPCE-3455
-  - Computers supporting x64-64 architecture and UEFI boot should generally work
+  - Computers supporting x86-64 architecture and UEFI boot should generally work
 - Asus
   - Tinker Board
 - Virtual appliance (x86_64/UEFI):

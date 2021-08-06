@@ -1,0 +1,53 @@
+From c7825747afd8bb975dc918f28e4afe8058a518f3 Mon Sep 17 00:00:00 2001
+Message-Id: <c7825747afd8bb975dc918f28e4afe8058a518f3.1627311993.git.stefan@agner.ch>
+From: Christian Hewitt <christianshewitt@gmail.com>
+Date: Mon, 11 Jan 2021 13:58:31 +0000
+Subject: [PATCH 1/9] arm64: dts: meson: add i2c3/rtc nodes and rtc aliases to
+ ODROID-N2 dtsi
+
+Enable the onboard pcf8563 rtc hardware on ODROID N2/N2+ boards via the
+common dtsi. Also add aliases to ensure vrtc does not claim /dev/rtc0.
+
+Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
+Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
+Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+Link: https://lore.kernel.org/r/20210111135831.2218-1-christianshewitt@gmail.com
+---
+ .../boot/dts/amlogic/meson-g12b-odroid-n2.dtsi     | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi
+index 39a09661c5f6..b78be3e6974d 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi
+@@ -13,6 +13,8 @@ / {
+ 	aliases {
+ 		serial0 = &uart_AO;
+ 		ethernet0 = &ethmac;
++		rtc0 = &rtc;
++		rtc1 = &vrtc;
+ 	};
+ 
+ 	dioo2133: audio-amplifier-0 {
+@@ -478,6 +480,18 @@ &ir {
+ 	linux,rc-map-name = "rc-odroid";
+ };
+ 
++&i2c3 {
++	status = "okay";
++	pinctrl-0 = <&i2c3_sda_a_pins>, <&i2c3_sck_a_pins>;
++	pinctrl-names = "default";
++
++	rtc: rtc@51 {
++		compatible = "nxp,pcf8563";
++		reg = <0x51>;
++		wakeup-source;
++	};
++};
++
+ &pwm_ab {
+ 	pinctrl-0 = <&pwm_a_e_pins>;
+ 	pinctrl-names = "default";
+-- 
+2.32.0
+
