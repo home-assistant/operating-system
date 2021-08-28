@@ -11,15 +11,16 @@
 #
 #############################################################
 
-RPI_RF_MOD_VERSION = 3b0311063973669d0b5310a3d3e4b6280ac4f438
+RPI_RF_MOD_VERSION = 7f5d50c8ac72e114a6b11a4ae0e92e316260fb0d
 RPI_RF_MOD_SITE = $(call github,jens-maus,RaspberryMatic,$(RPI_RF_MOD_VERSION))
 RPI_RF_MOD_LICENSE = Apache-2.0
 RPI_RF_MOD_DEPENDENCIES = host-dtc
-#RPI_RF_MOD_LICENSE_FILES = LICENSE
+RPI_RF_MOD_LICENSE_FILES = LICENSE
 
 ifeq ($(BR2_PACKAGE_RPI_RF_MOD_DTS_RPI),y)
   # RaspberryPi DTS file
   RPI_RF_MOD_DTS_FILE = rpi-rf-mod
+  RPI_RF_MOD_DTS_FILE_ALT = rpi-rf-mod-rpi1
 else ifeq ($(BR2_PACKAGE_RPI_RF_MOD_DTS_TINKER),y)
   # ASUS Tinkerboard DTS file
   RPI_RF_MOD_DTS_FILE = rpi-rf-mod-tinker
@@ -38,11 +39,17 @@ define RPI_RF_MOD_BUILD_CMDS
   if [[ -n "$(RPI_RF_MOD_DTS_FILE)" ]]; then \
     $(HOST_DIR)/bin/dtc -@ -I dts -O dtb -W no-unit_address_vs_reg -o $(@D)/buildroot-external/package/rpi-rf-mod/dts/rpi-rf-mod.dtbo $(@D)/buildroot-external/package/rpi-rf-mod/dts/$(RPI_RF_MOD_DTS_FILE).dts; \
   fi
+  if [[ -n "$(RPI_RF_MOD_DTS_FILE_ALT)" ]]; then \
+    $(HOST_DIR)/bin/dtc -@ -I dts -O dtb -W no-unit_address_vs_reg -o $(@D)/buildroot-external/package/rpi-rf-mod/dts/$(RPI_RF_MOD_DTS_FILE_ALT).dtbo $(@D)/buildroot-external/package/rpi-rf-mod/dts/$(RPI_RF_MOD_DTS_FILE_ALT).dts; \
+  fi
 endef
 
 define RPI_RF_MOD_INSTALL_TARGET_CMDS
   if [[ -n "$(RPI_RF_MOD_DTS_FILE)" ]]; then \
     $(INSTALL) -D -m 0644 $(@D)/buildroot-external/package/rpi-rf-mod/dts/rpi-rf-mod.dtbo $(BINARIES_DIR)/; \
+  fi
+  if [[ -n "$(RPI_RF_MOD_DTS_FILE_ALT)" ]]; then \
+    $(INSTALL) -D -m 0644 $(@D)/buildroot-external/package/rpi-rf-mod/dts/$(RPI_RF_MOD_DTS_FILE_ALT).dtbo $(BINARIES_DIR)/; \
   fi
 endef
 

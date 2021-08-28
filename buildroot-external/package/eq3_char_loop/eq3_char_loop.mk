@@ -8,7 +8,7 @@
 #
 #############################################################
 
-EQ3_CHAR_LOOP_VERSION = 8cb51174c2bc8c4b33df50a96b82c90e8092f79c
+EQ3_CHAR_LOOP_VERSION = e60183fc5b8375d9eea185c716f716c07657fa00
 EQ3_CHAR_LOOP_SITE = $(call github,eq-3,occu,$(EQ3_CHAR_LOOP_VERSION))
 EQ3_CHAR_LOOP_LICENSE = GPL2
 #EQ3_CHAR_LOOP_LICENSE_FILES = LICENSE
