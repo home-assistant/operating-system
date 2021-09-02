@@ -174,13 +174,13 @@ List of Examples
 
 ---------------------------------------------------------------------
 
-Buildroot 2021.02.3 manual generated on 2021-06-12 15:00:43 UTC from
-git revision 5293208a57
+Buildroot 2021.02.4 manual generated on 2021-08-10 20:33:55 UTC from
+git revision 004a792dcf
 
 The Buildroot manual is written by the Buildroot developers. It is
 licensed under the GNU General Public License, version 2. Refer to
 the COPYING [http://git.buildroot.org/buildroot/tree/COPYING?id=
-5293208a57ce78f9fc958704d7df52f28532cde6] file in the Buildroot
+004a792dcf10e6c474070c9571f7504411e786cc] file in the Buildroot
 sources for the full text of this license.
 
 Copyright © 2004-2020 The Buildroot developers
@@ -479,12 +479,9 @@ Mailing List
     page [http://lists.buildroot.org/mailman/listinfo/buildroot].
 
     Mails that are sent to the mailing list are also available in the
-    mailing list archives [http://lists.buildroot.org/pipermail/
-    buildroot] and via Gmane [http://gmane.org], at
-    gmane.comp.lib.uclibc.buildroot [http://dir.gmane.org/
-    gmane.comp.lib.uclibc.buildroot]. Please search the mailing list
-    archives before asking questions, since there is a good chance
-    someone else has asked the same question before.
+    mailing list archives, available through Mailman [http://
+    lists.buildroot.org/pipermail/buildroot] or at lore.kernel.org
+    [https://lore.kernel.org/buildroot/].
 
 IRC
 
@@ -494,7 +491,7 @@ IRC
     topics.
 
     When asking for help on IRC, share relevant logs or pieces of
-    code using a code sharing website, such as http://code.bulix.org.
+    code using a code sharing website, such as https://paste.ack.tf/.
 
     Note that for certain questions, posting to the mailing list may
     be better as it will reach more people, both developers and

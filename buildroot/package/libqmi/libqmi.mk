@@ -16,6 +16,13 @@ LIBQMI_DEPENDENCIES = libglib2
 
 LIBQMI_CONF_OPTS = --disable-Werror
 
+ifeq ($(BR2_PACKAGE_GOBJECT_INTROSPECTION),y)
+LIBQMI_DEPENDENCIES += gobject-introspection
+LIBQMI_CONF_OPTS += --enable-introspection
+else
+LIBQMI_CONF_OPTS += --disable-introspection
+endif
+
 # if libgudev available, request udev support for a better
 # qmi-firmware-update experience
 ifeq ($(BR2_PACKAGE_LIBGUDEV),y)

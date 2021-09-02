@@ -47,7 +47,7 @@ diff --git a/Makefile.pre.in b/Makefile.pre.in
 index 0c809f3d8a..7c3dde8dd4 100644
 --- a/Makefile.pre.in
 +++ b/Makefile.pre.in
-@@ -213,6 +213,8 @@ FILEMODE=	644
+@@ -216,6 +216,8 @@ FILEMODE=	644
  # configure script arguments
  CONFIG_ARGS=	@CONFIG_ARGS@
  
@@ -56,7 +56,7 @@ index 0c809f3d8a..7c3dde8dd4 100644
  
  # Subdirectories with code
  SRCDIRS= 	@SRCDIRS@
-@@ -629,6 +631,7 @@ sharedmods: $(BUILDPYTHON) pybuilddir.txt Modules/_math.o
+@@ -632,6 +634,7 @@ sharedmods: $(BUILDPYTHON) pybuilddir.txt Modules/_math.o
  	esac; \
  	echo "$(RUNSHARED) CC='$(CC)' LDSHARED='$(BLDSHARED)' OPT='$(OPT)' \
  		_TCLTK_INCLUDES='$(TCLTK_INCLUDES)' _TCLTK_LIBS='$(TCLTK_LIBS)' \
@@ -64,7 +64,7 @@ index 0c809f3d8a..7c3dde8dd4 100644
  		$(PYTHON_FOR_BUILD) $(srcdir)/setup.py $$quiet build"; \
  	$(RUNSHARED) CC='$(CC)' LDSHARED='$(BLDSHARED)' OPT='$(OPT)' \
  		_TCLTK_INCLUDES='$(TCLTK_INCLUDES)' _TCLTK_LIBS='$(TCLTK_LIBS)' \
-@@ -1674,7 +1677,8 @@ libainstall:	@DEF_MAKE_RULE@ python-config
+@@ -1696,7 +1699,8 @@ libainstall:	@DEF_MAKE_RULE@ python-config
  # Install the dynamically loadable modules
  # This goes into $(exec_prefix)
  sharedinstall: sharedmods
@@ -78,7 +78,7 @@ diff --git a/configure.ac b/configure.ac
 index c2445edc88..73d66167de 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -3052,6 +3052,8 @@ LIBS="$withval $LIBS"
+@@ -3081,6 +3081,8 @@ LIBS="$withval $LIBS"
  
  PKG_PROG_PKG_CONFIG
  
@@ -91,7 +91,7 @@ diff --git a/setup.py b/setup.py
 index 770866bca7..b6c829b3a5 100644
 --- a/setup.py
 +++ b/setup.py
-@@ -43,7 +43,10 @@ from distutils.spawn import find_executable
+@@ -44,7 +44,10 @@ from distutils.spawn import find_executable
  TEST_EXTENSIONS = True
  
  # This global variable is used to hold the list of modules to be disabled.

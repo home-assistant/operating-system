@@ -1,0 +1,41 @@
+From 4a557f242a76c6a2a3134acf1d3279818f8ab371 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Fri, 23 Jul 2021 09:50:36 +0200
+Subject: [PATCH] configure: fix check_link_silent test
+
+Replace -o /dev/null by -o "$tmpc".out when testing with
+check_link_silent otherwise test will fail with some bugged binutils
+(https://sourceware.org/bugzilla/show_bug.cgi?id=19526) since version
+4.13 and
+https://github.com/rofl0r/proxychains-ng/commit/35a674bdbc294730429a1007c9e7ce01e65b49b5:
+
+checking what's the option to use in linker to set library name ...
+cannot find an option to set library name
+package/pkg-generic.mk:249: recipe for target '/home/buildroot/autobuild/instance-2/output-1/build/proxychains-ng-4.14/.stamp_configured' failed
+
+Fixes:
+ - http://autobuild.buildroot.org/results/9320d9b2c69882e23bbe7b30057eb8bee0c9d2e5
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: https://github.com/rofl0r/proxychains-ng/pull/387]
+---
+ configure | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/configure b/configure
+index 8b21b97..cfe19e7 100755
+--- a/configure
++++ b/configure
+@@ -49,7 +49,8 @@ check_compile_run() {
+ 
+ check_link_silent() {
+ 	printf "$2" > "$tmpc"
+-	$CC $OUR_CPPFLAGS $CPPFLAGS $1 $CFLAGS "$tmpc" -o /dev/null >/dev/null 2>&1
++	$CC $OUR_CPPFLAGS $CPPFLAGS $1 $CFLAGS "$tmpc" -o "$tmpc".out  >/dev/null 2>&1
++	rm -f "$tmpc".out
+ }
+ 
+ check_link() {
+-- 
+2.30.2
+

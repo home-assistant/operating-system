@@ -1,0 +1,29 @@
+From 331966be70c371b268a4fcce9e97280cd869f137 Mon Sep 17 00:00:00 2001
+From: Jakub Kulik <kulikjak@gmail.com>
+Date: Mon, 15 Mar 2021 08:49:28 +0100
+Subject: [PATCH] Fix dictionary iteration error in _ExecutorManagerThread
+
+[Thomas: Taken from upstream pull request
+https://github.com/python/cpython/pull/24868, which is aimed at fixing
+https://bugs.python.org/issue43498]
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ Lib/concurrent/futures/process.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Lib/concurrent/futures/process.py b/Lib/concurrent/futures/process.py
+index 90bc98bf2ec..e3b36dff572 100644
+--- a/Lib/concurrent/futures/process.py
++++ b/Lib/concurrent/futures/process.py
+@@ -373,7 +373,7 @@ class _ExecutorManagerThread(threading.Thread):
+         assert not self.thread_wakeup._closed
+         wakeup_reader = self.thread_wakeup._reader
+         readers = [result_reader, wakeup_reader]
+-        worker_sentinels = [p.sentinel for p in self.processes.values()]
++        worker_sentinels = [p.sentinel for p in self.processes.copy().values()]
+         ready = mp.connection.wait(readers + worker_sentinels)
+ 
+         cause = None
+-- 
+2.31.1
+

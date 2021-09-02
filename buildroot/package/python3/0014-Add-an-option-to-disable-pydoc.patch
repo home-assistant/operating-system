@@ -20,7 +20,7 @@ diff --git a/Makefile.pre.in b/Makefile.pre.in
 index 204f293d53..63e3df0470 100644
 --- a/Makefile.pre.in
 +++ b/Makefile.pre.in
-@@ -1357,7 +1357,9 @@ bininstall: altbininstall
+@@ -1374,7 +1374,9 @@ bininstall: altbininstall
  	-rm -f $(DESTDIR)$(BINDIR)/idle3
  	(cd $(DESTDIR)$(BINDIR); $(LN) -s idle$(VERSION) idle3)
  	-rm -f $(DESTDIR)$(BINDIR)/pydoc3
@@ -30,7 +30,7 @@ index 204f293d53..63e3df0470 100644
  	-rm -f $(DESTDIR)$(BINDIR)/2to3
  	(cd $(DESTDIR)$(BINDIR); $(LN) -s 2to3-$(VERSION) 2to3)
  	if test "x$(LIPO_32BIT_FLAGS)" != "x" ; then \
-@@ -1403,7 +1405,7 @@ LIBSUBDIRS=	tkinter site-packages \
+@@ -1424,7 +1426,7 @@ LIBSUBDIRS=	tkinter site-packages \
  		multiprocessing multiprocessing/dummy \
  		unittest \
  		venv venv/scripts venv/scripts/common venv/scripts/posix \
@@ -39,7 +39,7 @@ index 204f293d53..63e3df0470 100644
  		zoneinfo
  
  TESTSUBDIRS=	tkinter/test tkinter/test/test_tkinter \
-@@ -1486,6 +1488,10 @@ ifeq (@TEST_MODULES@,yes)
+@@ -1508,6 +1510,10 @@ ifeq (@TEST_MODULES@,yes)
  LIBSUBDIRS += $(TESTSUBDIRS)
  endif
  
@@ -54,7 +54,7 @@ diff --git a/configure.ac b/configure.ac
 index 92e28d02ee..174ed85a7c 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -3329,6 +3329,12 @@ if test "$posix_threads" = "yes"; then
+@@ -3358,6 +3358,12 @@ if test "$posix_threads" = "yes"; then
        AC_CHECK_FUNCS(pthread_getcpuclockid)
  fi
  
@@ -71,7 +71,7 @@ diff --git a/setup.py b/setup.py
 index 926c16f58f..1fc5fac90c 100644
 --- a/setup.py
 +++ b/setup.py
-@@ -2586,6 +2586,12 @@ def main():
+@@ -2565,6 +2565,12 @@ def main():
      # turn off warnings when deprecated modules are imported
      import warnings
      warnings.filterwarnings("ignore",category=DeprecationWarning)
@@ -84,7 +84,7 @@ index 926c16f58f..1fc5fac90c 100644
      setup(# PyPI Metadata (PEP 301)
            name = "Python",
            version = sys.version.split()[0],
-@@ -2610,8 +2616,7 @@ def main():
+@@ -2589,8 +2595,7 @@ def main():
            # If you change the scripts installed here, you also need to
            # check the PyBuildScripts command above, and change the links
            # created by the bininstall target in Makefile.pre.in

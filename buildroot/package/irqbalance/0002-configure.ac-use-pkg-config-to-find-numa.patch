@@ -1,0 +1,38 @@
+From 274cb8ea470a10ce46b783e77784b0eb08cf20d8 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sun, 1 Aug 2021 23:26:01 +0200
+Subject: [PATCH] configure.ac: use pkg-config to find numa
+
+Use pkg-config to find numa and fallback to current mechanism.
+Thanks to pkg-config, numa dependencies such as -latomic will be
+retrieved.
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: https://github.com/Irqbalance/irqbalance/pull/188]
+---
+ configure.ac | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/configure.ac b/configure.ac
+index c45b9ce..50c62ba 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -23,7 +23,14 @@ AC_CHECK_HEADERS([numa.h])
+ 
+ AC_CHECK_FUNCS(getopt_long)
+ 
+-AC_CHECK_LIB(numa, numa_available)
++PKG_CHECK_MODULES([NUMA], [numa], [has_numa=yes], [AC_CHECK_LIB(numa, numa_available)])
++AS_IF([test "x$has_numa" = "xyes"], [
++  AC_SUBST([NUMA_CFLAGS])
++  AC_SUBST([NUMA_LIBS])
++  LIBS="$LIBS $NUMA_LIBS"
++  AC_SUBST([LIBS])
++])
++
+ AC_CHECK_LIB(m, floor)
+ 
+ PKG_CHECK_MODULES([GLIB2], [glib-2.0], [], [AC_MSG_ERROR([glib-2.0 is required])])
+-- 
+2.30.2
+

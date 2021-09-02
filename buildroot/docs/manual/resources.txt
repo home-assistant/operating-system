@@ -21,11 +21,9 @@ http://lists.buildroot.org/mailman/listinfo/buildroot[mailing list info
 page].
 +
 Mails that are sent to the mailing list are also available in the
-http://lists.buildroot.org/pipermail/buildroot[mailing list archives] and
-via http://gmane.org[Gmane], at
-http://dir.gmane.org/gmane.comp.lib.uclibc.buildroot[+gmane.comp.lib.uclibc.buildroot+].
-Please search the mailing list archives before asking questions, since
-there is a good chance someone else has asked the same question before.
+mailing list archives, available through
+http://lists.buildroot.org/pipermail/buildroot[Mailman] or at
+https://lore.kernel.org/buildroot/[lore.kernel.org].
 
 IRC::
 +
@@ -34,7 +32,7 @@ hosted on https://www.oftc.net/WebChat/[OFTC]. It is a useful place to
 ask quick questions or discuss on certain topics.
 +
 When asking for help on IRC, share relevant logs or pieces of code
-using a code sharing website, such as http://code.bulix.org.
+using a code sharing website, such as https://paste.ack.tf/.
 +
 Note that for certain questions, posting to the mailing list may be
 better as it will reach more people, both developers and users.

@@ -23,6 +23,10 @@ GESFTPSERVER_DEPENDENCIES += \
 	$(if $(BR2_ENABLE_LOCALE),,libiconv) \
 	$(if $(BR2_PACKAGE_OPENSSH),openssh)
 
+# Python on the host is only used for tests, which we don't use in
+# Buildroot
+GESFTPSERVER_CONF_ENV += rjk_cv_python24=false
+
 # openssh/dropbear looks here
 define GESFTPSERVER_ADD_SYMLINK
 	ln -sf gesftpserver $(TARGET_DIR)/usr/libexec/sftp-server

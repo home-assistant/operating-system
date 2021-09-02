@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-LIBCURL_VERSION = 7.77.0
+LIBCURL_VERSION = 7.78.0
 LIBCURL_SOURCE = curl-$(LIBCURL_VERSION).tar.xz
-LIBCURL_SITE = https://curl.haxx.se/download
+LIBCURL_SITE = https://curl.se/download
 LIBCURL_DEPENDENCIES = host-pkgconf \
 	$(if $(BR2_PACKAGE_ZLIB),zlib) \
 	$(if $(BR2_PACKAGE_RTMPDUMP),rtmpdump)
@@ -19,7 +19,7 @@ LIBCURL_INSTALL_STAGING = YES
 # We disable NTLM support because it uses fork(), which doesn't work
 # on non-MMU platforms. Moreover, this authentication method is
 # probably almost never used. See
-# http://curl.haxx.se/docs/manpage.html#--ntlm.
+# http://curl.se/docs/manpage.html#--ntlm.
 # Likewise, there is no compiler on the target, so libcurl-option (to
 # generate C code) isn't very useful
 LIBCURL_CONF_OPTS = --disable-manual --disable-ntlm-wb \

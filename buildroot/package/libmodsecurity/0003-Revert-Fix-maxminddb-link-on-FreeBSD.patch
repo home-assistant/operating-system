@@ -1,0 +1,28 @@
+From 6737dc133cb4811a000c02b4e0a92b72f0b220ee Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Fri, 16 Jul 2021 19:12:51 +0200
+Subject: [PATCH] Revert "Fix maxminddb link on FreeBSD"
+
+This reverts commit 785958f9b5089b918c7d054cbcc2fe4a3c7b3788.
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ build/libmaxmind.m4 | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/build/libmaxmind.m4 b/build/libmaxmind.m4
+index 656fc250..02820b5a 100644
+--- a/build/libmaxmind.m4
++++ b/build/libmaxmind.m4
+@@ -10,7 +10,7 @@ dnl  MAXMIND_VERSION
+ AC_DEFUN([PROG_MAXMIND], [
+ 
+ # Possible names for the maxmind library/package (pkg-config)
+-MAXMIND_POSSIBLE_LIB_NAMES="maxminddb maxmind"
++MAXMIND_POSSIBLE_LIB_NAMES="libmaxminddb maxminddb maxmind"
+ 
+ # Possible extensions for the library
+ MAXMIND_POSSIBLE_EXTENSIONS="so la sl dll dylib"
+-- 
+2.30.2
+

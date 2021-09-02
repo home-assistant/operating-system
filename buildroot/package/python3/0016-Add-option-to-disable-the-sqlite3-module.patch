@@ -16,7 +16,7 @@ diff --git a/Makefile.pre.in b/Makefile.pre.in
 index 8b7de12999..d826d8ac4b 100644
 --- a/Makefile.pre.in
 +++ b/Makefile.pre.in
-@@ -1396,7 +1396,6 @@ LIBSUBDIRS=	tkinter site-packages \
+@@ -1417,7 +1417,6 @@ LIBSUBDIRS=	tkinter site-packages \
  		email email/mime \
  		ensurepip ensurepip/_bundled \
  		html json http dbm xmlrpc \
@@ -24,7 +24,7 @@ index 8b7de12999..d826d8ac4b 100644
  		logging csv wsgiref urllib \
  		ctypes ctypes/macholib \
  		idlelib idlelib/Icons \
-@@ -1473,7 +1472,6 @@ TESTSUBDIRS=	tkinter/test tkinter/test/test_tkinter \
+@@ -1495,7 +1494,6 @@ TESTSUBDIRS=	tkinter/test tkinter/test/test_tkinter \
  		test/test_asyncio \
  		test/test_email test/test_email/data \
  		test/test_json \
@@ -32,7 +32,7 @@ index 8b7de12999..d826d8ac4b 100644
  		ctypes/test \
  		idlelib/idle_test \
  		distutils/tests \
-@@ -1490,6 +1488,11 @@ TESTSUBDIRS += lib2to3/tests			\
+@@ -1512,6 +1510,11 @@ TESTSUBDIRS += lib2to3/tests			\
  	lib2to3/tests/data/fixers/myfixes
  endif
  
@@ -48,7 +48,7 @@ diff --git a/configure.ac b/configure.ac
 index f1f5e9a7b0..8b5c65974c 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -3329,6 +3329,15 @@ if test "$posix_threads" = "yes"; then
+@@ -3358,6 +3358,15 @@ if test "$posix_threads" = "yes"; then
        AC_CHECK_FUNCS(pthread_getcpuclockid)
  fi
  

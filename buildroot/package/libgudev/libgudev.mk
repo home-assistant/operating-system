@@ -13,4 +13,11 @@ LIBGUDEV_LICENSE = LGPL-2.1+
 LIBGUDEV_LICENSE_FILES = COPYING
 LIBGUDEV_CONF_OPTS = --disable-umockdev
 
+ifeq ($(BR2_PACKAGE_GOBJECT_INTROSPECTION),y)
+LIBGUDEV_CONF_OPTS += --enable-introspection
+LIBGUDEV_DEPENDENCIES += gobject-introspection
+else
+LIBGUDEV_CONF_OPTS += --disable-introspection
+endif
+
 $(eval $(autotools-package))

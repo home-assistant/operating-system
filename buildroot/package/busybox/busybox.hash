@@ -1,5 +1,5 @@
-# From https://busybox.net/downloads/busybox-1.33.0.tar.bz2.sha256
-sha256  d568681c91a85edc6710770cebc1e80e042ad74d305b5c2e6d57a5f3de3b8fbd  busybox-1.33.0.tar.bz2
+# From https://busybox.net/downloads/busybox-1.33.1.tar.bz2.sha256
+sha256  12cec6bd2b16d8a9446dd16130f2b92982f1819f6e1c5f5887b6db03f5660d28  busybox-1.33.1.tar.bz2
 # Locally computed
 sha256  bbfc9843646d483c334664f651c208b9839626891d8f17604db2146962f43548  LICENSE
 sha256  b5a136ed67798e51fe2e0ca0b2a21cb01b904ff0c9f7d563a6292e276607e58f  archival/libarchive/bz/LICENSE

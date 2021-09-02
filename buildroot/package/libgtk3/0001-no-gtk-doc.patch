@@ -14,7 +14,7 @@ Signed-off-by: Hadrien Boutteville <hadrien.boutteville@gmail.com>
 
 --- a/gtk-doc.make
 +++ b/gtk-doc.make
-@@ -299,7 +299,7 @@
+@@ -300,7 +300,7 @@
  #
  # Require gtk-doc when making dist
  #

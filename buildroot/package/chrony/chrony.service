@@ -4,6 +4,10 @@ After=syslog.target network.target
 Conflicts=systemd-timesyncd.service
 
 [Service]
+# Turn off DNSSEC validation for hostname look-ups, since those need the
+# correct time to work, but we likely won't acquire that without NTP. Let's
+# break this chicken-and-egg cycle here.
+Environment=SYSTEMD_NSS_RESOLVE_VALIDATE=0
 ExecStart=/usr/sbin/chronyd -n
 Restart=always
 

@@ -1,0 +1,86 @@
+From dc92574c10f3e2516ec6445b88c5d584f40df4e5 Mon Sep 17 00:00:00 2001
+From: Jay Berkenbilt <ejb@ql.org>
+Date: Mon, 4 Jan 2021 11:55:28 -0500
+Subject: [PATCH] Fix some pipelines to be safe if downstream write fails (fuzz
+ issue 28262)
+
+[Retrieved (and updated to remove updates on ChangeLog and fuzz) from:
+https://github.com/qpdf/qpdf/commit/dc92574c10f3e2516ec6445b88c5d584f40df4e5]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ ChangeLog                     |   6 ++++++
+ fuzz/qpdf_extra/28262.fuzz    | Bin 0 -> 40395 bytes
+ libqpdf/Pl_AES_PDF.cc         |   2 +-
+ libqpdf/Pl_ASCII85Decoder.cc  |   7 +++++--
+ libqpdf/Pl_ASCIIHexDecoder.cc |   6 ++++--
+ libqpdf/Pl_Count.cc           |   2 +-
+ 6 files changed, 17 insertions(+), 6 deletions(-)
+ create mode 100644 fuzz/qpdf_extra/28262.fuzz
+
+diff --git a/libqpdf/Pl_AES_PDF.cc b/libqpdf/Pl_AES_PDF.cc
+index 18cf3a4d..2865f804 100644
+--- a/libqpdf/Pl_AES_PDF.cc
++++ b/libqpdf/Pl_AES_PDF.cc
+@@ -238,6 +238,6 @@ Pl_AES_PDF::flush(bool strip_padding)
+ 	    }
+ 	}
+     }
+-    getNext()->write(this->outbuf, bytes);
+     this->offset = 0;
++    getNext()->write(this->outbuf, bytes);
+ }
+diff --git a/libqpdf/Pl_ASCII85Decoder.cc b/libqpdf/Pl_ASCII85Decoder.cc
+index b8df3e87..9d9f6704 100644
+--- a/libqpdf/Pl_ASCII85Decoder.cc
++++ b/libqpdf/Pl_ASCII85Decoder.cc
+@@ -119,10 +119,13 @@ Pl_ASCII85Decoder::flush()
+ 
+     QTC::TC("libtests", "Pl_ASCII85Decoder partial flush",
+ 	    (this->pos == 5) ? 0 : 1);
+-    getNext()->write(outbuf, this->pos - 1);
+-
++    // Reset before calling getNext()->write in case that throws an
++    // exception.
++    auto t = this->pos - 1;
+     this->pos = 0;
+     memset(this->inbuf, 117, 5);
++
++    getNext()->write(outbuf, t);
+ }
+ 
+ void
+diff --git a/libqpdf/Pl_ASCIIHexDecoder.cc b/libqpdf/Pl_ASCIIHexDecoder.cc
+index f20a9769..7845268e 100644
+--- a/libqpdf/Pl_ASCIIHexDecoder.cc
++++ b/libqpdf/Pl_ASCIIHexDecoder.cc
+@@ -97,12 +97,14 @@ Pl_ASCIIHexDecoder::flush()
+ 
+     QTC::TC("libtests", "Pl_ASCIIHexDecoder partial flush",
+ 	    (this->pos == 2) ? 0 : 1);
+-    getNext()->write(&ch, 1);
+-
++    // Reset before calling getNext()->write in case that throws an
++    // exception.
+     this->pos = 0;
+     this->inbuf[0] = '0';
+     this->inbuf[1] = '0';
+     this->inbuf[2] = '\0';
++
++    getNext()->write(&ch, 1);
+ }
+ 
+ void
+diff --git a/libqpdf/Pl_Count.cc b/libqpdf/Pl_Count.cc
+index 8077092a..c35619b8 100644
+--- a/libqpdf/Pl_Count.cc
++++ b/libqpdf/Pl_Count.cc
+@@ -27,8 +27,8 @@ Pl_Count::write(unsigned char* buf, size_t len)
+     if (len)
+     {
+ 	this->m->count += QIntC::to_offset(len);
+-	getNext()->write(buf, len);
+ 	this->m->last_char = buf[len - 1];
++	getNext()->write(buf, len);
+     }
+ }
+ 

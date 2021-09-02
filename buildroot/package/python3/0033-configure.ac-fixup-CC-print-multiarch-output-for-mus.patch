@@ -32,7 +32,7 @@ diff --git a/configure.ac b/configure.ac
 index 615c16aced..241298e6cf 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -718,7 +718,9 @@ then
+@@ -727,7 +727,9 @@ then
  fi
  
  

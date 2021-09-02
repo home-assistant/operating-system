@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-SPICE_VERSION = 0.14.3
+SPICE_VERSION = 0.15.0
 SPICE_SOURCE = spice-$(SPICE_VERSION).tar.bz2
 SPICE_SITE = http://www.spice-space.org/download/releases/spice-server
 SPICE_LICENSE = LGPL-2.1+
@@ -43,11 +43,6 @@ SPICE_CONF_OPTS += --enable-opus
 SPICE_DEPENDENCIES += opus
 else
 SPICE_CONF_OPTS += --disable-opus
-endif
-
-# no enable/disable, detected using pkg-config
-ifeq ($(BR2_PACKAGE_OPUS),y)
-SPICE_DEPENDENCIES += opus
 endif
 
 # We need to tweak spice.pc because it /forgets/ (for static linking) that

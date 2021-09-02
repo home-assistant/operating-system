@@ -16,7 +16,7 @@ diff --git a/Makefile.pre.in b/Makefile.pre.in
 index d826d8ac4b..dc84384680 100644
 --- a/Makefile.pre.in
 +++ b/Makefile.pre.in
-@@ -1390,7 +1390,7 @@ maninstall:	altmaninstall
+@@ -1411,7 +1411,7 @@ maninstall:	altmaninstall
  # Install the library
  XMLLIBSUBDIRS=  xml xml/dom xml/etree xml/parsers xml/sax
  
@@ -25,7 +25,7 @@ index d826d8ac4b..dc84384680 100644
  		asyncio \
  		collections concurrent concurrent/futures encodings \
  		email email/mime \
-@@ -1408,8 +1408,7 @@ LIBSUBDIRS=	tkinter site-packages \
+@@ -1429,8 +1429,7 @@ LIBSUBDIRS=	tkinter site-packages \
  		curses \
  		zoneinfo
  
@@ -35,7 +35,7 @@ index d826d8ac4b..dc84384680 100644
  		test/audiodata \
  		test/capath test/data \
  		test/cjkencodings test/decimaltestdata \
-@@ -1480,6 +1479,12 @@ TESTSUBDIRS=	tkinter/test tkinter/test/test_tkinter \
+@@ -1502,6 +1501,12 @@ TESTSUBDIRS=	tkinter/test tkinter/test/test_tkinter \
  		test/test_tools test/test_warnings test/test_warnings/data \
  		unittest/test unittest/test/testmock
  
@@ -52,7 +52,7 @@ diff --git a/configure.ac b/configure.ac
 index 8b5c65974c..4c72dae960 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -3338,6 +3338,15 @@ if test "$SQLITE3" = "no" ; then
+@@ -3367,6 +3367,15 @@ if test "$SQLITE3" = "no" ; then
     DISABLED_EXTENSIONS="${DISABLED_EXTENSIONS} _sqlite3"
  fi
  

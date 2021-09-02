@@ -23,7 +23,7 @@ diff --git a/setup.py b/setup.py
 index 3d0c74bb7f..c7be85f352 100644
 --- a/setup.py
 +++ b/setup.py
-@@ -1779,7 +1779,8 @@ class PyBuildExt(build_ext):
+@@ -1764,7 +1764,8 @@ class PyBuildExt(build_ext):
  
      def detect_uuid(self):
          # Build the _uuid module if possible

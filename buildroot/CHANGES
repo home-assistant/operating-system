@@ -1,3 +1,54 @@
+2021.02.4, released August 10th, 2021
+
+	Important / security related fixes.
+
+	Toolchain: Disable PIC/PIE for Microblaze (like for NIOS II)
+	as it is not currently working.
+
+	binutils: fix linker assert failure on OpenRisc, or1k build
+	issue with gcc < 5
+
+	gdb: Enable on NIOS II
+
+	utils/scanpypi: Various improvements
+
+	Defconfigs: stm32f469_disco: Fix kernel boot issue, Microchip
+	sam9x60ek mmc_dev: Add missing toolchain/system options
+
+	Updated/fixed packages: apache, arm-trusted-firmware, audit,
+	avahi, bind, binutils, bird, bluez5_utils, boinc, busybox,
+	chrony, clamav, cryptsetup, cwiid, dnsmasq, docker-cli,
+	docker-engine, dovecot, dovecot-pigeonhole, e2fsprogs, exiv2,
+	fail2ban, fb-test-app, feh, fetchmail, flac, fluxbox, gawk,
+	gcc, gcr, gdb, gdk-pixbuf, gesftpserver, glibc, go, gptfdisk,
+	granite, grub2, gqrx, guile, hdparm, heirloom-mailx,
+	ibrcommon, ibrdtn, ibrdtn-tools, ibrdtnd, intel-microcode,
+	iodine, irqbalance, keepalived, libass, libconfig, libcurl,
+	libfreeimage, libfuse3, libgcrypt, libgtk3, libgudev, libhtp,
+	libjson, libkrb5, libloki, libmodsecurity, libndp,
+	libnetfilter-log, libnfnetlink, libnice, libodb, libodb-boost,
+	libodb-mysql, libodb-pgsql, libpcap, libqmi, libressl,
+	librsvg, libtasn1, libtirpc, libuci, libxmlrpc,
+	linux-firmware, linuxptp, lrzsz, ltp-testsuite, lvm2, mariadb,
+	mbedtls, monit, mono, mosquitto, mpd, mpg123, mpv, nbd, neard,
+	netsnmp, nettle, nginx-modsecurity, nmap, nodejs, ntp,
+	openntpd, openpgm, openswan, pango, pcre2,
+	perl-crypt-openssl-rsa, php, pixman, polkit, postgresql,
+	proxychains-ng, putty, python, python-django,
+	python-dataproperty, python-pysftp, python-urllib3, python3,
+	qpdf, redis, ripgrep, ruby, samba4, spice, slirp, suricata,
+	sysdig, tcpdump, tftpd, thrift, tor, tpm2-tools, trinity,
+	uboot, uboot-tools, uclibc, util-linux, vlc, wireless-regdb,
+	wireshark, wolfssl, xapp_fonttosfnt, xlib_libX11,
+	xlib_libxshmfence, xserver_xorg-server
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#13586: grub failure with BR2_OPTIMIZE_3
+	#13661: host-python2 build fails on aarch64
+	#13836: package build failure when target install set to no..
+	#13846: BR2_PACKAGE_LVM2_STANDARD_INSTALL should be default to..
+
 2021.02.3, released June 12th, 2021
 
 	Important / security related fixes.
