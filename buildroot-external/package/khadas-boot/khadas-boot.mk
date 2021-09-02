@@ -11,7 +11,6 @@ KHADAS_BOOT_LICENSE_FILES = Licenses/gpl-2.0.txt
 KHADAS_BOOT_INSTALL_IMAGES = YES
 KHADAS_BOOT_DEPENDENCIES = uboot
 
-
 ifeq ($(BR2_PACKAGE_KHADAS_BOOT_VIM3),y)
 KHADAS_BOOT_VERSION = 251220
 
@@ -39,7 +38,6 @@ define KHADAS_BOOT_BUILD_CMDS
 	cp $(KHADAS_BOOT_FIP_DIR)/piei.fw $(@D)/fip/
 	cp $(KHADAS_BOOT_FIP_DIR)/aml_ddr.fw $(@D)/fip/
 	cp $(BINARIES_DIR)/u-boot.bin $(@D)/fip/bl33.bin
-
 
 	cd $(@D); $(KHADAS_BOOT_FIP_DIR)/blx_fix.sh \
 		fip/bl30.bin \

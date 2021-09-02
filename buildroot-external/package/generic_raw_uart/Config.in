@@ -1,7 +1,7 @@
 config BR2_PACKAGE_GENERIC_RAW_UART
-  bool "Support for Generic RAW UART kernel module"
-  help
-    Adds support for generic-raw-uart kernel module
+	bool "Support for Generic RAW UART kernel module"
+	help
+	  Adds support for generic-raw-uart kernel module
 
-    Alexander Reinert <alex@areinert.de>
-    https://github.com/alexreinert/piVCCU/tree/master/kernel
+	  Alexander Reinert <alex@areinert.de>
+	  https://github.com/alexreinert/piVCCU/tree/master/kernel

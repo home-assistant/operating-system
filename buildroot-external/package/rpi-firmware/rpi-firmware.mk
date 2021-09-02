@@ -1,3 +1,9 @@
+################################################################################
+#
+# rpi-firmware
+#
+################################################################################
+
 ifeq ($(BR2_PACKAGE_RPI_FIRMWARE_VARIANT_PI4),y)
 RPI_FIRMWARE_BOOT_FILES = \
 	start4.elf \
@@ -24,4 +30,3 @@ define RPI_FIRMWARE_INSTALL_IMAGES_CMDS
 	$(RPI_FIRMWARE_INSTALL_DTB)
 	$(RPI_FIRMWARE_INSTALL_DTB_OVERLAYS)
 endef
-
