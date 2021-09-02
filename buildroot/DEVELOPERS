@@ -122,10 +122,7 @@ F:	package/python-docopt/
 N:	Anders Darander <anders@chargestorm.se>
 F:	package/ktap/
 
-N:	André Hentschel <nerv@dawncrow.de>
-F:	board/freescale/imx8qxpmek/
-F:	configs/freescale_imx8qxpmek_defconfig
-F:	package/freescale-imx/imx-sc-firmware/
+N:	André Zwing <nerv@dawncrow.de>
 F:	package/libkrb5/
 F:	package/openal/
 F:	package/p7zip/
@@ -179,6 +176,9 @@ F:	package/sam-ba/
 F:	package/sshguard/
 F:	package/sunwait/
 F:	package/sysdig/
+
+N:	Andy Shevchenko <andy.shevchenko@gmail.com>
+F:	package/fb-test-app/
 
 N:	Anisse Astier <anisse@astier.eu>
 F:	package/go/
@@ -519,7 +519,7 @@ F:	package/rtl8821au/
 F:	package/runc/
 F:	package/tini/
 
-N:	Christophe Priouzeau <christophe.priouzeau@st.com>
+N:	Christophe Priouzeau <christophe.priouzeau@foss.st.com>
 F:	board/stmicroelectronics/stm32f429-disco/
 F:	board/stmicroelectronics/stm32f469-disco/
 F:	configs/stm32f429_disco_defconfig
@@ -1024,12 +1024,14 @@ F:	package/xapian/
 
 N:	Giulio Benetti <giulio.benetti@benettiengineering.com>
 F:	package/at/
+F:	package/libfuse3/
 F:	package/libnspr/
 F:	package/libnss/
 F:	package/minicom/
 F:	package/nfs-utils/
 F:	package/sunxi-mali-mainline/
 F:	package/sunxi-mali-mainline-driver/
+F:	package/udisks/
 
 N:	Gregory Dymarek <gregd72002@gmail.com>
 F:	package/ding-libs/
@@ -1237,11 +1239,6 @@ F:	package/sysrepo/
 
 N:	Jan Pedersen <jp@jp-embedded.com>
 F:	package/zip/
-
-N:	Jan Viktorin <viktorin@rehivetech.com>
-F:	package/python-pexpect/
-F:	package/python-ptyprocess/
-F:	package/zynq-boot-bin/
 
 N:	Jarkko Sakkinen <jarkko.sakkinen@intel.com>
 F:	package/quota/
@@ -2134,6 +2131,7 @@ F:	package/libtirpc/
 F:	package/linux-backports/
 F:	package/ltp-testsuite/
 F:	package/nfs-utils/
+F:	package/rpcbind/
 F:	support/kconfig/
 
 N:	Phil Eichinger <phil.eichinger@gmail.com>
@@ -2211,7 +2209,7 @@ F:	package/nanomsg/
 N:	Ramon Fried <rfried.dev@gmail.com>
 F:	package/bitwise/
 
-N:	Raphaël Mélotte <raphael.melotte@essensium.com>
+N:	Raphaël Mélotte <raphael.melotte@mind.be>
 F:	package/jbig2dec/
 F:	package/python-boto3/
 F:	package/python-botocore/
@@ -2725,9 +2723,6 @@ N:	Yair Ben Avraham <yairba@protonmail.com>
 F:	package/casync/
 F:	package/gloox/
 F:	package/tpm2-pkcs11/
-
-N:	Yann CARDAILLAC <ycardaillac@sepro-group.com>
-F:	package/open62541/
 
 N:	Yann E. MORIN <yann.morin.1998@free.fr>
 F:	board/friendlyarm/nanopi-neo/

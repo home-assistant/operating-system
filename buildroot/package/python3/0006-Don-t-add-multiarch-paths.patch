@@ -20,7 +20,7 @@ diff --git a/setup.py b/setup.py
 index ec3ba60607..e27620035c 100644
 --- a/setup.py
 +++ b/setup.py
-@@ -749,10 +749,10 @@ class PyBuildExt(build_ext):
+@@ -734,10 +734,10 @@ class PyBuildExt(build_ext):
          if not CROSS_COMPILING:
              add_dir_to_list(self.compiler.library_dirs, '/usr/local/lib')
              add_dir_to_list(self.compiler.include_dirs, '/usr/local/include')

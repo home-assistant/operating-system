@@ -12,7 +12,7 @@ diff --git a/configure.ac b/configure.ac
 index e513ef6a20..c07505e89e 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -3136,6 +3136,12 @@ fi
+@@ -3165,6 +3165,12 @@ fi
  
  AC_MSG_RESULT($with_decimal_contextvar)
  

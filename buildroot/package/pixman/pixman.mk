@@ -44,12 +44,20 @@ ifneq ($(BR2_iwmmxt),y)
 PIXMAN_CONF_OPTS += --disable-arm-iwmmxt
 endif
 
+PIXMAN_CFLAGS = $(TARGET_CFLAGS)
+
 # toolchain gets confused about TLS access through GOT (PIC), so disable TLS
 # movhi	r4, %got_hiadj(%tls_ldo(fast_path_cache))
 # {standard input}:172: Error: bad expression
 ifeq ($(BR2_TOOLCHAIN_EXTERNAL_CODESOURCERY_NIOSII),y)
-PIXMAN_CONF_ENV += CFLAGS="$(TARGET_CFLAGS) -DPIXMAN_NO_TLS"
+PIXMAN_CFLAGS += -DPIXMAN_NO_TLS
 endif
+
+ifeq ($(BR2_TOOLCHAIN_HAS_GCC_BUG_101737),y)
+PIXMAN_CFLAGS += -O0
+endif
+
+PIXMAN_CONF_OPTS += CFLAGS="$(PIXMAN_CFLAGS)"
 
 $(eval $(autotools-package))
 $(eval $(host-autotools-package))

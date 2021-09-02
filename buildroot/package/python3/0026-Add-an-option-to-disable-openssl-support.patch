@@ -12,7 +12,7 @@ diff --git a/configure.ac b/configure.ac
 index c07505e89e..612e32faf5 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -3377,6 +3377,12 @@ AC_ARG_ENABLE(unicodedata,
+@@ -3406,6 +3406,12 @@ AC_ARG_ENABLE(unicodedata,
      	     DISABLED_EXTENSIONS="${DISABLED_EXTENSIONS} unicodedata"
    	  fi])
  

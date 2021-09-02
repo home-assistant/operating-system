@@ -1,0 +1,30 @@
+ChangeLog:
+
+o [Ncat][GH#2154] Ncat no longer crashes when used with Unix domain sockets.
+
+Backported from: r38121
+
+Signed-off-by: Alexey Neyman <stilor@att.net>
+
+Index: ncat/ncat_main.c
+===================================================================
+--- a/ncat/ncat_main.c	(revision 38120)
++++ b/ncat/ncat_main.c	(revision 38121)
+@@ -846,7 +846,7 @@
+             targetaddrs->addr.un.sun_family = AF_UNIX;
+             strncpy(targetaddrs->addr.un.sun_path, argv[optind], sizeof(targetaddrs->addr.un.sun_path));
+             targetaddrs->addrlen = SUN_LEN(&targetaddrs->addr.un);
+-            o.target = argv[optind];
++            o.sslservername = o.target = argv[optind];
+             optind++;
+         } else
+ #endif
+@@ -865,7 +865,7 @@
+                 targetaddrs->addr.vm.svm_cid = long_cid;
+ 
+                 targetaddrs->addrlen = sizeof(targetaddrs->addr.vm);
+-                o.target = argv[optind];
++                o.sslservername = o.target = argv[optind];
+                 optind++;
+             }
+         } else

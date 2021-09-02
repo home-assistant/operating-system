@@ -18,9 +18,9 @@ start(){
 
 	# Create dir to store log files in if one doesn't exist. Create
 	# the directory with SELinux permissions if possible
-	command -v matchpathcon >/dev/null 2>&1
+	command -v selabel_lookup >/dev/null 2>&1
 	if [ $? = 0 ]; then
-		mkdir -p /var/log/audit -Z `matchpathcon -n /var/log/audit`
+		mkdir -p /var/log/audit -Z `selabel_lookup -b file -k /var/log/audit`
 	else
 		mkdir -p /var/log/audit
 	fi

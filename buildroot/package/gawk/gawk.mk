@@ -39,5 +39,11 @@ endef
 
 GAWK_POST_INSTALL_TARGET_HOOKS += GAWK_CREATE_SYMLINK
 
+define HOST_GAWK_CREATE_SYMLINK
+	ln -sf gawk $(HOST_DIR)/usr/bin/awk
+endef
+
+HOST_GAWK_POST_INSTALL_HOOKS += HOST_GAWK_CREATE_SYMLINK
+
 $(eval $(autotools-package))
 $(eval $(host-autotools-package))

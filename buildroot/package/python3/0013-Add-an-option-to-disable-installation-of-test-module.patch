@@ -21,7 +21,7 @@ diff --git a/Makefile.pre.in b/Makefile.pre.in
 index 7c3dde8dd4..204f293d53 100644
 --- a/Makefile.pre.in
 +++ b/Makefile.pre.in
-@@ -1385,8 +1385,29 @@ maninstall:	altmaninstall
+@@ -1406,8 +1406,29 @@ maninstall:	altmaninstall
  
  # Install the library
  XMLLIBSUBDIRS=  xml xml/dom xml/etree xml/parsers xml/sax
@@ -53,7 +53,7 @@ index 7c3dde8dd4..204f293d53 100644
  		test/audiodata \
  		test/capath test/data \
  		test/cjkencodings test/decimaltestdata \
-@@ -1446,28 +1467,25 @@ LIBSUBDIRS=	tkinter tkinter/test tkinter/test/test_tkinter \
+@@ -1468,28 +1489,25 @@ LIBSUBDIRS=	tkinter tkinter/test tkinter/test/test_tkinter \
  		test/test_importlib/zipdata02 \
  		test/test_zoneinfo test/test_zoneinfo/data \
  		test/ziptestdata \
@@ -100,7 +100,7 @@ diff --git a/configure.ac b/configure.ac
 index 73d66167de..92e28d02ee 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -3329,6 +3329,11 @@ if test "$posix_threads" = "yes"; then
+@@ -3358,6 +3358,11 @@ if test "$posix_threads" = "yes"; then
        AC_CHECK_FUNCS(pthread_getcpuclockid)
  fi
  

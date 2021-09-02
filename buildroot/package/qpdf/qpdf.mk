@@ -14,6 +14,9 @@ QPDF_DEPENDENCIES = host-pkgconf zlib jpeg
 
 QPDF_CONF_OPTS = --with-random=/dev/urandom
 
+# 0002-Fix-some-pipelines-to-be-safe-if-downstream-write-fails.patch
+QPDF_IGNORE_CVES += CVE-2021-36978
+
 ifeq ($(BR2_PACKAGE_GNUTLS),y)
 QPDF_CONF_OPTS += --enable-crypto-gnutls
 QPDF_DEPENDENCIES += gnutls

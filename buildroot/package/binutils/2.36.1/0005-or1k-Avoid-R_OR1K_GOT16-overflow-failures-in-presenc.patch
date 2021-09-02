@@ -1,0 +1,61 @@
+From de914df5f2ba23a9f6f1fbf6efdc22e1b045901c Mon Sep 17 00:00:00 2001
+From: Stafford Horne <shorne@gmail.com>
+Date: Sun, 2 May 2021 06:02:16 +0900
+Subject: [PATCH] or1k: Avoid R_OR1K_GOT16 overflow failures in presence of
+ R_OR1K_GOT_AHI16
+
+Now that we support R_OR1K_GOT_AHI16 we can relax the R_OR1K_GOT16
+overflow validation check if the section has R_OR1K_GOT_AHI16.
+
+We cannot simple disable R_OR1K_GOT16 overflow validation as there will
+still be binaries that will have only R_OR1K_GOT16.  The
+R_OR1K_GOT_AHI16 relocation will only be added by GCC when building with
+the option -mcmodel=large.
+
+This assumes that R_OR1K_GOT_AHI16 will come before R_OR1K_GOT16, which
+is the code pattern that will be emitted by GCC.
+
+bfd/ChangeLog:
+
+	PR 21464
+	* elf32-or1k.c (or1k_elf_relocate_section): Relax R_OR1K_GOT16
+	overflow check if we have R_OR1K_GOT_AHI16 followed by
+	R_OR1K_GOT16.
+
+Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+---
+ bfd/elf32-or1k.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+diff --git a/bfd/elf32-or1k.c b/bfd/elf32-or1k.c
+index 48461854a96..44e67f2b84b 100644
+--- a/bfd/elf32-or1k.c
++++ b/bfd/elf32-or1k.c
+@@ -1278,6 +1278,7 @@ or1k_elf_relocate_section (bfd *output_bfd,
+   asection *sgot, *splt;
+   bfd_vma plt_base, got_base, got_sym_value;
+   bfd_boolean ret_val = TRUE;
++  bfd_boolean saw_gotha = FALSE;
+ 
+   if (htab == NULL)
+     return FALSE;
+@@ -1485,6 +1486,16 @@ or1k_elf_relocate_section (bfd *output_bfd,
+ 		|| r_type == R_OR1K_GOT_AHI16)
+ 	      relocation -= got_sym_value;
+ 
++	    if (r_type == R_OR1K_GOT_AHI16)
++	      saw_gotha = TRUE;
++
++	    /* If we have a R_OR1K_GOT16 followed by a R_OR1K_GOT_AHI16
++	       relocation we assume the code is doing the right thing to avoid
++	       overflows.  Here we mask the lower 16-bit of the relocation to
++	       avoid overflow validation failures.  */
++	    if (r_type == R_OR1K_GOT16 && saw_gotha)
++	      relocation &= 0xffff;
++
+ 	  /* Addend should be zero.  */
+ 	  if (rel->r_addend != 0)
+ 	    {
+-- 
+2.25.1
+

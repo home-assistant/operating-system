@@ -9,7 +9,7 @@ config BR2_PACKAGE_GDK_PIXBUF
 	  Gdk-Pixbuf is an image loader and scaler. It uses GObject
 	  and the GLib, to integrate well with GNOME applications.
 
-	  http://www.gtk.org/
+	  https://www.gtk.org/
 
 comment "gdk-pixbuf needs a toolchain w/ wchar, threads"
 	depends on BR2_USE_MMU

@@ -5,7 +5,7 @@ config BR2_PACKAGE_LIBCURL
 	  Telnet, and Dict servers, using any of the supported
 	  protocols.
 
-	  http://curl.haxx.se/
+	  https://curl.se/
 
 if BR2_PACKAGE_LIBCURL
 

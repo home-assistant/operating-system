@@ -4,11 +4,12 @@
 #
 ################################################################################
 
-LINUXPTP_VERSION = 3.1
+LINUXPTP_VERSION = 3.1.1
 LINUXPTP_SOURCE = linuxptp-$(LINUXPTP_VERSION).tgz
 LINUXPTP_SITE = http://downloads.sourceforge.net/linuxptp
 LINUXPTP_LICENSE = GPL-2.0+
 LINUXPTP_LICENSE_FILES = COPYING
+LINUXPTP_CPE_ID_VENDOR = linuxptp_project
 
 LINUXPTP_MAKE_ENV = \
 	$(TARGET_MAKE_ENV) \

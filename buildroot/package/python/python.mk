@@ -24,6 +24,7 @@ HOST_PYTHON_CONF_OPTS += \
 	--disable-sqlite3 \
 	--disable-tk \
 	--with-expat=system \
+	--with-system-ffi \
 	--disable-curses \
 	--disable-codecs-cjk \
 	--disable-nis \
@@ -56,7 +57,7 @@ HOST_PYTHON_MAKE = $(MAKE1)
 
 PYTHON_DEPENDENCIES = host-python libffi $(TARGET_NLS_DEPENDENCIES)
 
-HOST_PYTHON_DEPENDENCIES = host-expat host-zlib
+HOST_PYTHON_DEPENDENCIES = host-expat host-libffi host-zlib
 
 ifeq ($(BR2_PACKAGE_HOST_PYTHON_SSL),y)
 HOST_PYTHON_DEPENDENCIES += host-openssl

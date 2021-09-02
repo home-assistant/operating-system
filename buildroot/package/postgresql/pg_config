@@ -31,6 +31,10 @@ case "$1" in
   --cflags)
 	echo "@TARGET_CFLAGS@"
 	;;
+  --cflags_sl)
+	# defined at src/template/linux
+	echo "-fPIC"
+	;;
   --cc)
 	echo "@TARGET_CC@"
 	;;

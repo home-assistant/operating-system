@@ -25,7 +25,7 @@ diff --git a/setup.py b/setup.py
 index d3f0e663f2..926c16f58f 100644
 --- a/setup.py
 +++ b/setup.py
-@@ -695,7 +695,7 @@ class PyBuildExt(build_ext):
+@@ -680,7 +680,7 @@ class PyBuildExt(build_ext):
          tmpfile = os.path.join(self.build_temp, 'ccpaths')
          if not os.path.exists(self.build_temp):
              os.makedirs(self.build_temp)

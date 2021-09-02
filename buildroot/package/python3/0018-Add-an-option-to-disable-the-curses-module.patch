@@ -16,7 +16,7 @@ diff --git a/Makefile.pre.in b/Makefile.pre.in
 index dc84384680..2a82f3308f 100644
 --- a/Makefile.pre.in
 +++ b/Makefile.pre.in
-@@ -1405,7 +1405,6 @@ LIBSUBDIRS=	site-packages \
+@@ -1426,7 +1426,6 @@ LIBSUBDIRS=	site-packages \
  		multiprocessing multiprocessing/dummy \
  		unittest \
  		venv venv/scripts venv/scripts/common venv/scripts/posix \
@@ -24,7 +24,7 @@ index dc84384680..2a82f3308f 100644
  		zoneinfo
  
  TESTSUBDIRS=	test \
-@@ -1485,6 +1484,10 @@ TESTSUBDIRS += tkinter/test tkinter/test/test_tkinter \
+@@ -1507,6 +1506,10 @@ TESTSUBDIRS += tkinter/test tkinter/test/test_tkinter \
  	tkinter/test/test_ttk
  endif
  
@@ -39,7 +39,7 @@ diff --git a/configure.ac b/configure.ac
 index 4c72dae960..acd98381a3 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -3347,6 +3347,15 @@ if test "$TK" = "no"; then
+@@ -3376,6 +3376,15 @@ if test "$TK" = "no"; then
     DISABLED_EXTENSIONS="${DISABLED_EXTENSIONS} _tkinter"
  fi
  

@@ -1,5 +1,5 @@
 # md5, sha256 from https://pypi.org/pypi/django/json
-md5  43784c090a8805605e3d0b768cd21cb2  Django-3.2.2.tar.gz
-sha256  0a1d195ad65c52bf275b8277b3d49680bd1137a5f55039a806f25f6b9752ce3d  Django-3.2.2.tar.gz
+md5  46e306a5a775cace03a03d5a158ff767  Django-3.2.5.tar.gz
+sha256  3da05fea54fdec2315b54a563d5b59f3b4e2b1e69c3a5841dda35019c01855cd  Django-3.2.5.tar.gz
 # Locally computed sha256 checksums
 sha256  b846415d1b514e9c1dff14a22deb906d794bc546ca6129f950a18cd091e2a669  LICENSE

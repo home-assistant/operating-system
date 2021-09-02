@@ -1,0 +1,79 @@
+From a2116312068b6b2c5732dfebde19b751cc81d4f3 Mon Sep 17 00:00:00 2001
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date: Sun, 1 Aug 2021 23:21:35 +0200
+Subject: [PATCH] configure.ac: drop usage of git at configure time
+
+The usage of git is only to print some messages at configure time,
+which is not very useful, and causes a significant number of warning
+when regenerating the configure script.
+
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ configure.ac | 23 -----------------------
+ 1 file changed, 23 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index 20163e1e..14e5892a 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -3,7 +3,6 @@
+ 
+ # Get the hash of the last commit, to be used if it is not an
+ # official release.
+-AC_DEFUN([MSC_GIT_HASH], m4_esyscmd_s(git log -1 --format="%h" --abbrev-commit))
+ AC_DEFUN([MSC_MAJOR], m4_esyscmd_s(cat headers/modsecurity/modsecurity.h | grep "define MODSECURITY_MAJOR " | awk {'print $3'} | sed 's/\"//g'))
+ AC_DEFUN([MSC_MINOR], m4_esyscmd_s(cat headers/modsecurity/modsecurity.h | grep "define MODSECURITY_MINOR " | awk {'print $3'} | sed 's/\"//g'))
+ AC_DEFUN([MSC_PATCHLEVEL], m4_esyscmd_s(cat headers/modsecurity/modsecurity.h | grep "define MODSECURITY_PATCHLEVEL " | awk {'print $3'} | sed 's/\"//g'))
+@@ -25,9 +24,6 @@ m4_define([msc_version],
+ m4_define([msc_version_with_patchlevel],
+     [msc_version_major.msc_version_minor.msc_version_patchlevel])
+ 
+-m4_define([msc_version_git],
+-    [m4_esyscmd_s(git describe)])
+-
+ m4_define([msc_version_info],
+     [msc_version_c_plus_a:msc_version_patchlevel:msc_version_minor])
+ 
+@@ -73,11 +69,6 @@ AC_MSG_ERROR([\
+ 
+    ])
+ fi
+-# Libinjection version
+-AC_DEFUN([LIBINJECTION_VERSION], m4_esyscmd_s(cd "others/libinjection" && git describe && cd ../..))
+-
+-# SecLang test version
+-AC_DEFUN([SECLANG_TEST_VERSION], m4_esyscmd_s(cd "test/test-cases/secrules-language-tests" && git log -1 --format="%h" --abbrev-commit && cd ../../..))
+ 
+ 
+ # Check for yajl
+@@ -217,10 +208,6 @@ AC_SUBST([MSC_VERSION_WITH_PATCHLEVEL])
+ MSC_VERSION=msc_version
+ AC_SUBST([MSC_VERSION])
+ 
+-MSC_GIT_VERSION=msc_version_git
+-AC_SUBST([MSC_GIT_VERSION])
+-
+-
+ AC_ARG_ENABLE(debug-logs,
+     [AC_HELP_STRING([--disable-debug-logs],[Turn off the SecDebugLog feature])],
+ 
+@@ -412,16 +399,6 @@ AC_OUTPUT
+ 
+ 
+ # Print a fancy summary
+-echo " "
+-echo " "
+-echo "ModSecurity - ${MSC_GIT_VERSION} for $PLATFORM"
+-echo " "
+-echo " Mandatory dependencies"
+-echo -n "   + libInjection                                  ...."
+-echo LIBINJECTION_VERSION
+-echo -n "   + SecLang tests                                 ...."
+-echo SECLANG_TEST_VERSION
+-
+ echo " "
+ echo " Optional dependencies"
+ 
+-- 
+2.31.1
+

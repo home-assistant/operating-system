@@ -14,7 +14,7 @@ Signed-off-by: Hadrien Boutteville <hadrien.boutteville@gmail.com>
 
 --- a/configure.ac
 +++ b/configure.ac
-@@ -1685,7 +1685,10 @@
+@@ -1650,7 +1650,10 @@
  # GObject introspection
  ##################################################
 

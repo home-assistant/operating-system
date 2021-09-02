@@ -1,0 +1,41 @@
+From 3f30f3a7e3f07f5ca3cef0f405b02e22a018c6e4 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sun, 9 May 2021 15:22:29 +0200
+Subject: [PATCH] unix/uxutils.h: fix build on uclibc
+
+Build on uclibc is broken since version 0.75 and commit
+65383082bf0c49cec63f4b36001a40bd9b13edf6 because AT_HWCAP2 is used
+even if <sys/auxv.h> is not available:
+
+unix/uxutils.c: In function 'platform_aes_hw_available':
+unix/uxutils.c:13:22: error: 'AT_HWCAP2' undeclared (first use in this function)
+   13 |     return getauxval(AT_HWCAP2) & HWCAP2_AES;
+      |                      ^~~~~~~~~
+
+To fix this build failure, include <elf.h>
+
+Fixes:
+ - http://autobuild.buildroot.org/results/726f7c5ce13e78ed91e827b872e9d7ccfa13f298
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: sent to Simon Tatham <anakin@pobox.com>]
+---
+ unix/uxutils.h | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/unix/uxutils.h b/unix/uxutils.h
+index c9acff53..b80bf972 100644
+--- a/unix/uxutils.h
++++ b/unix/uxutils.h
+@@ -18,6 +18,8 @@
+ 
+ #if defined __arm__ || defined __aarch64__
+ 
++#include <elf.h>
++
+ #ifdef HAVE_SYS_TYPES_H
+ #include <sys/types.h>
+ #endif
+-- 
+2.30.2
+
