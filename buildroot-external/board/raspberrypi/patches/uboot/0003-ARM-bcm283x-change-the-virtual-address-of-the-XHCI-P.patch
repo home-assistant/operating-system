@@ -1,0 +1,49 @@
+From 72619dd5d0be59e702fd7b7090916ee688c34180 Mon Sep 17 00:00:00 2001
+Message-Id: <72619dd5d0be59e702fd7b7090916ee688c34180.1630679018.git.stefan@agner.ch>
+In-Reply-To: <9cb97076d98f7f68534abb3d1f596644ae730841.1630679018.git.stefan@agner.ch>
+References: <9cb97076d98f7f68534abb3d1f596644ae730841.1630679018.git.stefan@agner.ch>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Date: Thu, 17 Jun 2021 11:22:03 +0200
+Subject: [PATCH 3/3] ARM: bcm283x: change the virtual address of the XHCI PCI
+ device base
+
+Move the XHCI PCI device base up in the virtual address space. This fixes
+initialization failure observed with newer Raspberry Pi firmware, later
+than 63b1922311 ("firmware: arm_loader: Update armstubs with those from
+PR 117). It looks that chosing 0xff800000 as the XHCI PCI device base
+conflicts with the updated ARM/VideoCore firmware.
+
+This also requires to reduce the size of the mapped PCI device region
+from 8MiB to 4MiB to fit into 32bit address space. This is still enough
+for the XHCI PCI device.
+
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ arch/arm/mach-bcm283x/init.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm/mach-bcm283x/init.c b/arch/arm/mach-bcm283x/init.c
+index 49027ce0a2..9803499985 100644
+--- a/arch/arm/mach-bcm283x/init.c
++++ b/arch/arm/mach-bcm283x/init.c
+@@ -14,7 +14,7 @@
+ #include <asm/global_data.h>
+ 
+ #define BCM2711_RPI4_PCIE_XHCI_MMIO_PHYS	0x600000000UL
+-#define BCM2711_RPI4_PCIE_XHCI_MMIO_SIZE	0x800000UL
++#define BCM2711_RPI4_PCIE_XHCI_MMIO_SIZE	0x400000UL
+ 
+ #ifdef CONFIG_ARM64
+ #include <asm/armv8/mmu.h>
+@@ -148,7 +148,7 @@ int mach_cpu_init(void)
+ 
+ #ifdef CONFIG_ARMV7_LPAE
+ #ifdef CONFIG_TARGET_RPI_4_32B
+-#define BCM2711_RPI4_PCIE_XHCI_MMIO_VIRT	0xff800000UL
++#define BCM2711_RPI4_PCIE_XHCI_MMIO_VIRT	0xffc00000UL
+ #include <addr_map.h>
+ #include <asm/system.h>
+ 
+-- 
+2.33.0
+
