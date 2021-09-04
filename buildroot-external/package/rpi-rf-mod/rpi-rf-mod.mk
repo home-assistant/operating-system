@@ -1,4 +1,4 @@
-#############################################################
+################################################################################
 #
 # Meta package for RPI-RF-MOD/HM-MOD-RPI-PCB device support
 # for HomeMatic/homematicIP connectivity.
@@ -9,7 +9,7 @@
 # Copyright (c) 2018-2021 Jens Maus <mail@jens-maus.de>
 # https://github.com/jens-maus/RaspberryMatic/tree/master/buildroot-external/package/rpi-rf-mod
 #
-#############################################################
+################################################################################
 
 RPI_RF_MOD_VERSION = 7f5d50c8ac72e114a6b11a4ae0e92e316260fb0d
 RPI_RF_MOD_SITE = $(call github,jens-maus,RaspberryMatic,$(RPI_RF_MOD_VERSION))
@@ -36,21 +36,21 @@ else ifeq ($(BR2_PACKAGE_RPI_RF_MOD_DTS_ODROID-C2),y)
 endif
 
 define RPI_RF_MOD_BUILD_CMDS
-  if [[ -n "$(RPI_RF_MOD_DTS_FILE)" ]]; then \
-    $(HOST_DIR)/bin/dtc -@ -I dts -O dtb -W no-unit_address_vs_reg -o $(@D)/buildroot-external/package/rpi-rf-mod/dts/rpi-rf-mod.dtbo $(@D)/buildroot-external/package/rpi-rf-mod/dts/$(RPI_RF_MOD_DTS_FILE).dts; \
-  fi
-  if [[ -n "$(RPI_RF_MOD_DTS_FILE_ALT)" ]]; then \
-    $(HOST_DIR)/bin/dtc -@ -I dts -O dtb -W no-unit_address_vs_reg -o $(@D)/buildroot-external/package/rpi-rf-mod/dts/$(RPI_RF_MOD_DTS_FILE_ALT).dtbo $(@D)/buildroot-external/package/rpi-rf-mod/dts/$(RPI_RF_MOD_DTS_FILE_ALT).dts; \
-  fi
+	if [[ -n "$(RPI_RF_MOD_DTS_FILE)" ]]; then \
+		$(HOST_DIR)/bin/dtc -@ -I dts -O dtb -W no-unit_address_vs_reg -o $(@D)/buildroot-external/package/rpi-rf-mod/dts/rpi-rf-mod.dtbo $(@D)/buildroot-external/package/rpi-rf-mod/dts/$(RPI_RF_MOD_DTS_FILE).dts; \
+	fi
+	if [[ -n "$(RPI_RF_MOD_DTS_FILE_ALT)" ]]; then \
+		$(HOST_DIR)/bin/dtc -@ -I dts -O dtb -W no-unit_address_vs_reg -o $(@D)/buildroot-external/package/rpi-rf-mod/dts/$(RPI_RF_MOD_DTS_FILE_ALT).dtbo $(@D)/buildroot-external/package/rpi-rf-mod/dts/$(RPI_RF_MOD_DTS_FILE_ALT).dts; \
+	fi
 endef
 
 define RPI_RF_MOD_INSTALL_TARGET_CMDS
-  if [[ -n "$(RPI_RF_MOD_DTS_FILE)" ]]; then \
-    $(INSTALL) -D -m 0644 $(@D)/buildroot-external/package/rpi-rf-mod/dts/rpi-rf-mod.dtbo $(BINARIES_DIR)/; \
-  fi
-  if [[ -n "$(RPI_RF_MOD_DTS_FILE_ALT)" ]]; then \
-    $(INSTALL) -D -m 0644 $(@D)/buildroot-external/package/rpi-rf-mod/dts/$(RPI_RF_MOD_DTS_FILE_ALT).dtbo $(BINARIES_DIR)/; \
-  fi
+	if [[ -n "$(RPI_RF_MOD_DTS_FILE)" ]]; then \
+		$(INSTALL) -D -m 0644 $(@D)/buildroot-external/package/rpi-rf-mod/dts/rpi-rf-mod.dtbo $(BINARIES_DIR)/; \
+	fi
+	if [[ -n "$(RPI_RF_MOD_DTS_FILE_ALT)" ]]; then \
+		$(INSTALL) -D -m 0644 $(@D)/buildroot-external/package/rpi-rf-mod/dts/$(RPI_RF_MOD_DTS_FILE_ALT).dtbo $(BINARIES_DIR)/; \
+	fi
 endef
 
 $(eval $(generic-package))

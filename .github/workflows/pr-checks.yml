@@ -9,12 +9,20 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
     - name: Check out code
-      uses: actions/checkout@v1
+      uses: actions/checkout@v2
+      with:
+        submodules: true
+
     - name: Check Dockerfile
       uses: brpaz/hadolint-action@v1.1.0
       with:
         dockerfile: Dockerfile
+
     - name: Check shell scripts
       uses: ludeeus/action-shellcheck@1.1.0
       with:
         ignore: buildroot buildroot-external/package/xe-guest-utilities
+
+    - name: Check buildroot-external packages
+      run: |
+        buildroot/utils/check-package --exclude PackageHeader --br2-external buildroot-external/package/*/*

@@ -24,8 +24,8 @@ config BR2_PACKAGE_UDISKS2
 	     interfaces that can be used to query and manipulate
 	     storage devices.
 
-	   o a command-line tool, udisksctl(1), that can be used to query
-	     and use the daemon
+	   o a command-line tool, udisksctl(1), that can be used to
+	     query and use the daemon
 
           https://github.com/storaged-project/udisks
 

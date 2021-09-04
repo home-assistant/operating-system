@@ -1,3 +1,7 @@
+kernel/Makefile: modification to get compile as buildroot package
+
+Signed-off-by: Jens Maus <mail@jens-maus.de>
+
 --- ./kernel/Makefile.orig	2020-12-14 13:09:44.406823210 +0100
 +++ ./kernel/Makefile	2021-01-14 11:37:37.524474444 +0100
 @@ -1,17 +1,26 @@

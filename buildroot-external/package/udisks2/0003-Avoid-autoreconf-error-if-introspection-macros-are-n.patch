@@ -4,11 +4,13 @@ In-Reply-To: <abcac570bfe1db867fda504942e6c782ada2aa00.1616318066.git.stefan@agn
 References: <abcac570bfe1db867fda504942e6c782ada2aa00.1616318066.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Fri, 19 Mar 2021 15:54:30 +0100
-Subject: [PATCH 3/3] Avoid autoreconf error if introspection macros are not
+Subject: [PATCH] Avoid autoreconf error if introspection macros are not
  available
 
 Don't make macros for introspection mandatory. This allows to run
 autoreconf even without GObject introspection automake macros available.
+
+Signed-off-by: Stefan Agner <stefan@agner.ch>
 ---
  configure.ac | 5 ++++-
  1 file changed, 4 insertions(+), 1 deletion(-)
