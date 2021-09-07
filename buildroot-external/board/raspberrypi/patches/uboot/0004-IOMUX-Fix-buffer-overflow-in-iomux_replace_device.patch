@@ -1,0 +1,44 @@
+From 0a33e4e03b9266818d6f0a6d566bf12be55c657c Mon Sep 17 00:00:00 2001
+Message-Id: <0a33e4e03b9266818d6f0a6d566bf12be55c657c.1631043469.git.stefan@agner.ch>
+In-Reply-To: <9cb97076d98f7f68534abb3d1f596644ae730841.1631043469.git.stefan@agner.ch>
+References: <9cb97076d98f7f68534abb3d1f596644ae730841.1631043469.git.stefan@agner.ch>
+From: Yuichiro Goto <goto@k-tech.co.jp>
+Date: Mon, 26 Apr 2021 08:08:03 +0900
+Subject: [PATCH 4/4] IOMUX: Fix buffer overflow in iomux_replace_device()
+
+Use of strcat() against an uninitialized buffer would lead
+to buffer overflow. This patch fixes it.
+
+Fixes: 694cd5618c ("IOMUX: Introduce iomux_replace_device()")
+Signed-off-by: Yuichiro Goto <goto@k-tech.co.jp>
+Cc: Peter Robinson <pbrobinson@gmail.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Tested-by: Peter Robinson <pbrobinson@gmail.com>
+---
+ common/iomux.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/common/iomux.c b/common/iomux.c
+index b9088aa3b5..c428f7110a 100644
+--- a/common/iomux.c
++++ b/common/iomux.c
+@@ -158,8 +158,12 @@ int iomux_replace_device(const int console, const char *old, const char *new)
+ 			return -ENOMEM;
+ 		}
+ 
+-		strcat(tmp, ",");
+-		strcat(tmp, name);
++		if (arg) {
++			strcat(tmp, ",");
++			strcat(tmp, name);
++		}
++		else
++			strcpy(tmp, name);
+ 
+ 		arg = tmp;
+ 		size = strlen(tmp) + 1;
+-- 
+2.33.0
+
