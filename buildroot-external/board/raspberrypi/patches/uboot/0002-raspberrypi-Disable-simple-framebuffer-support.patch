@@ -1,10 +1,10 @@
 From 69ac2930e69ca876f8da95d80f4a1cb8cc23bb6a Mon Sep 17 00:00:00 2001
-Message-Id: <69ac2930e69ca876f8da95d80f4a1cb8cc23bb6a.1630679018.git.stefan@agner.ch>
-In-Reply-To: <9cb97076d98f7f68534abb3d1f596644ae730841.1630679018.git.stefan@agner.ch>
-References: <9cb97076d98f7f68534abb3d1f596644ae730841.1630679018.git.stefan@agner.ch>
+Message-Id: <69ac2930e69ca876f8da95d80f4a1cb8cc23bb6a.1631043469.git.stefan@agner.ch>
+In-Reply-To: <9cb97076d98f7f68534abb3d1f596644ae730841.1631043469.git.stefan@agner.ch>
+References: <9cb97076d98f7f68534abb3d1f596644ae730841.1631043469.git.stefan@agner.ch>
 From: Florin Sarbu <florin@balena.io>
 Date: Thu, 12 Sep 2019 12:31:31 +0200
-Subject: [PATCH 2/3] raspberrypi: Disable simple framebuffer support
+Subject: [PATCH 2/4] raspberrypi: Disable simple framebuffer support
 
 On 4.19 kernels this u-boot driver clashes with bcm2708_fb.
 So let's disable it from here so that we have bcm2708_fb

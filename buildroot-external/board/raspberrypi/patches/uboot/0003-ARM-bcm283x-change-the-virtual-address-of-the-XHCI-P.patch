@@ -1,10 +1,10 @@
 From 72619dd5d0be59e702fd7b7090916ee688c34180 Mon Sep 17 00:00:00 2001
-Message-Id: <72619dd5d0be59e702fd7b7090916ee688c34180.1630679018.git.stefan@agner.ch>
-In-Reply-To: <9cb97076d98f7f68534abb3d1f596644ae730841.1630679018.git.stefan@agner.ch>
-References: <9cb97076d98f7f68534abb3d1f596644ae730841.1630679018.git.stefan@agner.ch>
+Message-Id: <72619dd5d0be59e702fd7b7090916ee688c34180.1631043469.git.stefan@agner.ch>
+In-Reply-To: <9cb97076d98f7f68534abb3d1f596644ae730841.1631043469.git.stefan@agner.ch>
+References: <9cb97076d98f7f68534abb3d1f596644ae730841.1631043469.git.stefan@agner.ch>
 From: Marek Szyprowski <m.szyprowski@samsung.com>
 Date: Thu, 17 Jun 2021 11:22:03 +0200
-Subject: [PATCH 3/3] ARM: bcm283x: change the virtual address of the XHCI PCI
+Subject: [PATCH 3/4] ARM: bcm283x: change the virtual address of the XHCI PCI
  device base
 
 Move the XHCI PCI device base up in the virtual address space. This fixes
