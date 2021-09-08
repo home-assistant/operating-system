@@ -5,7 +5,7 @@
 `BOOT_SYS`:
 
 - efi
-- hybrid
+- hyprid
 - mbr
 
 HassOS is using GPT. But to use GPT we need own the first 1024 of boot drive. Is that's not possible, you can use MBR for your device. This also work with SPLs.
