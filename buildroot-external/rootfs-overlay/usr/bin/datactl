@@ -45,8 +45,13 @@ uuid=a52a4597-fa3a-4851-aefd-2fbe9f849079, type=0FC63DAF-8483-4772-8E79-3D69D847
 EOF
 
     # Since we create a new partition table etc. we are guaranteed the target
-    # partition is partition 1
-    NEW_DEVICE_PART_SIZE=$(cat "/sys/class/block/$(basename "${NEW_DEVICE_ROOT}")1/size")
+    # partition is partition 1. If the device name ends with a digit, "p" is
+    # placed between device name and partition number.
+    case "${NEW_DEVICE_ROOT}" in
+        *[0-9]) NEW_DEVICE_PART="${NEW_DEVICE_ROOT}p1";;
+        *) NEW_DEVICE_PART="${NEW_DEVICE_ROOT}1";;
+    esac
+    NEW_DEVICE_PART_SIZE=$(cat "/sys/class/block/$(basename "${NEW_DEVICE_PART}")/size")
     OLD_DEVICE_PART_SIZE=$(cat "/sys/class/block/$(basename "${DATA_DEVICE_CHILD}")/size")
 
     if [ "${NEW_DEVICE_PART_SIZE}" -lt "${OLD_DEVICE_PART_SIZE}" ]; then
