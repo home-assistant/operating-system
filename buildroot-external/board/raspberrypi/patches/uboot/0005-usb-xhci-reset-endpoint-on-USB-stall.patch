@@ -1,10 +1,10 @@
 From 194a2cb0e38c8684e9c98aa66ba3d3a838fce9d6 Mon Sep 17 00:00:00 2001
-Message-Id: <194a2cb0e38c8684e9c98aa66ba3d3a838fce9d6.1632740631.git.stefan@agner.ch>
-In-Reply-To: <9cb97076d98f7f68534abb3d1f596644ae730841.1632740631.git.stefan@agner.ch>
-References: <9cb97076d98f7f68534abb3d1f596644ae730841.1632740631.git.stefan@agner.ch>
+Message-Id: <194a2cb0e38c8684e9c98aa66ba3d3a838fce9d6.1632746837.git.stefan@agner.ch>
+In-Reply-To: <9cb97076d98f7f68534abb3d1f596644ae730841.1632746837.git.stefan@agner.ch>
+References: <9cb97076d98f7f68534abb3d1f596644ae730841.1632746837.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Mon, 27 Sep 2021 12:28:04 +0200
-Subject: [PATCH 5/5] usb: xhci: reset endpoint on USB stall
+Subject: [PATCH 5/9] usb: xhci: reset endpoint on USB stall
 
 There are devices which cause a USB stall when trying to read strings.
 Specifically Arduino Mega R3 stalls when trying to read the product

@@ -1,0 +1,44 @@
+From b16bbc78a20f124caf6e03278b60806a3442ee69 Mon Sep 17 00:00:00 2001
+Message-Id: <b16bbc78a20f124caf6e03278b60806a3442ee69.1632746837.git.stefan@agner.ch>
+In-Reply-To: <9cb97076d98f7f68534abb3d1f596644ae730841.1632746837.git.stefan@agner.ch>
+References: <9cb97076d98f7f68534abb3d1f596644ae730841.1632746837.git.stefan@agner.ch>
+From: Stefan Agner <stefan@agner.ch>
+Date: Tue, 29 Dec 2020 23:34:52 +0100
+Subject: [PATCH 6/9] rpi: add NVMe to boot order
+
+The Compute Module 4 I/O Board can support a NVMe. Add NVMe to the boot
+order.
+
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+---
+ include/configs/rpi.h | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/include/configs/rpi.h b/include/configs/rpi.h
+index 19a0d611c4..c84fe216d7 100644
+--- a/include/configs/rpi.h
++++ b/include/configs/rpi.h
+@@ -176,6 +176,12 @@
+ 	#define BOOT_TARGET_MMC(func)
+ #endif
+ 
++#if CONFIG_IS_ENABLED(CMD_NVME)
++	#define BOOT_TARGET_NVME(func) func(NVME, nvme, 0)
++#else
++	#define BOOT_TARGET_NVME(func)
++#endif
++
+ #if CONFIG_IS_ENABLED(CMD_USB)
+ 	#define BOOT_TARGET_USB(func) func(USB, usb, 0)
+ #else
+@@ -196,6 +202,7 @@
+ 
+ #define BOOT_TARGET_DEVICES(func) \
+ 	BOOT_TARGET_MMC(func) \
++	BOOT_TARGET_NVME(func) \
+ 	BOOT_TARGET_USB(func) \
+ 	BOOT_TARGET_PXE(func) \
+ 	BOOT_TARGET_DHCP(func)
+-- 
+2.33.0
+
