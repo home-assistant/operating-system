@@ -1,10 +1,10 @@
-From 194a2cb0e38c8684e9c98aa66ba3d3a838fce9d6 Mon Sep 17 00:00:00 2001
-Message-Id: <194a2cb0e38c8684e9c98aa66ba3d3a838fce9d6.1632740631.git.stefan@agner.ch>
-In-Reply-To: <9cb97076d98f7f68534abb3d1f596644ae730841.1632740631.git.stefan@agner.ch>
-References: <9cb97076d98f7f68534abb3d1f596644ae730841.1632740631.git.stefan@agner.ch>
+From b9f62d571a79e9ea7be3c8327733bc5964336bae Mon Sep 17 00:00:00 2001
+Message-Id: <b9f62d571a79e9ea7be3c8327733bc5964336bae.1632758787.git.stefan@agner.ch>
+In-Reply-To: <fe8e09815b4ae3ef12937f81cfb08e50f972f7b0.1632758787.git.stefan@agner.ch>
+References: <fe8e09815b4ae3ef12937f81cfb08e50f972f7b0.1632758787.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Mon, 27 Sep 2021 12:28:04 +0200
-Subject: [PATCH 5/5] usb: xhci: reset endpoint on USB stall
+Subject: [PATCH 2/2] usb: xhci: reset endpoint on USB stall
 
 There are devices which cause a USB stall when trying to read strings.
 Specifically Arduino Mega R3 stalls when trying to read the product
@@ -34,7 +34,7 @@ Signed-off-by: Stefan Agner <stefan@agner.ch>
  1 file changed, 31 insertions(+)
 
 diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.c
-index 46c137f857..667e9fbf5e 100644
+index 35bd5cd29e..430823cb9d 100644
 --- a/drivers/usb/host/xhci-ring.c
 +++ b/drivers/usb/host/xhci-ring.c
 @@ -481,6 +481,33 @@ union xhci_trb *xhci_wait_for_event(struct xhci_ctrl *ctrl, trb_type expected)
@@ -71,7 +71,7 @@ index 46c137f857..667e9fbf5e 100644
  /*
   * Stops transfer processing for an endpoint and throws away all unprocessed
   * TRBs by setting the xHC's dequeue pointer to our enqueue pointer. The next
-@@ -931,6 +958,10 @@ int xhci_ctrl_tx(struct usb_device *udev, unsigned long pipe,
+@@ -928,6 +955,10 @@ int xhci_ctrl_tx(struct usb_device *udev, unsigned long pipe,
  
  	record_transfer_result(udev, event, length);
  	xhci_acknowledge_event(ctrl);

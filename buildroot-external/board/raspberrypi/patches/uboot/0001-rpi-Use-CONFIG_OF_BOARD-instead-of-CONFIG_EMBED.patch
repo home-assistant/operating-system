@@ -1,8 +1,8 @@
-From 9cb97076d98f7f68534abb3d1f596644ae730841 Mon Sep 17 00:00:00 2001
-Message-Id: <9cb97076d98f7f68534abb3d1f596644ae730841.1632740631.git.stefan@agner.ch>
+From fe8e09815b4ae3ef12937f81cfb08e50f972f7b0 Mon Sep 17 00:00:00 2001
+Message-Id: <fe8e09815b4ae3ef12937f81cfb08e50f972f7b0.1632758787.git.stefan@agner.ch>
 From: Pascal Vizeli <pvizeli@syshack.ch>
 Date: Tue, 10 Dec 2019 09:48:46 +0000
-Subject: [PATCH 1/5] rpi: Use CONFIG_OF_BOARD instead of CONFIG_EMBED
+Subject: [PATCH 1/2] rpi: Use CONFIG_OF_BOARD instead of CONFIG_EMBED
 
 Signed-off-by: Pascal Vizeli <pvizeli@syshack.ch>
 ---
@@ -14,7 +14,7 @@ Signed-off-by: Pascal Vizeli <pvizeli@syshack.ch>
  5 files changed, 5 insertions(+), 5 deletions(-)
 
 diff --git a/configs/rpi_0_w_defconfig b/configs/rpi_0_w_defconfig
-index 01565991f5..c0a9b6c788 100644
+index d17e102052..e5cd7d4913 100644
 --- a/configs/rpi_0_w_defconfig
 +++ b/configs/rpi_0_w_defconfig
 @@ -17,7 +17,7 @@ CONFIG_CMD_GPIO=y
@@ -27,7 +27,7 @@ index 01565991f5..c0a9b6c788 100644
  CONFIG_SYS_RELOC_GD_ENV_ADDR=y
  CONFIG_ENV_VARS_UBOOT_RUNTIME_CONFIG=y
 diff --git a/configs/rpi_2_defconfig b/configs/rpi_2_defconfig
-index 1ad0626782..33e0ef6989 100644
+index 8b8affb777..8bda6e6aa9 100644
 --- a/configs/rpi_2_defconfig
 +++ b/configs/rpi_2_defconfig
 @@ -17,7 +17,7 @@ CONFIG_CMD_GPIO=y
@@ -40,7 +40,7 @@ index 1ad0626782..33e0ef6989 100644
  CONFIG_SYS_RELOC_GD_ENV_ADDR=y
  CONFIG_ENV_VARS_UBOOT_RUNTIME_CONFIG=y
 diff --git a/configs/rpi_3_32b_defconfig b/configs/rpi_3_32b_defconfig
-index a14d7eefbc..15c62adc69 100644
+index b867b7fa7b..370495c9e4 100644
 --- a/configs/rpi_3_32b_defconfig
 +++ b/configs/rpi_3_32b_defconfig
 @@ -18,7 +18,7 @@ CONFIG_CMD_GPIO=y
@@ -53,7 +53,7 @@ index a14d7eefbc..15c62adc69 100644
  CONFIG_SYS_RELOC_GD_ENV_ADDR=y
  CONFIG_ENV_VARS_UBOOT_RUNTIME_CONFIG=y
 diff --git a/configs/rpi_3_defconfig b/configs/rpi_3_defconfig
-index 4aedfb17cd..daeb6d1b64 100644
+index 3cebd657da..bb0a7ebcd5 100644
 --- a/configs/rpi_3_defconfig
 +++ b/configs/rpi_3_defconfig
 @@ -18,7 +18,7 @@ CONFIG_CMD_GPIO=y
@@ -66,7 +66,7 @@ index 4aedfb17cd..daeb6d1b64 100644
  CONFIG_SYS_RELOC_GD_ENV_ADDR=y
  CONFIG_ENV_VARS_UBOOT_RUNTIME_CONFIG=y
 diff --git a/configs/rpi_defconfig b/configs/rpi_defconfig
-index 78638105f7..06b390d907 100644
+index af2189b8fe..f6517eb52a 100644
 --- a/configs/rpi_defconfig
 +++ b/configs/rpi_defconfig
 @@ -17,7 +17,7 @@ CONFIG_CMD_GPIO=y
