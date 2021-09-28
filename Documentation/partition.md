@@ -41,40 +41,27 @@ Sometime the bootloader part can look different because there can be firmware or
 The data partition is the only partition with real I/O. It will be expanded automatically at boot to the full size of the disk.
 
 
-## Using datactl to move the data partition.
+## Using CLI to move the data partition.
 
-In a Home Assistant OS installation, the data is stored on the `/mnt/data` partition of the SD card. This is the only read+write partition on the SD drive. Using the `datactl` move command, this partition can be moved off of the SD card onto an externally connected drive, leaving the rest of the read-only system on the SD.
+In a Home Assistant OS installation, the data is stored on the `/mnt/data` partition of the boot storage (typically the SD card). This is the only read/write partition on the boot storage. Using the `datadisk` move command, this partition can be moved to an externally connected drive, leaving the rest of the read-only system on the boot storage.
 
-The storage capacity of the external drive must be larger than the storage capacity of the existing SD card.
-
-The command needs to be run from the host console by either connecting a keyboard and monitor or making use of the [debug ssh access](https://developers.home-assistant.io/docs/operating-system/debugging/) over port 22222. The command will not work from within an SSH add-on container.
-
-Log in as `root` to get to the Home Assistant CLI and then enter `login` to continue to the host.
-
-Confirm your USB SSD/HD is connected and recognized using `fdisk -l`.
-
-With the drive connected, use the following command (replacing sdx with your drive, without a partition number):
+The storage capacity of the external drive must be larger than the storage capacity of the existing disk.
 
 ```sh
-$ datactl move /dev/sdx
+$ ha os datadisk move /dev/sdx
 ```
 
-Enter "yes" to confirm the operation. This will prepare the disk, however, the
-actual move will be running on next reboot. This will make the first boot significantly longer than usual; please be patient. Reboot with the following command:
+This will make a reboot which going significantly longer than usual; please be patient!
+
+For getting a list of supported detected devices which can be used by `datadisk`:
+
 ```sh
-$ ha host reboot
+$ ha os datadisk list
 ```
 
-Once complete, the external drive
-will contain the data and will need to be plugged in to successfully boot Home
-Assistant.
+## Using UI to move the data partition.
 
-## Check if the move was succesful.
-Within the Home Assistant interface you won't see if the move was succesful. To check this, go to your host console again (as described above) and enter:
-```sh
-$ systemctl status mnt-data.mount
-```
-If the data partition was moved to your USB drive you should see ```sh Active: active (mounted)  ``` in the output. Also, it will show, which drive got mounted as /mnt/data (```sh Where ``` and ```sh what ``` section of the output)
+__follow__
 
 
 ## Check Power Supply Rating
