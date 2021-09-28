@@ -43,7 +43,7 @@ The data partition is the only partition with real I/O. It will be expanded auto
 
 ## Using CLI to move the data partition.
 
-In a Home Assistant OS installation, the data is stored on the `/mnt/data` partition of the SD card. This is the only read+write partition on the SD drive. Using the `datadisk` move command, this partition can be moved off of the SD card onto an externally connected drive, leaving the rest of the read-only system on the SD.
+In a Home Assistant OS installation, the data is stored on the `/mnt/data` partition of the boot storage (typically the SD card). This is the only read/write partition on the boot storage. Using the `datadisk` move command, this partition can be moved to an externally connected drive, leaving the rest of the read-only system on the boot storage.
 
 The storage capacity of the external drive must be larger than the storage capacity of the existing SD card.
 
