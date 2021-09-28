@@ -1,11 +1,10 @@
-From 41bc5702b6a856b6a135f705e747fae737277b20 Mon Sep 17 00:00:00 2001
-Message-Id: <41bc5702b6a856b6a135f705e747fae737277b20.1619639299.git.stefan@agner.ch>
+From d87c6d3bb3de5f574d472dc5390f3f162db81823 Mon Sep 17 00:00:00 2001
+Message-Id: <d87c6d3bb3de5f574d472dc5390f3f162db81823.1632759065.git.stefan@agner.ch>
 From: Pascal Vizeli <pvizeli@syshack.ch>
 Date: Sun, 5 Aug 2018 20:43:03 +0000
-Subject: [PATCH] cmd: read string from file into env
+Subject: [PATCH] CMD: read string from fileinto env
 
 Signed-off-by: Pascal Vizeli <pvizeli@syshack.ch>
-Signed-off-by: Stefan Agner <stefan@agner.ch>
 ---
  cmd/Kconfig   |  5 +++++
  cmd/Makefile  |  1 +
@@ -14,12 +13,12 @@ Signed-off-by: Stefan Agner <stefan@agner.ch>
  create mode 100644 cmd/fileenv.c
 
 diff --git a/cmd/Kconfig b/cmd/Kconfig
-index 863b7f9fda..5c67b6d719 100644
+index 3a857b3f6e..9dc88988ac 100644
 --- a/cmd/Kconfig
 +++ b/cmd/Kconfig
-@@ -1397,6 +1397,11 @@ config CMD_SETEXPR
- 	  Also supports loading the value at a memory location into a variable.
- 	  If CONFIG_REGEX is enabled, setexpr also supports a gsub function.
+@@ -1422,6 +1422,11 @@ config CMD_SETEXPR_FMT
+ 	  Evaluate format string expression and store result in an environment
+ 	    variable.
  
 +config CMD_FILEENV
 +	bool "fileenv"
@@ -30,13 +29,13 @@ index 863b7f9fda..5c67b6d719 100644
  
  menu "Android support commands"
 diff --git a/cmd/Makefile b/cmd/Makefile
-index 567e2b79d2..8804b70ca8 100644
+index ed3669411e..a11b4b692e 100644
 --- a/cmd/Makefile
 +++ b/cmd/Makefile
-@@ -140,6 +140,7 @@ obj-$(CONFIG_CMD_SF) += sf.o
- obj-$(CONFIG_CMD_SCSI) += scsi.o disk.o
+@@ -142,6 +142,7 @@ obj-$(CONFIG_CMD_SCSI) += scsi.o disk.o
  obj-$(CONFIG_CMD_SHA1SUM) += sha1sum.o
  obj-$(CONFIG_CMD_SETEXPR) += setexpr.o
+ obj-$(CONFIG_CMD_SETEXPR_FMT) += printf.o
 +obj-$(CONFIG_CMD_FILEENV) += fileenv.o
  obj-$(CONFIG_CMD_SPI) += spi.o
  obj-$(CONFIG_CMD_STRINGS) += strings.o
@@ -94,5 +93,5 @@ index 0000000000..9891cb05ab
 +	"    - Read file from fat32 and store it as env."
 +);
 -- 
-2.31.1
+2.33.0
 
