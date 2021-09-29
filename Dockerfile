@@ -46,6 +46,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         vim \
     && rm -rf /var/lib/apt/lists/*
 
+RUN apt-get update && apt-get install -y --no-install-recommends \
+	skopeo \
+	jq \
+    && rm -rf /var/lib/apt/lists/*
+
 # Init entry
 COPY scripts/entry.sh /usr/sbin/
 ENTRYPOINT ["/usr/sbin/entry.sh"]
