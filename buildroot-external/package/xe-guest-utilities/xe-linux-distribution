@@ -1,0 +1,572 @@
+#! /bin/sh
+
+# Copyright (c) 2015, Citrix Systems
+# All rights reserved.
+
+# Redistribution and use in source and binary forms, with or without modification,
+# are permitted provided that the following conditions are met:
+
+# 1. Redistributions of source code must retain the above copyright notice, this
+# list of conditions and the following disclaimer.
+
+# 2. Redistributions in binary form must reproduce the above copyright notice,
+# this list of conditions and the following disclaimer in the documentation and/or
+# other materials provided with the distribution.
+
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+# IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
+# INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+# NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+# PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+# WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+# POSSIBILITY OF SUCH DAMAGE.
+
+# Script to write information about the current distribution to stdout or a file.
+# Information collected:
+#   - Distribution name
+#   - Distribution version (major and minor)
+#   - Kernel version (uname)
+
+LANG="C"
+export LANG
+
+
+write_to_output()
+{
+    local distro="$1"
+    local major="$2"
+    local minor="$3"
+    local name="$4"
+    local uname=$(uname -r)
+
+    if [ -n "${TEST_RESULT}" ] ; then
+        MAJOR=$major
+        MINOR=$minor
+        DISTRO=$distro
+        UNAME=$uname
+        NAME=$name
+        return 0
+    fi
+
+    echo "os_distro=\"${distro}\""
+    echo "os_majorver=\"${major}\""
+    echo "os_minorver=\"${minor}\""
+    echo "os_uname=\"${uname}\""
+    echo "os_name=\"${name}\""
+
+    return 0
+}
+
+identify_debian()
+{
+    local debian_version="$1"
+    local major
+    local minor
+
+    # 3.1
+    # 4.0
+    # Ignores testing and unstable which contain ".*/sid".
+
+    if [ ! -f "${debian_version}" ] ; then
+        return 1
+    fi
+
+    eval $(awk -F. '/^[0-9]*\.[0-9]*/ \
+                        { print "major="$1 ; print "minor="$2 ; exit 0 }' \
+                   "${debian_version}")
+    
+    if [ -z "${major}" ] && [ -z "${minor}" ] && ! grep -q /sid "${debian_version}" ; then
+        return 1
+    fi
+
+    write_to_output "debian" "${major}" "${minor}" "Debian $(head -n 1 $debian_version)"
+
+    return 0
+}
+
+identify_redhat()
+{
+    redhat_release="$1"
+    local distro
+    local major
+    local minor
+    local beta
+
+    # distro=rhel
+    # Red Hat Enterprise Linux AS release 3 (Taroon Update 6)
+    # Red Hat Enterprise Linux AS release 3 (Taroon Update 8)
+    # Red Hat Enterprise Linux AS release 4 (Nahant)
+    # Red Hat Enterprise Linux AS release 4 (Nahant Update 1)
+    # Red Hat Enterprise Linux AS release 4 (Nahant Update 2)
+    # Red Hat Enterprise Linux AS release 4 (Nahant Update 3)
+    # Red Hat Enterprise Linux AS release 4 (Nahant Update 4)
+    # Red Hat Enterprise Linux Server release 4.92 (Tikanga)
+    # Red Hat Enterprise Linux Server release 5 (Tikanga)
+    # Red Hat Enterprise Linux Server release 5.1 Beta (Tikanga)
+    # Red Hat Enterprise Linux release 6.0 Beta (Santiago)
+
+    # distro=xe-ddk
+    # \@PRODUCT_BRAND\@ DDK release \@PRODUCT_VERSION\@-\@BUILD_NUMBER\@ (\@PRODUCT_NAME\@)
+    # Rio DDK release 0.5.6-2991c (xenenterprise)
+
+    # distro=xe-sdk
+    # \@PRODUCT_BRAND\@ SDK release \@PRODUCT_VERSION\@-\@BUILD_NUMBER\@ (\@PRODUCT_NAME\@)
+    # Rio SDK release 0.5.6-2991c (xenenterprise)
+
+    # distro=fedora
+    # Fedora Core release 3 (Heidelberg)
+
+    # distro=centos
+    # CentOS release 4.0 (Final)
+    # CentOS release 5 (Final)
+    # CentOS Linux release 7.0.1406 (Core)
+    # CentOS Stream release 8
+
+    # distro=rocky
+    # Rocky Linux release 8.3
+
+    # distro=scientific
+    # Scientific Linux release 6.5 (Carbon)
+
+    # distro=oracle
+    # Enterprise Linux Enterprise Linux Server release 5 (Carthage)
+    # Enterprise Linux Enterprise Linux Server release 5.5 (Carthage)
+    # Oracle Linux Server release 5.6
+    
+    # distro=almalinux
+    # AlmaLinux release 8.3 (Purple Manul)
+    
+    if [ ! -f "${redhat_release}" ] ; then
+        return 1
+    fi
+
+    eval $(sed -nr \
+               's/^(.*) DDK release ([^-]*)(-(.*))? (.*)$/distro=xe-ddk;major=\2;minor=\4/gp;' \
+                         "${redhat_release}")
+    eval $(sed -n \
+               -e 's/^\(.*\) SDK release \(.*\)-\(.*\) (.*)$/distro=xe-sdk;major=\2;minor=\3/gp;' \
+               -e 's/^Red Hat Enterprise Linux.* release \([0-9]*\) (.* Update \(.*\))$/distro=rhel;major=\1;minor=\2/gp;'\
+               -e 's/^Red Hat Enterprise Linux.* release \([0-9]*\) (.*)$/distro=rhel;major=\1/gp;' \
+               -e 's/^Red Hat Enterprise Linux.* release \([0-9]*\)\.\([0-9]*\) \([Bb]eta \)\?(.*)$/distro=rhel;major=\1;minor=\2;beta=\3;/gp;' \
+               -e 's/^Fedora.*release \([0-9]*\) (.*)$/distro=fedora;major=\1/gp;' \
+               -e 's/^CentOS release \([0-9]*\)\.\([0-9]*\) (.*)/distro=centos;major=\1;minor=\2/gp;' \
+               -e 's/^CentOS release \([0-9]*\) (.*)/distro=centos;major=\1/gp;' \
+               -e 's/^CentOS Linux release \([0-9]*\)\.\([0-9]*\).*$/distro=centos;major=\1;minor=\2/gp;' \
+               -e 's/^CentOS Stream release \([0-9]*\).*$/distro=centos;major=\1/gp;' \
+               -e 's/^Rocky Linux release \([0-9]*\)\.\([0-9]*\).*$/distro=rocky;major=\1;minor=\2/gp;' \
+               -e 's/^Enterprise Linux Enterprise Linux .* release \([0-9]*\)\.\([0-9]*\) (.*)$/distro=oracle;major=\1;minor=\2;/gp;' \
+               -e 's/^Enterprise Linux Enterprise Linux .* release \([0-9]*\) (.*)$/distro=oracle;major=\1/gp;' \
+               -e 's/^Oracle Linux Server release \([0-9]*\)\.\([0-9]*\)$/distro=oracle;major=\1;minor=\2/gp;' \
+               -e 's/^Scientific Linux SL release \([0-9]*\)\.\([0-9]*\) (.*)$/distro=scientific;major=\1;minor=\2;/gp;' \
+               -e 's/^Scientific Linux release \([0-9]*\)\.\([0-9]*\) (.*)$/distro=scientific;major=\1;minor=\2;/gp;' \
+               -e 's/^AlmaLinux release \([0-9]*\)\.\([0-9]*\) (.*)$/distro=almalinux;major=\1;minor=\2;/gp;' \
+                         "${redhat_release}")
+
+    if [ -z "${major}" -o -z "${distro}" ] ; then
+        return 1
+    fi
+
+    if [ -z "${minor}" ] ; then
+        minor=0
+    fi
+
+    # HACK to handle RHEL betas
+    if [ "${distro}" == "rhel" ] && [ ${minor} -gt 90 ] ; then
+        major=$(expr ${major} + 1 )
+        minor=0
+        beta=Beta
+    fi
+
+    if [ -n "${beta}" ] ; then
+        minor="${minor}beta"
+    fi
+
+    write_to_output "${distro}" "${major}" "${minor}" "$(head -n 1 ${redhat_release})"
+
+}
+
+identify_sles()
+{
+    suse_release="$1"
+    local major
+    local minor
+    local _major
+
+    # SUSE LINUX Enterprise Server 9 (i586)
+    # VERSION = 9
+    #
+    # SUSE LINUX Enterprise Server 9 (i586)
+    # VERSION = 9
+    # PATCHLEVEL = 2
+    #
+    # SUSE LINUX Enterprise Server 9 (i586)
+    # VERSION = 9
+    # PATCHLEVEL = 3
+    #
+    # SUSE Linux Enterprise Server 10 (i586)
+    # VERSION = 10
+    #
+    # SUSE Linux Enterprise Server 10 (i586)
+    # VERSION = 10
+    # PATCHLEVEL = 1
+    #
+    # SUSE Linux Enterprise Server 11 (i586)
+    # VERSION = 11
+    # PATCHLEVEL = 0
+    #
+    # /etc/SuSE-release is deprecated and removed in SLE15, so use /etc/os-release to detect.
+    # NAME="SLES"
+    # VERSION="15"
+    # VERSION_ID="15"
+    # PRETTY_NAME="SUSE Linux Enterprise Server 15"
+    # ID="sles"
+    # ID_LIKE="suse"
+    # ANSI_COLOR="0;32"
+    # CPE_NAME="cpe:/o:suse:sles:15"
+
+    if [ ! -f "${suse_release}" ] ; then
+        return 1
+    fi
+
+    eval $(sed -n \
+               -e 's/^VERSION_ID="\([0-9]*\)\.\?\([0-9]*\)\?"$/major=\1;minor=\2;/gp' \
+               -e 's/^PRETTY_NAME="SUSE L\(inux\|INUX\) Enterprise \([a-zA-Z0-9_]*\) \([0-9]*\)\( SP[0-9]*\)\?"/_major=\3;_pretty_name=\0;/gp' \
+               -e 's/^SUSE L\(inux\|INUX\) Enterprise \([a-zA-Z0-9_]*\) \([0-9]*\) (.*)/_major=\3;_pretty_name="\0";/gp;' \
+               -e 's/^VERSION = \([0-9]*\)$/major=\1;/gp;' \
+               -e 's/^PATCHLEVEL = \([0-9]*\)$/minor=\1;/gp;' \
+               "${suse_release}")
+
+    if [ -z "${major}" -o -z "${_major}" ] ; then
+        return 1
+    fi
+    
+    if [ "${major}" != "${_major}" ] ; then
+        return 1
+    fi
+
+    if [ -z "${minor}" ] ; then
+        minor=0
+    fi
+
+    write_to_output "sles" "${major}" "${minor}" "${_pretty_name##*=}"
+}
+
+identify_lsb()
+{
+    lsb_release="$1"
+
+    if [ ! -x "${lsb_release}" ] ; then
+        saved_IFS=$IFS
+        IFS=:
+        for i in $PATH ; do
+            if [ -x "${i}/${lsb_release}" ] ; then
+                lsb_release="${i}/${lsb_release}"
+                break
+            fi
+        done
+        IFS=$saved_IFS
+    fi
+
+    if [ -x "${lsb_release}" ] ; then
+        distro=$(${lsb_release} --short --id | tr 'A-Z' 'a-z')
+        description=$(${lsb_release} --short --description | sed -e 's/^"\(.*\)"$/\1/g')
+        release=$(${lsb_release} --short --release)
+    else
+        if [ -f /etc/lsb-release ] ; then
+            source /etc/lsb-release
+            distro="$DISTRIB_ID"
+            description="$DISTRIB_DESCRIPTION"
+            release="$DISTRIB_RELEASE"
+        else
+            return 1
+        fi
+    fi
+
+    if [ -z "${distro}" -o -z "${release}" ] ; then
+        return 1
+    fi
+
+    eval $(echo $release | awk -F. -- '{ subindex = index($0,"."); \
+                                         print "major=\"" $1 "\""; \
+                                         print "minor=\"" substr($0,subindex+1) "\"" }')
+
+    if [ -z "${major}" -o -z "${distro}" ] ; then
+        return 1
+    fi
+
+    write_to_output "${distro}" "${major}" "${minor}" "${description}"
+}
+
+identify_os_release()
+{
+    os_release="$1"
+    local major
+    local minor
+
+    # Use /etc/os-release to detect.
+    # NAME="SLES"
+    # VERSION="15"
+    # VERSION_ID="15"
+    # PRETTY_NAME="SUSE Linux Enterprise Server 15"
+    # ID="sles"
+    # ID_LIKE="suse"
+    # ANSI_COLOR="0;32"
+    # CPE_NAME="cpe:/o:suse:sles:15"
+
+    if [ ! -f "${os_release}" ] ; then
+        return 1
+    fi
+
+    source "${os_release}"
+
+    eval $(echo "$VERSION_ID" | \
+	    sed -n -e 's/^\([0-9]*\)\.\?\([0-9]*\).*$/major=\1;minor=\2;/gp')
+
+    major="${major:-unknown}"
+    minor="${minor:-unknown}"
+
+    write_to_output "${ID}" "${major}" "${minor}" "${PRETTY_NAME}"
+}
+
+identify_kylin()
+{
+    kylin_release="$1"
+    local distro
+    local major
+    local minor
+
+    # distro
+    # NeoKylin Linux Security OS V5.0 (Update8)
+    # Neokylin Linux Security OS Server release V5 (Santiago)
+    # NeoKylin Linux Advanced Server release 6.5 (Berryllium)
+    # NeoKylin Linux Advanced Server release 7.0
+
+    if [ ! -f "${kylin_release}" ] ; then
+        return 1
+    fi
+
+    eval $(sed -rn \
+            's/^Neo[kK]ylin Linux[^0-9]+([0-9]+)\.?([0-9]+)?.*$/distro=neokylin;major=\1;minor=\2;/gp;' \
+            "${kylin_release}")
+
+    if [ -z "${major}" -o -z "${distro}" ] ; then
+        return 1
+    fi
+
+    if [ -z "${minor}" ] ; then
+        minor=0
+    fi
+
+    write_to_output "${distro}" "${major}" "${minor}" "$(head -n 1 ${kylin_release})"
+}
+
+identify_asianux()
+{
+    asianux_release="$1"
+    local distro
+    local major
+    local minor
+
+    # distro
+    # 'Asianux Server 4.5 (Final)'
+    # 'Asianux Server 4 (Hiranya SP2)'
+    # 'Asianux Server 4 (Hiranya SP4)'
+
+    if [ ! -f "${asianux_release}" ] ; then
+        return 1
+    fi
+
+    eval $(sed -rn \
+              's/^Asianux Server ([0-9]*)\.([0-9]*) .*$/distro=asianux;major=\1;minor=\2;/gp;'`
+              `'s/^Asianux Server ([0-9]*) \([^0-9]*([0-9]*)\)$/distro=asianux;major=\1;minor=\2;/gp;' \
+              "${asianux_release}")
+
+    if [ -z "${major}" -o -z "${distro}" ] ; then
+        return 1
+    fi
+
+    if [ -z "${minor}" ] ; then
+        minor=0
+    fi
+
+    write_to_output "${distro}" "${major}" "${minor}" "$(head -n 1 ${asianux_release})"
+}
+
+identify_turbo()
+{
+    turbo_release="$1"
+    local distro
+    local major
+    local minor
+
+    # distro
+    # GreatTurbo Enterprise Server release 12.2 (Theseus)
+
+    if [ ! -f "${turbo_release}" ] ; then
+        return 1
+    fi
+
+    eval $(sed -rn \
+              's/^GreatTurbo[^0-9]*([0-9]*)\.?([0-9]*)?.*$/distro=turbo;major=\1;minor=\2;/gp;' \
+              "${turbo_release}")
+
+    if [ -z "${major}" -o -z "${distro}" ] ; then
+        return 1
+    fi
+
+    if [ -z "${minor}" ] ; then
+        minor=0
+    fi
+
+    write_to_output "${distro}" "${major}" "${minor}" "$(head -n 1 ${turbo_release})"
+}
+
+identify_linx()
+{
+    linx_release="$1"
+    local distro
+    local major
+    local minor
+
+    # distro
+    # '6.0.60.4' corresponds to Linx Linux 6
+    # '6.0.80' corresponds to Linx Linux 8
+    
+
+    if [ ! -f "${linx_release}" ] ; then
+        return 1
+    fi
+
+    eval $(sed -rn \
+              's/^6.0.([0-9])0.*$/distro=linx;major=\1;minor=0;/gp;' \
+              "${linx_release}")
+
+    if [ -z "${major}" -o -z "${distro}" ] ; then
+        return 1
+    fi
+
+    if [ -z "${minor}" ] ; then
+        minor=0
+    fi
+    
+    linx_osname="Linx Linux ${major}.${minor}"
+    write_to_output "${distro}" "${major}" "${minor}" "${linx_osname}"
+}
+
+identify_yinhe()
+{
+    yinhe_release="$1"
+    local distro
+    local major
+    local minor
+
+    # distro
+    # Kylin 4.0
+
+    if [ ! -f "${yinhe_release}" ] ; then
+        return 1
+    fi
+
+    eval $(sed -rn \
+              's/^Kylin ([0-9]).([0-9])$/distro=yinhe;major=\1;minor=\2;/gp;' \
+              "${yinhe_release}")
+
+    if [ -z "${major}" -o -z "${distro}" ] ; then
+        return 1
+    fi
+
+    if [ -z "${minor}" ] ; then
+        minor=0
+    fi
+    
+    yinhe_osname="Yinhe Kylin Linux ${major}.${minor}"
+    write_to_output "${distro}" "${major}" "${minor}" "${yinhe_osname}"
+}
+
+identify_gooroom()
+{
+    gooroom_release="$1"
+    local distro
+    local major
+    local minor
+    local description
+
+    if [ ! -f "${gooroom_release}" ] ; then
+        return 1
+    fi
+
+    eval $(sed -rn 's/^DISTRIB_ID=(.*)$/distro=\1;/gp;' ${gooroom_release})
+    if [ ${distro} != "Gooroom" ] ; then
+        return 1
+    fi
+
+    eval $(sed -rn 's/^DISTRIB_RELEASE=([0-9]).([0-9])$/major=\1;minor=\2;/gp;' ${gooroom_release})
+
+    if [ -z "${major}" ] ; then
+        return 1
+    fi
+
+    if [ -z "${minor}" ] ; then
+        minor=0
+    fi
+
+    eval $(sed -rn 's/^DISTRIB_DESCRIPTION=(.*)$/description=\1;/gp;' ${gooroom_release})
+
+    write_to_output "${distro}" "${major}" "${minor}" "${description}"
+}
+
+identify_boot2docker()
+{
+    boot2docker_release="$1"
+    local major
+    local minor
+
+    if [ ! -f "${boot2docker_release}" ] ; then
+        return 1
+    fi
+
+    major=$(awk -F. '{printf("%s", $1)}' /etc/version)
+    minor=$(awk -F. '{printf("%s.%s", $2, $3)}' /etc/version)
+
+    write_to_output "boot2docker" "${major}" "${minor}" "boot2docker $(head -n 1 /etc/version)"
+
+}
+
+if [ $# -eq 1 ] ; then
+    exec 1>"$1"
+fi
+
+if [ -z "${TEST}" ] ; then
+    #identify kylin disto before redhat, as kylin has both kylin_release and redhat_release.
+    identify_asianux /etc/asianux-release && exit 0
+    identify_turbo /etc/turbo-release && exit 0
+    identify_kylin  /etc/neokylin-release  && exit 0
+    identify_redhat /etc/oracle-release && exit 0
+    identify_redhat /etc/enterprise-release && exit 0
+    #identify Rocky or AlmaLinux before CentOS and RHEL, as Rocky and AlmaLinux both have centos-release and redhat-release
+    identify_redhat /etc/rocky-release && exit 0
+    identify_redhat /etc/almalinux-release && exit 0
+    identify_redhat /etc/centos-release && exit 0
+    identify_redhat /etc/redhat-release && exit 0
+    #identify SuSE-release before, as previous version of SUSE or other distros also have os-release
+    identify_sles /etc/SuSE-release && exit 0
+    identify_sles /etc/os-release && exit 0
+    #identify Linx disto before debian, as Linx has both linx_release and debian_version.
+    identify_yinhe /etc/kylin-build   && exit 0
+    identify_linx /etc/linx-release   && exit 0
+    identify_gooroom /etc/lsb-release && exit 0
+    identify_lsb lsb_release         && exit 0
+    identify_debian /etc/debian_version && exit 0
+    identify_boot2docker /etc/boot2docker && exit 0
+    identify_os_release /etc/os-release && exit 0
+
+
+    if [ $# -eq 1 ] ; then
+        rm -f "$1"
+    fi
+
+    exit 1
+fi

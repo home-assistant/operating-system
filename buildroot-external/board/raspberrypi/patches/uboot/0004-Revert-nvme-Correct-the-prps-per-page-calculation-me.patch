@@ -1,0 +1,44 @@
+From bb7d531f80d676a26f85982fc2bbb2a0939fd3bf Mon Sep 17 00:00:00 2001
+Message-Id: <bb7d531f80d676a26f85982fc2bbb2a0939fd3bf.1632816160.git.stefan@agner.ch>
+In-Reply-To: <cb3001355d465fa4a2f80cd186700a7bd27ca354.1632816160.git.stefan@agner.ch>
+References: <cb3001355d465fa4a2f80cd186700a7bd27ca354.1632816160.git.stefan@agner.ch>
+From: Stefan Agner <stefan@agner.ch>
+Date: Thu, 23 Sep 2021 23:43:31 +0200
+Subject: [PATCH 4/8] Revert "nvme: Correct the prps per page calculation
+ method"
+
+This reverts commit 859b33c948945f7904f60a2c12a3792d356d51ad.
+
+If there is more than one PRP List the last entry is a pointer to
+the next list. From the NVM Express specification:
+
+"The last entry within a memory page, as indicated by the memory page
+size in the CC.MPS field, shall be a PRP List pointer if there is more
+than a single memory page of data to be transferred."
+
+For the purpose of calculating the number of pages required for PRP
+lists we should always assume that the last entry is required for
+the next PRP list.
+
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+Cc: Wesley Sheng <wesleyshenggit@sina.com>
+---
+ drivers/nvme/nvme.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/nvme/nvme.c b/drivers/nvme/nvme.c
+index f6465ea7f4..1ae3001a90 100644
+--- a/drivers/nvme/nvme.c
++++ b/drivers/nvme/nvme.c
+@@ -81,7 +81,7 @@ static int nvme_setup_prps(struct nvme_dev *dev, u64 *prp2,
+ 	u64 *prp_pool;
+ 	int length = total_len;
+ 	int i, nprps;
+-	u32 prps_per_page = page_size >> 3;
++	u32 prps_per_page = (page_size >> 3) - 1;
+ 	u32 num_pages;
+ 
+ 	length -= (page_size - offset);
+-- 
+2.33.0
+

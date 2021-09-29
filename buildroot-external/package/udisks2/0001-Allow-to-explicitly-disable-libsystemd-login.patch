@@ -8,6 +8,8 @@ Currently libsystemd-login is used to inhibit poweroff, sleep and
 reboot. The library makes calls to systemd-logind which in turn needs
 quite some services to be present. This can be problematic when using
 udisks in early boot stages.
+
+Signed-off-by: Stefan Agner <stefan@agner.ch>
 ---
  configure.ac | 21 +++++++++++++--------
  1 file changed, 13 insertions(+), 8 deletions(-)

@@ -1,6 +1,7 @@
 [Unit]
 Description=HassOS AppArmor
-Wants=hassos-supervisor.service
+Wants=hassos-supervisor.service network-online.target time-sync.target
+After=network-online.target time-sync.target
 Before=docker.service hassos-supervisor.service
 RequiresMountsFor=/mnt/data
 

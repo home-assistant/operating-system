@@ -4,12 +4,14 @@ In-Reply-To: <abcac570bfe1db867fda504942e6c782ada2aa00.1616318066.git.stefan@agn
 References: <abcac570bfe1db867fda504942e6c782ada2aa00.1616318066.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Sat, 13 Mar 2021 15:24:45 +0100
-Subject: [PATCH 2/3] Make polkit dependency optional
+Subject: [PATCH] Make polkit dependency optional
 
 Make authorization using polkit a compile time option. This allows to
 build udisks2 without polkit.
 
 Fixes: #615
+
+Signed-off-by: Stefan Agner <stefan@agner.ch>
 ---
  configure.ac              | 33 +++++++++++++++----
  data/Makefile.am          |  2 ++

@@ -179,8 +179,8 @@ function _create_disk_gpt() {
     dd if="${data_img}" of="${hdd_img}" conv=notrunc,sparse bs=512 seek="${data_offset}"
 
     # Set Hyprid partition
-    if [ "${BOOT_SYS}" == "hyprid" ]; then
-        _fix_disk_hyprid
+    if [ "${BOOT_SYS}" == "hybrid" ]; then
+        _fix_disk_hybrid
     fi
 
     # Write SPL
@@ -264,7 +264,7 @@ function _create_disk_mbr() {
 }
 
 
-function _fix_disk_hyprid() {
+function _fix_disk_hybrid() {
     local hdd_img="$(hassos_image_name img)"
 
     sgdisk -t 1:"E3C9E316-0B5C-4DB8-817D-F92DF00215AE" "${hdd_img}"

@@ -1,0 +1,7 @@
+config BR2_PACKAGE_XE_GUEST_UTILITIES
+	bool "Xen guest utilities"
+	depends on BR2_PACKAGE_HOST_GO_TARGET_ARCH_SUPPORTS
+	depends on BR2_PACKAGE_HOST_GO_TARGET_CGO_LINKING_SUPPORTS
+	depends on BR2_TOOLCHAIN_HAS_THREADS
+	help
+	  Xen guest utilities for UNIX-like operating systems.
