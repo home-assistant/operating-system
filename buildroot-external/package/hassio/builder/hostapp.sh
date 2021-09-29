@@ -1,8 +1,6 @@
 #!/bin/bash
 set -e
 
-ARCH=
-MACHINE=
 DATA_IMG="/export/data.ext4"
 APPARMOR_URL="https://version.home-assistant.io/apparmor.txt"
 
