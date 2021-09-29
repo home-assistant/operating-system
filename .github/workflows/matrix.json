@@ -12,6 +12,12 @@
     "label": "board/generic-x86-64"
   },
   {
+    "id": "khadas-vim3",
+    "defconfig": "khadas_vim3",
+    "runner": "aarch64-runner",
+    "label": "board/khadas"
+  },
+  {
     "id": "odroid-c2",
     "defconfig": "odroid_c2",
     "runner": "aarch64-runner",
