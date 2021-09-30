@@ -26,16 +26,10 @@ define HASSIO_CONFIGURE_CMDS
 
 endef
 
-define HASSIO_BUILD_CMDS
-	docker build --tag hassos-hostapps $(@D)/builder
-endef
+HASSIO_INSTALL_IMAGES = YES
 
-define HASSIO_INSTALL_TARGET_CMDS
-	docker run --rm --privileged \
-		-e BUILDER_UID="$(shell id -u)" -e BUILDER_GID="$(shell id -g)" \
-		-v $(BINARIES_DIR):/export \
-		-v $(@D)/images:/images \
-		hassos-hostapps
+define HASSIO_INSTALL_IMAGES_CMDS
+	$(BR2_EXTERNAL_HASSOS_PATH)/package/hassio/create-data-partition.sh "$(@D)" "$(BINARIES_DIR)"
 endef
 
 $(eval $(generic-package))
