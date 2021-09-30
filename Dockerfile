@@ -1,4 +1,4 @@
-FROM debian:buster
+FROM debian:bullseye
 
 # Set shell
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
@@ -32,8 +32,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         ncurses-dev \
         patch \
         perl \
-        python \
-        python-matplotlib \
+        python3 \
+        python3-matplotlib \
+        python-is-python3 \
         graphviz \
         rsync \
         sudo \
