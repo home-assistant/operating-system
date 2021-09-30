@@ -14,8 +14,8 @@ HASSIO_VERSION_URL = "https://version.home-assistant.io/stable.json"
 HASSIO_CONTAINER_IMAGES_ARCH = supervisor dns audio cli multicast observer core
 
 define HASSIO_CONFIGURE_CMDS
-	# Set "core" version to "landingpage" and "supervisor" to "latest"
-	curl -s $(HASSIO_VERSION_URL) | jq '.core = "landingpage" | .supervisor = "latest"' > $(@D)/stable.json
+	# Deploy only landing page for "core" by setting version to "landingpage"
+	curl -s $(HASSIO_VERSION_URL) | jq '.core = "landingpage"' > $(@D)/stable.json
 
 	$(Q)mkdir -p $(@D)/images
 	$(Q)mkdir -p $(HASSIO_DL_DIR)
