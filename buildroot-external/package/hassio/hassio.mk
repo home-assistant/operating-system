@@ -15,7 +15,7 @@ HASSIO_CONTAINER_IMAGES_ARCH = supervisor dns audio cli multicast observer core
 
 define HASSIO_CONFIGURE_CMDS
 	# Set "core" version to "landingpage" and "supervisor" to "latest"
-	curl -s ${HASSIO_VERSION_URL} | jq '.core = "landingpage" | .supervisor = "latest"' > $(@D)/stable.json
+	curl -s $(HASSIO_VERSION_URL) | jq '.core = "landingpage" | .supervisor = "latest"' > $(@D)/stable.json
 
 	$(Q)mkdir -p $(@D)/images
 	$(Q)mkdir -p $(HASSIO_DL_DIR)
