@@ -9,7 +9,12 @@ function hassos_pre_image() {
         "${BINARIES_DIR}/boot.scr"
     cp "${BINARIES_DIR}"/*.dtb "${BOOT_DATA}/"
     cp -r "${BINARIES_DIR}/rpi-firmware/"* "${BOOT_DATA}/"
-    cp "${BOARD_DIR}/../boot-env.txt" "${BOOT_DATA}/config.txt"
+    if [ -f "${BOARD_DIR}/config.txt" ]; then
+        cp "${BOARD_DIR}/config.txt" "${BOOT_DATA}/config.txt"
+    else
+        cp "${BOARD_DIR}/../config.txt" "${BOOT_DATA}/config.txt"
+    fi
+    cp "${BOARD_DIR}/../config.txt" "${BOOT_DATA}/config.txt"
     cp "${BINARIES_DIR}"/*.dtbo "${BOOT_DATA}/overlays/"
 
     # EEPROM update for Raspberry Pi 4/Compute Module 4
