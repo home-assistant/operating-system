@@ -1,0 +1,71 @@
+From 3f182b7e743662ec3fa63e1c7f213171d99485ba Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Mon, 10 Feb 2020 21:45:58 +0100
+Subject: [PATCH] Checks for strtol_l function
+
+strtol_l (and strtoul_l, strtoll_l, strtoull_l) are not always available
+(for example on musl) so check for strtol_l and reuse android fallback if
+needed to avoid the following build failure:
+
+/home/buildroot/autobuild/instance-1/output-1/build/ogre-1.12.0/OgreMain/src/OgreStringConverter.cpp: In static member function 'static bool Ogre::StringConverter::parse(const String&, Ogre::int32&)':
+/home/buildroot/autobuild/instance-1/output-1/build/ogre-1.12.0/OgreMain/src/OgreStringConverter.cpp:253:22: error: 'strtol_l' was not declared in this scope
+         ret = (int32)strtol_l(val.c_str(), &end, 0, _numLocale);
+                      ^~~~~~~~
+
+Fixes:
+ - http://autobuild.buildroot.org/results/107cffe41081ce46441dec8699d6ad0f152bc152
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Retrieved from:
+https://github.com/OGRECave/ogre/commit/3f182b7e743662ec3fa63e1c7f213171d99485ba]
+---
+ CMake/ConfigureBuild.cmake             | 7 +++++++
+ CMake/Templates/OgreBuildSettings.h.in | 2 ++
+ OgreMain/include/OgreString.h          | 3 +++
+ 3 files changed, 12 insertions(+)
+
+diff --git a/CMake/ConfigureBuild.cmake b/CMake/ConfigureBuild.cmake
+index ab049a525ae..73606c997c1 100644
+--- a/CMake/ConfigureBuild.cmake
++++ b/CMake/ConfigureBuild.cmake
+@@ -133,6 +133,13 @@ if(SDL2_FOUND OR EMSCRIPTEN)
+     set(OGRE_BITES_HAVE_SDL 1)
+ endif()
+ 
++# determine if strtol_l is supported
++include(CheckFunctionExists)
++CHECK_FUNCTION_EXISTS(strtol_l HAVE_STRTOL_L)
++if (NOT HAVE_STRTOL_L)
++  set(OGRE_NO_LOCALE_STRCONVERT 1)
++endif ()
++
+ # generate OgreBuildSettings.h
+ configure_file(${OGRE_TEMPLATES_DIR}/OgreComponents.h.in ${PROJECT_BINARY_DIR}/include/OgreComponents.h @ONLY)
+ configure_file(${OGRE_TEMPLATES_DIR}/OgreBuildSettings.h.in ${PROJECT_BINARY_DIR}/include/OgreBuildSettings.h @ONLY)
+diff --git a/CMake/Templates/OgreBuildSettings.h.in b/CMake/Templates/OgreBuildSettings.h.in
+index a491d09624c..95eb1b71d64 100644
+--- a/CMake/Templates/OgreBuildSettings.h.in
++++ b/CMake/Templates/OgreBuildSettings.h.in
+@@ -107,4 +107,6 @@ WARNING: Disabling this will make the samples unusable.
+ 
+ #cmakedefine01 OGRE_NO_QUAD_BUFFER_STEREO
+ 
++#cmakedefine01 OGRE_NO_LOCALE_STRCONVERT
++
+ #endif
+diff --git a/OgreMain/include/OgreString.h b/OgreMain/include/OgreString.h
+index a81c220012e..1f544195dee 100644
+--- a/OgreMain/include/OgreString.h
++++ b/OgreMain/include/OgreString.h
+@@ -46,8 +46,11 @@ THE SOFTWARE.
+ #   define strnicmp strncasecmp
+ #endif
+ 
++#if OGRE_PLATFORM == OGRE_PLATFORM_ANDROID || OGRE_PLATFORM == OGRE_PLATFORM_EMSCRIPTEN || \
++	(OGRE_PLATFORM == OGRE_PLATFORM_LINUX && OGRE_NO_LOCALE_STRCONVERT == 1)
+ #if OGRE_PLATFORM == OGRE_PLATFORM_ANDROID || OGRE_PLATFORM == OGRE_PLATFORM_EMSCRIPTEN
+ #   define locale_t int
++#endif
+ #   define strtod_l(ptr, end, l) strtod(ptr, end)
+ #   define strtoul_l(ptr, end, base, l) strtoul(ptr, end, base)
+ #   define strtol_l(ptr, end, base, l) strtol(ptr, end, base)

@@ -1,0 +1,40 @@
+From dfc801c44a93bed7b3951905b188823d6a0432c8 Mon Sep 17 00:00:00 2001
+From: Sergey Poznyakoff <gray@gnu.org>
+Date: Wed, 11 Aug 2021 18:10:38 +0300
+Subject: Fix previous commit
+
+* src/dstring.c (ds_reset,ds_concat): Don't call ds_resize in a
+loop.
+
+[Retrieved from:
+https://git.savannah.gnu.org/cgit/cpio.git/commit/?id=dfc801c44a93bed7b3951905b188823d6a0432c8]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ src/dstring.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/dstring.c b/src/dstring.c
+index 692d3e7..b7e0bb5 100644
+--- a/src/dstring.c
++++ b/src/dstring.c
+@@ -64,7 +64,7 @@ void
+ ds_reset (dynamic_string *s, size_t len)
+ {
+   while (len > s->ds_size)
+-    ds_resize (s);
++    s->ds_string = x2nrealloc (s->ds_string, &s->ds_size, 1);
+   s->ds_idx = len;
+ }
+ 
+@@ -116,7 +116,7 @@ ds_concat (dynamic_string *s, char const *str)
+ {
+   size_t len = strlen (str);
+   while (len + 1 > s->ds_size)
+-    ds_resize (s);
++    s->ds_string = x2nrealloc (s->ds_string, &s->ds_size, 1);
+   memcpy (s->ds_string + s->ds_idx, str, len);
+   s->ds_idx += len;
+   s->ds_string[s->ds_idx] = 0;
+-- 
+cgit v1.2.1
+

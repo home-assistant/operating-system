@@ -1,4 +1,5 @@
 from __future__ import print_function
+from io import open
 import os
 import re
 import glob
@@ -231,7 +232,8 @@ def parse_developers():
     linen = 0
     global unittests
     unittests = list_unittests()
-    with open(os.path.join(brpath, "DEVELOPERS"), "r") as f:
+    developers_fname = os.path.join(brpath, 'DEVELOPERS')
+    with open(developers_fname, mode='r', encoding='utf_8') as f:
         files = []
         name = None
         for line in f:
@@ -249,7 +251,10 @@ def parse_developers():
                 if len(dev_files) == 0:
                     print("WARNING: '%s' doesn't match any file" % fname,
                           file=sys.stderr)
-                files += [os.path.relpath(f, brpath) for f in dev_files]
+                for f in dev_files:
+                    dev_file = os.path.relpath(f, brpath)
+                    dev_file = dev_file.replace(os.sep, '/')  # force unix sep
+                    files.append(dev_file)
             elif line == "":
                 if not name:
                     continue

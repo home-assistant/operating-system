@@ -1,0 +1,51 @@
+From 194ec61843b9598ce90873c812b817c4b96e2e0d Mon Sep 17 00:00:00 2001
+From: Baruch Siach <baruch@tkos.co.il>
+Date: Thu, 2 Sep 2021 12:56:00 +0300
+Subject: [PATCH] Detect libpcap dependencies using pkg-config
+
+When building statically the link command line must include all
+dependencies of all libraries. libpcap can optionally depend on libnl.
+mausezahn can't build statically in this case.
+
+Use pkg-config in configure and in the link command to construct the
+library flags we need to link with libpcap.
+
+Signed-off-by: Baruch Siach <baruch@tkos.co.il>
+Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
+---
+Upstream status: commit 194ec61843b9598ce90873c812b817c4b96e2e0d
+
+ configure          | 4 +++-
+ mausezahn/Makefile | 2 +-
+ 2 files changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/configure b/configure
+index 510826a798f5..598ae2433a7a 100755
+--- a/configure
++++ b/configure
+@@ -588,7 +588,9 @@ int main(void)
+ }
+ EOF
+ 
+-	$CC -o $TMPDIR/pcaptest $TMPDIR/pcaptest.c -lpcap >> config.log 2>&1
++	$CC -o $TMPDIR/pcaptest $TMPDIR/pcaptest.c \
++		$($PKG_CONFIG --libs libpcap 2>> config.log) \
++		>> config.log 2>&1
+ 	if [ ! -x $TMPDIR/pcaptest ] ; then
+ 		echo "[NO]"
+ 		echo "CONFIG_LIBPCAP=0" >> Config
+diff --git a/mausezahn/Makefile b/mausezahn/Makefile
+index ca16b6579583..9544565355cc 100644
+--- a/mausezahn/Makefile
++++ b/mausezahn/Makefile
+@@ -1,6 +1,6 @@
+ mausezahn-libs =	-lcli \
+ 			-lnet \
+-			-lpcap \
++			$(shell PKG_CONFIG_PATH=$(PKG_CONFIG_PATH) $(PKG_CONFIG) --libs libpcap 2> /dev/null ) \
+ 			-lrt \
+ 			-lpthread \
+ 			-lm
+-- 
+2.33.0
+

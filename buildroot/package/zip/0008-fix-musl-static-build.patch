@@ -1,0 +1,20 @@
+fix musl static build
+
+Don't define NO_DIR if no directory library is needed
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+
+diff -Nura zip30.orig/unix/configure zip30/unix/configure
+--- zip30.orig/unix/configure	2021-08-31 21:29:55.219967136 +0200
++++ zip30/unix/configure	2021-08-31 21:50:48.239280513 +0200
+@@ -569,8 +569,8 @@
+   done
+   if [ ${OPT} ]; then
+     LFLAGS2="${LFLAGS2} ${OPT}"
+-  else
+-    CFLAGS="${CFLAGS} -DNO_DIR"
++  #else
++  #  CFLAGS="${CFLAGS} -DNO_DIR"
+   fi
+ fi
+ 

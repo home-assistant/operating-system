@@ -13,6 +13,8 @@ https://github.com/pyudev/pyudev/pull/117
 Signed-off-by: Yegor Yefremov <yegorslists@googlemail.com>
 [Marcin: adjust to 0.22.0]
 Signed-off-by: Marcin Niestroj <m.niestroj@grinn-global.com>
+[Fabrice: Use %-formatting instead of f-string for python 2]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
 ---
  src/pyudev/_ctypeslib/utils.py | 8 ++++----
  1 file changed, 4 insertions(+), 4 deletions(-)
@@ -37,7 +39,7 @@ index 9dffb3c..aa9942f 100644
 -    library_name = find_library(name)
 -    if not library_name:
 +    try:
-+        lib = cdll.LoadLibrary(f'lib{name}.so')
++        lib = cdll.LoadLibrary('lib%s.so' % name)
 +    except OSError:
          raise ImportError('No library named %s' % name)
 -    lib = CDLL(library_name, use_errno=True)

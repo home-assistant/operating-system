@@ -88,5 +88,5 @@ config BR2_GDB_VERSION
 	default "4ecb98fbc2f94dbe01b69384afbc515107de73df" if BR2_csky
 	default "8.3.1"    if BR2_GDB_VERSION_8_3
 	default "9.2"      if BR2_GDB_VERSION_9_2 || !BR2_PACKAGE_HOST_GDB
-	default "10.1"	   if BR2_GDB_VERSION_10
+	default "10.2"	   if BR2_GDB_VERSION_10
 	depends on BR2_PACKAGE_GDB || BR2_PACKAGE_HOST_GDB

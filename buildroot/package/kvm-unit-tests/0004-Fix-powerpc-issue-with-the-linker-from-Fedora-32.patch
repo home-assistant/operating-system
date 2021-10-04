@@ -1,0 +1,61 @@
+From 5126732d73aa75a0bc84f898042bfe35640624b8 Mon Sep 17 00:00:00 2001
+From: Thomas Huth <thuth@redhat.com>
+Date: Wed, 13 May 2020 13:14:46 +0200
+Subject: [PATCH] Fix powerpc issue with the linker from Fedora 32
+
+The linker from Fedora 32 complains:
+
+powerpc64-linux-gnu-ld: powerpc/selftest.elf: error: PHDR segment not
+ covered by LOAD segment
+
+Let's introduce some fake PHDRs to the linker script to get this
+working again.
+
+Message-Id: <20200514192626.9950-7-thuth@redhat.com>
+Signed-off-by: Thomas Huth <thuth@redhat.com>
+Signed-off-by: Matthew Weber <matthew.weber@collins.com>
+---
+ powerpc/flat.lds | 19 ++++++++++++++++---
+ 1 file changed, 16 insertions(+), 3 deletions(-)
+
+diff --git a/powerpc/flat.lds b/powerpc/flat.lds
+index 53221e8..5eed368 100644
+--- a/powerpc/flat.lds
++++ b/powerpc/flat.lds
+@@ -1,7 +1,17 @@
+ 
++PHDRS
++{
++    text PT_LOAD FLAGS(5);
++    data PT_LOAD FLAGS(6);
++}
++
+ SECTIONS
+ {
+-    .text : { *(.init) *(.text) *(.text.*) }
++    .text : {
++        *(.init)
++        *(.text)
++        *(.text.*)
++    } :text
+     . = ALIGN(64K);
+     etext = .;
+     .opd : { *(.opd) }
+@@ -19,9 +29,12 @@ SECTIONS
+     .data : {
+         *(.data)
+         *(.data.rel*)
+-    }
++    } :data
+     . = ALIGN(16);
+-    .rodata : { *(.rodata) *(.rodata.*) }
++    .rodata : {
++        *(.rodata)
++        *(.rodata.*)
++    } :data
+     . = ALIGN(16);
+     .bss : { *(.bss) }
+     . = ALIGN(256);
+-- 
+2.17.1
+

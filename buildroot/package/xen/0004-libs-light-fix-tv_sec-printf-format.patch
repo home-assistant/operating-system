@@ -1,0 +1,63 @@
+From a8ac01aa3e3ea5e6a9a1620aa8fa7e9da3458120 Mon Sep 17 00:00:00 2001
+From: Manuel Bouyer <bouyer@netbsd.org>
+Date: Tue, 26 Jan 2021 23:47:55 +0100
+Subject: [PATCH] libs/light: fix tv_sec printf format
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Don't assume tv_sec is a unsigned long, it is 64 bits on NetBSD 32 bits.
+Use %jd and cast to (intmax_t) instead
+
+Signed-off-by: Manuel Bouyer <bouyer@netbsd.org>
+Reviewed-by: Roger Pau Monné <roger.pau@citrix.com>
+[Retrieved (and backported) from:
+https://gitlab.com/xen-project/xen/-/commit/a8ac01aa3e3ea5e6a9a1620aa8fa7e9da3458120]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ tools/libs/light/libxl_create.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/tools/libxl/libxl_create.c b/tools/libxl/libxl_create.c
+index 8616113e72..9848d65f36 100644
+--- a/tools/libxl/libxl_create.c
++++ b/tools/libxl/libxl_create.c
+@@ -496,7 +496,7 @@ int libxl__domain_build(libxl__gc *gc,
+         vments[2] = "image/ostype";
+         vments[3] = "hvm";
+         vments[4] = "start_time";
+-        vments[5] = GCSPRINTF("%lu.%02d", start_time.tv_sec,(int)start_time.tv_usec/10000);
++        vments[5] = GCSPRINTF("%jd.%02d", (intmax_t)start_time.tv_sec,(int)start_time.tv_usec/10000);
+ 
+         localents = libxl__calloc(gc, 13, sizeof(char *));
+         i = 0;
+@@ -535,7 +535,7 @@ int libxl__domain_build(libxl__gc *gc,
+         vments[i++] = "image/kernel";
+         vments[i++] = (char *) state->pv_kernel.path;
+         vments[i++] = "start_time";
+-        vments[i++] = GCSPRINTF("%lu.%02d", start_time.tv_sec,(int)start_time.tv_usec/10000);
++        vments[i++] = GCSPRINTF("%jd.%02d", (intmax_t)start_time.tv_sec,(int)start_time.tv_usec/10000);
+         if (state->pv_ramdisk.path) {
+             vments[i++] = "image/ramdisk";
+             vments[i++] = (char *) state->pv_ramdisk.path;
+@@ -1502,7 +1502,7 @@ static void domcreate_stream_done(libxl__egc *egc,
+         vments[2] = "image/ostype";
+         vments[3] = "hvm";
+         vments[4] = "start_time";
+-        vments[5] = GCSPRINTF("%lu.%02d", start_time.tv_sec,(int)start_time.tv_usec/10000);
++        vments[5] = GCSPRINTF("%jd.%02d", (intmax_t)start_time.tv_sec,(int)start_time.tv_usec/10000);
+         break;
+     case LIBXL_DOMAIN_TYPE_PV:
+         vments = libxl__calloc(gc, 11, sizeof(char *));
+@@ -1512,7 +1512,7 @@ static void domcreate_stream_done(libxl__egc *egc,
+         vments[i++] = "image/kernel";
+         vments[i++] = (char *) state->pv_kernel.path;
+         vments[i++] = "start_time";
+-        vments[i++] = GCSPRINTF("%lu.%02d", start_time.tv_sec,(int)start_time.tv_usec/10000);
++        vments[i++] = GCSPRINTF("%jd.%02d", (intmax_t)start_time.tv_sec,(int)start_time.tv_usec/10000);
+         if (state->pv_ramdisk.path) {
+             vments[i++] = "image/ramdisk";
+             vments[i++] = (char *) state->pv_ramdisk.path;
+-- 
+GitLab
+

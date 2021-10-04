@@ -12,7 +12,7 @@ config BR2_PACKAGE_GNUTLS
 	  GnuTLS is a secure communications library implementing the SSL
 	  and TLS protocols and technologies around them.
 
-	  http://www.gnutls.org
+	  https://www.gnutls.org/
 
 if BR2_PACKAGE_GNUTLS
 

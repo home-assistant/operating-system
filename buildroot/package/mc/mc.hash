@@ -1,4 +1,4 @@
-# Hash from http://ftp.midnight-commander.org/mc-4.8.25.sha256
-sha256  ffc19617f20ebb23330acd3998b7fd559a042d172fa55746d53d246697b2548a  mc-4.8.25.tar.xz
+# Hash from http://ftp.midnight-commander.org/mc-4.8.27.sha256
+sha256  31be59225ffa9920816e9a8b3be0ab225a16d19e4faf46890f25bdffa02a4ff4  mc-4.8.27.tar.xz
 # sha256 locally computed:
 sha256  5576bbec76296e1c8e081f7037ebd01bdada388635f58d844a2f20d37bbe4284  COPYING

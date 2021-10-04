@@ -9,4 +9,5 @@ config BR2_PACKAGE_PYTHON_SECRETSTORAGE
 	  https://github.com/mitya57/secretstorage
 
 comment "python-secretstorage needs a toolchain w/ C++"
+	depends on BR2_PACKAGE_PYTHON3
 	depends on !BR2_INSTALL_LIBSTDCPP

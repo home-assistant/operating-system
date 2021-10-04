@@ -80,6 +80,6 @@ also be defined.
   to the +make+ command during the target installation step. By default,
   +install+.
 
-* +LIBFOO_SYNC_HEADERS+, to run syncqt.pl before qmake. Some packages
+* +LIBFOO_SYNC_QT_HEADERS+, to run syncqt.pl before qmake. Some packages
   need this to have a properly populated include directory before
   running the build.

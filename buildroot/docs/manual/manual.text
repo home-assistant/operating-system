@@ -174,13 +174,13 @@ List of Examples
 
 ---------------------------------------------------------------------
 
-Buildroot 2021.02.4 manual generated on 2021-08-10 20:33:55 UTC from
-git revision 004a792dcf
+Buildroot 2021.02.5 manual generated on 2021-09-15 15:21:07 UTC from
+git revision 767a2da72f
 
 The Buildroot manual is written by the Buildroot developers. It is
 licensed under the GNU General Public License, version 2. Refer to
 the COPYING [http://git.buildroot.org/buildroot/tree/COPYING?id=
-004a792dcf10e6c474070c9571f7504411e786cc] file in the Buildroot
+767a2da72fc1690fde33b665851f20492ba5cd75] file in the Buildroot
 sources for the full text of this license.
 
 Copyright © 2004-2020 The Buildroot developers
@@ -6517,9 +6517,9 @@ also be defined.
   * LIBFOO_INSTALL_TARGET_OPTS, to specify additional targets to pass
     to the make command during the target installation step. By
     default, install.
-  * LIBFOO_SYNC_HEADERS, to run syncqt.pl before qmake. Some packages
-    need this to have a properly populated include directory before
-    running the build.
+  * LIBFOO_SYNC_QT_HEADERS, to run syncqt.pl before qmake. Some
+    packages need this to have a properly populated include directory
+    before running the build.
 
 18.19. Infrastructure for packages building kernel modules
 

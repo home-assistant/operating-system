@@ -1,0 +1,95 @@
+From f7a6df5f5bf3acc219352a1b25573ae2082d7e42 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Thu, 3 Dec 2020 20:58:19 +0100
+Subject: [PATCH] Fix build with 64 bits time_t
+
+time element is deprecated on new input_event structure in kernel's
+input.h [1]
+
+This will avoid the following build failure:
+
+hw/input/virtio-input-host.c: In function 'virtio_input_host_handle_status':
+hw/input/virtio-input-host.c:198:28: error: 'struct input_event' has no member named 'time'
+  198 |     if (gettimeofday(&evdev.time, NULL)) {
+      |                            ^
+
+Fixes:
+ - http://autobuild.buildroot.org/results/a538167e288c14208d557cd45446df86d3d599d5
+ - http://autobuild.buildroot.org/results/efd4474fb4b6c0ce0ab3838ce130429c51e43bbb
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit?id=152194fe9c3f
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Message-Id: <20201203195819.583626-1-fontaine.fabrice@gmail.com>
+Fixes: https://gitlab.com/qemu-project/qemu/-/issues/246
+Reviewed-by: Michael S. Tsirkin <mst@redhat.com>
+Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+
+[Retrieved (and updated for qemu-xen) from:
+https://github.com/qemu/qemu/commit/f7a6df5f5bf3acc219352a1b25573ae2082d7e42]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ contrib/vhost-user-input/main.c | 8 ++++++--
+ hw/input/virtio-input-host.c    | 5 ++++-
+ 2 files changed, 10 insertions(+), 3 deletions(-)
+
+diff --git a/tools/qemu-xen/contrib/vhost-user-input/main.c b/tools/qemu-xen/contrib/vhost-user-input/main.c
+index c15d18c33f0c..081230da548a 100644
+--- a/tools/qemu-xen/contrib/vhost-user-input/main.c
++++ b/tools/qemu-xen/contrib/vhost-user-input/main.c
+@@ -6,13 +6,14 @@
+ #include "qemu/osdep.h"
+ 
+ #include <glib.h>
+-#include <linux/input.h>
++#include <sys/ioctl.h>
+ 
+ #include "qemu/iov.h"
+ #include "qemu/bswap.h"
+ #include "qemu/sockets.h"
+ #include "contrib/libvhost-user/libvhost-user.h"
+ #include "contrib/libvhost-user/libvhost-user-glib.h"
++#include "standard-headers/linux/input.h"
+ #include "standard-headers/linux/virtio_input.h"
+ #include "qapi/error.h"
+ 
+@@ -113,13 +114,16 @@ vi_evdev_watch(VuDev *dev, int condition, void *data)
+ static void vi_handle_status(VuInput *vi, virtio_input_event *event)
+ {
+     struct input_event evdev;
++    struct timeval tval;
+     int rc;
+ 
+-    if (gettimeofday(&evdev.time, NULL)) {
++    if (gettimeofday(&tval, NULL)) {
+         perror("vi_handle_status: gettimeofday");
+         return;
+     }
+ 
++    evdev.input_event_sec = tval.tv_sec;
++    evdev.input_event_usec = tval.tv_usec;
+     evdev.type = le16toh(event->type);
+     evdev.code = le16toh(event->code);
+     evdev.value = le32toh(event->value);
+diff --git a/tools/qemu-xen/hw/input/virtio-input-host.c b/tools/qemu-xen/hw/input/virtio-input-host.c
+index 85daf73f1a80..137efba57b0f 100644
+--- a/tools/qemu-xen/hw/input/virtio-input-host.c
++++ b/tools/qemu-xen/hw/input/virtio-input-host.c
+@@ -193,13 +193,16 @@ static void virtio_input_host_handle_status(VirtIOInput *vinput,
+ {
+     VirtIOInputHost *vih = VIRTIO_INPUT_HOST(vinput);
+     struct input_event evdev;
++    struct timeval tval;
+     int rc;
+ 
+-    if (gettimeofday(&evdev.time, NULL)) {
++    if (gettimeofday(&tval, NULL)) {
+         perror("virtio_input_host_handle_status: gettimeofday");
+         return;
+     }
+ 
++    evdev.input_event_sec = tval.tv_sec;
++    evdev.input_event_usec = tval.tv_usec;
+     evdev.type = le16_to_cpu(event->type);
+     evdev.code = le16_to_cpu(event->code);
+     evdev.value = le32_to_cpu(event->value);

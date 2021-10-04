@@ -130,12 +130,6 @@ config BR2_PACKAGE_GNURADIO_FILTER
 	help
 	  Filter signal processing blocks
 
-config BR2_PACKAGE_GNURADIO_PAGER
-	bool "gr-flex support"
-	select BR2_PACKAGE_GNURADIO_ANALOG
-	help
-	  FLEX pager decoder implementation blocks
-
 config BR2_PACKAGE_GNURADIO_QTGUI
 	bool "gr-qtgui"
 	depends on BR2_PACKAGE_GNURADIO_PYTHON

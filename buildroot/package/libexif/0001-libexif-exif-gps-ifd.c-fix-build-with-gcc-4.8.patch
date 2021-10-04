@@ -1,0 +1,40 @@
+From 0c925491dea995ca96770159158bb8d57a48d84b Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Wed, 15 Sep 2021 07:56:32 +0200
+Subject: [PATCH] libexif/exif-gps-ifd.c: fix build with gcc 4.8
+
+Fix the following build failure with gcc 4.8 raised since version 0.6.23 and
+https://github.com/libexif/libexif/commit/e12c3529813cd16d50bf0a1c759093e1039dffec:
+
+exif-gps-ifd.c: In function 'exif_get_gps_tag_info':
+exif-gps-ifd.c:62:3: error: 'for' loop initial declarations are only allowed in C99 mode
+   for (int i = 0; i < sizeof(exif_gps_ifd_tags) / sizeof(ExifGPSIfdTagInfo); ++i) {
+   ^
+exif-gps-ifd.c:62:3: note: use option -std=c99 or -std=gnu99 to compile your code
+
+Fixes:
+ - http://autobuild.buildroot.org/results/7dd222e06d1e6611449fb8fe7516817c9ad43d65
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: https://github.com/libexif/libexif/pull/72]
+---
+ libexif/exif-gps-ifd.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/libexif/exif-gps-ifd.c b/libexif/exif-gps-ifd.c
+index 9c9ba70..de5f950 100644
+--- a/libexif/exif-gps-ifd.c
++++ b/libexif/exif-gps-ifd.c
+@@ -59,7 +59,8 @@ const static struct ExifGPSIfdTagInfo exif_gps_ifd_tags[] = {
+ };
+ 
+ const ExifGPSIfdTagInfo *exif_get_gps_tag_info(ExifTag tag) {
+-  for (int i = 0; i < sizeof(exif_gps_ifd_tags) / sizeof(ExifGPSIfdTagInfo); ++i) {
++  int i;
++  for (i = 0; i < sizeof(exif_gps_ifd_tags) / sizeof(ExifGPSIfdTagInfo); ++i) {
+     if (tag==exif_gps_ifd_tags[i].tag)
+       return &exif_gps_ifd_tags[i];
+   }
+-- 
+2.33.0
+

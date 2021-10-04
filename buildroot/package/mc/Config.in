@@ -6,6 +6,7 @@ config BR2_PACKAGE_MC
 	select BR2_PACKAGE_LIBGLIB2
 	# mc prefers slang, but can use ncurses too
 	select BR2_PACKAGE_SLANG if !BR2_PACKAGE_NCURSES
+	select BR2_PACKAGE_NCURSES_WCHAR if BR2_PACKAGE_NCURSES
 	help
 	  GNU Midnight Commander is a visual file manager, licensed
 	  under GNU General Public License. It can use either SLang

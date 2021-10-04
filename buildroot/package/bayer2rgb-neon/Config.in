@@ -9,7 +9,7 @@ config BR2_PACKAGE_BAYER2RGB_NEON
 	  to decode raw camera bayer to RGB using
 	  NEON hardware acceleration.
 
-	  https://git.phytec.de/bayer2rgb-neon/
+	  https://gitlab-ext.sigma-chemnitz.de/ensc/bayer2rgb
 
 comment "bayer2rgb-neon needs a toolchain w/ C++, dynamic library, gcc >= 4.9"
 	depends on BR2_arm && BR2_ARM_CPU_HAS_NEON
