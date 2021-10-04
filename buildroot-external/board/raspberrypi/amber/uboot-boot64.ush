@@ -1,0 +1,79 @@
+
+part start ${devtype} ${devnum} 6 dev_env
+${devtype} dev ${devnum}
+
+setenv loadbootstate " \
+    echo 'loading env...'; \
+    ${devtype} read ${ramdisk_addr_r} ${dev_env} 0x20; \
+    env import -c ${ramdisk_addr_r} 0x4000;"
+
+setenv storebootstate " \
+    echo 'storing env...'; \
+    env export -c -s 0x4000 ${ramdisk_addr_r} BOOT_ORDER BOOT_A_LEFT BOOT_B_LEFT MACHINE_ID; \
+    ${devtype} write ${ramdisk_addr_r} ${dev_env} 0x20;"
+
+run loadbootstate
+test -n "${BOOT_ORDER}" || setenv BOOT_ORDER "A B"
+test -n "${BOOT_A_LEFT}" || setenv BOOT_A_LEFT 3
+test -n "${BOOT_B_LEFT}" || setenv BOOT_B_LEFT 3
+
+# HassOS bootargs
+setenv bootargs_hassos "zram.enabled=1 zram.num_devices=3 apparmor=1 security=apparmor rootwait systemd.machine_id=${MACHINE_ID} cgroup_enable=memory fsck.repair=yes"
+
+if gpio input GPIO27; then
+  sleep 1
+  if gpio input GPIO27; then
+    echo "Device wipe button has been pressed, setting wipe flag..."
+    setenv bootargs_hassos "${bootargs_hassos} haos.wipe=1"
+  fi
+fi
+
+# HassOS system A/B
+setenv bootargs_a "root=PARTUUID=8d3d53e3-6d49-4c38-8349-aff6859e82fd rootfstype=squashfs ro"
+setenv bootargs_b "root=PARTUUID=a3ec664e-32ce-4665-95ea-7ae90ce9aa20 rootfstype=squashfs ro"
+
+# Preserve origin bootargs
+setenv bootargs_rpi
+setenv fdt_org ${fdt_addr}
+fdt addr ${fdt_org}
+fdt get value bootargs_rpi /chosen bootargs
+
+setenv bootargs
+for BOOT_SLOT in "${BOOT_ORDER}"; do
+  if test "x${bootargs}" != "x"; then
+    # skip remaining slots
+  elif test "x${BOOT_SLOT}" = "xA"; then
+    if test ${BOOT_A_LEFT} -gt 0; then
+      setexpr BOOT_A_LEFT ${BOOT_A_LEFT} - 1
+      echo "Trying to boot slot A, ${BOOT_A_LEFT} attempts remaining. Loading kernel ..."
+      if load ${devtype} ${devnum}:2 ${kernel_addr_r} Image; then
+          setenv bootargs "${bootargs_hassos} ${bootargs_rpi} ${bootargs_a} rauc.slot=A"
+      fi
+    fi
+  elif test "x${BOOT_SLOT}" = "xB"; then
+    if test ${BOOT_B_LEFT} -gt 0; then
+      setexpr BOOT_B_LEFT ${BOOT_B_LEFT} - 1
+      echo "Trying to boot slot B, ${BOOT_B_LEFT} attempts remaining. Loading kernel ..."
+      if load ${devtype} ${devnum}:4 ${kernel_addr_r} Image; then
+          setenv bootargs "${bootargs_hassos} ${bootargs_rpi} ${bootargs_b} rauc.slot=B"
+      fi
+    fi
+  fi
+done
+
+setenv fdt_addr
+if test -n "${bootargs}"; then
+  run storebootstate
+else
+  echo "No valid slot found, resetting tries to 3"
+  setenv BOOT_A_LEFT 3
+  setenv BOOT_B_LEFT 3
+  run storebootstate
+  reset
+fi
+
+echo "Starting kernel"
+booti ${kernel_addr_r} - ${fdt_org}
+
+echo "Boot failed, resetting..."
+reset
