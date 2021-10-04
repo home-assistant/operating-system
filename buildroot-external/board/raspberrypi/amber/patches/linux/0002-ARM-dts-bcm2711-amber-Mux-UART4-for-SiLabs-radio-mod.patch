@@ -1,0 +1,58 @@
+From 0113b0cf3e1e1d64234a3674a159e3af6f082000 Mon Sep 17 00:00:00 2001
+Message-Id: <0113b0cf3e1e1d64234a3674a159e3af6f082000.1633341968.git.stefan@agner.ch>
+In-Reply-To: <4000c39e3084ea0bdd76173fda310b6c32fd4734.1633341968.git.stefan@agner.ch>
+References: <4000c39e3084ea0bdd76173fda310b6c32fd4734.1633341968.git.stefan@agner.ch>
+From: Stefan Agner <stefan@agner.ch>
+Date: Thu, 4 Mar 2021 14:33:09 +0100
+Subject: [PATCH 2/6] ARM: dts: bcm2711: amber: Mux UART4 for SiLabs radio
+ module
+
+Enable UART4 by default and mux pins including hardware flow control.
+
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+---
+ arch/arm/boot/dts/bcm2711-rpi-cm4-ha-amber.dts | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-amber.dts b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-amber.dts
+index 11d8f87ac6d3..48a56bf7e3d8 100644
+--- a/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-amber.dts
++++ b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-amber.dts
+@@ -19,6 +19,7 @@ memory@0 {
+ 	};
+ 
+ 	aliases {
++		serial4 = &uart4;
+ 		emmc2bus = &emmc2bus;
+ 		ethernet0 = &genet;
+ 		pcie0 = &pcie0;
+@@ -283,6 +284,14 @@ &uart1 {
+ 	status = "okay";
+ };
+ 
++/* uart4 for Zigbee */
++&uart4 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&uart4_pins>;
++	uart-has-rtscts;
++	status = "okay";
++};
++
+ &vchiq {
+ 	interrupts = <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
+ };
+@@ -505,9 +514,9 @@ uart3_pins: uart3_pins {
+ 	};
+ 
+ 	uart4_pins: uart4_pins {
+-		brcm,pins = <8 9>;
++		brcm,pins = <8 9 10 11>;
+ 		brcm,function = <BCM2835_FSEL_ALT4>;
+-		brcm,pull = <0 2>;
++		brcm,pull = <0 2 2 0>;
+ 	};
+ 
+ 	uart5_pins: uart5_pins {
+-- 
+2.33.0
+

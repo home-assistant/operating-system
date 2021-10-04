@@ -1,0 +1,35 @@
+From e6388d4f1c27666f14a5b78f190659fa7ebfdffc Mon Sep 17 00:00:00 2001
+Message-Id: <e6388d4f1c27666f14a5b78f190659fa7ebfdffc.1633341968.git.stefan@agner.ch>
+In-Reply-To: <4000c39e3084ea0bdd76173fda310b6c32fd4734.1633341968.git.stefan@agner.ch>
+References: <4000c39e3084ea0bdd76173fda310b6c32fd4734.1633341968.git.stefan@agner.ch>
+From: Stefan Agner <stefan@agner.ch>
+Date: Thu, 4 Mar 2021 14:48:48 +0100
+Subject: [PATCH 4/6] ARM: dts: bcm2711: amber: Enable I2C6 by default
+
+The main I2C bus used on Amber is I2C6. Enable it by default.
+
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+---
+ arch/arm/boot/dts/bcm2711-rpi-cm4-ha-amber.dts | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-amber.dts b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-amber.dts
+index f0f83ff79882..c4b0432b81a4 100644
+--- a/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-amber.dts
++++ b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-amber.dts
+@@ -544,6 +544,12 @@ &i2c1 {
+ 	clock-frequency = <100000>;
+ };
+ 
++&i2c6 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&i2c6_pins>;
++	status = "okay";
++};
++
+ &i2s {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&i2s_pins>;
+-- 
+2.33.0
+

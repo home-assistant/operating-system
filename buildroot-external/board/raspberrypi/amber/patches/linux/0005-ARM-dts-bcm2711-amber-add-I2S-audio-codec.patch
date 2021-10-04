@@ -1,0 +1,67 @@
+From b56cab462d92c755a34dc4bb4d901fb86cf81a5b Mon Sep 17 00:00:00 2001
+Message-Id: <b56cab462d92c755a34dc4bb4d901fb86cf81a5b.1633341968.git.stefan@agner.ch>
+In-Reply-To: <4000c39e3084ea0bdd76173fda310b6c32fd4734.1633341968.git.stefan@agner.ch>
+References: <4000c39e3084ea0bdd76173fda310b6c32fd4734.1633341968.git.stefan@agner.ch>
+From: Stefan Agner <stefan@agner.ch>
+Date: Thu, 4 Mar 2021 17:19:01 +0100
+Subject: [PATCH 5/6] ARM: dts: bcm2711: amber: add I2S audio codec
+
+Add TI PCM5122 I2S audio codec.
+
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+---
+ .../arm/boot/dts/bcm2711-rpi-cm4-ha-amber.dts | 26 +++++++++++++++++++
+ 1 file changed, 26 insertions(+)
+
+diff --git a/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-amber.dts b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-amber.dts
+index c4b0432b81a4..8d8d31a2fafb 100644
+--- a/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-amber.dts
++++ b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-amber.dts
+@@ -548,11 +548,22 @@ &i2c6 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&i2c6_pins>;
+ 	status = "okay";
++
++	card_codec: pcm5121@4c {
++		#sound-dai-cells = <0>;
++		compatible = "ti,pcm5121";
++		reg = <0x4c>;
++		AVDD-supply = <&vdd_3v3_reg>;
++		DVDD-supply = <&vdd_3v3_reg>;
++		CPVDD-supply = <&vdd_3v3_reg>;
++		status = "okay";
++	};
+ };
+ 
+ &i2s {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&i2s_pins>;
++	status = "okay";
+ };
+ 
+ / {
+@@ -602,6 +613,21 @@ &pwm1 {
+ 	status = "disabled";
+ };
+ 
++&sound {
++	compatible = "simple-audio-card";
++	simple-audio-card,format = "i2s";
++	simple-audio-card,name = "pcm5521-sound";
++	status = "okay";
++
++	simple-audio-card,cpu {
++		sound-dai = <&i2s>;
++	};
++
++	dailink0_slave: simple-audio-card,codec {
++		sound-dai = <&card_codec>;
++	};
++};
++
+ &audio {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&audio_pins>;
+-- 
+2.33.0
+
