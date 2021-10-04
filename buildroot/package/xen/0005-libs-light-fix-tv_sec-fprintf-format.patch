@@ -1,0 +1,30 @@
+From 4881285bcfd8f2e2c913c6e9f011b1e90652f414 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sat, 28 Aug 2021 11:00:07 +0200
+Subject: [PATCH] libs/light: fix tv_sec fprintf format
+
+Don't assume tv_sec is a unsigned long, it is 64 bits on NetBSD 32 bits.
+Use %jd and cast to (intmax_t) instead
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Upstream status: sent to xen-devel@lists.xenproject.org]
+---
+ tools/libs/light/libxl_domain.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tools/libxl/libxl_domain.c b/tools/libxl/libxl_domain.c
+index c00c36c928..51a6127552 100644
+--- a/tools/libxl/libxl_domain.c
++++ b/tools/libxl/libxl_domain.c
+@@ -1444,7 +1444,7 @@ static int libxl__mark_domid_recent(libxl__gc *gc, uint32_t domid)
+         }
+     }
+ 
+-    r = fprintf(nf, "%lu %u\n", ctxt.ts.tv_sec, domid);
++    r = fprintf(nf, "%jd %u\n", (intmax_t)ctxt.ts.tv_sec, domid);
+     if (r < 0) {
+         LOGED(ERROR, domid, "failed to write to '%s'", new);
+         goto out;
+-- 
+2.32.0
+

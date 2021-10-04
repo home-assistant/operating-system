@@ -11,6 +11,12 @@ IPMIUTIL_LICENSE_FILES = COPYING
 
 IPMIUTIL_MAKE = $(MAKE1)
 
+# aclocal.m4 is newer than config.h.in. Touch the latter to avoid autoreconf
+define IPMIUTIL_TOUCH_CONFIG_H_IN
+	touch $(@D)/config.h.in
+endef
+IPMIUTIL_PRE_CONFIGURE_HOOKS += IPMIUTIL_TOUCH_CONFIG_H_IN
+
 # forgets to link against libcrypto dependencies breaking static link
 ifeq ($(BR2_PACKAGE_OPENSSL)x$(BR2_STATIC_LIBS),yx)
 # tests against distro libcrypto so it might get a false positive when

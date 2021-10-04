@@ -11,7 +11,7 @@ diff --git a/prosody.cfg.lua.dist b/prosody.cfg.lua.dist
 index af3cc0e4..675db12f 100644
 --- a/prosody.cfg.lua.dist
 +++ b/prosody.cfg.lua.dist
-@@ -176,6 +176,9 @@ log = {
+@@ -187,6 +187,9 @@ log = {
  -- HTTPS currently only supports a single certificate, specify it here:
  --https_certificate = "certs/localhost.crt"
  

@@ -191,7 +191,10 @@ config BR2_TARGET_ARM_TRUSTED_FIRMWARE_SSP
 
 config BR2_TARGET_ARM_TRUSTED_FIRMWARE_SSP_LEVEL
 	string
-	default "none"    if !BR2_TARGET_ARM_TRUSTED_FIRMWARE_SSP
+	# While newer versions of TF-A support "none" as
+	# ENABLE_STACK_PROTECTOR value, older versions (e.g 2.0) only
+	# supported "0" to disable SSP.
+	default "0"    	  if !BR2_TARGET_ARM_TRUSTED_FIRMWARE_SSP
 	default "default" if BR2_SSP_REGULAR
 	default "strong"  if BR2_SSP_STRONG
 	default "all"     if BR2_SSP_ALL

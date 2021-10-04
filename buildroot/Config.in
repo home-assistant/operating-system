@@ -835,8 +835,15 @@ endchoice
 comment "RELocation Read Only (RELRO) needs shared libraries"
 	depends on !BR2_SHARED_LIBS
 
+config BR2_FORTIFY_SOURCE_ARCH_SUPPORTS
+	bool
+	default y
+	# Microblaze glibc toolchains don't work with Fortify Source enabled
+	depends on !BR2_microblaze
+
 choice
 	bool "Buffer-overflow Detection (FORTIFY_SOURCE)"
+	depends on BR2_FORTIFY_SOURCE_ARCH_SUPPORTS
 	depends on BR2_TOOLCHAIN_USES_GLIBC
 	depends on !BR2_OPTIMIZE_0
 	help
@@ -877,6 +884,7 @@ config BR2_FORTIFY_SOURCE_2
 endchoice
 
 comment "Fortify Source needs a glibc toolchain and optimization"
+	depends on BR2_FORTIFY_SOURCE_ARCH_SUPPORTS
 	depends on (!BR2_TOOLCHAIN_USES_GLIBC || BR2_OPTIMIZE_0)
 endmenu
 

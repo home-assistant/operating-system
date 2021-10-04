@@ -1,0 +1,94 @@
+From 702697cafcec735e55f075594a2990204c8ea17d Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Tue, 10 Aug 2021 18:01:48 +0200
+Subject: [PATCH] Add --disable-{demo,testsuite} options
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Allow the user to disable demo and testsuite to avoid the following
+build failures on arc and riscv32:
+
+latency.c: In function 'display':
+latency.c:326:21: error: format '%ld' expects argument of type 'long int', but argument 2 has type 'time_t' {aka 'long long int'} [-Werror=format=]
+  326 |         ("RTT|  %.2ld:%.2ld:%.2ld  (%s, %Ld us period, "
+      |                 ~~~~^
+      |                     |
+      |                     long int
+      |                 %.2lld
+  327 |          "priority %d)\n", dt / 3600,
+      |                            ~~~~~~~~~
+      |                               |
+      |                               time_t {aka long long int}
+
+altency.c: In function ‘display’:
+altency.c:262:21: error: format ‘%ld’ expects argument of type ‘long int’, but argument 2 has type ‘time_t’ {aka ‘long long int’} [-Werror=format=]
+  262 |         ("RTT|  %.2ld:%.2ld:%.2ld  (%s, %Ld us period, "
+      |                 ~~~~^
+      |                     |
+      |                     long int
+      |                 %.2lld
+  263 |          "priority %d)\n", dt / 3600,
+      |                            ~~~~~~~~~
+      |                               |
+      |                               time_t {aka long long int}
+
+Fixes:
+ - http://autobuild.buildroot.org/results/448efe22e8fe058a1b354a3c124874e30b9ce138
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ Makefile.am  | 12 ++++++++++--
+ configure.ac | 12 ++++++++++++
+ 2 files changed, 22 insertions(+), 2 deletions(-)
+
+diff --git a/Makefile.am b/Makefile.am
+index 891e53f66..604644277 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -6,9 +6,17 @@ SUBDIRS = 		\
+ 	config		\
+ 	include		\
+ 	scripts		\
+-	testsuite	\
+-	utils		\
++	utils
++
++if XENO_ENABLE_DEMO
++SUBDIRS += 		\
+ 	demo
++endif
++
++if XENO_ENABLE_TESTSUITE
++SUBDIRS += 		\
++	testsuite
++endif
+ 
+ EXTRA_DIST = kernel debian
+ 
+diff --git a/configure.ac b/configure.ac
+index bd5fd5ba9..29dfd16e5 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -200,6 +200,18 @@ test \! x$debug_mode = x && AC_DEFINE(CONFIG_XENO_DEBUG,1,[config])
+ AM_CONDITIONAL(XENO_DEBUG_FULL,[test x$debug_mode = xfull])
+ test x$debug_mode = xfull && AC_DEFINE(CONFIG_XENO_DEBUG_FULL,1,[config])
+ 
++dnl Demo (default: on)
++
++AC_ARG_ENABLE(demo,
++	AS_HELP_STRING([--disable-demo], [Disable demo]))
++AM_CONDITIONAL(XENO_ENABLE_DEMO,[test x$enable_demo != xno])
++
++dnl Testsuite (default: on)
++
++AC_ARG_ENABLE(testsuite,
++	AS_HELP_STRING([--disable-testsuite], [Disable testsuite]))
++AM_CONDITIONAL(XENO_ENABLE_TESTSUITE,[test x$enable_testsuite != xno])
++
+ dnl Low resolution clock (default: off)
+ 
+ unset lores_clock
+-- 
+2.30.2
+

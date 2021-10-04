@@ -1,0 +1,118 @@
+From 4bd8fe780ff2064f2d4e9c905d8a98dd0f9b6191 Mon Sep 17 00:00:00 2001
+From: Nevo Hed <nhed+buildroot@starry.com>
+Date: Mon, 30 Aug 2021 13:28:13 -0400
+Subject: [PATCH] Allow forcing of endianness for cross-compilation
+
+Upstream-status: Invalid (upstream doesn't support cross-compilation)
+See https://trac.nginx.org/nginx/ticket/2240
+
+Signed-off-by: Nevo Hed <nhed+buildroot@starry.com>
+---
+ auto/endianness | 61 ++++++++++++++++++++++++++++++++-----------------
+ auto/options    |  6 +++++
+ 2 files changed, 46 insertions(+), 21 deletions(-)
+
+diff --git a/auto/endianness b/auto/endianness
+index 1b552b6b..4b2a3cd7 100644
+--- a/auto/endianness
++++ b/auto/endianness
+@@ -26,25 +26,44 @@ int main(void) {
+ 
+ END
+ 
+-ngx_test="$CC $CC_TEST_FLAGS $CC_AUX_FLAGS \
+-          -o $NGX_AUTOTEST $NGX_AUTOTEST.c $NGX_LD_OPT $ngx_feature_libs"
+-
+-eval "$ngx_test >> $NGX_AUTOCONF_ERR 2>&1"
+-
+-if [ -x $NGX_AUTOTEST ]; then
+-    if $NGX_AUTOTEST >/dev/null 2>&1; then
+-        echo " little endian"
++case "${NGX_FORCE_ENDIANNESS}" in
++    little)
++        echo " little endian (forced)"
+         have=NGX_HAVE_LITTLE_ENDIAN . auto/have
+-    else
+-        echo " big endian"
+-    fi
+-
+-    rm -rf $NGX_AUTOTEST*
+-
+-else
+-    rm -rf $NGX_AUTOTEST*
+-
+-    echo
+-    echo "$0: error: cannot detect system byte ordering"
+-    exit 1
+-fi
++    ;;
++
++    big)
++        echo " big endian (forced)"
++    ;;
++
++    "")
++        ngx_test="$CC $CC_TEST_FLAGS $CC_AUX_FLAGS \
++                  -o $NGX_AUTOTEST $NGX_AUTOTEST.c $NGX_LD_OPT $ngx_feature_libs"
++
++        eval "$ngx_test >> $NGX_AUTOCONF_ERR 2>&1"
++
++        if [ -x $NGX_AUTOTEST ]; then
++            if $NGX_AUTOTEST >/dev/null 2>&1; then
++                echo " little endian"
++                have=NGX_HAVE_LITTLE_ENDIAN . auto/have
++            else
++                echo " big endian"
++            fi
++
++            rm -rf $NGX_AUTOTEST*
++
++        else
++            rm -rf $NGX_AUTOTEST*
++
++            echo
++            echo "$0: error: cannot detect system byte ordering"
++            exit 1
++        fi
++    ;;
++
++    *)
++        echo
++        echo "$0: error: invalid \"--force-endianness=${NGX_FORCE_ENDIANNESS}\""
++        exit 1
++    ;;
++esac
+diff --git a/auto/options b/auto/options
+index 80be906e..85a06456 100644
+--- a/auto/options
++++ b/auto/options
+@@ -17,6 +17,8 @@ NGX_USER=
+ NGX_GROUP=
+ NGX_BUILD=
+ 
++NGX_FORCE_ENDIANNESS=
++
+ CC=${CC:-cc}
+ CPP=
+ NGX_OBJS=objs
+@@ -196,6 +198,8 @@ do
+         --user=*)                        NGX_USER="$value"          ;;
+         --group=*)                       NGX_GROUP="$value"         ;;
+ 
++        --force-endianness=*)            NGX_FORCE_ENDIANNESS="$value" ;;
++
+         --crossbuild=*)                  NGX_PLATFORM="$value"      ;;
+ 
+         --build=*)                       NGX_BUILD="$value"         ;;
+@@ -432,6 +436,8 @@ cat << END
+   --build=NAME                       set build name
+   --builddir=DIR                     set build directory
+ 
++  --force-endianness=<big>|<little>  force endianness
++
+   --with-select_module               enable select module
+   --without-select_module            disable select module
+   --with-poll_module                 enable poll module
+-- 
+2.31.1
+

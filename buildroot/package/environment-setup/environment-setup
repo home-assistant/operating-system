@@ -16,4 +16,10 @@ Some tips:
 * To build CMake-based projects, use the "cmake" alias
 
 EOF
-SDK_PATH=$(dirname $(realpath "${BASH_SOURCE[0]}"))
+if [ x"$BASH_VERSION" != x"" ] ; then
+	SDK_PATH=$(dirname $(realpath "${BASH_SOURCE[0]}"))
+elif [ x"$ZSH_VERSION" != x"" ] ; then
+	SDK_PATH=$(dirname $(realpath $0))
+else
+	echo "unsupported shell"
+fi

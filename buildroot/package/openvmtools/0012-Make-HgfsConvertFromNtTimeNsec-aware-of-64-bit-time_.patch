@@ -1,0 +1,80 @@
+From 3f0580f2546de8be7acf1bc78a55a257bc638ebe Mon Sep 17 00:00:00 2001
+From: Bartosz Brachaczek <b.brachaczek@gmail.com>
+Date: Tue, 12 Nov 2019 14:31:08 +0100
+Subject: [PATCH] Make HgfsConvertFromNtTimeNsec aware of 64-bit time_t on i386
+
+I verified that this function behaves as expected on x86_64, i386 with
+32-bit time_t, and i386 with 64-bit time_t for the following values of
+ntTtime:
+
+UNIX_EPOCH-1, UNIX_EPOCH, UNIX_EPOCH+1, UNIX_S32_MAX-1, UNIX_S32_MAX,
+UNIX_S32_MAX+1, UNIX_S32_MAX*2+1
+
+I did not verify whether the use of Div643264 is optimal, performance
+wise.
+
+Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+---
+ lib/hgfs/hgfsUtil.c | 34 +++++++++++++++++++---------------
+ 1 file changed, 19 insertions(+), 15 deletions(-)
+
+diff --git a/lib/hgfs/hgfsUtil.c b/lib/hgfs/hgfsUtil.c
+index cc580ab8..49b10040 100644
+--- a/lib/hgfs/hgfsUtil.c
++++ b/lib/hgfs/hgfsUtil.c
+@@ -110,23 +110,21 @@ HgfsConvertFromNtTimeNsec(struct timespec *unixTime, // OUT: Time in UNIX format
+ 			  uint64 ntTime) // IN: Time in Windows NT format
+ {
+ #ifdef __i386__
+-   uint32 sec;
+-   uint32 nsec;
++   uint64 sec64;
++   uint32 sec32, nsec;
++#endif
+ 
+    ASSERT(unixTime);
+-   /* We assume that time_t is 32bit */
+-   ASSERT_ON_COMPILE(sizeof (unixTime->tv_sec) == 4);
+ 
+-   /* Cap NT time values that are outside of Unix time's range */
++   if (sizeof (unixTime->tv_sec) == 4) {
++      /* Cap NT time values that are outside of Unix time's range */
+ 
+-   if (ntTime >= UNIX_S32_MAX) {
+-      unixTime->tv_sec = 0x7FFFFFFF;
+-      unixTime->tv_nsec = 0;
+-      return 1;
++      if (ntTime >= UNIX_S32_MAX) {
++         unixTime->tv_sec = 0x7FFFFFFF;
++         unixTime->tv_nsec = 0;
++         return 1;
++      }
+    }
+-#else
+-   ASSERT(unixTime);
+-#endif
+ 
+    if (ntTime < UNIX_EPOCH) {
+       unixTime->tv_sec = 0;
+@@ -135,9 +133,15 @@ HgfsConvertFromNtTimeNsec(struct timespec *unixTime, // OUT: Time in UNIX format
+    }
+ 
+ #ifdef __i386__
+-   Div643232(ntTime - UNIX_EPOCH, 10000000, &sec, &nsec);
+-   unixTime->tv_sec = sec;
+-   unixTime->tv_nsec = nsec * 100;
++   if (sizeof (unixTime->tv_sec) == 4) {
++      Div643232(ntTime - UNIX_EPOCH, 10000000, &sec32, &nsec);
++      unixTime->tv_sec = sec32;
++      unixTime->tv_nsec = nsec * 100;
++   } else {
++      Div643264(ntTime - UNIX_EPOCH, 10000000, &sec64, &nsec);
++      unixTime->tv_sec = sec64;
++      unixTime->tv_nsec = nsec * 100;
++   }
+ #else
+    unixTime->tv_sec = (ntTime - UNIX_EPOCH) / 10000000;
+    unixTime->tv_nsec = ((ntTime - UNIX_EPOCH) % 10000000) * 100;
+-- 
+2.25.1
+

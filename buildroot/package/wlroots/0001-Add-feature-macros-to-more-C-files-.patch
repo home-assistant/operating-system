@@ -1,0 +1,174 @@
+From cf37ba4c0bf31316b698ba23015f91903766871d Mon Sep 17 00:00:00 2001
+From: Paul Cercueil <paul@crapouillou.net>
+Date: Thu, 18 Feb 2021 22:31:39 +0000
+Subject: [PATCH] Add feature macros to more C files
+
+These source files use "struct timespec", which is POSIX 1993.09.
+
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+
+[Retrieved from: https://github.com/swaywm/wlroots/pull/2493]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ backend/wayland/output.c                  | 1 +
+ types/data_device/wlr_data_device.c       | 1 +
+ types/data_device/wlr_drag.c              | 1 +
+ types/wlr_export_dmabuf_v1.c              | 1 +
+ types/wlr_idle.c                          | 1 +
+ types/wlr_keyboard_shortcuts_inhibit_v1.c | 1 +
+ types/wlr_pointer_constraints_v1.c        | 1 +
+ types/wlr_primary_selection.c             | 1 +
+ types/wlr_relative_pointer_v1.c           | 1 +
+ types/wlr_screencopy_v1.c                 | 1 +
+ types/wlr_virtual_pointer_v1.c            | 1 +
+ types/wlr_xdg_decoration_v1.c             | 1 +
+ types/xdg_shell/wlr_xdg_popup.c           | 1 +
+ types/xdg_shell/wlr_xdg_positioner.c      | 1 +
+ types/xdg_shell/wlr_xdg_shell.c           | 1 +
+ types/xdg_shell/wlr_xdg_surface.c         | 1 +
+ 16 files changed, 16 insertions(+)
+
+diff --git a/backend/wayland/output.c b/backend/wayland/output.c
+index d5410e0d32..8ff8fa2a00 100644
+--- a/backend/wayland/output.c
++++ b/backend/wayland/output.c
+@@ -1,3 +1,4 @@
++#define _POSIX_C_SOURCE 199309L
+ #include <assert.h>
+ #include <stdint.h>
+ #include <stdio.h>
+diff --git a/types/data_device/wlr_data_device.c b/types/data_device/wlr_data_device.c
+index 6cd84ec0ab..beac496124 100644
+--- a/types/data_device/wlr_data_device.c
++++ b/types/data_device/wlr_data_device.c
+@@ -1,3 +1,4 @@
++#define _POSIX_C_SOURCE 199309L
+ #include <assert.h>
+ #include <stdlib.h>
+ #include <string.h>
+diff --git a/types/data_device/wlr_drag.c b/types/data_device/wlr_drag.c
+index 53bf4066a1..e3c1e249b4 100644
+--- a/types/data_device/wlr_drag.c
++++ b/types/data_device/wlr_drag.c
+@@ -1,3 +1,4 @@
++#define _POSIX_C_SOURCE 199309L
+ #include <assert.h>
+ #include <stdlib.h>
+ #include <string.h>
+diff --git a/types/wlr_export_dmabuf_v1.c b/types/wlr_export_dmabuf_v1.c
+index a8e2a4bde3..98ceae68f1 100644
+--- a/types/wlr_export_dmabuf_v1.c
++++ b/types/wlr_export_dmabuf_v1.c
+@@ -1,3 +1,4 @@
++#define _POSIX_C_SOURCE 199309L
+ #include <assert.h>
+ #include <stdlib.h>
+ #include <unistd.h>
+diff --git a/types/wlr_idle.c b/types/wlr_idle.c
+index 4c338931cc..80fd871fab 100644
+--- a/types/wlr_idle.c
++++ b/types/wlr_idle.c
+@@ -1,3 +1,4 @@
++#define _POSIX_C_SOURCE 199309L
+ #include <assert.h>
+ #include <stdlib.h>
+ #include <string.h>
+diff --git a/types/wlr_keyboard_shortcuts_inhibit_v1.c b/types/wlr_keyboard_shortcuts_inhibit_v1.c
+index fe4e64b04e..8360a9c21c 100644
+--- a/types/wlr_keyboard_shortcuts_inhibit_v1.c
++++ b/types/wlr_keyboard_shortcuts_inhibit_v1.c
+@@ -1,3 +1,4 @@
++#define _POSIX_C_SOURCE 199309L
+ #include <assert.h>
+ #include <stdlib.h>
+ #include <util/signal.h>
+diff --git a/types/wlr_pointer_constraints_v1.c b/types/wlr_pointer_constraints_v1.c
+index eca45984c4..f1db8e3415 100644
+--- a/types/wlr_pointer_constraints_v1.c
++++ b/types/wlr_pointer_constraints_v1.c
+@@ -1,3 +1,4 @@
++#define _POSIX_C_SOURCE 199309L
+ #include <assert.h>
+ #include <limits.h>
+ #include <pixman.h>
+diff --git a/types/wlr_primary_selection.c b/types/wlr_primary_selection.c
+index 0875462c8c..7e0e11ddaa 100644
+--- a/types/wlr_primary_selection.c
++++ b/types/wlr_primary_selection.c
+@@ -1,3 +1,4 @@
++#define _POSIX_C_SOURCE 199309L
+ #include <assert.h>
+ #include <stdlib.h>
+ #include <wlr/types/wlr_primary_selection.h>
+diff --git a/types/wlr_relative_pointer_v1.c b/types/wlr_relative_pointer_v1.c
+index 8613f2b91c..3f8dd8b72a 100644
+--- a/types/wlr_relative_pointer_v1.c
++++ b/types/wlr_relative_pointer_v1.c
+@@ -1,3 +1,4 @@
++#define _POSIX_C_SOURCE 199309L
+ #include <assert.h>
+ #include <inttypes.h>
+ #include <stdlib.h>
+diff --git a/types/wlr_screencopy_v1.c b/types/wlr_screencopy_v1.c
+index 6feb074274..29864c2364 100644
+--- a/types/wlr_screencopy_v1.c
++++ b/types/wlr_screencopy_v1.c
+@@ -1,3 +1,4 @@
++#define _POSIX_C_SOURCE 199309L
+ #include <assert.h>
+ #include <stdlib.h>
+ #include <drm_fourcc.h>
+diff --git a/types/wlr_virtual_pointer_v1.c b/types/wlr_virtual_pointer_v1.c
+index a9d1fd7bc4..5566e9e013 100644
+--- a/types/wlr_virtual_pointer_v1.c
++++ b/types/wlr_virtual_pointer_v1.c
+@@ -1,3 +1,4 @@
++#define _POSIX_C_SOURCE 199309L
+ #include <assert.h>
+ #include <stdlib.h>
+ #include <wlr/types/wlr_seat.h>
+diff --git a/types/wlr_xdg_decoration_v1.c b/types/wlr_xdg_decoration_v1.c
+index 544035b7b8..904474c088 100644
+--- a/types/wlr_xdg_decoration_v1.c
++++ b/types/wlr_xdg_decoration_v1.c
+@@ -1,3 +1,4 @@
++#define _POSIX_C_SOURCE 199309L
+ #include <assert.h>
+ #include <stdbool.h>
+ #include <stdlib.h>
+diff --git a/types/xdg_shell/wlr_xdg_popup.c b/types/xdg_shell/wlr_xdg_popup.c
+index 69b4cfe19f..05d6551fc8 100644
+--- a/types/xdg_shell/wlr_xdg_popup.c
++++ b/types/xdg_shell/wlr_xdg_popup.c
+@@ -1,3 +1,4 @@
++#define _POSIX_C_SOURCE 199309L
+ #include <assert.h>
+ #include <stdlib.h>
+ #include <string.h>
+diff --git a/types/xdg_shell/wlr_xdg_positioner.c b/types/xdg_shell/wlr_xdg_positioner.c
+index f88bf323b8..8881c49916 100644
+--- a/types/xdg_shell/wlr_xdg_positioner.c
++++ b/types/xdg_shell/wlr_xdg_positioner.c
+@@ -1,3 +1,4 @@
++#define _POSIX_C_SOURCE 199309L
+ #include <assert.h>
+ #include <stdlib.h>
+ #include "types/wlr_xdg_shell.h"
+diff --git a/types/xdg_shell/wlr_xdg_shell.c b/types/xdg_shell/wlr_xdg_shell.c
+index 0480d5f354..c93fe7c3fb 100644
+--- a/types/xdg_shell/wlr_xdg_shell.c
++++ b/types/xdg_shell/wlr_xdg_shell.c
+@@ -1,3 +1,4 @@
++#define _POSIX_C_SOURCE 199309L
+ #include <assert.h>
+ #include <stdlib.h>
+ #include "types/wlr_xdg_shell.h"
+diff --git a/types/xdg_shell/wlr_xdg_surface.c b/types/xdg_shell/wlr_xdg_surface.c
+index edf562abcd..c1dfbfba7e 100644
+--- a/types/xdg_shell/wlr_xdg_surface.c
++++ b/types/xdg_shell/wlr_xdg_surface.c
+@@ -1,3 +1,4 @@
++#define _POSIX_C_SOURCE 199309L
+ #include <assert.h>
+ #include <stdlib.h>
+ #include <string.h>
