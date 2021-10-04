@@ -14,7 +14,6 @@ function hassos_pre_image() {
     else
         cp "${BOARD_DIR}/../config.txt" "${BOOT_DATA}/config.txt"
     fi
-    cp "${BOARD_DIR}/../config.txt" "${BOOT_DATA}/config.txt"
     cp "${BINARIES_DIR}"/*.dtbo "${BOOT_DATA}/overlays/"
 
     # EEPROM update for Raspberry Pi 4/Compute Module 4
