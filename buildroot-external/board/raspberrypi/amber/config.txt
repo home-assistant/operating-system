@@ -5,9 +5,7 @@
 # HAOS - don't change it!
 disable_splash=1
 kernel=u-boot.bin
-
-# uncomment for aarch64 bit support
-#arm_64bit=1
+arm_64bit=1
 
 # uncomment to enable primary UART console
 enable_uart=1
