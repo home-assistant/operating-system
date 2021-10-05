@@ -1,10 +1,10 @@
-From 130b939a3176abdd483bd30cbed9783d96e68819 Mon Sep 17 00:00:00 2001
-Message-Id: <130b939a3176abdd483bd30cbed9783d96e68819.1632816160.git.stefan@agner.ch>
-In-Reply-To: <cb3001355d465fa4a2f80cd186700a7bd27ca354.1632816160.git.stefan@agner.ch>
-References: <cb3001355d465fa4a2f80cd186700a7bd27ca354.1632816160.git.stefan@agner.ch>
+From 698fc7c39fb3265ccb9cc7f3bb08432b76f3cdf5 Mon Sep 17 00:00:00 2001
+Message-Id: <698fc7c39fb3265ccb9cc7f3bb08432b76f3cdf5.1633447374.git.stefan@agner.ch>
+In-Reply-To: <d7ec084799b394cc02395829dc97019c8834e944.1633447374.git.stefan@agner.ch>
+References: <d7ec084799b394cc02395829dc97019c8834e944.1633447374.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Tue, 29 Dec 2020 23:34:52 +0100
-Subject: [PATCH 3/8] rpi: add NVMe to boot order
+Subject: [PATCH 3/9] rpi: add NVMe to boot order
 
 The Compute Module 4 I/O Board can support a NVMe. Add NVMe to the boot
 order.
