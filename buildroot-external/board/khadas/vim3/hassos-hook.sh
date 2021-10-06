@@ -10,8 +10,7 @@ function hassos_pre_image() {
     cp "${BINARIES_DIR}/meson-g12b-s922x-khadas-vim3.dtb" "${BOOT_DATA}/meson-g12b-s922x-khadas-vim3.dtb"
 
     cp "${BOARD_DIR}/boot-env.txt" "${BOOT_DATA}/haos-config.txt"
-
-    echo "console=tty0 console=ttyAML0,115200n8" > "${BOOT_DATA}/cmdline.txt"
+    cp "${BOARD_DIR}/cmdline.txt" "${BOOT_DATA}/cmdline.txt"
 
     # SPL
     create_spl_image

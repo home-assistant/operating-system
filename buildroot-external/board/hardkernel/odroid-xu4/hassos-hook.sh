@@ -11,8 +11,7 @@ function hassos_pre_image() {
 
     cp "${BINARIES_DIR}/boot.scr" "${BOOT_DATA}/boot.scr"
     cp "${BINARIES_DIR}/exynos5422-odroidxu4.dtb" "${BOOT_DATA}/exynos5422-odroidxu4.dtb"
-
-    echo "console=tty1 console=ttySAC2,115200" > "${BOOT_DATA}/cmdline.txt"
+    cp "${BOARD_DIR}/cmdline.txt" "${BOOT_DATA}/cmdline.txt"
 
     # SPL
     create_spl_image

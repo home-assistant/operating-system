@@ -9,7 +9,16 @@ function hassos_pre_image() {
         "${BINARIES_DIR}/boot.scr"
     cp "${BINARIES_DIR}"/*.dtb "${BOOT_DATA}/"
     cp -r "${BINARIES_DIR}/rpi-firmware/"* "${BOOT_DATA}/"
-    cp "${BOARD_DIR}/../boot-env.txt" "${BOOT_DATA}/config.txt"
+    if [ -f "${BOARD_DIR}/config.txt" ]; then
+        cp "${BOARD_DIR}/config.txt" "${BOOT_DATA}/config.txt"
+    else
+        cp "${BOARD_DIR}/../config.txt" "${BOOT_DATA}/config.txt"
+    fi
+    if [ -f "${BOARD_DIR}/cmdline.txt" ]; then
+        cp "${BOARD_DIR}/cmdline.txt" "${BOOT_DATA}/cmdline.txt"
+    else
+        cp "${BOARD_DIR}/../cmdline.txt" "${BOOT_DATA}/cmdline.txt"
+    fi
     cp "${BINARIES_DIR}"/*.dtbo "${BOOT_DATA}/overlays/"
 
     # EEPROM update for Raspberry Pi 4/Compute Module 4
@@ -17,9 +26,6 @@ function hassos_pre_image() {
         cp "${BINARIES_DIR}/rpi-eeprom/pieeprom.sig" "${BOOT_DATA}/pieeprom.sig"
         cp "${BINARIES_DIR}/rpi-eeprom/pieeprom.upd" "${BOOT_DATA}/pieeprom.upd"
     fi
-
-    # Set cmd options
-    echo "dwc_otg.lpm_enable=0 console=tty1" > "${BOOT_DATA}/cmdline.txt"
 
     # Enable 64bit support
     if [[ "${BOARD_ID}" =~ "64" ]]; then

@@ -12,8 +12,7 @@ function hassos_pre_image() {
     mkdir -p "${BOOT_DATA}/overlays"
     cp "${BINARIES_DIR}"/*.dtbo "${BOOT_DATA}/overlays/"
     cp "${BOARD_DIR}/boot-env.txt" "${BOOT_DATA}/haos-config.txt"
-
-    echo "console=tty0 console=ttyAML0,115200n8" > "${BOOT_DATA}/cmdline.txt"
+    cp "${BOARD_DIR}/cmdline.txt" "${BOOT_DATA}/cmdline.txt"
 
     # SPL
     create_spl_image
