@@ -1,11 +1,11 @@
 From bdaf8f67fd33ae1d38011a2b6f9da4884ec11dd2 Mon Sep 17 00:00:00 2001
-Message-Id: <bdaf8f67fd33ae1d38011a2b6f9da4884ec11dd2.1633447374.git.stefan@agner.ch>
-In-Reply-To: <d7ec084799b394cc02395829dc97019c8834e944.1633447374.git.stefan@agner.ch>
-References: <d7ec084799b394cc02395829dc97019c8834e944.1633447374.git.stefan@agner.ch>
+Message-Id: <bdaf8f67fd33ae1d38011a2b6f9da4884ec11dd2.1633601057.git.stefan@agner.ch>
+In-Reply-To: <d7ec084799b394cc02395829dc97019c8834e944.1633601057.git.stefan@agner.ch>
+References: <d7ec084799b394cc02395829dc97019c8834e944.1633601057.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Fri, 24 Sep 2021 00:27:39 +0200
-Subject: [PATCH 7/9] nvme: translate virtual addresses into the bus's address
- space
+Subject: [PATCH 07/10] nvme: translate virtual addresses into the bus's
+ address space
 
 So far we've been content with passing physical/CPU addresses when
 configuring memory addresses into NVMe controllers, but not all
