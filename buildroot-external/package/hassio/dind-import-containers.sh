@@ -3,7 +3,14 @@ set -e
 
 APPARMOR_URL="https://version.home-assistant.io/apparmor.txt"
 
-# Install supervisor
+# Make sure we can talk to the Docker daemon
+echo "Waiting for Docker daemon..."
+while ! docker version 2> /dev/null > /dev/null; do
+	sleep 1
+done
+
+# Install Supervisor, plug-ins and landing page
+echo "Loading containers..."
 for image in /build/images/*.tar; do
 	docker load --input "${image}"
 done
