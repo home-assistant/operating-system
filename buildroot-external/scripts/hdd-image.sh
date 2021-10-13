@@ -78,7 +78,7 @@ function create_overlay_image() {
 
     rm -f "${overlay_img}"
     truncate --size="${OVERLAY_SIZE}" "${overlay_img}"
-    mkfs.ext4 -L "hassos-overlay" -E lazy_itable_init=0,lazy_journal_init=0 "${overlay_img}"
+    mkfs.ext4 -L "hassos-overlay" -I 256 -E lazy_itable_init=0,lazy_journal_init=0 "${overlay_img}"
 }
 
 
