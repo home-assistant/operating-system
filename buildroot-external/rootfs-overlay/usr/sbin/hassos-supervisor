@@ -100,4 +100,5 @@ fi
 # Run supervisor
 mkdir -p ${SUPERVISOR_DATA}
 echo "[INFO] Starting the Supervisor..."
-exec docker container start --attach hassio_supervisor
+docker container start hassio_supervisor
+exec docker container wait hassio_supervisor
