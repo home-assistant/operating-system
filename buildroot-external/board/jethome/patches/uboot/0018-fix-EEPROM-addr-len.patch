@@ -1,0 +1,13 @@
+diff --git a/include/configs/jethub.h b/include/configs/jethub.h
+index 35f85095..6e0525a9 100644
+--- a/include/configs/jethub.h
++++ b/include/configs/jethub.h
+@@ -8,6 +8,8 @@
+ #ifndef __JETHUB_CONFIG_H
+ #define __JETHUB_CONFIG_H
+
++#define CONFIG_SYS_I2C_EEPROM_ADDR_LEN 1
++
+ #if defined(CONFIG_MESON_AXG)
+ #define BOOTENV_DEV_RESCUE(devtypeu, devtypel, instance) \
+        "bootcmd_rescue=" \

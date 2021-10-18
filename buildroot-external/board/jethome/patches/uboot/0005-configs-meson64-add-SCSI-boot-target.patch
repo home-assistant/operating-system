@@ -1,0 +1,42 @@
+From 5992340a42a8b5666b6fa1c9b18843dbfcd9cf41 Mon Sep 17 00:00:00 2001
+From: Neil Armstrong <narmstrong@baylibre.com>
+Date: Fri, 17 Sep 2021 09:37:04 +0200
+Subject: [PATCH 05/17] configs: meson64: add SCSI boot target
+
+Add SCSI target to be able to boot from the SATA disks on the Odroid HC4 using
+an on-board AHCI PCIe controller.
+
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Signed-off-by: Mark Kettenis <kettenis@openbsd.org>
+---
+ include/configs/meson64.h | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/include/configs/meson64.h b/include/configs/meson64.h
+index b779363b2b..cb202d5555 100644
+--- a/include/configs/meson64.h
++++ b/include/configs/meson64.h
+@@ -62,6 +62,12 @@
+ 	#define BOOT_TARGET_NVME(func)
+ #endif
+ 
++#ifdef CONFIG_CMD_SCSI
++	#define BOOT_TARGET_SCSI(func) func(SCSI, scsi, 0)
++#else
++	#define BOOT_TARGET_SCSI(func)
++#endif
++
+ #ifndef BOOT_TARGET_DEVICES
+ #define BOOT_TARGET_DEVICES(func) \
+ 	func(ROMUSB, romusb, na)  \
+@@ -70,6 +76,7 @@
+ 	func(MMC, mmc, 2) \
+ 	BOOT_TARGET_DEVICES_USB(func) \
+ 	BOOT_TARGET_NVME(func) \
++	BOOT_TARGET_SCSI(func) \
+ 	func(PXE, pxe, na) \
+ 	func(DHCP, dhcp, na)
+ #endif
+-- 
+2.30.2
+

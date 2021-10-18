@@ -1,0 +1,933 @@
+From a18fad052718d4160667f87000725819363e5b7c Mon Sep 17 00:00:00 2001
+From: Vyacheslav Bocharov <adeep@lexina.in>
+Date: Sun, 19 Sep 2021 10:37:26 +0300
+Subject: [PATCH 12/17] ARM: amlogic: add JetHub D1/H1 device support
+
+Add support for new home automation devices.
+
+JetHome Jethub D1 (http://jethome.ru/jethub-d1) is a home automation controller with the following features:
+- DIN Rail Mounting case
+- Amlogic A113X (ARM Cortex-A53) quad-core up to 1.5GHz
+- no video out
+- 512Mb/1GB DDR3
+- 8/16GB eMMC flash
+- 1 x USB 2.0
+- 1 x 10/100Mbps ethernet
+- WiFi / Bluetooth AMPAK AP6255 (Broadcom BCM43455) IEEE 802.11a/b/g/n/ac, Bluetooth 4.2.
+- TI CC2538 + CC2592 Zigbee Wireless Module with up to 20dBm output power and Zigbee 3.0 support.
+- 2 x gpio LEDS
+- GPIO user Button
+- 1 x 1-Wire
+- 2 x RS-485
+- 4 x dry contact digital GPIO inputs
+- 3 x relay GPIO outputs
+- DC source with a voltage of 9 to 56 V / Passive POE
+
+JetHome Jethub H1 (http://jethome.ru/jethub-h1) is a home automation controller with the following features:
+- Square plastic case
+- Amlogic S905W (ARM Cortex-A53) quad-core up to 1.5GHz
+- no video out
+- 1GB DDR3
+- 8/16GB eMMC flash
+- 2 x USB 2.0
+- 1 x 10/100Mbps ethernet
+- WiFi / Bluetooth RTL8822CS IEEE 802.11a/b/g/n/ac, Bluetooth 5.0.
+- TI CC2538 + CC2592 Zigbee Wireless Module with up to 20dBm output power and Zigbee 3.0 support.
+- MicroSD 2.x/3.x/4.x DS/HS cards.
+- 1 x gpio LED
+- ADC user Button
+- DC source 5V microUSB with serial console
+
+Patches from:
+- JetHub H1
+  https://lore.kernel.org/r/20210915085715.1134940-4-adeep@lexina.in
+  https://git.kernel.org/amlogic/c/abfaae24ecf3e7f00508b60fa05e2b6789b8f607
+- JetHub D1
+  https://lore.kernel.org/r/20210915085715.1134940-5-adeep@lexina.in
+  https://git.kernel.org/amlogic/c/8e279fb2903990cc6296ec56b3b80b2f854b6c79
+
+Signed-off-by: Vyacheslav Bocharov <adeep@lexina.in>
+Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ arch/arm/dts/Makefile                         |   2 +
+ .../arm/dts/meson-axg-jethome-jethub-j100.dts | 361 ++++++++++++++++++
+ .../meson-gxl-s905w-jethome-jethub-j80.dts    | 241 ++++++++++++
+ board/amlogic/jethub-j80/MAINTAINERS          |   9 +
+ board/amlogic/jethub-j80/Makefile             |   6 +
+ board/amlogic/jethub-j80/jethub-j80.c         |  68 ++++
+ configs/jethub_j100_defconfig                 |  55 +++
+ configs/jethub_j80_defconfig                  |  63 +++
+ 8 files changed, 805 insertions(+)
+ create mode 100644 arch/arm/dts/meson-axg-jethome-jethub-j100.dts
+ create mode 100644 arch/arm/dts/meson-gxl-s905w-jethome-jethub-j80.dts
+ create mode 100644 board/amlogic/jethub-j80/MAINTAINERS
+ create mode 100644 board/amlogic/jethub-j80/Makefile
+ create mode 100644 board/amlogic/jethub-j80/jethub-j80.c
+ create mode 100644 configs/jethub_j100_defconfig
+ create mode 100644 configs/jethub_j80_defconfig
+
+diff --git a/arch/arm/dts/Makefile b/arch/arm/dts/Makefile
+index 7c251853ea..c21bbde5d6 100644
+--- a/arch/arm/dts/Makefile
++++ b/arch/arm/dts/Makefile
+@@ -169,10 +169,12 @@ dtb-$(CONFIG_ARCH_MESON) += \
+ 	meson-gxl-s905x-libretech-cc-v2.dtb \
+ 	meson-gxl-s905x-khadas-vim.dtb \
+ 	meson-gxl-s905d-libretech-pc.dtb \
++	meson-gxl-s905w-jethome-jethub-j80.dtb \
+ 	meson-gxm-khadas-vim2.dtb \
+ 	meson-gxm-s912-libretech-pc.dtb \
+ 	meson-gxm-wetek-core2.dtb \
+ 	meson-axg-s400.dtb \
++	meson-axg-jethome-jethub-j100.dtb \
+ 	meson-g12a-u200.dtb \
+ 	meson-g12a-sei510.dtb \
+ 	meson-g12b-gtking.dtb \
+diff --git a/arch/arm/dts/meson-axg-jethome-jethub-j100.dts b/arch/arm/dts/meson-axg-jethome-jethub-j100.dts
+new file mode 100644
+index 0000000000..5783732dc6
+--- /dev/null
++++ b/arch/arm/dts/meson-axg-jethome-jethub-j100.dts
+@@ -0,0 +1,361 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++/*
++ * Copyright (c) 2021 Vyacheslav Bocharov <adeep@lexina.in>
++ * Copyright (c) 2020 JetHome
++ * Author: Aleksandr Kazantsev <ak@tvip.ru>
++ * Author: Alexey Shevelkin <ash@tvip.ru>
++ * Author: Vyacheslav Bocharov <adeep@lexina.in>
++ */
++
++/dts-v1/;
++
++#include "meson-axg.dtsi"
++#include <dt-bindings/input/input.h>
++#include <dt-bindings/thermal/thermal.h>
++
++/ {
++	compatible = "jethome,jethub-j100", "amlogic,a113d", "amlogic,meson-axg";
++	model = "JetHome JetHub J100";
++	aliases {
++		serial0 = &uart_AO;   /* Console */
++		serial1 = &uart_AO_B; /* External UART (Wireless Module) */
++		ethernet0 = &ethmac;
++	};
++
++	chosen {
++		stdout-path = "serial0:115200n8";
++	};
++
++	/* 1024MB RAM */
++	memory@0 {
++		device_type = "memory";
++		reg = <0x0 0x0 0x0 0x40000000>;
++	};
++
++	reserved-memory {
++		linux,cma {
++			size = <0x0 0x400000>;
++		};
++	};
++
++	emmc_pwrseq: emmc-pwrseq {
++		compatible = "mmc-pwrseq-emmc";
++		reset-gpios = <&gpio BOOT_9 GPIO_ACTIVE_LOW>;
++	};
++
++	vcc_3v3: regulator-vcc_3v3 {
++		compatible = "regulator-fixed";
++		regulator-name = "VCC_3V3";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		vin-supply = <&vddao_3v3>;
++		regulator-always-on;
++	};
++
++	vcc_5v: regulator-vcc_5v {
++		compatible = "regulator-fixed";
++		regulator-name = "VCC5V";
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++		regulator-always-on;
++	};
++
++	vddao_3v3: regulator-vddao_3v3 {
++		compatible = "regulator-fixed";
++		regulator-name = "VDDAO_3V3";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		vin-supply = <&vcc_5v>;
++		regulator-always-on;
++	};
++
++	vddio_ao18: regulator-vddio_ao18 {
++		compatible = "regulator-fixed";
++		regulator-name = "VDDIO_AO18";
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <1800000>;
++		vin-supply = <&vddao_3v3>;
++		regulator-always-on;
++	};
++
++	vddio_boot: regulator-vddio_boot {
++		compatible = "regulator-fixed";
++		regulator-name = "VDDIO_BOOT";
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <1800000>;
++		vin-supply = <&vddao_3v3>;
++		regulator-always-on;
++	};
++
++	usb_pwr: regulator-usb_pwr {
++		compatible = "regulator-fixed";
++		regulator-name = "USB_PWR";
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++		vin-supply = <&vcc_5v>;
++		regulator-always-on;
++	};
++
++	sdio_pwrseq: sdio-pwrseq {
++		compatible = "mmc-pwrseq-simple";
++		reset-gpios = <&gpio GPIOX_7 GPIO_ACTIVE_LOW>;
++		clocks = <&wifi32k>;
++		clock-names = "ext_clock";
++	};
++
++	wifi32k: wifi32k {
++		compatible = "pwm-clock";
++		#clock-cells = <0>;
++		clock-frequency = <32768>;
++		pwms = <&pwm_ab 0 30518 0>; /* PWM_A at 32.768KHz */
++	};
++
++	thermal-zones {
++		cpu_thermal: cpu-thermal {
++			polling-delay-passive = <250>;
++			polling-delay = <1000>;
++			thermal-sensors = <&scpi_sensors 0>;
++			trips {
++				cpu_passive: cpu-passive {
++					temperature = <70000>; /* millicelsius */
++					hysteresis = <2000>; /* millicelsius */
++					type = "passive";
++				};
++
++				cpu_hot: cpu-hot {
++					temperature = <80000>; /* millicelsius */
++					hysteresis = <2000>; /* millicelsius */
++					type = "hot";
++				};
++
++				cpu_critical: cpu-critical {
++					temperature = <100000>; /* millicelsius */
++					hysteresis = <2000>; /* millicelsius */
++					type = "critical";
++				};
++			};
++		};
++
++		cpu_cooling_maps: cooling-maps {
++			map0 {
++				trip = <&cpu_passive>;
++				cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++						<&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++						<&cpu2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++						<&cpu3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
++			};
++
++			map1 {
++				trip = <&cpu_hot>;
++				cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++						<&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++						<&cpu2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++						<&cpu3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
++			};
++		};
++	};
++	onewire {
++		compatible = "w1-gpio";
++		gpios = <&gpio GPIOA_14 GPIO_ACTIVE_HIGH>;
++		#gpio-cells = <1>;
++	};
++};
++
++&efuse {
++	sn: sn@32 {
++		reg = <0x32 0x20>;
++	};
++
++	eth_mac: eth_mac@0 {
++		reg = <0x0 0x6>;
++	};
++
++	bt_mac: bt_mac@6 {
++		reg = <0x6 0x6>;
++	};
++
++	wifi_mac: wifi_mac@c {
++		reg = <0xc 0x6>;
++	};
++
++	bid: bid@12 {
++		reg = <0x12 0x20>;
++	};
++};
++
++&ethmac {
++	status = "okay";
++	pinctrl-0 = <&eth_rmii_x_pins>;
++	pinctrl-names = "default";
++	phy-handle = <&eth_phy0>;
++	phy-mode = "rmii";
++
++	mdio {
++		compatible = "snps,dwmac-mdio";
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		/* ICPlus IP101A/G Ethernet PHY (vendor_id=0x0243, model_id=0x0c54) */
++		eth_phy0: ethernet-phy@0 {
++			/* compatible = "ethernet-phy-id0243.0c54";*/
++			max-speed = <100>;
++			reg = <0>;
++
++			reset-assert-us = <10000>;
++			reset-deassert-us = <10000>;
++			reset-gpios = <&gpio GPIOZ_5 GPIO_ACTIVE_LOW>;
++		};
++	};
++};
++
++/* Internal I2C bus (on CPU module) */
++&i2c1 {
++	status = "okay";
++	pinctrl-0 = <&i2c1_z_pins>;
++	pinctrl-names = "default";
++
++	/* RTC */
++	pcf8563: pcf8563@51 {
++		compatible = "nxp,pcf8563";
++		reg = <0x51>;
++		status = "okay";
++	};
++};
++
++/* Peripheral I2C bus (on motherboard) */
++&i2c_AO {
++	status = "okay";
++	pinctrl-0 = <&i2c_ao_sck_10_pins>, <&i2c_ao_sda_11_pins>;
++	pinctrl-names = "default";
++};
++
++&pwm_ab {
++	status = "okay";
++	pinctrl-0 = <&pwm_a_x20_pins>;
++	pinctrl-names = "default";
++};
++
++/* wifi module */
++&sd_emmc_b {
++	status = "okay";
++	#address-cells = <1>;
++	#size-cells = <0>;
++
++	pinctrl-0 = <&sdio_pins>;
++	pinctrl-1 = <&sdio_clk_gate_pins>;
++	pinctrl-names = "default", "clk-gate";
++
++	bus-width = <4>;
++	cap-sd-highspeed;
++	sd-uhs-sdr104;
++	max-frequency = <200000000>;
++	non-removable;
++	disable-wp;
++
++	mmc-pwrseq = <&sdio_pwrseq>;
++
++	vmmc-supply = <&vddao_3v3>;
++	vqmmc-supply = <&vddio_boot>;
++
++	brcmf: wifi@1 {
++		reg = <1>;
++		compatible = "brcm,bcm4329-fmac";
++	};
++};
++
++/* emmc storage */
++&sd_emmc_c {
++	status = "okay";
++	pinctrl-0 = <&emmc_pins>, <&emmc_ds_pins>;
++	pinctrl-1 = <&emmc_clk_gate_pins>;
++	pinctrl-names = "default", "clk-gate";
++
++	bus-width = <8>;
++	cap-mmc-highspeed;
++	max-frequency = <200000000>;
++	non-removable;
++	disable-wp;
++	mmc-ddr-1_8v;
++	mmc-hs200-1_8v;
++
++	mmc-pwrseq = <&emmc_pwrseq>;
++
++	vmmc-supply = <&vcc_3v3>;
++	vqmmc-supply = <&vddio_boot>;
++};
++
++/* UART Bluetooth */
++&uart_B {
++	status = "okay";
++	pinctrl-0 = <&uart_b_z_pins>, <&uart_b_z_cts_rts_pins>;
++	pinctrl-names = "default";
++	uart-has-rtscts;
++
++	bluetooth {
++		compatible = "brcm,bcm43438-bt";
++		shutdown-gpios = <&gpio GPIOZ_7 GPIO_ACTIVE_HIGH>;
++	};
++};
++
++/* UART Console */
++&uart_AO {
++	status = "okay";
++	pinctrl-0 = <&uart_ao_a_pins>;
++	pinctrl-names = "default";
++};
++
++/* UART Wireless module */
++&uart_AO_B {
++	status = "okay";
++	pinctrl-0 = <&uart_ao_b_pins>;
++	pinctrl-names = "default";
++};
++
++&usb {
++	status = "okay";
++	phy-supply = <&usb_pwr>;
++};
++
++&spicc1 {
++	status = "okay";
++	pinctrl-0 = <&spi1_x_pins>, <&spi1_ss0_x_pins>;
++	pinctrl-names = "default";
++};
++
++&gpio {
++	gpio-line-names =
++		"", "", "", "", "", // 0 - 4
++		"", "", "", "", "", // 5 - 9
++		"UserButton", "", "", "", "", // 10 - 14
++		"", "", "", "", "", // 15 - 19
++		"", "", "", "", "", // 20 - 24
++		"", "LedRed", "LedGreen", "Output3", "Output2", // 25 - 29
++		"Output1", "", "", "", "", // 30 - 34
++		"", "ZigBeeBOOT", "", "", "", // 35 - 39
++		"", "ZigBeeRESET", "", "Input4", "Input3", // 40 - 44
++		"Input2", "Input1", "", "", "", // 45 - 49
++		"", "", "", "", "", // 50 - 54
++		"", "", "", "", "", // 55 - 59
++		"", "", "", "", "", // 60 - 64
++		"", "", "", "", "", // 65 - 69
++		"", "", "", "", "", // 70 - 74
++		"", "", "", "", "", // 75 - 79
++		"", "", "", "", "", // 80 - 84
++		"", ""; // 85-86
++};
++
++&cpu0 {
++	#cooling-cells = <2>;
++};
++
++&cpu1 {
++	#cooling-cells = <2>;
++};
++
++&cpu2 {
++	#cooling-cells = <2>;
++};
++
++&cpu3 {
++	#cooling-cells = <2>;
++};
+diff --git a/arch/arm/dts/meson-gxl-s905w-jethome-jethub-j80.dts b/arch/arm/dts/meson-gxl-s905w-jethome-jethub-j80.dts
+new file mode 100644
+index 0000000000..6eafb90869
+--- /dev/null
++++ b/arch/arm/dts/meson-gxl-s905w-jethome-jethub-j80.dts
+@@ -0,0 +1,241 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++/*
++ * Copyright (c) 2021 Vyacheslav Bocharov <adeep@lexina.in>
++ * Copyright (c) 2020 JetHome
++ * Author: Aleksandr Kazantsev <ak@tvip.ru>
++ * Author: Alexey Shevelkin <ash@tvip.ru>
++ * Author: Vyacheslav Bocharov <adeep@lexina.in>
++ */
++
++/dts-v1/;
++
++#include "meson-gxl.dtsi"
++
++/ {
++	compatible = "jethome,jethub-j80", "amlogic,s905w", "amlogic,meson-gxl";
++	model = "JetHome JetHub J80";
++	memory@0 {
++		device_type = "memory";
++		reg = <0x0 0x0 0x0 0x40000000>;
++	};
++
++	reserved-memory {
++		linux,cma {
++			size = <0x0 0x1000000>;
++		};
++	};
++
++	aliases {
++		serial0 = &uart_AO;   /* Console */
++		serial1 = &uart_A;    /* Bluetooth */
++		serial2 = &uart_AO_B; /* Wireless module 1 */
++		serial3 = &uart_C;    /* Wireless module 2 */
++		ethernet0 = &ethmac;
++	};
++
++	chosen {
++		stdout-path = "serial0:115200n8";
++	};
++
++	vddio_ao18: regulator-vddio_ao18 {
++		compatible = "regulator-fixed";
++		regulator-name = "VDDIO_AO18";
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <1800000>;
++	};
++
++	vddio_boot: regulator-vddio_boot {
++		compatible = "regulator-fixed";
++		regulator-name = "VDDIO_BOOT";
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <1800000>;
++	};
++
++	vddao_3v3: regulator-vddao_3v3 {
++		compatible = "regulator-fixed";
++		regulator-name = "VDDAO_3V3";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++	};
++
++	vcc_3v3: regulator-vcc_3v3 {
++		compatible = "regulator-fixed";
++		regulator-name = "VCC_3V3";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++	};
++
++	emmc_pwrseq: emmc-pwrseq {
++		compatible = "mmc-pwrseq-emmc";
++		reset-gpios = <&gpio BOOT_9 GPIO_ACTIVE_LOW>;
++	};
++
++	wifi32k: wifi32k {
++		compatible = "pwm-clock";
++		#clock-cells = <0>;
++		clock-frequency = <32768>;
++		pwms = <&pwm_ef 0 30518 0>; /* PWM_E at 32.768KHz */
++	};
++
++	sdio_pwrseq: sdio-pwrseq {
++		compatible = "mmc-pwrseq-simple";
++		reset-gpios = <&gpio GPIOX_6 GPIO_ACTIVE_LOW>;
++		clocks = <&wifi32k>;
++		clock-names = "ext_clock";
++	};
++};
++
++&efuse {
++	bt_mac: bt_mac@6 {
++		reg = <0x6 0x6>;
++	};
++
++	wifi_mac: wifi_mac@C {
++		reg = <0xc 0x6>;
++	};
++};
++
++&sn {
++	reg = <0x32 0x20>;
++};
++
++&eth_mac {
++	reg = <0x0 0x6>;
++};
++
++&bid {
++	reg = <0x12 0x20>;
++};
++
++&usb {
++	status = "okay";
++	dr_mode = "host";
++};
++
++&pwm_ef {
++	status = "okay";
++	pinctrl-0 = <&pwm_e_pins>;
++	pinctrl-names = "default";
++	clocks = <&clkc CLKID_FCLK_DIV4>;
++	clock-names = "clkin0";
++};
++
++&saradc {
++	status = "okay";
++	vref-supply = <&vddio_ao18>;
++};
++
++/* Wireless SDIO Module */
++&sd_emmc_a {
++	status = "okay";
++	pinctrl-0 = <&sdio_pins>;
++	pinctrl-1 = <&sdio_clk_gate_pins>;
++	pinctrl-names = "default", "clk-gate";
++	#address-cells = <1>;
++	#size-cells = <0>;
++
++	bus-width = <4>;
++	cap-sd-highspeed;
++	max-frequency = <50000000>;
++
++	non-removable;
++	disable-wp;
++
++	/* WiFi firmware requires power to be kept while in suspend */
++	keep-power-in-suspend;
++
++	mmc-pwrseq = <&sdio_pwrseq>;
++
++	vmmc-supply = <&vddao_3v3>;
++	vqmmc-supply = <&vddio_boot>;
++};
++
++/* SD card */
++&sd_emmc_b {
++	status = "okay";
++	pinctrl-0 = <&sdcard_pins>;
++	pinctrl-1 = <&sdcard_clk_gate_pins>;
++	pinctrl-names = "default", "clk-gate";
++
++	bus-width = <4>;
++	cap-sd-highspeed;
++	max-frequency = <50000000>;
++	disable-wp;
++
++	cd-gpios = <&gpio CARD_6 GPIO_ACTIVE_LOW>;
++
++	vmmc-supply = <&vddao_3v3>;
++	vqmmc-supply = <&vddio_boot>;
++};
++
++/* eMMC */
++&sd_emmc_c {
++	status = "okay";
++	pinctrl-0 = <&emmc_pins>, <&emmc_ds_pins>;
++	pinctrl-1 = <&emmc_clk_gate_pins>;
++	pinctrl-names = "default", "clk-gate";
++
++	bus-width = <8>;
++	cap-mmc-highspeed;
++	max-frequency = <200000000>;
++	non-removable;
++	disable-wp;
++	mmc-ddr-1_8v;
++	mmc-hs200-1_8v;
++
++	mmc-pwrseq = <&emmc_pwrseq>;
++	vmmc-supply = <&vcc_3v3>;
++	vqmmc-supply = <&vddio_boot>;
++};
++
++/* Console UART */
++&uart_AO {
++	status = "okay";
++	pinctrl-0 = <&uart_ao_a_pins>;
++	pinctrl-names = "default";
++};
++
++/* S905W only has access to its internal PHY */
++&ethmac {
++	status = "okay";
++	phy-mode = "rmii";
++	phy-handle = <&internal_phy>;
++};
++
++&internal_phy {
++	status = "okay";
++	pinctrl-0 = <&eth_link_led_pins>, <&eth_act_led_pins>;
++	pinctrl-names = "default";
++};
++
++&uart_A {
++	status = "okay";
++	pinctrl-0 = <&uart_a_pins>, <&uart_a_cts_rts_pins>;
++	pinctrl-names = "default";
++	uart-has-rtscts;
++};
++
++&uart_C {
++	status = "okay";
++	pinctrl-0 = <&uart_c_pins>;
++	pinctrl-names = "default";
++};
++
++&uart_AO_B {
++	status = "okay";
++	pinctrl-0 = <&uart_ao_b_pins>, <&uart_ao_b_cts_rts_pins>;
++	pinctrl-names = "default";
++	uart-has-rtscts;
++};
++
++&i2c_B {
++	status = "okay";
++	pinctrl-names = "default";
++	pinctrl-0 = <&i2c_b_pins>;
++
++	pcf8563: pcf8563@51 {
++		compatible = "nxp,pcf8563";
++		reg = <0x51>;
++		status = "okay";
++	};
++};
+diff --git a/board/amlogic/jethub-j80/MAINTAINERS b/board/amlogic/jethub-j80/MAINTAINERS
+new file mode 100644
+index 0000000000..459e9f89da
+--- /dev/null
++++ b/board/amlogic/jethub-j80/MAINTAINERS
+@@ -0,0 +1,9 @@
++JetHome JetHub
++M:	Vyacheslav Bocharov <adeep@lexina.in>
++S:	Maintained
++L:	u-boot-amlogic@groups.io
++F:	board/amlogic/jethub-j80/
++F:	configs/jethub_j80_defconfig
++F:	configs/jethub_j100_defconfig
++F:	doc/board/amlogic/jethub-j80.rst
++F:	doc/board/amlogic/jethub-j100.rst
+diff --git a/board/amlogic/jethub-j80/Makefile b/board/amlogic/jethub-j80/Makefile
+new file mode 100644
+index 0000000000..a727a4b222
+--- /dev/null
++++ b/board/amlogic/jethub-j80/Makefile
+@@ -0,0 +1,6 @@
++# SPDX-License-Identifier: GPL-2.0+
++#
++# (C) Copyright 2021 Vyacheslav Bocharov
++# Author: Vyacheslav Bocharov <adeep@lexina.in>
++
++obj-y	:= jethub-j80.o
+diff --git a/board/amlogic/jethub-j80/jethub-j80.c b/board/amlogic/jethub-j80/jethub-j80.c
+new file mode 100644
+index 0000000000..ae402303aa
+--- /dev/null
++++ b/board/amlogic/jethub-j80/jethub-j80.c
+@@ -0,0 +1,68 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * Copyright (C) 2021 Vyacheslav Bocharov
++ * Author: Vyacheslav Bocharov <adeep@lexina.in>
++ * Author: Neil Armstrong <narmstrong@baylibre.com>
++ *
++ */
++
++#include <common.h>
++#include <dm.h>
++#include <adc.h>
++#include <env.h>
++#include <init.h>
++#include <net.h>
++#include <asm/io.h>
++#include <asm/arch/gx.h>
++#include <asm/arch/sm.h>
++#include <asm/arch/eth.h>
++#include <asm/arch/mem.h>
++
++#define EFUSE_SN_OFFSET		50
++#define EFUSE_SN_SIZE		32
++#define EFUSE_MAC_OFFSET	0
++#define EFUSE_MAC_SIZE		6
++#define EFUSE_USID_OFFSET	18
++#define EFUSE_USID_SIZE		32
++
++int misc_init_r(void)
++{
++	u8 mac_addr[EFUSE_MAC_SIZE];
++	char serial[EFUSE_SN_SIZE];
++	char usid[EFUSE_USID_SIZE];
++	ssize_t len;
++	unsigned int adcval;
++	int ret;
++	char value[16];
++
++	if (!eth_env_get_enetaddr("ethaddr", mac_addr)) {
++		len = meson_sm_read_efuse(EFUSE_MAC_OFFSET,
++					  mac_addr, EFUSE_MAC_SIZE);
++		if (len == EFUSE_MAC_SIZE && is_valid_ethaddr(mac_addr))
++			eth_env_set_enetaddr("ethaddr", mac_addr);
++		else
++			meson_generate_serial_ethaddr();
++	}
++
++	if (!env_get("serial")) {
++		len = meson_sm_read_efuse(EFUSE_SN_OFFSET, serial,
++					  EFUSE_SN_SIZE);
++		if (len == EFUSE_SN_SIZE)
++			env_set("serial", serial);
++	}
++
++	if (!env_get("usid")) {
++		len = meson_sm_read_efuse(EFUSE_USID_OFFSET, usid,
++					  EFUSE_USID_SIZE);
++		if (len == EFUSE_USID_SIZE)
++			env_set("usid", usid);
++	}
++
++	ret = adc_channel_single_shot("adc@8680", 0, &adcval);
++	if (adcval < 3000)
++		env_set("userbutton", "true");
++	else
++		env_set("userbutton", "false");
++
++	return 0;
++}
+diff --git a/configs/jethub_j100_defconfig b/configs/jethub_j100_defconfig
+new file mode 100644
+index 0000000000..290ce4db85
+--- /dev/null
++++ b/configs/jethub_j100_defconfig
+@@ -0,0 +1,55 @@
++CONFIG_ARM=y
++CONFIG_SYS_CONFIG_NAME="jethub"
++CONFIG_ARCH_MESON=y
++CONFIG_SYS_TEXT_BASE=0x01000000
++CONFIG_NR_DRAM_BANKS=1
++CONFIG_ENV_SIZE=0x2000
++CONFIG_DM_GPIO=y
++CONFIG_DEFAULT_DEVICE_TREE="meson-axg-jethome-jethub-j100"
++CONFIG_MESON_AXG=y
++CONFIG_DEBUG_UART_BASE=0xff803000
++CONFIG_DEBUG_UART_CLOCK=24000000
++CONFIG_IDENT_STRING=" jethubj100"
++CONFIG_DEBUG_UART=y
++CONFIG_OF_BOARD_SETUP=y
++# CONFIG_DISPLAY_CPUINFO is not set
++CONFIG_MISC_INIT_R=y
++# CONFIG_CMD_BDI is not set
++# CONFIG_CMD_IMI is not set
++CONFIG_CMD_GPIO=y
++CONFIG_RANDOM_UUID=y
++# CONFIG_CMD_LOADS is not set
++CONFIG_CMD_MMC=y
++CONFIG_CMD_USB=y
++CONFIG_CMD_USB_MASS_STORAGE=y
++CONFIG_CMD_REGULATOR=y
++CONFIG_PARTITION_TYPE_GUID=y
++CONFIG_OF_CONTROL=y
++CONFIG_SYS_RELOC_GD_ENV_ADDR=y
++CONFIG_MMC_MESON_GX=y
++CONFIG_MTD_UBI=y
++CONFIG_PHY_REALTEK=y
++CONFIG_DM_ETH=y
++CONFIG_ETH_DESIGNWARE_MESON8B=y
++CONFIG_MESON_GXL_USB_PHY=y
++CONFIG_PINCTRL=y
++CONFIG_PINCTRL_MESON_AXG=y
++CONFIG_DM_REGULATOR=y
++CONFIG_DM_REGULATOR_FIXED=y
++CONFIG_DM_RESET=y
++CONFIG_DEBUG_UART_ANNOUNCE=y
++CONFIG_DEBUG_UART_SKIP_INIT=y
++CONFIG_MESON_SERIAL=y
++CONFIG_USB=y
++CONFIG_USB_XHCI_HCD=y
++CONFIG_USB_XHCI_DWC3=y
++CONFIG_USB_DWC2=y
++CONFIG_USB_DWC3=y
++# CONFIG_USB_DWC3_GADGET is not set
++CONFIG_USB_DWC3_MESON_GXL=y
++CONFIG_USB_GADGET=y
++CONFIG_USB_GADGET_VENDOR_NUM=0x1b8e
++CONFIG_USB_GADGET_PRODUCT_NUM=0xfada
++CONFIG_USB_GADGET_DWC2_OTG=y
++CONFIG_USB_GADGET_DOWNLOAD=y
++CONFIG_OF_LIBFDT_OVERLAY=y
+diff --git a/configs/jethub_j80_defconfig b/configs/jethub_j80_defconfig
+new file mode 100644
+index 0000000000..7db05af3b0
+--- /dev/null
++++ b/configs/jethub_j80_defconfig
+@@ -0,0 +1,63 @@
++CONFIG_ARM=y
++CONFIG_SYS_BOARD="jethub-j80"
++CONFIG_SYS_CONFIG_NAME="jethub"
++CONFIG_ARCH_MESON=y
++CONFIG_SYS_TEXT_BASE=0x01000000
++CONFIG_NR_DRAM_BANKS=1
++CONFIG_ENV_SIZE=0x2000
++CONFIG_DM_GPIO=y
++CONFIG_DEFAULT_DEVICE_TREE="meson-gxl-s905w-jethome-jethub-j80"
++CONFIG_MESON_GXL=y
++CONFIG_DEBUG_UART_BASE=0xc81004c0
++CONFIG_DEBUG_UART_CLOCK=24000000
++CONFIG_IDENT_STRING=" jethubj80"
++CONFIG_DEBUG_UART=y
++CONFIG_OF_BOARD_SETUP=y
++CONFIG_CONSOLE_MUX=y
++# CONFIG_DISPLAY_CPUINFO is not set
++CONFIG_MISC_INIT_R=y
++# CONFIG_CMD_BDI is not set
++# CONFIG_CMD_IMI is not set
++CONFIG_CMD_ADC=y
++CONFIG_CMD_GPIO=y
++CONFIG_RANDOM_UUID=y
++# CONFIG_CMD_LOADS is not set
++CONFIG_CMD_MMC=y
++CONFIG_CMD_USB=y
++CONFIG_CMD_USB_MASS_STORAGE=y
++CONFIG_CMD_REGULATOR=y
++CONFIG_PARTITION_TYPE_GUID=y
++CONFIG_OF_CONTROL=y
++CONFIG_SYS_RELOC_GD_ENV_ADDR=y
++CONFIG_NET_RANDOM_ETHADDR=y
++CONFIG_SARADC_MESON=y
++CONFIG_MMC_MESON_GX=y
++CONFIG_MTD_UBI=y
++CONFIG_PHY_MESON_GXL=y
++CONFIG_DM_ETH=y
++CONFIG_DM_MDIO=y
++CONFIG_DM_MDIO_MUX=y
++CONFIG_ETH_DESIGNWARE_MESON8B=y
++CONFIG_MDIO_MUX_MMIOREG=y
++CONFIG_MESON_GXL_USB_PHY=y
++CONFIG_PINCTRL=y
++CONFIG_PINCTRL_MESON_GXL=y
++CONFIG_DM_REGULATOR=y
++CONFIG_DM_REGULATOR_FIXED=y
++CONFIG_DM_RESET=y
++CONFIG_DEBUG_UART_ANNOUNCE=y
++CONFIG_DEBUG_UART_SKIP_INIT=y
++CONFIG_MESON_SERIAL=y
++CONFIG_USB=y
++CONFIG_USB_XHCI_HCD=y
++CONFIG_USB_XHCI_DWC3=y
++CONFIG_USB_DWC2=y
++CONFIG_USB_DWC3=y
++# CONFIG_USB_DWC3_GADGET is not set
++CONFIG_USB_DWC3_MESON_GXL=y
++CONFIG_USB_GADGET=y
++CONFIG_USB_GADGET_VENDOR_NUM=0x1b8e
++CONFIG_USB_GADGET_PRODUCT_NUM=0xfada
++CONFIG_USB_GADGET_DWC2_OTG=y
++CONFIG_USB_GADGET_DOWNLOAD=y
++CONFIG_OF_LIBFDT_OVERLAY=y
+-- 
+2.30.2
+

@@ -1,0 +1,55 @@
+From 474e1aa2305fd9677310d19c525b96bca5e9c580 Mon Sep 17 00:00:00 2001
+From: Neil Armstrong <narmstrong@baylibre.com>
+Date: Fri, 17 Sep 2021 09:37:02 +0200
+Subject: [PATCH 03/17] ARM: meson: keep HW order for MMC devices
+
+Since Linux commmit [1], the order is fixed with aliases, in order to keep the
+MMC device order, set it back to HW order in U-Boot dtsi files.
+
+[1] ab547c4fb39f ("arm64: dts: amlogic: Assign a fixed index to mmc devices")
+
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ arch/arm/dts/meson-g12-common-u-boot.dtsi | 7 +++++++
+ arch/arm/dts/meson-gx-u-boot.dtsi         | 7 +++++++
+ 2 files changed, 14 insertions(+)
+
+diff --git a/arch/arm/dts/meson-g12-common-u-boot.dtsi b/arch/arm/dts/meson-g12-common-u-boot.dtsi
+index 38fd3d3feb..b1f60b15c9 100644
+--- a/arch/arm/dts/meson-g12-common-u-boot.dtsi
++++ b/arch/arm/dts/meson-g12-common-u-boot.dtsi
+@@ -5,6 +5,13 @@
+  */
+ 
+ / {
++	/* Keep HW order from U-boot */
++	aliases {
++		/delete-property/ mmc0;
++		/delete-property/ mmc1;
++		/delete-property/ mmc2;
++	};
++
+ 	soc {
+ 		u-boot,dm-pre-reloc;
+ 	};
+diff --git a/arch/arm/dts/meson-gx-u-boot.dtsi b/arch/arm/dts/meson-gx-u-boot.dtsi
+index 17d2cb95c1..fb6952f1d8 100644
+--- a/arch/arm/dts/meson-gx-u-boot.dtsi
++++ b/arch/arm/dts/meson-gx-u-boot.dtsi
+@@ -5,6 +5,13 @@
+  */
+ 
+ / {
++	/* Keep HW order from U-boot */
++	aliases {
++		/delete-property/ mmc0;
++		/delete-property/ mmc1;
++		/delete-property/ mmc2;
++	};
++
+ 	soc {
+ 		u-boot,dm-pre-reloc;
+ 	};
+-- 
+2.30.2
+

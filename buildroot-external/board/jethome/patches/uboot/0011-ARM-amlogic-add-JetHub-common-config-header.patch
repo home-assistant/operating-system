@@ -1,0 +1,62 @@
+From 5eb1ec3e6e0e53082555fc860d3cb4dae2069801 Mon Sep 17 00:00:00 2001
+From: Vyacheslav Bocharov <adeep@lexina.in>
+Date: Sun, 19 Sep 2021 10:34:11 +0300
+Subject: [PATCH 11/17] ARM: amlogic: add JetHub common config header
+
+JetHub devices uses its own boot sequence with "rescue" button
+
+Signed-off-by: Vyacheslav Bocharov <adeep@lexina.in>
+---
+ include/configs/jethub.h | 40 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 40 insertions(+)
+ create mode 100644 include/configs/jethub.h
+
+diff --git a/include/configs/jethub.h b/include/configs/jethub.h
+new file mode 100644
+index 0000000000..35f85095ac
+--- /dev/null
++++ b/include/configs/jethub.h
+@@ -0,0 +1,40 @@
++/* SPDX-License-Identifier: GPL-2.0+ */
++/*
++ * Configuration for JetHome devices
++ * Copyright (C) 2021 Vyacheslav Bocharov
++ * Author: Vyacheslav Bocharov <adeep@lexina.in>
++ */
++
++#ifndef __JETHUB_CONFIG_H
++#define __JETHUB_CONFIG_H
++
++#if defined(CONFIG_MESON_AXG)
++#define BOOTENV_DEV_RESCUE(devtypeu, devtypel, instance) \
++	"bootcmd_rescue=" \
++		"if gpio input 10; then " \
++		"run bootcmd_usb0;" \
++		"fi;\0"
++#else
++#define BOOTENV_DEV_RESCUE(devtypeu, devtypel, instance) \
++	"bootcmd_rescue=" \
++		"if test \"${userbutton}\" = \"true\"; then " \
++		"run bootcmd_mmc0; " \
++		"fi;\0"
++#endif
++
++#define BOOTENV_DEV_NAME_RESCUE(devtypeu, devtypel, instance) \
++	"rescue "
++
++#ifndef BOOT_TARGET_DEVICES
++#define BOOT_TARGET_DEVICES(func) \
++	func(RESCUE, rescue, na) \
++	func(MMC, mmc, 1) \
++	func(MMC, mmc, 0) \
++	BOOT_TARGET_DEVICES_USB(func) \
++	func(PXE, pxe, na) \
++	func(DHCP, dhcp, na)
++#endif
++
++#include <configs/meson64.h>
++
++#endif /* __JETHUB_CONFIG_H */
+-- 
+2.30.2
+

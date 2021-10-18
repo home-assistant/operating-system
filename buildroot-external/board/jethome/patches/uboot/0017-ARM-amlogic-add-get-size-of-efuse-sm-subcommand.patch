@@ -1,0 +1,110 @@
+From ae5184839facd6b3cf2eb0acba8529cb38f22127 Mon Sep 17 00:00:00 2001
+From: Vyacheslav Bocharov <adeep@lexina.in>
+Date: Tue, 5 Oct 2021 16:08:46 +0300
+Subject: [PATCH 17/17] ARM: amlogic: add get size of efuse sm subcommand
+
+Signed-off-by: Vyacheslav Bocharov <adeep@lexina.in>
+---
+ arch/arm/mach-meson/sm.c | 48 +++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 45 insertions(+), 3 deletions(-)
+
+diff --git a/arch/arm/mach-meson/sm.c b/arch/arm/mach-meson/sm.c
+index fb437b94d1..42c47027c5 100644
+--- a/arch/arm/mach-meson/sm.c
++++ b/arch/arm/mach-meson/sm.c
+@@ -25,6 +25,7 @@
+ #define FN_GET_SHARE_MEM_OUTPUT_BASE	0x82000021
+ #define FN_EFUSE_READ			0x82000030
+ #define FN_EFUSE_WRITE			0x82000031
++#define FN_EFUSE_USER_MAX               0x82000033
+ #define FN_CHIP_ID			0x82000044
+ 
+ static void *shmem_input;
+@@ -88,6 +89,21 @@ ssize_t meson_sm_write_efuse(uintptr_t offset, void *buffer, size_t size)
+ 	return 0;
+ }
+ 
++ssize_t meson_sm_get_max_bytes(void)
++{
++	struct pt_regs regs;
++
++	meson_init_shmem();
++	regs.regs[0] = FN_EFUSE_USER_MAX;
++
++	smc_call(&regs);
++
++	if (regs.regs[0] == 0)
++		return -1;
++
++        return regs.regs[0];
++}
++
+ #define SM_CHIP_ID_LENGTH	119
+ #define SM_CHIP_ID_OFFSET	4
+ #define SM_CHIP_ID_SIZE		12
+@@ -208,7 +224,7 @@ static int do_sm_reboot_reason(struct cmd_tbl *cmdtp, int flag, int argc,
+ }
+ 
+ static int do_efuse_read(struct cmd_tbl *cmdtp, int flag, int argc,
+-			char *const argv[])
++			 char *const argv[])
+ {
+ 	ulong address, offset, size;
+ 	int ret;
+@@ -229,7 +245,7 @@ static int do_efuse_read(struct cmd_tbl *cmdtp, int flag, int argc,
+ }
+ 
+ static int do_efuse_write(struct cmd_tbl *cmdtp, int flag, int argc,
+-			char *const argv[])
++			  char *const argv[])
+ {
+ 	ulong address, offset, size;
+ 	int ret;
+@@ -249,11 +265,36 @@ static int do_efuse_write(struct cmd_tbl *cmdtp, int flag, int argc,
+ 	return CMD_RET_SUCCESS;
+ }
+ 
++static int do_efuse_getmax(struct cmd_tbl *cmdtp, int flag, int argc,
++			   char *const argv[])
++{
++        char buf[256];
++	char *destarg = NULL;
++	int size;
++
++	if (argc > 1)
++		destarg = argv[1];
++
++	size = meson_sm_get_max_bytes();
++	if (size < 0)
++		return CMD_RET_FAILURE;
++
++	if (destarg)
++        {
++                snprintf(buf, 256, "%i", size);
++		env_set(destarg, buf);
++        } else
++		printf("efuse size : %i\n", size);
++
++	return CMD_RET_SUCCESS;
++}
++
+ static struct cmd_tbl cmd_sm_sub[] = {
+ 	U_BOOT_CMD_MKENT(serial, 2, 1, do_sm_serial, "", ""),
+ 	U_BOOT_CMD_MKENT(reboot_reason, 1, 1, do_sm_reboot_reason, "", ""),
+         U_BOOT_CMD_MKENT(efuseread, 4, 1, do_efuse_read, "", ""),
+         U_BOOT_CMD_MKENT(efusewrite, 4, 0, do_efuse_write, "", ""),
++        U_BOOT_CMD_MKENT(getmax, 1, 0, do_efuse_getmax, "", ""),
+ };
+ 
+ static int do_sm(struct cmd_tbl *cmdtp, int flag, int argc,
+@@ -282,5 +323,6 @@ U_BOOT_CMD(
+ 	"serial <address> - read chip unique id to memory address\n"
+ 	"sm reboot_reason [name] - get reboot reason and store to to environment\n"
+         "sm efuseread <offset> <size> <address> - read efuse to memory address\n"
+-        "sm efusewrite <offset> <size> <address> - write into efuse from memory address"
++        "sm efusewrite <offset> <size> <address> - write into efuse from memory address\n"
++        "sm getmax - get efuse max bytes"
+ );
+-- 
+2.30.2
+
