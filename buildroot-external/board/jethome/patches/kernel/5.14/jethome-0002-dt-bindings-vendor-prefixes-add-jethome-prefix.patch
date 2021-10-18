@@ -1,0 +1,29 @@
+From c3e0be7ca8a219e4a199d718ed40b5ca658f2cfc Mon Sep 17 00:00:00 2001
+From: Vyacheslav Bocharov <devel@lexina.in>
+Date: Sat, 4 Sep 2021 16:53:19 +0300
+Subject: [PATCH 2/4] dt-bindings: vendor-prefixes: add jethome prefix
+
+JetHome is trademark of IP Sokolov P.A., manufacturer of home automation
+devices.
+
+Signed-off-by: Vyacheslav Bocharov <adeep@lexina.in>
+---
+ Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+index a867f7102c35..c52f0d3261bb 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
++++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+@@ -577,6 +577,8 @@ patternProperties:
+     description: JEDEC Solid State Technology Association
+   "^jesurun,.*":
+     description: Shenzhen Jesurun Electronics Business Dept.
++  "^jethome,.*":
++    description: JetHome (IP Sokolov P.A.)
+   "^jianda,.*":
+     description: Jiandangjing Technology Co., Ltd.
+   "^kam,.*":
+-- 
+2.30.2
+
