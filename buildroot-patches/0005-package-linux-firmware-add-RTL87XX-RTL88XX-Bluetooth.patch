@@ -1,10 +1,10 @@
 From d064be35e78b286a30894071a4de353c33bdd09a Mon Sep 17 00:00:00 2001
-Message-Id: <d064be35e78b286a30894071a4de353c33bdd09a.1635185056.git.stefan@agner.ch>
-In-Reply-To: <7bc8a611131f89c7773e75863be58a682bfefa46.1635185056.git.stefan@agner.ch>
-References: <7bc8a611131f89c7773e75863be58a682bfefa46.1635185056.git.stefan@agner.ch>
+Message-Id: <d064be35e78b286a30894071a4de353c33bdd09a.1635192084.git.stefan@agner.ch>
+In-Reply-To: <7bc8a611131f89c7773e75863be58a682bfefa46.1635192084.git.stefan@agner.ch>
+References: <7bc8a611131f89c7773e75863be58a682bfefa46.1635192084.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Wed, 17 Mar 2021 14:48:43 +0100
-Subject: [PATCH 05/11] package/linux-firmware: add RTL87XX/RTL88XX Bluetooth
+Subject: [PATCH 05/12] package/linux-firmware: add RTL87XX/RTL88XX Bluetooth
  firmware
 
 Add firmware files for Realtek 87XX and 88XX Bluetooth chipsets. Those
