@@ -1,7 +1,7 @@
-From 81093c8655737f9208df3b75371290600625bec8 Mon Sep 17 00:00:00 2001
-Message-Id: <81093c8655737f9208df3b75371290600625bec8.1627492452.git.stefan@agner.ch>
-In-Reply-To: <09f9b55b419ef01ad24998bbacb1a49976b58bfa.1627492452.git.stefan@agner.ch>
-References: <09f9b55b419ef01ad24998bbacb1a49976b58bfa.1627492452.git.stefan@agner.ch>
+From 9f590c153e042db3e15532c8cf8a9404383e2789 Mon Sep 17 00:00:00 2001
+Message-Id: <9f590c153e042db3e15532c8cf8a9404383e2789.1635185056.git.stefan@agner.ch>
+In-Reply-To: <7bc8a611131f89c7773e75863be58a682bfefa46.1635185056.git.stefan@agner.ch>
+References: <7bc8a611131f89c7773e75863be58a682bfefa46.1635185056.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Mon, 8 Feb 2021 14:08:28 +0100
 Subject: [PATCH 04/11] package/rpi-firmware: Allow to deploy multiple firmware
@@ -72,5 +72,5 @@ index f3d28ef825..58085a8ca8 100644
  	$(RPI_FIRMWARE_INSTALL_DTB)
  	$(RPI_FIRMWARE_INSTALL_DTB_OVERLAYS)
 -- 
-2.32.0
+2.33.1
 

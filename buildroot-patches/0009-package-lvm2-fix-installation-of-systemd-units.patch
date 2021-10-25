@@ -1,7 +1,7 @@
-From f358c8ba53970154054bc2140fb4127a116d97ff Mon Sep 17 00:00:00 2001
-Message-Id: <f358c8ba53970154054bc2140fb4127a116d97ff.1627492452.git.stefan@agner.ch>
-In-Reply-To: <09f9b55b419ef01ad24998bbacb1a49976b58bfa.1627492452.git.stefan@agner.ch>
-References: <09f9b55b419ef01ad24998bbacb1a49976b58bfa.1627492452.git.stefan@agner.ch>
+From 36b65be42d138e54665ee508fc9021f90f134ee9 Mon Sep 17 00:00:00 2001
+Message-Id: <36b65be42d138e54665ee508fc9021f90f134ee9.1635185056.git.stefan@agner.ch>
+In-Reply-To: <7bc8a611131f89c7773e75863be58a682bfefa46.1635185056.git.stefan@agner.ch>
+References: <7bc8a611131f89c7773e75863be58a682bfefa46.1635185056.git.stefan@agner.ch>
 From: "Yann E. MORIN" <yann.morin.1998@free.fr>
 Date: Fri, 21 May 2021 16:44:36 +0200
 Subject: [PATCH 09/11] package/lvm2: fix installation of systemd units
@@ -58,5 +58,5 @@ index 19e8757e54..87c1c761ea 100644
  LVM2_CONF_ENV += ac_cv_flag_HAVE_PIE=no
  endif
 -- 
-2.32.0
+2.33.1
 

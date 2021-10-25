@@ -1,7 +1,7 @@
-From 30030f11ea80bee5f25136a3caf070a9b97e8b10 Mon Sep 17 00:00:00 2001
-Message-Id: <30030f11ea80bee5f25136a3caf070a9b97e8b10.1627492452.git.stefan@agner.ch>
-In-Reply-To: <09f9b55b419ef01ad24998bbacb1a49976b58bfa.1627492452.git.stefan@agner.ch>
-References: <09f9b55b419ef01ad24998bbacb1a49976b58bfa.1627492452.git.stefan@agner.ch>
+From f9a4d9c76e695d8897f00dc57b6926cd0d3847b4 Mon Sep 17 00:00:00 2001
+Message-Id: <f9a4d9c76e695d8897f00dc57b6926cd0d3847b4.1635185056.git.stefan@agner.ch>
+In-Reply-To: <7bc8a611131f89c7773e75863be58a682bfefa46.1635185056.git.stefan@agner.ch>
+References: <7bc8a611131f89c7773e75863be58a682bfefa46.1635185056.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Mon, 19 Apr 2021 10:59:03 +0200
 Subject: [PATCH 07/11] package/rpi-firmware: bump version to 1.20210303
@@ -38,5 +38,5 @@ index 58085a8ca8..ea82836900 100644
  RPI_FIRMWARE_LICENSE = BSD-3-Clause
  RPI_FIRMWARE_LICENSE_FILES = boot/LICENCE.broadcom
 -- 
-2.32.0
+2.33.1
 

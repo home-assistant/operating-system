@@ -1,7 +1,7 @@
-From c8de13c1131adab0455eca939c4f168fd0ae30af Mon Sep 17 00:00:00 2001
-Message-Id: <c8de13c1131adab0455eca939c4f168fd0ae30af.1627492452.git.stefan@agner.ch>
-In-Reply-To: <09f9b55b419ef01ad24998bbacb1a49976b58bfa.1627492452.git.stefan@agner.ch>
-References: <09f9b55b419ef01ad24998bbacb1a49976b58bfa.1627492452.git.stefan@agner.ch>
+From 62b542d08b9fee2fca6190daae858239331591b0 Mon Sep 17 00:00:00 2001
+Message-Id: <62b542d08b9fee2fca6190daae858239331591b0.1635185056.git.stefan@agner.ch>
+In-Reply-To: <7bc8a611131f89c7773e75863be58a682bfefa46.1635185056.git.stefan@agner.ch>
+References: <7bc8a611131f89c7773e75863be58a682bfefa46.1635185056.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Wed, 28 Jul 2021 15:52:18 +0200
 Subject: [PATCH 10/11] package/rpi-wifi-firmware: bump version to 883b726
@@ -35,5 +35,5 @@ index 24ba5941b0..28926ff4f0 100644
  RPI_WIFI_FIRMWARE_LICENSE = PROPRIETARY
  RPI_WIFI_FIRMWARE_LICENSE_FILES = LICENCE.broadcom_bcm43xx
 -- 
-2.32.0
+2.33.1
 
