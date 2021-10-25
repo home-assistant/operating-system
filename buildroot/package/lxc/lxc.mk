@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LXC_VERSION = 4.0.6
+LXC_VERSION = 4.0.10
 LXC_SITE = https://linuxcontainers.org/downloads/lxc
 LXC_LICENSE = GPL-2.0 (some tools), LGPL-2.1+
 LXC_LICENSE_FILES = LICENSE.GPL2 LICENSE.LGPL2.1

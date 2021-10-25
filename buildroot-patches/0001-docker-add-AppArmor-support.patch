@@ -1,5 +1,5 @@
-From 09f9b55b419ef01ad24998bbacb1a49976b58bfa Mon Sep 17 00:00:00 2001
-Message-Id: <09f9b55b419ef01ad24998bbacb1a49976b58bfa.1627492452.git.stefan@agner.ch>
+From 7bc8a611131f89c7773e75863be58a682bfefa46 Mon Sep 17 00:00:00 2001
+Message-Id: <7bc8a611131f89c7773e75863be58a682bfefa46.1635185056.git.stefan@agner.ch>
 From: Pascal Vizeli <pvizeli@syshack.ch>
 Date: Mon, 13 Jan 2020 12:27:06 +0000
 Subject: [PATCH 01/11] docker: add AppArmor support
@@ -11,7 +11,7 @@ Signed-off-by: Stefan Agner <stefan@agner.ch>
  1 file changed, 5 insertions(+)
 
 diff --git a/package/docker-containerd/docker-containerd.mk b/package/docker-containerd/docker-containerd.mk
-index e229d9cb54..e968518a69 100644
+index 16026eb8e9..c2aaefdff8 100644
 --- a/package/docker-containerd/docker-containerd.mk
 +++ b/package/docker-containerd/docker-containerd.mk
 @@ -30,6 +30,11 @@ DOCKER_CONTAINERD_DEPENDENCIES += libapparmor
@@ -27,5 +27,5 @@ index e229d9cb54..e968518a69 100644
  DOCKER_CONTAINERD_DEPENDENCIES += libseccomp host-pkgconf
  DOCKER_CONTAINERD_TAGS += seccomp
 -- 
-2.32.0
+2.33.1
 

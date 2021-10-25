@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-ATFTP_VERSION = 0.7.4
+ATFTP_VERSION = 0.7.5
 ATFTP_SITE = http://sourceforge.net/projects/atftp/files
 ATFTP_LICENSE = GPL-2.0+
 ATFTP_LICENSE_FILES = LICENSE

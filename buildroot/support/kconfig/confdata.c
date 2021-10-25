@@ -744,7 +744,7 @@ int conf_write(const char *name)
 	struct menu *menu;
 	const char *basename;
 	const char *str;
-	char dirname[PATH_MAX+1], tmpname[PATH_MAX+1], newname[PATH_MAX+1];
+	char dirname[PATH_MAX+1], tmpname[PATH_MAX+20], newname[PATH_MAX+1];
 	char *env;
 
 	if (!name)
@@ -974,7 +974,7 @@ int conf_write_autoconf(void)
 	const char *name;
 	FILE *out, *tristate, *out_h;
 	int i;
-	char dir[PATH_MAX+1], buf[PATH_MAX+1];
+	char dir[PATH_MAX+1], buf[PATH_MAX+20];
 	char *s;
 
 	strcpy(dir, conf_get_configname());

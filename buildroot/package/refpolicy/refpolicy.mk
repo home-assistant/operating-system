@@ -14,7 +14,8 @@ REFPOLICY_DEPENDENCIES = \
 	host-policycoreutils \
 	host-python3 \
 	host-setools \
-	host-gawk
+	host-gawk \
+	host-libxml2
 
 ifeq ($(BR2_PACKAGE_REFPOLICY_CUSTOM_GIT),y)
 REFPOLICY_VERSION = $(call qstrip,$(BR2_PACKAGE_REFPOLICY_CUSTOM_REPO_VERSION))
@@ -30,6 +31,7 @@ endif
 # Cannot use multiple threads to build the reference policy
 REFPOLICY_MAKE = \
 	PYTHON=$(HOST_DIR)/usr/bin/python3 \
+	XMLLINT=$(LIBXML2_HOST_BINARY) \
 	TEST_TOOLCHAIN=$(HOST_DIR) \
 	$(TARGET_MAKE_ENV) \
 	$(MAKE1)

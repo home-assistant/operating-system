@@ -1,7 +1,7 @@
-From e06ba47c59eec31475a8302fca569a0315158154 Mon Sep 17 00:00:00 2001
-Message-Id: <e06ba47c59eec31475a8302fca569a0315158154.1627492452.git.stefan@agner.ch>
-In-Reply-To: <09f9b55b419ef01ad24998bbacb1a49976b58bfa.1627492452.git.stefan@agner.ch>
-References: <09f9b55b419ef01ad24998bbacb1a49976b58bfa.1627492452.git.stefan@agner.ch>
+From 8510d87bd5dbbb23a55dd7bb4f17c7f375dfccef Mon Sep 17 00:00:00 2001
+Message-Id: <8510d87bd5dbbb23a55dd7bb4f17c7f375dfccef.1635185056.git.stefan@agner.ch>
+In-Reply-To: <7bc8a611131f89c7773e75863be58a682bfefa46.1635185056.git.stefan@agner.ch>
+References: <7bc8a611131f89c7773e75863be58a682bfefa46.1635185056.git.stefan@agner.ch>
 From: Pascal Vizeli <pvizeli@syshack.ch>
 Date: Thu, 16 Apr 2020 14:32:45 +0000
 Subject: [PATCH 02/11] network-manager: wpa_supplicant
@@ -42,5 +42,5 @@ index 607c2b402b..c8351d8730 100644
  NETWORK_MANAGER_LICENSE_FILES = COPYING COPYING.LGPL CONTRIBUTING
  NETWORK_MANAGER_CPE_ID_VENDOR = gnome
 -- 
-2.32.0
+2.33.1
 

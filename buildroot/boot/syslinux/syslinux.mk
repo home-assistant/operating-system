@@ -14,7 +14,12 @@ SYSLINUX_LICENSE_FILES = COPYING
 SYSLINUX_INSTALL_IMAGES = YES
 
 # host-util-linux needed to provide libuuid when building host tools
-SYSLINUX_DEPENDENCIES = host-nasm host-upx util-linux host-util-linux
+SYSLINUX_DEPENDENCIES = \
+	host-nasm \
+	host-python3 \
+	host-upx \
+	host-util-linux \
+	util-linux
 
 ifeq ($(BR2_TARGET_SYSLINUX_LEGACY_BIOS),y)
 SYSLINUX_TARGET += bios
@@ -59,6 +64,7 @@ define SYSLINUX_BUILD_CMDS
 		CC_FOR_BUILD="$(HOSTCC)" \
 		CFLAGS_FOR_BUILD="$(HOST_CFLAGS)" \
 		LDFLAGS_FOR_BUILD="$(HOST_LDFLAGS)" \
+		PYTHON=$(HOST_DIR)/bin/python3 \
 		$(SYSLINUX_EFI_ARGS) -C $(@D) $(SYSLINUX_TARGET)
 endef
 

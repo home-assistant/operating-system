@@ -1,0 +1,34 @@
+From 3b89170333ef0fdfffee14751ce3e1d66d7dfa00 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Tue, 14 Sep 2021 19:08:02 +0200
+Subject: [PATCH] tools/Makefile: fix {C,LD}FLAGS with CROSS_BUILD_TOOLS
+
+When CROSS_BUILD_TOOLS is set, set KBUILD_HOST{CF,LD}FLAGS to
+{C,LD}FLAGS otherwise CC will be used with HOST{C,LD}FLAGS which seems
+wrong.
+
+It should be noted that, for an unknown reason, overriding
+HOST{C,LD}FLAGS don't work.
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ tools/Makefile | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/tools/Makefile b/tools/Makefile
+index 4a86321f64..98bb92990d 100644
+--- a/tools/Makefile
++++ b/tools/Makefile
+@@ -316,7 +316,8 @@ subdir- += env
+ 
+ ifneq ($(CROSS_BUILD_TOOLS),)
+ override HOSTCC = $(CC)
+-override HOSTCFLAGS = $(CFLAGS)
++override KBUILD_HOSTCFLAGS = $(CFLAGS)
++override KBUILD_HOSTLDFLAGS = $(LDFLAGS)
+ 
+ quiet_cmd_crosstools_strip = STRIP   $^
+       cmd_crosstools_strip = $(STRIP) $^; touch $@
+-- 
+2.33.0
+
