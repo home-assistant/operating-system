@@ -1,10 +1,10 @@
 From f4d0ac532040a9194fd939e6be23233ca3976728 Mon Sep 17 00:00:00 2001
-Message-Id: <f4d0ac532040a9194fd939e6be23233ca3976728.1635185056.git.stefan@agner.ch>
-In-Reply-To: <7bc8a611131f89c7773e75863be58a682bfefa46.1635185056.git.stefan@agner.ch>
-References: <7bc8a611131f89c7773e75863be58a682bfefa46.1635185056.git.stefan@agner.ch>
+Message-Id: <f4d0ac532040a9194fd939e6be23233ca3976728.1635192084.git.stefan@agner.ch>
+In-Reply-To: <7bc8a611131f89c7773e75863be58a682bfefa46.1635192084.git.stefan@agner.ch>
+References: <7bc8a611131f89c7773e75863be58a682bfefa46.1635192084.git.stefan@agner.ch>
 From: Pascal Vizeli <pvizeli@syshack.ch>
 Date: Thu, 16 Apr 2020 12:01:44 +0000
-Subject: [PATCH 03/11] Fix dhcp client
+Subject: [PATCH 03/12] Fix dhcp client
 
 Signed-off-by: Pascal Vizeli <pvizeli@syshack.ch>
 ---

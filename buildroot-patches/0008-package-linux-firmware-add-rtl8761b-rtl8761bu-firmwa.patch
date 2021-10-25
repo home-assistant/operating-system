@@ -1,10 +1,10 @@
 From 05d3380da24004da4e413cfc342e0f97c7aef631 Mon Sep 17 00:00:00 2001
-Message-Id: <05d3380da24004da4e413cfc342e0f97c7aef631.1635185056.git.stefan@agner.ch>
-In-Reply-To: <7bc8a611131f89c7773e75863be58a682bfefa46.1635185056.git.stefan@agner.ch>
-References: <7bc8a611131f89c7773e75863be58a682bfefa46.1635185056.git.stefan@agner.ch>
+Message-Id: <05d3380da24004da4e413cfc342e0f97c7aef631.1635192084.git.stefan@agner.ch>
+In-Reply-To: <7bc8a611131f89c7773e75863be58a682bfefa46.1635192084.git.stefan@agner.ch>
+References: <7bc8a611131f89c7773e75863be58a682bfefa46.1635192084.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Sat, 19 Jun 2021 18:20:46 +0200
-Subject: [PATCH 08/11] package/linux-firmware: add rtl8761b/rtl8761bu firmware
+Subject: [PATCH 08/12] package/linux-firmware: add rtl8761b/rtl8761bu firmware
 
 Bumpt to latest git hash and deploy rtl8761b/rtl8761bu firmwares as
 well.
