@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-DOCKER_PROXY_VERSION = b3507428be5b458cb0e2b4086b13531fb0706e46
+DOCKER_PROXY_VERSION = 64b7a4574d1426139437d20e81c0b6d391130ec8
 DOCKER_PROXY_SITE = $(call github,moby,libnetwork,$(DOCKER_PROXY_VERSION))
 
 DOCKER_PROXY_LICENSE = Apache-2.0
