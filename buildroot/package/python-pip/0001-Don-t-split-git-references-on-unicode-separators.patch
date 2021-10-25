@@ -1,0 +1,45 @@
+From 62300cf398faacdd0e490b0a1400dec2558612bf Mon Sep 17 00:00:00 2001
+From: Pradyun Gedam <pradyunsg@users.noreply.github.com>
+Date: Sat, 24 Apr 2021 10:13:15 +0100
+Subject: [PATCH] Don't split git references on unicode separators
+
+Previously, maliciously formatted tags could be used to hijack a
+commit-based pin. Using the fact that the split here allowed for
+all of unicode's whitespace characters as separators -- which git allows
+as a part of a tag name -- it is possible to force a different revision
+to be installed; if an attacker gains access to the repository.
+
+This change stops splitting the string on unicode characters, by forcing
+the splits to happen on newlines and ASCII spaces.
+
+(cherry picked from commit ca832b2836e0bffa7cf95589acdcd71230f5834e)
+Signed-off-by: Peter Korsgaard <peter@korsgaard.com>
+---
+ src/pip/_internal/vcs/git.py | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/src/pip/_internal/vcs/git.py b/src/pip/_internal/vcs/git.py
+index 7483303a9..d706064e7 100644
+--- a/src/pip/_internal/vcs/git.py
++++ b/src/pip/_internal/vcs/git.py
+@@ -137,9 +137,15 @@ class Git(VersionControl):
+         output = cls.run_command(['show-ref', rev], cwd=dest,
+                                  show_stdout=False, on_returncode='ignore')
+         refs = {}
+-        for line in output.strip().splitlines():
++        # NOTE: We do not use splitlines here since that would split on other
++        #       unicode separators, which can be maliciously used to install a
++        #       different revision.
++        for line in output.strip().split("\n"):
++            line = line.rstrip("\r")
++            if not line:
++                continue
+             try:
+-                sha, ref = line.split()
++                sha, ref = line.split(" ", maxsplit=2)
+             except ValueError:
+                 # Include the offending line to simplify troubleshooting if
+                 # this error ever occurs.
+-- 
+2.20.1
+

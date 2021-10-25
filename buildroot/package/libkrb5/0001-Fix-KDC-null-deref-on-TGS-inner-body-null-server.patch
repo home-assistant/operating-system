@@ -1,0 +1,47 @@
+From d775c95af7606a51bf79547a94fa52ddd1cb7f49 Mon Sep 17 00:00:00 2001
+From: Greg Hudson <ghudson@mit.edu>
+Date: Tue, 3 Aug 2021 01:15:27 -0400
+Subject: [PATCH] Fix KDC null deref on TGS inner body null server
+
+After the KDC decodes a FAST inner body, it does not check for a null
+server.  Prior to commit 39548a5b17bbda9eeb63625a201cfd19b9de1c5b this
+would typically result in an error from krb5_unparse_name(), but with
+the addition of get_local_tgt() it results in a null dereference.  Add
+a null check.
+
+Reported by Joseph Sutton of Catalyst.
+
+CVE-2021-37750:
+
+In MIT krb5 releases 1.14 and later, an authenticated attacker can
+cause a null dereference in the KDC by sending a FAST TGS request with
+no server field.
+
+ticket: 9008 (new)
+tags: pullup
+target_version: 1.19-next
+target_version: 1.18-next
+
+[Retrieved from:
+https://github.com/krb5/krb5/commit/d775c95af7606a51bf79547a94fa52ddd1cb7f49]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ src/kdc/do_tgs_req.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/src/kdc/do_tgs_req.c b/src/kdc/do_tgs_req.c
+index 582e497cc9..32dc65fa8e 100644
+--- a/src/kdc/do_tgs_req.c
++++ b/src/kdc/do_tgs_req.c
+@@ -204,6 +204,11 @@ process_tgs_req(krb5_kdc_req *request, krb5_data *pkt,
+         status = "FIND_FAST";
+         goto cleanup;
+     }
++    if (sprinc == NULL) {
++        status = "NULL_SERVER";
++        errcode = KRB5KDC_ERR_S_PRINCIPAL_UNKNOWN;
++        goto cleanup;
++    }
+ 
+     errcode = get_local_tgt(kdc_context, &sprinc->realm, header_server,
+                             &local_tgt, &local_tgt_storage, &local_tgt_key);

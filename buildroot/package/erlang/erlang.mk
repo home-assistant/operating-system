@@ -16,6 +16,9 @@ ERLANG_CPE_ID_VENDOR = erlang
 ERLANG_CPE_ID_PRODUCT = erlang\/otp
 ERLANG_INSTALL_STAGING = YES
 
+# windows specific issue: https://nvd.nist.gov/vuln/detail/CVE-2021-29221
+ERLANG_IGNORE_CVES += CVE-2021-29221
+
 # Remove the leftover deps directory from the ssl app
 # See https://bugs.erlang.org/browse/ERL-1168
 define ERLANG_REMOVE_SSL_DEPS

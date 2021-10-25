@@ -20,7 +20,7 @@ config BR2_PACKAGE_OPENJDK
 	depends on !BR2_STATIC_LIBS # glibc
 	depends on BR2_INSTALL_LIBSTDCPP # cups
 	depends on BR2_TOOLCHAIN_HAS_THREADS # alsa-lib, cups, libusb
-	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # libusb
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # libusb, C++14 for OpenJDK16
 	depends on BR2_TOOLCHAIN_USES_GLIBC
 	depends on BR2_USE_MMU # cups
 	depends on BR2_PACKAGE_XORG7
@@ -59,7 +59,11 @@ config BR2_OPENJDK_VERSION_LTS
 	bool "LTS (OpenJDK 11)"
 
 config BR2_OPENJDK_VERSION_LATEST
-	bool "latest (OpenJDK 14)"
+	bool "latest (OpenJDK 16)"
+	depends on BR2_HOST_GCC_AT_LEAST_4_9 # C++14
+
+comment "OpenJDK 16 needs a host gcc >= 4.9"
+	depends on !BR2_HOST_GCC_AT_LEAST_4_9 # C++14
 
 endchoice
 

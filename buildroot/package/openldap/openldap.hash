@@ -1,7 +1,7 @@
-# From https://www.openldap.org/software/download/OpenLDAP/openldap-release/openldap-2.4.58.md5
-md5  c203d735ba69976e5b28dc39006f29b5  openldap-2.4.58.tgz
-# From https://www.openldap.org/software/download/OpenLDAP/openldap-release/openldap-2.4.58.sha1
-sha1  875416827be3ad63f20004510a354db0aaceb2ed  openldap-2.4.58.tgz
+# From https://www.openldap.org/software/download/OpenLDAP/openldap-release/openldap-2.4.59.md5
+md5  6036a03b3a67b4a1fe1246e0a2c7265a  openldap-2.4.59.tgz
+# From https://www.openldap.org/software/download/OpenLDAP/openldap-release/openldap-2.4.59.sha1
+sha1  b154d06bbf40fafafb34fffc4b116946d931efef  openldap-2.4.59.tgz
 # Locally computed
-sha256  57b59254be15d0bf6a9ab3d514c1c05777b02123291533134a87c94468f8f47b  openldap-2.4.58.tgz
+sha256  99f37d6747d88206c470067eda624d5e48c1011e943ec0ab217bae8712e22f34  openldap-2.4.59.tgz
 sha256  310fe25c858a9515fc8c8d7d1f24a67c9496f84a91e0a0e41ea9975b1371e569  LICENSE

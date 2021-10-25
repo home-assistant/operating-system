@@ -174,13 +174,13 @@ List of Examples
 
 ---------------------------------------------------------------------
 
-Buildroot 2021.02.5 manual generated on 2021-09-15 15:21:07 UTC from
-git revision 767a2da72f
+Buildroot 2021.02.6 manual generated on 2021-10-11 18:45:17 UTC from
+git revision b1e32fa954
 
 The Buildroot manual is written by the Buildroot developers. It is
 licensed under the GNU General Public License, version 2. Refer to
 the COPYING [http://git.buildroot.org/buildroot/tree/COPYING?id=
-767a2da72fc1690fde33b665851f20492ba5cd75] file in the Buildroot
+b1e32fa954faae7dce51ebee48981af3ace3c0ba] file in the Buildroot
 sources for the full text of this license.
 
 Copyright © 2004-2020 The Buildroot developers
@@ -1750,7 +1750,7 @@ from the cross gdb.
 Then, on the host, you should start the cross gdb using the following
 command line:
 
-<buildroot>/output/host/bin/<tuple>-gdb -x <buildroot>/output/staging/usr/share/buildroot/gdbinit foo
+<buildroot>/output/host/bin/<tuple>-gdb -ix <buildroot>/output/staging/usr/share/buildroot/gdbinit foo
 
 Of course, foo must be available in the current directory, built with
 debugging symbols. Typically you start this command from the

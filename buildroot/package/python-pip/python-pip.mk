@@ -13,4 +13,7 @@ PYTHON_PIP_LICENSE_FILES = LICENSE.txt
 PYTHON_PIP_CPE_ID_VENDOR = pypa
 PYTHON_PIP_CPE_ID_PRODUCT = pip
 
+#0001-Don-t-split-git-references-on-unicode-separators.patch
+PYTHON_PIP_IGNORE_CVES += CVE-2021-3572
+
 $(eval $(python-package))

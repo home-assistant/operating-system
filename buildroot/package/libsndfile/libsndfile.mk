@@ -19,6 +19,9 @@ LIBSNDFILE_IGNORE_CVES += CVE-2018-13139 CVE-2018-19432
 LIBSNDFILE_IGNORE_CVES += \
 	CVE-2017-14245 CVE-2017-14246 CVE-2017-17456 CVE-2017-17457 \
 	CVE-2018-19661 CVE-2018-19662
+# 0011-ms_adpcm-Fix-and-extend-size-checks.patch
+LIBSNDFILE_IGNORE_CVES += CVE-2021-3246
+
 # disputed, https://github.com/erikd/libsndfile/issues/398
 LIBSNDFILE_IGNORE_CVES += CVE-2018-13419
 # 0004-src-wav.c-Fix-heap-read-overflow.patch

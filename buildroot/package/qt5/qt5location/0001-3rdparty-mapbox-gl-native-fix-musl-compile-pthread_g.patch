@@ -1,0 +1,47 @@
+From acf752757ee4bf2913289ee1142f4968fdb22a4a Mon Sep 17 00:00:00 2001
+From: Peter Seiderer <ps.report@gmx.net>
+Date: Wed, 15 Sep 2021 23:05:52 +0200
+Subject: [PATCH] 3rdparty: mapbox-gl-native: fix musl compile
+ (pthread_getname_np)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+- pthread_getname_np not available with musl libc (patch inspired/ported
+  from [1])
+
+Fixes:
+
+  platform/default/thread.cpp: In function ‘std::string mbgl::platform::getCurrentThreadName()’:
+  platform/default/thread.cpp:14:5: error: ‘pthread_getname_np’ was not declared in this scope; did you mean ‘pthread_setname_np’?
+     14 |     pthread_getname_np(pthread_self(), name, sizeof(name));
+        |     ^~~~~~~~~~~~~~~~~~
+        |     pthread_setname_np
+
+[1] https://github.com/void-linux/void-packages/blob/e64dd67f43c409d2b2db08214084e842d92ad620/srcpkgs/qt5/patches/0014-musl-set_thread_name_np.patch
+
+Signed-off-by: Peter Seiderer <ps.report@gmx.net>
+[yann.morin.1998@free.fr: add uClibc]
+Signed-off-by: Yann E. MORIN <yann.morin.1998@free.fr>
+---
+ src/3rdparty/mapbox-gl-native/platform/default/thread.cpp | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/src/3rdparty/mapbox-gl-native/platform/default/thread.cpp b/src/3rdparty/mapbox-gl-native/platform/default/thread.cpp
+index c7c79b4..3f135eb 100644
+--- a/src/3rdparty/mapbox-gl-native/platform/default/thread.cpp
++++ b/src/3rdparty/mapbox-gl-native/platform/default/thread.cpp
+@@ -11,8 +11,9 @@ namespace platform {
+ 
+ std::string getCurrentThreadName() {
+     char name[32] = "unknown";
++#if defined(__GLIBC__) || defined(__UCLIBC__)
+     pthread_getname_np(pthread_self(), name, sizeof(name));
+-
++#endif
+     return name;
+ }
+ 
+-- 
+2.33.0
+

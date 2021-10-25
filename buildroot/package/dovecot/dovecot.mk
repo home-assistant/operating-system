@@ -15,8 +15,6 @@ DOVECOT_DEPENDENCIES = \
 	host-pkgconf \
 	$(if $(BR2_PACKAGE_LIBICONV),libiconv) \
 	openssl
-# add host-gettext for AM_ICONV macro
-DOVECOT_DEPENDENCIES += host-gettext
 
 # CVE-2016-4983 is an issue in a postinstall script in the dovecot rpm, which
 # is part of the Red Hat packaging and not part of upstream dovecot

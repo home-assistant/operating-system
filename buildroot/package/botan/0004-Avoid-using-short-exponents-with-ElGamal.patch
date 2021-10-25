@@ -1,0 +1,38 @@
+From 9a23e4e3bc3966340531f2ff608fa9d33b5185a2 Mon Sep 17 00:00:00 2001
+From: Jack Lloyd <jack@randombit.net>
+Date: Tue, 3 Aug 2021 18:20:29 -0400
+Subject: [PATCH] Avoid using short exponents with ElGamal
+
+Some off-brand PGP implementation generates keys where p - 1 is
+smooth, as a result short exponents can leak enough information about
+k to allow decryption.
+
+Signed-off-by: Peter Korsgaard <peter@korsgaard.com>
+[Peter: Drop tests, CVE-2021-40529]
+---
+ src/lib/pubkey/elgamal/elgamal.cpp        |  8 +++-
+ 1 file changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/src/lib/pubkey/elgamal/elgamal.cpp b/src/lib/pubkey/elgamal/elgamal.cpp
+index b3ec6df2c..0e33c2ca5 100644
+--- a/src/lib/pubkey/elgamal/elgamal.cpp
++++ b/src/lib/pubkey/elgamal/elgamal.cpp
+@@ -113,8 +113,12 @@ ElGamal_Encryption_Operation::raw_encrypt(const uint8_t msg[], size_t msg_len,
+    if(m >= m_group.get_p())
+       throw Invalid_Argument("ElGamal encryption: Input is too large");
+ 
+-   const size_t k_bits = m_group.exponent_bits();
+-   const BigInt k(rng, k_bits);
++   /*
++   Some ElGamal implementations foolishly use prime fields where p - 1 is
++   smooth, as a result it is unsafe to use short exponents.
++   */
++   const size_t k_bits = m_group.p_bits() - 1;
++   const BigInt k(rng, k_bits, false);
+ 
+    const BigInt a = m_group.power_g_p(k, k_bits);
+    const BigInt b = m_group.multiply_mod_p(m, monty_execute(*m_monty_y_p, k, k_bits));
+-
+-- 
+2.20.1
+
