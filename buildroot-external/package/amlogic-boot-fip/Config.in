@@ -1,0 +1,20 @@
+config BR2_PACKAGE_AMLOGIC_BOOT_FIP
+        bool "amlogic-boot-fip"
+        help
+          This package enables access to various u-boot
+          blobs from the LibreELEC amlogic-boot-fip repository.
+
+          https://github.com/LibreELEC/amlogic-boot-fip
+
+if BR2_PACKAGE_AMLOGIC_BOOT_FIP
+
+config BR2_PACKAGE_AMLOGIC_BOOT_FIP_JETHUB_J100
+        bool "JetHub D1 (j100)"
+        help
+          u-boot blobs for JetHome JetHub D1 (j100)
+
+config BR2_PACKAGE_AMLOGIC_BOOT_FIP_JETHUB_J80
+        bool "JetHub H1 (j80)"
+        help
+          u-boot blobs for JetHome JetHub H1 (j80)
+endif
