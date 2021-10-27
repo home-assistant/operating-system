@@ -1,0 +1,27 @@
+From 2214c1f039143caaf4ed99eb0f3fc4551b322148 Mon Sep 17 00:00:00 2001
+Message-Id: <2214c1f039143caaf4ed99eb0f3fc4551b322148.1635377266.git.stefan@agner.ch>
+From: Aman Gupta Karmani <aman@tmm1.net>
+Date: Mon, 12 Oct 2020 13:39:26 -0700
+Subject: [PATCH 1/2] time-wait-sync: log errors trying to watch
+ /run/systemd/timesync
+
+---
+ src/timesync/wait-sync.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/timesync/wait-sync.c b/src/timesync/wait-sync.c
+index 2a9b113ff4..62fa13c509 100644
+--- a/src/timesync/wait-sync.c
++++ b/src/timesync/wait-sync.c
+@@ -44,7 +44,7 @@ static void clock_state_release(ClockState *sp) {
+ static int clock_state_update(ClockState *sp, sd_event *event);
+ 
+ static int update_notify_run_systemd_timesync(ClockState *sp) {
+-        sp->run_systemd_timesync_wd = inotify_add_watch(sp->inotify_fd, "/run/systemd/timesync", IN_CREATE|IN_DELETE_SELF);
++        sp->run_systemd_timesync_wd = inotify_add_watch_and_warn(sp->inotify_fd, "/run/systemd/timesync", IN_CREATE|IN_DELETE_SELF);
+         return sp->run_systemd_timesync_wd;
+ }
+ 
+-- 
+2.33.1
+
