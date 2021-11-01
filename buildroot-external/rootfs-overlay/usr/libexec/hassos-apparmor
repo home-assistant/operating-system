@@ -4,7 +4,6 @@ set -e
 APPARMOR_URL="https://version.home-assistant.io/apparmor.txt"
 PROFILES_DIR="/mnt/data/supervisor/apparmor"
 CACHE_DIR="${PROFILES_DIR}/cache"
-REMOVE_DIR="${PROFILES_DIR}/remove"
 
 # Check folder structure
 if [ ! -d "${PROFILES_DIR}" ]; then
@@ -14,9 +13,8 @@ if [ ! -d "${PROFILES_DIR}" ]; then
     curl -sL -o "${PROFILES_DIR}"/hassio-supervisor "${APPARMOR_URL}"
 fi
 mkdir -p "${CACHE_DIR}"
-mkdir -p "${REMOVE_DIR}"
 
-# Load/Update exists/new profiles
+# Load exists profiles
 for profile in "${PROFILES_DIR}"/*; do
     if [ ! -f "${profile}" ]; then
         continue
@@ -26,19 +24,4 @@ for profile in "${PROFILES_DIR}"/*; do
     if ! apparmor_parser -r -W -L "${CACHE_DIR}" "${profile}"; then
         echo "[Error]: Can't load profile ${profile}"
     fi
-done
-
-# Cleanup old profiles
-for profile in "${REMOVE_DIR}"/*; do
-    if [ ! -f "${profile}" ]; then
-        continue
-    fi
-
-    # Unload Profile
-    if apparmor_parser -R -W -L "${CACHE_DIR}" "${profile}"; then
-        if rm "${profile}"; then
-            continue
-        fi
-    fi
-    echo "[Error]: Can't remove profile ${profile}"
 done
