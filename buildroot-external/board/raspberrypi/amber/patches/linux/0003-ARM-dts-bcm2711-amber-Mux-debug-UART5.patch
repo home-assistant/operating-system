@@ -1,30 +1,21 @@
-From c9f08bb9ed2f72ec76651552e85c4fa5ccbab6f3 Mon Sep 17 00:00:00 2001
-Message-Id: <c9f08bb9ed2f72ec76651552e85c4fa5ccbab6f3.1633341968.git.stefan@agner.ch>
-In-Reply-To: <4000c39e3084ea0bdd76173fda310b6c32fd4734.1633341968.git.stefan@agner.ch>
-References: <4000c39e3084ea0bdd76173fda310b6c32fd4734.1633341968.git.stefan@agner.ch>
+From 1e395219026ad0575483aecc9d49992099e73e8b Mon Sep 17 00:00:00 2001
+Message-Id: <1e395219026ad0575483aecc9d49992099e73e8b.1635895105.git.stefan@agner.ch>
+In-Reply-To: <fa42d0ece205b3c2a8a06dac3e4436400cf59978.1635895105.git.stefan@agner.ch>
+References: <fa42d0ece205b3c2a8a06dac3e4436400cf59978.1635895105.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Thu, 4 Mar 2021 14:44:23 +0100
-Subject: [PATCH 3/6] ARM: dts: bcm2711: amber: Mux debug UART5
+Subject: [PATCH 3/7] ARM: dts: bcm2711: amber: Mux debug UART5
 
 Signed-off-by: Stefan Agner <stefan@agner.ch>
 ---
- arch/arm/boot/dts/bcm2711-rpi-cm4-ha-amber.dts | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/bcm2711-rpi-cm4-ha-amber.dts | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
 diff --git a/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-amber.dts b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-amber.dts
-index 48a56bf7e3d8..f0f83ff79882 100644
+index ba4116cdffc4..4c2fe964eb72 100644
 --- a/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-amber.dts
 +++ b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-amber.dts
-@@ -9,7 +9,7 @@ / {
- 
- 	chosen {
- 		/* 8250 auxiliary UART instead of pl011 */
--		stdout-path = "serial1:115200n8";
-+		stdout-path = "serial5:115200n8";
- 	};
- 
- 	/* Will be filled by the bootloader */
-@@ -20,6 +20,7 @@ memory@0 {
+@@ -22,6 +22,7 @@ memory@0 {
  
  	aliases {
  		serial4 = &uart4;
@@ -32,7 +23,7 @@ index 48a56bf7e3d8..f0f83ff79882 100644
  		emmc2bus = &emmc2bus;
  		ethernet0 = &genet;
  		pcie0 = &pcie0;
-@@ -292,6 +293,13 @@ &uart4 {
+@@ -330,6 +331,13 @@ &uart4 {
  	status = "okay";
  };
  
@@ -46,6 +37,14 @@ index 48a56bf7e3d8..f0f83ff79882 100644
  &vchiq {
  	interrupts = <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
  };
+@@ -366,6 +374,7 @@ soc {
+ / {
+ 	chosen {
+ 		bootargs = "coherent_pool=1M 8250.nr_uarts=1 snd_bcm2835.enable_compat_alsa=0 snd_bcm2835.enable_hdmi=1";
++		stdout-path = "serial5:115200n8";
+ 	};
+ 
+ 	aliases {
 -- 
-2.33.0
+2.33.1
 

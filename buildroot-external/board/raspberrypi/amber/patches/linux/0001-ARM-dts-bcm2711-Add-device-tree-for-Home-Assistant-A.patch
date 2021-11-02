@@ -1,8 +1,8 @@
-From 4000c39e3084ea0bdd76173fda310b6c32fd4734 Mon Sep 17 00:00:00 2001
-Message-Id: <4000c39e3084ea0bdd76173fda310b6c32fd4734.1633341968.git.stefan@agner.ch>
+From fa42d0ece205b3c2a8a06dac3e4436400cf59978 Mon Sep 17 00:00:00 2001
+Message-Id: <fa42d0ece205b3c2a8a06dac3e4436400cf59978.1635895105.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
-Date: Thu, 4 Mar 2021 14:28:29 +0100
-Subject: [PATCH 1/6] ARM: dts: bcm2711: Add device tree for Home Assistant
+Date: Wed, 3 Nov 2021 00:00:45 +0100
+Subject: [PATCH 1/7] ARM: dts: bcm2711: Add device tree for Home Assistant
  Amber
 
 Add device tree for Home Assistant Amber, a Compute Module 4 based I/O
@@ -11,10 +11,10 @@ board.
 Signed-off-by: Stefan Agner <stefan@agner.ch>
 ---
  arch/arm/boot/dts/Makefile                    |   3 +-
- .../arm/boot/dts/bcm2711-rpi-cm4-ha-amber.dts | 618 ++++++++++++++++++
+ .../arm/boot/dts/bcm2711-rpi-cm4-ha-amber.dts | 659 ++++++++++++++++++
  arch/arm64/boot/dts/broadcom/Makefile         |   1 +
  .../dts/broadcom/bcm2711-rpi-cm4-ha-amber.dts |   1 +
- 4 files changed, 622 insertions(+), 1 deletion(-)
+ 4 files changed, 663 insertions(+), 1 deletion(-)
  create mode 100644 arch/arm/boot/dts/bcm2711-rpi-cm4-ha-amber.dts
  create mode 100644 arch/arm64/boot/dts/broadcom/bcm2711-rpi-cm4-ha-amber.dts
 
@@ -34,14 +34,16 @@ index 12cd8bf582e1..4fa8c7be516a 100644
  	alpine-db.dtb
 diff --git a/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-amber.dts b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-amber.dts
 new file mode 100644
-index 000000000000..11d8f87ac6d3
+index 000000000000..855da2b029a4
 --- /dev/null
 +++ b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-amber.dts
-@@ -0,0 +1,618 @@
+@@ -0,0 +1,659 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/dts-v1/;
 +#include "bcm2711.dtsi"
 +#include "bcm2835-rpi.dtsi"
++
++#include <dt-bindings/reset/raspberrypi,firmware-reset.h>
 +
 +/ {
 +	compatible = "raspberrypi,4-compute-module-ha-amber", "brcm,bcm2711";
@@ -62,14 +64,15 @@ index 000000000000..11d8f87ac6d3
 +		emmc2bus = &emmc2bus;
 +		ethernet0 = &genet;
 +		pcie0 = &pcie0;
++		blconfig = &blconfig;
 +	};
 +
 +	leds {
-+		act {
++		led-act {
 +			gpios = <&gpio 42 GPIO_ACTIVE_HIGH>;
 +		};
 +
-+		pwr {
++		led-pwr {
 +			label = "PWR";
 +			gpios = <&expgpio 2 GPIO_ACTIVE_LOW>;
 +			default-state = "keep";
@@ -116,6 +119,11 @@ index 000000000000..11d8f87ac6d3
 +};
 +
 +&firmware {
++	firmware_clocks: clocks {
++		compatible = "raspberrypi,firmware-clocks";
++		#clock-cells = <1>;
++	};
++
 +	expgpio: gpio {
 +		compatible = "raspberrypi,firmware-gpio";
 +		gpio-controller;
@@ -141,6 +149,11 @@ index 000000000000..11d8f87ac6d3
 +			gpios = <7 GPIO_ACTIVE_HIGH>;
 +			output-low;
 +		};
++	};
++
++	reset: reset {
++		compatible = "raspberrypi,firmware-reset";
++		#reset-cells = <1>;
 +	};
 +};
 +
@@ -220,12 +233,14 @@ index 000000000000..11d8f87ac6d3
 +&hdmi0 {
 +	clocks = <&firmware_clocks 13>, <&firmware_clocks 14>, <&dvp 0>, <&clk_27MHz>;
 +	clock-names = "hdmi", "bvb", "audio", "cec";
++	wifi-2.4ghz-coexistence;
 +	status = "okay";
 +};
 +
 +&hdmi1 {
 +	clocks = <&firmware_clocks 13>, <&firmware_clocks 14>, <&dvp 1>, <&clk_27MHz>;
 +	clock-names = "hdmi", "bvb", "audio", "cec";
++	wifi-2.4ghz-coexistence;
 +	status = "okay";
 +};
 +
@@ -249,18 +264,26 @@ index 000000000000..11d8f87ac6d3
 +	status = "okay";
 +};
 +
-+&vc4 {
-+	status = "okay";
-+};
-+
-+&vec {
-+	status = "disabled";
-+};
-+
 +&pwm1 {
 +	pinctrl-names = "default";
 +	pinctrl-0 = <&pwm1_0_gpio40 &pwm1_1_gpio41>;
 +	status = "okay";
++};
++
++&rmem {
++	/*
++	 * RPi4's co-processor will copy the board's bootloader configuration
++	 * into memory for the OS to consume. It'll also update this node with
++	 * its placement information.
++	 */
++	blconfig: nvram@0 {
++		compatible = "raspberrypi,bootloader-config", "nvmem-rmem";
++		#address-cells = <1>;
++		#size-cells = <1>;
++		reg = <0x0 0x0 0x0>;
++		no-map;
++		status = "disabled";
++	};
 +};
 +
 +/* SDHCI is used to control the SDIO for wireless */
@@ -296,9 +319,24 @@ index 000000000000..11d8f87ac6d3
 +};
 +
 +&genet_mdio {
-+	phy1: ethernet-phy@1 {
++	phy1: ethernet-phy@0 {
 +		/* No PHY interrupt */
-+		reg = <0x1>;
++		reg = <0x0>;
++	};
++};
++
++&pcie0 {
++	pci@1,0 {
++		#address-cells = <3>;
++		#size-cells = <2>;
++		ranges;
++
++		reg = <0 0 0 0 0>;
++
++		usb@1,0 {
++			reg = <0x10000 0 0 0 0>;
++			resets = <&reset RASPBERRYPI_FIRMWARE_RESET_ID_USB>;
++		};
 +	};
 +};
 +
@@ -327,6 +365,14 @@ index 000000000000..11d8f87ac6d3
 +	interrupts = <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
 +};
 +
++&vc4 {
++	status = "okay";
++};
++
++&vec {
++	status = "disabled";
++};
++
 +// =============================================
 +// Downstream rpi- changes
 +
@@ -346,6 +392,7 @@ index 000000000000..11d8f87ac6d3
 +#include "bcm283x-rpi-csi0-2lane.dtsi"
 +#include "bcm283x-rpi-csi1-4lane.dtsi"
 +#include "bcm283x-rpi-i2c0mux_0_44.dtsi"
++#include "bcm283x-rpi-cam1-regulator.dtsi"
 +
 +/ {
 +	chosen {
@@ -358,23 +405,20 @@ index 000000000000..11d8f87ac6d3
 +		mmc0 = &emmc2;
 +		mmc1 = &mmcnr;
 +		mmc2 = &sdhost;
-+		/delete-property/ i2c2;
 +		i2c3 = &i2c3;
 +		i2c4 = &i2c4;
 +		i2c5 = &i2c5;
 +		i2c6 = &i2c6;
++		i2c20 = &ddc0;
++		i2c21 = &ddc1;
++		spi3 = &spi3;
++		spi4 = &spi4;
++		spi5 = &spi5;
++		spi6 = &spi6;
 +		/delete-property/ intc;
 +	};
 +
 +	/delete-node/ wifi-pwrseq;
-+
-+	cam0_reg: cam1_reg: cam1_reg {
-+		compatible = "regulator-fixed";
-+		regulator-name = "cam1-reg";
-+		gpio = <&expgpio 5 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+		status = "disabled";
-+	};
 +};
 +
 +&mmcnr {
@@ -572,13 +616,6 @@ index 000000000000..11d8f87ac6d3
 +	pinctrl-0 = <&i2s_pins>;
 +};
 +
-+/ {
-+	__overrides__ {
-+		/delete-property/ i2c2_baudrate;
-+		/delete-property/ i2c2_iknowwhatimdoing;
-+	};
-+};
-+
 +// =============================================
 +// Board specific stuff here
 +
@@ -602,13 +639,13 @@ index 000000000000..11d8f87ac6d3
 +};
 +
 +&leds {
-+	act_led: act {
++	act_led: led-act {
 +		label = "led0";
 +		linux,default-trigger = "mmc0";
 +		gpios = <&gpio 42 GPIO_ACTIVE_HIGH>;
 +	};
 +
-+	pwr_led: pwr {
++	pwr_led: led-pwr {
 +		label = "led1";
 +		linux,default-trigger = "default-on";
 +		gpios = <&expgpio 2 GPIO_ACTIVE_LOW>;
@@ -623,6 +660,10 @@ index 000000000000..11d8f87ac6d3
 +	pinctrl-names = "default";
 +	pinctrl-0 = <&audio_pins>;
 +	brcm,disable-headphones = <1>;
++};
++
++cam0_reg: &cam1_reg {
++	gpio = <&expgpio 5 GPIO_ACTIVE_HIGH>;
 +};
 +
 +/ {
@@ -676,5 +717,5 @@ index 000000000000..728975338bf0
 @@ -0,0 +1 @@
 +#include "../../../../arm/boot/dts/bcm2711-rpi-cm4-ha-amber.dts"
 -- 
-2.33.0
+2.33.1
 

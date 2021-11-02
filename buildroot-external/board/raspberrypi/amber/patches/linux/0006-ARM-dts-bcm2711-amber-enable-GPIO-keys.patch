@@ -1,10 +1,10 @@
-From 5d8c4f62c8e254380b9cb83f22fa035311bc3bfb Mon Sep 17 00:00:00 2001
-Message-Id: <5d8c4f62c8e254380b9cb83f22fa035311bc3bfb.1633341968.git.stefan@agner.ch>
-In-Reply-To: <4000c39e3084ea0bdd76173fda310b6c32fd4734.1633341968.git.stefan@agner.ch>
-References: <4000c39e3084ea0bdd76173fda310b6c32fd4734.1633341968.git.stefan@agner.ch>
+From 7e2f95935408ec5b1d7a2b63daaef7fdb01d642c Mon Sep 17 00:00:00 2001
+Message-Id: <7e2f95935408ec5b1d7a2b63daaef7fdb01d642c.1635895105.git.stefan@agner.ch>
+In-Reply-To: <fa42d0ece205b3c2a8a06dac3e4436400cf59978.1635895105.git.stefan@agner.ch>
+References: <fa42d0ece205b3c2a8a06dac3e4436400cf59978.1635895105.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Tue, 9 Mar 2021 15:02:53 +0100
-Subject: [PATCH 6/6] ARM: dts: bcm2711: amber: enable GPIO keys
+Subject: [PATCH 6/7] ARM: dts: bcm2711: amber: enable GPIO keys
 
 Signed-off-by: Stefan Agner <stefan@agner.ch>
 ---
@@ -12,7 +12,7 @@ Signed-off-by: Stefan Agner <stefan@agner.ch>
  1 file changed, 30 insertions(+)
 
 diff --git a/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-amber.dts b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-amber.dts
-index 8d8d31a2fafb..7badb6073729 100644
+index 637ce01618d8..a2cbb8510491 100644
 --- a/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-amber.dts
 +++ b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-amber.dts
 @@ -2,6 +2,7 @@
@@ -21,10 +21,10 @@ index 8d8d31a2fafb..7badb6073729 100644
  #include "bcm2835-rpi.dtsi"
 +#include <dt-bindings/input/input.h>
  
- / {
- 	compatible = "raspberrypi,4-compute-module-ha-amber", "brcm,bcm2711";
-@@ -26,6 +27,29 @@ aliases {
- 		pcie0 = &pcie0;
+ #include <dt-bindings/reset/raspberrypi,firmware-reset.h>
+ 
+@@ -29,6 +30,29 @@ aliases {
+ 		blconfig = &blconfig;
  	};
  
 +	keys: gpio-keys {
@@ -51,9 +51,9 @@ index 8d8d31a2fafb..7badb6073729 100644
 +	};
 +
  	leds {
- 		act {
+ 		led-act {
  			gpios = <&gpio 42 GPIO_ACTIVE_HIGH>;
-@@ -393,6 +417,12 @@ spidev1: spidev@1{
+@@ -438,6 +462,12 @@ spidev1: spidev@1{
  };
  
  &gpio {
@@ -67,5 +67,5 @@ index 8d8d31a2fafb..7badb6073729 100644
  		brcm,pins = <9 10 11>;
  		brcm,function = <BCM2835_FSEL_ALT0>;
 -- 
-2.33.0
+2.33.1
 
