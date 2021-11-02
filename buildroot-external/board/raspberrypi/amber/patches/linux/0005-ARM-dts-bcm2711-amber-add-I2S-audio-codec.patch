@@ -1,10 +1,10 @@
-From b56cab462d92c755a34dc4bb4d901fb86cf81a5b Mon Sep 17 00:00:00 2001
-Message-Id: <b56cab462d92c755a34dc4bb4d901fb86cf81a5b.1633341968.git.stefan@agner.ch>
-In-Reply-To: <4000c39e3084ea0bdd76173fda310b6c32fd4734.1633341968.git.stefan@agner.ch>
-References: <4000c39e3084ea0bdd76173fda310b6c32fd4734.1633341968.git.stefan@agner.ch>
+From 3fa8a55b7fd515f0ffe8b000be23080003ed5ac4 Mon Sep 17 00:00:00 2001
+Message-Id: <3fa8a55b7fd515f0ffe8b000be23080003ed5ac4.1635895105.git.stefan@agner.ch>
+In-Reply-To: <fa42d0ece205b3c2a8a06dac3e4436400cf59978.1635895105.git.stefan@agner.ch>
+References: <fa42d0ece205b3c2a8a06dac3e4436400cf59978.1635895105.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Thu, 4 Mar 2021 17:19:01 +0100
-Subject: [PATCH 5/6] ARM: dts: bcm2711: amber: add I2S audio codec
+Subject: [PATCH 5/7] ARM: dts: bcm2711: amber: add I2S audio codec
 
 Add TI PCM5122 I2S audio codec.
 
@@ -14,10 +14,10 @@ Signed-off-by: Stefan Agner <stefan@agner.ch>
  1 file changed, 26 insertions(+)
 
 diff --git a/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-amber.dts b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-amber.dts
-index c4b0432b81a4..8d8d31a2fafb 100644
+index a95c3f96044a..637ce01618d8 100644
 --- a/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-amber.dts
 +++ b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-amber.dts
-@@ -548,11 +548,22 @@ &i2c6 {
+@@ -593,11 +593,22 @@ &i2c6 {
  	pinctrl-names = "default";
  	pinctrl-0 = <&i2c6_pins>;
  	status = "okay";
@@ -39,8 +39,8 @@ index c4b0432b81a4..8d8d31a2fafb 100644
 +	status = "okay";
  };
  
- / {
-@@ -602,6 +613,21 @@ &pwm1 {
+ // =============================================
+@@ -640,6 +651,21 @@ &pwm1 {
  	status = "disabled";
  };
  
@@ -63,5 +63,5 @@ index c4b0432b81a4..8d8d31a2fafb 100644
  	pinctrl-names = "default";
  	pinctrl-0 = <&audio_pins>;
 -- 
-2.33.0
+2.33.1
 

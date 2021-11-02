@@ -1,12 +1,12 @@
-From 071423b3beab53facdc69b7c945f82a907825f80 Mon Sep 17 00:00:00 2001
-Message-Id: <071423b3beab53facdc69b7c945f82a907825f80.1635895105.git.stefan@agner.ch>
+From c9b6a336142c18892a1b617e8e1460ddd89a0991 Mon Sep 17 00:00:00 2001
+Message-Id: <c9b6a336142c18892a1b617e8e1460ddd89a0991.1635895105.git.stefan@agner.ch>
 In-Reply-To: <fa42d0ece205b3c2a8a06dac3e4436400cf59978.1635895105.git.stefan@agner.ch>
 References: <fa42d0ece205b3c2a8a06dac3e4436400cf59978.1635895105.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
-Date: Thu, 4 Mar 2021 14:48:48 +0100
-Subject: [PATCH 4/7] ARM: dts: bcm2711: amber: Enable I2C6 by default
+Date: Thu, 28 Oct 2021 19:38:04 +0200
+Subject: [PATCH 7/7] ARM: dts: bcm2711: amber: add user LED
 
-The main I2C bus used on Amber is I2C6. Enable it by default.
+Add yellow user LED.
 
 Signed-off-by: Stefan Agner <stefan@agner.ch>
 ---
@@ -14,22 +14,22 @@ Signed-off-by: Stefan Agner <stefan@agner.ch>
  1 file changed, 6 insertions(+)
 
 diff --git a/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-amber.dts b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-amber.dts
-index 4c2fe964eb72..a95c3f96044a 100644
+index a2cbb8510491..a80a50de399e 100644
 --- a/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-amber.dts
 +++ b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-amber.dts
-@@ -589,6 +589,12 @@ &i2c1 {
- 	clock-frequency = <100000>;
+@@ -675,6 +675,12 @@ pwr_led: led-pwr {
+ 		linux,default-trigger = "default-on";
+ 		gpios = <&expgpio 2 GPIO_ACTIVE_LOW>;
+ 	};
++
++	user_led: led-user {
++		label = "led2";
++		linux,default-trigger = "heartbeat";
++		gpios = <&gpio 44 GPIO_ACTIVE_HIGH>;
++	};
  };
  
-+&i2c6 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c6_pins>;
-+	status = "okay";
-+};
-+
- &i2s {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&i2s_pins>;
+ &pwm1 {
 -- 
 2.33.1
 
