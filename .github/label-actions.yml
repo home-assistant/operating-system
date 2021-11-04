@@ -16,7 +16,7 @@ core-issue:
 
     It looks like this issue is related to Home Assistant Core. Please check
     the [Home Assistant Core](https://github.com/home-assistant/core/issues)
-    repository if the issue hasn't been reported already. Open a new issue
+    repository, the issue might have been reported already. Open a new issue
     in that repository if you can't find a matching issue.
   close: true
 
@@ -27,6 +27,6 @@ supervisor-issue:
 
     It looks like this issue is related to Home Assistant Supervisor. Please
     check the [Home Assistant Supervisor](https://github.com/home-assistant/supervisor/issues)
-    repository if the issue hasn't been reported already. Open a new issue
+    repository, the issue might have been reported already. Open a new issue
     in that repository if you can't find a matching issue.
   close: true
