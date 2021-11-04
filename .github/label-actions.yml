@@ -1,5 +1,5 @@
 assume-fixed:
-  comment: |
+  comment: >
     :wave: @{issue-author}, thanks for reporting an issue!
 
     This issue is assumed to be fixed in the latest stable release. Please
@@ -9,7 +9,7 @@ assume-fixed:
   close: true
 
 core-issue:
-  comment: |
+  comment: >
     :wave: @{issue-author}, thanks for reporting an issue!
 
     It looks like this issue is related to Home Assistant Core. Please check
@@ -19,7 +19,7 @@ core-issue:
   close: true
 
 supervisor-issue:
-  comment: |
+  comment: >
     :wave: @{issue-author}, thanks for reporting an issue!
 
     It looks like this issue is related to Home Assistant Supervisor. Please
