@@ -1,0 +1,32 @@
+assume-fixed:
+  comment: >
+    :wave: @{issue-author}, thanks for reporting an issue!
+
+
+    This issue is assumed to be fixed in the latest stable release. Please
+    reopen in case you can still reproduce the issue with the latest stable
+    release. You can find the latest stable release at
+    https://github.com/home-assistant/operating-system/releases/latest
+  close: true
+
+core-issue:
+  comment: >
+    :wave: @{issue-author}, thanks for reporting an issue!
+
+
+    It looks like this issue is related to Home Assistant Core. Please check
+    the [Home Assistant Core](https://github.com/home-assistant/core/issues)
+    repository, the issue might have been reported already. Open a new issue
+    in that repository if you can't find a matching issue.
+  close: true
+
+supervisor-issue:
+  comment: >
+    :wave: @{issue-author}, thanks for reporting an issue!
+
+
+    It looks like this issue is related to Home Assistant Supervisor. Please
+    check the [Home Assistant Supervisor](https://github.com/home-assistant/supervisor/issues)
+    repository, the issue might have been reported already. Open a new issue
+    in that repository if you can't find a matching issue.
+  close: true
