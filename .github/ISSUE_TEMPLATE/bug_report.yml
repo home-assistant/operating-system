@@ -20,7 +20,7 @@ body:
     attributes:
       value: |
         ## Environment
-  - type: input
+  - type: dropdown
     validations:
       required: true
     attributes:
