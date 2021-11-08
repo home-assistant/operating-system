@@ -1,0 +1,21 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Report incorrect or missing information on our documentation
+    url: https://github.com/home-assistant/home-assistant.io/issues
+    about: Our documentation has its own issue tracker. Please report issues with the website there.
+
+  - name: Report incorrect or missing information on our developer documentation
+    url: https://github.com/home-assistant/developers.home-assistant.io/issues
+    about: Our developer documentation has its own issue tracker. Please report issues with the website there.
+
+  - name: Request a feature for the Operating System
+    url: https://community.home-assistant.io/c/feature-requests
+    about: Request an new feature for the Operating System.
+
+  - name: I have a question or need support
+    url: https://www.home-assistant.io/help
+    about: We use GitHub for tracking bugs, check our website for resources on getting help.
+
+  - name: I'm unsure where to go?
+    url: https://www.home-assistant.io/join-chat
+    about: If you are unsure where to go, then joining our chat is recommended; Just ask!
