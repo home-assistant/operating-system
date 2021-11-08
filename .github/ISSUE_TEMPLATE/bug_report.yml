@@ -58,8 +58,8 @@ body:
     attributes:
       label: Did you upgrade the Operating System.
       options:
-        - Yes
-        - No
+        - "Yes"
+        - "No"
   - type: textarea
     validations:
       required: true
