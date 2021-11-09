@@ -42,9 +42,9 @@ body:
         - rpi4-64  (Raspberry Pi 4/400 64-bit OS)
         - tinker (ASUS Tinker Board/Tinker Board S)
       description: >
-        [![Open your Home Assistant instance and show your Home Assistant version information.](https://my.home-assistant.io/badges/info.svg)](https://my.home-assistant.io/redirect/info/)
+        Can be found in the [Configuration panel -> Info](https://my.home-assistant.io/badges/info.svg)](https://my.home-assistant.io/redirect/info/). It is listed as the `Board` value.
 
-        `Board` value.
+        [![Open your Home Assistant instance and show your Home Assistant version information.](https://my.home-assistant.io/badges/info.svg)](https://my.home-assistant.io/redirect/info/)
   - type: input
     validations:
       required: true
@@ -52,9 +52,7 @@ body:
       label: What version of Home Assistant Operating System is installed?
       placeholder: "6.6"
       description: >
-        [![Open your Home Assistant instance and show your Home Assistant version information.](https://my.home-assistant.io/badges/info.svg)](https://my.home-assistant.io/redirect/info/)
-
-        `Host Operating System` version e.g. 6.6.
+        Can be found in the [Configuration panel -> Info](https://my.home-assistant.io/badges/info.svg)](https://my.home-assistant.io/redirect/info/). It is listed as the `Host Operating System` value.
   - type: dropdown
     validations:
       required: true
@@ -82,9 +80,9 @@ body:
     attributes:
       label: Anything in the Supervisor logs that might be useful for us?
       description: >
-        [![Open your Home Assistant instance and show your Supervisor system logs.](https://my.home-assistant.io/badges/supervisor_logs.svg)](https://my.home-assistant.io/redirect/supervisor_logs/)
+        Supervisor Logs can be found under [Supervisor -> System](https://my.home-assistant.io/redirect/supervisor_logs/), then choose Log Provider `Supervisor`.
 
-        Choose Log Provider `Supervisor`.
+        [![Open your Home Assistant instance and show your Supervisor system logs.](https://my.home-assistant.io/badges/supervisor_logs.svg)](https://my.home-assistant.io/redirect/supervisor_logs/)
       render: txt
   - type: textarea
     validations:
@@ -92,14 +90,20 @@ body:
     attributes:
       label: Anything in the Host logs that might be useful for us?
       description: >
-        [![Open your Home Assistant instance and show your Supervisor system information.](https://my.home-assistant.io/badges/supervisor_info.svg)](https://my.home-assistant.io/redirect/supervisor_info/)
-
-        Choose Log Provider `Host`.
+        Supervisor Logs can be found under [Supervisor -> System](https://my.home-assistant.io/redirect/supervisor_logs/), then choose Log Provider `Host`.
       render: txt
+  - type: textarea
+    attributes:
+      label: System Health information
+      description: >
+        **Optional** Copy the full System Health in this text area.
+
+        Can be found in the [Configuration panel -> Info](https://my.home-assistant.io/badges/info.svg)](https://my.home-assistant.io/redirect/info/).
+        Use the copy icon on top right and choose `For GitHub`.
   - type: textarea
     attributes:
       label: Additional information
       description: >
-        If you have any additional information for us, use the field below.
+        **Optional** If you have any additional information for us, use the field below.
         Please note, you can attach screenshots or screen recordings here, by
         dragging and dropping files in the field below.
