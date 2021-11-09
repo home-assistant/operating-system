@@ -31,8 +31,6 @@ body:
         - odroid-n2 (Hardkernel ODROID-N2/N2+)
         - odroid-xu4 (Hardkernel ODROID-XU4)
         - ova (for Virtual Machines)
-        - rpi (Raspberry Pi 1)
-        - rpi0-w (Raspberry Pi Zero W)
         - rpi2 (Raspberry Pi 2)
         - rpi3 (Raspberry Pi 3 32-bit OS)
         - rpi3-64 (Raspberry Pi 3 64-bit OS)
