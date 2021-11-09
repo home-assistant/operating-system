@@ -42,7 +42,9 @@ body:
         - rpi4-64  (Raspberry Pi 4/400 64-bit OS)
         - tinker (ASUS Tinker Board/Tinker Board S)
       description: >
-        Can be found in the Configuration panel -> Info, `Board` value.
+        [![Open your Home Assistant instance and show your Home Assistant version information.](https://my.home-assistant.io/badges/info.svg)](https://my.home-assistant.io/redirect/info/)
+
+        `Board` value.
   - type: input
     validations:
       required: true
@@ -50,8 +52,9 @@ body:
       label: What version of Home Assistant Operating System is installed?
       placeholder: "6.6"
       description: >
-        Can be found in the Configuration panel -> Info or Supervisor panel ->
-        System tab.
+        [![Open your Home Assistant instance and show your Home Assistant version information.](https://my.home-assistant.io/badges/info.svg)](https://my.home-assistant.io/redirect/info/)
+
+        `Host Operating System` version e.g. 6.6.
   - type: dropdown
     validations:
       required: true
@@ -79,8 +82,9 @@ body:
     attributes:
       label: Anything in the Supervisor logs that might be useful for us?
       description: >
-        Supervisor Logs can be found under Supervisor -> System, then choose
-        Log Provider `Supervisor`.
+        [![Open your Home Assistant instance and show your Supervisor system logs.](https://my.home-assistant.io/badges/supervisor_logs.svg)](https://my.home-assistant.io/redirect/supervisor_logs/)
+
+        Choose Log Provider `Supervisor`.
       render: txt
   - type: textarea
     validations:
@@ -88,10 +92,9 @@ body:
     attributes:
       label: Anything in the Host logs that might be useful for us?
       description: >
-        Host Logs can be found under Supervisor -> System, then choose
-        Log Provider `Host`.
-
         [![Open your Home Assistant instance and show your Supervisor system information.](https://my.home-assistant.io/badges/supervisor_info.svg)](https://my.home-assistant.io/redirect/supervisor_info/)
+
+        Choose Log Provider `Host`.
       render: txt
   - type: textarea
     attributes:
