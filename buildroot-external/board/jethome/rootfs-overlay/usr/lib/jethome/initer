@@ -2,13 +2,12 @@
 
 SRC=$( cd -P -- "$(dirname -- "$(command -v -- "$0")")" && pwd -P )
 
-if grep -Eq "^GXL.+S905W" /sys/devices/soc0/soc_id; then
-  echo "Amlogic S905W detected."
+if grep -Eq "^jethome,jethub-j80" /proc/device-tree/compatible; then
+  echo "JetHub H1 detected."
   bash "$SRC/init_j80"
-elif grep -Eq "^AXG" /sys/devices/soc0/soc_id; then
-  echo "Amlogic AXG detected."
+elif grep -Eq "^jethome,jethub-j100" /proc/device-tree/compatible; then
+  echo "JetHub D1 detected."
   bash "$SRC/init_j100"
 else
   echo "SoC detection failed. Unable to init"
 fi
-
