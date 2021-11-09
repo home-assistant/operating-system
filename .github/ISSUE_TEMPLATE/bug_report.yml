@@ -1,0 +1,105 @@
+name: Bug Report Form
+description: Report an issue related to the Home Assistant Operating System.
+labels: bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Make sure to test with the last version of the Operating System before reporting a bug.
+        If the bug appears to be a regression, make sure to check if the bug indeed disappears
+        from the previous version. Use `ha os update --version x.y` command to downgrade.
+  - type: textarea
+    validations:
+      required: true
+    attributes:
+      label: Describe the issue you are experiencing
+      description: Provide a clear and concise description of what the bug is.
+  - type: markdown
+    attributes:
+      value: |
+        ## Environment
+  - type: dropdown
+    validations:
+      required: true
+    attributes:
+      label: What operating system image do you use?
+      options:
+        - generic-x86-64 (Generic UEFI capable x86-64 systems)
+        - khadas-vim3 (Khadas VIM3)
+        - odroid-c2 (Hardkernel ODROID-C2)
+        - odroid-c4 (Hardkernel ODROID-C4)
+        - odroid-n2 (Hardkernel ODROID-N2/N2+)
+        - odroid-xu4 (Hardkernel ODROID-XU4)
+        - ova (for Virtual Machines)
+        - rpi2 (Raspberry Pi 2)
+        - rpi3 (Raspberry Pi 3 32-bit OS)
+        - rpi3-64 (Raspberry Pi 3 64-bit OS)
+        - rpi4  (Raspberry Pi 4/400 32-bit OS)
+        - rpi4-64  (Raspberry Pi 4/400 64-bit OS)
+        - tinker (ASUS Tinker Board/Tinker Board S)
+      description: >
+        Can be found in the [Configuration panel -> Info](https://my.home-assistant.io/redirect/info/). It is listed as the `Board` value.
+
+        [![Open your Home Assistant instance and show your Home Assistant version information.](https://my.home-assistant.io/badges/info.svg)](https://my.home-assistant.io/redirect/info/)
+  - type: input
+    validations:
+      required: true
+    attributes:
+      label: What version of Home Assistant Operating System is installed?
+      placeholder: "6.6"
+      description: >
+        Can be found in the [Configuration panel -> Info](https://my.home-assistant.io/redirect/info/). It is listed as the `Host Operating System` value.
+  - type: dropdown
+    validations:
+      required: true
+    attributes:
+      label: Did you upgrade the Operating System.
+      options:
+        - "Yes"
+        - "No"
+  - type: textarea
+    validations:
+      required: true
+    attributes:
+      label: Steps to reproduce the issue
+      description: |
+        Please tell us exactly how to reproduce your issue.
+        Provide clear and concise step by step instructions and add code snippets if needed.
+      value: |
+        1.
+        2.
+        3.
+        ...
+  - type: textarea
+    validations:
+      required: true
+    attributes:
+      label: Anything in the Supervisor logs that might be useful for us?
+      description: >
+        Supervisor Logs can be found under [Supervisor -> System](https://my.home-assistant.io/redirect/supervisor_logs/), then choose Log Provider `Supervisor`.
+
+        [![Open your Home Assistant instance and show your Supervisor system logs.](https://my.home-assistant.io/badges/supervisor_logs.svg)](https://my.home-assistant.io/redirect/supervisor_logs/)
+      render: txt
+  - type: textarea
+    validations:
+      required: true
+    attributes:
+      label: Anything in the Host logs that might be useful for us?
+      description: >
+        Supervisor Logs can be found under [Supervisor -> System](https://my.home-assistant.io/redirect/supervisor_logs/), then choose Log Provider `Host`.
+      render: txt
+  - type: textarea
+    attributes:
+      label: System Health information
+      description: >
+        **Optional** Copy the full System Health in this text area.
+
+        Can be found in the [Configuration panel -> Info](https://my.home-assistant.io/redirect/info/).
+        Use the copy icon on top right and choose `For GitHub`.
+  - type: textarea
+    attributes:
+      label: Additional information
+      description: >
+        **Optional** If you have any additional information for us, use the field below.
+        Please note, you can attach screenshots or screen recordings here, by
+        dragging and dropping files in the field below.
