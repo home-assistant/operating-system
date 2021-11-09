@@ -90,6 +90,7 @@ body:
       description: >
         Host Logs can be found under Supervisor -> System, then choose
         Log Provider `Host`.
+        [![Open your Home Assistant instance and show your Supervisor system information.](https://my.home-assistant.io/badges/supervisor_info.svg)](https://my.home-assistant.io/redirect/supervisor_info/)
       render: txt
   - type: textarea
     attributes:
