@@ -10,8 +10,6 @@ function hassos_pre_image() {
     mkdir -p "${BOOT_DATA}/amlogic"
     cp "${BINARIES_DIR}/meson-gxl-s905w-jethome-jethub-j80.dtb" "${BOOT_DATA}/amlogic/"
 
-    #mkdir -p "${BOOT_DATA}/overlays"
-    #cp "${BINARIES_DIR}"/*.dtbo "${BOOT_DATA}/overlays/" || true
     cp "${BOARD_DIR}/boot-env.txt" "${BOOT_DATA}/haos-config.txt" || true
     cp "${BOARD_DIR}/cmdline.txt" "${BOOT_DATA}/cmdline.txt"
 
