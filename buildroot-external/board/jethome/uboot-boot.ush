@@ -1,9 +1,3 @@
-# set basic addr vars
-
-setenv kernel_addr_r  "0x14000000"
-setenv ramdisk_addr_r "0x1A000000"
-setenv fdt_addr_r     "0x10800000"
-
 ###########################################
 
 part start ${devtype} ${devnum} 9 mmc_env
