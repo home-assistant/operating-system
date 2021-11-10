@@ -3,7 +3,7 @@ Description=HassOS File swap for JetHome
 DefaultDependencies=no
 Requires=hassos-expand.service mnt-data.mount systemd-growfs@mnt-data.service
 After=hassos-expand.service mnt-data.mount systemd-growfs@mnt-data.service
-Wants=hassos-expand.service mnt-data.mount systemd-fsck@dev-disk-by\x2dlabel-hassos\x2ddata.service systemd-growfs@mnt-data.service
+Wants=systemd-fsck@dev-disk-by\x2dlabel-hassos\x2ddata.service
 #RefuseManualStart=true
 #RefuseManualStop=true
 
