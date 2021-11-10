@@ -42,18 +42,6 @@
     "label": "board/odroid"
   },
   {
-    "id": "rpi",
-    "defconfig": "rpi",
-    "runner": "arm-runner",
-    "label": "board/raspberrypi"
-  },
-  {
-    "id": "rpi0-w",
-    "defconfig": "rpi0_w",
-    "runner": "arm-runner",
-    "label": "board/raspberrypi"
-  },
-  {
     "id": "rpi2",
     "defconfig": "rpi2",
     "runner": "arm-runner",
