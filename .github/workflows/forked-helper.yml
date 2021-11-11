@@ -15,7 +15,7 @@ jobs:
     steps:
       - name: Assign secret
         id: get_dispatch_secret
-        run: echo '::set-output name=dispatch_secret::${{ secrets.HASSOS_SELF_DISPATCH_TOKEN }}'
+        run: echo '::set-output name=dispatch_secret::${{ secrets.HAOS_SELF_DISPATCH_TOKEN }}'
       - name: Get event details
         id: get_event_details
         # Process JSON according https://github.community/t5/GitHub-Actions/set-output-Truncates-Multiline-Strings/td-p/37870
@@ -31,7 +31,7 @@ jobs:
         with:
           token: ${{ steps.get_dispatch_secret.outputs.dispatch_secret }}
           repository: ${{ github.repository }}
-          event-type: hassos-dispatch
+          event-type: haos-dispatch
           client-payload: >
             {
               "event": "${{ github.event_name }}",
