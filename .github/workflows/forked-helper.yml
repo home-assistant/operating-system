@@ -1,0 +1,42 @@
+name: Forked helper
+
+on:
+  push:
+  release:
+  deployment:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  fork-repository-dispatch:
+    name: 📢 Run repository dispatch to default fork branch
+    if: ${{ github.repository_owner != 'home-assistant' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Assign secret
+        id: get_dispatch_secret
+        run: echo '::set-output name=dispatch_secret::${{ secrets.HASSOS_SELF_DISPATCH_TOKEN }}'
+      - name: Get event details
+        id: get_event_details
+        # Process JSON according https://github.community/t5/GitHub-Actions/set-output-Truncates-Multiline-Strings/td-p/37870
+        run: |
+          JSON=$(cat ${{ github.event_path }})
+          JSON="${JSON//'%'/'%25'}"
+          JSON="${JSON//$'\n'/'%0A'}"
+          JSON="${JSON//$'\r'/'%0D'}"
+          echo "::set-output name=event_details::${JSON}"
+      - name: Dispatch event on forked repostitory
+        if: steps.get_dispatch_secret.outputs.dispatch_secret
+        uses: peter-evans/repository-dispatch@v1
+        with:
+          token: ${{ steps.get_dispatch_secret.outputs.dispatch_secret }}
+          repository: ${{ github.repository }}
+          event-type: hassos-dispatch
+          client-payload: >
+            {
+              "event": "${{ github.event_name }}",
+              "ref": "${{ github.ref }}",
+              "base_ref": "${{ github.base_ref }}",
+              "sha": "${{ github.sha }}",
+              "event_details": ${{ steps.get_event_details.outputs.event_details }}
+            }
