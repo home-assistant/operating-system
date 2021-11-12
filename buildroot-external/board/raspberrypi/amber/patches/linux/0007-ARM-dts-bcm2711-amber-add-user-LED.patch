@@ -1,10 +1,10 @@
 From 702c3ef370741afce83cfb9a2fb166da0a94fdc7 Mon Sep 17 00:00:00 2001
-Message-Id: <702c3ef370741afce83cfb9a2fb166da0a94fdc7.1636733804.git.stefan@agner.ch>
-In-Reply-To: <a08d21ffe9957db5f00b1ee8f0d1667b11a25cb9.1636733804.git.stefan@agner.ch>
-References: <a08d21ffe9957db5f00b1ee8f0d1667b11a25cb9.1636733804.git.stefan@agner.ch>
+Message-Id: <702c3ef370741afce83cfb9a2fb166da0a94fdc7.1636734839.git.stefan@agner.ch>
+In-Reply-To: <a08d21ffe9957db5f00b1ee8f0d1667b11a25cb9.1636734839.git.stefan@agner.ch>
+References: <a08d21ffe9957db5f00b1ee8f0d1667b11a25cb9.1636734839.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Thu, 28 Oct 2021 19:38:04 +0200
-Subject: [PATCH 7/7] ARM: dts: bcm2711: amber: add user LED
+Subject: [PATCH 7/8] ARM: dts: bcm2711: amber: add user LED
 
 Add yellow user LED.
 
