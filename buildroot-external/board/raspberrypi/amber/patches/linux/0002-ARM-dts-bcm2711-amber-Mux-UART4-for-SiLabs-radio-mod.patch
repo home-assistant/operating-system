@@ -1,10 +1,10 @@
-From 60125e49aff88c430ebc6b8702aaf3867f529b75 Mon Sep 17 00:00:00 2001
-Message-Id: <60125e49aff88c430ebc6b8702aaf3867f529b75.1635895105.git.stefan@agner.ch>
-In-Reply-To: <fa42d0ece205b3c2a8a06dac3e4436400cf59978.1635895105.git.stefan@agner.ch>
-References: <fa42d0ece205b3c2a8a06dac3e4436400cf59978.1635895105.git.stefan@agner.ch>
+From c2cd4c6be5337c1998e789f5eab755c8a71030d9 Mon Sep 17 00:00:00 2001
+Message-Id: <c2cd4c6be5337c1998e789f5eab755c8a71030d9.1636734839.git.stefan@agner.ch>
+In-Reply-To: <a08d21ffe9957db5f00b1ee8f0d1667b11a25cb9.1636734839.git.stefan@agner.ch>
+References: <a08d21ffe9957db5f00b1ee8f0d1667b11a25cb9.1636734839.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Thu, 4 Mar 2021 14:33:09 +0100
-Subject: [PATCH 2/7] ARM: dts: bcm2711: amber: Mux UART4 for SiLabs radio
+Subject: [PATCH 2/8] ARM: dts: bcm2711: amber: Mux UART4 for SiLabs radio
  module
 
 Enable UART4 by default and mux pins including hardware flow control.

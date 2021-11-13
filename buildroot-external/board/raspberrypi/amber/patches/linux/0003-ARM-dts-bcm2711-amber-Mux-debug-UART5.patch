@@ -1,10 +1,10 @@
-From 1e395219026ad0575483aecc9d49992099e73e8b Mon Sep 17 00:00:00 2001
-Message-Id: <1e395219026ad0575483aecc9d49992099e73e8b.1635895105.git.stefan@agner.ch>
-In-Reply-To: <fa42d0ece205b3c2a8a06dac3e4436400cf59978.1635895105.git.stefan@agner.ch>
-References: <fa42d0ece205b3c2a8a06dac3e4436400cf59978.1635895105.git.stefan@agner.ch>
+From 34ad3ae858d00c68703bea3b94dfb59c8bb928d9 Mon Sep 17 00:00:00 2001
+Message-Id: <34ad3ae858d00c68703bea3b94dfb59c8bb928d9.1636734839.git.stefan@agner.ch>
+In-Reply-To: <a08d21ffe9957db5f00b1ee8f0d1667b11a25cb9.1636734839.git.stefan@agner.ch>
+References: <a08d21ffe9957db5f00b1ee8f0d1667b11a25cb9.1636734839.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Thu, 4 Mar 2021 14:44:23 +0100
-Subject: [PATCH 3/7] ARM: dts: bcm2711: amber: Mux debug UART5
+Subject: [PATCH 3/8] ARM: dts: bcm2711: amber: Mux debug UART5
 
 Signed-off-by: Stefan Agner <stefan@agner.ch>
 ---

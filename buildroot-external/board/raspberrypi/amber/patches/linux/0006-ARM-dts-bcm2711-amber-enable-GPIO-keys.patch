@@ -1,10 +1,10 @@
-From 7e2f95935408ec5b1d7a2b63daaef7fdb01d642c Mon Sep 17 00:00:00 2001
-Message-Id: <7e2f95935408ec5b1d7a2b63daaef7fdb01d642c.1635895105.git.stefan@agner.ch>
-In-Reply-To: <fa42d0ece205b3c2a8a06dac3e4436400cf59978.1635895105.git.stefan@agner.ch>
-References: <fa42d0ece205b3c2a8a06dac3e4436400cf59978.1635895105.git.stefan@agner.ch>
+From a5961a4bdb240848bcce5129a587fde6ce1fce9a Mon Sep 17 00:00:00 2001
+Message-Id: <a5961a4bdb240848bcce5129a587fde6ce1fce9a.1636734839.git.stefan@agner.ch>
+In-Reply-To: <a08d21ffe9957db5f00b1ee8f0d1667b11a25cb9.1636734839.git.stefan@agner.ch>
+References: <a08d21ffe9957db5f00b1ee8f0d1667b11a25cb9.1636734839.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Tue, 9 Mar 2021 15:02:53 +0100
-Subject: [PATCH 6/7] ARM: dts: bcm2711: amber: enable GPIO keys
+Subject: [PATCH 6/8] ARM: dts: bcm2711: amber: enable GPIO keys
 
 Signed-off-by: Stefan Agner <stefan@agner.ch>
 ---

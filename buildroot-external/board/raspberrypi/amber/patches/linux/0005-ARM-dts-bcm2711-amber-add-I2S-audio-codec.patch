@@ -1,10 +1,10 @@
-From 3fa8a55b7fd515f0ffe8b000be23080003ed5ac4 Mon Sep 17 00:00:00 2001
-Message-Id: <3fa8a55b7fd515f0ffe8b000be23080003ed5ac4.1635895105.git.stefan@agner.ch>
-In-Reply-To: <fa42d0ece205b3c2a8a06dac3e4436400cf59978.1635895105.git.stefan@agner.ch>
-References: <fa42d0ece205b3c2a8a06dac3e4436400cf59978.1635895105.git.stefan@agner.ch>
+From 4311662759cc1a652859d61b62e2bf1e388a3bee Mon Sep 17 00:00:00 2001
+Message-Id: <4311662759cc1a652859d61b62e2bf1e388a3bee.1636734839.git.stefan@agner.ch>
+In-Reply-To: <a08d21ffe9957db5f00b1ee8f0d1667b11a25cb9.1636734839.git.stefan@agner.ch>
+References: <a08d21ffe9957db5f00b1ee8f0d1667b11a25cb9.1636734839.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Thu, 4 Mar 2021 17:19:01 +0100
-Subject: [PATCH 5/7] ARM: dts: bcm2711: amber: add I2S audio codec
+Subject: [PATCH 5/8] ARM: dts: bcm2711: amber: add I2S audio codec
 
 Add TI PCM5122 I2S audio codec.
 

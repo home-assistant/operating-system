@@ -1,0 +1,32 @@
+From 1cb48f353aab457185274b734063fbdd2fc0f3df Mon Sep 17 00:00:00 2001
+Message-Id: <1cb48f353aab457185274b734063fbdd2fc0f3df.1636734839.git.stefan@agner.ch>
+In-Reply-To: <a08d21ffe9957db5f00b1ee8f0d1667b11a25cb9.1636734839.git.stefan@agner.ch>
+References: <a08d21ffe9957db5f00b1ee8f0d1667b11a25cb9.1636734839.git.stefan@agner.ch>
+From: Stefan Agner <stefan@agner.ch>
+Date: Fri, 12 Nov 2021 17:33:32 +0100
+Subject: [PATCH 8/8] ARM: dts: bcm2711: amber: Add NXP PCF85063A RTC
+
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+---
+ arch/arm/boot/dts/bcm2711-rpi-cm4-ha-amber.dts | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-amber.dts b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-amber.dts
+index 3b69185ef840..01d98b05517f 100644
+--- a/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-amber.dts
++++ b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-amber.dts
+@@ -633,6 +633,11 @@ card_codec: pcm5121@4c {
+ 		CPVDD-supply = <&vdd_3v3_reg>;
+ 		status = "okay";
+ 	};
++
++	pcf85063a: rtc@51 {
++		compatible = "nxp,pcf85063a";
++		reg = <0x51>;
++	};
+ };
+ 
+ &i2s {
+-- 
+2.33.1
+

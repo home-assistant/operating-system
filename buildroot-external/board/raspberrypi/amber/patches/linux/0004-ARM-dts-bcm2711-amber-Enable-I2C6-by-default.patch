@@ -1,10 +1,10 @@
-From 071423b3beab53facdc69b7c945f82a907825f80 Mon Sep 17 00:00:00 2001
-Message-Id: <071423b3beab53facdc69b7c945f82a907825f80.1635895105.git.stefan@agner.ch>
-In-Reply-To: <fa42d0ece205b3c2a8a06dac3e4436400cf59978.1635895105.git.stefan@agner.ch>
-References: <fa42d0ece205b3c2a8a06dac3e4436400cf59978.1635895105.git.stefan@agner.ch>
+From 494a018160133dc908c7ceb42daa016d147e488c Mon Sep 17 00:00:00 2001
+Message-Id: <494a018160133dc908c7ceb42daa016d147e488c.1636734839.git.stefan@agner.ch>
+In-Reply-To: <a08d21ffe9957db5f00b1ee8f0d1667b11a25cb9.1636734839.git.stefan@agner.ch>
+References: <a08d21ffe9957db5f00b1ee8f0d1667b11a25cb9.1636734839.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Thu, 4 Mar 2021 14:48:48 +0100
-Subject: [PATCH 4/7] ARM: dts: bcm2711: amber: Enable I2C6 by default
+Subject: [PATCH 4/8] ARM: dts: bcm2711: amber: Enable I2C6 by default
 
 The main I2C bus used on Amber is I2C6. Enable it by default.
 
