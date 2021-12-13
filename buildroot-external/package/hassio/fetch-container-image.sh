@@ -36,4 +36,4 @@ dst_image_file_path="${dst_dir}/${image_file_name}.tar"
 	fi
 
 	cp "${image_file_path}" "${dst_image_file_path}"
-) 3>${image_file_path}.lock
+) 3>"${image_file_path}.lock"
