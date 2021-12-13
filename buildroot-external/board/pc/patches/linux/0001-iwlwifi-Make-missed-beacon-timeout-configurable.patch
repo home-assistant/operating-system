@@ -1,0 +1,98 @@
+From 332c4f164ac60dcc65c315841d9c6f064ae316ec Mon Sep 17 00:00:00 2001
+Message-Id: <332c4f164ac60dcc65c315841d9c6f064ae316ec.1639398304.git.stefan@agner.ch>
+From: Zachary Michaels <mikezackles@gmail.com>
+Date: Thu, 7 Jan 2021 08:13:11 -0800
+Subject: [PATCH] iwlwifi: Make missed beacon timeout configurable
+
+Makes the beacon timeout a module parameter, allowing the original default (16
+missed beacons) to be kept while also enabling users that experience problems to
+increase the timeout.
+
+See https://bugzilla.kernel.org/show_bug.cgi?id=203709
+
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+---
+ drivers/net/wireless/intel/iwlwifi/iwl-drv.c       | 4 ++++
+ drivers/net/wireless/intel/iwlwifi/iwl-modparams.h | 2 ++
+ drivers/net/wireless/intel/iwlwifi/mvm/mac-ctxt.c  | 3 ++-
+ drivers/net/wireless/intel/iwlwifi/mvm/mvm.h       | 1 -
+ 4 files changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/wireless/intel/iwlwifi/iwl-drv.c b/drivers/net/wireless/intel/iwlwifi/iwl-drv.c
+index be214f39f52b..4401b6b8484a 100644
+--- a/drivers/net/wireless/intel/iwlwifi/iwl-drv.c
++++ b/drivers/net/wireless/intel/iwlwifi/iwl-drv.c
+@@ -1740,6 +1740,7 @@ struct iwl_mod_params iwlwifi_mod_params = {
+ 	.power_level = IWL_POWER_INDEX_1,
+ 	.uapsd_disable = IWL_DISABLE_UAPSD_BSS | IWL_DISABLE_UAPSD_P2P_CLIENT,
+ 	.enable_ini = true,
++	.beacon_timeout = 16,
+ 	/* the rest are 0 by default */
+ };
+ IWL_EXPORT_SYMBOL(iwlwifi_mod_params);
+@@ -1857,6 +1858,9 @@ module_param_named(enable_ini, iwlwifi_mod_params.enable_ini,
+ 		   bool, S_IRUGO | S_IWUSR);
+ MODULE_PARM_DESC(enable_ini,
+ 		 "Enable debug INI TLV FW debug infrastructure (default: true");
++module_param_named(beacon_timeout, iwlwifi_mod_params.beacon_timeout, uint, 0644);
++MODULE_PARM_DESC(beacon_timeout,
++		 "Number of missed beacons before disconnecting (default: 16)");
+ 
+ /*
+  * set bt_coex_active to true, uCode will do kill/defer
+diff --git a/drivers/net/wireless/intel/iwlwifi/iwl-modparams.h b/drivers/net/wireless/intel/iwlwifi/iwl-modparams.h
+index e8ce3a300857..801d12a27354 100644
+--- a/drivers/net/wireless/intel/iwlwifi/iwl-modparams.h
++++ b/drivers/net/wireless/intel/iwlwifi/iwl-modparams.h
+@@ -115,6 +115,7 @@ enum iwl_uapsd_disable {
+  * @disable_11ac: disable VHT capabilities, default = false.
+  * @remove_when_gone: remove an inaccessible device from the PCIe bus.
+  * @enable_ini: enable new FW debug infratructure (INI TLVs)
++ * @beacon_timeout: number of missed beacons before disconnect, default = 16
+  */
+ struct iwl_mod_params {
+ 	int swcrypto;
+@@ -137,6 +138,7 @@ struct iwl_mod_params {
+ 	bool disable_11ax;
+ 	bool remove_when_gone;
+ 	bool enable_ini;
++	u32 beacon_timeout;
+ };
+ 
+ static inline bool iwl_enable_rx_ampdu(void)
+diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/mac-ctxt.c b/drivers/net/wireless/intel/iwlwifi/mvm/mac-ctxt.c
+index 6a8bf9bb9c45..34dec6fc8f3e 100644
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/mac-ctxt.c
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/mac-ctxt.c
+@@ -63,6 +63,7 @@
+ #include <linux/etherdevice.h>
+ #include <net/mac80211.h>
+ #include "iwl-io.h"
++#include "iwl-modparams.h"
+ #include "iwl-prph.h"
+ #include "fw-api.h"
+ #include "mvm.h"
+@@ -1430,7 +1431,7 @@ void iwl_mvm_rx_missed_beacons_notif(struct iwl_mvm *mvm,
+ 	 * TODO: the threshold should be adjusted based on latency conditions,
+ 	 * and/or in case of a CS flow on one of the other AP vifs.
+ 	 */
+-	if (rx_missed_bcon > IWL_MVM_MISSED_BEACONS_THRESHOLD_LONG)
++	if (rx_missed_bcon > iwlwifi_mod_params.beacon_timeout)
+ 		iwl_mvm_connection_loss(mvm, vif, "missed beacons");
+ 	else if (rx_missed_bcon_since_rx > IWL_MVM_MISSED_BEACONS_THRESHOLD)
+ 		ieee80211_beacon_loss(vif);
+diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/mvm.h b/drivers/net/wireless/intel/iwlwifi/mvm/mvm.h
+index 64f5a4cb3d3a..730638da8fd3 100644
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/mvm.h
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/mvm.h
+@@ -92,7 +92,6 @@
+ /* RSSI offset for WkP */
+ #define IWL_RSSI_OFFSET 50
+ #define IWL_MVM_MISSED_BEACONS_THRESHOLD 8
+-#define IWL_MVM_MISSED_BEACONS_THRESHOLD_LONG 16
+ 
+ /* A TimeUnit is 1024 microsecond */
+ #define MSEC_TO_TU(_msec)	(_msec*1000/1024)
+-- 
+2.34.0
+
