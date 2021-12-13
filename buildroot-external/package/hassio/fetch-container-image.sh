@@ -24,15 +24,16 @@ image_file_name="${full_image_name//[:\/]/_}@${image_digest//[:\/]/_}"
 image_file_path="${dl_dir}/${image_file_name}.tar"
 dst_image_file_path="${dst_dir}/${image_file_name}.tar"
 
-if [ -f "${image_file_path}" ]
-then
-	echo "Skipping download of existing image: ${full_image_name} (digest ${image_digest})"
+(
+	# Use file locking to avoid race condition
+	flock --verbose 3
+	if [ ! -f "${image_file_path}" ]
+	then
+		echo "Fetching image: ${full_image_name} (digest ${image_digest})"
+		skopeo copy "docker://${image_name}@${image_digest}" "docker-archive:${image_file_path}:${full_image_name}"
+	else
+		echo "Skipping download of existing image: ${full_image_name} (digest ${image_digest})"
+	fi
+
 	cp "${image_file_path}" "${dst_image_file_path}"
-	exit 0
-fi
-
-# Use digest here to avoid race conditions of any sort...
-echo "Fetching image: ${full_image_name}"
-skopeo copy "docker://${image_name}@${image_digest}" "docker-archive:${image_file_path}:${full_image_name}"
-
-cp "${image_file_path}" "${dst_image_file_path}"
+) 3>"${image_file_path}.lock"
