@@ -112,7 +112,7 @@ jobs:
         uses: burnett01/rsync-deployments@4.1
         with:
           rsh: -q
-          switches: -aW --ignore-existing
+          switches: -aW
           path: release/
           remote_path: ${{ secrets.DEV_TARGET_PATH }}/${{ needs.prepare.outputs.version_main }}.${{ needs.prepare.outputs.version_dev }}/
           remote_host: ${{ secrets.DEV_HOST }}
