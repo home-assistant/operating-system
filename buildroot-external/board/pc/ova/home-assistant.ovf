@@ -53,12 +53,12 @@
       </Item>
       <Item>
         <rasd:Address>0</rasd:Address>
-        <rasd:Caption>sataController0</rasd:Caption>
-        <rasd:Description>SATA Controller</rasd:Description>
-        <rasd:ElementName>sataController0</rasd:ElementName>
+        <rasd:Caption>SCSIController</rasd:Caption>
+        <rasd:Description>SCSI Controller</rasd:Description>
+        <rasd:ElementName>SCSIController</rasd:ElementName>
         <rasd:InstanceID>3</rasd:InstanceID>
-        <rasd:ResourceSubType>AHCI</rasd:ResourceSubType>
-        <rasd:ResourceType>20</rasd:ResourceType>
+        <rasd:ResourceSubType>lsilogic</rasd:ResourceSubType>
+        <rasd:ResourceType>6</rasd:ResourceType>
       </Item>
       <Item ovf:required="false">
         <rasd:Address>0</rasd:Address>
@@ -136,7 +136,7 @@
         <RTC localOrUTC="UTC"/>
       </Hardware>
       <StorageControllers>
-        <StorageController name="SATA" type="AHCI" PortCount="1">
+        <StorageController name="LsiLogic" type="LsiLogic" PortCount="16" useHostIOCache="true" Bootable="true">
           <AttachedDevice type="HardDisk" hotpluggable="false" port="0" device="0">
             <Image uuid="{5f042839-c478-43d9-9eb0-fd8a902146ec}"/>
           </AttachedDevice>
