@@ -20,7 +20,7 @@ The following boards/devices are supported:
   - Odroid-XU4
 - Asus
   - Tinker Board
-- Intel NUC
+- Generic x86-64 (UEFI, not suited for virtualization)
   - Intel NUC5CPYH
   - Intel NUC6CAYH
   - Intel NUC10I3FNK2
