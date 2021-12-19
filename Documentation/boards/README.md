@@ -25,7 +25,7 @@ The following boards/devices are supported:
   - Intel NUC6CAYH
   - Intel NUC10I3FNK2
   - Gigabyte GB-BPCE-3455
-  - Others recent Intel NUC computers are likely to work too, only those listed above have been tested.
+  - Computers supporting x86-64 architecture and UEFI boot should generally work
 - Virtual appliance (x86_64/UEFI):
   - VMDK
   - OVA ?
