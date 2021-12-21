@@ -1,0 +1,51 @@
+From 7ab43bacd08d660867166f79a8b55f6cd3444bf8 Mon Sep 17 00:00:00 2001
+From: Artem Lapkin <email2tema@gmail.com>
+Date: Thu, 25 Nov 2021 11:08:59 +0800
+Subject: [PATCH 1/2] image-board: fix wrong implementation ram disk address
+ setup from cmdline
+
+Problem
+
+Wrong implementation logic: ramdisk cmdline image address always ignored!
+Next block { rd_addr = hextoul(select, NULL) } unusable for raw initrd.
+
+We have unbootable raw initrd images because, select_ramdisk for raw
+initrd images ignore submited select addr and setup rd_datap value to 0
+
+Signed-off-by: Artem Lapkin <art@khadas.com>
+---
+ boot/image-board.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/boot/image-board.c b/boot/image-board.c
+index bf8817165c..87a8f07432 100644
+--- a/boot/image-board.c
++++ b/boot/image-board.c
+@@ -334,7 +334,7 @@ static int select_ramdisk(bootm_headers_t *images, const char *select, u8 arch,
+ 
+ 	if (select) {
+ 		ulong default_addr;
+-		bool done = true;
++		bool done = false;
+ 
+ 		if (CONFIG_IS_ENABLED(FIT)) {
+ 			/*
+@@ -352,13 +352,13 @@ static int select_ramdisk(bootm_headers_t *images, const char *select, u8 arch,
+ 					   &fit_uname_config)) {
+ 				debug("*  ramdisk: config '%s' from image at 0x%08lx\n",
+ 				      fit_uname_config, rd_addr);
++				done = true;
+ 			} else if (fit_parse_subimage(select, default_addr,
+ 						      &rd_addr,
+ 						      &fit_uname_ramdisk)) {
+ 				debug("*  ramdisk: subimage '%s' from image at 0x%08lx\n",
+ 				      fit_uname_ramdisk, rd_addr);
+-			} else {
+-				done = false;
++				done = true;
+ 			}
+ 		}
+ 		if (!done) {
+-- 
+2.30.2
+

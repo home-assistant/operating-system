@@ -1,0 +1,54 @@
+From 4ac22afaa40da590605cd725850b81bfb562b0fb Mon Sep 17 00:00:00 2001
+From: Vyacheslav Bocharov <adeep@lexina.in>
+Date: Thu, 2 Dec 2021 13:10:24 +0300
+Subject: [PATCH 2/2] mmc: meson-gx: change clock phase value on axg SoCs
+
+Amlogic AXG SoCs seems doesn't work over 50MHz. When phase sets to 270',
+it's working fine over 50MHz on Amlogic AXG SoCs.
+Based on 0dbb54eb3257c243c7968f967a6b183b1edb56c8 by Neil Armstrong
+<narmstrong@baylibre.com>
+
+To distinguish which value is used adds an u-boot only axg compatible.
+---
+ drivers/mmc/meson_gx_mmc.c | 5 +++--
+ drivers/mmc/meson_gx_mmc.h | 1 +
+ 2 files changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/mmc/meson_gx_mmc.c b/drivers/mmc/meson_gx_mmc.c
+index fcf4f03d1e..718eae42ec 100644
+--- a/drivers/mmc/meson_gx_mmc.c
++++ b/drivers/mmc/meson_gx_mmc.c
+@@ -68,7 +68,8 @@ static void meson_mmc_config_clock(struct mmc *mmc)
+ 	 * Other SoCs use CLK_CO_PHASE_180 by default.
+ 	 * It needs to find what is a proper value about each SoCs.
+ 	 */
+-	if (meson_gx_mmc_is_compatible(mmc->dev, MMC_COMPATIBLE_SM1))
++	if (meson_gx_mmc_is_compatible(mmc->dev, MMC_COMPATIBLE_SM1) ||
++            meson_gx_mmc_is_compatible(mmc->dev, MMC_COMPATIBLE_AXG))
+ 		meson_mmc_clk |= CLK_CO_PHASE_270;
+ 	else
+ 		meson_mmc_clk |= CLK_CO_PHASE_180;
+@@ -322,7 +323,7 @@ int meson_mmc_bind(struct udevice *dev)
+ 
+ static const struct udevice_id meson_mmc_match[] = {
+ 	{ .compatible = "amlogic,meson-gx-mmc", .data = MMC_COMPATIBLE_GX },
+-	{ .compatible = "amlogic,meson-axg-mmc", .data = MMC_COMPATIBLE_GX },
++	{ .compatible = "amlogic,meson-axg-mmc", .data = MMC_COMPATIBLE_AXG },
+ 	{ .compatible = "amlogic,meson-sm1-mmc", .data = MMC_COMPATIBLE_SM1 },
+ 	{ /* sentinel */ }
+ };
+diff --git a/drivers/mmc/meson_gx_mmc.h b/drivers/mmc/meson_gx_mmc.h
+index 8974b78f55..53201cedda 100644
+--- a/drivers/mmc/meson_gx_mmc.h
++++ b/drivers/mmc/meson_gx_mmc.h
+@@ -12,6 +12,7 @@
+ enum meson_gx_mmc_compatible {
+ 	MMC_COMPATIBLE_GX,
+ 	MMC_COMPATIBLE_SM1,
++	MMC_COMPATIBLE_AXG,
+ };
+ 
+ #define SDIO_PORT_A			0
+-- 
+2.30.2
+
