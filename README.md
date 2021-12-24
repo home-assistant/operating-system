@@ -16,8 +16,8 @@ Home Assistant Operating System uses Docker as Container engine. It by default d
 
 - Raspberry Pi
 - Hardkernel ODROID
-- Intel NUC
 - Asus Tinker Board
+- Generic x86-64 (e.g. Intel NUC)
 - Virtual appliances
 
 See the full list and specific models [here](./Documentation/boards/README.md)
