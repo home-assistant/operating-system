@@ -45,8 +45,6 @@ Notes:
 |Pi3B 64-bit   |`make rpi3_64`       |[rpi3_64](../../buildroot-external/configs/rpi3_64_defconfig)|[raspberrypi](./raspberrypi/)|
 |Pi3B 32-bit   |`make rpi3`          |[rpi3](../../buildroot-external/configs/rpi3_defconfig)|[raspberrypi](./raspberrypi/)|
 |Pi2           |`make rpi2`          |[rpi2](../../buildroot-external/configs/rpi2_defconfig)|[raspberrypi](./raspberrypi/)|
-|Pi Zero       |`make rpi0_w`        |[rpi0_w](../../buildroot-external/configs/rpi0_w_defconfig)|[raspberrypi](./raspberrypi/)|
-|Pi            |`make rpi`           |[rpi](../../buildroot-external/configs/rpi_defconfig)|[raspberrypi](./raspberrypi/)|
 |Odroid-N2/N2+ |`make odroid_n2`     |[odroid_n2](../../buildroot-external/configs/odroid_n2_defconfig)|[hardkernel](./hardkernel/)|
 |Odroid-C2     |`make odroid_c2`     |[odroid_c2](../../buildroot-external/configs/odroid_c2_defconfig)|[hardkernel](./hardkernel/)|
 |Odroid-C4     |`make odroid_c4`     |[odroid_c4](../../buildroot-external/configs/odroid_c4_defconfig)|[hardkernel](./hardkernel/)|
