@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -o errexit
+
 ##
 # Hooks
 
@@ -65,12 +67,17 @@ if [ "${RAUC_SLOT_CLASS}" = "spl" ]; then
     DEVICE_ROOT="/dev/$(lsblk -no pkname "${DEVICE_CHILD}")"
     PART_TABLE="$(sfdisk -lqJ "${DEVICE_ROOT}")"
     PART_LABEL="$(echo "${PART_TABLE}" | jq -r '.partitiontable.label')"
+    FLAGS=""
+
+    if dd oflag=direct if=/dev/null 2> /dev/null; then
+        FLAGS="oflag=direct"
+    fi
 
     if [ "${PART_LABEL}" = "gpt" ]; then
-        dd if="${RAUC_IMAGE_NAME}" of="${DEVICE_ROOT}" conv=notrunc oflag=direct bs=512 seek=2 skip=2
+        dd if="${RAUC_IMAGE_NAME}" of="${DEVICE_ROOT}" conv=notrunc ${FLAGS} bs=512 seek=2 skip=2
     else
-        dd if="${RAUC_IMAGE_NAME}" of="${DEVICE_ROOT}" conv=notrunc oflag=direct bs=1 count=440
-        dd if="${RAUC_IMAGE_NAME}" of="${DEVICE_ROOT}" conv=notrunc oflag=direct bs=512 seek=1 skip=1
+        dd if="${RAUC_IMAGE_NAME}" of="${DEVICE_ROOT}" conv=notrunc ${FLAGS} bs=1 count=440
+        dd if="${RAUC_IMAGE_NAME}" of="${DEVICE_ROOT}" conv=notrunc ${FLAGS} bs=512 seek=1 skip=1
     fi
 fi
 
