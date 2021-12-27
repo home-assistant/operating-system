@@ -304,12 +304,25 @@ function convert_disk_image_virtual() {
     rm -f "${hdd_vdi}"
     rm -f "${hdd_qcow2}"
 
-    qemu-img convert -O vmdk "${hdd_img}" "${hdd_vmdk}"
+    qemu-img convert -O vmdk -o adapter_type=lsilogic "${hdd_img}" "${hdd_vmdk}"
     qemu-img convert -O vhdx "${hdd_img}" "${hdd_vhdx}"
     qemu-img convert -O vdi "${hdd_img}" "${hdd_vdi}"
     qemu-img convert -O qcow2 "${hdd_img}" "${hdd_qcow2}"
 }
 
+function convert_disk_image_ova() {
+    local hdd_img="$(hassos_image_name img)"
+    local hdd_ova="$(hassos_image_name ova)"
+    local ova_data="${BINARIES_DIR}/ova"
+
+    mkdir -p "${ova_data}"
+    rm -f "${hdd_ova}"
+
+    cp -a "${BOARD_DIR}/home-assistant.ovf" "${ova_data}/home-assistant.ovf"
+    qemu-img convert -O vmdk -o subformat=streamOptimized,adapter_type=lsilogic "${hdd_img}" "${ova_data}/home-assistant.vmdk"
+    (cd "${ova_data}" || exit 1; "${HOST_DIR}/bin/openssl" sha256 home-assistant.* >home-assistant.mf)
+    tar -C "${ova_data}" --owner=root --group=root -cf "${hdd_ova}" home-assistant.ovf home-assistant.vmdk home-assistant.mf
+}
 
 function convert_disk_image_xz() {
     local hdd_ext=${1:-img}
