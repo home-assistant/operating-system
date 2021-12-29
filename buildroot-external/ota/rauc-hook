@@ -81,8 +81,11 @@ if [ "${RAUC_SLOT_CLASS}" = "spl" ]; then
     fi
 
     # Flash to eMMC boot partition if necessary
-    if [ "$RAUC_MF_COMPATIBLE" = "haos-odroid-xu4" ] && [ -b "${DEVICE_ROOT}/boot0" ]; then
-        dd if="${RAUC_IMAGE_NAME}" of="${DEVICE_ROOT}/boot0" bs=512 skip=1 count=2047
+    if [ "$RAUC_SYSTEM_COMPATIBLE" = "haos-odroid-xu4" ] && [ -b "${DEVICE_ROOT}boot0" ]; then
+        echo "Updating eMMC boot partition"
+        echo 0 > /sys/block/"$(basename "${DEVICE_ROOT}boot0")"/force_ro
+        dd if="${RAUC_IMAGE_NAME}" of="${DEVICE_ROOT}boot0" conv=notrunc ${FLAGS} bs=512 skip=1 count=2047
+        echo 1 > /sys/block/"$(basename "${DEVICE_ROOT}boot0")"/force_ro
     fi
 fi
 
