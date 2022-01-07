@@ -72,6 +72,5 @@ dtparam=audio=on
 [all]
 #dtoverlay=vc4-fkms-v3d
 #max_framebuffers=2
-device_tree=bcm2711-rpi-cm4-ha-amber.dtb
-dtoverlay=dwc2,dr_mode=host
+device_tree=bcm2711-rpi-cm4-ha-yellow.dtb
 

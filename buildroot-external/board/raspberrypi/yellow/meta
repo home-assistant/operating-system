@@ -1,5 +1,5 @@
-BOARD_ID=amber
-BOARD_NAME="Amber"
+BOARD_ID=yellow
+BOARD_NAME="Yellow"
 CHASSIS=embedded
 BOOTLOADER=uboot
 KERNEL_FILE=Image

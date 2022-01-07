@@ -1,23 +1,23 @@
-From c2cd4c6be5337c1998e789f5eab755c8a71030d9 Mon Sep 17 00:00:00 2001
-Message-Id: <c2cd4c6be5337c1998e789f5eab755c8a71030d9.1636734839.git.stefan@agner.ch>
-In-Reply-To: <a08d21ffe9957db5f00b1ee8f0d1667b11a25cb9.1636734839.git.stefan@agner.ch>
-References: <a08d21ffe9957db5f00b1ee8f0d1667b11a25cb9.1636734839.git.stefan@agner.ch>
+From e2b56e7d8786f7000c3159346b6cf2360ad3c8c3 Mon Sep 17 00:00:00 2001
+Message-Id: <e2b56e7d8786f7000c3159346b6cf2360ad3c8c3.1641573384.git.stefan@agner.ch>
+In-Reply-To: <9d68dedb813f942286856c9d8c2eed01b55bb473.1641573384.git.stefan@agner.ch>
+References: <9d68dedb813f942286856c9d8c2eed01b55bb473.1641573384.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Thu, 4 Mar 2021 14:33:09 +0100
-Subject: [PATCH 2/8] ARM: dts: bcm2711: amber: Mux UART4 for SiLabs radio
+Subject: [PATCH 2/9] ARM: dts: bcm2711: yellow: Mux UART4 for SiLabs radio
  module
 
 Enable UART4 by default and mux pins including hardware flow control.
 
 Signed-off-by: Stefan Agner <stefan@agner.ch>
 ---
- arch/arm/boot/dts/bcm2711-rpi-cm4-ha-amber.dts | 13 +++++++++++--
+ arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts | 13 +++++++++++--
  1 file changed, 11 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-amber.dts b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-amber.dts
-index 855da2b029a4..ba4116cdffc4 100644
---- a/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-amber.dts
-+++ b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-amber.dts
+diff --git a/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
+index 5d4e058cac43..6b702d66ac55 100644
+--- a/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
++++ b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
 @@ -21,6 +21,7 @@ memory@0 {
  	};
  
@@ -54,5 +54,5 @@ index 855da2b029a4..ba4116cdffc4 100644
  
  	uart5_pins: uart5_pins {
 -- 
-2.33.1
+2.34.1
 

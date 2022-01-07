@@ -1,20 +1,20 @@
-From 34ad3ae858d00c68703bea3b94dfb59c8bb928d9 Mon Sep 17 00:00:00 2001
-Message-Id: <34ad3ae858d00c68703bea3b94dfb59c8bb928d9.1636734839.git.stefan@agner.ch>
-In-Reply-To: <a08d21ffe9957db5f00b1ee8f0d1667b11a25cb9.1636734839.git.stefan@agner.ch>
-References: <a08d21ffe9957db5f00b1ee8f0d1667b11a25cb9.1636734839.git.stefan@agner.ch>
+From 6b48f11add95190d8148a4a4689b35f41b5167bb Mon Sep 17 00:00:00 2001
+Message-Id: <6b48f11add95190d8148a4a4689b35f41b5167bb.1641573384.git.stefan@agner.ch>
+In-Reply-To: <9d68dedb813f942286856c9d8c2eed01b55bb473.1641573384.git.stefan@agner.ch>
+References: <9d68dedb813f942286856c9d8c2eed01b55bb473.1641573384.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Thu, 4 Mar 2021 14:44:23 +0100
-Subject: [PATCH 3/8] ARM: dts: bcm2711: amber: Mux debug UART5
+Subject: [PATCH 3/9] ARM: dts: bcm2711: yellow: Mux debug UART5
 
 Signed-off-by: Stefan Agner <stefan@agner.ch>
 ---
- arch/arm/boot/dts/bcm2711-rpi-cm4-ha-amber.dts | 9 +++++++++
+ arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts | 9 +++++++++
  1 file changed, 9 insertions(+)
 
-diff --git a/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-amber.dts b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-amber.dts
-index ba4116cdffc4..4c2fe964eb72 100644
---- a/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-amber.dts
-+++ b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-amber.dts
+diff --git a/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
+index 6b702d66ac55..3f611d90093d 100644
+--- a/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
++++ b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
 @@ -22,6 +22,7 @@ memory@0 {
  
  	aliases {
@@ -46,5 +46,5 @@ index ba4116cdffc4..4c2fe964eb72 100644
  
  	aliases {
 -- 
-2.33.1
+2.34.1
 
