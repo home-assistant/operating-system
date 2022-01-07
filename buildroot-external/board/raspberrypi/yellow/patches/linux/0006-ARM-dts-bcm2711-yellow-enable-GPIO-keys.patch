@@ -1,20 +1,20 @@
-From a5961a4bdb240848bcce5129a587fde6ce1fce9a Mon Sep 17 00:00:00 2001
-Message-Id: <a5961a4bdb240848bcce5129a587fde6ce1fce9a.1636734839.git.stefan@agner.ch>
-In-Reply-To: <a08d21ffe9957db5f00b1ee8f0d1667b11a25cb9.1636734839.git.stefan@agner.ch>
-References: <a08d21ffe9957db5f00b1ee8f0d1667b11a25cb9.1636734839.git.stefan@agner.ch>
+From 8571b271c3e0b861cf666b2588eed380c0b79791 Mon Sep 17 00:00:00 2001
+Message-Id: <8571b271c3e0b861cf666b2588eed380c0b79791.1641573384.git.stefan@agner.ch>
+In-Reply-To: <9d68dedb813f942286856c9d8c2eed01b55bb473.1641573384.git.stefan@agner.ch>
+References: <9d68dedb813f942286856c9d8c2eed01b55bb473.1641573384.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Tue, 9 Mar 2021 15:02:53 +0100
-Subject: [PATCH 6/8] ARM: dts: bcm2711: amber: enable GPIO keys
+Subject: [PATCH 6/9] ARM: dts: bcm2711: yellow: enable GPIO keys
 
 Signed-off-by: Stefan Agner <stefan@agner.ch>
 ---
- .../arm/boot/dts/bcm2711-rpi-cm4-ha-amber.dts | 30 +++++++++++++++++++
+ .../boot/dts/bcm2711-rpi-cm4-ha-yellow.dts    | 30 +++++++++++++++++++
  1 file changed, 30 insertions(+)
 
-diff --git a/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-amber.dts b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-amber.dts
-index 637ce01618d8..a2cbb8510491 100644
---- a/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-amber.dts
-+++ b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-amber.dts
+diff --git a/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
+index f3967b67368a..6a0c89d1f4c8 100644
+--- a/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
++++ b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
 @@ -2,6 +2,7 @@
  /dts-v1/;
  #include "bcm2711.dtsi"
@@ -67,5 +67,5 @@ index 637ce01618d8..a2cbb8510491 100644
  		brcm,pins = <9 10 11>;
  		brcm,function = <BCM2835_FSEL_ALT0>;
 -- 
-2.33.1
+2.34.1
 

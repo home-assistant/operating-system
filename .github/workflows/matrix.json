@@ -72,6 +72,12 @@
     "label": "board/raspberrypi"
   },
   {
+    "id": "yellow",
+    "defconfig": "yellow",
+    "runner": "aarch64-runner",
+    "label": "board/yellow"
+  },
+  {
     "id": "tinker",
     "defconfig": "tinker",
     "runner": "arm-runner",
