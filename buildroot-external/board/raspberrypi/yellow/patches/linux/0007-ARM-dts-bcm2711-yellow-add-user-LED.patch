@@ -1,7 +1,7 @@
 From 5cebd1b1689f9b4c60ae53340fe3cbf96244f51b Mon Sep 17 00:00:00 2001
-Message-Id: <5cebd1b1689f9b4c60ae53340fe3cbf96244f51b.1641573384.git.stefan@agner.ch>
-In-Reply-To: <9d68dedb813f942286856c9d8c2eed01b55bb473.1641573384.git.stefan@agner.ch>
-References: <9d68dedb813f942286856c9d8c2eed01b55bb473.1641573384.git.stefan@agner.ch>
+Message-Id: <5cebd1b1689f9b4c60ae53340fe3cbf96244f51b.1641591965.git.stefan@agner.ch>
+In-Reply-To: <9d68dedb813f942286856c9d8c2eed01b55bb473.1641591965.git.stefan@agner.ch>
+References: <9d68dedb813f942286856c9d8c2eed01b55bb473.1641591965.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Thu, 28 Oct 2021 19:38:04 +0200
 Subject: [PATCH 7/9] ARM: dts: bcm2711: yellow: add user LED
