@@ -128,6 +128,14 @@ profile using DHCP, use the following commands on the host console:
 
 Home Assistant OS will recreate the default connection profile during boot.
 
+### Enabling WiFi
+
+WiFi is discouraged for security reasons, however if you're still in the testing phase or need to get started before adding adequate additional security, you can us the `ha` command (this command tested on a RaspberryPI 4, but will work in many scenarios):
+
+```bash
+ha network update wlan0 --enabled --ipv4-method auto --wifi-auth wpa-psk --wifi-mode infrastructure --wifi-ssid MY-SSID --wifi-psk MY_PASS
+````
+
 ### Powersave
 
 If you have trouble with powersave then apply the following changes:
