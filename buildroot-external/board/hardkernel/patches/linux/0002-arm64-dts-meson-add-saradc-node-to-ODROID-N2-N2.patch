@@ -1,10 +1,10 @@
 From ec3b1240b428c5652ccb7fdadad217a2ff8ab4db Mon Sep 17 00:00:00 2001
-Message-Id: <ec3b1240b428c5652ccb7fdadad217a2ff8ab4db.1627311993.git.stefan@agner.ch>
-In-Reply-To: <c7825747afd8bb975dc918f28e4afe8058a518f3.1627311993.git.stefan@agner.ch>
-References: <c7825747afd8bb975dc918f28e4afe8058a518f3.1627311993.git.stefan@agner.ch>
+Message-Id: <ec3b1240b428c5652ccb7fdadad217a2ff8ab4db.1642331593.git.stefan@agner.ch>
+In-Reply-To: <c7825747afd8bb975dc918f28e4afe8058a518f3.1642331593.git.stefan@agner.ch>
+References: <c7825747afd8bb975dc918f28e4afe8058a518f3.1642331593.git.stefan@agner.ch>
 From: Hyeonki Hong <hhk7734@gmail.com>
 Date: Wed, 7 Apr 2021 04:26:08 +0000
-Subject: [PATCH 2/9] arm64: dts: meson: add saradc node to ODROID N2/N2+
+Subject: [PATCH 02/10] arm64: dts: meson: add saradc node to ODROID N2/N2+
 
 Add the meson saradc node to the ODROID N2/N2+ common dtsi.
 
@@ -33,5 +33,5 @@ index b78be3e6974d..8a5e132c4b79 100644
  &sd_emmc_b {
  	status = "okay";
 -- 
-2.32.0
+2.34.1
 

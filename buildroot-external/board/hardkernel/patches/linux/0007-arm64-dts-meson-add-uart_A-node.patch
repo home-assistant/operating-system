@@ -1,10 +1,10 @@
 From dcaf2dc71dd62487eb37561682934414a5795e0e Mon Sep 17 00:00:00 2001
-Message-Id: <dcaf2dc71dd62487eb37561682934414a5795e0e.1627311993.git.stefan@agner.ch>
-In-Reply-To: <c7825747afd8bb975dc918f28e4afe8058a518f3.1627311993.git.stefan@agner.ch>
-References: <c7825747afd8bb975dc918f28e4afe8058a518f3.1627311993.git.stefan@agner.ch>
+Message-Id: <dcaf2dc71dd62487eb37561682934414a5795e0e.1642331593.git.stefan@agner.ch>
+In-Reply-To: <c7825747afd8bb975dc918f28e4afe8058a518f3.1642331593.git.stefan@agner.ch>
+References: <c7825747afd8bb975dc918f28e4afe8058a518f3.1642331593.git.stefan@agner.ch>
 From: Hyeonki Hong <hhk7734@gmail.com>
 Date: Fri, 27 Mar 2020 17:05:22 +0900
-Subject: [PATCH 7/9] arm64: dts: meson: add uart_A node
+Subject: [PATCH 07/10] arm64: dts: meson: add uart_A node
 
 The UART_A is available through J3 pin 8/10 and documented to be
 available as UART by default.
@@ -40,5 +40,5 @@ index dd345c6aa4b5..cec346178e3d 100644
  	status = "okay";
  	pinctrl-0 = <&uart_ao_a_pins>;
 -- 
-2.32.0
+2.34.1
 
