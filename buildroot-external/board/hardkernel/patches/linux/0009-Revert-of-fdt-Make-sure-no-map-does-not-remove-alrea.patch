@@ -1,11 +1,11 @@
 From 19c34c0ceb6302b07e1017c426796c4cf7322d13 Mon Sep 17 00:00:00 2001
-Message-Id: <19c34c0ceb6302b07e1017c426796c4cf7322d13.1627311993.git.stefan@agner.ch>
-In-Reply-To: <c7825747afd8bb975dc918f28e4afe8058a518f3.1627311993.git.stefan@agner.ch>
-References: <c7825747afd8bb975dc918f28e4afe8058a518f3.1627311993.git.stefan@agner.ch>
+Message-Id: <19c34c0ceb6302b07e1017c426796c4cf7322d13.1642331593.git.stefan@agner.ch>
+In-Reply-To: <c7825747afd8bb975dc918f28e4afe8058a518f3.1642331593.git.stefan@agner.ch>
+References: <c7825747afd8bb975dc918f28e4afe8058a518f3.1642331593.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Mon, 26 Jul 2021 16:59:08 +0200
-Subject: [PATCH 9/9] Revert "of/fdt: Make sure no-map does not remove already
- reserved regions"
+Subject: [PATCH 09/10] Revert "of/fdt: Make sure no-map does not remove
+ already reserved regions"
 
 U-Boot on Hardkernel ODROID-N2 adds fdt "memreserve" entries alongside
 the reserved-memory nodes present in upstream Linux. This causes
@@ -48,5 +48,5 @@ index 57ff31b6b1e4..7ef2246e0b1e 100644
  }
  
 -- 
-2.32.0
+2.34.1
 
