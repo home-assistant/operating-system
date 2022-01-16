@@ -1,10 +1,10 @@
 From 5ca49a58577f7e9e6f8e0b1cb7c97e756a0e921f Mon Sep 17 00:00:00 2001
-Message-Id: <5ca49a58577f7e9e6f8e0b1cb7c97e756a0e921f.1627311993.git.stefan@agner.ch>
-In-Reply-To: <c7825747afd8bb975dc918f28e4afe8058a518f3.1627311993.git.stefan@agner.ch>
-References: <c7825747afd8bb975dc918f28e4afe8058a518f3.1627311993.git.stefan@agner.ch>
+Message-Id: <5ca49a58577f7e9e6f8e0b1cb7c97e756a0e921f.1642331593.git.stefan@agner.ch>
+In-Reply-To: <c7825747afd8bb975dc918f28e4afe8058a518f3.1642331593.git.stefan@agner.ch>
+References: <c7825747afd8bb975dc918f28e4afe8058a518f3.1642331593.git.stefan@agner.ch>
 From: Hyeonki Hong <hhk7734@gmail.com>
 Date: Wed, 7 Apr 2021 04:26:09 +0000
-Subject: [PATCH 3/9] arm64: dts: meson: add GPIO line names to ODROID N2/N2+
+Subject: [PATCH 03/10] arm64: dts: meson: add GPIO line names to ODROID N2/N2+
 
 Add GPIO line-name identifiers to the ODROID N2/N2+ common dtsi.
 
@@ -74,5 +74,5 @@ index 8a5e132c4b79..41b2f9c96b5f 100644
  	 * WARNING: The USB Hub on the Odroid-N2 needs a reset signal
  	 * to be turned high in order to be detected by the USB Controller
 -- 
-2.32.0
+2.34.1
 
