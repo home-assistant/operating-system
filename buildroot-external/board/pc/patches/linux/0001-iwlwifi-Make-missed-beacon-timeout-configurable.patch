@@ -1,8 +1,8 @@
-From 332c4f164ac60dcc65c315841d9c6f064ae316ec Mon Sep 17 00:00:00 2001
-Message-Id: <332c4f164ac60dcc65c315841d9c6f064ae316ec.1639398304.git.stefan@agner.ch>
+From 6e5d979ec45555720a6537eb006947dca825afc0 Mon Sep 17 00:00:00 2001
+Message-Id: <6e5d979ec45555720a6537eb006947dca825afc0.1644327234.git.stefan@agner.ch>
 From: Zachary Michaels <mikezackles@gmail.com>
 Date: Thu, 7 Jan 2021 08:13:11 -0800
-Subject: [PATCH] iwlwifi: Make missed beacon timeout configurable
+Subject: [PATCH 1/2] iwlwifi: Make missed beacon timeout configurable
 
 Makes the beacon timeout a module parameter, allowing the original default (16
 missed beacons) to be kept while also enabling users that experience problems to
@@ -19,10 +19,10 @@ Signed-off-by: Stefan Agner <stefan@agner.ch>
  4 files changed, 8 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/net/wireless/intel/iwlwifi/iwl-drv.c b/drivers/net/wireless/intel/iwlwifi/iwl-drv.c
-index be214f39f52b..4401b6b8484a 100644
+index 30c6d7b18599..d64cec9d593d 100644
 --- a/drivers/net/wireless/intel/iwlwifi/iwl-drv.c
 +++ b/drivers/net/wireless/intel/iwlwifi/iwl-drv.c
-@@ -1740,6 +1740,7 @@ struct iwl_mod_params iwlwifi_mod_params = {
+@@ -1741,6 +1741,7 @@ struct iwl_mod_params iwlwifi_mod_params = {
  	.power_level = IWL_POWER_INDEX_1,
  	.uapsd_disable = IWL_DISABLE_UAPSD_BSS | IWL_DISABLE_UAPSD_P2P_CLIENT,
  	.enable_ini = true,
@@ -30,7 +30,7 @@ index be214f39f52b..4401b6b8484a 100644
  	/* the rest are 0 by default */
  };
  IWL_EXPORT_SYMBOL(iwlwifi_mod_params);
-@@ -1857,6 +1858,9 @@ module_param_named(enable_ini, iwlwifi_mod_params.enable_ini,
+@@ -1858,6 +1859,9 @@ module_param_named(enable_ini, iwlwifi_mod_params.enable_ini,
  		   bool, S_IRUGO | S_IWUSR);
  MODULE_PARM_DESC(enable_ini,
  		 "Enable debug INI TLV FW debug infrastructure (default: true");
@@ -94,5 +94,5 @@ index 64f5a4cb3d3a..730638da8fd3 100644
  /* A TimeUnit is 1024 microsecond */
  #define MSEC_TO_TU(_msec)	(_msec*1000/1024)
 -- 
-2.34.0
+2.35.1
 
