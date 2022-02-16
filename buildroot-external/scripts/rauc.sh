@@ -8,7 +8,14 @@ function _create_rauc_header() {
         echo "mountprefix=/run/rauc"
         echo "statusfile=/mnt/data/rauc.db"
         echo "bootloader=${BOOTLOADER}"
-
+        if [ "${BOOTLOADER}" == "grub" ]; then
+            if [ "${BOOT_SYS}" == "efi" ]; then
+                echo "grubenv=/mnt/boot/EFI/BOOT/grubenv"
+            else
+                echo "grubenv=/mnt/boot/grubenv"
+            fi
+        fi
+    
         echo "[keyring]"
         echo "path=/etc/rauc/keyring.pem"
     ) > "${TARGET_DIR}/etc/rauc/system.conf"

@@ -1,0 +1,20 @@
+#!/bin/bash
+# shellcheck disable=SC2155
+
+function hassos_pre_image() {
+    local BOOT_DATA="$(path_boot_dir)"
+    local EFIPART_DATA="${BINARIES_DIR}/efi-part"
+
+    mkdir -p "${BOOT_DATA}/EFI/BOOT"
+
+    cp "${BOARD_DIR}/grub.cfg" "${EFIPART_DATA}/EFI/BOOT/grub.cfg"
+    grub-editenv "${EFIPART_DATA}/EFI/BOOT/grubenv" create
+
+    cp -r "${EFIPART_DATA}/"* "${BOOT_DATA}/"
+}
+
+
+function hassos_post_image() {
+    convert_disk_image_xz
+}
+
