@@ -3,4 +3,3 @@ config BR2_PACKAGE_RTL88X2BU
 	depends on BR2_LINUX_KERNEL
 	---help---
 	  Driver for RTL88X2BU USB WiFi adapters (no firmware needed).
-
