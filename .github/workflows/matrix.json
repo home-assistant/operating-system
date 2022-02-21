@@ -14,7 +14,7 @@
   {
     "id": "generic-aarch64",
     "defconfig": "generic_aarch64",
-    "runner": "aarch64-64-runner",
+    "runner": "aarch64-runner",
     "label": "board/generic-aarch64"
   },
   {
