@@ -18,7 +18,7 @@ if [ -e /usr/sbin/fw_setenv ]; then
 ###
 # GRUB
 elif [ -e /usr/bin/grub-editenv ]; then
-    GRUBENV_FILE="$(cat /etc/rauc/system.conf | grep '^grubenv=' | cut -d= -f2)"
+    GRUBENV_FILE="$(grep '^grubenv=' < /etc/rauc/system.conf | cut -d= -f2)"
     # machine-id
     if [ "$(/usr/bin/grub-editenv "$GRUBENV_FILE" list | grep '^MACHINE_ID=' | cut -d= -f2)" != "${MACHINE_ID}" ]; then
         echo "[INFO] set machine-id to ${MACHINE_ID}"
