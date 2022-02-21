@@ -1,0 +1,5 @@
+config BR2_PACKAGE_RTL88X2BU
+	tristate "Realtek 88x2 USB WiFi"
+	depends on BR2_LINUX_KERNEL
+	---help---
+	  Driver for RTL88X2BU USB WiFi adapters (no firmware needed).
