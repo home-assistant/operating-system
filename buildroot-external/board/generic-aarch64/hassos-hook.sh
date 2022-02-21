@@ -8,6 +8,7 @@ function hassos_pre_image() {
     mkdir -p "${BOOT_DATA}/EFI/BOOT"
 
     cp "${BOARD_DIR}/grub.cfg" "${EFIPART_DATA}/EFI/BOOT/grub.cfg"
+    echo 'THIS FILE IS UNUSED' > "${EFIPART_DATA}/cmdline.txt"
     grub-editenv "${EFIPART_DATA}/EFI/BOOT/grubenv" create
 
     cp -r "${EFIPART_DATA}/"* "${BOOT_DATA}/"
