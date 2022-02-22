@@ -132,7 +132,7 @@ BR2_PACKAGE_RPI_RF_MOD=y
 # Bootloader
 BR2_TARGET_GRUB2=y
 BR2_TARGET_GRUB2_ARM64_EFI=y
-BR2_TARGET_GRUB2_BUILTIN_MODULES="boot linux ext2 fat squash4 part_msdos part_gpt normal efi_gop regexp loadenv echo cat test"
+BR2_TARGET_GRUB2_BUILTIN_MODULES="boot linux ext2 fat squash4 part_msdos part_gpt normal efi_gop regexp loadenv echo cat test configfile"
 BR2_TARGET_GRUB2_INSTALL_TOOLS=y
 
 # Filesystem image

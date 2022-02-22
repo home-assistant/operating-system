@@ -1,0 +1,1 @@
+set CMDLINE="rootwait zram.enabled=1 zram.num_devices=3 apparmor=1 security=apparmor systemd.machine_id=$MACHINE_ID cgroup_enable=memory fsck.repair=yes"
