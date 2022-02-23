@@ -1,10 +1,10 @@
-From 698fc7c39fb3265ccb9cc7f3bb08432b76f3cdf5 Mon Sep 17 00:00:00 2001
-Message-Id: <698fc7c39fb3265ccb9cc7f3bb08432b76f3cdf5.1633601057.git.stefan@agner.ch>
-In-Reply-To: <d7ec084799b394cc02395829dc97019c8834e944.1633601057.git.stefan@agner.ch>
-References: <d7ec084799b394cc02395829dc97019c8834e944.1633601057.git.stefan@agner.ch>
+From ae45864457182fcaa67911e1e3d8db242dff3646 Mon Sep 17 00:00:00 2001
+Message-Id: <ae45864457182fcaa67911e1e3d8db242dff3646.1645627172.git.stefan@agner.ch>
+In-Reply-To: <24b77460dbfa2497ceb7a1611bf28b6eb88a1d74.1645627172.git.stefan@agner.ch>
+References: <24b77460dbfa2497ceb7a1611bf28b6eb88a1d74.1645627172.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Tue, 29 Dec 2020 23:34:52 +0100
-Subject: [PATCH 03/10] rpi: add NVMe to boot order
+Subject: [PATCH 3/5] rpi: add NVMe to boot order
 
 The Compute Module 4 I/O Board can support a NVMe. Add NVMe to the boot
 order.
@@ -15,10 +15,10 @@ Signed-off-by: Stefan Agner <stefan@agner.ch>
  1 file changed, 7 insertions(+)
 
 diff --git a/include/configs/rpi.h b/include/configs/rpi.h
-index 522b41c02d..9b46203b5b 100644
+index 4c5c1ac31f..e24c94c7d2 100644
 --- a/include/configs/rpi.h
 +++ b/include/configs/rpi.h
-@@ -169,6 +169,12 @@
+@@ -143,6 +143,12 @@
  	#define BOOT_TARGET_MMC(func)
  #endif
  
@@ -31,7 +31,7 @@ index 522b41c02d..9b46203b5b 100644
  #if CONFIG_IS_ENABLED(CMD_USB)
  	#define BOOT_TARGET_USB(func) func(USB, usb, 0)
  #else
-@@ -189,6 +195,7 @@
+@@ -163,6 +169,7 @@
  
  #define BOOT_TARGET_DEVICES(func) \
  	BOOT_TARGET_MMC(func) \
@@ -40,5 +40,5 @@ index 522b41c02d..9b46203b5b 100644
  	BOOT_TARGET_PXE(func) \
  	BOOT_TARGET_DHCP(func)
 -- 
-2.33.0
+2.35.1
 
