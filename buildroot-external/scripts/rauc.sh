@@ -8,7 +8,14 @@ function _create_rauc_header() {
         echo "mountprefix=/run/rauc"
         echo "statusfile=/mnt/data/rauc.db"
         echo "bootloader=${BOOTLOADER}"
-
+        if [ "${BOOTLOADER}" == "grub" ]; then
+            if [ "${BOOT_SYS}" == "efi" ]; then
+                echo "grubenv=/mnt/boot/EFI/BOOT/grubenv"
+            else
+                echo "grubenv=/mnt/boot/grubenv"
+            fi
+        fi
+    
         echo "[keyring]"
         echo "path=/etc/rauc/keyring.pem"
     ) > "${TARGET_DIR}/etc/rauc/system.conf"
@@ -77,7 +84,7 @@ function install_bootloader_config() {
     if [ "${BOOTLOADER}" == "uboot" ]; then
     	# shellcheck disable=SC1117
         echo -e "/dev/disk/by-partlabel/hassos-bootstate\t0x0000\t${BOOT_ENV_SIZE}" > "${TARGET_DIR}/etc/fw_env.config"
-    else
+    elif [ "${BOOTLOADER}" == "barebox" ]; then
         cp -f "${BR2_EXTERNAL_HASSOS_PATH}/bootloader/barebox-state-efi.dtb" "${TARGET_DIR}/etc/barebox-state.dtb"
     fi
 

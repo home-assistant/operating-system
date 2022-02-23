@@ -1,0 +1,10 @@
+BOARD_ID=generic-aarch64
+BOARD_NAME="Generic aarch64"
+CHASSIS=embedded
+BOOTLOADER=grub
+KERNEL_FILE=Image
+BOOT_SYS=efi
+BOOT_SPL=false
+DISK_SIZE=6
+SUPERVISOR_MACHINE=qemuarm-64
+SUPERVISOR_ARCH=aarch64

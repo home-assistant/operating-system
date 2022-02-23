@@ -12,6 +12,12 @@
     "label": "board/generic-x86-64"
   },
   {
+    "id": "generic-aarch64",
+    "defconfig": "generic_aarch64",
+    "runner": "aarch64-runner",
+    "label": "board/generic-aarch64"
+  },
+  {
     "id": "khadas-vim3",
     "defconfig": "khadas_vim3",
     "runner": "aarch64-runner",
