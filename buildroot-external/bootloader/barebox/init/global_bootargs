@@ -1,6 +1,0 @@
-#!/bin/sh
-
-global linux.bootargs.zram="zram.enabled=1 zram.num_devices=3"
-global linux.bootargs.apparmor="apparmor=1 security=apparmor"
-global linux.bootargs.misc="rootwait"
-global linux.bootargs.systemd="systemd.machine_id=${state.machine_id}"

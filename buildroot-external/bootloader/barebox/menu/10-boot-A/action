@@ -1,5 +1,0 @@
-#!/bin/sh
-
-global linux.bootargs.bootchooser="bootchooser.active=A"
-
-boot system0

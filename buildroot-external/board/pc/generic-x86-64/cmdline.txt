@@ -1,1 +1,1 @@
-console=tty1
+cmdline="console=tty1"

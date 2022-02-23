@@ -1,7 +1,7 @@
 BOARD_ID=ova
 BOARD_NAME="Open Virtual Appliance"
 CHASSIS=vm
-BOOTLOADER=barebox
+BOOTLOADER=grub
 KERNEL_FILE=bzImage
 BOOT_SYS=efi
 BOOT_SPL=false
