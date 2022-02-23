@@ -119,7 +119,7 @@ jobs:
           asset_content_type: application/x-tar
 
       - name: Upload qcow2 image
-        if: ${{ matrix.board.name == 'ova' }}
+        if: ${{ matrix.board.name == 'ova' || matrix.board.name == 'generic-aarch64' }}
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -152,7 +152,7 @@ jobs:
           asset_content_type: application/zip
 
       - name: Upload vmdk image
-        if: ${{ matrix.board.name == 'ova' }}
+        if: ${{ matrix.board.name == 'ova' || matrix.board.name == 'generic-aarch64' }}
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
