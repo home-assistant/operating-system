@@ -1,5 +1,5 @@
-From 5dfad94f1e62c3246ee7f28e1de3780044f828d7 Mon Sep 17 00:00:00 2001
-Message-Id: <5dfad94f1e62c3246ee7f28e1de3780044f828d7.1645702818.git.stefan@agner.ch>
+From ee4adaa04e3ac1a5d20ad713a0133382c35da5a1 Mon Sep 17 00:00:00 2001
+Message-Id: <ee4adaa04e3ac1a5d20ad713a0133382c35da5a1.1645704230.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Thu, 24 Feb 2022 12:38:48 +0100
 Subject: [PATCH] loadenv: add file_env to load var from file
@@ -12,7 +12,7 @@ character.
  1 file changed, 72 insertions(+), 1 deletion(-)
 
 diff --git a/grub-core/commands/loadenv.c b/grub-core/commands/loadenv.c
-index 3fd664aac..2f0ac6292 100644
+index 3fd664aac..7e7b18139 100644
 --- a/grub-core/commands/loadenv.c
 +++ b/grub-core/commands/loadenv.c
 @@ -40,6 +40,14 @@ static const struct grub_arg_option options[] =
@@ -71,7 +71,7 @@ index 3fd664aac..2f0ac6292 100644
 +      /* terminate at the first non-printable character */
 +      while (ret)
 +        {
-+	  if (grub_isprint(buf[offset]))
++	  if (!grub_isprint(buf[offset]))
 +	    {
 +	      buf[offset] = '\0';
 +	      size = 0;
