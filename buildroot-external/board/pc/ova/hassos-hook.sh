@@ -3,13 +3,15 @@
 
 function hassos_pre_image() {
     local BOOT_DATA="$(path_boot_dir)"
+    local EFIPART_DATA="${BINARIES_DIR}/efi-part"
 
     mkdir -p "${BOOT_DATA}/EFI/BOOT"
-    mkdir -p "${BOOT_DATA}/EFI/barebox"
 
-    cp "${BINARIES_DIR}/barebox.bin" "${BOOT_DATA}/EFI/BOOT/BOOTx64.EFI"
-    cp "${BR2_EXTERNAL_HASSOS_PATH}/bootloader/barebox-state-efi.dtb" "${BOOT_DATA}/EFI/barebox/state.dtb"
-    cp "${BOARD_DIR}/cmdline.txt" "${BOOT_DATA}/cmdline.txt"
+    cp "${BOARD_DIR}/../grub.cfg" "${EFIPART_DATA}/EFI/BOOT/grub.cfg"
+    cp "${BOARD_DIR}/cmdline.txt" "${EFIPART_DATA}/cmdline.txt"
+    grub-editenv "${EFIPART_DATA}/EFI/BOOT/grubenv" create
+
+    cp -r "${EFIPART_DATA}/"* "${BOOT_DATA}/"
 }
 
 

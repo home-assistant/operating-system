@@ -1,6 +1,0 @@
-#!/bin/sh
-
-global linux.bootargs.base=""
-if [ -f /boot/cmdline.txt ]; then
-	readf /boot/cmdline.txt global.linux.bootargs.base
-fi

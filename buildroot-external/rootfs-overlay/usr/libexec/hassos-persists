@@ -27,16 +27,4 @@ elif [ -e /usr/bin/grub-editenv ]; then
         echo "[INFO] machine-id is okay"
     fi
 
-###
-# Barebox
-else
-
-    # machine-id
-    if [ "$(barebox-state -g state.machine_id -i /etc/barebox-state.dtb)" != "${MACHINE_ID}" ]; then
-        echo "[INFO] set machine-id to ${MACHINE_ID}"
-        barebox-state -s "state.machine_id=${MACHINE_ID}" -i /etc/barebox-state.dtb
-    else
-        echo "[INFO] machine-id is okay"
-    fi
-
 fi

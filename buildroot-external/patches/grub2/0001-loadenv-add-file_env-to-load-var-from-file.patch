@@ -1,0 +1,119 @@
+From ee4adaa04e3ac1a5d20ad713a0133382c35da5a1 Mon Sep 17 00:00:00 2001
+Message-Id: <ee4adaa04e3ac1a5d20ad713a0133382c35da5a1.1645704230.git.stefan@agner.ch>
+From: Stefan Agner <stefan@agner.ch>
+Date: Thu, 24 Feb 2022 12:38:48 +0100
+Subject: [PATCH] loadenv: add file_env to load var from file
+
+Introduce file_env which allows to load the value of a variable from a
+file. The variable value is terminated at the first non-printable
+character.
+---
+ grub-core/commands/loadenv.c | 73 +++++++++++++++++++++++++++++++++++-
+ 1 file changed, 72 insertions(+), 1 deletion(-)
+
+diff --git a/grub-core/commands/loadenv.c b/grub-core/commands/loadenv.c
+index 3fd664aac..7e7b18139 100644
+--- a/grub-core/commands/loadenv.c
++++ b/grub-core/commands/loadenv.c
+@@ -40,6 +40,14 @@ static const struct grub_arg_option options[] =
+     {0, 0, 0, 0, 0, 0}
+   };
+ 
++static const struct grub_arg_option options_file_env[] =
++  {
++    /* TRANSLATORS: This option is used to override default filename
++       for loading and storing environment.  */
++    {"file", 'f', 0, N_("Specify filename."), 0, ARG_TYPE_PATHNAME},
++    {0, 0, 0, 0, 0, 0}
++  };
++
+ /* Opens 'filename' with compression filters disabled. Optionally disables the
+    PUBKEY filter (that insists upon properly signed files) as well.  PUBKEY
+    filter is restored before the function returns. */
+@@ -442,7 +450,64 @@ grub_cmd_save_env (grub_extcmd_context_t ctxt, int argc, char **args)
+   return grub_errno;
+ }
+ 
+-static grub_extcmd_t cmd_load, cmd_list, cmd_save;
++static grub_err_t
++grub_cmd_file_env (grub_extcmd_context_t ctxt, int argc, char **args)
++{
++  grub_off_t offset = 0;
++  struct grub_arg_list *state = ctxt->state;
++  grub_file_t file;
++  grub_size_t size;
++  char *buf;
++
++  if (argc != 1)
++    return grub_error (GRUB_ERR_BAD_ARGUMENT, N_("variable name expected"));
++
++  /* state[0] is the -f flag; state[1] is the --skip-sig flag */
++  file = open_envblk_file ((state[0].set) ? state[0].arg : 0,
++		           GRUB_FILE_TYPE_CAT);
++  if (! file)
++    return grub_errno;
++
++  size = grub_file_size (file);
++  buf = grub_malloc (size + 1);
++  if (! buf)
++    goto fail;
++
++  /* make sure buffer is terminated in any case */
++  buf[size] = '\0';
++  while (size > 0)
++    {
++      grub_ssize_t ret;
++
++      ret = grub_file_read (file, buf + offset, size);
++      if (ret <= 0)
++	goto fail;
++
++      /* terminate at the first non-printable character */
++      while (ret)
++        {
++	  if (!grub_isprint(buf[offset]))
++	    {
++	      buf[offset] = '\0';
++	      size = 0;
++	      break;
++	    }
++
++	  ret--;
++	  size--;
++	  offset++;
++        }
++    }
++
++  grub_env_set (args[0], buf);
++
++ fail:
++  grub_free (buf);
++  grub_file_close (file);
++  return grub_errno;
++}
++
++static grub_extcmd_t cmd_load, cmd_list, cmd_save, cmd_file;
+ 
+ GRUB_MOD_INIT(loadenv)
+ {
+@@ -460,6 +525,11 @@ GRUB_MOD_INIT(loadenv)
+ 			  N_("[-f FILE] variable_name [...]"),
+ 			  N_("Save variables to environment block file."),
+ 			  options);
++  cmd_file =
++    grub_register_extcmd ("file_env", grub_cmd_file_env, 0,
++			  N_("[-f FILE] variable_name"),
++			  N_("Set variable to content of a file."),
++			  options_file_env);
+ }
+ 
+ GRUB_MOD_FINI(loadenv)
+@@ -467,4 +537,5 @@ GRUB_MOD_FINI(loadenv)
+   grub_unregister_extcmd (cmd_load);
+   grub_unregister_extcmd (cmd_list);
+   grub_unregister_extcmd (cmd_save);
++  grub_unregister_extcmd (cmd_file);
+ }
+-- 
+2.35.1
+

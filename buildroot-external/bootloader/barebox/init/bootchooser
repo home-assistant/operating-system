@@ -1,9 +1,0 @@
-#!/bin/sh
-
-global bootchooser.targets
-global bootchooser.system0.boot
-global bootchooser.system1.boot
-
-[ -z "${global.bootchooser.targets}" ] && global.bootchooser.targets="system0 system1"
-[ -z "${global.bootchooser.system0.boot}" ] && global.bootchooser.system0.boot="system0"
-[ -z "${global.bootchooser.system1.boot}" ] && global.bootchooser.system1.boot="system1"

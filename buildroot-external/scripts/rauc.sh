@@ -84,8 +84,6 @@ function install_bootloader_config() {
     if [ "${BOOTLOADER}" == "uboot" ]; then
     	# shellcheck disable=SC1117
         echo -e "/dev/disk/by-partlabel/hassos-bootstate\t0x0000\t${BOOT_ENV_SIZE}" > "${TARGET_DIR}/etc/fw_env.config"
-    elif [ "${BOOTLOADER}" == "barebox" ]; then
-        cp -f "${BR2_EXTERNAL_HASSOS_PATH}/bootloader/barebox-state-efi.dtb" "${TARGET_DIR}/etc/barebox-state.dtb"
     fi
 
     # Fix MBR
