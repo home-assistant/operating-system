@@ -8,7 +8,6 @@ Conflicts=getty@%i.service
 # sure that this is synchronized before getty.target, even though
 # getty.target didn't actually pull it in.
 Before=getty.target
-IgnoreOnIsolate=yes
 
 # IgnoreOnIsolate causes issues with sulogin, if someone isolates
 # rescue.target or starts rescue.service from multi-user.target or
