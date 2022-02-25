@@ -56,8 +56,8 @@ if [ "${RAUC_SLOT_CLASS}" = "boot" ]; then
 
     # If grubenv is missing, initialize with boot order which will try the right
     # boot slot
-    if [ -d "${BOOT_NEW}"/EFI/BOOT/ -a ! -f "${BOOT_NEW}"/EFI/BOOT/grubenv ]; then
-        cp -f "${BOOT_NEW}"/EFI/BOOT/grubenv-${RAUC_SLOT_BOOTNAME} "${BOOT_NEW}"/EFI/BOOT/grubenv
+    if [ -d "${BOOT_NEW}"/EFI/BOOT/ ] && [ ! -f "${BOOT_NEW}"/EFI/BOOT/grubenv ]; then
+        cp -f "${BOOT_NEW}/EFI/BOOT/grubenv-${RAUC_SLOT_BOOTNAME}" "${BOOT_NEW}"/EFI/BOOT/grubenv
     fi
 
     # Restore boot config
