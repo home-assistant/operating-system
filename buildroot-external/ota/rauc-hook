@@ -22,12 +22,6 @@ install_boot() {
     # Update
     cp -rf "${BOOT_NEW}"/* "${BOOT_MNT}/"
 
-    # If grubenv is missing, initialize with boot order which will try the right
-    # boot slot
-    if [ -d "${BOOT_NEW}"/EFI/BOOT/ ] && [ ! -f "${BOOT_NEW}"/EFI/BOOT/grubenv ]; then
-        cp -f "${BOOT_NEW}/EFI/BOOT/grubenv-${RAUC_SLOT_BOOTNAME}" "${BOOT_NEW}"/EFI/BOOT/grubenv
-    fi
-
     # Restore boot config
     cp -f "${BOOT_TMP}"/*.txt "${BOOT_MNT}/"
 
@@ -62,6 +56,21 @@ install_spl() {
     fi
 }
 
+post_install_kernel() {
+    BOOT_MNT=/mnt/boot
+
+    # Mount boot
+    if ! systemctl -q is-active mnt-boot.mount; then
+        systemctl start mnt-boot.mount
+    fi
+
+    # If grubenv is missing, initialize with boot order which will try the right
+    # boot slot first
+    if [ -d "${BOOT_MNT}"/EFI/BOOT/ ] && [ ! -f "${BOOT_MNT}"/EFI/BOOT/grubenv ]; then
+        cp -f "${BOOT_MNT}/EFI/BOOT/grubenv-${RAUC_SLOT_BOOTNAME}" "${BOOT_MNT}"/EFI/BOOT/grubenv
+    fi
+}
+
 ##
 # Hooks
 
@@ -90,6 +99,11 @@ case "$1" in
             install_boot
         elif [ "${RAUC_SLOT_CLASS}" = "spl" ]; then
             install_spl
+        fi
+        ;;
+    slot-post-install)
+        if [ "${RAUC_SLOT_CLASS}" = "kernel" ]; then
+            post_install_kernel
         fi
         ;;
     *)

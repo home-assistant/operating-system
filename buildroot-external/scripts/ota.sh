@@ -38,6 +38,9 @@ function create_ota_update() {
         echo "hooks=install"
         echo "[image.kernel]"
         echo "filename=kernel.img"
+        if [ "${BOOTLOADER}" == "grub" ]; then
+            echo "hooks=post-install"
+        fi
         echo "[image.rootfs]"
         echo "filename=rootfs.img"
     ) > "${rauc_folder}/manifest.raucm"
