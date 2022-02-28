@@ -2,39 +2,7 @@
 
 set -o errexit
 
-##
-# Hooks
-
-case "$1" in
-     install-check)
-         if [ "$RAUC_MF_COMPATIBLE" = "$RAUC_SYSTEM_COMPATIBLE" ]; then
-             exit 0
-         fi
-         # Be compatible with hassos OS ID
-         # shellcheck disable=SC3060
-         rauc_os_compatible=${RAUC_MF_COMPATIBLE/haos-/hassos-}
-         if [ "$rauc_os_compatible" = "$RAUC_SYSTEM_COMPATIBLE" ]; then
-             exit 0
-         fi
-         # generic-x86-64: Be compatible with intel-nuc
-         # shellcheck disable=SC3060
-         rauc_board_compatible=${rauc_os_compatible/generic-x86-64/intel-nuc}
-         if [ "${rauc_board_compatible}" = "$RAUC_SYSTEM_COMPATIBLE" ]; then
-             exit 0
-         fi
-         echo "Compatible does not match!" 1>&2
-         exit 10
-         ;;
-    slot-install)
-        # Use install handlers below
-        ;;
-    *)
-        exit 1
-        ;;
-esac
-
-# Handle boot hocks
-if [ "${RAUC_SLOT_CLASS}" = "boot" ]; then
+install_boot() {
     BOOT_TMP=/tmp/boot-tmp
     BOOT_NEW=/tmp/boot-new
     BOOT_MNT=/mnt/boot
@@ -54,21 +22,14 @@ if [ "${RAUC_SLOT_CLASS}" = "boot" ]; then
     # Update
     cp -rf "${BOOT_NEW}"/* "${BOOT_MNT}/"
 
-    # If grubenv is missing, initialize with boot order which will try the right
-    # boot slot
-    if [ -d "${BOOT_NEW}"/EFI/BOOT/ ] && [ ! -f "${BOOT_NEW}"/EFI/BOOT/grubenv ]; then
-        cp -f "${BOOT_NEW}/EFI/BOOT/grubenv-${RAUC_SLOT_BOOTNAME}" "${BOOT_NEW}"/EFI/BOOT/grubenv
-    fi
-
     # Restore boot config
     cp -f "${BOOT_TMP}"/*.txt "${BOOT_MNT}/"
 
     umount "${BOOT_NEW}"
     rm -rf "${BOOT_TMP}" "${BOOT_NEW}"
-fi
+}
 
-# Handle spl install
-if [ "${RAUC_SLOT_CLASS}" = "spl" ]; then
+install_spl() {
     DEVICE_CHILD="$(findfs LABEL="hassos-boot")"
     DEVICE_ROOT="/dev/$(lsblk -no pkname "${DEVICE_CHILD}")"
     PART_TABLE="$(sfdisk -lqJ "${DEVICE_ROOT}")"
@@ -93,10 +54,61 @@ if [ "${RAUC_SLOT_CLASS}" = "spl" ]; then
         dd if="${RAUC_IMAGE_NAME}" of="${DEVICE_ROOT}boot0" conv=notrunc ${FLAGS} bs=512 skip=1 count=2047
         echo 1 > /sys/block/"$(basename "${DEVICE_ROOT}boot0")"/force_ro
     fi
-fi
+}
+
+post_install_kernel() {
+    BOOT_MNT=/mnt/boot
+
+    # Mount boot
+    if ! systemctl -q is-active mnt-boot.mount; then
+        systemctl start mnt-boot.mount
+    fi
+
+    # If grubenv is missing, initialize with boot order which will try the right
+    # boot slot first
+    if [ -d "${BOOT_MNT}"/EFI/BOOT/ ] && [ ! -f "${BOOT_MNT}"/EFI/BOOT/grubenv ]; then
+        cp -f "${BOOT_MNT}/EFI/BOOT/grubenv-${RAUC_SLOT_BOOTNAME}" "${BOOT_MNT}"/EFI/BOOT/grubenv
+    fi
+}
 
 ##
-# Fixups
+# Hooks
 
+case "$1" in
+     install-check)
+         if [ "$RAUC_MF_COMPATIBLE" = "$RAUC_SYSTEM_COMPATIBLE" ]; then
+             exit 0
+         fi
+         # Be compatible with hassos OS ID
+         # shellcheck disable=SC3060
+         rauc_os_compatible=${RAUC_MF_COMPATIBLE/haos-/hassos-}
+         if [ "$rauc_os_compatible" = "$RAUC_SYSTEM_COMPATIBLE" ]; then
+             exit 0
+         fi
+         # generic-x86-64: Be compatible with intel-nuc
+         # shellcheck disable=SC3060
+         rauc_board_compatible=${rauc_os_compatible/generic-x86-64/intel-nuc}
+         if [ "${rauc_board_compatible}" = "$RAUC_SYSTEM_COMPATIBLE" ]; then
+             exit 0
+         fi
+         echo "Compatible does not match!" 1>&2
+         exit 10
+         ;;
+    slot-install)
+        if [ "${RAUC_SLOT_CLASS}" = "boot" ]; then
+            install_boot
+        elif [ "${RAUC_SLOT_CLASS}" = "spl" ]; then
+            install_spl
+        fi
+        ;;
+    slot-post-install)
+        if [ "${RAUC_SLOT_CLASS}" = "kernel" ]; then
+            post_install_kernel
+        fi
+        ;;
+    *)
+        exit 1
+        ;;
+esac
 
 exit 0
