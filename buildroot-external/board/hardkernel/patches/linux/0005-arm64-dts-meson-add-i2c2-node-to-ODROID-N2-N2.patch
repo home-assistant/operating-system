@@ -1,10 +1,10 @@
-From d5d2d8b9eb93eab85af12f1844975903a7c5a879 Mon Sep 17 00:00:00 2001
-Message-Id: <d5d2d8b9eb93eab85af12f1844975903a7c5a879.1642331593.git.stefan@agner.ch>
-In-Reply-To: <c7825747afd8bb975dc918f28e4afe8058a518f3.1642331593.git.stefan@agner.ch>
-References: <c7825747afd8bb975dc918f28e4afe8058a518f3.1642331593.git.stefan@agner.ch>
+From 51ded393003a60d3932081114bff142c4c69b293 Mon Sep 17 00:00:00 2001
+Message-Id: <51ded393003a60d3932081114bff142c4c69b293.1646168061.git.stefan@agner.ch>
+In-Reply-To: <9f8390a715bc58e7423b65a18c4499761c84b819.1646168061.git.stefan@agner.ch>
+References: <9f8390a715bc58e7423b65a18c4499761c84b819.1646168061.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Thu, 29 Apr 2021 21:32:43 +0200
-Subject: [PATCH 08/10] arm64: dts: meson: add i2c2 node to ODROID N2/N2+
+Subject: [PATCH 5/7] arm64: dts: meson: add i2c2 node to ODROID N2/N2+
 
 The J2 connectors pinout documents "I2C.SDA0/SCL0" on pin 3 and 5, which
 are connected to GPIOX_17/18. This GPIO allow to mux I2C to the second
@@ -16,7 +16,7 @@ Signed-off-by: Stefan Agner <stefan@agner.ch>
  1 file changed, 6 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi
-index cec346178e3d..f1c3356c78a0 100644
+index 738eb0339333..2e9fefc20b19 100644
 --- a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi
 +++ b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi
 @@ -586,6 +586,12 @@ &ir {
@@ -33,5 +33,5 @@ index cec346178e3d..f1c3356c78a0 100644
  	status = "okay";
  	pinctrl-0 = <&i2c3_sda_a_pins>, <&i2c3_sck_a_pins>;
 -- 
-2.34.1
+2.35.1
 

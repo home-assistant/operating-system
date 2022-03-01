@@ -1,10 +1,8 @@
-From 70e65f906389f7236fe9ad8e1c05dedac0d1988b Mon Sep 17 00:00:00 2001
-Message-Id: <70e65f906389f7236fe9ad8e1c05dedac0d1988b.1642331593.git.stefan@agner.ch>
-In-Reply-To: <c7825747afd8bb975dc918f28e4afe8058a518f3.1642331593.git.stefan@agner.ch>
-References: <c7825747afd8bb975dc918f28e4afe8058a518f3.1642331593.git.stefan@agner.ch>
+From 9f8390a715bc58e7423b65a18c4499761c84b819 Mon Sep 17 00:00:00 2001
+Message-Id: <9f8390a715bc58e7423b65a18c4499761c84b819.1646168061.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Mon, 11 Jan 2021 11:20:48 +0100
-Subject: [PATCH 04/10] arm64: dts: meson: g12b: add power button support
+Subject: [PATCH 1/7] arm64: dts: meson: g12b: add power button support
 
 Add power button support on J2 pin 11 (GPIOX_3 on the SoC side). The
 GPIO is low active, e.g. when connecting with pin 9 (GND) a power
@@ -16,7 +14,7 @@ Signed-off-by: Stefan Agner <stefan@agner.ch>
  1 file changed, 11 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi
-index 41b2f9c96b5f..4b6bb7e74e25 100644
+index d33e54b5e196..5f0f036b1265 100644
 --- a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi
 +++ b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi
 @@ -39,6 +39,17 @@ emmc_pwrseq: emmc-pwrseq {
@@ -38,5 +36,5 @@ index 41b2f9c96b5f..4b6bb7e74e25 100644
  		compatible = "gpio-leds";
  
 -- 
-2.34.1
+2.35.1
 

@@ -1,29 +1,30 @@
-From 400645dd70ae5a0efbbce35067c8674d380ed2a7 Mon Sep 17 00:00:00 2001
+From 105003d49a505e0f0e033a6f3d945f745912c7b1 Mon Sep 17 00:00:00 2001
+Message-Id: <105003d49a505e0f0e033a6f3d945f745912c7b1.1646168061.git.stefan@agner.ch>
+In-Reply-To: <9f8390a715bc58e7423b65a18c4499761c84b819.1646168061.git.stefan@agner.ch>
+References: <9f8390a715bc58e7423b65a18c4499761c84b819.1646168061.git.stefan@agner.ch>
 From: Hyeonki Hong <hhk7734@gmail.com>
-Date: Wed, 13 May 2020 10:37:28 +0900
-Subject: [PATCH 21/74] ODROID-C4: arm64/dts: add i2c2, i2c3 node
+Date: Tue, 1 Mar 2022 21:53:32 +0100
+Subject: [PATCH 7/7] ODROID-C4: arm64/dts: add i2c2, i2c3 node
 
-Change-Id: Id75f935111744ff6945791deefef20f897dc98ac
-(cherry picked from commit 3f4b2ffd0905946175c478baa65361695e78e0de)
 ---
- .../boot/dts/amlogic/meson-sm1-odroid-c4.dts  | 53 +++++++++++++++++++
+ .../boot/dts/amlogic/meson-sm1-odroid.dtsi    | 53 +++++++++++++++++++
  1 file changed, 53 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-sm1-odroid-c4.dts b/arch/arm64/boot/dts/amlogic/meson-sm1-odroid-c4.dts
-index 831053aa6dff..5988dc5f34d0 100644
---- a/arch/arm64/boot/dts/amlogic/meson-sm1-odroid-c4.dts
-+++ b/arch/arm64/boot/dts/amlogic/meson-sm1-odroid-c4.dts
-@@ -16,6 +16,8 @@ / {
- 
+diff --git a/arch/arm64/boot/dts/amlogic/meson-sm1-odroid.dtsi b/arch/arm64/boot/dts/amlogic/meson-sm1-odroid.dtsi
+index 690e4823a9d0..85637c1c846b 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-sm1-odroid.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-sm1-odroid.dtsi
+@@ -11,6 +11,8 @@
+ / {
  	aliases {
  		ethernet0 = &ethmac;
 +		i2c0 = &i2c2;
 +		i2c1 = &i2c3;
  		serial0 = &uart_AO;
  		serial1 = &uart_A;
- 		spi0 = &spicc0;
-@@ -434,6 +436,57 @@ &ir {
- 	linux,rc-map-name = "rc-odroid";
+ 	};
+@@ -373,6 +375,57 @@ &ir {
+ 	pinctrl-names = "default";
  };
  
 +&i2c2 {
@@ -81,5 +82,5 @@ index 831053aa6dff..5988dc5f34d0 100644
  	pinctrl-0 = <&pwm_ao_d_e_pins>;
  	pinctrl-names = "default";
 -- 
-2.25.1
+2.35.1
 
