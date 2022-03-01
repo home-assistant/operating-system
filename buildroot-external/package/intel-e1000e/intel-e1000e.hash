@@ -1,5 +1,0 @@
-# from https://downloadcenter.intel.com/download/15817/Intel-Network-Adapter-Driver-for-PCIe-Intel-Gigabit-Ethernet-Network-Connections-Under-Linux-
-md5  54a1488fe9e7ed56d2bb96aaa66f35e9  e1000e-3.8.7.tar.gz
-
-# Locally calculated
-sha256  63bad49d2d37c975e5f5f88689c953eeb9be37b0ef035945c79820a95f480f11  e1000e-3.8.7.tar.gz
