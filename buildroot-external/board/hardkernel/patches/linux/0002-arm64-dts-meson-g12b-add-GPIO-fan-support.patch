@@ -1,10 +1,10 @@
-From 86d9151effff69d2a8fc2027a31dd60bd8c6eb05 Mon Sep 17 00:00:00 2001
-Message-Id: <86d9151effff69d2a8fc2027a31dd60bd8c6eb05.1642331593.git.stefan@agner.ch>
-In-Reply-To: <c7825747afd8bb975dc918f28e4afe8058a518f3.1642331593.git.stefan@agner.ch>
-References: <c7825747afd8bb975dc918f28e4afe8058a518f3.1642331593.git.stefan@agner.ch>
+From 26917e25696e7156a85d4dfcc578cb4cf4f42dde Mon Sep 17 00:00:00 2001
+Message-Id: <26917e25696e7156a85d4dfcc578cb4cf4f42dde.1646168061.git.stefan@agner.ch>
+In-Reply-To: <9f8390a715bc58e7423b65a18c4499761c84b819.1646168061.git.stefan@agner.ch>
+References: <9f8390a715bc58e7423b65a18c4499761c84b819.1646168061.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Mon, 11 Jan 2021 11:38:54 +0100
-Subject: [PATCH 05/10] arm64: dts: meson: g12b: add GPIO fan support
+Subject: [PATCH 2/7] arm64: dts: meson: g12b: add GPIO fan support
 
 Add simple GPIO fan node to support a fan on GPIO J8. Unfortunately the
 pad used to control the fan does not support real PWM, hence the RPM
@@ -16,7 +16,7 @@ Signed-off-by: Stefan Agner <stefan@agner.ch>
  1 file changed, 11 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi
-index 4b6bb7e74e25..e8a3ede698b5 100644
+index 5f0f036b1265..36dbd2666015 100644
 --- a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi
 +++ b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi
 @@ -39,6 +39,17 @@ emmc_pwrseq: emmc-pwrseq {
@@ -38,5 +38,5 @@ index 4b6bb7e74e25..e8a3ede698b5 100644
  		compatible = "gpio-keys-polled";
  		poll-interval = <100>;
 -- 
-2.34.1
+2.35.1
 
