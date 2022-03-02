@@ -17,13 +17,13 @@ install_boot() {
     mount "${RAUC_IMAGE_NAME}" "${BOOT_NEW}"
 
     # Backup boot config
-    cp -f "${BOOT_MNT}"/*.txt "${BOOT_TMP}/"
+    cp -f "${BOOT_MNT}"/*.txt "${BOOT_TMP}/" || true
 
     # Update
     cp -rf "${BOOT_NEW}"/* "${BOOT_MNT}/"
 
     # Restore boot config
-    cp -f "${BOOT_TMP}"/*.txt "${BOOT_MNT}/"
+    cp -f "${BOOT_TMP}"/*.txt "${BOOT_MNT}/" || true
 
     umount "${BOOT_NEW}"
     rm -rf "${BOOT_TMP}" "${BOOT_NEW}"
