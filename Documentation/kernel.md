@@ -18,3 +18,4 @@ Default Kernel tree: 5.15
 | Odroid-XU4 | 5.15.25 |
 | Generic aarch64 | 5.15.25 |
 | Generic x86-64 | 5.15.25 |
+| Khadas VIM3 | 5.15.25 |
