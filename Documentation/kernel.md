@@ -1,7 +1,7 @@
 
 # Kernel Version
 
-Default Kernel tree: 5.10
+Default Kernel tree: 5.15
 
 | Board | Version |
 |-------|---------|
@@ -16,4 +16,5 @@ Default Kernel tree: 5.10
 | Odroid-C4 | 5.15.25 |
 | Odroid-N2 | 5.15.25 |
 | Odroid-XU4 | 5.15.25 |
+| Generic aarch64 | 5.15.25 |
 | Generic x86-64 | 5.15.25 |
