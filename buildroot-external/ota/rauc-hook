@@ -39,7 +39,7 @@ case "$1" in
         fi
 
         # OS 8+ to 7 and lower downgrade path
-        if ! command -v barebox-state &> /dev/null; then
+        if ! command -v barebox-state > /dev/null; then
             cp -f "${BOOT_MNT}/EFI/barebox/state-${RAUC_SLOT_BOOTNAME}.dtb" "${BOOT_MNT}"/EFI/barebox/state.dtb
             blkdiscard /dev/disk/by-partuuid/33236519-7f32-4dff-8002-3390b62c309d
             echo "Cleared state and copied default state-${RAUC_SLOT_BOOTNAME}.dtb to state.dtb."
