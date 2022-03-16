@@ -3,6 +3,8 @@
 
 function create_ota_update() {
     local ota_file="$(hassos_image_name raucb)"
+    local ota_compatible="$(hassos_rauc_compatible)"
+    local ota_version="$(hassos_version)"
     local rauc_folder="${BINARIES_DIR}/rauc"
     local boot="${BINARIES_DIR}/boot.vfat"
     local kernel="${BINARIES_DIR}/kernel.img"
@@ -26,35 +28,17 @@ function create_ota_update() {
     cp -f "${rootfs}" "${rauc_folder}/rootfs.img"
     cp -f "${BR2_EXTERNAL_HASSOS_PATH}/ota/rauc-hook" "${rauc_folder}/hook"
 
-    (
-        echo "[update]"
-        echo "compatible=$(hassos_rauc_compatible)"
-        echo "version=$(hassos_version)"
-        echo "[hooks]"
-        echo "filename=hook"
-        echo "hooks=install-check"
-        echo "[image.boot]"
-        echo "filename=boot.vfat"
-        echo "hooks=install"
-        echo "[image.kernel]"
-        echo "filename=kernel.img"
-        if [ "${BOOTLOADER}" == "grub" ]; then
-            echo "hooks=post-install"
-        fi
-        echo "[image.rootfs]"
-        echo "filename=rootfs.img"
-    ) > "${rauc_folder}/manifest.raucm"
-
     # SPL
     if [ "${BOOT_SPL}" == "true" ]; then
         cp -f "${spl}" "${rauc_folder}/spl.img"
-
-        (
-            echo "[image.spl]"
-            echo "filename=spl.img"
-            echo "hooks=install"
-        ) >> "${rauc_folder}/manifest.raucm"
     fi
+
+    export BOOTLOADER BOOT_SPL
+    export ota_compatible ota_version
+    (
+        "${HOST_DIR}/bin/host-tempio" \
+            -template "${BR2_EXTERNAL_HASSOS_PATH}/ota/manifest.raucm.gtpl"
+    ) > "${rauc_folder}/manifest.raucm"
 
     rauc bundle -d --cert="${cert}" --key="${key}" --keyring="${keyring}" "${rauc_folder}" "${ota_file}"
 }
