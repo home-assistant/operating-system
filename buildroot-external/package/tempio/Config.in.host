@@ -1,0 +1,5 @@
+config BR2_PACKAGE_HOST_TEMPIO
+	bool "Home Assistant tempio"
+	depends on BR2_PACKAGE_HOST_GO_HOST_ARCH_SUPPORTS
+	help
+	  Install Home Assistant template helper.

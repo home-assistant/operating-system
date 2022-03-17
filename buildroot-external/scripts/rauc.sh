@@ -1,73 +1,20 @@
 #!/bin/bash
 set -e
 
-function _create_rauc_header() {
-    (
-        echo "[system]"
-        echo "compatible=$(hassos_rauc_compatible)"
-        echo "mountprefix=/run/rauc"
-        echo "statusfile=/mnt/data/rauc.db"
-        echo "bootloader=${BOOTLOADER}"
-        if [ "${BOOTLOADER}" == "grub" ]; then
-            if [ "${BOOT_SYS}" == "efi" ]; then
-                echo "grubenv=/mnt/boot/EFI/BOOT/grubenv"
-            else
-                echo "grubenv=/mnt/boot/grubenv"
-            fi
-        fi
-    
-        echo "[keyring]"
-        echo "path=/etc/rauc/keyring.pem"
-    ) > "${TARGET_DIR}/etc/rauc/system.conf"
-}
-
-
-function _write_rauc_boot() {
-    (
-        echo "[slot.boot.0]"
-        echo "device=/dev/disk/by-partlabel/hassos-boot"
-        echo "type=vfat"
-        echo "allow-mounted=true"
-    ) >> "${TARGET_DIR}/etc/rauc/system.conf"
-
-    # SPL
-    if ! [ "${BOOT_SPL}" == "true" ]; then
-        return 0
-    fi
-
-    (
-        echo "[slot.spl.0]"
-        echo "device=/dev/disk/by-partlabel/hassos-boot"
-        echo "type=raw"
-    ) >> "${TARGET_DIR}/etc/rauc/system.conf"
-}
-
-
-function _write_rauc_system() {
-    local slot_num=${1}
-    local slot_name=${2}
-
-    (
-        echo "[slot.kernel.${slot_num}]"
-        echo "device=/dev/disk/by-partlabel/hassos-kernel${slot_num}"
-        echo "type=raw"
-        echo "bootname=${slot_name}"
-
-        echo "[slot.rootfs.${slot_num}]"
-        echo "device=/dev/disk/by-partlabel/hassos-system${slot_num}"
-        echo "type=raw"
-        echo "parent=kernel.${slot_num}"
-    ) >> "${TARGET_DIR}/etc/rauc/system.conf"
-}
-
 
 function write_rauc_config() {
     mkdir -p "${TARGET_DIR}/etc/rauc"
 
-    _create_rauc_header
-    _write_rauc_boot
-    _write_rauc_system 0 A
-    _write_rauc_system 1 B
+    local ota_compatible
+    ota_compatible="$(hassos_rauc_compatible)"
+
+    export ota_compatible
+    export BOOTLOADER BOOT_SYS BOOT_SPL
+
+    (
+        "${HOST_DIR}/bin/host-tempio" \
+            -template "${BR2_EXTERNAL_HASSOS_PATH}/ota/system.conf.gtpl"
+    ) > "${TARGET_DIR}/etc/rauc/system.conf"
 }
 
 
