@@ -5,7 +5,8 @@ set -e
 function write_rauc_config() {
     mkdir -p "${TARGET_DIR}/etc/rauc"
 
-    local ota_compatible="$(hassos_rauc_compatible)"
+    local ota_compatible
+    ota_compatible="$(hassos_rauc_compatible)"
 
     export ota_compatible
     export BOOTLOADER BOOT_SYS BOOT_SPL
