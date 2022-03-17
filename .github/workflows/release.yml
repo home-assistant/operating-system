@@ -57,10 +57,6 @@ jobs:
     runs-on: ${{ matrix.board.runner }}
 
     steps:
-      # Make sure directories of potentially removed submodules are cleaned correctly
-      - name: Cleanup git submodules
-        run: find . -name .git -type f -exec rm {} \;
-
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
         with:
