@@ -1,0 +1,41 @@
+#!/bin/bash
+#
+
+TIMESYNCD_CONF=/run/systemd/timesyncd.conf.d/10-ntp.conf
+
+timesyncd_dhcp_ntp_remove() {
+  if [ -e $TIMESYNCD_CONF ]; then
+    rm -f $TIMESYNCD_CONF
+    systemctl restart systemd-timesyncd.service
+  fi
+}
+
+timesyncd_dhcp_ntp_add() {
+  mkdir -p $(dirname $TIMESYNCD_CONF)
+
+  echo '[Time]' > ${TIMESYNCD_CONF}
+  echo "NTP=${DHCP4_NTP_SERVERS}" >> ${TIMESYNCD_CONF}
+
+  systemctl restart systemd-timesyncd.service
+}
+
+INTERFACE=${1}
+ACTION=${2}
+
+case ${ACTION} in
+  up|down|dhcp4-change)
+    if [ ! -z "${DHCP4_NTP_SERVERS}" ]
+    then
+      timesyncd_dhcp_ntp_add
+      RETURN_CODE=$?
+    else
+      timesyncd_dhcp_ntp_remove
+      RETURN_CODE=$?
+    fi
+  ;;
+  *)
+    $RETURN_CODE=0
+    ;;
+esac
+
+return $RETURN_CODE
