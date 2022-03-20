@@ -36,7 +36,7 @@ function create_ota_update() {
     export BOOTLOADER BOOT_SPL
     export ota_compatible ota_version
     (
-        "${HOST_DIR}/bin/host-tempio" \
+        "${HOST_DIR}/bin/tempio" \
             -template "${BR2_EXTERNAL_HASSOS_PATH}/ota/manifest.raucm.gtpl"
     ) > "${rauc_folder}/manifest.raucm"
 
