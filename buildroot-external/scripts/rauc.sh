@@ -12,7 +12,7 @@ function write_rauc_config() {
     export BOOTLOADER BOOT_SYS BOOT_SPL
 
     (
-        "${HOST_DIR}/bin/host-tempio" \
+        "${HOST_DIR}/bin/tempio" \
             -template "${BR2_EXTERNAL_HASSOS_PATH}/ota/system.conf.gtpl"
     ) > "${TARGET_DIR}/etc/rauc/system.conf"
 }
