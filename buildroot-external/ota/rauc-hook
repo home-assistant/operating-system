@@ -28,6 +28,25 @@ case "$1" in
     slot-install)
         # Use install handlers below
         ;;
+    slot-post-install)
+        # Handle main slot only
+        test "${RAUC_SLOT_CLASS}" = "kernel" || exit 0
+
+        BOOT_MNT=/mnt/boot
+
+        if ! systemctl -q is-active mnt-boot.mount; then
+            systemctl start mnt-boot.mount
+        fi
+
+        # OS 8+ to 7 and lower downgrade path
+        if ! command -v barebox-state > /dev/null; then
+            cp -f "${BOOT_MNT}/EFI/barebox/state-${RAUC_SLOT_BOOTNAME}.dtb" "${BOOT_MNT}"/EFI/barebox/state.dtb
+            blkdiscard /dev/disk/by-partuuid/33236519-7f32-4dff-8002-3390b62c309d
+            echo "Cleared state and copied default state-${RAUC_SLOT_BOOTNAME}.dtb to state.dtb."
+        fi
+
+        exit 0
+        ;;
     *)
         exit 1
         ;;

@@ -9,6 +9,8 @@ function hassos_pre_image() {
 
     cp "${BINARIES_DIR}/barebox.bin" "${BOOT_DATA}/EFI/BOOT/BOOTx64.EFI"
     cp "${BR2_EXTERNAL_HASSOS_PATH}/bootloader/barebox-state-efi.dtb" "${BOOT_DATA}/EFI/barebox/state.dtb"
+    cp "${BR2_EXTERNAL_HASSOS_PATH}/bootloader/barebox-state-efi-A.dtb" "${BOOT_DATA}/EFI/barebox/state-A.dtb"
+    cp "${BR2_EXTERNAL_HASSOS_PATH}/bootloader/barebox-state-efi-B.dtb" "${BOOT_DATA}/EFI/barebox/state-B.dtb"
     cp "${BOARD_DIR}/cmdline.txt" "${BOOT_DATA}/cmdline.txt"
 }
 
