@@ -19,9 +19,6 @@ function fix_rootfs() {
     # systemd-update-done.service relies on writeable /var and /etc
     rm -f "${TARGET_DIR}/usr/lib/systemd/system/sysinit.target.wants/systemd-update-done.service"
 
-    # Fix: permission for system connection files
-    chmod 600 "${TARGET_DIR}/etc/NetworkManager/system-connections"/*
-
     # Fix: tempfs with /srv
     sed -i "/srv/d" "${TARGET_DIR}/usr/lib/tmpfiles.d/home.conf"
 
