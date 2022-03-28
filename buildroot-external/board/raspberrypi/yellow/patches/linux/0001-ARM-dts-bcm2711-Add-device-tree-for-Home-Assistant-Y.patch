@@ -1,5 +1,5 @@
-From 9d68dedb813f942286856c9d8c2eed01b55bb473 Mon Sep 17 00:00:00 2001
-Message-Id: <9d68dedb813f942286856c9d8c2eed01b55bb473.1641591965.git.stefan@agner.ch>
+From 017d6caf5d4e0b0963109633e191f49d7814165e Mon Sep 17 00:00:00 2001
+Message-Id: <017d6caf5d4e0b0963109633e191f49d7814165e.1648505253.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Wed, 3 Nov 2021 00:00:45 +0100
 Subject: [PATCH 1/9] ARM: dts: bcm2711: Add device tree for Home Assistant
@@ -19,22 +19,22 @@ Signed-off-by: Stefan Agner <stefan@agner.ch>
  create mode 100644 arch/arm64/boot/dts/broadcom/bcm2711-rpi-cm4-ha-yellow.dts
 
 diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index 12cd8bf582e1..de739b68635b 100644
+index 6bcb35ad76ac..40d9f4433cef 100644
 --- a/arch/arm/boot/dts/Makefile
 +++ b/arch/arm/boot/dts/Makefile
-@@ -14,7 +14,8 @@ dtb-$(CONFIG_ARCH_BCM2835) += \
- 	bcm2711-rpi-4-b.dtb \
+@@ -17,7 +17,8 @@ dtb-$(CONFIG_ARCH_BCM2835) += \
  	bcm2711-rpi-400.dtb \
  	bcm2710-rpi-cm3.dtb \
--	bcm2711-rpi-cm4.dtb
-+	bcm2711-rpi-cm4.dtb \
+ 	bcm2711-rpi-cm4.dtb \
+-	bcm2711-rpi-cm4s.dtb
++	bcm2711-rpi-cm4s.dtb \
 +	bcm2711-rpi-cm4-ha-yellow.dtb
  
  dtb-$(CONFIG_ARCH_ALPINE) += \
  	alpine-db.dtb
 diff --git a/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
 new file mode 100644
-index 000000000000..5d4e058cac43
+index 000000000000..9e7a66e70197
 --- /dev/null
 +++ b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
 @@ -0,0 +1,659 @@
@@ -326,15 +326,16 @@ index 000000000000..5d4e058cac43
 +};
 +
 +&pcie0 {
-+	pci@1,0 {
++	pci@0,0 {
++		device_type = "pci";
 +		#address-cells = <3>;
 +		#size-cells = <2>;
 +		ranges;
 +
 +		reg = <0 0 0 0 0>;
 +
-+		usb@1,0 {
-+			reg = <0x10000 0 0 0 0>;
++		usb@0,0 {
++			reg = <0 0 0 0 0>;
 +			resets = <&reset RASPBERRYPI_FIRMWARE_RESET_ID_USB>;
 +		};
 +	};
@@ -392,7 +393,6 @@ index 000000000000..5d4e058cac43
 +#include "bcm283x-rpi-csi0-2lane.dtsi"
 +#include "bcm283x-rpi-csi1-4lane.dtsi"
 +#include "bcm283x-rpi-i2c0mux_0_44.dtsi"
-+#include "bcm283x-rpi-cam1-regulator.dtsi"
 +
 +/ {
 +	chosen {
@@ -698,10 +698,10 @@ index 000000000000..5d4e058cac43
 +	};
 +};
 diff --git a/arch/arm64/boot/dts/broadcom/Makefile b/arch/arm64/boot/dts/broadcom/Makefile
-index 69809bf2f45d..22327ed93238 100644
+index e7c2c4fd59a8..6fa5993dd993 100644
 --- a/arch/arm64/boot/dts/broadcom/Makefile
 +++ b/arch/arm64/boot/dts/broadcom/Makefile
-@@ -10,6 +10,7 @@ dtb-$(CONFIG_ARCH_BCM2835) += bcm2711-rpi-4-b.dtb
+@@ -11,6 +11,7 @@ dtb-$(CONFIG_ARCH_BCM2835) += bcm2711-rpi-4-b.dtb
  dtb-$(CONFIG_ARCH_BCM2835) += bcm2711-rpi-400.dtb
  dtb-$(CONFIG_ARCH_BCM2835) += bcm2710-rpi-cm3.dtb
  dtb-$(CONFIG_ARCH_BCM2835) += bcm2711-rpi-cm4.dtb
@@ -717,5 +717,5 @@ index 000000000000..fdc5ec5bc956
 @@ -0,0 +1 @@
 +#include "../../../../arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts"
 -- 
-2.34.1
+2.35.1
 

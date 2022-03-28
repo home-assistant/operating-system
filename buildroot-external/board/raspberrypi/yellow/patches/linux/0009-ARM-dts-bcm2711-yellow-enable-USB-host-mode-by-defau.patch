@@ -1,7 +1,7 @@
-From b389cd8a2b8e2d7bf623269fd9464d4337b4e42e Mon Sep 17 00:00:00 2001
-Message-Id: <b389cd8a2b8e2d7bf623269fd9464d4337b4e42e.1641591965.git.stefan@agner.ch>
-In-Reply-To: <9d68dedb813f942286856c9d8c2eed01b55bb473.1641591965.git.stefan@agner.ch>
-References: <9d68dedb813f942286856c9d8c2eed01b55bb473.1641591965.git.stefan@agner.ch>
+From c65c727a631864a9ea486f41437f3392cbb1885e Mon Sep 17 00:00:00 2001
+Message-Id: <c65c727a631864a9ea486f41437f3392cbb1885e.1648505253.git.stefan@agner.ch>
+In-Reply-To: <017d6caf5d4e0b0963109633e191f49d7814165e.1648505253.git.stefan@agner.ch>
+References: <017d6caf5d4e0b0963109633e191f49d7814165e.1648505253.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Fri, 7 Jan 2022 17:10:00 +0100
 Subject: [PATCH 9/9] ARM: dts: bcm2711: yellow: enable USB host mode by
@@ -16,10 +16,10 @@ Signed-off-by: Stefan Agner <stefan@agner.ch>
  1 file changed, 9 insertions(+)
 
 diff --git a/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
-index 999a71f31d89..5ec7f134fd7c 100644
+index d33be3e96b8a..d81f2f1d4b43 100644
 --- a/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
 +++ b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
-@@ -657,6 +657,15 @@ &sdhost {
+@@ -656,6 +656,15 @@ &sdhost {
  	status = "disabled";
  };
  
@@ -36,5 +36,5 @@ index 999a71f31d89..5ec7f134fd7c 100644
  	led-modes = <0x00 0x08>; /* link/activity link */
  };
 -- 
-2.34.1
+2.35.1
 
