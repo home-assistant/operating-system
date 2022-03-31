@@ -3,11 +3,7 @@
 mkdir -p /mnt/overlay/etc/
 
 # Network
-if [ ! -d /mnt/overlay/etc/NetworkManager/system-connections ]; then
-    mkdir -p /mnt/overlay/etc/NetworkManager/system-connections
-    cp -fp /etc/NetworkManager/system-connections/* /mnt/overlay/etc/NetworkManager/system-connections/
-    chmod 600 /mnt/overlay/etc/NetworkManager/system-connections/*
-fi
+mkdir -p /mnt/overlay/etc/NetworkManager/system-connections
 
 if [ ! -f /mnt/overlay/etc/hostname ]; then
     cp -fp /etc/hostname /mnt/overlay/etc/hostname
