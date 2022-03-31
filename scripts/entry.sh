@@ -13,7 +13,7 @@ if [ "${BUILDER_UID:-0}" -ne 0 ] && [ "${BUILDER_GID:-0}" -ne 0 ]; then
   echo "builder ALL=(ALL:ALL) NOPASSWD: ALL" >> /etc/sudoers
   # Make sure cache is accessible by builder
   chown "${BUILDER_UID}:${BUILDER_GID}" /cache
-  # Make sure output is accessible by builder (if ephemeral volume is used)
+  # Make sure output is accessible by builder (if anonymous volume is used)
   chown "${BUILDER_UID}:${BUILDER_GID}" /build/output || true
   USER="builder"
 fi
