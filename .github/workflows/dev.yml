@@ -102,6 +102,7 @@ jobs:
           docker run --rm --privileged -v "${GITHUB_WORKSPACE}:/build" \
             -e BUILDER_UID="${BUILDER_UID}" -e BUILDER_GID="${BUILDER_GID}" \
             -v "${{ matrix.board.runner }}-build-cache:/cache" \
+            -v "/build/output" \
             haos-builder make BUILDDIR=/build VERSION_DEV=${{ needs.prepare.outputs.version_dev }} ${{ matrix.board.defconfig }}
 
       - name: Upload images
