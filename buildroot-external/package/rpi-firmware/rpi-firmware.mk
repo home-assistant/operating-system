@@ -19,7 +19,8 @@ RPI_FIRMWARE_BOOT_FILES = \
 	start_cd.elf \
 	fixup.dat \
 	fixup_x.dat \
-	fixup_cd.dat
+	fixup_cd.dat \
+	bootcode.bin
 endif
 
 define RPI_FIRMWARE_INSTALL_IMAGES_CMDS
