@@ -1,3 +1,5 @@
+name-template: Home Assistant OS $NEXT_MINOR_VERSION
+version-template: "$MAJOR.$MINOR"
 categories:
   - title: 'Home Assistant Operating System'
     label: 'os'
@@ -16,7 +18,6 @@ categories:
   - title: 'Khadas VIM Series'
     label: 'board/khadas'
 filter-by-commitish: true
-commitish: dev
 template: |
   ## Changes
 
