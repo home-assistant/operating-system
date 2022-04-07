@@ -7,6 +7,8 @@ categories:
     label: 'build'
   - title: 'Raspberry Pi'
     label: 'board/raspberrypi'
+  - title: 'Home Assistant Yellow'
+    label: 'board/yellow'
   - title: 'Open Virtual Appliance'
     label: 'board/ova'
   - title: 'Generic x86-64'
@@ -17,8 +19,6 @@ categories:
     label: 'board/tinker'
   - title: 'Khadas VIM Series'
     label: 'board/khadas'
-  - title: 'Home Assistant Yellow'
-    label: 'board/yellow'
 filter-by-commitish: true
 template: |
   ## Changes
