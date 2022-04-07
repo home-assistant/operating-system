@@ -16,7 +16,6 @@ categories:
   - title: 'Khadas VIM Series'
     label: 'board/khadas'
 filter-by-commitish: true
-commitish: dev
 template: |
   ## Changes
 
