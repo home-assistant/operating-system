@@ -17,6 +17,8 @@ categories:
     label: 'board/tinker'
   - title: 'Khadas VIM Series'
     label: 'board/khadas'
+  - title: 'Home Assistant Yellow'
+    label: 'board/yellow'
 filter-by-commitish: true
 template: |
   ## Changes
