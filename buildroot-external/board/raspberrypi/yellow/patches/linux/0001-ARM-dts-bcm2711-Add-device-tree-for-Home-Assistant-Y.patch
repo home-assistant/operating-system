@@ -1,7 +1,7 @@
-From 017d6caf5d4e0b0963109633e191f49d7814165e Mon Sep 17 00:00:00 2001
-Message-Id: <017d6caf5d4e0b0963109633e191f49d7814165e.1648505253.git.stefan@agner.ch>
+From 2d3d8c091bc692999a1c519c1dc1570cc8be2358 Mon Sep 17 00:00:00 2001
+Message-Id: <2d3d8c091bc692999a1c519c1dc1570cc8be2358.1649681596.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
-Date: Wed, 3 Nov 2021 00:00:45 +0100
+Date: Mon, 11 Apr 2022 14:47:59 +0200
 Subject: [PATCH 1/9] ARM: dts: bcm2711: Add device tree for Home Assistant
  Yellow
 
@@ -11,15 +11,15 @@ board.
 Signed-off-by: Stefan Agner <stefan@agner.ch>
 ---
  arch/arm/boot/dts/Makefile                    |   3 +-
- .../boot/dts/bcm2711-rpi-cm4-ha-yellow.dts    | 659 ++++++++++++++++++
+ .../boot/dts/bcm2711-rpi-cm4-ha-yellow.dts    | 598 ++++++++++++++++++
  arch/arm64/boot/dts/broadcom/Makefile         |   1 +
  .../broadcom/bcm2711-rpi-cm4-ha-yellow.dts    |   1 +
- 4 files changed, 663 insertions(+), 1 deletion(-)
+ 4 files changed, 602 insertions(+), 1 deletion(-)
  create mode 100644 arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
  create mode 100644 arch/arm64/boot/dts/broadcom/bcm2711-rpi-cm4-ha-yellow.dts
 
 diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index 6bcb35ad76ac..40d9f4433cef 100644
+index f9acf5c4a59b..fb5b4555d42e 100644
 --- a/arch/arm/boot/dts/Makefile
 +++ b/arch/arm/boot/dts/Makefile
 @@ -17,7 +17,8 @@ dtb-$(CONFIG_ARCH_BCM2835) += \
@@ -34,37 +34,23 @@ index 6bcb35ad76ac..40d9f4433cef 100644
  	alpine-db.dtb
 diff --git a/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
 new file mode 100644
-index 000000000000..9e7a66e70197
+index 000000000000..61d8c81d3de4
 --- /dev/null
 +++ b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
-@@ -0,0 +1,659 @@
+@@ -0,0 +1,598 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/dts-v1/;
 +#include "bcm2711.dtsi"
-+#include "bcm2835-rpi.dtsi"
-+
-+#include <dt-bindings/reset/raspberrypi,firmware-reset.h>
++#include "bcm2711-rpi.dtsi"
++//#include "bcm283x-rpi-usb-peripheral.dtsi"
 +
 +/ {
-+	compatible = "raspberrypi,4-compute-module-ha-yellow", "brcm,bcm2711";
++	compatible = "raspberrypi,4-compute-module-ha-yellow", "raspberrypi,4-compute-module", "brcm,bcm2711";
 +	model = "Raspberry Pi Compute Module 4 on Home Assistant Yellow";
 +
 +	chosen {
 +		/* 8250 auxiliary UART instead of pl011 */
 +		stdout-path = "serial1:115200n8";
-+	};
-+
-+	/* Will be filled by the bootloader */
-+	memory@0 {
-+		device_type = "memory";
-+		reg = <0 0 0>;
-+	};
-+
-+	aliases {
-+		emmc2bus = &emmc2bus;
-+		ethernet0 = &genet;
-+		pcie0 = &pcie0;
-+		blconfig = &blconfig;
 +	};
 +
 +	leds {
@@ -94,8 +80,8 @@ index 000000000000..9e7a66e70197
 +		regulator-always-on;
 +		regulator-settling-time-us = <5000>;
 +		gpios = <&expgpio 4 GPIO_ACTIVE_HIGH>;
-+		states = <1800000 0x1
-+			  3300000 0x0>;
++		states = <1800000 0x1>,
++			 <3300000 0x0>;
 +		status = "okay";
 +	};
 +
@@ -118,42 +104,26 @@ index 000000000000..9e7a66e70197
 +	status = "okay";
 +};
 +
-+&firmware {
-+	firmware_clocks: clocks {
-+		compatible = "raspberrypi,firmware-clocks";
-+		#clock-cells = <1>;
++&expgpio {
++	gpio-line-names = "BT_ON",
++			  "WL_ON",
++			  "PWR_LED_OFF",
++			  "ANT1",
++			  "VDD_SD_IO_SEL",
++			  "CAM_GPIO",
++			  "SD_PWR_ON",
++			  "ANT2";
++
++	ant1: ant1 {
++		gpio-hog;
++		gpios = <3 GPIO_ACTIVE_HIGH>;
++		output-high;
 +	};
 +
-+	expgpio: gpio {
-+		compatible = "raspberrypi,firmware-gpio";
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+		gpio-line-names = "BT_ON",
-+				  "WL_ON",
-+				  "PWR_LED_OFF",
-+				  "ANT1",
-+				  "VDD_SD_IO_SEL",
-+				  "CAM_GPIO",
-+				  "SD_PWR_ON",
-+				  "ANT2";
-+		status = "okay";
-+
-+		ant1: ant1 {
-+			gpio-hog;
-+			gpios = <3 GPIO_ACTIVE_HIGH>;
-+			output-high;
-+		};
-+
-+		ant2: ant2 {
-+			gpio-hog;
-+			gpios = <7 GPIO_ACTIVE_HIGH>;
-+			output-low;
-+		};
-+	};
-+
-+	reset: reset {
-+		compatible = "raspberrypi,firmware-reset";
-+		#reset-cells = <1>;
++	ant2: ant2 {
++		gpio-hog;
++		gpios = <7 GPIO_ACTIVE_HIGH>;
++		output-low;
 +	};
 +};
 +
@@ -231,21 +201,11 @@ index 000000000000..9e7a66e70197
 +};
 +
 +&hdmi0 {
-+	clocks = <&firmware_clocks 13>, <&firmware_clocks 14>, <&dvp 0>, <&clk_27MHz>;
-+	clock-names = "hdmi", "bvb", "audio", "cec";
-+	wifi-2.4ghz-coexistence;
 +	status = "okay";
 +};
 +
 +&hdmi1 {
-+	clocks = <&firmware_clocks 13>, <&firmware_clocks 14>, <&dvp 1>, <&clk_27MHz>;
-+	clock-names = "hdmi", "bvb", "audio", "cec";
-+	wifi-2.4ghz-coexistence;
 +	status = "okay";
-+};
-+
-+&hvs {
-+	clocks = <&firmware_clocks 4>;
 +};
 +
 +&pixelvalve0 {
@@ -268,22 +228,6 @@ index 000000000000..9e7a66e70197
 +	pinctrl-names = "default";
 +	pinctrl-0 = <&pwm1_0_gpio40 &pwm1_1_gpio41>;
 +	status = "okay";
-+};
-+
-+&rmem {
-+	/*
-+	 * RPi4's co-processor will copy the board's bootloader configuration
-+	 * into memory for the OS to consume. It'll also update this node with
-+	 * its placement information.
-+	 */
-+	blconfig: nvram@0 {
-+		compatible = "raspberrypi,bootloader-config", "nvmem-rmem";
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		reg = <0x0 0x0 0x0>;
-+		no-map;
-+		status = "disabled";
-+	};
 +};
 +
 +/* SDHCI is used to control the SDIO for wireless */
@@ -327,17 +271,12 @@ index 000000000000..9e7a66e70197
 +
 +&pcie0 {
 +	pci@0,0 {
-+		device_type = "pci";
++		device-type = "pci";
 +		#address-cells = <3>;
 +		#size-cells = <2>;
 +		ranges;
 +
 +		reg = <0 0 0 0 0>;
-+
-+		usb@0,0 {
-+			reg = <0 0 0 0 0>;
-+			resets = <&reset RASPBERRYPI_FIRMWARE_RESET_ID_USB>;
-+		};
 +	};
 +};
 +
@@ -389,7 +328,7 @@ index 000000000000..9e7a66e70197
 +	};
 +};
 +
-+#include "bcm2711-rpi.dtsi"
++#include "bcm2711-rpi-ds.dtsi"
 +#include "bcm283x-rpi-csi0-2lane.dtsi"
 +#include "bcm283x-rpi-csi1-4lane.dtsi"
 +#include "bcm283x-rpi-i2c0mux_0_44.dtsi"
@@ -698,17 +637,17 @@ index 000000000000..9e7a66e70197
 +	};
 +};
 diff --git a/arch/arm64/boot/dts/broadcom/Makefile b/arch/arm64/boot/dts/broadcom/Makefile
-index e7c2c4fd59a8..6fa5993dd993 100644
+index 8eadc747ae1f..786dfe43d804 100644
 --- a/arch/arm64/boot/dts/broadcom/Makefile
 +++ b/arch/arm64/boot/dts/broadcom/Makefile
-@@ -11,6 +11,7 @@ dtb-$(CONFIG_ARCH_BCM2835) += bcm2711-rpi-4-b.dtb
+@@ -13,6 +13,7 @@ dtb-$(CONFIG_ARCH_BCM2835) += bcm2711-rpi-4-b.dtb
  dtb-$(CONFIG_ARCH_BCM2835) += bcm2711-rpi-400.dtb
  dtb-$(CONFIG_ARCH_BCM2835) += bcm2710-rpi-cm3.dtb
  dtb-$(CONFIG_ARCH_BCM2835) += bcm2711-rpi-cm4.dtb
 +dtb-$(CONFIG_ARCH_BCM2835) += bcm2711-rpi-cm4-ha-yellow.dtb
  
+ subdir-y	+= bcm4908
  subdir-y	+= northstar2
- subdir-y	+= stingray
 diff --git a/arch/arm64/boot/dts/broadcom/bcm2711-rpi-cm4-ha-yellow.dts b/arch/arm64/boot/dts/broadcom/bcm2711-rpi-cm4-ha-yellow.dts
 new file mode 100644
 index 000000000000..fdc5ec5bc956

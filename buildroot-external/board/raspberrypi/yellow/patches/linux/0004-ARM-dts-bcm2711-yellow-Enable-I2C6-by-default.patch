@@ -1,7 +1,7 @@
-From 1efbeac97f7308aedddfbfdb3fee291b2015b585 Mon Sep 17 00:00:00 2001
-Message-Id: <1efbeac97f7308aedddfbfdb3fee291b2015b585.1648505253.git.stefan@agner.ch>
-In-Reply-To: <017d6caf5d4e0b0963109633e191f49d7814165e.1648505253.git.stefan@agner.ch>
-References: <017d6caf5d4e0b0963109633e191f49d7814165e.1648505253.git.stefan@agner.ch>
+From 606dcdc896ffc18001ad4983d45a2e23cacd040a Mon Sep 17 00:00:00 2001
+Message-Id: <606dcdc896ffc18001ad4983d45a2e23cacd040a.1649681596.git.stefan@agner.ch>
+In-Reply-To: <2d3d8c091bc692999a1c519c1dc1570cc8be2358.1649681596.git.stefan@agner.ch>
+References: <2d3d8c091bc692999a1c519c1dc1570cc8be2358.1649681596.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Thu, 4 Mar 2021 14:48:48 +0100
 Subject: [PATCH 4/9] ARM: dts: bcm2711: yellow: Enable I2C6 by default
@@ -14,10 +14,10 @@ Signed-off-by: Stefan Agner <stefan@agner.ch>
  1 file changed, 6 insertions(+)
 
 diff --git a/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
-index 7755b1ae48b6..0f2e7e7dad3e 100644
+index d1dea0a214a6..0bdbfdd44aed 100644
 --- a/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
 +++ b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
-@@ -589,6 +589,12 @@ &i2c1 {
+@@ -531,6 +531,12 @@ &i2c1 {
  	clock-frequency = <100000>;
  };
  
