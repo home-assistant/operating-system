@@ -1,7 +1,7 @@
-From 2aaa4d5dd580848cb73881182903868c6aa7e35c Mon Sep 17 00:00:00 2001
-Message-Id: <2aaa4d5dd580848cb73881182903868c6aa7e35c.1648505253.git.stefan@agner.ch>
-In-Reply-To: <017d6caf5d4e0b0963109633e191f49d7814165e.1648505253.git.stefan@agner.ch>
-References: <017d6caf5d4e0b0963109633e191f49d7814165e.1648505253.git.stefan@agner.ch>
+From 57289aaeb0a0a3b09991d005d6e3317ed2da6b7a Mon Sep 17 00:00:00 2001
+Message-Id: <57289aaeb0a0a3b09991d005d6e3317ed2da6b7a.1649681596.git.stefan@agner.ch>
+In-Reply-To: <2d3d8c091bc692999a1c519c1dc1570cc8be2358.1649681596.git.stefan@agner.ch>
+References: <2d3d8c091bc692999a1c519c1dc1570cc8be2358.1649681596.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Fri, 12 Nov 2021 17:33:32 +0100
 Subject: [PATCH 8/9] ARM: dts: bcm2711: yellow: add NXP PCF85063A RTC
@@ -12,10 +12,10 @@ Signed-off-by: Stefan Agner <stefan@agner.ch>
  1 file changed, 5 insertions(+)
 
 diff --git a/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
-index 1a1ebdd54b39..d33be3e96b8a 100644
+index f5d1d8b9ea32..5c682d09616a 100644
 --- a/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
 +++ b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
-@@ -632,6 +632,11 @@ card_codec: pcm5121@4c {
+@@ -575,6 +575,11 @@ card_codec: pcm5121@4c {
  		CPVDD-supply = <&vdd_3v3_reg>;
  		status = "okay";
  	};
