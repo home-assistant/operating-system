@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - dev
-      - rel-4
+      - rel-*
 
 jobs:
   update_release_draft:

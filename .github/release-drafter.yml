@@ -1,3 +1,5 @@
+name-template: Home Assistant OS $NEXT_MINOR_VERSION
+version-template: "$MAJOR.$MINOR"
 categories:
   - title: 'Home Assistant Operating System'
     label: 'os'
@@ -5,6 +7,8 @@ categories:
     label: 'build'
   - title: 'Raspberry Pi'
     label: 'board/raspberrypi'
+  - title: 'Home Assistant Yellow'
+    label: 'board/yellow'
   - title: 'Open Virtual Appliance'
     label: 'board/ova'
   - title: 'Generic x86-64'
@@ -15,8 +19,9 @@ categories:
     label: 'board/tinker'
   - title: 'Khadas VIM Series'
     label: 'board/khadas'
+  - title: 'Generic aarch64'
+    label: 'board/generic-aarch64'
 filter-by-commitish: true
-commitish: dev
 template: |
   ## Changes
 
