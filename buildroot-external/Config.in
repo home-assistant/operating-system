@@ -1,5 +1,5 @@
 source "$BR2_EXTERNAL_HASSOS_PATH/package/hassio/Config.in"
-source "$BR2_EXTERNAL_HASSOS_PATH/package/bluetooth-bcm43xx/Config.in"
+source "$BR2_EXTERNAL_HASSOS_PATH/package/pi-bluetooth/Config.in"
 source "$BR2_EXTERNAL_HASSOS_PATH/package/bluetooth-rtl8723/Config.in"
 source "$BR2_EXTERNAL_HASSOS_PATH/package/hardkernel-boot/Config.in"
 source "$BR2_EXTERNAL_HASSOS_PATH/package/khadas-boot/Config.in"

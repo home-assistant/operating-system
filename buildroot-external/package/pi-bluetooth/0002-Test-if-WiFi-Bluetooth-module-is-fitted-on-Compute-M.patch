@@ -1,0 +1,36 @@
+From 2bfc211b1dc619cce4ea500227576ce1d59c404e Mon Sep 17 00:00:00 2001
+Message-Id: <2bfc211b1dc619cce4ea500227576ce1d59c404e.1649951264.git.stefan@agner.ch>
+In-Reply-To: <b74ac4e14e4fcbb76b4cea86573cf602f2b28f8b.1649951264.git.stefan@agner.ch>
+References: <b74ac4e14e4fcbb76b4cea86573cf602f2b28f8b.1649951264.git.stefan@agner.ch>
+From: Stefan Agner <stefan@agner.ch>
+Date: Thu, 14 Apr 2022 15:29:39 +0200
+Subject: [PATCH] Test if WiFi/Bluetooth module is fitted on Compute Module 4
+
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+---
+ usr/bin/btuart | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/usr/bin/btuart b/usr/bin/btuart
+index cb99a4f..046227c 100755
+--- a/usr/bin/btuart
++++ b/usr/bin/btuart
+@@ -11,6 +11,15 @@ else
+   BDADDR=`printf b8:27:eb:%02x:%02x:%02x $((0x$B1 ^ 0xaa)) $((0x$B2 ^ 0xaa)) $((0x$B3 ^ 0xaa))`
+ fi
+ 
++if grep -q "raspberrypi,4-compute-module" /proc/device-tree/compatible; then
++  BOARDREV_EXT=$(xxd -p -g4 /proc/device-tree/chosen/rpi-boardrev-ext)
++  # Ceck Bit 30: Whether the Compute Module has a WiFi module fitted
++  if [ $((16#${BOARDREV_EXT} & 16#40000000)) -gt 0 ]; then
++    # No WiFi/Bluetooth
++    exit 0
++  fi
++fi
++
+ # Bail out if the kernel is managing the Bluetooth modem initialisation
+ if ( dmesg | grep -q -E "hci[0-9]+: BCM: chip" ); then
+   # On-board bluetooth is already enabled
+-- 
+2.35.1
+

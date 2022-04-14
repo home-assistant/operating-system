@@ -1,0 +1,30 @@
+From b74ac4e14e4fcbb76b4cea86573cf602f2b28f8b Mon Sep 17 00:00:00 2001
+Message-Id: <b74ac4e14e4fcbb76b4cea86573cf602f2b28f8b.1649951264.git.stefan@agner.ch>
+From: Luca Giovenzana <luca@giovenzana.org>
+Date: Thu, 14 Apr 2022 14:55:56 +0200
+Subject: [PATCH] Fix Bluetooth: hci0: Frame reassembly failed (-84)
+
+Lower UART baudrate to fix Frame reassembly failed (-84) issues.
+https://github.com/raspberrypi/firmware/issues/1150
+
+Signed-off-by: Luca Giovenzana <luca@giovenzana.org>
+---
+ usr/bin/btuart | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/usr/bin/btuart b/usr/bin/btuart
+index 493fd86..cb99a4f 100755
+--- a/usr/bin/btuart
++++ b/usr/bin/btuart
+@@ -25,7 +25,7 @@ if [ "$uart0" = "$serial1" ] ; then
+ 	if [ "$uart0_pins" = "16" ] ; then
+ 		$HCIATTACH /dev/serial1 bcm43xx 3000000 flow - $BDADDR
+ 	else
+-		$HCIATTACH /dev/serial1 bcm43xx 921600 noflow - $BDADDR
++		$HCIATTACH /dev/serial1 bcm43xx 460800 noflow - $BDADDR
+ 	fi
+ else
+ 	$HCIATTACH /dev/serial1 bcm43xx 460800 noflow - $BDADDR
+-- 
+2.35.1
+
