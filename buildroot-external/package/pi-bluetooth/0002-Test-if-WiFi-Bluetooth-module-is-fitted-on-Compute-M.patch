@@ -1,11 +1,10 @@
 From 2bfc211b1dc619cce4ea500227576ce1d59c404e Mon Sep 17 00:00:00 2001
-Message-Id: <2bfc211b1dc619cce4ea500227576ce1d59c404e.1649943015.git.stefan@agner.ch>
-In-Reply-To: <b74ac4e14e4fcbb76b4cea86573cf602f2b28f8b.1649943015.git.stefan@agner.ch>
-References: <b74ac4e14e4fcbb76b4cea86573cf602f2b28f8b.1649943015.git.stefan@agner.ch>
+Message-Id: <2bfc211b1dc619cce4ea500227576ce1d59c404e.1649951264.git.stefan@agner.ch>
+In-Reply-To: <b74ac4e14e4fcbb76b4cea86573cf602f2b28f8b.1649951264.git.stefan@agner.ch>
+References: <b74ac4e14e4fcbb76b4cea86573cf602f2b28f8b.1649951264.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Thu, 14 Apr 2022 15:29:39 +0200
-Subject: [PATCH 2/2] Test if WiFi/Bluetooth module is fitted on Compute Module
- 4
+Subject: [PATCH] Test if WiFi/Bluetooth module is fitted on Compute Module 4
 
 Signed-off-by: Stefan Agner <stefan@agner.ch>
 ---
