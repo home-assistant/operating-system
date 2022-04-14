@@ -12,7 +12,7 @@ PI_BLUETOOTH_LICENSE_FILES = debian/copyright
 
 define BLUETOOTH_BCM43XX_INSTALL_TARGET_CMDS
 	$(INSTALL) -d $(TARGET_DIR)/etc/systemd/system/hassos-hardware.target.wants
-	$(INSTALL) -m 0644 $(BR2_EXTERNAL_HASSOS_PATH)/bluetooth-bcm43xx.service $(TARGET_DIR)/usr/lib/systemd/system/
+	$(INSTALL) -m 0644 $(BR2_EXTERNAL_HASSOS_PATH)/hciuart.service $(TARGET_DIR)/usr/lib/systemd/system/
 	$(INSTALL) -m 0644 $(BR2_EXTERNAL_HASSOS_PATH)/bthelper@.service $(TARGET_DIR)/usr/lib/systemd/system/
 
 	$(INSTALL) -d $(TARGET_DIR)/usr/bin

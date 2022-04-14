@@ -1,9 +1,7 @@
 [Unit]
-Description=Bluetooth for BCM43xx
-Before=bluetooth.service
-Requires=dev-serial1.device
-After=dev-serial1.device
+Description=Configure Bluetooth Modems connected by UART
 ConditionFileNotEmpty=/proc/device-tree/soc/gpio@7e200000/bt_pins/brcm,pins
+After=dev-serial1.device
 
 [Service]
 Type=forking

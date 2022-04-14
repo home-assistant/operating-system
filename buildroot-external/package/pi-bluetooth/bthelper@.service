@@ -1,8 +1,10 @@
 [Unit]
 Description=Raspberry Pi bluetooth helper
-Requires=bluetooth.service
-After=bluetooth.service
+Requires=hciuart.service bluetooth.service
+After=hciuart.service
+Before=bluetooth.service
 
 [Service]
-Type=simple
+Type=oneshot
 ExecStart=/usr/bin/bthelper %I
+RemainAfterExit=yes
