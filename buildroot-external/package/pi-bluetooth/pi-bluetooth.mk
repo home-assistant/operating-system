@@ -1,9 +1,8 @@
 ################################################################################
 #
-# Bluetooth BCM43xx
+# Pi-Bluetooth
 #
 ################################################################################
-
 
 PI_BLUETOOTH_VERSION = 23af66cff597c80523bf9581d7f75d387227f183
 PI_BLUETOOTH_SITE = $(call github,RPi-Distro,pi-bluetooth,$(PI_BLUETOOTH_VERSION))
