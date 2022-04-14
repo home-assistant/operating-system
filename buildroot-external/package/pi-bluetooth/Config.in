@@ -1,0 +1,7 @@
+config BR2_PACKAGE_PI_BLUETOOTH
+	bool "Bluetooth scripts for Raspberry Pi"
+	depends on BR2_PACKAGE_BLUEZ5_UTILS_CLIENT
+	depends on BR2_PACKAGE_BRCMFMAC_SDIO_FIRMWARE_RPI_BT
+	select BR2_PACKAGE_BLUEZ5_UTILS_DEPRECATED
+	help
+	  Install Bluetooth scripts for Raspberry Pi
