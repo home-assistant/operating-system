@@ -1,0 +1,7 @@
+config BR2_PACKAGE_GASKET
+	tristate "Coral Gasket Driver"
+	depends on BR2_LINUX_KERNEL
+	---help---
+	  Driver for Gasket (Google ASIC Software, Kernel Extensions, and Tools)
+          is a top level driver for lightweight communication with Google ASICs.
+          Apex refers to the EdgeTPU v1.
