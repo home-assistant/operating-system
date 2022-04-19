@@ -23,6 +23,8 @@ hassos-xy.raucb
 - The `timesyncd.conf` file allow you to set different NTP servers. HassOS won't boot without correct working time servers!
 - The `hassos-*.raucb` file is a firmware OTA update which will be installed. These can be found on on the [release][hassos-release] page.
 
+Text files that are on USB stick must have Unix (LF) end of line characters. If you create USB stick on Windows machine, be sure to use Notepad++, Visual Studio Code or any other editor, that supports different line endings. In Notepad++ LF EOL can be enabled with setting `Edit -> EOL Conversion -> Unix (LF)`.
+
 You can put this USB stick into the device and it will be read on startup and files written to the correct places. You can also trigger this process later over the
 API/UI or by calling `systemctl restart hassos-config` on the host. *The USB Stick just needs to be inserted to the device during this setup process and can be disconnected afterwards.*
 
