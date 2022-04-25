@@ -41,17 +41,7 @@ jobs:
         with:
           script: |
             const boards = require('./.github/workflows/matrix.json')
-
-            if (context.eventName == "workflow_dispatch") {
-              console.log("Run full build for all boards")
-              return { "board": boards }
-            }
-
-            const labels = context.payload.pull_request.labels.map(l => l.name)
-            const labelsSet = new Set(labels)
-            const buildBoards = boards.filter(b => labelsSet.has(b.label))
-
-            return { "board": buildBoards }
+            return { "board": boards }
 
   build:
     name: Release build for ${{ matrix.board.name }}
