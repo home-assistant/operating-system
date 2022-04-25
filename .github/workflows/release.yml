@@ -44,7 +44,7 @@ jobs:
             return { "board": boards }
 
   build:
-    name: Release build for ${{ matrix.board.name }}
+    name: Release build for ${{ matrix.board.id }}
     needs: validate_release
     strategy:
       matrix: ${{ fromJson(needs.validate_release.outputs.matrix) }}
@@ -75,10 +75,10 @@ jobs:
             -e BUILDER_UID="${BUILDER_UID}" -e BUILDER_GID="${BUILDER_GID}" \
             -v "${{ matrix.board.runner }}-build-cache:/cache" \
             -v "/build/output" \
-            haos-builder make BUILDDIR=/build VERSION_DEV=${{ needs.validate_release.outputs.version_dev }} ${{ matrix.board.name }}
+            haos-builder make BUILDDIR=/build VERSION_DEV=${{ needs.validate_release.outputs.version_dev }} ${{ matrix.board.defconfig }}
 
       - name: Upload disk image
-        if: ${{ matrix.board.name != 'ova' }}
+        if: ${{ matrix.board.id != 'ova' }}
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -99,7 +99,7 @@ jobs:
           asset_content_type: application/octet-stream
 
       - name: Upload ova image
-        if: ${{ matrix.board.name == 'ova' }}
+        if: ${{ matrix.board.id == 'ova' }}
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -110,7 +110,7 @@ jobs:
           asset_content_type: application/x-tar
 
       - name: Upload qcow2 image
-        if: ${{ matrix.board.name == 'ova' || matrix.board.name == 'generic-aarch64' }}
+        if: ${{ matrix.board.id == 'ova' || matrix.board.id == 'generic-aarch64' }}
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -121,7 +121,7 @@ jobs:
           asset_content_type: application/x-xz
 
       - name: Upload vdi image
-        if: ${{ matrix.board.name == 'ova' }}
+        if: ${{ matrix.board.id == 'ova' }}
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -132,7 +132,7 @@ jobs:
           asset_content_type: application/zip
 
       - name: Upload vhdx image
-        if: ${{ matrix.board.name == 'ova' }}
+        if: ${{ matrix.board.id == 'ova' }}
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -143,7 +143,7 @@ jobs:
           asset_content_type: application/zip
 
       - name: Upload vmdk image
-        if: ${{ matrix.board.name == 'ova' || matrix.board.name == 'generic-aarch64' }}
+        if: ${{ matrix.board.id == 'ova' || matrix.board.id == 'generic-aarch64' }}
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
