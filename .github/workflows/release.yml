@@ -47,7 +47,7 @@ jobs:
     name: Release build for ${{ matrix.board.name }}
     needs: validate_release
     strategy:
-      matrix: ${{ fromJson(needs.prepare.outputs.matrix) }}
+      matrix: ${{ fromJson(needs.validate_release.outputs.matrix) }}
     runs-on: ${{ matrix.board.runner }}
 
     steps:
