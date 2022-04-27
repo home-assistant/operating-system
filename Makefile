@@ -26,6 +26,10 @@ all: $(TARGETS)
 $(RELEASE_DIR):
 	mkdir -p $(RELEASE_DIR)
 
+savedefconfig:
+	@echo "config $*"
+	$(MAKE) -C $(BUILDROOT) O=$(O) BR2_EXTERNAL=$(BUILDROOT_EXTERNAL) "savedefconfig"
+
 $(TARGETS_CONFIG): %-config:
 	@echo "config $*"
 	$(MAKE) -C $(BUILDROOT) O=$(O) BR2_EXTERNAL=$(BUILDROOT_EXTERNAL) "$*_defconfig"
