@@ -1,10 +1,10 @@
-From 7cccc3ff3a11bbf572e35678cf1cb8ed03c1fbc9 Mon Sep 17 00:00:00 2001
-Message-Id: <7cccc3ff3a11bbf572e35678cf1cb8ed03c1fbc9.1649681596.git.stefan@agner.ch>
-In-Reply-To: <2d3d8c091bc692999a1c519c1dc1570cc8be2358.1649681596.git.stefan@agner.ch>
-References: <2d3d8c091bc692999a1c519c1dc1570cc8be2358.1649681596.git.stefan@agner.ch>
+From 41127a02d66d07d0a17e904557899b15a067a692 Mon Sep 17 00:00:00 2001
+Message-Id: <41127a02d66d07d0a17e904557899b15a067a692.1651085802.git.stefan@agner.ch>
+In-Reply-To: <2d3d8c091bc692999a1c519c1dc1570cc8be2358.1651085802.git.stefan@agner.ch>
+References: <2d3d8c091bc692999a1c519c1dc1570cc8be2358.1651085802.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Tue, 9 Mar 2021 15:02:53 +0100
-Subject: [PATCH 6/9] ARM: dts: bcm2711: yellow: enable GPIO keys
+Subject: [PATCH 06/10] ARM: dts: bcm2711: yellow: enable GPIO keys
 
 Signed-off-by: Stefan Agner <stefan@agner.ch>
 ---
@@ -12,7 +12,7 @@ Signed-off-by: Stefan Agner <stefan@agner.ch>
  1 file changed, 31 insertions(+)
 
 diff --git a/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
-index f203f7037915..c74193b3987e 100644
+index f6f42bf45c92..e2fa42a11cc9 100644
 --- a/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
 +++ b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
 @@ -4,6 +4,8 @@
@@ -37,15 +37,15 @@ index f203f7037915..c74193b3987e 100644
 +		status = "okay";
 +
 +		power {
-+			label = "Power Button";
++			label = "Blue Button";
 +			linux,code = <KEY_POWER>;
 +			gpios = <&gpio 26 GPIO_ACTIVE_LOW>;
 +			debounce-interval = <100>; // ms
 +		};
 +
 +		user {
-+			label = "User Button";
-+			linux,code = <KEY_MACRO>;
++			label = "Red Button";
++			linux,code = <BTN_1>;
 +			gpios = <&gpio 27 GPIO_ACTIVE_LOW>;
 +			debounce-interval = <100>; // ms
 +		};
@@ -68,5 +68,5 @@ index f203f7037915..c74193b3987e 100644
  		brcm,pins = <9 10 11>;
  		brcm,function = <BCM2835_FSEL_ALT0>;
 -- 
-2.35.1
+2.36.0
 
