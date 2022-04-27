@@ -1,10 +1,10 @@
-From 7211af3546200c906b719c3e664d2554d48a43f5 Mon Sep 17 00:00:00 2001
-Message-Id: <7211af3546200c906b719c3e664d2554d48a43f5.1649681596.git.stefan@agner.ch>
-In-Reply-To: <2d3d8c091bc692999a1c519c1dc1570cc8be2358.1649681596.git.stefan@agner.ch>
-References: <2d3d8c091bc692999a1c519c1dc1570cc8be2358.1649681596.git.stefan@agner.ch>
+From f1553f413c8f53694d2f27db5b5c43d19cf1ff4f Mon Sep 17 00:00:00 2001
+Message-Id: <f1553f413c8f53694d2f27db5b5c43d19cf1ff4f.1651085802.git.stefan@agner.ch>
+In-Reply-To: <2d3d8c091bc692999a1c519c1dc1570cc8be2358.1651085802.git.stefan@agner.ch>
+References: <2d3d8c091bc692999a1c519c1dc1570cc8be2358.1651085802.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Fri, 7 Jan 2022 17:10:00 +0100
-Subject: [PATCH 9/9] ARM: dts: bcm2711: yellow: enable USB host mode by
+Subject: [PATCH 09/10] ARM: dts: bcm2711: yellow: enable USB host mode by
  default
 
 The DWC2 controller is disable by default. Enable it since Home
@@ -16,7 +16,7 @@ Signed-off-by: Stefan Agner <stefan@agner.ch>
  1 file changed, 9 insertions(+)
 
 diff --git a/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
-index 5c682d09616a..b988d50234c1 100644
+index f78428ea64f3..711a09441ad0 100644
 --- a/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
 +++ b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
 @@ -599,6 +599,15 @@ &sdhost {
@@ -36,5 +36,5 @@ index 5c682d09616a..b988d50234c1 100644
  	led-modes = <0x00 0x08>; /* link/activity link */
  };
 -- 
-2.35.1
+2.36.0
 
