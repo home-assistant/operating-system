@@ -1,0 +1,58 @@
+From 74d815143bb9b504fb54d3eaf0ed3e382b26000a Mon Sep 17 00:00:00 2001
+Message-Id: <74d815143bb9b504fb54d3eaf0ed3e382b26000a.1651759401.git.stefan@agner.ch>
+In-Reply-To: <184b6a054e04bb4c7fb4885a30d62314229dc551.1651759401.git.stefan@agner.ch>
+References: <184b6a054e04bb4c7fb4885a30d62314229dc551.1651759401.git.stefan@agner.ch>
+From: Stefan Agner <stefan@agner.ch>
+Date: Thu, 5 May 2022 15:46:51 +0200
+Subject: [PATCH] efidisk: pass buffers with higher alignment
+
+Despite the UEFI specification saying "the requirement is that the
+start address of a buffer must be evenly divisible by IoAlign with
+no remainder.", it seems that a higher alignment requirement is
+neecssary on some system (e.g. a Intel NUC system with NVMe SSD).
+That particular system has IoAlign set to 2, and sometimes returns
+status 7 when buffers with alignment of 2 are passed. Things seem
+to work fine with buffers aligned to 4 bytes.
+
+It seems that IoAlign > 1 means 2 ^ IoAlign. There is also such a hint
+in an example printed in the Driver Writer's Guide:
+ScsiPassThruMode.IoAlign = 2; // Data must be alligned on 4-byte boundary
+
+Pass 2 ^ IoAlign aligned buffers to make sure GRUB2 works properly on
+all systems.
+
+Note: The problem has only noticed with compressed squashfs. It seems
+that ext4 (and presumably other file system drivers) pass buffers with
+a higher alignment already.
+
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+---
+ grub-core/disk/efi/efidisk.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
+
+diff --git a/grub-core/disk/efi/efidisk.c b/grub-core/disk/efi/efidisk.c
+index 9e20af70e..eaf22367f 100644
+--- a/grub-core/disk/efi/efidisk.c
++++ b/grub-core/disk/efi/efidisk.c
+@@ -553,8 +553,16 @@ grub_efidisk_readwrite (struct grub_disk *disk, grub_disk_addr_t sector,
+   d = disk->data;
+   bio = d->block_io;
+ 
+-  /* Set alignment to 1 if 0 specified */
+-  io_align = bio->media->io_align ? bio->media->io_align : 1;
++  /*
++   * If IoAlign is > 1, it means alignment by 2^IoAlign
++   * Note: UEFI spec claims alignment by IoAlign. But there are systems
++   * with IoAlign=2 which return status 7 if 2 bytes aligned buffers are
++   * passed.
++   */
++  if (bio->media->io_align > 1)
++    io_align = 1 << bio->media->io_align;
++  else
++    io_align = 1;
+   num_bytes = size << disk->log_sector_size;
+ 
+   if ((grub_addr_t) buf & (io_align - 1))
+-- 
+2.36.0
+
