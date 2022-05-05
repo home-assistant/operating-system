@@ -1,10 +1,10 @@
 From 3b2b7d0c9a886d913062ed5a9ffa8b764d882540 Mon Sep 17 00:00:00 2001
-Message-Id: <3b2b7d0c9a886d913062ed5a9ffa8b764d882540.1650445464.git.stefan@agner.ch>
-In-Reply-To: <184b6a054e04bb4c7fb4885a30d62314229dc551.1650445464.git.stefan@agner.ch>
-References: <184b6a054e04bb4c7fb4885a30d62314229dc551.1650445464.git.stefan@agner.ch>
+Message-Id: <3b2b7d0c9a886d913062ed5a9ffa8b764d882540.1651759401.git.stefan@agner.ch>
+In-Reply-To: <184b6a054e04bb4c7fb4885a30d62314229dc551.1651759401.git.stefan@agner.ch>
+References: <184b6a054e04bb4c7fb4885a30d62314229dc551.1651759401.git.stefan@agner.ch>
 From: Peter Jones <pjones@redhat.com>
 Date: Mon, 27 Jan 2020 15:01:16 -0500
-Subject: [PATCH 2/2] squash4: Fix an uninitialized variable
+Subject: [PATCH] squash4: Fix an uninitialized variable
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -40,5 +40,5 @@ index 95d5c1e1f..82704f966 100644
    grub_uint64_t a = 0;
    grub_size_t i;
 -- 
-2.35.3
+2.36.0
 
