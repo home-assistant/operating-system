@@ -1,7 +1,10 @@
-From 062488e4b8fd552c01e1104b3bc91a6f7ffe6c41 Mon Sep 17 00:00:00 2001
+From e45da42e71e4f92995d5ec11679ca00b0971dbfe Mon Sep 17 00:00:00 2001
+Message-Id: <e45da42e71e4f92995d5ec11679ca00b0971dbfe.1652225232.git.stefan@agner.ch>
+In-Reply-To: <ff0c5c49024da05b47d4fcc4d115761c43eef7a6.1652225232.git.stefan@agner.ch>
+References: <ff0c5c49024da05b47d4fcc4d115761c43eef7a6.1652225232.git.stefan@agner.ch>
 From: Myy Miouyouyou <myy@miouyouyou.fr>
 Date: Thu, 19 Oct 2017 21:24:47 +0200
-Subject: [PATCH 10/28] RK3288: DTSI: rk3288.dtsi: Add missing SPI2 pinctrl
+Subject: [PATCH] RK3288: DTSI: rk3288.dtsi: Add missing SPI2 pinctrl
 
 The spi2_cs1 pin reference is missing in the spi2 first pin control
 definition.
@@ -14,10 +17,10 @@ Signed-off-by: Myy Miouyouyou <myy@miouyouyou.fr>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/arch/arm/boot/dts/rk3288.dtsi b/arch/arm/boot/dts/rk3288.dtsi
-index 5b789528..9ed532cc 100644
+index ff6faa82192b..5061c5418d75 100644
 --- a/arch/arm/boot/dts/rk3288.dtsi
 +++ b/arch/arm/boot/dts/rk3288.dtsi
-@@ -334,7 +334,7 @@
+@@ -311,7 +311,7 @@ spi2: spi@ff130000 {
  		dma-names = "tx", "rx";
  		interrupts = <GIC_SPI 46 IRQ_TYPE_LEVEL_HIGH>;
  		pinctrl-names = "default";
@@ -27,5 +30,5 @@ index 5b789528..9ed532cc 100644
  		#address-cells = <1>;
  		#size-cells = <0>;
 -- 
-2.11.0
+2.36.1
 

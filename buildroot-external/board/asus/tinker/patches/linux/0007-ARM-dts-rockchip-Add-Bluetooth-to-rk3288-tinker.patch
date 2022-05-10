@@ -1,0 +1,63 @@
+From 392472dc977300a9f2a62159c105a6dfed878643 Mon Sep 17 00:00:00 2001
+Message-Id: <392472dc977300a9f2a62159c105a6dfed878643.1652225232.git.stefan@agner.ch>
+In-Reply-To: <ff0c5c49024da05b47d4fcc4d115761c43eef7a6.1652225232.git.stefan@agner.ch>
+References: <ff0c5c49024da05b47d4fcc4d115761c43eef7a6.1652225232.git.stefan@agner.ch>
+From: Stefan Agner <stefan@agner.ch>
+Date: Tue, 10 May 2022 22:57:26 +0200
+Subject: [PATCH] ARM: dts: rockchip: Add Bluetooth to rk3288-tinker
+
+Enable Bluetooth support via UART0. Use the existing bindings
+for Realtek rtl8723bs Bluetooth device.
+
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+---
+ arch/arm/boot/dts/rk3288-tinker.dtsi | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
+
+diff --git a/arch/arm/boot/dts/rk3288-tinker.dtsi b/arch/arm/boot/dts/rk3288-tinker.dtsi
+index cdff130d1292..e904c130dedc 100644
+--- a/arch/arm/boot/dts/rk3288-tinker.dtsi
++++ b/arch/arm/boot/dts/rk3288-tinker.dtsi
+@@ -388,6 +388,20 @@ bl_en: bl-en {
+ 		};
+ 	};
+ 
++	bluetooth {
++		bt_enable_pin: bt-enable-pin {
++			rockchip,pins = <4 RK_PD5 RK_FUNC_GPIO &pcfg_pull_none>;
++		};
++
++		bt_device_wake_pin: bt-device-wake-pin {
++			rockchip,pins = <4 RK_PD2 RK_FUNC_GPIO &pcfg_pull_none>;
++		};
++
++		bt_host_wake_pin: bt-host-wake-pin {
++			rockchip,pins = <4 RK_PD7 RK_FUNC_GPIO &pcfg_pull_none>;
++		};
++	};
++
+ 	buttons {
+ 		pwrbtn: pwrbtn {
+ 			rockchip,pins = <0 RK_PA5 RK_FUNC_GPIO &pcfg_pull_up>;
+@@ -520,6 +534,18 @@ &tsadc {
+ 
+ &uart0 {
+ 	status = "okay";
++	pinctrl-names = "default";
++	pinctrl-0 = <&uart0_xfer &uart0_cts &uart0_rts>;
++	uart-has-rtscts;
++
++	bluetooth {
++		compatible = "realtek,rtl8723bs-bt";
++		pinctrl-names = "default";
++		pinctrl-0 = <&bt_device_wake_pin &bt_host_wake_pin &bt_enable_pin>;
++		enable-gpios = <&gpio4 RK_PD5 GPIO_ACTIVE_HIGH>;
++		device-wake-gpios = <&gpio4 RK_PD2 GPIO_ACTIVE_HIGH>;
++		host-wake-gpios = <&gpio4 RK_PD7 GPIO_ACTIVE_HIGH>;
++	};
+ };
+ 
+ &uart1 {
+-- 
+2.36.1
+
