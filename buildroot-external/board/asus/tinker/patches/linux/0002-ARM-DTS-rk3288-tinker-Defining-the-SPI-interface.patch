@@ -1,7 +1,7 @@
-From 8b5d04dbe80d237fd9a9a74a21e063d29b45743b Mon Sep 17 00:00:00 2001
-Message-Id: <8b5d04dbe80d237fd9a9a74a21e063d29b45743b.1652216438.git.stefan@agner.ch>
-In-Reply-To: <22e0fba77fffa3c5addabda4fd159a943ad7400f.1652216438.git.stefan@agner.ch>
-References: <22e0fba77fffa3c5addabda4fd159a943ad7400f.1652216438.git.stefan@agner.ch>
+From e73b4b762a0842cc75b2784e4c4267f6f4fc50c4 Mon Sep 17 00:00:00 2001
+Message-Id: <e73b4b762a0842cc75b2784e4c4267f6f4fc50c4.1652225232.git.stefan@agner.ch>
+In-Reply-To: <ff0c5c49024da05b47d4fcc4d115761c43eef7a6.1652225232.git.stefan@agner.ch>
+References: <ff0c5c49024da05b47d4fcc4d115761c43eef7a6.1652225232.git.stefan@agner.ch>
 From: "Miouyouyou (Myy)" <myy@miouyouyou.fr>
 Date: Mon, 5 Nov 2018 22:15:14 +0100
 Subject: [PATCH] ARM: DTS: rk3288-tinker: Defining the SPI interface

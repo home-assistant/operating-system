@@ -1,7 +1,7 @@
-From 0fe57e0961593ef3dd05850ac8b7b37d1900bbf0 Mon Sep 17 00:00:00 2001
-Message-Id: <0fe57e0961593ef3dd05850ac8b7b37d1900bbf0.1652216438.git.stefan@agner.ch>
-In-Reply-To: <22e0fba77fffa3c5addabda4fd159a943ad7400f.1652216438.git.stefan@agner.ch>
-References: <22e0fba77fffa3c5addabda4fd159a943ad7400f.1652216438.git.stefan@agner.ch>
+From e45da42e71e4f92995d5ec11679ca00b0971dbfe Mon Sep 17 00:00:00 2001
+Message-Id: <e45da42e71e4f92995d5ec11679ca00b0971dbfe.1652225232.git.stefan@agner.ch>
+In-Reply-To: <ff0c5c49024da05b47d4fcc4d115761c43eef7a6.1652225232.git.stefan@agner.ch>
+References: <ff0c5c49024da05b47d4fcc4d115761c43eef7a6.1652225232.git.stefan@agner.ch>
 From: Myy Miouyouyou <myy@miouyouyou.fr>
 Date: Thu, 19 Oct 2017 21:24:47 +0200
 Subject: [PATCH] RK3288: DTSI: rk3288.dtsi: Add missing SPI2 pinctrl

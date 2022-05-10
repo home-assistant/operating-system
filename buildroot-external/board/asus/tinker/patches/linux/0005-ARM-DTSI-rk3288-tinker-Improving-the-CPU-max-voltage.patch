@@ -1,7 +1,7 @@
-From a88f01ea561b494080883f73e8ab310644daefe3 Mon Sep 17 00:00:00 2001
-Message-Id: <a88f01ea561b494080883f73e8ab310644daefe3.1652216438.git.stefan@agner.ch>
-In-Reply-To: <22e0fba77fffa3c5addabda4fd159a943ad7400f.1652216438.git.stefan@agner.ch>
-References: <22e0fba77fffa3c5addabda4fd159a943ad7400f.1652216438.git.stefan@agner.ch>
+From e33d3ba4c34d0893d9d07b62ad4eea41d2e8bbc0 Mon Sep 17 00:00:00 2001
+Message-Id: <e33d3ba4c34d0893d9d07b62ad4eea41d2e8bbc0.1652225232.git.stefan@agner.ch>
+In-Reply-To: <ff0c5c49024da05b47d4fcc4d115761c43eef7a6.1652225232.git.stefan@agner.ch>
+References: <ff0c5c49024da05b47d4fcc4d115761c43eef7a6.1652225232.git.stefan@agner.ch>
 From: "Miouyouyou (Myy)" <myy@miouyouyou.fr>
 Date: Mon, 5 Nov 2018 20:16:05 +0100
 Subject: [PATCH] ARM: DTSI: rk3288-tinker: Improving the CPU max voltage

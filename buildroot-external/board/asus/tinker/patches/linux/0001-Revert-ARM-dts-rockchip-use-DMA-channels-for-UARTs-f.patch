@@ -1,5 +1,5 @@
-From 22e0fba77fffa3c5addabda4fd159a943ad7400f Mon Sep 17 00:00:00 2001
-Message-Id: <22e0fba77fffa3c5addabda4fd159a943ad7400f.1652216438.git.stefan@agner.ch>
+From ff0c5c49024da05b47d4fcc4d115761c43eef7a6 Mon Sep 17 00:00:00 2001
+Message-Id: <ff0c5c49024da05b47d4fcc4d115761c43eef7a6.1652225232.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Wed, 17 Feb 2021 19:55:41 +0100
 Subject: [PATCH] Revert "ARM: dts: rockchip: use DMA channels for UARTs for

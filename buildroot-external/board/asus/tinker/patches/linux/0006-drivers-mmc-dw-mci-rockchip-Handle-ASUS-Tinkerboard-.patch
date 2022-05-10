@@ -1,7 +1,7 @@
-From 3719f7b2760cbbd52b9930a795a621b1bd177120 Mon Sep 17 00:00:00 2001
-Message-Id: <3719f7b2760cbbd52b9930a795a621b1bd177120.1652216438.git.stefan@agner.ch>
-In-Reply-To: <22e0fba77fffa3c5addabda4fd159a943ad7400f.1652216438.git.stefan@agner.ch>
-References: <22e0fba77fffa3c5addabda4fd159a943ad7400f.1652216438.git.stefan@agner.ch>
+From e073d75cd0dbfbcbbf1b46e565b326db37b75e6a Mon Sep 17 00:00:00 2001
+Message-Id: <e073d75cd0dbfbcbbf1b46e565b326db37b75e6a.1652225232.git.stefan@agner.ch>
+In-Reply-To: <ff0c5c49024da05b47d4fcc4d115761c43eef7a6.1652225232.git.stefan@agner.ch>
+References: <ff0c5c49024da05b47d4fcc4d115761c43eef7a6.1652225232.git.stefan@agner.ch>
 From: Myy Miouyouyou <myy@miouyouyou.fr>
 Date: Sun, 7 Jan 2018 01:52:44 +0100
 Subject: [PATCH] drivers: mmc: dw-mci-rockchip: Handle ASUS Tinkerboard reboot

@@ -1,7 +1,7 @@
-From 2435118b5871d3555e28144862f315be33da243d Mon Sep 17 00:00:00 2001
-Message-Id: <2435118b5871d3555e28144862f315be33da243d.1652216438.git.stefan@agner.ch>
-In-Reply-To: <22e0fba77fffa3c5addabda4fd159a943ad7400f.1652216438.git.stefan@agner.ch>
-References: <22e0fba77fffa3c5addabda4fd159a943ad7400f.1652216438.git.stefan@agner.ch>
+From 00de5155d12a178b83961f459ddccd7fa08ec25c Mon Sep 17 00:00:00 2001
+Message-Id: <00de5155d12a178b83961f459ddccd7fa08ec25c.1652225232.git.stefan@agner.ch>
+In-Reply-To: <ff0c5c49024da05b47d4fcc4d115761c43eef7a6.1652225232.git.stefan@agner.ch>
+References: <ff0c5c49024da05b47d4fcc4d115761c43eef7a6.1652225232.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Fri, 4 Sep 2020 21:57:55 +0200
 Subject: [PATCH] ARM: dts: rockchip: enable I2C1/4 on rk3288-tinker
