@@ -6,12 +6,15 @@
 # This includes compiling of required device tree overlays for
 # selected platforms
 #
-# Copyright (c) 2018-2021 Jens Maus <mail@jens-maus.de>
+# Codeload URL:
+# https://codeload.github.com/jens-maus/RaspberryMatic/tar.gz/COMMIT
+#
+# Copyright (c) 2018-2022 Jens Maus <mail@jens-maus.de>
 # https://github.com/jens-maus/RaspberryMatic/tree/master/buildroot-external/package/rpi-rf-mod
 #
 ################################################################################
 
-RPI_RF_MOD_VERSION = 7f5d50c8ac72e114a6b11a4ae0e92e316260fb0d
+RPI_RF_MOD_VERSION = 41a25de861e84d411f92d9139da81f19c857d91e
 RPI_RF_MOD_SITE = $(call github,jens-maus,RaspberryMatic,$(RPI_RF_MOD_VERSION))
 RPI_RF_MOD_LICENSE = Apache-2.0
 RPI_RF_MOD_DEPENDENCIES = host-dtc
