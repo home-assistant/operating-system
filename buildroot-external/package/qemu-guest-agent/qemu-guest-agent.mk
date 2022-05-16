@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-QEMU_GUEST_AGENT_VERSION = 4.2.0
+QEMU_GUEST_AGENT_VERSION = 7.0.0
 QEMU_GUEST_AGENT_SOURCE = qemu-$(QEMU_GUEST_AGENT_VERSION).tar.xz
 QEMU_GUEST_AGENT_SITE = http://download.qemu.org
 QEMU_GUEST_AGENT_LICENSE = GPL-2.0, LGPL-2.1, MIT, BSD-3-Clause, BSD-2-Clause, Others/BSD-1c
@@ -19,7 +19,7 @@ QEMU_GUEST_AGENT_DEPENDENCIES = host-pkgconf libglib2 zlib
 # not automatically pulled. :-(
 QEMU_GUEST_AGENT_LIBS = -lrt -lm
 
-QEMU_GUEST_AGENT_OPTS = -lrt -lm
+#QEMU_GUEST_AGENT_OPTS =
 
 QEMU_GUEST_AGENT_VARS = LIBTOOL=$(HOST_DIR)/bin/libtool
 
@@ -38,6 +38,8 @@ define QEMU_GUEST_AGENT_CONFIGURE_CMDS
 			--localstatedir=/var \
 			--cross-prefix=$(TARGET_CROSS) \
 			--audio-drv-list= \
+			--meson=$(HOST_DIR)/bin/meson \
+			--ninja=$(HOST_DIR)/bin/ninja \
 			--disable-kvm \
 			--disable-linux-user \
 			--disable-linux-aio \
@@ -60,7 +62,6 @@ define QEMU_GUEST_AGENT_CONFIGURE_CMDS
 			--disable-virtfs \
 			--disable-brlapi \
 			--disable-fdt \
-			--disable-bluez \
 			--disable-kvm \
 			--disable-rdma \
 			--disable-vde \
@@ -68,6 +69,7 @@ define QEMU_GUEST_AGENT_CONFIGURE_CMDS
 			--disable-cap-ng \
 			--disable-attr \
 			--disable-vhost-net \
+			--disable-vhost-user \
 			--disable-spice \
 			--disable-rbd \
 			--disable-libiscsi \
@@ -85,19 +87,18 @@ define QEMU_GUEST_AGENT_CONFIGURE_CMDS
 			--disable-numa \
 			--disable-blobs \
 			--disable-capstone \
-			--disable-tools \
-			--disable-slirp \
 			--disable-tcg-interpreter \
+			--enable-tools \
 			--enable-guest-agent
 endef
 
 define QEMU_GUEST_AGENT_BUILD_CMDS
 	unset TARGET_DIR; \
-	$(TARGET_MAKE_ENV) $(MAKE) -C $(@D) qemu-ga
+	$(TARGET_MAKE_ENV) $(MAKE) -C $(@D)
 endef
 
 define QEMU_GUEST_AGENT_INSTALL_TARGET_CMDS
-	$(INSTALL) -m 755 $(@D)/qemu-ga $(TARGET_DIR)/usr/libexec/
+	$(INSTALL) -D -m 0755 $(@D)/build/qga/qemu-ga $(TARGET_DIR)/usr/libexec/qemu-ga
 endef
 
 define QEMU_GUEST_AGENT_INSTALL_INIT_SYSTEMD
