@@ -11,7 +11,7 @@ timesyncd_dhcp_ntp_remove() {
 }
 
 timesyncd_dhcp_ntp_add() {
-  mkdir -p $(dirname $TIMESYNCD_CONF)
+  mkdir -p "$(dirname $TIMESYNCD_CONF)"
 
   echo '[Time]' > ${TIMESYNCD_CONF}
   echo "NTP=${DHCP4_NTP_SERVERS}" >> ${TIMESYNCD_CONF}
@@ -19,12 +19,13 @@ timesyncd_dhcp_ntp_add() {
   systemctl restart systemd-timesyncd.service
 }
 
+# shellcheck disable=SC2034
 INTERFACE=${1}
 ACTION=${2}
 
 case ${ACTION} in
   up|down|dhcp4-change)
-    if [ ! -z "${DHCP4_NTP_SERVERS}" ]
+    if [ -n "${DHCP4_NTP_SERVERS}" ]
     then
       timesyncd_dhcp_ntp_add
       RETURN_CODE=$?
@@ -34,7 +35,7 @@ case ${ACTION} in
     fi
   ;;
   *)
-    $RETURN_CODE=0
+    RETURN_CODE=0
     ;;
 esac
 
