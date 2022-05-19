@@ -1,46 +1,52 @@
-From e3c27254802e1d7ebaa64df8edb93b0a899f1678 Mon Sep 17 00:00:00 2001
-Message-Id: <e3c27254802e1d7ebaa64df8edb93b0a899f1678.1652212828.git.stefan@agner.ch>
-In-Reply-To: <184b6a054e04bb4c7fb4885a30d62314229dc551.1652212828.git.stefan@agner.ch>
-References: <184b6a054e04bb4c7fb4885a30d62314229dc551.1652212828.git.stefan@agner.ch>
+From 7eaacdbf00ec29931553384f914c229c6078582e Mon Sep 17 00:00:00 2001
+Message-Id: <7eaacdbf00ec29931553384f914c229c6078582e.1652945863.git.stefan@agner.ch>
+In-Reply-To: <184b6a054e04bb4c7fb4885a30d62314229dc551.1652945863.git.stefan@agner.ch>
+References: <184b6a054e04bb4c7fb4885a30d62314229dc551.1652945863.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Thu, 5 May 2022 15:46:51 +0200
 Subject: [PATCH] efidisk: pass buffers with higher alignment
 
-Despite the UEFI specification saying "the requirement is that the
-start address of a buffer must be evenly divisible by IoAlign with
-no remainder.", it seems that a higher alignment requirement is
-neecssary on some system (e.g. a Intel NUC system with NVMe SSD).
-That particular system has IoAlign set to 2, and sometimes returns
-status 7 when buffers with alignment of 2 are passed. Things seem
-to work fine with buffers aligned to 4 bytes.
+Some devices report a IoAlign value of 2, however seem to require a
+buffer with higher alignment.
 
-It seems that some system interpret IoAlign > 1 to mean 2 ^ IoAlign.
-There is also such a hint in an example printed in the Driver Writer's
-Guide:
+The UEFI specification is saying: "IoAlign values of 0 and 1 mean that
+the buffer can be placed anywhere in memory. Otherwise, IoAlign must
+be a power of 2, and the requirement is that the start address of a
+buffer must be evenly divisible by IoAlign with no remainder."
+
+It seems that this got misinterpreted by some vendors assuming IoAlign
+is 2^IoAlign. There is also such a hint in an example in earlier
+versions of the Driver Writer's Guide:
 ScsiPassThruMode.IoAlign = 2; // Data must be alligned on 4-byte boundary
 
-However, some systems (e.g. U-Boot and some drivers in EDK II) do follow
-the UEFI specification.
+However, it is unsafe to just blindly align buffers by 2^IoAlign, as
+this would lead to an overflow for systems which use block size
+alignment (e.g. 512 bytes, for example U-Boot).
 
-Work around by using an alignment of at least 512 bytes in case
-alignment is requested. Also make sure that IoAlign is still respected
-as per UEFI specification if a higher alignment than block size is
+Ontop of that, some devices seem to report no alignment requirements
+but seem to read corrupt data or report read errors if the buffer is
+not aligned.
+
+Work around by using an alignment of at least BlockSize (typically 512
+bytes) in any casea. Also make sure that IoAlign is still respected as
+per UEFI specification if a higher alignment than block size is
 requested.
 
 Note: The problem has only noticed with compressed squashfs. It seems
 that ext4 (and presumably other file system drivers) pass buffers with
 a higher alignment already.
 
+Acked-by: Heinrich Schuchardt <xypron.glpk@gmx.de>
 Signed-off-by: Stefan Agner <stefan@agner.ch>
 ---
- grub-core/disk/efi/efidisk.c | 18 ++++++++++++++++--
- 1 file changed, 16 insertions(+), 2 deletions(-)
+ grub-core/disk/efi/efidisk.c | 15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
 
 diff --git a/grub-core/disk/efi/efidisk.c b/grub-core/disk/efi/efidisk.c
-index 9e20af70e..c4eb4f4e7 100644
+index 9e20af70e..c6e37f131 100644
 --- a/grub-core/disk/efi/efidisk.c
 +++ b/grub-core/disk/efi/efidisk.c
-@@ -553,8 +553,22 @@ grub_efidisk_readwrite (struct grub_disk *disk, grub_disk_addr_t sector,
+@@ -553,8 +553,19 @@ grub_efidisk_readwrite (struct grub_disk *disk, grub_disk_addr_t sector,
    d = disk->data;
    bio = d->block_io;
  
@@ -49,18 +55,15 @@ index 9e20af70e..c4eb4f4e7 100644
 +  /*
 +   * If IoAlign is > 1, it should represent the required alignment. However,
 +   * some UEFI implementation on Intel NUC systems seem to use IoAlign=2 but
-+   * require 2^IoAlign.
-+   * Make sure to align to at least block size if IO alignment is required.
++   * require 2^IoAlign. Some implementation seem to require alignment despite
++   * not reporting any requirements.
++   *
++   * Make sure to align to at least block size in any case.
 +   */
-+  if (bio->media->io_align > 1)
-+    {
-+      if (bio->media->io_align < bio->media->block_size)
-+        io_align = bio->media->block_size;
-+      else
-+        io_align = bio->media->io_align;
-+    }
++  if (bio->media->io_align < bio->media->block_size)
++    io_align = bio->media->block_size;
 +  else
-+    io_align = 1;
++    io_align = bio->media->io_align;
 +
    num_bytes = size << disk->log_sector_size;
  
