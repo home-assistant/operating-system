@@ -44,6 +44,8 @@ jobs:
             return { "board": boards }
 
   build:
+    permissions:
+      contents: write  # for actions/upload-release-asset to upload release asset
     name: Release build for ${{ matrix.board.id }}
     needs: validate_release
     strategy:
