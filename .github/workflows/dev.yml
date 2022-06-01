@@ -32,7 +32,7 @@ jobs:
           version_pr=$(printf "%05d" ${{ github.event.pull_request.number }})
           echo "Development build for PR #${{ github.event.pull_request.number }}"
           echo "::set-output name=version_pr::${version_pr}"
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Get Major/Minor version
         id: version_main
         run: |
@@ -78,7 +78,7 @@ jobs:
             return { "ref": context.payload.pull_request.head.sha }
 
       - name: Checkout source
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           submodules: true
           persist-credentials: false
