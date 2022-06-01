@@ -40,7 +40,7 @@ jobs:
           build=$(cat ${GITHUB_WORKSPACE}/buildroot-external/meta | grep VERSION_BUILD | cut -d'=' -f2)
           echo "::set-output name=version_main::${major}.${build}"
       - name: Create build matrix
-        uses: actions/github-script@v4
+        uses: actions/github-script@v6
         id: generate_matrix
         with:
           script: |
@@ -69,7 +69,7 @@ jobs:
 
     steps:
       - name: Define git reference
-        uses: actions/github-script@v4
+        uses: actions/github-script@v6
         id: generate_gitref
         with:
           script: |
