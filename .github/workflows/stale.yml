@@ -16,7 +16,7 @@ jobs:
       # - No PRs marked as no-stale or pinned
       # - No issues marked as no-stale, help-wanted or pinned
       - name: 90 days stale issues & PRs policy
-        uses: actions/stale@v4
+        uses: actions/stale@v5
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           days-before-stale: 90
