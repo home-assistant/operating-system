@@ -1,10 +1,10 @@
 From ae45864457182fcaa67911e1e3d8db242dff3646 Mon Sep 17 00:00:00 2001
-Message-Id: <ae45864457182fcaa67911e1e3d8db242dff3646.1645627172.git.stefan@agner.ch>
-In-Reply-To: <24b77460dbfa2497ceb7a1611bf28b6eb88a1d74.1645627172.git.stefan@agner.ch>
-References: <24b77460dbfa2497ceb7a1611bf28b6eb88a1d74.1645627172.git.stefan@agner.ch>
+Message-Id: <ae45864457182fcaa67911e1e3d8db242dff3646.1654086219.git.stefan@agner.ch>
+In-Reply-To: <24b77460dbfa2497ceb7a1611bf28b6eb88a1d74.1654086219.git.stefan@agner.ch>
+References: <24b77460dbfa2497ceb7a1611bf28b6eb88a1d74.1654086219.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Tue, 29 Dec 2020 23:34:52 +0100
-Subject: [PATCH 3/5] rpi: add NVMe to boot order
+Subject: [PATCH] rpi: add NVMe to boot order
 
 The Compute Module 4 I/O Board can support a NVMe. Add NVMe to the boot
 order.
@@ -40,5 +40,5 @@ index 4c5c1ac31f..e24c94c7d2 100644
  	BOOT_TARGET_PXE(func) \
  	BOOT_TARGET_DHCP(func)
 -- 
-2.35.1
+2.36.1
 
