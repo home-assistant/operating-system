@@ -12,6 +12,9 @@ jobs:
     if: ${{ github.event_name == 'workflow_dispatch' || contains(github.event.pull_request.labels.*.name, 'run-dev-build') }}
     name: Prepare build
     runs-on: [ "ubuntu-20.04" ]
+    permissions:
+      contents: read
+      pull-requests: read
     outputs:
       version_main: ${{ steps.version_main.outputs.version_main }}
       version_dev: ${{ steps.version_dev.outputs.version_dev }}${{ steps.version_pr.outputs.version_pr }}
