@@ -6,9 +6,6 @@ on:
     - cron: "0 * * * *"
   workflow_dispatch:
 
-permissions:
-  contents: read
-
 jobs:
   stale:
     permissions:

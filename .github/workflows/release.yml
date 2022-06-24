@@ -5,8 +5,7 @@ name: Release build
 on:
   release:
     types: [published]
-permissions:
-  contents: read
+
 jobs:
   validate_release:
     name: Validate release
