@@ -8,6 +8,9 @@ on:
 
 jobs:
   update_release_draft:
+    permissions:
+      contents: write  # for release-drafter/release-drafter to create a github release
+      pull-requests: read  # for release-drafter/release-drafter to read PR content and labels
     runs-on: ubuntu-latest
     steps:
       - uses: release-drafter/release-drafter@v5
