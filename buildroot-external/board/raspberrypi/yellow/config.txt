@@ -7,8 +7,11 @@ disable_splash=1
 kernel=u-boot.bin
 arm_64bit=1
 
-# uncomment to enable primary UART console
+# Enable primary UART by default
 enable_uart=1
+
+# Free up full-fledged PL011 UART for J11
+dtoverlay=miniuart-bt
 
 # No HDMI on Yellow, but we can't set to 16 since we need the full firmware
 # for codecs
@@ -23,9 +26,7 @@ gpu_mem=32
 #dtoverlay=lirc-rpi
 
 # Uncomment this to enable GPIO support for RPI-RF-MOD/HM-MOD-RPI-PCB
-#enable_uart=1
 #dtparam=i2c_arm=on
-#dtoverlay=miniuart-bt
 #dtoverlay=rpi-rf-mod
 
 # Additional overlays and parameters are documented /boot/overlays/README
