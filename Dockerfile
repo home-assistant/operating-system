@@ -28,27 +28,24 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         cpio \
         file \
         git \
+        graphviz \
+        jq \
         make \
         ncurses-dev \
+        openssh-client \
         patch \
         perl \
         python3 \
         python3-matplotlib \
         python-is-python3 \
-        graphviz \
+        qemu-utils \
         rsync \
+        skopeo \
         sudo \
         unzip \
-        zip \
-        wget \
-        qemu-utils \
-        openssh-client \
         vim \
-    && rm -rf /var/lib/apt/lists/*
-
-RUN apt-get update && apt-get install -y --no-install-recommends \
-	skopeo \
-	jq \
+        wget \
+        zip \
     && rm -rf /var/lib/apt/lists/*
 
 # Init entry
