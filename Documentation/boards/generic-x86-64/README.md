@@ -12,6 +12,7 @@ been tested with is listed below.
 |-----------------------|--------------|---------|-------------|
 | Intel NUC5CPYH        | Q3 2015      | yes     | [generic_x86_64](../../../buildroot-external/configs/generic_x86_64_defconfig) |
 | Intel NUC6CAYH        | Q4 2016      | yes     | [generic_x86_64](../../../buildroot-external/configs/generic_x86_64_defconfig) |
+| Intel NUC6CAYS        | Q4 2016      | yes     | [generic_x86_64](../../../buildroot-external/configs/generic_x86_64_defconfig) |
 | Intel NUC7i3DNHE	| Q3 2017      | yes     | [generic_x86_64](../../../buildroot-external/configs/generic_x86_64_defconfig) |
 | Intel NUC10i3FNK2     | Q4 2019      | yes     | [generic_x86_64](../../../buildroot-external/configs/generic_x86_64_defconfig) |
 | Gigabyte GB-BPCE-3455 | 2017         | yes*    | [generic_x86_64](../../../buildroot-external/configs/generic_x86_64_defconfig) |
@@ -48,7 +49,7 @@ The following cards are supported:
 
 ## Bluetooth
 
-Bluetooth is untested.
+Bluetooth integrated in Intel Wireless cards working OK, other options untested.
 
 ## Installation
 
