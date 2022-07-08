@@ -1,12 +1,3 @@
-# We don't need this folder because we map the hole folder
-buildroot/
-buildroot-external/
-buildroot-patches/
-
-# Output/Release directory gets created using build scripts
-output*/
-release/
-
-# Ignore hidden directories as well
-.git/
-.github/
+# Ignore everything except what we really need
+*
+!scripts/
