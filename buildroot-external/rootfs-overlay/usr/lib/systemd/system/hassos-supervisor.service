@@ -4,8 +4,8 @@ Requires=docker.service rauc.service dbus.service
 Wants=network-online.target hassos-apparmor.service time-sync.target systemd-journal-gatewayd.socket
 After=docker.service rauc.service dbus.service network-online.target hassos-apparmor.service time-sync.target systemd-journal-gatewayd.socket
 RequiresMountsFor=/mnt/data /mnt/boot /mnt/overlay
-StartLimitIntervalSec=60
-StartLimitBurst=5
+StartLimitIntervalSec=30m
+StartLimitBurst=3
 ConditionPathExists=/run/dbus/system_bus_socket
 ConditionPathExists=/run/docker.sock
 
