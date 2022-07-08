@@ -133,7 +133,7 @@ Home Assistant OS will recreate the default connection profile during boot.
 Wi-Fi is discouraged for reliability reasons. However, if you still prefer to use Wi-Fi, you can us the `ha network` command to set up Wi-Fi (example for a Raspberry Pi 4, check `ha network info` to check if your board supports Wi-Fi and the name of the Wi-Fi device):
 
 ```bash
-ha network update wlan0 --ipv4-method auto --wifi-auth wpa-psk --wifi-mode infrastructure --wifi-ssid MY-SSID --wifi-psk MY_PASS
+ha network update wlan0 --ipv4-method auto --wifi-auth wpa-psk --wifi-mode infrastructure --wifi-ssid "MY-SSID" --wifi-psk MY_PASS
 ````
 
 ### Powersave
