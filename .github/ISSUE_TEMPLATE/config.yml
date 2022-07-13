@@ -5,7 +5,7 @@ contact_links:
     about: Our documentation has its own issue tracker. Please report issues with the website there.
 
   - name: Report incorrect or missing information on our developer documentation
-    url: https://github.com/home-assistant/developers.home-assistant.io/issues
+    url: https://github.com/home-assistant/developers.home-assistant/issues
     about: Our developer documentation has its own issue tracker. Please report issues with the website there.
 
   - name: Request a feature for the Operating System
