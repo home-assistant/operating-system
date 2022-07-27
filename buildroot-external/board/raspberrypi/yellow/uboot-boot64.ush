@@ -34,6 +34,8 @@ if gpio input GPIO27; then
     echo "Device wipe button has been pressed, setting wipe flag..."
     setenv bootargs_hassos "${bootargs_hassos} haos.wipe=1"
   fi
+elif gpio input GPIO26; then
+  ums 0 mmc 0
 fi
 
 # HassOS system A/B

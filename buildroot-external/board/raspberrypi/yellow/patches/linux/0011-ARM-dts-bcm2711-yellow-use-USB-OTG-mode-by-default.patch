@@ -1,0 +1,32 @@
+From f626368d2e2c7b5fc9066e80ef33d58071c297b6 Mon Sep 17 00:00:00 2001
+Message-Id: <f626368d2e2c7b5fc9066e80ef33d58071c297b6.1658843713.git.stefan@agner.ch>
+In-Reply-To: <2d3d8c091bc692999a1c519c1dc1570cc8be2358.1658843713.git.stefan@agner.ch>
+References: <2d3d8c091bc692999a1c519c1dc1570cc8be2358.1658843713.git.stefan@agner.ch>
+From: Stefan Agner <stefan@agner.ch>
+Date: Tue, 26 Jul 2022 15:53:59 +0200
+Subject: [PATCH 11/11] ARM: dts: bcm2711: yellow: use USB OTG mode by default
+
+OTG seems to work fine, and allows to use the USB-C port as a USB
+peripheral (e.g. in U-Boot via UMS command).
+
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+---
+ arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
+index f2f4f1a49592..f354bfb69093 100644
+--- a/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
++++ b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
+@@ -601,7 +601,7 @@ &sdhost {
+ 
+ &usb {
+ 	compatible = "brcm,bcm2835-usb";
+-	dr_mode = "host";
++	dr_mode = "otg";
+ 	g-np-tx-fifo-size = <32>;
+ 	g-rx-fifo-size = <558>;
+ 	g-tx-fifo-size = <512 512 512 512 512 256 256>;
+-- 
+2.37.1
+

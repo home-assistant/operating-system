@@ -1,10 +1,10 @@
 From 31ab383d0803e39e94472eea192e712fcc6e3cd6 Mon Sep 17 00:00:00 2001
-Message-Id: <31ab383d0803e39e94472eea192e712fcc6e3cd6.1651085802.git.stefan@agner.ch>
-In-Reply-To: <2d3d8c091bc692999a1c519c1dc1570cc8be2358.1651085802.git.stefan@agner.ch>
-References: <2d3d8c091bc692999a1c519c1dc1570cc8be2358.1651085802.git.stefan@agner.ch>
+Message-Id: <31ab383d0803e39e94472eea192e712fcc6e3cd6.1658843713.git.stefan@agner.ch>
+In-Reply-To: <2d3d8c091bc692999a1c519c1dc1570cc8be2358.1658843713.git.stefan@agner.ch>
+References: <2d3d8c091bc692999a1c519c1dc1570cc8be2358.1658843713.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Fri, 12 Nov 2021 17:33:32 +0100
-Subject: [PATCH 08/10] ARM: dts: bcm2711: yellow: add NXP PCF85063A RTC
+Subject: [PATCH 08/11] ARM: dts: bcm2711: yellow: add NXP PCF85063A RTC
 
 Signed-off-by: Stefan Agner <stefan@agner.ch>
 ---
@@ -28,5 +28,5 @@ index 6039c7894796..f78428ea64f3 100644
  
  &i2s {
 -- 
-2.36.0
+2.37.1
 
