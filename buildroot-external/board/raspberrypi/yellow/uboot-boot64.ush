@@ -20,8 +20,16 @@ test -n "${BOOT_B_LEFT}" || setenv BOOT_B_LEFT 3
 # HassOS bootargs
 setenv bootargs_hassos "zram.enabled=1 zram.num_devices=3 apparmor=1 security=apparmor rootwait systemd.machine_id=${MACHINE_ID} cgroup_enable=memory fsck.repair=yes"
 
+# Red Button pressed?
 if gpio input GPIO27; then
   sleep 1
+  # ... and Blue Button Pressed?
+  if gpio input GPIO26; then
+    echo "Boot wipe has been pressed, deleting boot files to trigger USB boot..."
+    fatrm mmc 0:1 /start4.elf
+    reset
+  fi
+  # Red still pressed?
   if gpio input GPIO27; then
     echo "Device wipe button has been pressed, setting wipe flag..."
     setenv bootargs_hassos "${bootargs_hassos} haos.wipe=1"
