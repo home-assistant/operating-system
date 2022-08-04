@@ -1,8 +1,8 @@
 From 2d3d8c091bc692999a1c519c1dc1570cc8be2358 Mon Sep 17 00:00:00 2001
-Message-Id: <2d3d8c091bc692999a1c519c1dc1570cc8be2358.1658843713.git.stefan@agner.ch>
+Message-Id: <2d3d8c091bc692999a1c519c1dc1570cc8be2358.1659172941.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Mon, 11 Apr 2022 14:47:59 +0200
-Subject: [PATCH 01/11] ARM: dts: bcm2711: Add device tree for Home Assistant
+Subject: [PATCH 01/13] ARM: dts: bcm2711: Add device tree for Home Assistant
  Yellow
 
 Add device tree for Home Assistant Yellow, a Compute Module 4 based I/O
