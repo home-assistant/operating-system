@@ -56,6 +56,23 @@ install_spl() {
     fi
 }
 
+check_grubenv() {
+    BOOT_MNT=/mnt/boot
+
+    # Mount boot
+    if ! systemctl -q is-active mnt-boot.mount; then
+        systemctl start mnt-boot.mount
+    fi
+
+    # If GRUB is installed, check if GRUB environment has been currupted
+    if command -v grub-editenv > /dev/null; then
+        if ! grub-editenv "${BOOT_MNT}/EFI/BOOT/grubenv" list > /dev/null; then
+            echo "GRUB environment seems to be corrupted. Recreating a new environment."
+            grub-editenv "${BOOT_MNT}"/EFI/BOOT/grubenv create
+        fi
+    fi
+}
+
 post_install_kernel() {
     BOOT_MNT=/mnt/boot
 
@@ -79,6 +96,9 @@ post_install_kernel() {
 case "$1" in
      install-check)
          if [ "$RAUC_MF_COMPATIBLE" = "$RAUC_SYSTEM_COMPATIBLE" ]; then
+             # Check if GRUB env has been corrupted. This is only problematic
+             # with OS 8, where compatible matches.
+             check_grubenv
              exit 0
          fi
          # Be compatible with hassos OS ID
