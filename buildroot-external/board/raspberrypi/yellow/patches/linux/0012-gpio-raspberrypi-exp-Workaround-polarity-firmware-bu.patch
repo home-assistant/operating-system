@@ -1,0 +1,41 @@
+From 01e15ae929bb8442f3c9cb31b7cad182ecc4d520 Mon Sep 17 00:00:00 2001
+Message-Id: <01e15ae929bb8442f3c9cb31b7cad182ecc4d520.1659172941.git.stefan@agner.ch>
+In-Reply-To: <2d3d8c091bc692999a1c519c1dc1570cc8be2358.1659172941.git.stefan@agner.ch>
+References: <2d3d8c091bc692999a1c519c1dc1570cc8be2358.1659172941.git.stefan@agner.ch>
+From: Stefan Agner <stefan@agner.ch>
+Date: Sat, 30 Jul 2022 11:12:13 +0200
+Subject: [PATCH 12/13] gpio: raspberrypi-exp: Workaround polarity firmware bug
+
+When configuring a GPIO as output, the firmware seems to invert the
+initial state when active low polarity is declared in the device tree.
+The bug has been acknowledged by the firmware team and will be fixed
+in a future firmware release:
+https://github.com/raspberrypi/linux/issues/5107
+
+Fix this by inverting the polarity on our side as well to make sure
+the initial output is set correctly.
+
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+---
+ drivers/gpio/gpio-raspberrypi-exp.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/drivers/gpio/gpio-raspberrypi-exp.c b/drivers/gpio/gpio-raspberrypi-exp.c
+index 64a552ecc2ad..f986940c3a5d 100644
+--- a/drivers/gpio/gpio-raspberrypi-exp.c
++++ b/drivers/gpio/gpio-raspberrypi-exp.c
+@@ -119,6 +119,11 @@ static int rpi_exp_gpio_dir_out(struct gpio_chip *gc, unsigned int off, int val)
+ 		return ret;
+ 	set_out.polarity = ret;		/* Retain existing setting */
+ 
++	/* Need to invert the GPIO in first config set if inverted polarity */
++	/* See https://github.com/raspberrypi/linux/issues/5107 */
++	if (set_out.polarity)
++		set_out.state = !val;
++
+ 	ret = rpi_firmware_property(gpio->fw, RPI_FIRMWARE_SET_GPIO_CONFIG,
+ 				    &set_out, sizeof(set_out));
+ 	if (ret || set_out.gpio != 0) {
+-- 
+2.37.1
+

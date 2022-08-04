@@ -1,0 +1,68 @@
+From 713afd6c80d4635306682a5643799195846271b1 Mon Sep 17 00:00:00 2001
+Message-Id: <713afd6c80d4635306682a5643799195846271b1.1659172941.git.stefan@agner.ch>
+In-Reply-To: <2d3d8c091bc692999a1c519c1dc1570cc8be2358.1659172941.git.stefan@agner.ch>
+References: <2d3d8c091bc692999a1c519c1dc1570cc8be2358.1659172941.git.stefan@agner.ch>
+From: Stefan Agner <stefan@agner.ch>
+Date: Sat, 30 Jul 2022 11:21:31 +0200
+Subject: [PATCH 13/13] ARM: dts: bcm2711: yellow: Add LED overrides
+
+Add device tree overrides for all three LEDs.
+
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+---
+ arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts | 17 ++++++++++-------
+ 1 file changed, 10 insertions(+), 7 deletions(-)
+
+diff --git a/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
+index f354bfb69093..2d272a02128b 100644
+--- a/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
++++ b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
+@@ -621,20 +621,24 @@ audio_pins: audio_pins {
+ 
+ &leds {
+ 	act_led: led-act {
+-		label = "led0";
++		label = "act";
+ 		linux,default-trigger = "activity";
++		default-state = "off";
+ 		gpios = <&gpio 42 GPIO_ACTIVE_HIGH>;
+ 	};
+ 
+ 	pwr_led: led-pwr {
+-		label = "led1";
++		label = "pwr";
+ 		linux,default-trigger = "default-on";
++		default-state = "off";
+ 		gpios = <&expgpio 2 GPIO_ACTIVE_LOW>;
+ 	};
+ 
+-	user_led: led-user {
+-		label = "led2";
++	usr_led: led-usr {
++		label = "usr";
+ 		linux,default-trigger = "heartbeat";
++		default-state = "off";
++		panic-indicator;
+ 		gpios = <&gpio 44 GPIO_ACTIVE_LOW>;
+ 	};
+ };
+@@ -670,14 +674,13 @@ cam0_reg: &cam1_reg {
+ 
+ / {
+ 	__overrides__ {
+-		act_led_gpio = <&act_led>,"gpios:4";
+-		act_led_activelow = <&act_led>,"gpios:8";
+ 		act_led_trigger = <&act_led>,"linux,default-trigger";
+ 
+-		pwr_led_gpio = <&pwr_led>,"gpios:4";
+ 		pwr_led_activelow = <&pwr_led>,"gpios:8";
+ 		pwr_led_trigger = <&pwr_led>,"linux,default-trigger";
+ 
++		usr_led_trigger = <&usr_led>,"linux,default-trigger";
++
+ 		eth_led0 = <&phy1>,"led-modes:0";
+ 		eth_led1 = <&phy1>,"led-modes:4";
+ 
+-- 
+2.37.1
+
