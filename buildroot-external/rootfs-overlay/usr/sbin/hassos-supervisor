@@ -89,7 +89,6 @@ if [ -z "${SUPERVISOR_CONTAINER_ID}" ]; then
         -v ${SUPERVISOR_DATA}:/data:rw \
         -e SUPERVISOR_SHARE=${SUPERVISOR_DATA} \
         -e SUPERVISOR_NAME=hassio_supervisor \
-        -e SUPERVISOR_CPU_RT=1 \
         -e SUPERVISOR_MACHINE=${SUPERVISOR_MACHINE} \
         "${SUPERVISOR_IMAGE}:latest"
 
