@@ -11,6 +11,10 @@ done
 
 # Install Supervisor, plug-ins and landing page
 echo "Loading container images..."
+
+# Make sure to order images by size (largest first)
+# It seems docker load requires space during operation
+# shellcheck disable=SC2045
 for image in $(ls -S /build/images/*.tar); do
 	docker load --input "${image}"
 done
