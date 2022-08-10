@@ -10,8 +10,8 @@ while ! docker version 2> /dev/null > /dev/null; do
 done
 
 # Install Supervisor, plug-ins and landing page
-echo "Loading containers..."
-for image in /build/images/*.tar; do
+echo "Loading container images..."
+for image in $(ls -S /build/images/*.tar); do
 	docker load --input "${image}"
 done
 
