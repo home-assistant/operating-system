@@ -10,8 +10,12 @@ while ! docker version 2> /dev/null > /dev/null; do
 done
 
 # Install Supervisor, plug-ins and landing page
-echo "Loading containers..."
-for image in /build/images/*.tar; do
+echo "Loading container images..."
+
+# Make sure to order images by size (largest first)
+# It seems docker load requires space during operation
+# shellcheck disable=SC2045
+for image in $(ls -S /build/images/*.tar); do
 	docker load --input "${image}"
 done
 
