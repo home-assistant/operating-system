@@ -1,8 +1,8 @@
 [Unit]
 Description=HassOS supervisor
-Requires=docker.service rauc.service dbus.service
+Requires=docker.service rauc.service dbus.socket
 Wants=network-online.target hassos-apparmor.service time-sync.target systemd-journal-gatewayd.socket
-After=docker.service rauc.service dbus.service network-online.target hassos-apparmor.service time-sync.target systemd-journal-gatewayd.socket
+After=docker.service rauc.service dbus.socket network-online.target hassos-apparmor.service time-sync.target systemd-journal-gatewayd.socket
 RequiresMountsFor=/mnt/data /mnt/boot /mnt/overlay
 StartLimitIntervalSec=30m
 StartLimitBurst=3
