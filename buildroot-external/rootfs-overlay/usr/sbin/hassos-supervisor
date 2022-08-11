@@ -80,6 +80,7 @@ if [ -z "${SUPERVISOR_CONTAINER_ID}" ]; then
     docker container create \
         --name hassio_supervisor \
         --privileged --security-opt apparmor="hassio-supervisor" \
+        --oom-score-adj=-300 \
         -v /run/docker.sock:/run/docker.sock:rw \
         -v /run/systemd-journal-gatewayd.sock:/run/systemd-journal-gatewayd.sock:rw \
         -v /run/dbus:/run/dbus:ro \
