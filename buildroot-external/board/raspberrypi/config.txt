@@ -75,6 +75,8 @@ dtparam=audio=on
 # Enable DRM VC4 V3D driver on top of the dispmanx display stack
 dtoverlay=vc4-fkms-v3d
 max_framebuffers=2
+# Enable boost from 1.5Ghz to 1.8Ghz on compatible models
+arm_boost=1
 
 [all]
 #dtoverlay=vc4-fkms-v3d
