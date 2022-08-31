@@ -1,0 +1,12 @@
+#!/bin/sh
+
+# Check if less than 128MiB is available on /mnt/data (4k block size).
+if [ "$(stat -f /mnt/data -c '%f')" -lt 32768 ]; then
+    echo "The system is very low on disk space!"
+    echo "This can cause Docker to fail to start, causing a boot loop."
+    echo "Asking systemd-journald to free up some space."
+    # systemd-journald defaults to 10% of disk size. So this should free up
+    # space for any system which has been running for a while (presumably it
+    # has when there is no space) and has a disk size larger than ~2.5GiB.
+    journalctl --vacuum-size=256M
+fi
