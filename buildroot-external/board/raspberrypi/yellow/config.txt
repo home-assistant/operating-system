@@ -31,8 +31,6 @@ gpu_mem=32
 
 # Additional overlays and parameters are documented /boot/overlays/README
 
-[cm4]
+[all]
 device_tree=bcm2711-rpi-cm4-ha-yellow.dtb
-# Enable boost from 1.5GHz to 1.8GHz on compatible models
-arm_boost=1
 
