@@ -12,6 +12,7 @@ Wants=systemd-fsck@dev-disk-by\x2dlabel-hassos\x2ddata.service systemd-growfs@mn
 What=/dev/disk/by-label/hassos-data
 Where=/mnt/data
 Type=ext4
+Options=commit=30
 
 [Install]
 WantedBy=local-fs.target
