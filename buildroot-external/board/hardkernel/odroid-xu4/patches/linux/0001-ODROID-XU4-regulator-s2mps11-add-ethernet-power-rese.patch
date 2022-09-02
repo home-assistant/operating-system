@@ -1,0 +1,94 @@
+From 1fb890d987088f5b6b4c165d8d05480e15b8882e Mon Sep 17 00:00:00 2001
+Message-Id: <1fb890d987088f5b6b4c165d8d05480e15b8882e.1662147854.git.stefan@agner.ch>
+From: memeka <mihailescu2m@gmail.com>
+Date: Fri, 18 Jan 2019 14:36:21 +1030
+Subject: [PATCH] ODROID-XU4: regulator: s2mps11: add ethernet power reset in
+ shutdown function
+
+Ethernet device cannot be detected on warm boot sometimes. This patch is
+to add the power reset routines for ethernet device using PMIC. Then
+ethernet device can be reset hardware-wise.
+
+Change-Id: Iffbe2966da7e4679f63b91ab79241167391792df
+Signed-off-by: Brian Kim <brian.kim@hardkernel.com>
+Signed-off-by: Marian Mihailescu <mihailescu2m@gmail.com>
+---
+ drivers/regulator/s2mps11.c | 55 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 55 insertions(+)
+
+diff --git a/drivers/regulator/s2mps11.c b/drivers/regulator/s2mps11.c
+index ebc67e3ddd4f..51f128076db9 100644
+--- a/drivers/regulator/s2mps11.c
++++ b/drivers/regulator/s2mps11.c
+@@ -1117,6 +1117,57 @@ static const struct regulator_desc s2mpu02_regulators[] = {
+ 	regulator_desc_s2mpu02_buck7(7),
+ };
+ 
++static int s2mps11_pmic_ethonoff(struct platform_device *pdev, bool onoff)
++{
++	struct sec_pmic_dev *iodev = dev_get_drvdata(pdev->dev.parent);
++	unsigned int reg_val = 0;
++	int ret = 0;
++
++	ret = regmap_read(iodev->regmap_pmic, S2MPS11_REG_L15CTRL, &reg_val);
++	if (ret) {
++		dev_err(&pdev->dev, "failed to read S2MPS11_REG_L15CTRL value\n");
++		return ret;
++	}
++
++	ret = regmap_read(iodev->regmap_pmic, S2MPS11_REG_L17CTRL, &reg_val);
++	if (ret) {
++		dev_err(&pdev->dev, "failed to read S2MPS11_REG_L17CTRL value\n");
++		return ret;
++	}
++
++	if (onoff) {
++		/* ETH VDD0 ON */
++		ret = regmap_update_bits(iodev->regmap_pmic, S2MPS11_REG_L15CTRL, 0xFF, 0x72);
++		if (ret) {
++			dev_err(&pdev->dev, "cannot update S2MPS11 LDO CTRL15 register\n");
++			return ret;
++		}
++
++		/* ETH VDD1 ON */
++		ret = regmap_update_bits(iodev->regmap_pmic, S2MPS11_REG_L17CTRL, 0xFF, 0x72);
++		if (ret) {
++			dev_err(&pdev->dev, "cannot update S2MPS11 LDO CTRL17 register\n");
++			return ret;
++		}
++	} else {
++		/* ETH VDD0 OFF */
++		ret = regmap_update_bits(iodev->regmap_pmic, S2MPS11_REG_L15CTRL, 0x3F, 0x00);
++		if (ret) {
++			dev_err(&pdev->dev, "cannot update S2MPS11 LDO CTRL15 register\n");
++			return ret;
++		}
++
++		/* ETH VDD1 OFF */
++		ret = regmap_update_bits(iodev->regmap_pmic, S2MPS11_REG_L17CTRL, 0x3F, 0x00);
++		if (ret) {
++			dev_err(&pdev->dev, "cannot update S2MPS11 LDO CTRL17 register\n");
++			return ret;
++		}
++	}
++
++	return ret;
++}
++
+ static int s2mps11_pmic_probe(struct platform_device *pdev)
+ {
+ 	struct sec_pmic_dev *iodev = dev_get_drvdata(pdev->dev.parent);
+@@ -1219,6 +1270,10 @@ static int s2mps11_pmic_probe(struct platform_device *pdev)
+ 		}
+ 	}
+ 
++	dev_info(&pdev->dev, "Resetting Ethernet\n");
++	s2mps11_pmic_ethonoff(pdev, false);
++	mdelay(10);
++	s2mps11_pmic_ethonoff(pdev, true);
+ out:
+ 	kfree(rdata);
+ 
+-- 
+2.37.2
+
