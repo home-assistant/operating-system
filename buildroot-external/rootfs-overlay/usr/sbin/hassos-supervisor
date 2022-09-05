@@ -34,9 +34,10 @@ fi
 mkdir -p "$(dirname ${SUPERVISOR_STARTUP_MARKER})"
 touch ${SUPERVISOR_STARTUP_MARKER}
 if [ -z "${SUPERVISOR_IMAGE_ID}" ]; then
-    # Check if legacy image is present, if so, use that ID
+    # Try tagging legacy image with current name and try get its ID
     echo "[WARNING] Supervisor image missing, trying to use the legacy image name"
-    SUPERVISOR_IMAGE_ID=$(docker images --no-trunc --filter "reference=homeassistant/${SUPERVISOR_ARCH}-hassio-supervisor:latest" --format "{{.ID}}" || echo "")
+    docker tag "homeassistant/${SUPERVISOR_ARCH}-hassio-supervisor:latest" "${SUPERVISOR_IMAGE}:latest" || true
+    SUPERVISOR_IMAGE_ID=$(docker images --no-trunc --filter "reference=${SUPERVISOR_IMAGE}:latest" --format "{{.ID}}" || echo "")
 fi
 
 if [ -z "${SUPERVISOR_IMAGE_ID}" ]; then
