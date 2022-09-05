@@ -34,6 +34,12 @@ fi
 mkdir -p "$(dirname ${SUPERVISOR_STARTUP_MARKER})"
 touch ${SUPERVISOR_STARTUP_MARKER}
 if [ -z "${SUPERVISOR_IMAGE_ID}" ]; then
+    # Check if legacy image is present, if so, use that ID
+    echo "[WARNING] Supervisor image missing, trying to use the legacy image name"
+    SUPERVISOR_IMAGE_ID=$(docker images --no-trunc --filter "reference=homeassistant/${SUPERVISOR_ARCH}-hassio-supervisor:latest" --format "{{.ID}}" || echo "")
+fi
+
+if [ -z "${SUPERVISOR_IMAGE_ID}" ]; then
     # Get the latest from update information
     # Using updater information instead of config. If the config version is
     # broken, this creates a way (e.g., bad release).
