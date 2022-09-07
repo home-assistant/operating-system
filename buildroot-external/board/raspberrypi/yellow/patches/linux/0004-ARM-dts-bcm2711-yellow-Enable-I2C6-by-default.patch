@@ -1,10 +1,10 @@
-From 606dcdc896ffc18001ad4983d45a2e23cacd040a Mon Sep 17 00:00:00 2001
-Message-Id: <606dcdc896ffc18001ad4983d45a2e23cacd040a.1659172941.git.stefan@agner.ch>
-In-Reply-To: <2d3d8c091bc692999a1c519c1dc1570cc8be2358.1659172941.git.stefan@agner.ch>
-References: <2d3d8c091bc692999a1c519c1dc1570cc8be2358.1659172941.git.stefan@agner.ch>
+From 8ec364f50abcd9f5fa89f421a7ef8f70dfb2564a Mon Sep 17 00:00:00 2001
+Message-Id: <8ec364f50abcd9f5fa89f421a7ef8f70dfb2564a.1662565903.git.stefan@agner.ch>
+In-Reply-To: <b28a8f5b591841f88f19cbf9850d713a602d912e.1662565903.git.stefan@agner.ch>
+References: <b28a8f5b591841f88f19cbf9850d713a602d912e.1662565903.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Thu, 4 Mar 2021 14:48:48 +0100
-Subject: [PATCH 04/13] ARM: dts: bcm2711: yellow: Enable I2C6 by default
+Subject: [PATCH] ARM: dts: bcm2711: yellow: Enable I2C6 by default
 
 The main I2C bus used on Yellow is I2C6. Enable it by default.
 
@@ -31,5 +31,5 @@ index d1dea0a214a6..0bdbfdd44aed 100644
  	pinctrl-names = "default";
  	pinctrl-0 = <&i2s_pins>;
 -- 
-2.37.1
+2.37.3
 
