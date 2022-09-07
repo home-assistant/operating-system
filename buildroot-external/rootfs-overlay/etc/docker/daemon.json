@@ -1,0 +1,11 @@
+{
+    "storage-driver": "overlay2",
+    "log-driver": "journald",
+    "experimental": true,
+    "ip6tables": true,
+    "log-opts": {
+        "tag": "{{.ImageName}}/{{.Name}}"
+    },
+    "data-root": "/mnt/data/docker",
+    "deprecated-key-path": "/mnt/overlay/etc/docker/key.json"
+}
