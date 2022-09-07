@@ -1,11 +1,10 @@
-From a4a63bb6f6789c00762b92f0469d10bac525d1f9 Mon Sep 17 00:00:00 2001
-Message-Id: <a4a63bb6f6789c00762b92f0469d10bac525d1f9.1659172941.git.stefan@agner.ch>
-In-Reply-To: <2d3d8c091bc692999a1c519c1dc1570cc8be2358.1659172941.git.stefan@agner.ch>
-References: <2d3d8c091bc692999a1c519c1dc1570cc8be2358.1659172941.git.stefan@agner.ch>
+From 7eb647452bb1a3294fae8edc5a323070adff922b Mon Sep 17 00:00:00 2001
+Message-Id: <7eb647452bb1a3294fae8edc5a323070adff922b.1662565903.git.stefan@agner.ch>
+In-Reply-To: <b28a8f5b591841f88f19cbf9850d713a602d912e.1662565903.git.stefan@agner.ch>
+References: <b28a8f5b591841f88f19cbf9850d713a602d912e.1662565903.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Thu, 4 Mar 2021 14:33:09 +0100
-Subject: [PATCH 02/13] ARM: dts: bcm2711: yellow: Mux UART4 for SiLabs radio
- module
+Subject: [PATCH] ARM: dts: bcm2711: yellow: Mux UART4 for SiLabs radio module
 
 Enable UART4 by default and mux pins including hardware flow control.
 
@@ -57,5 +56,5 @@ index 61d8c81d3de4..8db71876a78c 100644
  
  	uart5_pins: uart5_pins {
 -- 
-2.37.1
+2.37.3
 

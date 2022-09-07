@@ -1,10 +1,10 @@
-From efe5e827dc0653066ebc9f71de2ccf391a4bb27e Mon Sep 17 00:00:00 2001
-Message-Id: <efe5e827dc0653066ebc9f71de2ccf391a4bb27e.1659172941.git.stefan@agner.ch>
-In-Reply-To: <2d3d8c091bc692999a1c519c1dc1570cc8be2358.1659172941.git.stefan@agner.ch>
-References: <2d3d8c091bc692999a1c519c1dc1570cc8be2358.1659172941.git.stefan@agner.ch>
+From e4db609b1080e4aabb027394966c07e050e02aab Mon Sep 17 00:00:00 2001
+Message-Id: <e4db609b1080e4aabb027394966c07e050e02aab.1662565903.git.stefan@agner.ch>
+In-Reply-To: <b28a8f5b591841f88f19cbf9850d713a602d912e.1662565903.git.stefan@agner.ch>
+References: <b28a8f5b591841f88f19cbf9850d713a602d912e.1662565903.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Thu, 28 Oct 2021 19:38:04 +0200
-Subject: [PATCH 07/13] ARM: dts: bcm2711: yellow: add user LED
+Subject: [PATCH] ARM: dts: bcm2711: yellow: add user LED
 
 Add yellow user LED.
 
@@ -39,5 +39,5 @@ index e2fa42a11cc9..6039c7894796 100644
  
  &pwm1 {
 -- 
-2.37.1
+2.37.3
 

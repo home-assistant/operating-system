@@ -1,10 +1,10 @@
-From 713afd6c80d4635306682a5643799195846271b1 Mon Sep 17 00:00:00 2001
-Message-Id: <713afd6c80d4635306682a5643799195846271b1.1659172941.git.stefan@agner.ch>
-In-Reply-To: <2d3d8c091bc692999a1c519c1dc1570cc8be2358.1659172941.git.stefan@agner.ch>
-References: <2d3d8c091bc692999a1c519c1dc1570cc8be2358.1659172941.git.stefan@agner.ch>
+From f69ef30ade36371215d02546d603143cc13adef2 Mon Sep 17 00:00:00 2001
+Message-Id: <f69ef30ade36371215d02546d603143cc13adef2.1662565903.git.stefan@agner.ch>
+In-Reply-To: <b28a8f5b591841f88f19cbf9850d713a602d912e.1662565903.git.stefan@agner.ch>
+References: <b28a8f5b591841f88f19cbf9850d713a602d912e.1662565903.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Sat, 30 Jul 2022 11:21:31 +0200
-Subject: [PATCH 13/13] ARM: dts: bcm2711: yellow: Add LED overrides
+Subject: [PATCH] ARM: dts: bcm2711: yellow: Add LED overrides
 
 Add device tree overrides for all three LEDs.
 
@@ -64,5 +64,5 @@ index f354bfb69093..2d272a02128b 100644
  		eth_led1 = <&phy1>,"led-modes:4";
  
 -- 
-2.37.1
+2.37.3
 
