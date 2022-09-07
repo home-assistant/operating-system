@@ -1,11 +1,10 @@
-From f1553f413c8f53694d2f27db5b5c43d19cf1ff4f Mon Sep 17 00:00:00 2001
-Message-Id: <f1553f413c8f53694d2f27db5b5c43d19cf1ff4f.1659172941.git.stefan@agner.ch>
-In-Reply-To: <2d3d8c091bc692999a1c519c1dc1570cc8be2358.1659172941.git.stefan@agner.ch>
-References: <2d3d8c091bc692999a1c519c1dc1570cc8be2358.1659172941.git.stefan@agner.ch>
+From 1acd279eca810707856e5038438f52d694a62170 Mon Sep 17 00:00:00 2001
+Message-Id: <1acd279eca810707856e5038438f52d694a62170.1662565903.git.stefan@agner.ch>
+In-Reply-To: <b28a8f5b591841f88f19cbf9850d713a602d912e.1662565903.git.stefan@agner.ch>
+References: <b28a8f5b591841f88f19cbf9850d713a602d912e.1662565903.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Fri, 7 Jan 2022 17:10:00 +0100
-Subject: [PATCH 09/13] ARM: dts: bcm2711: yellow: enable USB host mode by
- default
+Subject: [PATCH] ARM: dts: bcm2711: yellow: enable USB host mode by default
 
 The DWC2 controller is disable by default. Enable it since Home
 Assistant Yellow has a USB hub and USB ports connected to it.
@@ -36,5 +35,5 @@ index f78428ea64f3..711a09441ad0 100644
  	led-modes = <0x00 0x08>; /* link/activity link */
  };
 -- 
-2.37.1
+2.37.3
 
