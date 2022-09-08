@@ -4,7 +4,7 @@
     "experimental": true,
     "ip6tables": true,
     "log-opts": {
-        "tag": "{{.ImageName}}/{{.Name}}"
+        "tag": "{{.Name}}"
     },
     "data-root": "/mnt/data/docker",
     "deprecated-key-path": "/mnt/overlay/etc/docker/key.json"
