@@ -1,10 +1,10 @@
-From 105003d49a505e0f0e033a6f3d945f745912c7b1 Mon Sep 17 00:00:00 2001
-Message-Id: <105003d49a505e0f0e033a6f3d945f745912c7b1.1646168061.git.stefan@agner.ch>
-In-Reply-To: <9f8390a715bc58e7423b65a18c4499761c84b819.1646168061.git.stefan@agner.ch>
-References: <9f8390a715bc58e7423b65a18c4499761c84b819.1646168061.git.stefan@agner.ch>
+From ba8dc083b2bdd7fb24efccada671ef5650143a91 Mon Sep 17 00:00:00 2001
+Message-Id: <ba8dc083b2bdd7fb24efccada671ef5650143a91.1663008544.git.stefan@agner.ch>
+In-Reply-To: <ff269d57d23c2edee262e14c6cf4116bc16d8019.1663008544.git.stefan@agner.ch>
+References: <ff269d57d23c2edee262e14c6cf4116bc16d8019.1663008544.git.stefan@agner.ch>
 From: Hyeonki Hong <hhk7734@gmail.com>
 Date: Tue, 1 Mar 2022 21:53:32 +0100
-Subject: [PATCH 7/7] ODROID-C4: arm64/dts: add i2c2, i2c3 node
+Subject: [PATCH] ODROID-C4: arm64/dts: add i2c2, i2c3 node
 
 ---
  .../boot/dts/amlogic/meson-sm1-odroid.dtsi    | 53 +++++++++++++++++++
@@ -82,5 +82,5 @@ index 690e4823a9d0..85637c1c846b 100644
  	pinctrl-0 = <&pwm_ao_d_e_pins>;
  	pinctrl-names = "default";
 -- 
-2.35.1
+2.37.3
 
