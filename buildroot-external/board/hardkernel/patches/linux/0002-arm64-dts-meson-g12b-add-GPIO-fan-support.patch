@@ -1,10 +1,10 @@
-From 26917e25696e7156a85d4dfcc578cb4cf4f42dde Mon Sep 17 00:00:00 2001
-Message-Id: <26917e25696e7156a85d4dfcc578cb4cf4f42dde.1646168061.git.stefan@agner.ch>
-In-Reply-To: <9f8390a715bc58e7423b65a18c4499761c84b819.1646168061.git.stefan@agner.ch>
-References: <9f8390a715bc58e7423b65a18c4499761c84b819.1646168061.git.stefan@agner.ch>
+From b4024d399bb13d46cd1a5d3be3793669b3d80e97 Mon Sep 17 00:00:00 2001
+Message-Id: <b4024d399bb13d46cd1a5d3be3793669b3d80e97.1663008544.git.stefan@agner.ch>
+In-Reply-To: <ff269d57d23c2edee262e14c6cf4116bc16d8019.1663008544.git.stefan@agner.ch>
+References: <ff269d57d23c2edee262e14c6cf4116bc16d8019.1663008544.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Mon, 11 Jan 2021 11:38:54 +0100
-Subject: [PATCH 2/7] arm64: dts: meson: g12b: add GPIO fan support
+Subject: [PATCH] arm64: dts: meson: g12b: add GPIO fan support
 
 Add simple GPIO fan node to support a fan on GPIO J8. Unfortunately the
 pad used to control the fan does not support real PWM, hence the RPM
@@ -38,5 +38,5 @@ index 5f0f036b1265..36dbd2666015 100644
  		compatible = "gpio-keys-polled";
  		poll-interval = <100>;
 -- 
-2.35.1
+2.37.3
 
