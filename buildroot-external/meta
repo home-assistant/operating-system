@@ -4,4 +4,4 @@ VERSION_BUILD=0
 HASSOS_NAME="Home Assistant OS"
 HASSOS_ID="haos"
 
-DEPLOYMENT="development"
+DEPLOYMENT="production"
