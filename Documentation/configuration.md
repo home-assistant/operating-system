@@ -25,8 +25,7 @@ hassos-xy.raucb
 
 Text files that are on USB stick must have Unix (LF) end of line characters. If you create USB stick on Windows machine, be sure to use Notepad++, Visual Studio Code or any other editor, that supports different line endings. In Notepad++ LF EOL can be enabled with setting `Edit -> EOL Conversion -> Unix (LF)`.
 
-You can put this USB stick into the device and it will be read on startup and files written to the correct places. You can also trigger this process later over the
-API/UI or by calling `systemctl restart hassos-config` on the host. *The USB Stick just needs to be inserted to the device during this setup process and can be disconnected afterwards.*
+You can put this USB stick into the device and it will be read on startup and files written to the correct places. You can also trigger this process later using `ha os import` from the CLI or by calling `systemctl restart hassos-config` on the OS shell. *The USB Stick just needs to be inserted to the device during this setup process and can be removed afterwards.*
 
 ## Local
 
@@ -54,7 +53,7 @@ Our default NTP configuration look like:
 
 ```
 [Time]
-NTP=time1.google.com time2.google.com time3.google.com
+NTP=time.cloudflare.com
 FallbackNTP=0.pool.ntp.org 1.pool.ntp.org 2.pool.ntp.org 3.pool.ntp.org
 ```
 
