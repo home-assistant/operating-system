@@ -1,0 +1,9 @@
+config BR2_PACKAGE_LXD_GUEST_AGENT
+	bool "LXD Guest Agent"
+	depends on BR2_USE_MMU # libglib2
+	depends on BR2_USE_WCHAR # libglib2
+	depends on BR2_TOOLCHAIN_HAS_THREADS # libglib2
+	select BR2_PACKAGE_LIBGLIB2
+	select BR2_PACKAGE_ZLIB
+	help
+	  LXD guest agent for LXD based virtualisations

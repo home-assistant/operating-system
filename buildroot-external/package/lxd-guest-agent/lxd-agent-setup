@@ -1,0 +1,39 @@
+#!/bin/sh
+set -eu
+PREFIX="/run/lxd_agent"
+
+# Functions.
+mount_virtiofs() {
+    mount -t virtiofs config "${PREFIX}/.mnt" >/dev/null 2>&1
+}
+
+mount_9p() {
+    /sbin/modprobe 9pnet_virtio >/dev/null 2>&1 || true
+    /bin/mount -t 9p config "${PREFIX}/.mnt" -o access=0,trans=virtio >/dev/null 2>&1
+}
+
+fail() {
+    umount -l "${PREFIX}" >/dev/null 2>&1 || true
+    rmdir "${PREFIX}" >/dev/null 2>&1 || true
+    echo "${1}"
+    exit 1
+}
+
+# Setup the mount target.
+umount -l "${PREFIX}" >/dev/null 2>&1 || true
+mkdir -p "${PREFIX}"
+mount -t tmpfs tmpfs "${PREFIX}" -o mode=0700,size=50M
+mkdir -p "${PREFIX}/.mnt"
+
+# Try virtiofs first.
+mount_virtiofs || mount_9p || fail "Couldn't mount virtiofs or 9p, failing."
+
+# Copy the data.
+cp -Ra "${PREFIX}/.mnt/"* "${PREFIX}"
+
+# Unmount the temporary mount.
+umount "${PREFIX}/.mnt"
+rmdir "${PREFIX}/.mnt"
+
+# Fix up permissions.
+chown -R root:root "${PREFIX}"

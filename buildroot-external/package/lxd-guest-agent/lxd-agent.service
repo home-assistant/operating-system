@@ -1,0 +1,17 @@
+[Unit]
+Description=LXD - agent
+After=syslog.target network.target
+ConditionPathExists=/dev/virtio-ports/org.linuxcontainers.lxd
+
+[Service]
+Type=notify
+WorkingDirectory=-/run/lxd_agent
+ExecStartPre=/usr/lib/systemd/lxd-agent-setup
+ExecStart=/run/lxd_agent/lxd-agent
+Restart=on-failure
+RestartSec=5s
+StartLimitInterval=60
+StartLimitBurst=10
+
+[Install]
+WantedBy=multi-user.target
