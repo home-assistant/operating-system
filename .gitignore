@@ -1,4 +1,12 @@
+# OS generated files
 .DS_Store
+
+# Build output dirs
 /release
-*.pem
 output*/
+
+# Certificates
+*.pem
+
+# vscode generated files
+.vscode*
