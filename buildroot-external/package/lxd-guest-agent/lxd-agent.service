@@ -1,7 +1,7 @@
 [Unit]
 Description=LXD - agent
 After=syslog.target network.target
-ConditionPathExists=/dev/virtio-ports/org.linuxcontainers.lxd
+ConditionVirtualization=lxd
 
 [Service]
 Type=notify

@@ -1,0 +1,79 @@
+From 9cf9bc6909bc298bc628a6b02f868af4d1a98392 Mon Sep 17 00:00:00 2001
+From: "bryan.york" <bryan.york@gmail.com>
+Date: Fri, 23 Sep 2022 10:33:07 -0700
+Subject: [PATCH] Add LXD Support
+
+---
+ src/basic/virt.c | 13 ++++++++-----
+ src/basic/virt.h |  3 ++-
+ 2 files changed, 10 insertions(+), 6 deletions(-)
+
+diff --git a/src/basic/virt.c b/src/basic/virt.c
+index 284ad95277..66550ee887 100644
+--- a/src/basic/virt.c
++++ b/src/basic/virt.c
+@@ -142,7 +142,8 @@ static int detect_vm_device_tree(void) {
+ #if defined(__i386__) || defined(__x86_64__) || defined(__arm__) || defined(__aarch64__) || defined(__loongarch64)
+ static int detect_vm_dmi_vendor(void) {
+         static const char *const dmi_vendors[] = {
+-                "/sys/class/dmi/id/product_name", /* Test this before sys_vendor to detect KVM over QEMU */
++                "/sys/class/dmi/id/board_name", /* Test this before product_name & sys_vendor to detect LXD over QEMU */
++		"/sys/class/dmi/id/product_name", /* Test this before sys_vendor to detect KVM over QEMU */
+                 "/sys/class/dmi/id/sys_vendor",
+                 "/sys/class/dmi/id/board_vendor",
+                 "/sys/class/dmi/id/bios_vendor",
+@@ -158,7 +159,8 @@ static int detect_vm_dmi_vendor(void) {
+                 { "QEMU",                VIRTUALIZATION_QEMU      },
+                 { "VMware",              VIRTUALIZATION_VMWARE    }, /* https://kb.vmware.com/s/article/1009458 */
+                 { "VMW",                 VIRTUALIZATION_VMWARE    },
+-                { "innotek GmbH",        VIRTUALIZATION_ORACLE    },
++                { "LXD",                 VIRTUALIZATION_LXD       },
++		{ "innotek GmbH",        VIRTUALIZATION_ORACLE    },
+                 { "VirtualBox",          VIRTUALIZATION_ORACLE    },
+                 { "Xen",                 VIRTUALIZATION_XEN       },
+                 { "Bochs",               VIRTUALIZATION_BOCHS     },
+@@ -432,7 +434,7 @@ int detect_vm(void) {
+ 
+         /* We have to use the correct order here:
+          *
+-         * → First, try to detect Oracle Virtualbox and Amazon EC2 Nitro, even if they use KVM, as well as Xen even if
++         * → First, try to detect LXD, Oracle Virtualbox and Amazon EC2 Nitro, even if they use KVM, as well as Xen even if
+          *   it cloaks as Microsoft Hyper-V. Attempt to detect uml at this stage also since it runs as a user-process
+          *   nested inside other VMs. Also check for Xen now, because Xen PV mode does not override CPUID when nested
+          *   inside another hypervisor.
+@@ -443,7 +445,7 @@ int detect_vm(void) {
+          * → Third, try to detect from DMI. */
+ 
+         dmi = detect_vm_dmi();
+-        if (IN_SET(dmi, VIRTUALIZATION_ORACLE, VIRTUALIZATION_XEN, VIRTUALIZATION_AMAZON)) {
++        if (IN_SET(dmi, VIRTUALIZATION_LXD, VIRTUALIZATION_ORACLE, VIRTUALIZATION_XEN, VIRTUALIZATION_AMAZON)) {
+                 r = dmi;
+                 goto finish;
+         }
+@@ -1006,7 +1008,8 @@ static const char *const virtualization_table[_VIRTUALIZATION_MAX] = {
+         [VIRTUALIZATION_XEN] = "xen",
+         [VIRTUALIZATION_UML] = "uml",
+         [VIRTUALIZATION_VMWARE] = "vmware",
+-        [VIRTUALIZATION_ORACLE] = "oracle",
++        [VIRTUALIZATION_LXD] = "lxd",
++	[VIRTUALIZATION_ORACLE] = "oracle",
+         [VIRTUALIZATION_MICROSOFT] = "microsoft",
+         [VIRTUALIZATION_ZVM] = "zvm",
+         [VIRTUALIZATION_PARALLELS] = "parallels",
+diff --git a/src/basic/virt.h b/src/basic/virt.h
+index 1eafbe2cbe..537dc79857 100644
+--- a/src/basic/virt.h
++++ b/src/basic/virt.h
+@@ -16,7 +16,8 @@ enum {
+         VIRTUALIZATION_XEN,
+         VIRTUALIZATION_UML,
+         VIRTUALIZATION_VMWARE,
+-        VIRTUALIZATION_ORACLE,
++        VIRTUALIZATION_LXD,
++	VIRTUALIZATION_ORACLE,
+         VIRTUALIZATION_MICROSOFT,
+         VIRTUALIZATION_ZVM,
+         VIRTUALIZATION_PARALLELS,
+-- 
+2.34.1
+

@@ -14,8 +14,6 @@ define LXD_GUEST_AGENT_INSTALL_INIT_SYSTEMD
 	$(INSTALL) -d $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants
 	ln -fs /usr/lib/systemd/system/lxd-agent.service \
 		$(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/lxd-agent.service
-        $(INSTALL) -D -m 644 $(LXD_GUEST_AGENT_PKGDIR)/99-lxd-agent.rules \
-                $(TARGET_DIR)/usr/lib/udev/rules.d/99-lxd-agent.rules
 endef
 
 $(eval $(generic-package))
