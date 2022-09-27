@@ -4,12 +4,12 @@
 #
 ################################################################################
 
-OS_AGENT_VERSION = 1.3.0
+OS_AGENT_VERSION = 1.4.1
 OS_AGENT_SITE = $(call github,home-assistant,os-agent,$(OS_AGENT_VERSION))
 OS_AGENT_LICENSE = Apache License 2.0
 OS_AGENT_LICENSE_FILES = LICENSE
 OS_AGENT_GOMOD = github.com/home-assistant/os-agent
-OS_AGENT_LDFLAGS = -X main.version=$(OS_AGENT_VERSION)
+OS_AGENT_LDFLAGS = -X main.version=$(OS_AGENT_VERSION) -X main.board=$(BR2_PACKAGE_OS_AGENT_BOARD)
 
 define OS_AGENT_INSTALL_INIT_SYSTEMD
 	$(INSTALL) -D -m 0644 $(@D)/contrib/io.hass.conf \
