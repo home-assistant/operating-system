@@ -2,3 +2,12 @@ config BR2_PACKAGE_OS_AGENT
 	bool "Home Assistant OS Agent"
 	help
 	  Install the Home Assistant OS Agent
+
+if BR2_PACKAGE_OS_AGENT
+
+config BR2_PACKAGE_OS_AGENT_BOARD
+	string "OS-Agent board"
+	help
+	  OS Agent board feature which should be pull.
+
+endif
