@@ -3,6 +3,7 @@ Description=QEMU Guest Agent
 After=syslog.target network.target
 ConditionVirtualization=|kvm
 ConditionVirtualization=|qemu
+ConditionPathExists=!/dev/virtio-ports/org.linuxcontainers.lxd
 
 [Service]
 ExecStart=/usr/libexec/qemu-ga -m virtio-serial -p /dev/virtio-ports/org.qemu.guest_agent.0
