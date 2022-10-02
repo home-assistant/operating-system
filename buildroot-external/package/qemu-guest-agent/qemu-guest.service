@@ -3,7 +3,6 @@ Description=QEMU Guest Agent
 After=syslog.target network.target
 ConditionVirtualization=|kvm
 ConditionVirtualization=|qemu
-# TODO: Remove Once https://github.com/systemd/systemd-stable/issues/218 is closed (And we can separate LXD and KVM)
 ConditionPathExists=!/dev/virtio-ports/org.linuxcontainers.lxd
 
 [Service]
