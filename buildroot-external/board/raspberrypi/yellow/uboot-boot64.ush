@@ -26,7 +26,7 @@ if gpio input GPIO27; then
   # ... and Blue Button Pressed?
   if gpio input GPIO26; then
     echo "Boot wipe has been pressed, deleting boot files to trigger USB boot..."
-    fatrm mmc 0:1 /start4.elf
+    fatrm ${devtype} ${devnum}:1 /start4.elf
     reset
   fi
   # Red still pressed?
@@ -35,7 +35,7 @@ if gpio input GPIO27; then
     setenv bootargs_hassos "${bootargs_hassos} haos.wipe=1"
   fi
 elif gpio input GPIO26; then
-  ums 0 mmc 0
+  ums 0 ${devtype} ${devnum}
 fi
 
 # HassOS system A/B
