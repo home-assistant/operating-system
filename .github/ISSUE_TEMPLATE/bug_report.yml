@@ -40,9 +40,9 @@ body:
         - tinker (ASUS Tinker Board/Tinker Board S)
         - yellow (Home Assistant Yellow)
       description: >
-        Can be found in the [Configuration panel -> Settings -> Info](https://my.home-assistant.io/redirect/info/). It is listed as the `Board` value.
+        Can be found in [Settings -> System -> Repairs -> System Information](https://my.home-assistant.io/redirect/system_health/). It is listed as the `Board` value.
 
-        [![Open your Home Assistant instance and show your Home Assistant version information.](https://my.home-assistant.io/badges/info.svg)](https://my.home-assistant.io/redirect/info/)
+        [![Open your Home Assistant instance and show health information about your system.](https://my.home-assistant.io/badges/system_health.svg)](https://my.home-assistant.io/redirect/system_health/)
   - type: input
     validations:
       required: true
@@ -50,7 +50,7 @@ body:
       label: What version of Home Assistant Operating System is installed?
       placeholder: "6.6"
       description: >
-        Can be found in the [Configuration panel -> Settings -> Info](https://my.home-assistant.io/redirect/info/). It is listed as the `Host Operating System` value.
+        Can be found in [Settings -> System -> Repairs -> System Information (top right menu)](https://my.home-assistant.io/redirect/system_health/). It is listed as the `Host Operating System` value.
   - type: dropdown
     validations:
       required: true
@@ -78,7 +78,8 @@ body:
     attributes:
       label: Anything in the Supervisor logs that might be useful for us?
       description: >
-        Supervisor Logs can be found under [Configuration panel -> Add-ons, Backup & Supervisor -> System](https://my.home-assistant.io/redirect/supervisor_logs/), then choose Log Provider `Supervisor`.
+        Supervisor Logs can be found in [Settings -> System -> Logs](https://my.home-assistant.io/redirect/logs/)
+        then choose `Supervisor` in the top right.
 
         [![Open your Home Assistant instance and show your Supervisor system logs.](https://my.home-assistant.io/badges/supervisor_logs.svg)](https://my.home-assistant.io/redirect/supervisor_logs/)
       render: txt
@@ -88,16 +89,19 @@ body:
     attributes:
       label: Anything in the Host logs that might be useful for us?
       description: >
-        Supervisor Logs can be found under [Configuration panel -> Add-ons, Backup & Supervisor -> System](https://my.home-assistant.io/redirect/supervisor_logs/), then choose Log Provider `Host`.
+        Host Logs can be found in [Settings -> System -> Logs](https://my.home-assistant.io/redirect/logs/)
+        then choose `Host` in the top right.
       render: txt
   - type: textarea
     attributes:
-      label: System Health information
+      label: System information
       description: >
         **Optional** Copy the full System Health in this text area.
 
-        Can be found in the [Configuration panel -> Settings -> Info](https://my.home-assistant.io/redirect/info/).
-        Use the copy icon on top right and choose `For GitHub`.
+        System information can be found in [Settings -> System -> Repairs -> System Information (top right menu)](https://my.home-assistant.io/redirect/system_health/),
+        Click the copy button at the bottom of the pop-up and paste it here.
+        
+        [![Open your Home Assistant instance and show health information about your system.](https://my.home-assistant.io/badges/system_health.svg)](https://my.home-assistant.io/redirect/system_health/)
   - type: textarea
     attributes:
       label: Additional information
