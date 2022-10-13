@@ -94,7 +94,7 @@ body:
       render: txt
   - type: textarea
     attributes:
-      label: System Health information
+      label: System information
       description: >
         **Optional** Copy the full System Health in this text area.
 
