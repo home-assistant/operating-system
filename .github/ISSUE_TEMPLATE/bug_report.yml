@@ -98,7 +98,7 @@ body:
       description: >
         **Optional** Copy the full System Health in this text area.
 
-        System Health information can be found in the top right menu in [Settings -> System -> Repairs](https://my.home-assistant.io/redirect/repairs/).
+        System information can be found in [Settings -> System -> Repairs -> System Information (top right menu)](https://my.home-assistant.io/redirect/system_health/),
         Click the copy button at the bottom of the pop-up and paste it here.
         
         [![Open your Home Assistant instance and show health information about your system.](https://my.home-assistant.io/badges/system_health.svg)](https://my.home-assistant.io/redirect/system_health/)
