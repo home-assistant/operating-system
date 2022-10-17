@@ -26,7 +26,7 @@ jobs:
         run: |
           version_dev="dev$(date --utc +'%Y%m%d')"
           echo "Development version \"${version_dev}\""
-          echo "::set-output name=version_dev::${version_dev}"
+          echo "version_dev=${version_dev}" >> $GITHUB_OUTPUT
       - name: Generate Development build version for PR
         if: ${{ github.event.pull_request }}
         shell: bash
@@ -34,14 +34,14 @@ jobs:
         run: |
           version_pr=$(printf "%05d" ${{ github.event.pull_request.number }})
           echo "Development build for PR #${{ github.event.pull_request.number }}"
-          echo "::set-output name=version_pr::${version_pr}"
+          echo "version_pr=${version_pr}" >> $GITHUB_OUTPUT
       - uses: actions/checkout@v3
       - name: Get Major/Minor version
         id: version_main
         run: |
           major=$(cat ${GITHUB_WORKSPACE}/buildroot-external/meta | grep VERSION_MAJOR | cut -d'=' -f2)
           build=$(cat ${GITHUB_WORKSPACE}/buildroot-external/meta | grep VERSION_BUILD | cut -d'=' -f2)
-          echo "::set-output name=version_main::${major}.${build}"
+          echo "version_main=${major}.${build}" >> $GITHUB_OUTPUT
       - name: Create build matrix
         uses: actions/github-script@v6
         id: generate_matrix

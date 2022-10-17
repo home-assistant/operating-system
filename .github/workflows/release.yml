@@ -29,12 +29,11 @@ jobs:
             exit 1
           fi
           if [ "" != "${tag_dev}" ]; then
-            echo "Note: Release build with custom dev part: ${tag_dev}."
-            echo "::set-output name=version::${major}.${build}.${tag_dev}"
+            echo "version=${major}.${build}.${tag_dev}" >> $GITHUB_OUTPUT
           else
-            echo "::set-output name=version::${major}.${build}"
+            echo "version=${major}.${build}" >> $GITHUB_OUTPUT
           fi
-          echo "::set-output name=version_dev::${tag_dev}"
+          echo "version_dev=${tag_dev}" >> $GITHUB_OUTPUT
       - name: Create build matrix
         uses: actions/github-script@v6
         id: generate_matrix
