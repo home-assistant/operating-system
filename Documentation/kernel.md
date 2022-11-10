@@ -5,18 +5,18 @@ Default Kernel tree: 5.15
 
 | Board | Version |
 |-------|---------|
-| Open Virtual Appliance | 5.15.76 |
+| Open Virtual Appliance | 5.15.77 |
 | Raspberry Pi | 5.15.61 |
 | Raspberry Pi 0-W | 5.15.61 |
 | Raspberry Pi 2 | 5.15.61 |
 | Raspberry Pi 3 | 5.15.61 |
 | Raspberry Pi 4 | 5.15.61 |
 | Home Assistant Yellow | 5.15.61 |
-| Tinker Board | 5.15.76 |
-| Odroid-C2 | 5.15.76 |
-| Odroid-C4 | 5.15.76 |
-| Odroid-N2 | 5.15.76 |
-| Odroid-XU4 | 5.15.76 |
-| Generic aarch64 | 5.15.76 |
-| Generic x86-64 | 5.15.76 |
-| Khadas VIM3 | 5.15.76 |
+| Tinker Board | 5.15.77 |
+| Odroid-C2 | 5.15.77 |
+| Odroid-C4 | 5.15.77 |
+| Odroid-N2 | 5.15.77 |
+| Odroid-XU4 | 5.15.77 |
+| Generic aarch64 | 5.15.77 |
+| Generic x86-64 | 5.15.77 |
+| Khadas VIM3 | 5.15.77 |
