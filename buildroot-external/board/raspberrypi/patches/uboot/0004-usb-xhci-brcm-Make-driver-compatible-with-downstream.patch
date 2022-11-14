@@ -1,7 +1,7 @@
-From b00922ee48987ef91f0ca2aa3a66ad22c6c83d57 Mon Sep 17 00:00:00 2001
-Message-Id: <b00922ee48987ef91f0ca2aa3a66ad22c6c83d57.1654086219.git.stefan@agner.ch>
-In-Reply-To: <24b77460dbfa2497ceb7a1611bf28b6eb88a1d74.1654086219.git.stefan@agner.ch>
-References: <24b77460dbfa2497ceb7a1611bf28b6eb88a1d74.1654086219.git.stefan@agner.ch>
+From de29ca70117fb2bfafa8b5699b34e9e94560b785 Mon Sep 17 00:00:00 2001
+Message-Id: <de29ca70117fb2bfafa8b5699b34e9e94560b785.1668448794.git.stefan@agner.ch>
+In-Reply-To: <135d886b4e5077c8fa96a5449a70d81ae9c1c3d0.1668448794.git.stefan@agner.ch>
+References: <135d886b4e5077c8fa96a5449a70d81ae9c1c3d0.1668448794.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Thu, 7 Oct 2021 12:02:39 +0200
 Subject: [PATCH] usb: xhci-brcm: Make driver compatible with downstream device
@@ -29,5 +29,5 @@ index fe17924028..0c6938187b 100644
  };
  
 -- 
-2.36.1
+2.38.1
 

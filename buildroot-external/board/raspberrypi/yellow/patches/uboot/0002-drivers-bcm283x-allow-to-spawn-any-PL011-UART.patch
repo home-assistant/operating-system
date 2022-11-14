@@ -1,10 +1,10 @@
-From c2447aa922068cebd9bbaac45acae3d853abf687 Mon Sep 17 00:00:00 2001
-Message-Id: <c2447aa922068cebd9bbaac45acae3d853abf687.1650924333.git.stefan@agner.ch>
-In-Reply-To: <78704bc154d695ee16fdf8396f4d60b740190014.1650924333.git.stefan@agner.ch>
-References: <78704bc154d695ee16fdf8396f4d60b740190014.1650924333.git.stefan@agner.ch>
+From 921f4b6d8cb3b997dd5c54fd436bb8223046421e Mon Sep 17 00:00:00 2001
+Message-Id: <921f4b6d8cb3b997dd5c54fd436bb8223046421e.1668448114.git.stefan@agner.ch>
+In-Reply-To: <85fb54b621c1ca79f1ec8634b0597a038338e51d.1668448114.git.stefan@agner.ch>
+References: <85fb54b621c1ca79f1ec8634b0597a038338e51d.1668448114.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Thu, 14 Apr 2022 12:18:41 +0200
-Subject: [PATCH 2/5] drivers: bcm283x: allow to spawn any PL011 UART
+Subject: [PATCH] drivers: bcm283x: allow to spawn any PL011 UART
 
 The current code checks pinmux for the first PL011 only. Raspberry Pi 4
 has multiple PL011 UARTs. This code prevents probing of other UARTs in
@@ -22,7 +22,7 @@ Signed-off-by: Stefan Agner <stefan@agner.ch>
  1 file changed, 27 deletions(-)
 
 diff --git a/drivers/serial/serial_bcm283x_pl011.c b/drivers/serial/serial_bcm283x_pl011.c
-index 182274036c..98628e1ca4 100644
+index fcba07f1c5..98628e1ca4 100644
 --- a/drivers/serial/serial_bcm283x_pl011.c
 +++ b/drivers/serial/serial_bcm283x_pl011.c
 @@ -11,37 +11,10 @@
@@ -35,14 +35,14 @@ index 182274036c..98628e1ca4 100644
 - * The serial device will only work properly if it has been muxed to the serial
 - * pins by firmware. Check whether that happened here.
 - *
-- * @return true if serial device is muxed, false if not
+- * Return: true if serial device is muxed, false if not
 - */
 -static bool bcm283x_is_serial_muxed(void)
 -{
 -	int serial_gpio = 15;
 -	struct udevice *dev;
 -
--	if (uclass_first_device(UCLASS_PINCTRL, &dev) || !dev)
+-	if (uclass_first_device_err(UCLASS_PINCTRL, &dev))
 -		return false;
 -
 -	if (pinctrl_get_gpio_mux(dev, 0, serial_gpio) != BCM2835_GPIO_ALT0)
@@ -64,5 +64,5 @@ index 182274036c..98628e1ca4 100644
  	 * Read the ofdata here rather than in an of_to_plat() method
  	 * since we need the soc simple-bus to be probed so that the 'ranges'
 -- 
-2.36.0
+2.38.1
 
