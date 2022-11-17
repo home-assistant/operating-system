@@ -1,7 +1,7 @@
-From 54d797d83265e31e16db922eb7c12d4bbc749127 Mon Sep 17 00:00:00 2001
-Message-Id: <54d797d83265e31e16db922eb7c12d4bbc749127.1654086219.git.stefan@agner.ch>
-In-Reply-To: <24b77460dbfa2497ceb7a1611bf28b6eb88a1d74.1654086219.git.stefan@agner.ch>
-References: <24b77460dbfa2497ceb7a1611bf28b6eb88a1d74.1654086219.git.stefan@agner.ch>
+From c70926d8b8ad11b8e489e92a8ca9ca93fb201595 Mon Sep 17 00:00:00 2001
+Message-Id: <c70926d8b8ad11b8e489e92a8ca9ca93fb201595.1668448794.git.stefan@agner.ch>
+In-Reply-To: <135d886b4e5077c8fa96a5449a70d81ae9c1c3d0.1668448794.git.stefan@agner.ch>
+References: <135d886b4e5077c8fa96a5449a70d81ae9c1c3d0.1668448794.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Fri, 24 Sep 2021 00:27:39 +0200
 Subject: [PATCH] nvme: translate virtual addresses into the bus's address
@@ -24,15 +24,15 @@ address space").
 
 Signed-off-by: Stefan Agner <stefan@agner.ch>
 ---
- drivers/nvme/nvme.c | 32 ++++++++++++++++++--------------
- drivers/nvme/nvme.h | 15 +++++++++++++++
- 2 files changed, 33 insertions(+), 14 deletions(-)
+ drivers/nvme/nvme.c | 31 +++++++++++++++++--------------
+ drivers/nvme/nvme.h |  8 ++++++++
+ 2 files changed, 25 insertions(+), 14 deletions(-)
 
 diff --git a/drivers/nvme/nvme.c b/drivers/nvme/nvme.c
-index 6ab94ada7e..dd190bd654 100644
+index 352c94ea91..fdfc49677b 100644
 --- a/drivers/nvme/nvme.c
 +++ b/drivers/nvme/nvme.c
-@@ -95,7 +95,7 @@ static int nvme_setup_prps(struct nvme_dev *dev, u64 *prp2,
+@@ -66,7 +66,7 @@ static int nvme_setup_prps(struct nvme_dev *dev, u64 *prp2,
  		buffer += (page_size - offset);
  
  	if (length <= page_size) {
@@ -41,10 +41,10 @@ index 6ab94ada7e..dd190bd654 100644
  		return 0;
  	}
  
-@@ -120,16 +120,16 @@ static int nvme_setup_prps(struct nvme_dev *dev, u64 *prp2,
+@@ -91,16 +91,16 @@ static int nvme_setup_prps(struct nvme_dev *dev, u64 *prp2,
  	i = 0;
  	while (nprps) {
- 		if (i == prps_per_page) {
+ 		if ((i == (prps_per_page - 1)) && nprps > 1) {
 -			u64 next_prp_list = (u64)prp_pool + page_size;
 -			*(prp_pool + i) = cpu_to_le64(next_prp_list);
 +			u64 next = nvme_virt_to_bus(dev, prp_pool + page_size);
@@ -61,8 +61,8 @@ index 6ab94ada7e..dd190bd654 100644
 +	*prp2 = nvme_virt_to_bus(dev, dev->prp_pool);
  
  	flush_dcache_range((ulong)dev->prp_pool, (ulong)dev->prp_pool +
- 			   dev->prp_entry_num * sizeof(u64));
-@@ -356,6 +356,7 @@ static int nvme_configure_admin_queue(struct nvme_dev *dev)
+ 			   num_pages * page_size);
+@@ -353,6 +353,7 @@ static int nvme_configure_admin_queue(struct nvme_dev *dev)
  	int result;
  	u32 aqa;
  	u64 cap = dev->cap;
@@ -70,7 +70,7 @@ index 6ab94ada7e..dd190bd654 100644
  	struct nvme_queue *nvmeq;
  	/* most architectures use 4KB as the page size */
  	unsigned page_shift = 12;
-@@ -396,8 +397,10 @@ static int nvme_configure_admin_queue(struct nvme_dev *dev)
+@@ -393,8 +394,10 @@ static int nvme_configure_admin_queue(struct nvme_dev *dev)
  	dev->ctrl_config |= NVME_CC_IOSQES | NVME_CC_IOCQES;
  
  	writel(aqa, &dev->bar->aqa);
@@ -83,7 +83,7 @@ index 6ab94ada7e..dd190bd654 100644
  
  	result = nvme_enable_ctrl(dev);
  	if (result)
-@@ -423,7 +426,7 @@ static int nvme_alloc_cq(struct nvme_dev *dev, u16 qid,
+@@ -420,7 +423,7 @@ static int nvme_alloc_cq(struct nvme_dev *dev, u16 qid,
  
  	memset(&c, 0, sizeof(c));
  	c.create_cq.opcode = nvme_admin_create_cq;
@@ -92,7 +92,7 @@ index 6ab94ada7e..dd190bd654 100644
  	c.create_cq.cqid = cpu_to_le16(qid);
  	c.create_cq.qsize = cpu_to_le16(nvmeq->q_depth - 1);
  	c.create_cq.cq_flags = cpu_to_le16(flags);
-@@ -440,7 +443,7 @@ static int nvme_alloc_sq(struct nvme_dev *dev, u16 qid,
+@@ -437,7 +440,7 @@ static int nvme_alloc_sq(struct nvme_dev *dev, u16 qid,
  
  	memset(&c, 0, sizeof(c));
  	c.create_sq.opcode = nvme_admin_create_sq;
@@ -101,7 +101,7 @@ index 6ab94ada7e..dd190bd654 100644
  	c.create_sq.sqid = cpu_to_le16(qid);
  	c.create_sq.qsize = cpu_to_le16(nvmeq->q_depth - 1);
  	c.create_sq.sq_flags = cpu_to_le16(flags);
-@@ -461,14 +464,14 @@ int nvme_identify(struct nvme_dev *dev, unsigned nsid,
+@@ -458,14 +461,14 @@ int nvme_identify(struct nvme_dev *dev, unsigned nsid,
  	memset(&c, 0, sizeof(c));
  	c.identify.opcode = nvme_admin_identify;
  	c.identify.nsid = cpu_to_le32(nsid);
@@ -118,7 +118,7 @@ index 6ab94ada7e..dd190bd654 100644
  	}
  
  	c.identify.cns = cpu_to_le32(cns);
-@@ -493,7 +496,7 @@ int nvme_get_features(struct nvme_dev *dev, unsigned fid, unsigned nsid,
+@@ -490,7 +493,7 @@ int nvme_get_features(struct nvme_dev *dev, unsigned fid, unsigned nsid,
  	memset(&c, 0, sizeof(c));
  	c.features.opcode = nvme_admin_get_features;
  	c.features.nsid = cpu_to_le32(nsid);
@@ -127,7 +127,7 @@ index 6ab94ada7e..dd190bd654 100644
  	c.features.fid = cpu_to_le32(fid);
  
  	ret = nvme_submit_admin_cmd(dev, &c, result);
-@@ -519,7 +522,7 @@ int nvme_set_features(struct nvme_dev *dev, unsigned fid, unsigned dword11,
+@@ -516,7 +519,7 @@ int nvme_set_features(struct nvme_dev *dev, unsigned fid, unsigned dword11,
  
  	memset(&c, 0, sizeof(c));
  	c.features.opcode = nvme_admin_set_features;
@@ -136,7 +136,7 @@ index 6ab94ada7e..dd190bd654 100644
  	c.features.fid = cpu_to_le32(fid);
  	c.features.dword11 = cpu_to_le32(dword11);
  
-@@ -776,7 +779,7 @@ static ulong nvme_blk_rw(struct udevice *udev, lbaint_t blknr,
+@@ -771,7 +774,7 @@ static ulong nvme_blk_rw(struct udevice *udev, lbaint_t blknr,
  		c.rw.slba = cpu_to_le64(slba);
  		slba += lbas;
  		c.rw.length = cpu_to_le16(lbas - 1);
@@ -145,54 +145,32 @@ index 6ab94ada7e..dd190bd654 100644
  		c.rw.prp2 = cpu_to_le64(prp2);
  		status = nvme_submit_sync_cmd(dev->queues[NVME_IO_Q],
  				&c, NULL, IO_TIMEOUT);
-@@ -835,6 +838,7 @@ static int nvme_probe(struct udevice *udev)
- 	struct nvme_id_ns *id;
- 
- 	ndev->instance = trailing_strtol(udev->name);
-+	ndev->dev = udev->parent;
- 
- 	INIT_LIST_HEAD(&ndev->namespaces);
- 	ndev->bar = dm_pci_map_bar(udev, PCI_BASE_ADDRESS_0,
 diff --git a/drivers/nvme/nvme.h b/drivers/nvme/nvme.h
-index c6aae4da5d..31e6899bca 100644
+index bc1d612dde..f52103c009 100644
 --- a/drivers/nvme/nvme.h
 +++ b/drivers/nvme/nvme.h
-@@ -7,8 +7,15 @@
+@@ -7,8 +7,11 @@
  #ifndef __DRIVER_NVME_H__
  #define __DRIVER_NVME_H__
  
 +#include <phys2bus.h>
  #include <asm/io.h>
  
-+#if CONFIG_IS_ENABLED(DM_USB)
-+#define nvme_to_dev(_dev)     _dev->dev
-+#else
-+#define nvme_to_dev(_dev)     NULL
-+#endif
++#define nvme_to_dev(_dev)	_dev->udev
 +
  struct nvme_id_power_state {
  	__le16			max_power;	/* centiwatts */
  	__u8			rsvd2;
-@@ -596,6 +603,9 @@ enum {
- 
- /* Represents an NVM Express device. Each nvme_dev is a PCI function. */
- struct nvme_dev {
-+#if CONFIG_IS_ENABLED(DM_USB)
-+	struct udevice *dev;
-+#endif
- 	struct list_head node;
- 	struct nvme_queue **queues;
- 	u32 __iomem *dbs;
-@@ -635,4 +645,9 @@ struct nvme_ns {
- 	u8 flbas;
- };
+@@ -705,4 +708,9 @@ int nvme_init(struct udevice *udev);
+  */
+ int nvme_shutdown(struct udevice *udev);
  
 +static inline dma_addr_t nvme_virt_to_bus(struct nvme_dev *dev, void *addr)
 +{
-+	return dev_phys_to_bus(nvme_to_dev(dev), virt_to_phys(addr));
++	return dev_phys_to_bus(nvme_to_dev(dev)->parent, virt_to_phys(addr));
 +}
 +
  #endif /* __DRIVER_NVME_H__ */
 -- 
-2.36.1
+2.38.1
 
