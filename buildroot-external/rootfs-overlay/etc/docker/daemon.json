@@ -7,5 +7,6 @@
         "tag": "{{.Name}}"
     },
     "data-root": "/mnt/data/docker",
-    "deprecated-key-path": "/mnt/overlay/etc/docker/key.json"
+    "deprecated-key-path": "/mnt/overlay/etc/docker/key.json",
+    "bip": "172.17.232.1/23"
 }
