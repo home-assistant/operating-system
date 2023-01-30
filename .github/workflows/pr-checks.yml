@@ -19,7 +19,7 @@ jobs:
         dockerfile: Dockerfile
 
     - name: Check shell scripts
-      uses: ludeeus/action-shellcheck@1.1.0
+      uses: ludeeus/action-shellcheck@2.0.0
       with:
         ignore: buildroot buildroot-external/package/xe-guest-utilities
 
