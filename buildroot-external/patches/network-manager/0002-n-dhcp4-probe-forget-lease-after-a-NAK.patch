@@ -1,0 +1,61 @@
+From 5f5e5bd79d78fc057a887858012df01604fc1ca8 Mon Sep 17 00:00:00 2001
+Message-Id: <5f5e5bd79d78fc057a887858012df01604fc1ca8.1675879722.git.stefan@agner.ch>
+In-Reply-To: <88f63699c444e43096e765b2603aa211a8ae58bb.1675879722.git.stefan@agner.ch>
+References: <88f63699c444e43096e765b2603aa211a8ae58bb.1675879722.git.stefan@agner.ch>
+From: Beniamino Galvani <bgalvani@redhat.com>
+Date: Thu, 5 May 2022 17:50:57 +0200
+Subject: [PATCH] n-dhcp4/probe: forget lease after a NAK
+
+If we have a lease and we get a NAK renewing/rebinding it, the lease
+is lost.
+
+Without this, probe->current_lease remains set and after the next
+DISCOVER/OFFER round, any call to n_dhcp4_client_lease_select() will
+fail at:
+
+        if (lease->probe->current_lease)
+                return -ENOTRECOVERABLE;
+
+As in:
+
+ [5325.1313] dhcp4 (veth0): send REQUEST of 172.25.1.200 to 255.255.255.255
+ [5325.1434] dhcp4 (veth0): received NACK from 172.25.1.1
+ [5325.1435] dhcp4 (veth0): client event 3 (RETRACTED)
+ [5325.1436] dhcp4 (veth0): send DISCOVER to 255.255.255.255
+ [5325.1641] dhcp4 (veth0): received OFFER of 172.25.1.200 from 172.25.1.1
+ [5325.1641] dhcp4 (veth0): client event (OFFER)
+ [5325.1641] dhcp4 (veth0): selecting lease failed: -131 (ENOTRECOVERABLE)
+
+Upstream: https://github.com/nettools/n-dhcp4/pull/33
+Upstream: https://github.com/nettools/n-dhcp4/commit/e4af93228e3772bbb443ec1237252e6a2f3e3dd7
+
+https://gitlab.freedesktop.org/NetworkManager/NetworkManager/-/issues/993
+
+e43b1791a382 ('Merge commit 'e23b3c9c3ac86b065eef002fa5c4321cc4a87df2' as 'shared/n-dhcp4'')
+---
+ src/n-dhcp4/src/n-dhcp4-c-probe.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/src/n-dhcp4/src/n-dhcp4-c-probe.c b/src/n-dhcp4/src/n-dhcp4-c-probe.c
+index 7f20ac0527..283c1693cf 100644
+--- a/src/n-dhcp4/src/n-dhcp4-c-probe.c
++++ b/src/n-dhcp4/src/n-dhcp4-c-probe.c
+@@ -995,14 +995,13 @@ static int n_dhcp4_client_probe_transition_nak(NDhcp4ClientProbe *probe) {
+         case N_DHCP4_CLIENT_PROBE_STATE_RENEWING:
+         case N_DHCP4_CLIENT_PROBE_STATE_REBINDING:
+ 
+-                /* XXX */
+-
+                 r = n_dhcp4_client_probe_raise(probe,
+                                                NULL,
+                                                N_DHCP4_CLIENT_EVENT_RETRACTED);
+                 if (r)
+                         return r;
+ 
++                probe->current_lease = n_dhcp4_client_lease_unref(probe->current_lease);
+                 probe->state = N_DHCP4_CLIENT_PROBE_STATE_INIT;
+                 probe->ns_deferred = n_dhcp4_gettime(CLOCK_BOOTTIME) + probe->ns_nak_restart_delay;
+                 probe->ns_nak_restart_delay = C_CLAMP(probe->ns_nak_restart_delay * 2u,
+-- 
+2.39.1
+
