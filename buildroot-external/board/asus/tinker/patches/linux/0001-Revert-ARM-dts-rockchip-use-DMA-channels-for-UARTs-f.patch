@@ -1,5 +1,5 @@
-From ff0c5c49024da05b47d4fcc4d115761c43eef7a6 Mon Sep 17 00:00:00 2001
-Message-Id: <ff0c5c49024da05b47d4fcc4d115761c43eef7a6.1652225232.git.stefan@agner.ch>
+From 3553f8a938dbb498aa1846a37ea343b7f53739da Mon Sep 17 00:00:00 2001
+Message-Id: <3553f8a938dbb498aa1846a37ea343b7f53739da.1676488094.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Wed, 17 Feb 2021 19:55:41 +0100
 Subject: [PATCH] Revert "ARM: dts: rockchip: use DMA channels for UARTs for
@@ -11,7 +11,7 @@ This reverts commit 3425fe335c29310f6628faf9a7947d07f32d8962.
  1 file changed, 8 deletions(-)
 
 diff --git a/arch/arm/boot/dts/rk3288.dtsi b/arch/arm/boot/dts/rk3288.dtsi
-index 4dcdcf17c977..ff6faa82192b 100644
+index 487b0e03d4b4..1569b1824c89 100644
 --- a/arch/arm/boot/dts/rk3288.dtsi
 +++ b/arch/arm/boot/dts/rk3288.dtsi
 @@ -378,8 +378,6 @@ uart0: serial@ff180000 {
@@ -51,5 +51,5 @@ index 4dcdcf17c977..ff6faa82192b 100644
  		pinctrl-0 = <&uart4_xfer>;
  		status = "disabled";
 -- 
-2.36.1
+2.39.1
 

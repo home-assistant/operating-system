@@ -1,7 +1,7 @@
-From e45da42e71e4f92995d5ec11679ca00b0971dbfe Mon Sep 17 00:00:00 2001
-Message-Id: <e45da42e71e4f92995d5ec11679ca00b0971dbfe.1652225232.git.stefan@agner.ch>
-In-Reply-To: <ff0c5c49024da05b47d4fcc4d115761c43eef7a6.1652225232.git.stefan@agner.ch>
-References: <ff0c5c49024da05b47d4fcc4d115761c43eef7a6.1652225232.git.stefan@agner.ch>
+From 7d37754f29c379c5066c6abf38c8d01d654b1613 Mon Sep 17 00:00:00 2001
+Message-Id: <7d37754f29c379c5066c6abf38c8d01d654b1613.1676488094.git.stefan@agner.ch>
+In-Reply-To: <3553f8a938dbb498aa1846a37ea343b7f53739da.1676488094.git.stefan@agner.ch>
+References: <3553f8a938dbb498aa1846a37ea343b7f53739da.1676488094.git.stefan@agner.ch>
 From: Myy Miouyouyou <myy@miouyouyou.fr>
 Date: Thu, 19 Oct 2017 21:24:47 +0200
 Subject: [PATCH] RK3288: DTSI: rk3288.dtsi: Add missing SPI2 pinctrl
@@ -17,7 +17,7 @@ Signed-off-by: Myy Miouyouyou <myy@miouyouyou.fr>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/arch/arm/boot/dts/rk3288.dtsi b/arch/arm/boot/dts/rk3288.dtsi
-index ff6faa82192b..5061c5418d75 100644
+index 1569b1824c89..478fd1bb85df 100644
 --- a/arch/arm/boot/dts/rk3288.dtsi
 +++ b/arch/arm/boot/dts/rk3288.dtsi
 @@ -311,7 +311,7 @@ spi2: spi@ff130000 {
@@ -30,5 +30,5 @@ index ff6faa82192b..5061c5418d75 100644
  		#address-cells = <1>;
  		#size-cells = <0>;
 -- 
-2.36.1
+2.39.1
 

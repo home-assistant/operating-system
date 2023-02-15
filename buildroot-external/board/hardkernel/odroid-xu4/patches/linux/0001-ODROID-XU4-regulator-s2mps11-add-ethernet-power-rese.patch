@@ -1,5 +1,5 @@
-From 1fb890d987088f5b6b4c165d8d05480e15b8882e Mon Sep 17 00:00:00 2001
-Message-Id: <1fb890d987088f5b6b4c165d8d05480e15b8882e.1662147854.git.stefan@agner.ch>
+From e7d59e0444170873e945a0675ed1565a65c99e17 Mon Sep 17 00:00:00 2001
+Message-Id: <e7d59e0444170873e945a0675ed1565a65c99e17.1676489173.git.stefan@agner.ch>
 From: memeka <mihailescu2m@gmail.com>
 Date: Fri, 18 Jan 2019 14:36:21 +1030
 Subject: [PATCH] ODROID-XU4: regulator: s2mps11: add ethernet power reset in
@@ -90,5 +90,5 @@ index ebc67e3ddd4f..51f128076db9 100644
  	kfree(rdata);
  
 -- 
-2.37.2
+2.39.1
 
