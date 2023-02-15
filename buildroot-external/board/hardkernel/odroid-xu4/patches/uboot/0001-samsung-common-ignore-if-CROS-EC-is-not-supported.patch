@@ -1,0 +1,30 @@
+From 24252c65cfea76c5724044381bafb587a9fecd6a Mon Sep 17 00:00:00 2001
+Message-Id: <24252c65cfea76c5724044381bafb587a9fecd6a.1676446297.git.stefan@agner.ch>
+From: Stefan Agner <stefan@agner.ch>
+Date: Wed, 15 Feb 2023 08:30:41 +0100
+Subject: [PATCH] samsung: common: ignore if CROS EC is not supported
+
+If the CROS device class is not compiled in, uclass returns not
+supported. Ignore this case as well.
+
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+---
+ board/samsung/common/board.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/board/samsung/common/board.c b/board/samsung/common/board.c
+index 16ce5cb892..663d7ca991 100644
+--- a/board/samsung/common/board.c
++++ b/board/samsung/common/board.c
+@@ -223,7 +223,7 @@ int board_late_init(void)
+ 	char mmcbootdev_str[16];
+ 
+ 	ret = uclass_first_device_err(UCLASS_CROS_EC, &dev);
+-	if (ret && ret != -ENODEV) {
++	if (ret && ret != -ENODEV && ret != -EPFNOSUPPORT) {
+ 		/* Force console on */
+ 		gd->flags &= ~GD_FLG_SILENT;
+ 
+-- 
+2.39.1
+
