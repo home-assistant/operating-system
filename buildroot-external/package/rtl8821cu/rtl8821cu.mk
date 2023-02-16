@@ -16,5 +16,9 @@ else
 RTL8821CU_MODULE_MAKE_OPTS += CONFIG_PLATFORM_I386_PC=y
 endif
 
+define RTL8821CU_LINUX_CONFIG_FIXUPS
+	$(call KCONFIG_DISABLE_OPT,CONFIG_WERROR)
+endef
+
 $(eval $(kernel-module))
 $(eval $(generic-package))
