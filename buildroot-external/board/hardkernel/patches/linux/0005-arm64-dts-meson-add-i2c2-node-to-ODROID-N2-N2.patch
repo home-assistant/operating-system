@@ -1,7 +1,7 @@
-From 96909bf9c466f99cdb5fdd45e82379198063c06d Mon Sep 17 00:00:00 2001
-Message-Id: <96909bf9c466f99cdb5fdd45e82379198063c06d.1663008544.git.stefan@agner.ch>
-In-Reply-To: <ff269d57d23c2edee262e14c6cf4116bc16d8019.1663008544.git.stefan@agner.ch>
-References: <ff269d57d23c2edee262e14c6cf4116bc16d8019.1663008544.git.stefan@agner.ch>
+From 00129576fb656015b66958f4d7370ee7e2d990e2 Mon Sep 17 00:00:00 2001
+Message-Id: <00129576fb656015b66958f4d7370ee7e2d990e2.1676488652.git.stefan@agner.ch>
+In-Reply-To: <86f6a398d2c080f92d51048ededf45efbe3a96d4.1676488652.git.stefan@agner.ch>
+References: <86f6a398d2c080f92d51048ededf45efbe3a96d4.1676488652.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Thu, 29 Apr 2021 21:32:43 +0200
 Subject: [PATCH] arm64: dts: meson: add i2c2 node to ODROID N2/N2+
@@ -16,10 +16,10 @@ Signed-off-by: Stefan Agner <stefan@agner.ch>
  1 file changed, 6 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi
-index 738eb0339333..2e9fefc20b19 100644
+index 7eaaced7893b..8d183253389c 100644
 --- a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi
 +++ b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi
-@@ -586,6 +586,12 @@ &ir {
+@@ -588,6 +588,12 @@ &ir {
  	linux,rc-map-name = "rc-odroid";
  };
  
@@ -33,5 +33,5 @@ index 738eb0339333..2e9fefc20b19 100644
  	status = "okay";
  	pinctrl-0 = <&i2c3_sda_a_pins>, <&i2c3_sck_a_pins>;
 -- 
-2.37.3
+2.39.1
 

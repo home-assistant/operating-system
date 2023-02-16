@@ -1,7 +1,7 @@
-From 9f82b2c1cdbdd172e7e7bfdccc88be3257fd4c91 Mon Sep 17 00:00:00 2001
-Message-Id: <9f82b2c1cdbdd172e7e7bfdccc88be3257fd4c91.1663008544.git.stefan@agner.ch>
-In-Reply-To: <ff269d57d23c2edee262e14c6cf4116bc16d8019.1663008544.git.stefan@agner.ch>
-References: <ff269d57d23c2edee262e14c6cf4116bc16d8019.1663008544.git.stefan@agner.ch>
+From 8c3e65cf09d62797a2fe50234f30f33f6e4eda44 Mon Sep 17 00:00:00 2001
+Message-Id: <8c3e65cf09d62797a2fe50234f30f33f6e4eda44.1676488652.git.stefan@agner.ch>
+In-Reply-To: <86f6a398d2c080f92d51048ededf45efbe3a96d4.1676488652.git.stefan@agner.ch>
+References: <86f6a398d2c080f92d51048ededf45efbe3a96d4.1676488652.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Mon, 11 Jan 2021 15:53:55 +0100
 Subject: [PATCH] arm64: dts: meson: g12b: odroid-n2: add fan as cooling device
@@ -20,10 +20,10 @@ Signed-off-by: Stefan Agner <stefan@agner.ch>
  1 file changed, 38 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi
-index 36dbd2666015..5ca75696bd5c 100644
+index bcf6d8eacd6e..6dcf990e0efc 100644
 --- a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi
 +++ b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi
-@@ -388,6 +388,44 @@ &clkc_audio {
+@@ -390,6 +390,44 @@ &clkc_audio {
  	status = "okay";
  };
  
@@ -69,5 +69,5 @@ index 36dbd2666015..5ca75696bd5c 100644
  	cpu-supply = <&vddcpu_b>;
  	operating-points-v2 = <&cpu_opp_table_0>;
 -- 
-2.37.3
+2.39.1
 

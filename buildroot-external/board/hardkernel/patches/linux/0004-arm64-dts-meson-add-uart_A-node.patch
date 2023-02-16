@@ -1,7 +1,7 @@
-From 025e89230336ccea12ff89195231dd0c03cd3eec Mon Sep 17 00:00:00 2001
-Message-Id: <025e89230336ccea12ff89195231dd0c03cd3eec.1663008544.git.stefan@agner.ch>
-In-Reply-To: <ff269d57d23c2edee262e14c6cf4116bc16d8019.1663008544.git.stefan@agner.ch>
-References: <ff269d57d23c2edee262e14c6cf4116bc16d8019.1663008544.git.stefan@agner.ch>
+From 433c5a06b1195e2e689f8d260ec471caca2fa1b6 Mon Sep 17 00:00:00 2001
+Message-Id: <433c5a06b1195e2e689f8d260ec471caca2fa1b6.1676488652.git.stefan@agner.ch>
+In-Reply-To: <86f6a398d2c080f92d51048ededf45efbe3a96d4.1676488652.git.stefan@agner.ch>
+References: <86f6a398d2c080f92d51048ededf45efbe3a96d4.1676488652.git.stefan@agner.ch>
 From: Hyeonki Hong <hhk7734@gmail.com>
 Date: Fri, 27 Mar 2020 17:05:22 +0900
 Subject: [PATCH] arm64: dts: meson: add uart_A node
@@ -15,7 +15,7 @@ Signed-off-by: Stefan Agner <stefan@agner.ch>
  1 file changed, 7 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi
-index 5ca75696bd5c..738eb0339333 100644
+index 6dcf990e0efc..7eaaced7893b 100644
 --- a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi
 +++ b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi
 @@ -12,6 +12,7 @@
@@ -26,7 +26,7 @@ index 5ca75696bd5c..738eb0339333 100644
  		ethernet0 = &ethmac;
  		rtc0 = &rtc;
  		rtc1 = &vrtc;
-@@ -728,6 +729,12 @@ &toddr_c {
+@@ -730,6 +731,12 @@ &toddr_c {
  	status = "okay";
  };
  
@@ -40,5 +40,5 @@ index 5ca75696bd5c..738eb0339333 100644
  	status = "okay";
  	pinctrl-0 = <&uart_ao_a_pins>;
 -- 
-2.37.3
+2.39.1
 

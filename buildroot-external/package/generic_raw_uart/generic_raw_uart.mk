@@ -13,11 +13,15 @@
 #
 ################################################################################
 
-GENERIC_RAW_UART_VERSION = 020698473cf9b980a1962b5ddd7ed4c9d58164e2
+GENERIC_RAW_UART_VERSION = 1fc8bcc306e509bb32950b6f8d9e3bc64a6ad674
 GENERIC_RAW_UART_SITE = $(call github,alexreinert,piVCCU,$(GENERIC_RAW_UART_VERSION))
 GENERIC_RAW_UART_LICENSE = GPL2
 GENERIC_RAW_UART_LICENSE_FILES = LICENSE
 GENERIC_RAW_UART_MODULE_SUBDIRS = kernel
+
+define GENERIC_RAW_UART_LINUX_CONFIG_FIXUPS
+	$(call KCONFIG_DISABLE_OPT,CONFIG_WERROR)
+endef
 
 $(eval $(kernel-module))
 $(eval $(generic-package))

@@ -1,7 +1,7 @@
-From e73b4b762a0842cc75b2784e4c4267f6f4fc50c4 Mon Sep 17 00:00:00 2001
-Message-Id: <e73b4b762a0842cc75b2784e4c4267f6f4fc50c4.1652225232.git.stefan@agner.ch>
-In-Reply-To: <ff0c5c49024da05b47d4fcc4d115761c43eef7a6.1652225232.git.stefan@agner.ch>
-References: <ff0c5c49024da05b47d4fcc4d115761c43eef7a6.1652225232.git.stefan@agner.ch>
+From 695638c05c0bb6f7bcc65e172dd132b3aa280b47 Mon Sep 17 00:00:00 2001
+Message-Id: <695638c05c0bb6f7bcc65e172dd132b3aa280b47.1676488094.git.stefan@agner.ch>
+In-Reply-To: <3553f8a938dbb498aa1846a37ea343b7f53739da.1676488094.git.stefan@agner.ch>
+References: <3553f8a938dbb498aa1846a37ea343b7f53739da.1676488094.git.stefan@agner.ch>
 From: "Miouyouyou (Myy)" <myy@miouyouyou.fr>
 Date: Mon, 5 Nov 2018 22:15:14 +0100
 Subject: [PATCH] ARM: DTS: rk3288-tinker: Defining the SPI interface
@@ -21,10 +21,10 @@ Signed-off-by: Stefan Agner <stefan@agner.ch>
  1 file changed, 19 insertions(+)
 
 diff --git a/arch/arm/boot/dts/rk3288-tinker.dtsi b/arch/arm/boot/dts/rk3288-tinker.dtsi
-index 9c1e38c54eae..cf278bcc91ad 100644
+index 09618bb7d872..30430d2e64b9 100644
 --- a/arch/arm/boot/dts/rk3288-tinker.dtsi
 +++ b/arch/arm/boot/dts/rk3288-tinker.dtsi
-@@ -485,6 +485,25 @@ &sdio0 {
+@@ -483,6 +483,25 @@ &sdio0 {
  	status = "okay";
  };
  
@@ -51,5 +51,5 @@ index 9c1e38c54eae..cf278bcc91ad 100644
  	rockchip,hw-tshut-mode = <1>; /* tshut mode 0:CRU 1:GPIO */
  	rockchip,hw-tshut-polarity = <1>; /* tshut polarity 0:LOW 1:HIGH */
 -- 
-2.36.1
+2.39.1
 

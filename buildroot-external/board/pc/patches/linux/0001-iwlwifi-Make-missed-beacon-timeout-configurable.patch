@@ -1,5 +1,5 @@
-From d6be44a647dc6ae5ad2dcf44ff4a97030f1c498e Mon Sep 17 00:00:00 2001
-Message-Id: <d6be44a647dc6ae5ad2dcf44ff4a97030f1c498e.1646056626.git.stefan@agner.ch>
+From bf633d2f767c88bd54fbe1cf66122703bb1b98ae Mon Sep 17 00:00:00 2001
+Message-Id: <bf633d2f767c88bd54fbe1cf66122703bb1b98ae.1676491209.git.stefan@agner.ch>
 From: Zachary Michaels <mikezackles@gmail.com>
 Date: Thu, 7 Jan 2021 08:13:11 -0800
 Subject: [PATCH] iwlwifi: Make missed beacon timeout configurable
@@ -19,21 +19,21 @@ Signed-off-by: Stefan Agner <stefan@agner.ch>
  4 files changed, 8 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/net/wireless/intel/iwlwifi/iwl-drv.c b/drivers/net/wireless/intel/iwlwifi/iwl-drv.c
-index 524b0ad87357..a055674f14c6 100644
+index a2203f661321..a8a9d9559b53 100644
 --- a/drivers/net/wireless/intel/iwlwifi/iwl-drv.c
 +++ b/drivers/net/wireless/intel/iwlwifi/iwl-drv.c
-@@ -1711,6 +1711,7 @@ struct iwl_mod_params iwlwifi_mod_params = {
+@@ -1779,6 +1779,7 @@ struct iwl_mod_params iwlwifi_mod_params = {
  	.power_level = IWL_POWER_INDEX_1,
  	.uapsd_disable = IWL_DISABLE_UAPSD_BSS | IWL_DISABLE_UAPSD_P2P_CLIENT,
- 	.enable_ini = true,
+ 	.enable_ini = ENABLE_INI,
 +	.beacon_timeout = 16,
  	/* the rest are 0 by default */
  };
  IWL_EXPORT_SYMBOL(iwlwifi_mod_params);
-@@ -1826,6 +1827,9 @@ module_param_named(enable_ini, iwlwifi_mod_params.enable_ini,
- 		   bool, S_IRUGO | S_IWUSR);
+@@ -1926,6 +1927,9 @@ module_param_cb(enable_ini, &enable_ini_ops, &iwlwifi_mod_params.enable_ini, 064
  MODULE_PARM_DESC(enable_ini,
- 		 "Enable debug INI TLV FW debug infrastructure (default: true");
+ 		 "0:disable, 1-15:FW_DBG_PRESET Values, 16:enabled without preset value defined,"
+ 		 "Debug INI TLV FW debug infrastructure (default: 16)");
 +module_param_named(beacon_timeout, iwlwifi_mod_params.beacon_timeout, uint, 0644);
 +MODULE_PARM_DESC(beacon_timeout,
 +		 "Number of missed beacons before disconnecting (default: 16)");
@@ -41,7 +41,7 @@ index 524b0ad87357..a055674f14c6 100644
  /*
   * set bt_coex_active to true, uCode will do kill/defer
 diff --git a/drivers/net/wireless/intel/iwlwifi/iwl-modparams.h b/drivers/net/wireless/intel/iwlwifi/iwl-modparams.h
-index 004ebdac4535..198c5ac2575b 100644
+index d0b4d02bdab9..f74e85ae0076 100644
 --- a/drivers/net/wireless/intel/iwlwifi/iwl-modparams.h
 +++ b/drivers/net/wireless/intel/iwlwifi/iwl-modparams.h
 @@ -62,6 +62,7 @@ enum iwl_uapsd_disable {
@@ -52,16 +52,16 @@ index 004ebdac4535..198c5ac2575b 100644
   */
  struct iwl_mod_params {
  	int swcrypto;
-@@ -84,6 +85,7 @@ struct iwl_mod_params {
- 	bool disable_11ax;
+@@ -85,6 +86,7 @@ struct iwl_mod_params {
  	bool remove_when_gone;
- 	bool enable_ini;
+ 	u32 enable_ini;
+ 	bool disable_11be;
 +	u32 beacon_timeout;
  };
  
  static inline bool iwl_enable_rx_ampdu(void)
 diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/mac-ctxt.c b/drivers/net/wireless/intel/iwlwifi/mvm/mac-ctxt.c
-index fd352b2624a6..2f70a36b1af9 100644
+index de0c545d50fd..24eb541209ef 100644
 --- a/drivers/net/wireless/intel/iwlwifi/mvm/mac-ctxt.c
 +++ b/drivers/net/wireless/intel/iwlwifi/mvm/mac-ctxt.c
 @@ -8,6 +8,7 @@
@@ -82,10 +82,10 @@ index fd352b2624a6..2f70a36b1af9 100644
  	else if (rx_missed_bcon_since_rx > IWL_MVM_MISSED_BEACONS_THRESHOLD)
  		ieee80211_beacon_loss(vif);
 diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/mvm.h b/drivers/net/wireless/intel/iwlwifi/mvm/mvm.h
-index 46af8dd2dc93..bb05df29c88b 100644
+index 1ccb3cad7cdc..56611a1b40ee 100644
 --- a/drivers/net/wireless/intel/iwlwifi/mvm/mvm.h
 +++ b/drivers/net/wireless/intel/iwlwifi/mvm/mvm.h
-@@ -38,7 +38,6 @@
+@@ -39,7 +39,6 @@
  /* RSSI offset for WkP */
  #define IWL_RSSI_OFFSET 50
  #define IWL_MVM_MISSED_BEACONS_THRESHOLD 8
@@ -94,5 +94,5 @@ index 46af8dd2dc93..bb05df29c88b 100644
  /* A TimeUnit is 1024 microsecond */
  #define MSEC_TO_TU(_msec)	(_msec*1000/1024)
 -- 
-2.35.1
+2.39.1
 

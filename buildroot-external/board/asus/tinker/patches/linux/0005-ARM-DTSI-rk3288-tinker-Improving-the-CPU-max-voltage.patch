@@ -1,7 +1,7 @@
-From e33d3ba4c34d0893d9d07b62ad4eea41d2e8bbc0 Mon Sep 17 00:00:00 2001
-Message-Id: <e33d3ba4c34d0893d9d07b62ad4eea41d2e8bbc0.1652225232.git.stefan@agner.ch>
-In-Reply-To: <ff0c5c49024da05b47d4fcc4d115761c43eef7a6.1652225232.git.stefan@agner.ch>
-References: <ff0c5c49024da05b47d4fcc4d115761c43eef7a6.1652225232.git.stefan@agner.ch>
+From 05fde1d1dbbe7805a58a8c445b8fb19e0df59826 Mon Sep 17 00:00:00 2001
+Message-Id: <05fde1d1dbbe7805a58a8c445b8fb19e0df59826.1676488094.git.stefan@agner.ch>
+In-Reply-To: <3553f8a938dbb498aa1846a37ea343b7f53739da.1676488094.git.stefan@agner.ch>
+References: <3553f8a938dbb498aa1846a37ea343b7f53739da.1676488094.git.stefan@agner.ch>
 From: "Miouyouyou (Myy)" <myy@miouyouyou.fr>
 Date: Mon, 5 Nov 2018 20:16:05 +0100
 Subject: [PATCH] ARM: DTSI: rk3288-tinker: Improving the CPU max voltage
@@ -14,10 +14,10 @@ Signed-off-by: Miouyouyou (Myy) <myy@miouyouyou.fr>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/arch/arm/boot/dts/rk3288-tinker.dtsi b/arch/arm/boot/dts/rk3288-tinker.dtsi
-index f23c6efd39d4..cdff130d1292 100644
+index 395afc2b2283..c7e79e594720 100644
 --- a/arch/arm/boot/dts/rk3288-tinker.dtsi
 +++ b/arch/arm/boot/dts/rk3288-tinker.dtsi
-@@ -186,7 +186,7 @@ vdd_cpu: DCDC_REG1 {
+@@ -184,7 +184,7 @@ vdd_cpu: DCDC_REG1 {
  				regulator-always-on;
  				regulator-boot-on;
  				regulator-min-microvolt = <750000>;
@@ -27,5 +27,5 @@ index f23c6efd39d4..cdff130d1292 100644
  				regulator-ramp-delay = <6000>;
  				regulator-state-mem {
 -- 
-2.36.1
+2.39.1
 

@@ -1,7 +1,7 @@
-From 00de5155d12a178b83961f459ddccd7fa08ec25c Mon Sep 17 00:00:00 2001
-Message-Id: <00de5155d12a178b83961f459ddccd7fa08ec25c.1652225232.git.stefan@agner.ch>
-In-Reply-To: <ff0c5c49024da05b47d4fcc4d115761c43eef7a6.1652225232.git.stefan@agner.ch>
-References: <ff0c5c49024da05b47d4fcc4d115761c43eef7a6.1652225232.git.stefan@agner.ch>
+From d04122215cb56b57458e05b475e41744b8126533 Mon Sep 17 00:00:00 2001
+Message-Id: <d04122215cb56b57458e05b475e41744b8126533.1676488094.git.stefan@agner.ch>
+In-Reply-To: <3553f8a938dbb498aa1846a37ea343b7f53739da.1676488094.git.stefan@agner.ch>
+References: <3553f8a938dbb498aa1846a37ea343b7f53739da.1676488094.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Fri, 4 Sep 2020 21:57:55 +0200
 Subject: [PATCH] ARM: dts: rockchip: enable I2C1/4 on rk3288-tinker
@@ -14,10 +14,10 @@ Signed-off-by: Stefan Agner <stefan@agner.ch>
  1 file changed, 8 insertions(+)
 
 diff --git a/arch/arm/boot/dts/rk3288-tinker.dtsi b/arch/arm/boot/dts/rk3288-tinker.dtsi
-index cf278bcc91ad..f23c6efd39d4 100644
+index 30430d2e64b9..395afc2b2283 100644
 --- a/arch/arm/boot/dts/rk3288-tinker.dtsi
 +++ b/arch/arm/boot/dts/rk3288-tinker.dtsi
-@@ -344,10 +344,18 @@ regulator-state-mem {
+@@ -342,10 +342,18 @@ regulator-state-mem {
  	};
  };
  
@@ -37,5 +37,5 @@ index cf278bcc91ad..f23c6efd39d4 100644
  	status = "okay";
  };
 -- 
-2.36.1
+2.39.1
 
