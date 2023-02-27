@@ -3,7 +3,7 @@
 # Generic raw uart kernel module for low-latency uart
 # communication with a RPI-RF-MOD/HM-MOD-RPI-PCB/HmIP-RFUSB
 #
-# Copyright (c) 2021-2022 Alexander Reinert
+# Copyright (c) 2021-2023 Alexander Reinert
 # https://github.com/alexreinert/piVCCU/tree/master/kernel
 #
 # Uses parts of bcm2835_raw_uart.c
@@ -13,7 +13,7 @@
 #
 ################################################################################
 
-GENERIC_RAW_UART_VERSION = 1fc8bcc306e509bb32950b6f8d9e3bc64a6ad674
+GENERIC_RAW_UART_VERSION = b787f3d84b311bd3e07b0ca8f2aa63330030746e
 GENERIC_RAW_UART_SITE = $(call github,alexreinert,piVCCU,$(GENERIC_RAW_UART_VERSION))
 GENERIC_RAW_UART_LICENSE = GPL2
 GENERIC_RAW_UART_LICENSE_FILES = LICENSE
