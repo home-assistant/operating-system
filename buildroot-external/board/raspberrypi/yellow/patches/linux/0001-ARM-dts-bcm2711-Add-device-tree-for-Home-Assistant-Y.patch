@@ -1,5 +1,5 @@
-From b28a8f5b591841f88f19cbf9850d713a602d912e Mon Sep 17 00:00:00 2001
-Message-Id: <b28a8f5b591841f88f19cbf9850d713a602d912e.1662565903.git.stefan@agner.ch>
+From f0292972b38d512fce48384ebbb72b2da46f03bd Mon Sep 17 00:00:00 2001
+Message-Id: <f0292972b38d512fce48384ebbb72b2da46f03bd.1677499716.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Mon, 11 Apr 2022 14:47:59 +0200
 Subject: [PATCH] ARM: dts: bcm2711: Add device tree for Home Assistant Yellow
@@ -10,15 +10,15 @@ board.
 Signed-off-by: Stefan Agner <stefan@agner.ch>
 ---
  arch/arm/boot/dts/Makefile                    |   3 +-
- .../boot/dts/bcm2711-rpi-cm4-ha-yellow.dts    | 598 ++++++++++++++++++
+ .../boot/dts/bcm2711-rpi-cm4-ha-yellow.dts    | 587 ++++++++++++++++++
  arch/arm64/boot/dts/broadcom/Makefile         |   1 +
  .../broadcom/bcm2711-rpi-cm4-ha-yellow.dts    |   1 +
- 4 files changed, 602 insertions(+), 1 deletion(-)
+ 4 files changed, 591 insertions(+), 1 deletion(-)
  create mode 100644 arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
  create mode 100644 arch/arm64/boot/dts/broadcom/bcm2711-rpi-cm4-ha-yellow.dts
 
 diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index 3dfe451bcb16..d147c3400732 100644
+index f7d8d09c0a16..3a7d6595aded 100644
 --- a/arch/arm/boot/dts/Makefile
 +++ b/arch/arm/boot/dts/Makefile
 @@ -18,7 +18,8 @@ dtb-$(CONFIG_ARCH_BCM2835) += \
@@ -33,14 +33,21 @@ index 3dfe451bcb16..d147c3400732 100644
  	alpine-db.dtb
 diff --git a/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
 new file mode 100644
-index 000000000000..61d8c81d3de4
+index 000000000000..f92936d7cf16
 --- /dev/null
 +++ b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
-@@ -0,0 +1,598 @@
+@@ -0,0 +1,587 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/dts-v1/;
++#define BCM2711
++#define i2c0 i2c0if
 +#include "bcm2711.dtsi"
++#include "bcm283x-rpi-wifi-bt.dtsi"
++#undef i2c0
++#include "bcm270x.dtsi"
++#define i2c0 i2c0mux
 +#include "bcm2711-rpi.dtsi"
++#undef i2c0
 +//#include "bcm283x-rpi-usb-peripheral.dtsi"
 +
 +/ {
@@ -63,11 +70,6 @@ index 000000000000..61d8c81d3de4
 +			default-state = "keep";
 +			linux,default-trigger = "default-on";
 +		};
-+	};
-+
-+	wifi_pwrseq: wifi-pwrseq {
-+		compatible = "mmc-pwrseq-simple";
-+		reset-gpios = <&expgpio 1 GPIO_ACTIVE_LOW>;
 +	};
 +
 +	sd_io_1v8_reg: sd_io_1v8_reg {
@@ -93,6 +95,10 @@ index 000000000000..61d8c81d3de4
 +		enable-active-high;
 +		gpio = <&expgpio 6 GPIO_ACTIVE_HIGH>;
 +	};
++};
++
++&bt {
++	shutdown-gpios = <&expgpio 0 GPIO_ACTIVE_HIGH>;
 +};
 +
 +&ddc0 {
@@ -229,23 +235,6 @@ index 000000000000..61d8c81d3de4
 +	status = "okay";
 +};
 +
-+/* SDHCI is used to control the SDIO for wireless */
-+&sdhci {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&emmc_gpio34>;
-+	bus-width = <4>;
-+	non-removable;
-+	mmc-pwrseq = <&wifi_pwrseq>;
-+	status = "okay";
-+
-+	brcmf: wifi@1 {
-+		reg = <1>;
-+		compatible = "brcm,bcm4329-fmac";
-+	};
-+};
-+
 +/* EMMC2 is used to drive the EMMC card */
 +&emmc2 {
 +	bus-width = <8>;
@@ -270,7 +259,7 @@ index 000000000000..61d8c81d3de4
 +
 +&pcie0 {
 +	pci@0,0 {
-+		device-type = "pci";
++		device_type = "pci";
 +		#address-cells = <3>;
 +		#size-cells = <2>;
 +		ranges;
@@ -284,13 +273,6 @@ index 000000000000..61d8c81d3de4
 +	pinctrl-names = "default";
 +	pinctrl-0 = <&uart0_ctsrts_gpio30 &uart0_gpio32>;
 +	uart-has-rtscts;
-+	status = "okay";
-+
-+	bluetooth {
-+		compatible = "brcm,bcm43438-bt";
-+		max-speed = <2000000>;
-+		shutdown-gpios = <&expgpio 0 GPIO_ACTIVE_HIGH>;
-+	};
 +};
 +
 +/* uart1 is mapped to the pin header */
@@ -298,10 +280,6 @@ index 000000000000..61d8c81d3de4
 +	pinctrl-names = "default";
 +	pinctrl-0 = <&uart1_gpio14>;
 +	status = "okay";
-+};
-+
-+&vchiq {
-+	interrupts = <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
 +};
 +
 +&vc4 {
@@ -312,12 +290,13 @@ index 000000000000..61d8c81d3de4
 +	status = "disabled";
 +};
 +
++&wifi_pwrseq {
++	reset-gpios = <&expgpio 1 GPIO_ACTIVE_LOW>;
++};
++
 +// =============================================
 +// Downstream rpi- changes
 +
-+#define BCM2711
-+
-+#include "bcm270x.dtsi"
 +#include "bcm271x-rpi-bt.dtsi"
 +
 +/ {
@@ -334,7 +313,7 @@ index 000000000000..61d8c81d3de4
 +
 +/ {
 +	chosen {
-+		bootargs = "coherent_pool=1M 8250.nr_uarts=1 snd_bcm2835.enable_compat_alsa=0 snd_bcm2835.enable_hdmi=1";
++		bootargs = "coherent_pool=1M 8250.nr_uarts=1 snd_bcm2835.enable_headphones=0";
 +	};
 +
 +	aliases {
@@ -579,12 +558,14 @@ index 000000000000..61d8c81d3de4
 +&leds {
 +	act_led: led-act {
 +		label = "led0";
++		default-state = "off";
 +		linux,default-trigger = "mmc0";
 +		gpios = <&gpio 42 GPIO_ACTIVE_HIGH>;
 +	};
 +
 +	pwr_led: led-pwr {
 +		label = "led1";
++		default-state = "off";
 +		linux,default-trigger = "default-on";
 +		gpios = <&expgpio 2 GPIO_ACTIVE_LOW>;
 +	};
@@ -594,10 +575,9 @@ index 000000000000..61d8c81d3de4
 +	status = "disabled";
 +};
 +
-+&audio {
++&vchiq {
 +	pinctrl-names = "default";
 +	pinctrl-0 = <&audio_pins>;
-+	brcm,disable-headphones = <1>;
 +};
 +
 +cam0_reg: &cam1_reg {
@@ -606,6 +586,8 @@ index 000000000000..61d8c81d3de4
 +
 +/ {
 +	__overrides__ {
++		audio = <&chosen>,"bootargs{on='snd_bcm2835.enable_hdmi=1',off='snd_bcm2835.enable_hdmi=0'}";
++
 +		act_led_gpio = <&act_led>,"gpios:4";
 +		act_led_activelow = <&act_led>,"gpios:8";
 +		act_led_trigger = <&act_led>,"linux,default-trigger";
@@ -633,19 +615,26 @@ index 000000000000..61d8c81d3de4
 +		sd_poll_once = <&emmc2>, "non-removable?";
 +		spi_dma4 = <&spi0>, "dmas:0=", <&dma40>,
 +			   <&spi0>, "dmas:8=", <&dma40>;
++
++		cam0_reg = <&cam0_reg>,"status";
++		cam0_reg_gpio = <&cam0_reg>,"gpio:4",
++				  <&cam0_reg>,"gpio:0=", <&gpio>;
++		cam1_reg = <&cam1_reg>,"status";
++		cam1_reg_gpio = <&cam1_reg>,"gpio:4",
++				  <&cam1_reg>,"gpio:0=", <&gpio>;
 +	};
 +};
 diff --git a/arch/arm64/boot/dts/broadcom/Makefile b/arch/arm64/boot/dts/broadcom/Makefile
-index 9873335d0ed2..8c19b62e189e 100644
+index 9b678d144085..7c1a67f7c028 100644
 --- a/arch/arm64/boot/dts/broadcom/Makefile
 +++ b/arch/arm64/boot/dts/broadcom/Makefile
-@@ -15,6 +15,7 @@ dtb-$(CONFIG_ARCH_BCM2835) += bcm2711-rpi-400.dtb
+@@ -16,6 +16,7 @@ dtb-$(CONFIG_ARCH_BCM2835) += bcm2710-rpi-3-b-plus.dtb
  dtb-$(CONFIG_ARCH_BCM2835) += bcm2710-rpi-cm3.dtb
  dtb-$(CONFIG_ARCH_BCM2835) += bcm2711-rpi-cm4.dtb
  dtb-$(CONFIG_ARCH_BCM2835) += bcm2711-rpi-cm4s.dtb
 +dtb-$(CONFIG_ARCH_BCM2835) += bcm2711-rpi-cm4-ha-yellow.dtb
  
- subdir-y	+= bcm4908
+ subdir-y	+= bcmbca
  subdir-y	+= northstar2
 diff --git a/arch/arm64/boot/dts/broadcom/bcm2711-rpi-cm4-ha-yellow.dts b/arch/arm64/boot/dts/broadcom/bcm2711-rpi-cm4-ha-yellow.dts
 new file mode 100644
@@ -655,5 +644,5 @@ index 000000000000..fdc5ec5bc956
 @@ -0,0 +1 @@
 +#include "../../../../arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts"
 -- 
-2.37.3
+2.39.1
 

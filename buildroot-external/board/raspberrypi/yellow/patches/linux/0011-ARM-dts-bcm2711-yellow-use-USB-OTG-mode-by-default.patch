@@ -1,7 +1,7 @@
-From 59e44006c1e7406bd1fc52aa9b1fc88a67652ddd Mon Sep 17 00:00:00 2001
-Message-Id: <59e44006c1e7406bd1fc52aa9b1fc88a67652ddd.1662565903.git.stefan@agner.ch>
-In-Reply-To: <b28a8f5b591841f88f19cbf9850d713a602d912e.1662565903.git.stefan@agner.ch>
-References: <b28a8f5b591841f88f19cbf9850d713a602d912e.1662565903.git.stefan@agner.ch>
+From 36e8909a2dbfb10fc34df9f606ff3f7f612027f3 Mon Sep 17 00:00:00 2001
+Message-Id: <36e8909a2dbfb10fc34df9f606ff3f7f612027f3.1677499716.git.stefan@agner.ch>
+In-Reply-To: <f0292972b38d512fce48384ebbb72b2da46f03bd.1677499716.git.stefan@agner.ch>
+References: <f0292972b38d512fce48384ebbb72b2da46f03bd.1677499716.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Tue, 26 Jul 2022 15:53:59 +0200
 Subject: [PATCH] ARM: dts: bcm2711: yellow: use USB OTG mode by default
@@ -15,10 +15,10 @@ Signed-off-by: Stefan Agner <stefan@agner.ch>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
-index f2f4f1a49592..f354bfb69093 100644
+index 11da9ec9b828..fa2b96e31a4f 100644
 --- a/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
 +++ b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
-@@ -601,7 +601,7 @@ &sdhost {
+@@ -580,7 +580,7 @@ &sdhost {
  
  &usb {
  	compatible = "brcm,bcm2835-usb";
@@ -28,5 +28,5 @@ index f2f4f1a49592..f354bfb69093 100644
  	g-rx-fifo-size = <558>;
  	g-tx-fifo-size = <512 512 512 512 512 256 256>;
 -- 
-2.37.3
+2.39.1
 

@@ -1,7 +1,7 @@
-From e4db609b1080e4aabb027394966c07e050e02aab Mon Sep 17 00:00:00 2001
-Message-Id: <e4db609b1080e4aabb027394966c07e050e02aab.1662565903.git.stefan@agner.ch>
-In-Reply-To: <b28a8f5b591841f88f19cbf9850d713a602d912e.1662565903.git.stefan@agner.ch>
-References: <b28a8f5b591841f88f19cbf9850d713a602d912e.1662565903.git.stefan@agner.ch>
+From 04601aebe965d7b153e548028a44b2c46159b657 Mon Sep 17 00:00:00 2001
+Message-Id: <04601aebe965d7b153e548028a44b2c46159b657.1677499716.git.stefan@agner.ch>
+In-Reply-To: <f0292972b38d512fce48384ebbb72b2da46f03bd.1677499716.git.stefan@agner.ch>
+References: <f0292972b38d512fce48384ebbb72b2da46f03bd.1677499716.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Thu, 28 Oct 2021 19:38:04 +0200
 Subject: [PATCH] ARM: dts: bcm2711: yellow: add user LED
@@ -14,10 +14,10 @@ Signed-off-by: Stefan Agner <stefan@agner.ch>
  1 file changed, 6 insertions(+), 1 deletion(-)
 
 diff --git a/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
-index e2fa42a11cc9..6039c7894796 100644
+index dcc36efcdcb1..6cdf595cdc2c 100644
 --- a/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
 +++ b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
-@@ -336,7 +336,6 @@ soc {
+@@ -315,7 +315,6 @@ soc {
  #include "bcm2711-rpi-ds.dtsi"
  #include "bcm283x-rpi-csi0-2lane.dtsi"
  #include "bcm283x-rpi-csi1-4lane.dtsi"
@@ -25,7 +25,7 @@ index e2fa42a11cc9..6039c7894796 100644
  
  / {
  	chosen {
-@@ -618,6 +617,12 @@ pwr_led: led-pwr {
+@@ -599,6 +598,12 @@ pwr_led: led-pwr {
  		linux,default-trigger = "default-on";
  		gpios = <&expgpio 2 GPIO_ACTIVE_LOW>;
  	};
@@ -39,5 +39,5 @@ index e2fa42a11cc9..6039c7894796 100644
  
  &pwm1 {
 -- 
-2.37.3
+2.39.1
 
