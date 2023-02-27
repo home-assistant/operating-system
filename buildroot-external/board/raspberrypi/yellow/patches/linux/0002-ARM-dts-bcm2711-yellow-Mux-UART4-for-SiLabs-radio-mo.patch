@@ -1,7 +1,7 @@
-From 7eb647452bb1a3294fae8edc5a323070adff922b Mon Sep 17 00:00:00 2001
-Message-Id: <7eb647452bb1a3294fae8edc5a323070adff922b.1662565903.git.stefan@agner.ch>
-In-Reply-To: <b28a8f5b591841f88f19cbf9850d713a602d912e.1662565903.git.stefan@agner.ch>
-References: <b28a8f5b591841f88f19cbf9850d713a602d912e.1662565903.git.stefan@agner.ch>
+From c07db9fb0a6a9779aadc7c8cc4c83c87c83b2ad4 Mon Sep 17 00:00:00 2001
+Message-Id: <c07db9fb0a6a9779aadc7c8cc4c83c87c83b2ad4.1677499716.git.stefan@agner.ch>
+In-Reply-To: <f0292972b38d512fce48384ebbb72b2da46f03bd.1677499716.git.stefan@agner.ch>
+References: <f0292972b38d512fce48384ebbb72b2da46f03bd.1677499716.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Thu, 4 Mar 2021 14:33:09 +0100
 Subject: [PATCH] ARM: dts: bcm2711: yellow: Mux UART4 for SiLabs radio module
@@ -14,10 +14,10 @@ Signed-off-by: Stefan Agner <stefan@agner.ch>
  1 file changed, 14 insertions(+), 2 deletions(-)
 
 diff --git a/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
-index 61d8c81d3de4..8db71876a78c 100644
+index f92936d7cf16..fa93ab5ca639 100644
 --- a/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
 +++ b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
-@@ -8,6 +8,10 @@ / {
+@@ -15,6 +15,10 @@ / {
  	compatible = "raspberrypi,4-compute-module-ha-yellow", "raspberrypi,4-compute-module", "brcm,bcm2711";
  	model = "Raspberry Pi Compute Module 4 on Home Assistant Yellow";
  
@@ -28,7 +28,7 @@ index 61d8c81d3de4..8db71876a78c 100644
  	chosen {
  		/* 8250 auxiliary UART instead of pl011 */
  		stdout-path = "serial1:115200n8";
-@@ -261,6 +265,14 @@ &uart1 {
+@@ -243,6 +247,14 @@ &uart1 {
  	status = "okay";
  };
  
@@ -40,10 +40,10 @@ index 61d8c81d3de4..8db71876a78c 100644
 +	status = "okay";
 +};
 +
- &vchiq {
- 	interrupts = <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
+ &vc4 {
+ 	status = "okay";
  };
-@@ -488,9 +500,9 @@ uart3_pins: uart3_pins {
+@@ -467,9 +479,9 @@ uart3_pins: uart3_pins {
  	};
  
  	uart4_pins: uart4_pins {
@@ -56,5 +56,5 @@ index 61d8c81d3de4..8db71876a78c 100644
  
  	uart5_pins: uart5_pins {
 -- 
-2.37.3
+2.39.1
 

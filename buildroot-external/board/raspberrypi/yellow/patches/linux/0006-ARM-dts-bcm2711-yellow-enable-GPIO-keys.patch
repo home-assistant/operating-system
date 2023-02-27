@@ -1,7 +1,7 @@
-From 67751f4575c3837ada1bdec85184c77ea917b83a Mon Sep 17 00:00:00 2001
-Message-Id: <67751f4575c3837ada1bdec85184c77ea917b83a.1662565903.git.stefan@agner.ch>
-In-Reply-To: <b28a8f5b591841f88f19cbf9850d713a602d912e.1662565903.git.stefan@agner.ch>
-References: <b28a8f5b591841f88f19cbf9850d713a602d912e.1662565903.git.stefan@agner.ch>
+From ee53448bf22dec674655ed7bdb433e401bb06e68 Mon Sep 17 00:00:00 2001
+Message-Id: <ee53448bf22dec674655ed7bdb433e401bb06e68.1677499716.git.stefan@agner.ch>
+In-Reply-To: <f0292972b38d512fce48384ebbb72b2da46f03bd.1677499716.git.stefan@agner.ch>
+References: <f0292972b38d512fce48384ebbb72b2da46f03bd.1677499716.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Tue, 9 Mar 2021 15:02:53 +0100
 Subject: [PATCH] ARM: dts: bcm2711: yellow: enable GPIO keys
@@ -12,11 +12,11 @@ Signed-off-by: Stefan Agner <stefan@agner.ch>
  1 file changed, 31 insertions(+)
 
 diff --git a/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
-index f6f42bf45c92..e2fa42a11cc9 100644
+index 8ca65c696531..dcc36efcdcb1 100644
 --- a/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
 +++ b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
-@@ -4,6 +4,8 @@
- #include "bcm2711-rpi.dtsi"
+@@ -11,6 +11,8 @@
+ #undef i2c0
  //#include "bcm283x-rpi-usb-peripheral.dtsi"
  
 +#include <dt-bindings/input/input.h>
@@ -24,7 +24,7 @@ index f6f42bf45c92..e2fa42a11cc9 100644
  / {
  	compatible = "raspberrypi,4-compute-module-ha-yellow", "raspberrypi,4-compute-module", "brcm,bcm2711";
  	model = "Raspberry Pi Compute Module 4 on Home Assistant Yellow";
-@@ -18,6 +20,29 @@ chosen {
+@@ -25,6 +27,29 @@ chosen {
  		stdout-path = "serial1:115200n8";
  	};
  
@@ -54,7 +54,7 @@ index f6f42bf45c92..e2fa42a11cc9 100644
  	leds {
  		led-act {
  			gpios = <&gpio 42 GPIO_ACTIVE_HIGH>;
-@@ -380,6 +405,12 @@ spidev1: spidev@1{
+@@ -359,6 +384,12 @@ spidev1: spidev@1{
  };
  
  &gpio {
@@ -68,5 +68,5 @@ index f6f42bf45c92..e2fa42a11cc9 100644
  		brcm,pins = <9 10 11>;
  		brcm,function = <BCM2835_FSEL_ALT0>;
 -- 
-2.37.3
+2.39.1
 

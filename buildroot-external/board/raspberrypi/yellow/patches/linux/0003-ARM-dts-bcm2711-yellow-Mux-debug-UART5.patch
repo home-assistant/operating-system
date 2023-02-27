@@ -1,7 +1,7 @@
-From a7b86d8d0d81f841d8399a83f0f59f383d1556ed Mon Sep 17 00:00:00 2001
-Message-Id: <a7b86d8d0d81f841d8399a83f0f59f383d1556ed.1662565903.git.stefan@agner.ch>
-In-Reply-To: <b28a8f5b591841f88f19cbf9850d713a602d912e.1662565903.git.stefan@agner.ch>
-References: <b28a8f5b591841f88f19cbf9850d713a602d912e.1662565903.git.stefan@agner.ch>
+From e12a021cbc1c474580d68e3593ce86d10ffc0232 Mon Sep 17 00:00:00 2001
+Message-Id: <e12a021cbc1c474580d68e3593ce86d10ffc0232.1677499716.git.stefan@agner.ch>
+In-Reply-To: <f0292972b38d512fce48384ebbb72b2da46f03bd.1677499716.git.stefan@agner.ch>
+References: <f0292972b38d512fce48384ebbb72b2da46f03bd.1677499716.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Thu, 4 Mar 2021 14:44:23 +0100
 Subject: [PATCH] ARM: dts: bcm2711: yellow: Mux debug UART5
@@ -12,10 +12,10 @@ Signed-off-by: Stefan Agner <stefan@agner.ch>
  1 file changed, 9 insertions(+)
 
 diff --git a/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
-index 8db71876a78c..d1dea0a214a6 100644
+index fa93ab5ca639..cc7e7b28ffc7 100644
 --- a/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
 +++ b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
-@@ -10,6 +10,7 @@ / {
+@@ -17,6 +17,7 @@ / {
  
  	aliases {
  		serial4 = &uart4;
@@ -23,7 +23,7 @@ index 8db71876a78c..d1dea0a214a6 100644
  	};
  
  	chosen {
-@@ -273,6 +274,13 @@ &uart4 {
+@@ -255,6 +256,13 @@ &uart4 {
  	status = "okay";
  };
  
@@ -34,17 +34,17 @@ index 8db71876a78c..d1dea0a214a6 100644
 +	status = "okay";
 +};
 +
- &vchiq {
- 	interrupts = <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
+ &vc4 {
+ 	status = "okay";
  };
-@@ -308,6 +316,7 @@ soc {
+@@ -287,6 +295,7 @@ soc {
  / {
  	chosen {
- 		bootargs = "coherent_pool=1M 8250.nr_uarts=1 snd_bcm2835.enable_compat_alsa=0 snd_bcm2835.enable_hdmi=1";
+ 		bootargs = "coherent_pool=1M 8250.nr_uarts=1 snd_bcm2835.enable_headphones=0";
 +		stdout-path = "serial5:115200n8";
  	};
  
  	aliases {
 -- 
-2.37.3
+2.39.1
 

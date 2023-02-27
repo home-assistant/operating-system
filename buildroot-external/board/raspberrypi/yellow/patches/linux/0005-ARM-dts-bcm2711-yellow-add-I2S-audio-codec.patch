@@ -1,7 +1,7 @@
-From 50abc7980f8c575930cc4c928d356763742e81fb Mon Sep 17 00:00:00 2001
-Message-Id: <50abc7980f8c575930cc4c928d356763742e81fb.1662565903.git.stefan@agner.ch>
-In-Reply-To: <b28a8f5b591841f88f19cbf9850d713a602d912e.1662565903.git.stefan@agner.ch>
-References: <b28a8f5b591841f88f19cbf9850d713a602d912e.1662565903.git.stefan@agner.ch>
+From e83a7bddbe8981c96837b0258f07230e1a93e907 Mon Sep 17 00:00:00 2001
+Message-Id: <e83a7bddbe8981c96837b0258f07230e1a93e907.1677499716.git.stefan@agner.ch>
+In-Reply-To: <f0292972b38d512fce48384ebbb72b2da46f03bd.1677499716.git.stefan@agner.ch>
+References: <f0292972b38d512fce48384ebbb72b2da46f03bd.1677499716.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Thu, 4 Mar 2021 17:19:01 +0100
 Subject: [PATCH] ARM: dts: bcm2711: yellow: add I2S audio codec
@@ -14,10 +14,10 @@ Signed-off-by: Stefan Agner <stefan@agner.ch>
  1 file changed, 26 insertions(+)
 
 diff --git a/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
-index 0bdbfdd44aed..f6f42bf45c92 100644
+index 72f437f4e81a..8ca65c696531 100644
 --- a/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
 +++ b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
-@@ -535,11 +535,22 @@ &i2c6 {
+@@ -514,11 +514,22 @@ &i2c6 {
  	pinctrl-names = "default";
  	pinctrl-0 = <&i2c6_pins>;
  	status = "okay";
@@ -40,7 +40,7 @@ index 0bdbfdd44aed..f6f42bf45c92 100644
  };
  
  // =============================================
-@@ -582,6 +593,21 @@ &pwm1 {
+@@ -563,6 +574,21 @@ &pwm1 {
  	status = "disabled";
  };
  
@@ -59,9 +59,9 @@ index 0bdbfdd44aed..f6f42bf45c92 100644
 +	};
 +};
 +
- &audio {
+ &vchiq {
  	pinctrl-names = "default";
  	pinctrl-0 = <&audio_pins>;
 -- 
-2.37.3
+2.39.1
 

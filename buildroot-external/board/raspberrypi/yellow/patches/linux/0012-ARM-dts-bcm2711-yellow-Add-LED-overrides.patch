@@ -1,7 +1,7 @@
-From f69ef30ade36371215d02546d603143cc13adef2 Mon Sep 17 00:00:00 2001
-Message-Id: <f69ef30ade36371215d02546d603143cc13adef2.1662565903.git.stefan@agner.ch>
-In-Reply-To: <b28a8f5b591841f88f19cbf9850d713a602d912e.1662565903.git.stefan@agner.ch>
-References: <b28a8f5b591841f88f19cbf9850d713a602d912e.1662565903.git.stefan@agner.ch>
+From b8640b0861e289e98af98a0f8b6861af6d2a2fd7 Mon Sep 17 00:00:00 2001
+Message-Id: <b8640b0861e289e98af98a0f8b6861af6d2a2fd7.1677499716.git.stefan@agner.ch>
+In-Reply-To: <f0292972b38d512fce48384ebbb72b2da46f03bd.1677499716.git.stefan@agner.ch>
+References: <f0292972b38d512fce48384ebbb72b2da46f03bd.1677499716.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Sat, 30 Jul 2022 11:21:31 +0200
 Subject: [PATCH] ARM: dts: bcm2711: yellow: Add LED overrides
@@ -10,29 +10,29 @@ Add device tree overrides for all three LEDs.
 
 Signed-off-by: Stefan Agner <stefan@agner.ch>
 ---
- arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts | 17 ++++++++++-------
- 1 file changed, 10 insertions(+), 7 deletions(-)
+ arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
 
 diff --git a/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
-index f354bfb69093..2d272a02128b 100644
+index fa2b96e31a4f..f7fdf8bbb395 100644
 --- a/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
 +++ b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
-@@ -621,20 +621,24 @@ audio_pins: audio_pins {
+@@ -600,22 +600,24 @@ audio_pins: audio_pins {
  
  &leds {
  	act_led: led-act {
 -		label = "led0";
 +		label = "act";
+ 		default-state = "off";
  		linux,default-trigger = "activity";
-+		default-state = "off";
  		gpios = <&gpio 42 GPIO_ACTIVE_HIGH>;
  	};
  
  	pwr_led: led-pwr {
 -		label = "led1";
 +		label = "pwr";
+ 		default-state = "off";
  		linux,default-trigger = "default-on";
-+		default-state = "off";
  		gpios = <&expgpio 2 GPIO_ACTIVE_LOW>;
  	};
  
@@ -46,10 +46,10 @@ index f354bfb69093..2d272a02128b 100644
  		gpios = <&gpio 44 GPIO_ACTIVE_LOW>;
  	};
  };
-@@ -670,14 +674,13 @@ cam0_reg: &cam1_reg {
- 
- / {
+@@ -652,14 +654,13 @@ / {
  	__overrides__ {
+ 		audio = <&chosen>,"bootargs{on='snd_bcm2835.enable_hdmi=1',off='snd_bcm2835.enable_hdmi=0'}";
+ 
 -		act_led_gpio = <&act_led>,"gpios:4";
 -		act_led_activelow = <&act_led>,"gpios:8";
  		act_led_trigger = <&act_led>,"linux,default-trigger";
@@ -64,5 +64,5 @@ index f354bfb69093..2d272a02128b 100644
  		eth_led1 = <&phy1>,"led-modes:4";
  
 -- 
-2.37.3
+2.39.1
 

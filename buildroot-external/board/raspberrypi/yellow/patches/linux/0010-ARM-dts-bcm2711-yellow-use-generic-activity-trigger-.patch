@@ -1,7 +1,7 @@
-From 92332ba4302096777ea47e408f3406da0b2ef2c5 Mon Sep 17 00:00:00 2001
-Message-Id: <92332ba4302096777ea47e408f3406da0b2ef2c5.1662565903.git.stefan@agner.ch>
-In-Reply-To: <b28a8f5b591841f88f19cbf9850d713a602d912e.1662565903.git.stefan@agner.ch>
-References: <b28a8f5b591841f88f19cbf9850d713a602d912e.1662565903.git.stefan@agner.ch>
+From d5f3fd27c65fb9ce56184f49c3001f2ef86f4e88 Mon Sep 17 00:00:00 2001
+Message-Id: <d5f3fd27c65fb9ce56184f49c3001f2ef86f4e88.1677499716.git.stefan@agner.ch>
+In-Reply-To: <f0292972b38d512fce48384ebbb72b2da46f03bd.1677499716.git.stefan@agner.ch>
+References: <f0292972b38d512fce48384ebbb72b2da46f03bd.1677499716.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Wed, 27 Apr 2022 20:36:19 +0200
 Subject: [PATCH] ARM: dts: bcm2711: yellow: use generic activity trigger for
@@ -16,18 +16,18 @@ Signed-off-by: Stefan Agner <stefan@agner.ch>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
-index 711a09441ad0..f2f4f1a49592 100644
+index 3866192a6f47..11da9ec9b828 100644
 --- a/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
 +++ b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
-@@ -622,7 +622,7 @@ audio_pins: audio_pins {
- &leds {
+@@ -602,7 +602,7 @@ &leds {
  	act_led: led-act {
  		label = "led0";
+ 		default-state = "off";
 -		linux,default-trigger = "mmc0";
 +		linux,default-trigger = "activity";
  		gpios = <&gpio 42 GPIO_ACTIVE_HIGH>;
  	};
  
 -- 
-2.37.3
+2.39.1
 
