@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-XE_GUEST_UTILITIES_VERSION = 7.30.0
+XE_GUEST_UTILITIES_VERSION = 7.33.0
 XE_GUEST_UTILITIES_SITE = $(call github,xenserver,xe-guest-utilities,v$(XE_GUEST_UTILITIES_VERSION))
 
 XE_GUEST_UTILITIES_LICENSE = BSD-2-Clause
@@ -24,11 +24,13 @@ XE_GUEST_UTILITIES_XENSTORE_ALIAS = \
 
 define XE_GUEST_UTILITIES_BUILD_CMDS
 	cd $(@D); \
-	$(TARGET_MAKE_ENV) $(MAKE)
+	$(HOST_GO_TARGET_ENV) $(TARGET_MAKE_ENV); \
+	$(GO_BIN) mod vendor; \
+	$(MAKE)
 endef
 
 define XE_GUEST_UTILITIES_INSTALL_TARGET_CMDS
-	$(INSTALL) -m 755 $(XE_GUEST_UTILITIES_PKGDIR)/xe-linux-distribution \
+	$(INSTALL) -m 755 $(@D)/build/stage/usr/sbin/xe-linux-distribution \
 		$(TARGET_DIR)/usr/sbin/xe-linux-distribution
 	$(INSTALL) -m 755 $(@D)/build/stage/usr/sbin/xe-daemon \
 		$(TARGET_DIR)/usr/sbin/xe-daemon
