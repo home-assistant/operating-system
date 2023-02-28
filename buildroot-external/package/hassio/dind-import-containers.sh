@@ -27,4 +27,3 @@ docker tag "${supervisor}" "ghcr.io/home-assistant/${arch}-hassio-supervisor:lat
 # Setup AppArmor
 mkdir -p "/data/supervisor/apparmor"
 wget -O "/data/supervisor/apparmor/hassio-supervisor" "${APPARMOR_URL}"
-
