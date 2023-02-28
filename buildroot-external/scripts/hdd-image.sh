@@ -171,7 +171,7 @@ function _create_disk_gpt() {
 
     ##
     # Write Images
-    sgdisk -v
+    sgdisk -v "${hdd_img}"
     dd if="${boot_img}" of"=${hdd_img}" conv=notrunc,sparse bs=512 seek="${boot_offset}"
     dd if="${kernel_img}" of="${hdd_img}" conv=notrunc,sparse bs=512 seek="${kernel_offset}"
     dd if="${rootfs_img}" of="${hdd_img}" conv=notrunc,sparse bs=512 seek="${rootfs_offset}"
