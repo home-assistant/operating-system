@@ -1,5 +1,0 @@
-config BR2_PACKAGE_RTL8821CU
-	tristate "Realtek 8821cu USB WiFi"
-	depends on BR2_LINUX_KERNEL
-	---help---
-	  Driver for RTL8821CU USB WiFi adapters (no firmware needed).

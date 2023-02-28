@@ -6,7 +6,7 @@ on: [pull_request]
 
 jobs:
   linters:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
     - name: Check out code
       uses: actions/checkout@v3
@@ -21,7 +21,7 @@ jobs:
     - name: Check shell scripts
       uses: ludeeus/action-shellcheck@2.0.0
       with:
-        ignore: buildroot buildroot-external/package/xe-guest-utilities
+        ignore: buildroot
 
     - name: Check buildroot-external packages
       run: |
