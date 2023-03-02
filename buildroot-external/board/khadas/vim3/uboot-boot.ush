@@ -19,7 +19,7 @@ test -n "${BOOT_A_LEFT}" || setenv BOOT_A_LEFT 3
 test -n "${BOOT_B_LEFT}" || setenv BOOT_B_LEFT 3
 
 # HassOS bootargs
-setenv bootargs_hassos "zram.enabled=1 zram.num_devices=3 apparmor=1 security=apparmor systemd.machine_id=${MACHINE_ID} fsck.repair=yes"
+setenv bootargs_hassos "zram.enabled=1 zram.num_devices=3 apparmor=1 security=apparmor net.naming-scheme=v250 systemd.machine_id=${MACHINE_ID} fsck.repair=yes"
 
 # HassOS system A/B
 setenv bootargs_a "root=PARTUUID=48617373-06 rootfstype=squashfs ro rootwait"
