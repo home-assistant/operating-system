@@ -41,7 +41,7 @@ install_spl() {
     fi
 
     if [ "${PART_LABEL}" = "gpt" ]; then
-        dd if="${RAUC_IMAGE_NAME}" of="${DEVICE_ROOT}" conv=notrunc ${FLAGS} bs=512 seek=2 skip=2
+        dd if="${RAUC_IMAGE_NAME}" of="${DEVICE_ROOT}" conv=notrunc ${FLAGS} bs=512 seek=64 skip=64
     else
         dd if="${RAUC_IMAGE_NAME}" of="${DEVICE_ROOT}" conv=notrunc ${FLAGS} bs=1 count=440
         dd if="${RAUC_IMAGE_NAME}" of="${DEVICE_ROOT}" conv=notrunc ${FLAGS} bs=512 seek=1 skip=1
