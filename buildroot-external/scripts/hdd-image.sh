@@ -10,7 +10,6 @@ KERNEL1_UUID="fc02a4f0-5350-406f-93a2-56cbed636b5f"
 OVERLAY_UUID="f1326040-5236-40eb-b683-aaa100a9afcf"
 DATA_UUID="a52a4597-fa3a-4851-aefd-2fbe9f849079"
 
-BOOT_SIZE=(32M 24M)
 BOOTSTATE_SIZE=8M
 SYSTEM_SIZE=256M
 KERNEL_SIZE=24M
@@ -45,11 +44,8 @@ function size2sectors() {
 
 
 function get_boot_size() {
-    if [ "${BOOT_SPL}" == "true" ]; then
-        echo "${BOOT_SIZE[1]}"
-    else
-        echo "${BOOT_SIZE[0]}"
-    fi
+    # shellcheck disable=SC2153
+    echo "${BOOT_SIZE}"
 }
 
 
@@ -57,7 +53,7 @@ function create_spl_image() {
     local boot_img="$(path_spl_img)"
 
     rm -f "${boot_img}"
-    truncate --size=8M "${boot_img}"
+    truncate --size="${BOOT_SPL_SIZE}" "${boot_img}"
 }
 
 
@@ -199,7 +195,9 @@ function _create_disk_mbr() {
     local hdd_img="$(hassos_image_name img)"
     local hdd_count=${DISK_SIZE:-2}
     local disk_layout="${BINARIES_DIR}/disk.layout"
-    local boot_start=$(size2sectors "8M")
+
+    # All boards with MBR disk layout have SPL
+    local boot_start=$(size2sectors "${BOOT_SPL_SIZE}")
 
     local boot_size=$(size2sectors "$(get_boot_size)")
     local kernel0_size=$(size2sectors "$KERNEL_SIZE")
