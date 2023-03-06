@@ -1,0 +1,21 @@
+config BR2_PACKAGE_ROCKCHIP_BLOBS
+	bool "Rockchip loader binaries"
+	help
+	  Rockchip loader binaries (required by U-Boot)
+
+if BR2_PACKAGE_ROCKCHIP_BLOBS
+
+config BR2_PACKAGE_ROCKCHIP_BLOBS_VERSION
+	string "Git hash version of rkbin"
+
+config BR2_PACKAGE_ROCKCHIP_BLOBS_ATF
+	string "ARM Trusted Firmware file"
+	help
+	  ARM Trusted Firmware file
+
+config BR2_PACKAGE_ROCKCHIP_BLOBS_TPL
+	string "Rockchip TPL file"
+	help
+	  Rockchip TPL file
+
+endif
