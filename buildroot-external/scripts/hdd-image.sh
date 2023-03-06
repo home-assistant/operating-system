@@ -44,6 +44,7 @@ function size2sectors() {
 
 
 function get_boot_size() {
+    # shellcheck disable=SC2153
     echo "${BOOT_SIZE}"
 }
 
