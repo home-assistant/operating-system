@@ -131,13 +131,12 @@ function _create_disk_gpt() {
     ##
     # Partition layout
 
-    # SPL
-    if [ "${BOOT_SPL}" == "true" ]; then
-        sgdisk -j 16384 "${hdd_img}"
-    fi
-
     # boot
     boot_offset="$(sgdisk -F "${hdd_img}")"
+    if [ "${BOOT_SPL}" == "true" ]; then
+        # Make sure boot partition is shifted by SPL size
+        boot_offset=$((boot_offset+$(size2sectors "${BOOT_SPL_SIZE}")))
+    fi
     sgdisk -n "0:${boot_offset}:+$(get_boot_size)" -c 0:"hassos-boot" -t 0:"C12A7328-F81F-11D2-BA4B-00A0C93EC93B" -u 0:${BOOT_UUID} "${hdd_img}"
 
     # Kernel 0
@@ -276,7 +275,9 @@ function _fix_disk_spl_gpt() {
 
     sgdisk -t 1:"E3C9E316-0B5C-4DB8-817D-F92DF00215AE" "${hdd_img}"
     dd if="${BR2_EXTERNAL_HASSOS_PATH}/bootloader/mbr-spl.img" of="${hdd_img}" conv=notrunc bs=512 count=1
-    dd if="${spl_img}" of="${hdd_img}" conv=notrunc bs=512 seek=2 skip=2
+
+    # Copy SPL, make sure to not overwrite GPT
+    dd if="${spl_img}" of="${hdd_img}" conv=notrunc bs=512 seek=64 skip=64
 }
 
 
