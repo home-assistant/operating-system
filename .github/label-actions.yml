@@ -30,3 +30,14 @@ supervisor-issue:
     repository, the issue might have been reported already. Open a new issue
     in that repository if you can't find a matching issue.
   close: true
+
+new-feature:
+  comment: >
+    :wave: @{issue-author}, thanks for your input!
+
+    We use this issue tracker to track issues of currently supported features.
+    Your request appears to request a new feature. We track potential new
+    features in the [Feature Request section of our Community Forum](https://community.home-assistant.io/c/feature-requests/13).
+    Please check if someone already requested a similar feature, or create
+    a new feature request with the "haos" tag in that forum. Thank you!
+  close: true
