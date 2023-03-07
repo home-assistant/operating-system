@@ -4,7 +4,8 @@
 #
 ################################################################################
 
-ROCKCHIP_BLOBS_SOURCE = $(BR2_PACKAGE_ROCKCHIP_BLOBS_VERSION).tar.gz
+ROCKCHIP_BLOBS_VERSION = $(call qstrip,$(BR2_PACKAGE_ROCKCHIP_BLOBS_VERSION))
+ROCKCHIP_BLOBS_SOURCE = $(ROCKCHIP_BLOBS_VERSION).tar.gz
 ROCKCHIP_BLOBS_SITE = https://github.com/JeffyCN/rockchip_mirrors/archive
 ROCKCHIP_BLOBS_LICENSE = PROPRIETARY
 ROCKCHIP_BLOBS_INSTALL_IMAGES = YES
