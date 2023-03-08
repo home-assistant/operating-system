@@ -1,17 +1,15 @@
 
-###########################################
-
-part start mmc ${devnum} 9 mmc_env
+part start mmc ${devnum} hassos-bootstate mmc_env
 mmc dev ${devnum}
 setenv loadbootstate " \
     echo 'loading env...'; \
-    mmc read ${ramdisk_addr_r} ${mmc_env} 0x10; \
-    env import -c ${ramdisk_addr_r} 0x2000;"
+    mmc read ${ramdisk_addr_r} ${mmc_env} 0x40; \
+    env import -c ${ramdisk_addr_r} 0x8000;"
 
 setenv storebootstate " \
     echo 'storing env...'; \
-    env export -c -s 0x2000 ${ramdisk_addr_r} BOOT_ORDER BOOT_A_LEFT BOOT_B_LEFT MACHINE_ID; \
-    mmc write ${ramdisk_addr_r} ${mmc_env} 0x10;"
+    env export -c -s 0x8000 ${ramdisk_addr_r} BOOT_ORDER BOOT_A_LEFT BOOT_B_LEFT MACHINE_ID; \
+    mmc write ${ramdisk_addr_r} ${mmc_env} 0x40;"
 
 run loadbootstate
 test -n "${BOOT_ORDER}" || setenv BOOT_ORDER "A B"
@@ -22,8 +20,8 @@ test -n "${BOOT_B_LEFT}" || setenv BOOT_B_LEFT 3
 setenv bootargs_hassos "zram.enabled=1 zram.num_devices=3 apparmor=1 security=apparmor net.naming-scheme=v250 systemd.machine_id=${MACHINE_ID} fsck.repair=yes"
 
 # HassOS system A/B
-setenv bootargs_a "root=PARTUUID=48617373-06 rootfstype=squashfs ro rootwait"
-setenv bootargs_b "root=PARTUUID=48617373-08 rootfstype=squashfs ro rootwait"
+setenv bootargs_a "root=PARTUUID=8d3d53e3-6d49-4c38-8349-aff6859e82fd rootfstype=squashfs ro rootwait"
+setenv bootargs_b "root=PARTUUID=a3ec664e-32ce-4665-95ea-7ae90ce9aa20 rootfstype=squashfs ro rootwait"
 
 # Load environment from haos-config.txt
 if test -e mmc ${devnum}:1 haos-config.txt; then
@@ -53,16 +51,6 @@ if test "${overlay_error}" = "true"; then
   fatload mmc ${devnum}:1 ${fdt_addr_r} ${fdtfile}
 fi
 
-# logical volumes get numbered after physical ones.
-# 1. boot
-# 2. Extended partition
-# 3. Overlay
-# 4. Data
-# 5. KernelA
-# 6. SystemA
-# 7. KernelB
-# 8. SystemB
-# 9. BootInfo
 setenv bootargs
 for BOOT_SLOT in "${BOOT_ORDER}"; do
   if test "x${bootargs}" != "x"; then
@@ -96,7 +84,6 @@ else
   reset
 fi
 
-printenv bootargs
 echo "Starting kernel"
 booti ${kernel_addr_r} - ${fdt_addr_r}
 
