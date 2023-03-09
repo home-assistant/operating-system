@@ -1,5 +1,5 @@
-From 77e77eeaba0a56c5f43847ce01b7908bc49d3e9f Mon Sep 17 00:00:00 2001
-Message-Id: <77e77eeaba0a56c5f43847ce01b7908bc49d3e9f.1678106298.git.stefan@agner.ch>
+From 6819a79bdb3c6a63459622e894b8fea9f7f407c5 Mon Sep 17 00:00:00 2001
+Message-Id: <6819a79bdb3c6a63459622e894b8fea9f7f407c5.1678356433.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Mon, 6 Mar 2023 10:35:01 +0100
 Subject: [PATCH] arm64: dts: rockchip: rk3568: Add ODROID-M1 board support
@@ -10,10 +10,10 @@ from v6.3-rc1.
 Signed-off-by: Stefan Agner <stefan@agner.ch>
 ---
  arch/arm/dts/Makefile                     |   1 +
- arch/arm/dts/rk3568-odroid-m1-u-boot.dtsi |  24 +
+ arch/arm/dts/rk3568-odroid-m1-u-boot.dtsi |  28 +
  arch/arm/dts/rk3568-odroid-m1.dts         | 744 ++++++++++++++++++++++
  configs/odroid-m1_defconfig               |  74 +++
- 4 files changed, 843 insertions(+)
+ 4 files changed, 847 insertions(+)
  create mode 100644 arch/arm/dts/rk3568-odroid-m1-u-boot.dtsi
  create mode 100644 arch/arm/dts/rk3568-odroid-m1.dts
  create mode 100644 configs/odroid-m1_defconfig
@@ -32,10 +32,10 @@ index c160e884bf..7958922b32 100644
  
 diff --git a/arch/arm/dts/rk3568-odroid-m1-u-boot.dtsi b/arch/arm/dts/rk3568-odroid-m1-u-boot.dtsi
 new file mode 100644
-index 0000000000..a40fb19a4a
+index 0000000000..83fa66d591
 --- /dev/null
 +++ b/arch/arm/dts/rk3568-odroid-m1-u-boot.dtsi
-@@ -0,0 +1,24 @@
+@@ -0,0 +1,28 @@
 +// SPDX-License-Identifier: GPL-2.0+
 +/*
 + * (C) Copyright 2021 Rockchip Electronics Co., Ltd
@@ -47,11 +47,15 @@ index 0000000000..a40fb19a4a
 +/ {
 +	chosen {
 +		stdout-path = &uart2;
-+		u-boot,spl-boot-order = "same-as-spl", &sdmmc0;
++		u-boot,spl-boot-order = "same-as-spl", &sdhci, &sdmmc0;
 +	};
 +};
 +
 +&sdmmc0 {
++	status = "okay";
++};
++
++&sdhci {
 +	status = "okay";
 +};
 +
