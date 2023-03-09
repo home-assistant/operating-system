@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-QEMU_GUEST_AGENT_VERSION = 7.0.0
+QEMU_GUEST_AGENT_VERSION = 7.2.0
 QEMU_GUEST_AGENT_SOURCE = qemu-$(QEMU_GUEST_AGENT_VERSION).tar.xz
 QEMU_GUEST_AGENT_SITE = http://download.qemu.org
 QEMU_GUEST_AGENT_LICENSE = GPL-2.0, LGPL-2.1, MIT, BSD-3-Clause, BSD-2-Clause, Others/BSD-1c
