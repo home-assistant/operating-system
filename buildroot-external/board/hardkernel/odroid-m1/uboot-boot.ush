@@ -1,6 +1,6 @@
 
 part start mmc ${devnum} hassos-bootstate mmc_env
-mmc dev ${devnum}
+
 setenv loadbootstate " \
     echo 'loading env...'; \
     mmc read ${ramdisk_addr_r} ${mmc_env} 0x40; \
