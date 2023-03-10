@@ -36,6 +36,12 @@
     "label": "board/odroid"
   },
   {
+    "id": "odroid-m1",
+    "defconfig": "odroid_m1",
+    "runner": "aarch64-runner",
+    "label": "board/odroid"
+  },
+  {
     "id": "odroid-n2",
     "defconfig": "odroid_n2",
     "runner": "aarch64-runner",

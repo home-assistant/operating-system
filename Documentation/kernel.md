@@ -15,6 +15,7 @@ Default Kernel tree: 5.15
 | Tinker Board | 6.1.16 |
 | Odroid-C2 | 6.1.16 |
 | Odroid-C4 | 6.1.16 |
+| Odroid-M1 | 6.1.16 |
 | Odroid-N2 | 6.1.16 |
 | Odroid-XU4 | 6.1.16 |
 | Generic aarch64 | 6.1.16 |
