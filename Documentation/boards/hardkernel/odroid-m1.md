@@ -12,6 +12,11 @@ eMMC boot is currently only supported via recovery button. eMMC boot via
 on-board bootloader will require an update of Petitboot (as of March 13 2023,
 this update hasn't been released yet.
 
+## NVMe
+
+Booting directly from NVMe is not supported. Using the NVMe as the data disk has
+been successfully tested.
+
 ## Technical notes on boot flow
 
 The Home Assistant OS image is bootable by the SoC directly, that means no help
