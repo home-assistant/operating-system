@@ -1,5 +1,5 @@
 BOARD_ID=odroid-n2
-BOARD_NAME="Hardkernel Odroid-N2"
+BOARD_NAME="Hardkernel ODROID-N2"
 CHASSIS=embedded
 BOOTLOADER=uboot
 KERNEL_FILE=Image

@@ -10,24 +10,24 @@ choice
 	default BR2_PACKAGE_HARDKERNEL_BOOT_ODROID_C2
 
 config BR2_PACKAGE_HARDKERNEL_BOOT_ODROID_C2
-	bool "Odroid-C2"
+	bool "ODROID-C2"
 	help
-	  For the Odroid-C2
+	  For the ODROID-C2
 
 config BR2_PACKAGE_HARDKERNEL_BOOT_ODROID_C4
-	bool "Odroid-C4"
+	bool "ODROID-C4"
 	help
-	  For the Odroid-C4
+	  For the ODROID-C4
 
 config BR2_PACKAGE_HARDKERNEL_BOOT_ODROID_XU4
-	bool "Odroid-XU4"
+	bool "ODROID-XU4"
 	help
-	  For the Odroid-XU4
+	  For the ODROID-XU4
 
 config BR2_PACKAGE_HARDKERNEL_BOOT_ODROID_N2
-	bool "Odroid-N2"
+	bool "ODROID-N2"
 	help
-	  For the Odroid-N2
+	  For the ODROID-N2
 
 endchoice
 

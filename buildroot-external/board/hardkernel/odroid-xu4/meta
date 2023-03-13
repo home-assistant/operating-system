@@ -1,5 +1,5 @@
 BOARD_ID=odroid-xu4
-BOARD_NAME="Hardkernel Odroid-XU4"
+BOARD_NAME="Hardkernel ODROID-XU4"
 CHASSIS=embedded
 BOOTLOADER=uboot
 KERNEL_FILE=zImage
