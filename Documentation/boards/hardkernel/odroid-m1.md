@@ -14,19 +14,18 @@ this update hasn't been released yet.
 
 ## NVMe
 
-Booting directly from NVMe is not supported. Using the NVMe as the data disk has
-been successfully tested.
+Booting directly from NVMe is not supported. The NVMe card can be used as a data disk.
 
 ## Technical notes on boot flow
 
-The Home Assistant OS image is bootable by the SoC directly, that means no help
+The Home Assistant OS image is bootable by the SoC directly. This means that no help
 from the Hardkernel provided and pre-installed bootloader Petitboot is necessary.
-However, since the ODROID-M1 boots from internal SPI automatically, booting
-directly off the SD-card or eMMC requires pressing the recovery button.
+However, the ODROID-M1 automatically boots from internal SPI. To boot
+directly off the SD-card or eMMC you need to press the recovery button.
 
 The SPI flashed U-Boot SPL tries searches for an U-Boot binary on the SD-card
-(and future releases also on the eMMC). This mechanism allows to boot the Home
-Assistant OS U-Boot without the need to press the recovery button.
+(and future releases also on the eMMC). This mechanism allows you to boot the Home
+Assistant OS U-Boot without pressing the recovery button.
 
 ## Console
 
