@@ -1,4 +1,4 @@
-# Odroid-C2
+# ODROID-C2
 
 ## eMMC
 
