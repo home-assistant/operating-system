@@ -1,5 +1,5 @@
 BOARD_ID=odroid-c4
-BOARD_NAME="Hardkernel Odroid-C4"
+BOARD_NAME="Hardkernel ODROID-C4"
 CHASSIS=embedded
 BOOTLOADER=uboot
 KERNEL_FILE=Image

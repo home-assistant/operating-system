@@ -28,13 +28,13 @@ else ifeq ($(BR2_PACKAGE_RPI_RF_MOD_DTS_TINKER),y)
   # ASUS Tinkerboard DTS file
   RPI_RF_MOD_DTS_FILE = rpi-rf-mod-tinker
 else ifeq ($(BR2_PACKAGE_RPI_RF_MOD_DTS_ODROID_C4),y)
-  # Odroid C4 DTS file
+  # ODROID-C4 DTS file
   RPI_RF_MOD_DTS_FILE = rpi-rf-mod-odroid-c4
 else ifeq ($(BR2_PACKAGE_RPI_RF_MOD_DTS_ODROID_N2),y)
-  # Odroid N2/N2+ DTS file
+  # ODROID-N2/N2+ DTS file
   RPI_RF_MOD_DTS_FILE = rpi-rf-mod-odroid-n2
 else ifeq ($(BR2_PACKAGE_RPI_RF_MOD_DTS_ODROID_C2),y)
-  # Odroid C2 DTS file
+  # ODROID-C2 DTS file
   RPI_RF_MOD_DTS_FILE = rpi-rf-mod-odroid-c2
 endif
 
