@@ -17,8 +17,11 @@ test -n "${BOOT_ORDER}" || setenv BOOT_ORDER "A B"
 test -n "${BOOT_A_LEFT}" || setenv BOOT_A_LEFT 3
 test -n "${BOOT_B_LEFT}" || setenv BOOT_B_LEFT 3
 
+# Allows ConditionFirstBoot=
+test -n "${MACHINE_ID}" || setenv BOOT_CONDITION "systemd.condition-first-boot=true"
+
 # HassOS bootargs
-setenv bootargs_hassos "zram.enabled=1 zram.num_devices=3 rootwait net.naming-scheme=v250 systemd.machine_id=${MACHINE_ID} cgroup_enable=memory fsck.repair=yes"
+setenv bootargs_hassos "zram.enabled=1 zram.num_devices=3 rootwait net.naming-scheme=v250 systemd.machine_id=${MACHINE_ID} cgroup_enable=memory fsck.repair=yes ${BOOT_CONDITION}"
 
 # Red Button pressed?
 if gpio input GPIO27; then
