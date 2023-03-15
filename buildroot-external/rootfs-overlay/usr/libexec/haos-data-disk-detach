@@ -1,0 +1,23 @@
+#!/bin/sh
+
+# Find root using rdev command
+rootpart=$(rdev | cut -f 1 -d ' ')
+rootdev=$(lsblk -no pkname "${rootpart}")
+
+# Wait up to 10s for devices to enumerate
+sleep 10s
+
+datapartitions=$(blkid --match-token LABEL="hassos-data" --output device)
+
+for datapart in ${datapartitions}
+do
+	datadev=$(lsblk -no pkname "${datapart}")
+
+	# If major does not match our root device major, it is an external data
+	# disk. Rename to make sure it gets ignored.
+	if [ "$rootdev" != "$datadev" ]
+	then
+		echo "Found external data disk device on ${datapart}, mark it disabled..."
+		e2label "${datapart}" hassos-data-dis
+	fi
+done
