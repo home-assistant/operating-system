@@ -1,0 +1,8 @@
+[Unit]
+Description=HAOS swap file
+
+[Swap]
+What=/mnt/data/swapfile
+
+[Install]
+WantedBy=swap.target

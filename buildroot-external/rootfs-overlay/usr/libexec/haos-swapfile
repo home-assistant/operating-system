@@ -1,0 +1,20 @@
+#!/bin/sh
+set -e
+
+swapfile="/mnt/data/swapfile"
+swapsize="$(awk '/MemTotal/{ print $2 * 0.25 }' /proc/meminfo)"
+
+
+if [ ! -s "${swapfile}" ] || [ "$(stat "${swapfile}" -c '%s')" -lt $((swapsize * 4)) ]; then
+	if [ "$(stat -f /mnt/data -c '%f')" -lt $((swapsize * 4)) ]; then
+		echo "[WARNING] Not enough space to allocate swapfile"
+		exit 1
+	fi
+
+	dd if=/dev/zero of="${swapfile}" bs=1k count="${swapsize}"
+fi
+
+if ! swaplabel "${swapfile}" > /dev/null 2>&1; then
+	/usr/lib/systemd/systemd-makefs swap "${swapfile}"
+fi
+
