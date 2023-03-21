@@ -5,8 +5,9 @@ swapfile="/mnt/data/swapfile"
 swapsize="$(awk '/MemTotal/{ print $2 * 0.25 }' /proc/meminfo)"
 
 
-if [ ! -s "${swapfile}" ] || [ "$(stat "${swapfile}" -c '%s')" -lt $((swapsize * 4)) ]; then
-	if [ "$(stat -f /mnt/data -c '%f')" -lt $((swapsize * 4)) ]; then
+if [ ! -s "${swapfile}" ] || [ "$(stat "${swapfile}" -c '%s')" -lt $((swapsize * 1024)) ]; then
+	# Check free space (in 4k blocks)
+	if [ "$(stat -f /mnt/data -c '%f')" -lt $((swapsize / 4)) ]; then
 		echo "[WARNING] Not enough space to allocate swapfile"
 		exit 1
 	fi
