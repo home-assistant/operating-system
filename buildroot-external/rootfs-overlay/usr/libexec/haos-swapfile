@@ -2,7 +2,7 @@
 set -e
 
 swapfile="/mnt/data/swapfile"
-swapsize="$(awk '/MemTotal/{ print $2 * 0.25 }' /proc/meminfo)"
+swapsize="$(awk '/MemTotal/{ print $2 * 0.33 }' /proc/meminfo)"
 
 
 if [ ! -s "${swapfile}" ] || [ "$(stat "${swapfile}" -c '%s')" -lt $((swapsize * 1024)) ]; then
