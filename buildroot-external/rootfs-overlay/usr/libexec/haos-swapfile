@@ -13,6 +13,7 @@ if [ ! -s "${swapfile}" ] || [ "$(stat "${swapfile}" -c '%s')" -lt $((swapsize *
 		exit 1
 	fi
 
+	echo "[INFO] Creating swapfile of size $((swapsize *4))k"
 	dd if=/dev/zero of="${swapfile}" bs=4k count="${swapsize}"
 fi
 
