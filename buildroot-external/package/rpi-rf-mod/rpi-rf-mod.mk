@@ -14,7 +14,7 @@
 #
 ################################################################################
 
-RPI_RF_MOD_VERSION = de15b40fe87116c14c810b25d3b5107091e8946b
+RPI_RF_MOD_VERSION = b472ab34508e8de6ad152ba81b0059fab3e77d38
 RPI_RF_MOD_SITE = $(call github,jens-maus,RaspberryMatic,$(RPI_RF_MOD_VERSION))
 RPI_RF_MOD_LICENSE = Apache-2.0
 RPI_RF_MOD_DEPENDENCIES = host-dtc
