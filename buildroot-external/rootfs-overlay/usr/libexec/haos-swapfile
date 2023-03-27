@@ -2,17 +2,19 @@
 set -e
 
 swapfile="/mnt/data/swapfile"
-swapsize="$(awk '/MemTotal/{ print $2 * 0.33 }' /proc/meminfo)"
+# Swap space in 4k blocks
+swapsize="$(awk '/MemTotal/{ print int($2 * 0.33 / 4) }' /proc/meminfo)"
 
 
-if [ ! -s "${swapfile}" ] || [ "$(stat "${swapfile}" -c '%s')" -lt $((swapsize * 1024)) ]; then
+if [ ! -s "${swapfile}" ] || [ "$(stat "${swapfile}" -c '%s')" -lt $((swapsize * 4096)) ]; then
 	# Check free space (in 4k blocks)
-	if [ "$(stat -f /mnt/data -c '%f')" -lt $((swapsize / 4)) ]; then
+	if [ "$(stat -f /mnt/data -c '%f')" -lt "${swapsize}" ]; then
 		echo "[WARNING] Not enough space to allocate swapfile"
 		exit 1
 	fi
 
-	dd if=/dev/zero of="${swapfile}" bs=1k count="${swapsize}"
+	echo "[INFO] Creating swapfile of size $((swapsize *4))k"
+	dd if=/dev/zero of="${swapfile}" bs=4k count="${swapsize}"
 fi
 
 if ! swaplabel "${swapfile}" > /dev/null 2>&1; then
