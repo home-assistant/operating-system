@@ -1,0 +1,27 @@
+From a053500cf43a31ee82a6e0f3d644ea36f5c77ffb Mon Sep 17 00:00:00 2001
+Message-Id: <a053500cf43a31ee82a6e0f3d644ea36f5c77ffb.1679932288.git.stefan@agner.ch>
+From: Stefan Agner <stefan@agner.ch>
+Date: Mon, 27 Mar 2023 17:48:34 +0200
+Subject: [PATCH] ndisc: support multiple gateways for a single network
+
+---
+ src/core/ndisc/nm-ndisc.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/src/core/ndisc/nm-ndisc.c b/src/core/ndisc/nm-ndisc.c
+index 9a6038d406..67cdf5d99a 100644
+--- a/src/core/ndisc/nm-ndisc.c
++++ b/src/core/ndisc/nm-ndisc.c
+@@ -654,7 +654,8 @@ nm_ndisc_add_route(NMNDisc *ndisc, const NMNDiscRoute *new_item, gint64 now_msec
+         NMNDiscRoute *item = &g_array_index(rdata->routes, NMNDiscRoute, i);
+ 
+         if (IN6_ARE_ADDR_EQUAL(&item->network, &new_item->network)
+-            && item->plen == new_item->plen) {
++            && item->plen == new_item->plen
++            && IN6_ARE_ADDR_EQUAL(&item->gateway, &new_item->gateway)) {
+             if (new_item->expiry_msec <= now_msec) {
+                 g_array_remove_index(rdata->routes, i);
+                 return TRUE;
+-- 
+2.40.0
+
