@@ -1,0 +1,11 @@
+[Unit]
+Description=Configure multigenerational LRU
+ConditionPathExists=/sys/kernel/mm/lru_gen/enabled
+
+[Service]
+Type=oneshot
+
+ExecStart=/bin/sh -c "echo 1 > /sys/kernel/mm/lru_gen/min_ttl_ms"
+
+[Install]
+WantedBy=basic.target
