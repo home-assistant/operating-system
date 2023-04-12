@@ -20,6 +20,17 @@ core-issue:
     in that repository if you can't find a matching issue.
   close: true
 
+frontend-issue:
+  comment: >
+    :wave: @{issue-author}, thanks for reporting an issue!
+
+
+    It looks like this issue is related to Home Assistant Frontend. Please
+    check the [Home Assistant Frontend](https://github.com/home-assistant/frontend/issues)
+    repository, the issue might have been reported already. Open a new issue
+    in that repository if you can't find a matching issue.
+  close: true
+
 supervisor-issue:
   comment: >
     :wave: @{issue-author}, thanks for reporting an issue!
