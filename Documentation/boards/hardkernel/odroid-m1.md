@@ -8,9 +8,17 @@ SD-card boot is supported via on-board bootloader (SPL) or recovery button.
 
 ## eMMC
 
-eMMC boot is currently only supported via recovery button. eMMC boot via
-on-board bootloader will require an update of Petitboot (as of March 13 2023,
-this update hasn't been released yet.
+eMMC boot via on-board bootloader requires the latest version of Petitboot
+(spiboot 20230328). To install the latest version download the SPI boot image
+from [inuxfactory.or.kr][1] as follows:
+
+1. Download `spiupdate_odroidm1_20220304.img.xz`
+2. Use balenaEtcher or another tool to flash the updater onto an SD card
+3. Download `spiboot-20230328.img`
+4. Store the file with the file name `spiboot.img` onto the FAT partition of that same SD card.
+5. Plug-in that SD card to your ODROID-M1. Petitboot will update itself, you can verify the progress on the HDMI output.
+
+Once Petitboot is updated you can flash Home Assistant OS directly onto an eMMC.
 
 ## NVMe
 
@@ -24,8 +32,8 @@ However, the ODROID-M1 automatically boots from internal SPI. To boot
 directly off the SD-card or eMMC you need to press the recovery button.
 
 The SPI flashed U-Boot SPL tries searches for an U-Boot binary on the SD-card
-(and future releases also on the eMMC). This mechanism allows you to boot the Home
-Assistant OS U-Boot without pressing the recovery button.
+(and from eMMC with Petitboot 20230328 and later). This mechanism allows you to
+boot the Home Assistant OS U-Boot without pressing the recovery button.
 
 ## Console
 
@@ -35,3 +43,5 @@ The serial console's baudrate is 1500000 by default.
 The systemd startup messages will only appear on the serial console by default.
 To show the messages on the HDMI console instead, add the console manually
 to the `cmdline.txt` file on the boot partition (e.g. `console=tty0`).
+
+[1]: http://ppa.linuxfactory.or.kr/images/petitboot/odroidm1/
