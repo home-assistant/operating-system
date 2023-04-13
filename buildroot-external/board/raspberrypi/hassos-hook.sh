@@ -19,7 +19,7 @@ function hassos_pre_image() {
     else
         cp "${BOARD_DIR}/../cmdline.txt" "${BOOT_DATA}/cmdline.txt"
     fi
-    cp "${BINARIES_DIR}"/*.dtbo "${BOOT_DATA}/overlays/"
+    cp "${BINARIES_DIR}"/*.dtbo "${BOOT_DATA}/overlays/" 2>/dev/null || true
 
     # EEPROM update for Raspberry Pi 4/Compute Module 4
     if grep -Eq "^BR2_PACKAGE_RPI_EEPROM=y$" "${BR2_CONFIG}"; then
