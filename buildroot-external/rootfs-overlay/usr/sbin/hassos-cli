@@ -19,7 +19,19 @@ docker container exec \
     -ti hassio_cli \
     /usr/bin/cli.sh
 
-# Jump to root login shell
-if [ $? -eq 10 ]; then
+case $? in
+  10)
+    # Jump to root login shell (login command)
     exec /bin/ash -l
-fi
+    ;;
+  143)
+    # 143 graceful termination (SIGTERM). Most likely a proper shutdown.
+    # Just sleep for a while until actual systemd shutdown gets invoked.
+    echo ""
+    echo "Home Assistant CLI has been terminated."
+    sleep 30
+    ;;
+  *)
+    echo "HA CLI failed with error code: $?"
+    ;;
+esac
