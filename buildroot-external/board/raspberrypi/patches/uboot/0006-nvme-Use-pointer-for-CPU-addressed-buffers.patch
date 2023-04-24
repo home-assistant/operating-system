@@ -1,7 +1,7 @@
-From 2b508d92673738d837576301866dc234d8b008c4 Mon Sep 17 00:00:00 2001
-Message-Id: <2b508d92673738d837576301866dc234d8b008c4.1668448794.git.stefan@agner.ch>
-In-Reply-To: <135d886b4e5077c8fa96a5449a70d81ae9c1c3d0.1668448794.git.stefan@agner.ch>
-References: <135d886b4e5077c8fa96a5449a70d81ae9c1c3d0.1668448794.git.stefan@agner.ch>
+From 3bccb6eb7f9e8e996cd50409eb96450c313953ec Mon Sep 17 00:00:00 2001
+Message-Id: <3bccb6eb7f9e8e996cd50409eb96450c313953ec.1682350496.git.stefan@agner.ch>
+In-Reply-To: <01b4d231cbb66ca193ba422a22d25c75d21ff8ee.1682350496.git.stefan@agner.ch>
+References: <01b4d231cbb66ca193ba422a22d25c75d21ff8ee.1682350496.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Thu, 23 Sep 2021 23:58:35 +0200
 Subject: [PATCH] nvme: Use pointer for CPU addressed buffers
@@ -260,5 +260,5 @@ index 2cdf8ce320..8ff823cd81 100644
  /**
   * nvme_scan_namespace - scan all namespaces attached to NVMe controllers
 -- 
-2.38.1
+2.40.0
 

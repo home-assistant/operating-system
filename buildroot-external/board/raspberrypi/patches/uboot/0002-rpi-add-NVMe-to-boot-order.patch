@@ -1,7 +1,7 @@
-From 191b5f4e0408e40f35379fdaab6b37a7ad93e298 Mon Sep 17 00:00:00 2001
-Message-Id: <191b5f4e0408e40f35379fdaab6b37a7ad93e298.1668448794.git.stefan@agner.ch>
-In-Reply-To: <135d886b4e5077c8fa96a5449a70d81ae9c1c3d0.1668448794.git.stefan@agner.ch>
-References: <135d886b4e5077c8fa96a5449a70d81ae9c1c3d0.1668448794.git.stefan@agner.ch>
+From 8870872f359771effddd74bcb4c7e0a4316d99f7 Mon Sep 17 00:00:00 2001
+Message-Id: <8870872f359771effddd74bcb4c7e0a4316d99f7.1682350496.git.stefan@agner.ch>
+In-Reply-To: <01b4d231cbb66ca193ba422a22d25c75d21ff8ee.1682350496.git.stefan@agner.ch>
+References: <01b4d231cbb66ca193ba422a22d25c75d21ff8ee.1682350496.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Tue, 29 Dec 2020 23:34:52 +0100
 Subject: [PATCH] rpi: add NVMe to boot order
@@ -40,5 +40,5 @@ index cd8fe8b518..7257659932 100644
  	BOOT_TARGET_PXE(func) \
  	BOOT_TARGET_DHCP(func)
 -- 
-2.38.1
+2.40.0
 

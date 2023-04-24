@@ -1,7 +1,7 @@
-From ab2790f8ff78790ea8a9cb0b05cafc55648ebbc4 Mon Sep 17 00:00:00 2001
-Message-Id: <ab2790f8ff78790ea8a9cb0b05cafc55648ebbc4.1668448794.git.stefan@agner.ch>
-In-Reply-To: <135d886b4e5077c8fa96a5449a70d81ae9c1c3d0.1668448794.git.stefan@agner.ch>
-References: <135d886b4e5077c8fa96a5449a70d81ae9c1c3d0.1668448794.git.stefan@agner.ch>
+From 11176a6ca068e0b572abbe5da8fef1d57bd40e7a Mon Sep 17 00:00:00 2001
+Message-Id: <11176a6ca068e0b572abbe5da8fef1d57bd40e7a.1682350496.git.stefan@agner.ch>
+In-Reply-To: <01b4d231cbb66ca193ba422a22d25c75d21ff8ee.1682350496.git.stefan@agner.ch>
+References: <01b4d231cbb66ca193ba422a22d25c75d21ff8ee.1682350496.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Thu, 23 Sep 2021 23:52:44 +0200
 Subject: [PATCH] nvme: improve readability of nvme_setup_prps()
@@ -45,5 +45,5 @@ index 73db80a294..751abc3cd5 100644
  			prp_pool += page_size;
  		}
 -- 
-2.38.1
+2.40.0
 
