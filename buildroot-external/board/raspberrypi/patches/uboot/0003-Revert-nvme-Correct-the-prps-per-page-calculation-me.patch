@@ -1,7 +1,7 @@
-From 644bd3743aa8771ef7ecb7b7239308d6da2a5b35 Mon Sep 17 00:00:00 2001
-Message-Id: <644bd3743aa8771ef7ecb7b7239308d6da2a5b35.1668448794.git.stefan@agner.ch>
-In-Reply-To: <135d886b4e5077c8fa96a5449a70d81ae9c1c3d0.1668448794.git.stefan@agner.ch>
-References: <135d886b4e5077c8fa96a5449a70d81ae9c1c3d0.1668448794.git.stefan@agner.ch>
+From 60afc919643d212439a63908c83523879af21032 Mon Sep 17 00:00:00 2001
+Message-Id: <60afc919643d212439a63908c83523879af21032.1682350496.git.stefan@agner.ch>
+In-Reply-To: <01b4d231cbb66ca193ba422a22d25c75d21ff8ee.1682350496.git.stefan@agner.ch>
+References: <01b4d231cbb66ca193ba422a22d25c75d21ff8ee.1682350496.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Thu, 23 Sep 2021 23:43:31 +0200
 Subject: [PATCH] Revert "nvme: Correct the prps per page calculation method"
@@ -39,5 +39,5 @@ index 6d0d3f3ca2..73db80a294 100644
  
  	length -= (page_size - offset);
 -- 
-2.38.1
+2.40.0
 
