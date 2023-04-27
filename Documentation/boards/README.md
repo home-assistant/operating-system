@@ -5,26 +5,24 @@
 The following boards/devices are supported:
 
 - Raspberry Pi
-  - Pi 4 Model B (1 GB, 2 GB, 4 GB and 8 GB model) 64-bit (recommended)
-  - Pi 4 Model B (1 GB, 2 GB, 4 GB and 8 GB model) 32-bit
-  - Pi 3 Model B and B+ 64-bit (recommended)
-  - Pi 3 Model B and B+ 32-bit
-  - Pi 2 (not recommended)
-  - Pi Zero-W (not recommended)
-  - Pi (not recommended)
+  - Pi 4 Model B ([1 GB](https://www.raspberrypi.com/products/raspberry-pi-4-model-b/?variant=raspberry-pi-4-model-b-1gb), [2 GB](https://www.raspberrypi.com/products/raspberry-pi-4-model-b/?variant=raspberry-pi-4-model-b-2gb), [4 GB](https://www.raspberrypi.com/products/raspberry-pi-4-model-b/?variant=raspberry-pi-4-model-b-4gb) and [8 GB](https://www.raspberrypi.com/products/raspberry-pi-4-model-b/?variant=raspberry-pi-4-model-b-8gb) model) 32-bit or 64-bit (recommended)
+  - [Pi 3 Model B](https://www.raspberrypi.com/products/raspberry-pi-3-model-b/) and [B+](https://www.raspberrypi.com/products/raspberry-pi-3-model-b-plus/) 32-bit or 64-bit (recommended)
+  - [Pi 2](https://www.raspberrypi.com/products/raspberry-pi-2-model-b/) (not recommended)
+  - [Pi Zero-W](https://www.raspberrypi.com/products/raspberry-pi-zero-w/) (not recommended)
+  - [Pi](https://www.raspberrypi.com/products/raspberry-pi-1-model-b-plus/) (not recommended)
 - Hardkernel
-  - ODROID-C2
-  - ODROID-C4
-  - ODROID-M1
-  - ODROID-N2
-  - ODROID-N2+
-  - ODROID-XU4
+  - [ODROID-C2](https://www.hardkernel.com/shop/odroid-c2/) (discontinued)
+  - [ODROID-C4](https://www.hardkernel.com/shop/odroid-c4/)
+  - [ODROID-M1](https://www.hardkernel.com/shop/odroid-m1/)
+  - [ODROID-N2](https://www.hardkernel.com/shop/odroid-n2/) (discontinued)
+  - ODROID-N2+ [2 GB](https://www.hardkernel.com/shop/odroid-n2-with-2gbyte-ram-2/) or [4 GB](https://www.hardkernel.com/shop/odroid-n2-with-4gbyte-ram-2/)
+  - [ODROID-XU4](https://www.hardkernel.com/shop/odroid-xu4-special-price/)
 - Asus
-  - Tinker Board
+  - [Tinker Board](https://tinker-board.asus.com/product/tinker-board.html)
 - Generic x86-64 (UEFI, not suited for virtualization)
-  - Intel NUC5CPYH
-  - Intel NUC6CAYH
-  - Intel NUC10I3FNK2
+  - [Intel NUC5CPYH](https://www.intel.com/content/www/us/en/products/sku/85254/intel-nuc-kit-nuc5cpyh/specifications.html)
+  - [Intel NUC6CAYH](https://www.intel.com/content/www/us/en/products/sku/95062/intel-nuc-kit-nuc6cayh/specifications.html)
+  - [Intel NUC10I3FNK2](https://www.intel.com/content/www/us/en/products/sku/195503/intel-nuc-10-performance-kit-nuc10i3fnk/specifications.html)
   - Gigabyte GB-BPCE-3455
   - Computers supporting x86-64 architecture and UEFI boot should generally work
 - Virtual appliance (x86_64/UEFI):
