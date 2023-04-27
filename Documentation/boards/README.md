@@ -11,12 +11,12 @@ The following boards/devices are supported:
   - [Pi Zero-W](https://www.raspberrypi.com/products/raspberry-pi-zero-w/) (not recommended)
   - [Pi](https://www.raspberrypi.com/products/raspberry-pi-1-model-b-plus/) (not recommended)
 - Hardkernel
-  - [ODROID-C2](https://wiki.odroid.com/odroid-c2/odroid-c2)
-  - [ODROID-C4](https://wiki.odroid.com/odroid-c4/odroid-c4)
-  - [ODROID-M1](https://wiki.odroid.com/odroid-m1/odroid-m1)
-  - [ODROID-N2](https://wiki.odroid.com/odroid-n2/odroid-n2)
-  - [ODROID-N2+](https://wiki.odroid.com/odroid-n2/odroid-n2)
-  - [ODROID-XU4](https://wiki.odroid.com/odroid-xu4/odroid-xu4)
+  - [ODROID-C2](https://www.hardkernel.com/shop/odroid-c2/) (discontinued)
+  - [ODROID-C4](https://www.hardkernel.com/shop/odroid-c4/)
+  - [ODROID-M1](https://www.hardkernel.com/shop/odroid-m1/)
+  - [ODROID-N2](https://www.hardkernel.com/shop/odroid-n2/) (discontinued)
+  - ODROID-N2+ [2 GB](https://www.hardkernel.com/shop/odroid-n2-with-2gbyte-ram-2/) or [4 GB](https://www.hardkernel.com/shop/odroid-n2-with-4gbyte-ram-2/)
+  - [ODROID-XU4](https://www.hardkernel.com/shop/odroid-xu4-special-price/)
 - Asus
   - [Tinker Board](https://tinker-board.asus.com/product/tinker-board.html)
 - Generic x86-64 (UEFI, not suited for virtualization)
