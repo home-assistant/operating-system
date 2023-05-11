@@ -15,7 +15,7 @@ from [linuxfactory.or.kr][1] as follows:
 1. Download `spiupdate_odroidm1_20220304.img.xz`
 2. Use balenaEtcher or another tool to flash the updater onto an SD card
 3. Download `spiboot-20230328.img`
-4. Important! Rename the `spiboot-20230328.img` file to`spiboot.img`.
+4. Rename the `spiboot-20230328.img` file to`spiboot.img`.
 5. Paste the `spiboot.img` file onto the FAT partition of that same SD card.
 6. Plug-in that SD card to your ODROID-M1. Petitboot will update itself, you can verify the progress on the HDMI output.
 7. If you see the version 20230328 in the top right corner, the installation was successful.
