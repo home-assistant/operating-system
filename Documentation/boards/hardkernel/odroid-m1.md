@@ -15,8 +15,11 @@ from [linuxfactory.or.kr][1] as follows:
 1. Download `spiupdate_odroidm1_20220304.img.xz`
 2. Use balenaEtcher or another tool to flash the updater onto an SD card
 3. Download `spiboot-20230328.img`
-4. Store the file with the file name `spiboot.img` onto the FAT partition of that same SD card.
-5. Plug-in that SD card to your ODROID-M1. Petitboot will update itself, you can verify the progress on the HDMI output.
+4. Rename the `spiboot-20230328.img` file to`spiboot.img`.
+5. Paste the `spiboot.img` file onto the FAT partition of that same SD card.
+6. Plug-in that SD card to your ODROID-M1. Petitboot will update itself, you can verify the progress on the HDMI output.
+7. If you see the version 20230328 in the top right corner, the installation was successful.
+  * If you see any other version there, the installation failed. 
 
 Once Petitboot is updated you can flash Home Assistant OS directly onto an eMMC.
 
