@@ -95,7 +95,7 @@ if [ -z "${SUPERVISOR_CONTAINER_ID}" ]; then
         -v /run/supervisor:/run/os:rw \
         -v /run/udev:/run/udev:ro \
         -v /etc/machine-id:/etc/machine-id:ro \
-        -v ${SUPERVISOR_DATA}:/data:rw \
+        -v ${SUPERVISOR_DATA}:/data:rw,slave \
         -e SUPERVISOR_SHARE=${SUPERVISOR_DATA} \
         -e SUPERVISOR_NAME=hassio_supervisor \
         -e SUPERVISOR_MACHINE=${SUPERVISOR_MACHINE} \
