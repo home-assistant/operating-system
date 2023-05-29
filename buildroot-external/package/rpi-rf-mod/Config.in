@@ -40,9 +40,9 @@ config BR2_PACKAGE_RPI_RF_MOD_DTS_ODROID_C2
 	  For the ODROID-C2
 
 config BR2_PACKAGE_RPI_RF_MOD_DTS_YELLOW
-  bool "HomeAssistant Yellow"
-  help
-    For the HomeAssistant Yellow
+	bool "HomeAssistant Yellow"
+	help
+	  For the HomeAssistant Yellow
 
 endchoice
 
