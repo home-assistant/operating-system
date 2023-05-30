@@ -23,7 +23,7 @@ The following boards/devices are supported:
   - [Intel NUC5CPYH](https://www.intel.com/content/www/us/en/products/sku/85254/intel-nuc-kit-nuc5cpyh/specifications.html)
   - [Intel NUC6CAYH](https://www.intel.com/content/www/us/en/products/sku/95062/intel-nuc-kit-nuc6cayh/specifications.html)
   - [Intel NUC10I3FNK2](https://www.intel.com/content/www/us/en/products/sku/195503/intel-nuc-10-performance-kit-nuc10i3fnk/specifications.html)
-  - Gigabyte GB-BPCE-3455
+  - [Gigabyte GB-BPCE-3455](https://www.gigabyte.com/Mini-PcBarebone/GB-BPCE-3455-rev-10/sp#sp)
   - Computers supporting x86-64 architecture and UEFI boot should generally work
 - Virtual appliance (x86_64/UEFI):
   - VMDK
