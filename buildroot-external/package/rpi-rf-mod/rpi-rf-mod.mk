@@ -14,11 +14,11 @@
 #
 ################################################################################
 
-RPI_RF_MOD_VERSION = b472ab34508e8de6ad152ba81b0059fab3e77d38
+RPI_RF_MOD_VERSION = 173dad1ea984a3097c2b3831e8857d09af8e2087
 RPI_RF_MOD_SITE = $(call github,jens-maus,RaspberryMatic,$(RPI_RF_MOD_VERSION))
 RPI_RF_MOD_LICENSE = Apache-2.0
-RPI_RF_MOD_DEPENDENCIES = host-dtc
 RPI_RF_MOD_LICENSE_FILES = LICENSE
+RPI_RF_MOD_DEPENDENCIES = host-dtc
 
 ifeq ($(BR2_PACKAGE_RPI_RF_MOD_DTS_RPI),y)
   # RaspberryPi DTS file
