@@ -25,19 +25,19 @@ config BR2_PACKAGE_RPI_RF_MOD_DTS_TINKER
 	  For the ASUS Tinkerboard
 
 config BR2_PACKAGE_RPI_RF_MOD_DTS_ODROID_C4
-	bool "Odroid-C4"
+	bool "ODROID-C4"
 	help
-	  For the Odroid-C4
+	  For the ODROID-C4
 
 config BR2_PACKAGE_RPI_RF_MOD_DTS_ODROID_N2
-	bool "Odroid-N2"
+	bool "ODROID-N2"
 	help
-	  For the Odroid-N2
+	  For the ODROID-N2
 
 config BR2_PACKAGE_RPI_RF_MOD_DTS_ODROID_C2
-	bool "Odroid-C2"
+	bool "ODROID-C2"
 	help
-	  For the Odroid-C2
+	  For the ODROID-C2
 
 endchoice
 
