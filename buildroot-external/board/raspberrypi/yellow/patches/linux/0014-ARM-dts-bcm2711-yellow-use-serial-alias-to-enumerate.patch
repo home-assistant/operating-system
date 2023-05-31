@@ -1,0 +1,46 @@
+From 60e2cd5b6747992f47feef0ee36e2d0d80706c18 Mon Sep 17 00:00:00 2001
+Message-Id: <60e2cd5b6747992f47feef0ee36e2d0d80706c18.1685523528.git.stefan@agner.ch>
+In-Reply-To: <f0292972b38d512fce48384ebbb72b2da46f03bd.1685523528.git.stefan@agner.ch>
+References: <f0292972b38d512fce48384ebbb72b2da46f03bd.1685523528.git.stefan@agner.ch>
+From: Stefan Agner <stefan@agner.ch>
+Date: Wed, 31 May 2023 10:57:43 +0200
+Subject: [PATCH] ARM: dts: bcm2711: yellow: use serial alias to enumerate
+ ttyAMA
+
+Now that the driver actually uses the index from the serial aliases,
+make sure to correctly enumerate the serial aliases.
+
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+---
+ arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
+
+diff --git a/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
+index f7fdf8bbb395..b8f0bc2df062 100644
+--- a/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
++++ b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
+@@ -17,11 +17,6 @@ / {
+ 	compatible = "raspberrypi,4-compute-module-ha-yellow", "raspberrypi,4-compute-module", "brcm,bcm2711";
+ 	model = "Raspberry Pi Compute Module 4 on Home Assistant Yellow";
+ 
+-	aliases {
+-		serial4 = &uart4;
+-		serial5 = &uart5;
+-	};
+-
+ 	chosen {
+ 		/* 8250 auxiliary UART instead of pl011 */
+ 		stdout-path = "serial1:115200n8";
+@@ -324,7 +319,8 @@ chosen {
+ 
+ 	aliases {
+ 		serial0 = &uart1;
+-		serial1 = &uart0;
++		serial1 = &uart4;
++		serial2 = &uart5;
+ 		mmc0 = &emmc2;
+ 		mmc1 = &mmcnr;
+ 		mmc2 = &sdhost;
+-- 
+2.40.1
+
