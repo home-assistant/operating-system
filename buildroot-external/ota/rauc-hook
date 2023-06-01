@@ -16,6 +16,9 @@ install_boot() {
     fi
     mount "${RAUC_IMAGE_NAME}" "${BOOT_NEW}"
 
+    # Avoid stale/old overlays
+    rm -f "${BOOT_MNT}"/overlays/* || true
+
     # Backup boot config
     cp -f "${BOOT_MNT}"/*.txt "${BOOT_TMP}/" || true
 
