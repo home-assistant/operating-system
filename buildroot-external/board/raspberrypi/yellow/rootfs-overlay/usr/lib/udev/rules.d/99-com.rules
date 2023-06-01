@@ -1,0 +1,4 @@
+
+KERNEL=="ttyAMA0", SYMLINK+="serial0"
+
+KERNEL=="ttyS0", SYMLINK+="serial1"
