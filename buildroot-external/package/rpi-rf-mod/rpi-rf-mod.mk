@@ -14,7 +14,7 @@
 #
 ################################################################################
 
-RPI_RF_MOD_VERSION = 173dad1ea984a3097c2b3831e8857d09af8e2087
+RPI_RF_MOD_VERSION = e7af99eeb4b8c480d36d5bc771484fd6d85188d6
 RPI_RF_MOD_SITE = $(call github,jens-maus,RaspberryMatic,$(RPI_RF_MOD_VERSION))
 RPI_RF_MOD_LICENSE = Apache-2.0
 RPI_RF_MOD_LICENSE_FILES = LICENSE
@@ -36,6 +36,9 @@ else ifeq ($(BR2_PACKAGE_RPI_RF_MOD_DTS_ODROID_N2),y)
 else ifeq ($(BR2_PACKAGE_RPI_RF_MOD_DTS_ODROID_C2),y)
   # ODROID-C2 DTS file
   RPI_RF_MOD_DTS_FILE = rpi-rf-mod-odroid-c2
+else ifeq ($(BR2_PACKAGE_RPI_RF_MOD_DTS_YELLOW),y)
+  # HomeAssistant Yellow DTS file
+  RPI_RF_MOD_DTS_FILE = rpi-rf-mod-yellow
 endif
 
 define RPI_RF_MOD_BUILD_CMDS
