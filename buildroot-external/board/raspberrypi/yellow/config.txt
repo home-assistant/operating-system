@@ -10,9 +10,6 @@ arm_64bit=1
 # Enable primary UART by default
 enable_uart=1
 
-# Free up full-fledged PL011 UART for J11
-dtoverlay=miniuart-bt
-
 # No HDMI on Yellow, but we can't set to 16 since we need the full firmware
 # for codecs
 gpu_mem=32

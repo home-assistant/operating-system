@@ -1,0 +1,79 @@
+From 51e62f1491c1fce95541008d29d154e4ae117a22 Mon Sep 17 00:00:00 2001
+Message-Id: <51e62f1491c1fce95541008d29d154e4ae117a22.1685609747.git.stefan@agner.ch>
+In-Reply-To: <f0292972b38d512fce48384ebbb72b2da46f03bd.1685609747.git.stefan@agner.ch>
+References: <f0292972b38d512fce48384ebbb72b2da46f03bd.1685609747.git.stefan@agner.ch>
+From: Stefan Agner <stefan@agner.ch>
+Date: Thu, 1 Jun 2023 10:22:12 +0200
+Subject: [PATCH] ARM: dts: bcm2711: yellow: Use mini-UART for Bluetooth by
+ default
+
+Use the mini UART for Bluetooth by default. This makes sure that the
+full UART is always available on J11.
+
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+---
+ .../boot/dts/bcm2711-rpi-cm4-ha-yellow.dts    | 23 ++++++++++++-------
+ 1 file changed, 15 insertions(+), 8 deletions(-)
+
+diff --git a/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
+index b8f0bc2df062..78e61e628d66 100644
+--- a/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
++++ b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
+@@ -318,7 +318,7 @@ chosen {
+ 	};
+ 
+ 	aliases {
+-		serial0 = &uart1;
++		serial0 = &uart0;
+ 		serial1 = &uart4;
+ 		serial2 = &uart5;
+ 		mmc0 = &emmc2;
+@@ -348,12 +348,14 @@ &mmcnr {
+ };
+ 
+ &uart0 {
+-	pinctrl-0 = <&uart0_pins &bt_pins>;
++	pinctrl-0 = <&uart0_pins>;
+ 	status = "okay";
+ };
+ 
+ &uart1 {
+-	pinctrl-0 = <&uart1_pins>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&uart1_pins &bt_pins &fake_bt_cts>;
++	status = "okay";
+ };
+ 
+ &spi0 {
+@@ -489,18 +491,23 @@ bt_pins: bt_pins {
+ 		brcm,pull = <2>;
+ 	};
+ 
+-	uart0_pins: uart0_pins {
+-		brcm,pins = <32 33>;
+-		brcm,function = <BCM2835_FSEL_ALT3>;
+-		brcm,pull = <0 2>;
++	fake_bt_cts: fake_bt_cts {
++		brcm,pins = <31>;
++		brcm,function = <1>; /* output */
+ 	};
+ 
+-	uart1_pins: uart1_pins {
++	uart0_pins: uart0_pins {
+ 		brcm,pins;
+ 		brcm,function;
+ 		brcm,pull;
+ 	};
+ 
++	uart1_pins: uart1_pins {
++		brcm,pins = <32 33>;
++		brcm,function = <2>; /* alt5=UART1 */
++		brcm,pull = <0 2>;
++	};
++
+ 	uart2_pins: uart2_pins {
+ 		brcm,pins = <0 1>;
+ 		brcm,function = <BCM2835_FSEL_ALT4>;
+-- 
+2.40.1
+
