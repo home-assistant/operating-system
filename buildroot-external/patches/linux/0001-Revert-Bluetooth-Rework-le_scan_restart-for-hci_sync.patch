@@ -1,0 +1,221 @@
+From 013a0ae9045de9e25b2f51ff56785e7fbce88626 Mon Sep 17 00:00:00 2001
+Message-ID: <013a0ae9045de9e25b2f51ff56785e7fbce88626.1686815046.git.stefan@agner.ch>
+From: Stefan Agner <stefan@agner.ch>
+Date: Thu, 15 Jun 2023 09:43:59 +0200
+Subject: [PATCH] Revert "Bluetooth: Rework le_scan_restart for hci_sync"
+
+This reverts commit 27d54b778ad1fb32c2c108cfe97e861c3909a46f.
+---
+ net/bluetooth/hci_request.c | 88 +++++++++++++++++++++++++++++++++++++
+ net/bluetooth/hci_sync.c    | 75 -------------------------------
+ 2 files changed, 88 insertions(+), 75 deletions(-)
+
+diff --git a/net/bluetooth/hci_request.c b/net/bluetooth/hci_request.c
+index f7e006a36382..43178a21ea7e 100644
+--- a/net/bluetooth/hci_request.c
++++ b/net/bluetooth/hci_request.c
+@@ -909,8 +909,95 @@ static void set_random_addr(struct hci_request *req, bdaddr_t *rpa)
+ 	hci_req_add(req, HCI_OP_LE_SET_RANDOM_ADDR, 6, rpa);
+ }
+ 
++static int le_scan_restart(struct hci_request *req, unsigned long opt)
++{
++	struct hci_dev *hdev = req->hdev;
++
++	/* If controller is not scanning we are done. */
++	if (!hci_dev_test_flag(hdev, HCI_LE_SCAN))
++		return 0;
++
++	if (hdev->scanning_paused) {
++		bt_dev_dbg(hdev, "Scanning is paused for suspend");
++		return 0;
++	}
++
++	hci_req_add_le_scan_disable(req, false);
++
++	if (use_ext_scan(hdev)) {
++		struct hci_cp_le_set_ext_scan_enable ext_enable_cp;
++
++		memset(&ext_enable_cp, 0, sizeof(ext_enable_cp));
++		ext_enable_cp.enable = LE_SCAN_ENABLE;
++		ext_enable_cp.filter_dup = LE_SCAN_FILTER_DUP_ENABLE;
++
++		hci_req_add(req, HCI_OP_LE_SET_EXT_SCAN_ENABLE,
++			    sizeof(ext_enable_cp), &ext_enable_cp);
++	} else {
++		struct hci_cp_le_set_scan_enable cp;
++
++		memset(&cp, 0, sizeof(cp));
++		cp.enable = LE_SCAN_ENABLE;
++		cp.filter_dup = LE_SCAN_FILTER_DUP_ENABLE;
++		hci_req_add(req, HCI_OP_LE_SET_SCAN_ENABLE, sizeof(cp), &cp);
++	}
++
++	return 0;
++}
++
++static void le_scan_restart_work(struct work_struct *work)
++{
++	struct hci_dev *hdev = container_of(work, struct hci_dev,
++					    le_scan_restart.work);
++	unsigned long timeout, duration, scan_start, now;
++	u8 status;
++
++	bt_dev_dbg(hdev, "");
++
++	hci_req_sync(hdev, le_scan_restart, 0, HCI_CMD_TIMEOUT, &status);
++	if (status) {
++		bt_dev_err(hdev, "failed to restart LE scan: status %d",
++			   status);
++		return;
++	}
++
++	hci_dev_lock(hdev);
++
++	if (!test_bit(HCI_QUIRK_STRICT_DUPLICATE_FILTER, &hdev->quirks) ||
++	    !hdev->discovery.scan_start)
++		goto unlock;
++
++	/* When the scan was started, hdev->le_scan_disable has been queued
++	 * after duration from scan_start. During scan restart this job
++	 * has been canceled, and we need to queue it again after proper
++	 * timeout, to make sure that scan does not run indefinitely.
++	 */
++	duration = hdev->discovery.scan_duration;
++	scan_start = hdev->discovery.scan_start;
++	now = jiffies;
++	if (now - scan_start <= duration) {
++		int elapsed;
++
++		if (now >= scan_start)
++			elapsed = now - scan_start;
++		else
++			elapsed = ULONG_MAX - scan_start + now;
++
++		timeout = duration - elapsed;
++	} else {
++		timeout = 0;
++	}
++
++	queue_delayed_work(hdev->req_workqueue,
++			   &hdev->le_scan_disable, timeout);
++
++unlock:
++	hci_dev_unlock(hdev);
++}
++
+ void hci_request_setup(struct hci_dev *hdev)
+ {
++	INIT_DELAYED_WORK(&hdev->le_scan_restart, le_scan_restart_work);
+ 	INIT_DELAYED_WORK(&hdev->interleave_scan, interleave_scan_work);
+ }
+ 
+@@ -919,4 +1006,5 @@ void hci_request_cancel_all(struct hci_dev *hdev)
+ 	__hci_cmd_sync_cancel(hdev, ENODEV);
+ 
+ 	cancel_interleave_scan(hdev);
++	cancel_delayed_work_sync(&hdev->le_scan_restart);
+ }
+diff --git a/net/bluetooth/hci_sync.c b/net/bluetooth/hci_sync.c
+index 3eec688a88a9..34f29d83b7ff 100644
+--- a/net/bluetooth/hci_sync.c
++++ b/net/bluetooth/hci_sync.c
+@@ -393,79 +393,6 @@ static void le_scan_disable(struct work_struct *work)
+ 	hci_dev_unlock(hdev);
+ }
+ 
+-static int hci_le_set_scan_enable_sync(struct hci_dev *hdev, u8 val,
+-				       u8 filter_dup);
+-static int hci_le_scan_restart_sync(struct hci_dev *hdev)
+-{
+-	/* If controller is not scanning we are done. */
+-	if (!hci_dev_test_flag(hdev, HCI_LE_SCAN))
+-		return 0;
+-
+-	if (hdev->scanning_paused) {
+-		bt_dev_dbg(hdev, "Scanning is paused for suspend");
+-		return 0;
+-	}
+-
+-	hci_le_set_scan_enable_sync(hdev, LE_SCAN_DISABLE, 0x00);
+-	return hci_le_set_scan_enable_sync(hdev, LE_SCAN_ENABLE,
+-					   LE_SCAN_FILTER_DUP_ENABLE);
+-}
+-
+-static int le_scan_restart_sync(struct hci_dev *hdev, void *data)
+-{
+-	return hci_le_scan_restart_sync(hdev);
+-}
+-
+-static void le_scan_restart(struct work_struct *work)
+-{
+-	struct hci_dev *hdev = container_of(work, struct hci_dev,
+-					    le_scan_restart.work);
+-	unsigned long timeout, duration, scan_start, now;
+-	int status;
+-
+-	bt_dev_dbg(hdev, "");
+-
+-	hci_dev_lock(hdev);
+-
+-	status = hci_cmd_sync_queue(hdev, le_scan_restart_sync, NULL, NULL);
+-	if (status) {
+-		bt_dev_err(hdev, "failed to restart LE scan: status %d",
+-			   status);
+-		goto unlock;
+-	}
+-
+-	if (!test_bit(HCI_QUIRK_STRICT_DUPLICATE_FILTER, &hdev->quirks) ||
+-	    !hdev->discovery.scan_start)
+-		goto unlock;
+-
+-	/* When the scan was started, hdev->le_scan_disable has been queued
+-	 * after duration from scan_start. During scan restart this job
+-	 * has been canceled, and we need to queue it again after proper
+-	 * timeout, to make sure that scan does not run indefinitely.
+-	 */
+-	duration = hdev->discovery.scan_duration;
+-	scan_start = hdev->discovery.scan_start;
+-	now = jiffies;
+-	if (now - scan_start <= duration) {
+-		int elapsed;
+-
+-		if (now >= scan_start)
+-			elapsed = now - scan_start;
+-		else
+-			elapsed = ULONG_MAX - scan_start + now;
+-
+-		timeout = duration - elapsed;
+-	} else {
+-		timeout = 0;
+-	}
+-
+-	queue_delayed_work(hdev->req_workqueue,
+-			   &hdev->le_scan_disable, timeout);
+-
+-unlock:
+-	hci_dev_unlock(hdev);
+-}
+-
+ static int reenable_adv_sync(struct hci_dev *hdev, void *data)
+ {
+ 	bt_dev_dbg(hdev, "");
+@@ -632,7 +559,6 @@ void hci_cmd_sync_init(struct hci_dev *hdev)
+ 	INIT_WORK(&hdev->cmd_sync_cancel_work, hci_cmd_sync_cancel_work);
+ 	INIT_WORK(&hdev->reenable_adv_work, reenable_adv);
+ 	INIT_DELAYED_WORK(&hdev->le_scan_disable, le_scan_disable);
+-	INIT_DELAYED_WORK(&hdev->le_scan_restart, le_scan_restart);
+ 	INIT_DELAYED_WORK(&hdev->adv_instance_expire, adv_timeout_expire);
+ }
+ 
+@@ -4771,7 +4697,6 @@ int hci_dev_close_sync(struct hci_dev *hdev)
+ 	cancel_delayed_work(&hdev->power_off);
+ 	cancel_delayed_work(&hdev->ncmd_timer);
+ 	cancel_delayed_work(&hdev->le_scan_disable);
+-	cancel_delayed_work(&hdev->le_scan_restart);
+ 
+ 	hci_request_cancel_all(hdev);
+ 
+-- 
+2.41.0
+
