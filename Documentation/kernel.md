@@ -5,19 +5,19 @@ Default Kernel tree: 6.1
 
 | Board | Version |
 |-------|---------|
-| Open Virtual Appliance | 6.1.36 |
+| Open Virtual Appliance | 6.1.37 |
 | Raspberry Pi | 6.1.21 |
 | Raspberry Pi 0-W | 6.1.21 |
 | Raspberry Pi 2 | 6.1.21 |
 | Raspberry Pi 3 | 6.1.21 |
 | Raspberry Pi 4 | 6.1.21 |
 | Home Assistant Yellow | 6.1.21 |
-| Tinker Board | 6.1.36 |
-| ODROID-C2 | 6.1.36 |
-| ODROID-C4 | 6.1.36 |
-| ODROID-M1 | 6.1.36 |
-| ODROID-N2 | 6.1.36 |
-| ODROID-XU4 | 6.1.36 |
-| Generic aarch64 | 6.1.36 |
-| Generic x86-64 | 6.1.36 |
-| Khadas VIM3 | 6.1.36 |
+| Tinker Board | 6.1.37 |
+| ODROID-C2 | 6.1.37 |
+| ODROID-C4 | 6.1.37 |
+| ODROID-M1 | 6.1.37 |
+| ODROID-N2 | 6.1.37 |
+| ODROID-XU4 | 6.1.37 |
+| Generic aarch64 | 6.1.37 |
+| Generic x86-64 | 6.1.37 |
+| Khadas VIM3 | 6.1.37 |
