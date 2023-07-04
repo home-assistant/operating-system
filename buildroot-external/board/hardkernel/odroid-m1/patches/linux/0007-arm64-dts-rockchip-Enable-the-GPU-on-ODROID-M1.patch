@@ -1,7 +1,7 @@
 From 13438a717627cae086cc3a1126552cffa2f4bd16 Mon Sep 17 00:00:00 2001
-Message-Id: <13438a717627cae086cc3a1126552cffa2f4bd16.1678107917.git.stefan@agner.ch>
-In-Reply-To: <d388735d551e09b00317a509859fca51776b9826.1678107917.git.stefan@agner.ch>
-References: <d388735d551e09b00317a509859fca51776b9826.1678107917.git.stefan@agner.ch>
+Message-ID: <13438a717627cae086cc3a1126552cffa2f4bd16.1688490481.git.stefan@agner.ch>
+In-Reply-To: <d388735d551e09b00317a509859fca51776b9826.1688490481.git.stefan@agner.ch>
+References: <d388735d551e09b00317a509859fca51776b9826.1688490481.git.stefan@agner.ch>
 From: Aurelien Jarno <aurelien@aurel32.net>
 Date: Fri, 30 Sep 2022 07:12:41 +0200
 Subject: [PATCH] arm64: dts: rockchip: Enable the GPU on ODROID-M1
@@ -33,5 +33,5 @@ index ac4e94d18feb..e4b7699d3eea 100644
  	avdd-0v9-supply = <&vdda0v9_image>;
  	avdd-1v8-supply = <&vcca1v8_image>;
 -- 
-2.39.2
+2.41.0
 
