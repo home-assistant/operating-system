@@ -1,7 +1,7 @@
 From b2eae73eeb32dd9383571de6af18fc8bd39aac3a Mon Sep 17 00:00:00 2001
-Message-Id: <b2eae73eeb32dd9383571de6af18fc8bd39aac3a.1678107917.git.stefan@agner.ch>
-In-Reply-To: <d388735d551e09b00317a509859fca51776b9826.1678107917.git.stefan@agner.ch>
-References: <d388735d551e09b00317a509859fca51776b9826.1678107917.git.stefan@agner.ch>
+Message-ID: <b2eae73eeb32dd9383571de6af18fc8bd39aac3a.1688490481.git.stefan@agner.ch>
+In-Reply-To: <d388735d551e09b00317a509859fca51776b9826.1688490481.git.stefan@agner.ch>
+References: <d388735d551e09b00317a509859fca51776b9826.1688490481.git.stefan@agner.ch>
 From: Aurelien Jarno <aurelien@aurel32.net>
 Date: Fri, 30 Sep 2022 07:12:46 +0200
 Subject: [PATCH] arm64: dts: rockchip: Add IR receiver node to ODROID-M1
@@ -50,5 +50,5 @@ index 2f685c606bb9..59ecf868dbd0 100644
  		led_power_pin: led-power-pin {
  			rockchip,pins = <0 RK_PC6 RK_FUNC_GPIO &pcfg_pull_none>;
 -- 
-2.39.2
+2.41.0
 

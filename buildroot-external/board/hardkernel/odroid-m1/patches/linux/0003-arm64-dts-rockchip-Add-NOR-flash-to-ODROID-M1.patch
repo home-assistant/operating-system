@@ -1,7 +1,7 @@
 From 982bb2beab8e38a7c0a365770be2ad9c5221a650 Mon Sep 17 00:00:00 2001
-Message-Id: <982bb2beab8e38a7c0a365770be2ad9c5221a650.1678107917.git.stefan@agner.ch>
-In-Reply-To: <d388735d551e09b00317a509859fca51776b9826.1678107917.git.stefan@agner.ch>
-References: <d388735d551e09b00317a509859fca51776b9826.1678107917.git.stefan@agner.ch>
+Message-ID: <982bb2beab8e38a7c0a365770be2ad9c5221a650.1688490481.git.stefan@agner.ch>
+In-Reply-To: <d388735d551e09b00317a509859fca51776b9826.1688490481.git.stefan@agner.ch>
+References: <d388735d551e09b00317a509859fca51776b9826.1688490481.git.stefan@agner.ch>
 From: Aurelien Jarno <aurelien@aurel32.net>
 Date: Fri, 30 Sep 2022 07:12:37 +0200
 Subject: [PATCH] arm64: dts: rockchip: Add NOR flash to ODROID-M1
@@ -99,5 +99,5 @@ index 112c65af3f55..94e839c9afab 100644
  	rockchip,hw-tshut-mode = <1>;
  	rockchip,hw-tshut-polarity = <0>;
 -- 
-2.39.2
+2.41.0
 

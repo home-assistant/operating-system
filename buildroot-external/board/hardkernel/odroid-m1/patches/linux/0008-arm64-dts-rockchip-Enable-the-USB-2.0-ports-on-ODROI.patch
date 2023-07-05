@@ -1,7 +1,7 @@
 From 0f0a85a289b4d0fbd5c39eb5ddbb681a37ad490c Mon Sep 17 00:00:00 2001
-Message-Id: <0f0a85a289b4d0fbd5c39eb5ddbb681a37ad490c.1678107917.git.stefan@agner.ch>
-In-Reply-To: <d388735d551e09b00317a509859fca51776b9826.1678107917.git.stefan@agner.ch>
-References: <d388735d551e09b00317a509859fca51776b9826.1678107917.git.stefan@agner.ch>
+Message-ID: <0f0a85a289b4d0fbd5c39eb5ddbb681a37ad490c.1688490481.git.stefan@agner.ch>
+In-Reply-To: <d388735d551e09b00317a509859fca51776b9826.1688490481.git.stefan@agner.ch>
+References: <d388735d551e09b00317a509859fca51776b9826.1688490481.git.stefan@agner.ch>
 From: Aurelien Jarno <aurelien@aurel32.net>
 Date: Fri, 30 Sep 2022 07:12:42 +0200
 Subject: [PATCH] arm64: dts: rockchip: Enable the USB 2.0 ports on ODROID-M1
@@ -107,5 +107,5 @@ index e4b7699d3eea..2e4cc20bd676 100644
  	assigned-clocks = <&cru DCLK_VOP0>, <&cru DCLK_VOP1>;
  	assigned-clock-parents = <&pmucru PLL_HPLL>, <&cru PLL_VPLL>;
 -- 
-2.39.2
+2.41.0
 

@@ -1,7 +1,7 @@
 From ded87dc761951205b8b9ba8ee4081e28a850a3db Mon Sep 17 00:00:00 2001
-Message-Id: <ded87dc761951205b8b9ba8ee4081e28a850a3db.1678107917.git.stefan@agner.ch>
-In-Reply-To: <d388735d551e09b00317a509859fca51776b9826.1678107917.git.stefan@agner.ch>
-References: <d388735d551e09b00317a509859fca51776b9826.1678107917.git.stefan@agner.ch>
+Message-ID: <ded87dc761951205b8b9ba8ee4081e28a850a3db.1688490481.git.stefan@agner.ch>
+In-Reply-To: <d388735d551e09b00317a509859fca51776b9826.1688490481.git.stefan@agner.ch>
+References: <d388735d551e09b00317a509859fca51776b9826.1688490481.git.stefan@agner.ch>
 From: Aurelien Jarno <aurelien@aurel32.net>
 Date: Fri, 30 Sep 2022 07:12:40 +0200
 Subject: [PATCH] arm64: dts: rockchip: Enable HDMI audio on ODROID-M1.
@@ -44,5 +44,5 @@ index 126b893048fe..ac4e94d18feb 100644
  	rockchip,trcm-sync-tx-only;
  	status = "okay";
 -- 
-2.39.2
+2.41.0
 
