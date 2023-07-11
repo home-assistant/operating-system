@@ -11,7 +11,7 @@ jobs:
   prepare:
     if: ${{ github.event_name == 'workflow_dispatch' || contains(github.event.pull_request.labels.*.name, 'run-dev-build') }}
     name: Prepare build
-    runs-on: [ "ubuntu-20.04" ]
+    runs-on: ubuntu-22.04
     permissions:
       contents: read
       pull-requests: read
@@ -68,7 +68,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.matrix) }}
-    runs-on: ${{ matrix.board.runner }}
+    runs-on: ubuntu-22.04
 
     steps:
       - name: Define git reference
@@ -98,14 +98,34 @@ jobs:
           echo -e "-----BEGIN CERTIFICATE-----\n${RAUC_CERTIFICATE}\n-----END CERTIFICATE-----" > cert.pem
           echo -e "-----BEGIN PRIVATE KEY-----\n${RAUC_PRIVATE_KEY}\n-----END PRIVATE KEY-----" > key.pem
 
+      - name: Free space on build drive
+        run: |
+          # Inspired by https://github.com/easimon/maximize-build-space/blob/v7/action.yml
+          sudo rm -rf /usr/local/lib/android/sdk/ndk
+          sudo rm -rf /opt/hostedtoolcache/CodeQL
+          # Make sure cache action can restore this lcoation
+          sudo mkdir /mnt/cache
+          sudo chown -R runner:runner /mnt/cache
+
+      - name: Cache downloads
+        uses: actions/cache@v3
+        with:
+          path: /mnt/cache/dl
+          key: haos-dl
+
+      - name: Cache object files
+        uses: actions/cache@v3
+        with:
+          path: /mnt/cache/cc
+          key: haos-cc-${{ matrix.board.architecture }}
+
       - name: Build
         run: |
           BUILDER_UID="$(id -u)"
           BUILDER_GID="$(id -g)"
           docker run --rm --privileged -v "${GITHUB_WORKSPACE}:/build" \
             -e BUILDER_UID="${BUILDER_UID}" -e BUILDER_GID="${BUILDER_GID}" \
-            -v "${{ matrix.board.runner }}-build-cache:/cache" \
-            -v "/build/output" \
+            -v "/mnt/cache:/cache" \
             haos-builder make BUILDDIR=/build VERSION_DEV=${{ needs.prepare.outputs.version_dev }} ${{ matrix.board.defconfig }}
 
       - name: Upload images
@@ -113,12 +133,13 @@ jobs:
         with:
           rsh: -q
           switches: -aW
-          path: release/
+          path: output/images/haos_*
           remote_path: ${{ secrets.DEV_TARGET_PATH }}/${{ needs.prepare.outputs.version_main }}.${{ needs.prepare.outputs.version_dev }}/
           remote_host: ${{ secrets.DEV_HOST }}
           remote_port: ${{ secrets.DEV_PORT }}
           remote_user: ${{ secrets.DEV_USERNAME }}
           remote_key: ${{ secrets.DEV_SSH_KEY }}
+
 
   bump_version:
     name: Bump dev channel version
