@@ -9,7 +9,7 @@ on:
 jobs:
   validate_release:
     name: Validate release
-    runs-on: [ "ubuntu-20.04" ]
+    runs-on: ubuntu-22.04
     outputs:
       version: ${{ steps.version_check.outputs.version }}
       version_dev: ${{ steps.version_check.outputs.version_dev }}
@@ -49,11 +49,11 @@ jobs:
     needs: validate_release
     strategy:
       matrix: ${{ fromJson(needs.validate_release.outputs.matrix) }}
-    runs-on: ${{ matrix.board.runner }}
+    runs-on: ubuntu-22.04
 
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v3
+      - name: Checkout source
+        uses: actions/checkout@v3
         with:
           submodules: true
 
@@ -68,13 +68,34 @@ jobs:
           echo -e "-----BEGIN CERTIFICATE-----\n${RAUC_CERTIFICATE}\n-----END CERTIFICATE-----" > cert.pem
           echo -e "-----BEGIN PRIVATE KEY-----\n${RAUC_PRIVATE_KEY}\n-----END PRIVATE KEY-----" > key.pem
 
+      - name: Free space on build drive
+        run: |
+          # Inspired by https://github.com/easimon/maximize-build-space/blob/v7/action.yml
+          sudo rm -rf /usr/local/lib/android/sdk/ndk
+          sudo rm -rf /opt/hostedtoolcache/CodeQL
+          # Make sure cache action can restore this lcoation
+          sudo mkdir /mnt/cache
+          sudo chown -R runner:runner /mnt/cache
+
+      - name: Cache downloads
+        uses: actions/cache@v3
+        with:
+          path: /mnt/cache/dl
+          key: haos-dl
+
+      - name: Cache object files
+        uses: actions/cache@v3
+        with:
+          path: /mnt/cache/cc
+          key: haos-cc-${{ matrix.board.architecture }}
+
       - name: Build
         run: |
           BUILDER_UID="$(id -u)"
           BUILDER_GID="$(id -g)"
           docker run --rm --privileged -v "${GITHUB_WORKSPACE}:/build" \
             -e BUILDER_UID="${BUILDER_UID}" -e BUILDER_GID="${BUILDER_GID}" \
-            -v "${{ matrix.board.runner }}-build-cache:/cache" \
+            -v "/mnt/cache:/cache" \
             haos-builder make BUILDDIR=/build VERSION_DEV=${{ needs.validate_release.outputs.version_dev }} ${{ matrix.board.defconfig }}
 
       - name: Upload release assets
