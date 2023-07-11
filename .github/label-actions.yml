@@ -8,6 +8,7 @@ assume-fixed:
     release. You can find the latest stable release at
     https://github.com/home-assistant/operating-system/releases/latest
   close: true
+  close-reason: not planned
 
 core-issue:
   comment: >
@@ -19,6 +20,7 @@ core-issue:
     repository, the issue might have been reported already. Open a new issue
     in that repository if you can't find a matching issue.
   close: true
+  close-reason: not planned
 
 frontend-issue:
   comment: >
@@ -30,6 +32,7 @@ frontend-issue:
     repository, the issue might have been reported already. Open a new issue
     in that repository if you can't find a matching issue.
   close: true
+  close-reason: not planned
 
 supervisor-issue:
   comment: >
@@ -41,6 +44,7 @@ supervisor-issue:
     repository, the issue might have been reported already. Open a new issue
     in that repository if you can't find a matching issue.
   close: true
+  close-reason: not planned
 
 new-feature:
   comment: >
@@ -52,3 +56,4 @@ new-feature:
     Please check if someone already requested a similar feature, or create
     a new feature request with the "haos" tag in that forum. Thank you!
   close: true
+  close-reason: not planned
