@@ -1,5 +1,5 @@
 From d388735d551e09b00317a509859fca51776b9826 Mon Sep 17 00:00:00 2001
-Message-Id: <d388735d551e09b00317a509859fca51776b9826.1678107917.git.stefan@agner.ch>
+Message-ID: <d388735d551e09b00317a509859fca51776b9826.1688490481.git.stefan@agner.ch>
 From: Dongjin Kim <tobetter@gmail.com>
 Date: Fri, 30 Sep 2022 07:12:35 +0200
 Subject: [PATCH] arm64: dts: rockchip: Add Hardkernel ODROID-M1 board
@@ -451,5 +451,5 @@ index 000000000000..b3016437640b
 +	status = "okay";
 +};
 -- 
-2.39.2
+2.41.0
 

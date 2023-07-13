@@ -9,7 +9,7 @@ on:
 jobs:
   validate_release:
     name: Validate release
-    runs-on: [ "ubuntu-20.04" ]
+    runs-on: ubuntu-22.04
     outputs:
       version: ${{ steps.version_check.outputs.version }}
       version_dev: ${{ steps.version_check.outputs.version_dev }}
@@ -49,11 +49,11 @@ jobs:
     needs: validate_release
     strategy:
       matrix: ${{ fromJson(needs.validate_release.outputs.matrix) }}
-    runs-on: ${{ matrix.board.runner }}
+    runs-on: ubuntu-22.04
 
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v3
+      - name: Checkout source
+        uses: actions/checkout@v3
         with:
           submodules: true
 
@@ -68,91 +68,41 @@ jobs:
           echo -e "-----BEGIN CERTIFICATE-----\n${RAUC_CERTIFICATE}\n-----END CERTIFICATE-----" > cert.pem
           echo -e "-----BEGIN PRIVATE KEY-----\n${RAUC_PRIVATE_KEY}\n-----END PRIVATE KEY-----" > key.pem
 
+      - name: Free space on build drive
+        run: |
+          # Inspired by https://github.com/easimon/maximize-build-space/blob/v7/action.yml
+          sudo rm -rf /usr/local/lib/android/sdk/ndk
+          sudo rm -rf /opt/hostedtoolcache/CodeQL
+          # Make sure cache action can restore this lcoation
+          sudo mkdir /mnt/cache
+          sudo chown -R runner:runner /mnt/cache
+
+      - name: Cache downloads
+        uses: actions/cache@v3
+        with:
+          path: /mnt/cache/dl
+          key: haos-dl
+
+      - name: Cache object files
+        uses: actions/cache@v3
+        with:
+          path: /mnt/cache/cc
+          key: haos-cc-${{ matrix.board.architecture }}
+
       - name: Build
         run: |
           BUILDER_UID="$(id -u)"
           BUILDER_GID="$(id -g)"
           docker run --rm --privileged -v "${GITHUB_WORKSPACE}:/build" \
             -e BUILDER_UID="${BUILDER_UID}" -e BUILDER_GID="${BUILDER_GID}" \
-            -v "${{ matrix.board.runner }}-build-cache:/cache" \
-            -v "/build/output" \
+            -v "/mnt/cache:/cache" \
             haos-builder make BUILDDIR=/build VERSION_DEV=${{ needs.validate_release.outputs.version_dev }} ${{ matrix.board.defconfig }}
 
-      - name: Upload disk image
-        if: ${{ matrix.board.id != 'ova' }}
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload release assets
+        uses: shogo82148/actions-upload-release-asset@v1
         with:
           upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ${{ github.workspace }}/release/haos_${{ matrix.board.id }}-${{ needs.validate_release.outputs.version }}.img.xz
-          asset_name: haos_${{ matrix.board.id }}-${{ needs.validate_release.outputs.version }}.img.xz
-          asset_content_type: application/x-xz
-
-      - name: Upload rauc update
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ${{ github.workspace }}/release/haos_${{ matrix.board.id }}-${{ needs.validate_release.outputs.version }}.raucb
-          asset_name: haos_${{ matrix.board.id }}-${{ needs.validate_release.outputs.version }}.raucb
-          asset_content_type: application/octet-stream
-
-      - name: Upload ova image
-        if: ${{ matrix.board.id == 'ova' }}
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ${{ github.workspace }}/release/haos_${{ matrix.board.id }}-${{ needs.validate_release.outputs.version }}.ova
-          asset_name: haos_${{ matrix.board.id }}-${{ needs.validate_release.outputs.version }}.ova
-          asset_content_type: application/x-tar
-
-      - name: Upload qcow2 image
-        if: ${{ matrix.board.id == 'ova' || matrix.board.id == 'generic-aarch64' }}
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ${{ github.workspace }}/release/haos_${{ matrix.board.id }}-${{ needs.validate_release.outputs.version }}.qcow2.xz
-          asset_name: haos_${{ matrix.board.id }}-${{ needs.validate_release.outputs.version }}.qcow2.xz
-          asset_content_type: application/x-xz
-
-      - name: Upload vdi image
-        if: ${{ matrix.board.id == 'ova' }}
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ${{ github.workspace }}/release/haos_${{ matrix.board.id }}-${{ needs.validate_release.outputs.version }}.vdi.zip
-          asset_name: haos_${{ matrix.board.id }}-${{ needs.validate_release.outputs.version }}.vdi.zip
-          asset_content_type: application/zip
-
-      - name: Upload vhdx image
-        if: ${{ matrix.board.id == 'ova' }}
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ${{ github.workspace }}/release/haos_${{ matrix.board.id }}-${{ needs.validate_release.outputs.version }}.vhdx.zip
-          asset_name: haos_${{ matrix.board.id }}-${{ needs.validate_release.outputs.version }}.vhdx.zip
-          asset_content_type: application/zip
-
-      - name: Upload vmdk image
-        if: ${{ matrix.board.id == 'ova' || matrix.board.id == 'generic-aarch64' }}
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ${{ github.workspace }}/release/haos_${{ matrix.board.id }}-${{ needs.validate_release.outputs.version }}.vmdk.zip
-          asset_name: haos_${{ matrix.board.id }}-${{ needs.validate_release.outputs.version }}.vmdk.zip
-          asset_content_type: application/zip
+          asset_path: output/images/haos_*
 
   bump_version:
     name: Bump dev version to ${{ needs.validate_release.outputs.version }}
