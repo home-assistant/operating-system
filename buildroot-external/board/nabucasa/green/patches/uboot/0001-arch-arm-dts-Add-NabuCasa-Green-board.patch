@@ -1,4 +1,5 @@
-From e2d4c198bcc450ce11ae7adfc41861d49e973a8c Mon Sep 17 00:00:00 2001
+From 377934f736699077b3622949231f171b4f3c4386 Mon Sep 17 00:00:00 2001
+Message-ID: <377934f736699077b3622949231f171b4f3c4386.1689232931.git.stefan@agner.ch>
 From: Zhangqun Ming <north_sea@qq.com>
 Date: Thu, 6 Jul 2023 10:06:35 +0000
 Subject: [PATCH] arch: arm: dts: Add NabuCasa Green board
@@ -14,20 +15,20 @@ Subject: [PATCH] arch: arm: dts: Add NabuCasa Green board
  create mode 100644 configs/green_defconfig
 
 diff --git a/arch/arm/dts/Makefile b/arch/arm/dts/Makefile
-index c160e884..09247a3e 100644
+index 480269fa60..b82ebfe371 100644
 --- a/arch/arm/dts/Makefile
 +++ b/arch/arm/dts/Makefile
-@@ -166,6 +166,7 @@ dtb-$(CONFIG_ROCKCHIP_RK3399) += \
+@@ -167,6 +167,7 @@ dtb-$(CONFIG_ROCKCHIP_RK3399) += \
  
  dtb-$(CONFIG_ROCKCHIP_RK3568) += \
- 	rk3568-evb.dtb \
+ 	rk3566-anbernic-rgxx3.dtb \
 +	rk3566-ha-green.dtb \
  	rk3566-radxa-cm3-io.dtb \
+ 	rk3568-evb.dtb \
  	rk3568-rock-3a.dtb
- 
 diff --git a/arch/arm/dts/rk3566-ha-green-u-boot.dtsi b/arch/arm/dts/rk3566-ha-green-u-boot.dtsi
 new file mode 100644
-index 00000000..83fa66d5
+index 0000000000..83fa66d591
 --- /dev/null
 +++ b/arch/arm/dts/rk3566-ha-green-u-boot.dtsi
 @@ -0,0 +1,28 @@
@@ -61,7 +62,7 @@ index 00000000..83fa66d5
 +};
 diff --git a/arch/arm/dts/rk3566-ha-green.dts b/arch/arm/dts/rk3566-ha-green.dts
 new file mode 100644
-index 00000000..d0830df4
+index 0000000000..d0830df48d
 --- /dev/null
 +++ b/arch/arm/dts/rk3566-ha-green.dts
 @@ -0,0 +1,685 @@
@@ -752,7 +753,7 @@ index 00000000..d0830df4
 +};
 diff --git a/configs/green_defconfig b/configs/green_defconfig
 new file mode 100644
-index 00000000..0617d308
+index 0000000000..0617d308aa
 --- /dev/null
 +++ b/configs/green_defconfig
 @@ -0,0 +1,74 @@
@@ -831,5 +832,5 @@ index 00000000..0617d308
 +# CONFIG_BINMAN_FDT is not set
 +CONFIG_ERRNO_STR=y
 -- 
-2.25.1
+2.41.0
 
