@@ -53,9 +53,10 @@ if test $is_eeprom_data -eq 1 ; then
         ha_version="rk3566-ha-green.dtb"
     fi
 
+
     i2c dev 1; i2c read 0x50 0x23.2 6 $kernel_addr_r
     e=""; sep="";for i in 0 1 2 3 4 5 ; do setexpr x $kernel_addr_r + $i; setexpr.b b *$x; e="$e$sep$b"; sep=":"; done
-    setenv eth1addr $e
+    setenv ethaddr $e
 fi
 
 
