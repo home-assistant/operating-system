@@ -42,7 +42,7 @@ index 000000000..d0830df48
 +	compatible = "rockchip,rk3566-ha-green", "rockchip,rk3566";
 +
 +	aliases {
-+		ethernet1 = &gmac1;
++		ethernet0 = &gmac1;
 +		mmc0 = &sdhci;
 +		mmc1 = &sdmmc0;
 +	};
