@@ -143,7 +143,7 @@ jobs:
 
   bump_version:
     name: Bump dev channel version
-    if: ${{ github.event_name == 'workflow_dispatch' }}
+    if: ${{ github.event_name == 'workflow_dispatch' && github.repository == 'home-assistant/operating-system' }}
     needs: [ build, prepare ]
     runs-on: [ "ubuntu-20.04" ]
 
