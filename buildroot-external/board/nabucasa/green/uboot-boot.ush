@@ -1,3 +1,7 @@
+if test "${devtype}" = "usb_mass_storage"; then
+    setenv devtype "usb"
+fi
+echo "boot devtype: ${devtype}:${devnum}"
 
 part start ${devtype} ${devnum} 6 dev_env
 ${devtype} dev ${devnum}
