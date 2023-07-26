@@ -84,7 +84,7 @@ index 000000000..d0830df48
 +			pinctrl-0 = <&led_power_pin>;
 +		};
 +		led_act: led-1 {
-+			gpios = <&gpio0 RK_PB7 GPIO_ACTIVE_HIGH>;
++			gpios = <&gpio0 RK_PB7 GPIO_ACTIVE_LOW>;
 +			function = LED_FUNCTION_ACTIVITY;
 +			color = <LED_COLOR_ID_GREEN>;
 +			linux,default-trigger = "activity";
@@ -575,7 +575,7 @@ index 000000000..d0830df48
 +	disable-wp;
 +	pinctrl-names = "default";
 +	pinctrl-0 = <&sdmmc0_bus4 &sdmmc0_clk &sdmmc0_cmd &sdmmc0_det>;
-+	sd-uhs-sdr50;
++	sd-uhs-sdr104;
 +	vmmc-supply = <&vcc3v3_sd>;
 +	vqmmc-supply = <&vccio_sd>;
 +	status = "okay";
