@@ -42,33 +42,9 @@ fi
 # Load extraargs
 fileenv ${devtype} ${devnum}:${boot_partnum} ${ramdisk_addr_r} cmdline.txt cmdline
 
-ha_version="rk3566-ha-green.dtb"
-i2c dev 1; 
-i2c read 0x50 0.2 4 $kernel_addr_r;
-e="";for i in 0 1 2 3; do setexpr x $kernel_addr_r + $i; setexpr.b b *$x; e="$e$b"; sep=":"; done
-if test "$e" = "3566" ; then
-  echo "header ok"
-  is_eeprom_data=1
-fi
-
-if test $is_eeprom_data -eq 1 ; then
-    i2c read 0x50 c.2 4 $kernel_addr_r;
-    if test "$kernel_addr_r" = "00A0" ; then
-        ha_version="rk3566-ha-green.dtb"
-    fi
-
-
-    i2c dev 1; i2c read 0x50 0x23.2 6 $kernel_addr_r
-    e=""; sep="";for i in 0 1 2 3 4 5 ; do setexpr x $kernel_addr_r + $i; setexpr.b b *$x; e="$e$sep$b"; sep=":"; done
-    setenv ethaddr $e
-
-    i2c dev 1;i2c read 0x50 0x10.2 0x13 $kernel_addr_r;
-    e=""; for i in 0 1 2 3 4 5 6 7 8 9 A B C D E F 10 11 12; do setexpr x $kernel_addr_r + $i; setexpr.b b *$x; setexpr c $b - 30; e="$e$c"; done
-    setenv serial# $e
-fi
-
 
 # Load device tree
+ha_version="rk3566-ha-green.dtb"
 setenv fdtfile $ha_version
 echo "Loading standard device tree ${fdtfile}"
 fatload ${devtype} ${devnum}:${boot_partnum} ${fdt_addr_r} ${fdtfile}
