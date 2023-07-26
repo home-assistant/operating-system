@@ -1,0 +1,137 @@
+diff --git a/arch/arm/dts/rk3566-ha-green.dts b/arch/arm/dts/rk3566-ha-green.dts
+index 52b4baa9..1a8c13e9 100644
+--- a/arch/arm/dts/rk3566-ha-green.dts
++++ b/arch/arm/dts/rk3566-ha-green.dts
+@@ -449,6 +449,13 @@
+ 		reg = <0x51>;
+ 		#clock-cells = <0>;
+ 	};
++
++	eeprom: eeprom@50 {            
++		compatible = "atmel,24c32";                                                                                 
++		reg = <0x50>;                                                                                         
++		pagesize = <32>;                                                                              
++	}; 
++
+ };
+ 
+ &i2s0_8ch {
+diff --git a/board/rockchip/evb_rk3568/Kconfig b/board/rockchip/evb_rk3568/Kconfig
+index f3d3a7e1..8bf457da 100644
+--- a/board/rockchip/evb_rk3568/Kconfig
++++ b/board/rockchip/evb_rk3568/Kconfig
+@@ -12,4 +12,7 @@ config SYS_CONFIG_NAME
+ config BOARD_SPECIFIC_OPTIONS # dummy
+ 	def_bool y
+ 
++config UBOOT_GREEN_BOARD      
++    tristate "uboot green boadrd"
++
+ endif
+diff --git a/board/rockchip/evb_rk3568/Makefile b/board/rockchip/evb_rk3568/Makefile
+index cbda95fe..e616da10 100644
+--- a/board/rockchip/evb_rk3568/Makefile
++++ b/board/rockchip/evb_rk3568/Makefile
+@@ -5,3 +5,4 @@
+ #
+ 
+ obj-y	+= evb_rk3568.o
++obj-$(CONFIG_UBOOT_GREEN_BOARD)   += nabucasa/green/board.o
+diff --git a/board/rockchip/evb_rk3568/nabucasa/green/board.c b/board/rockchip/evb_rk3568/nabucasa/green/board.c
+new file mode 100644
+index 00000000..8d24b02a
+--- /dev/null
++++ b/board/rockchip/evb_rk3568/nabucasa/green/board.c
+@@ -0,0 +1,91 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright 2022 Google LLC
++ */
++#include <net.h>
++#include <errno.h>
++#include <dm/device.h>
++#include <dm/uclass.h>
++#include <common.h>
++#include <dm.h>
++#include <eeprom.h>
++#include <env.h>
++#include <i2c_eeprom.h>
++#include <netdev.h>
++
++
++int misc_init_r(void)
++{
++    
++    #define CONTENT_SIZE 44
++    #define ETHADDR_OFFSET 0X23 
++    #define ETHADDR_LEN 6
++    #define SERIALNUM_OFFSET 0X10 
++    #define SERIALNUM_LEN 19
++    #define VERSION_OFFSET 0X0C
++    #define VERSION_LEN 4
++
++    unsigned char data[CONTENT_SIZE];
++    unsigned char ethaddr[ETHADDR_LEN];
++    unsigned char serialnum[SERIALNUM_LEN + 1];
++    unsigned char version[VERSION_LEN];
++    unsigned char fdtfile_name[32] = "rk3566-ha-green.dtb";
++
++    const char *ETHADDR_NAME = "ethaddr";
++    struct udevice *dev;
++    int ret;
++    
++
++    if (env_get(ETHADDR_NAME)){
++        printf("ethaddr not null\n");
++        ret = 0;
++        goto exit;
++    }
++
++
++    ret = uclass_first_device_err(UCLASS_I2C_EEPROM, &dev);
++    if (ret){
++        printf("UCLASS_I2C_EEPROM get error\n");
++        goto exit;
++    }
++
++
++    ret = i2c_eeprom_read(dev, 0, data, sizeof(data));
++    if (ret){
++        printf("UCLASS_I2C_EEPROM read error %d\n", ret);
++        goto exit;
++    }
++    
++    if((data[0] == 3) && (data[1] == 5) && (data[2] == 6) && (data[3] == 6))
++    {
++        printf("header ok\n");
++
++        memcpy(version , data + VERSION_OFFSET, VERSION_LEN);
++        if(!strcmp(version, "00A0")){
++            sprintf(fdtfile_name, "%s", "rk3566-ha-green.dtb");
++            printf("overlay fdtfile_name = %s\n", fdtfile_name);
++        }
++            
++        
++        
++
++
++        memcpy(serialnum, data + SERIALNUM_OFFSET, SERIALNUM_LEN);
++        serialnum[SERIALNUM_LEN] = 0;
++        env_set("serial#", serialnum);
++        
++
++        memcpy(ethaddr, data + ETHADDR_OFFSET, ETHADDR_LEN);
++
++        if (is_valid_ethaddr(ethaddr))
++            eth_env_set_enetaddr(ETHADDR_NAME, ethaddr);
++    }
++    
++
++exit:
++    env_set("fdtfile", fdtfile_name);
++
++    
++
++    return 0;
++}
+\ No newline at end of file
