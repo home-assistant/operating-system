@@ -63,10 +63,10 @@ index 00000000..8d24b02a
 +{
 +    
 +    #define CONTENT_SIZE 44
-+    #define ETHADDR_OFFSET 0X23 
++    #define ETHADDR_OFFSET 0X22 
 +    #define ETHADDR_LEN 6
 +    #define SERIALNUM_OFFSET 0X10 
-+    #define SERIALNUM_LEN 19
++    #define SERIALNUM_LEN 18
 +    #define VERSION_OFFSET 0X0C
 +    #define VERSION_LEN 4
 +
