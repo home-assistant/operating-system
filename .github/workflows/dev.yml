@@ -4,6 +4,11 @@ name: Development build
 
 on:
   workflow_dispatch:
+    inputs:
+      boards:
+        description: 'List of boards to build (comma separated identifiers)'
+        required: false
+        type: string
   pull_request_target:
     types: [opened,synchronize,labeled]
 
@@ -50,8 +55,16 @@ jobs:
             const boards = require('./.github/workflows/matrix.json')
 
             if (context.eventName == "workflow_dispatch") {
-              console.log("Run full build for all boards")
-              return { "board": boards }
+              const boardFilter = "${{ github.event.inputs.boards }}"
+              if (boardFilter == "") {
+                console.log("Run full build for all boards")
+                return { "board": boards }
+              } else {
+                console.log("Run partial build")
+                const boardSet = new Set(boardFilter.split(','))
+                const buildBoards = boards.filter(b => boardSet.has(b.id))
+                return { "board": buildBoards }
+              }
             }
 
             const labels = context.payload.pull_request.labels.map(l => l.name)
