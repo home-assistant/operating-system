@@ -126,7 +126,7 @@ index 0000000000..d0830df48d
 +			pinctrl-0 = <&led_power_pin>;
 +		};
 +		led_act: led-1 {
-+			gpios = <&gpio0 RK_PB7 GPIO_ACTIVE_LOW>;
++			gpios = <&gpio0 RK_PB7 GPIO_ACTIVE_HIGH>;
 +			function = LED_FUNCTION_ACTIVITY;
 +			color = <LED_COLOR_ID_GREEN>;
 +			linux,default-trigger = "activity";
