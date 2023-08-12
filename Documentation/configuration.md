@@ -3,7 +3,7 @@
 ## Automatic
 
 You can use an USB drive with HassOS to configure network options, SSH access to the host and to install updates.
-Format a USB stick with FAT32/EXT4/NTFS and name it `CONFIG` (in all capitals). Alternative you can create a `CONFIG` folder inside the `boot` partition. Use the following directory structure within the USB drive:
+Format a USB stick with FAT32/EXT4/NTFS and name it `CONFIG` (in all capitals)  The linux command is `dosfslabel /dev/<<USB_DRIVE>> CONFIG`. Alternative you can create a `CONFIG` folder inside the `boot` partition. Use the following directory structure within the USB drive:
 
 ```text
 network/
