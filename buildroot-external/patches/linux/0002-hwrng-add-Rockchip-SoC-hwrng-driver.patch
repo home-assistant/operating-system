@@ -1,7 +1,7 @@
-From 08264b26ac568035ff04bcccc5c47d4a5d50f93b Mon Sep 17 00:00:00 2001
-Message-ID: <08264b26ac568035ff04bcccc5c47d4a5d50f93b.1688490481.git.stefan@agner.ch>
-In-Reply-To: <d388735d551e09b00317a509859fca51776b9826.1688490481.git.stefan@agner.ch>
-References: <d388735d551e09b00317a509859fca51776b9826.1688490481.git.stefan@agner.ch>
+From c23703defb6008dde794e198abeaf2de008fe7ae Mon Sep 17 00:00:00 2001
+Message-ID: <c23703defb6008dde794e198abeaf2de008fe7ae.1691152222.git.stefan@agner.ch>
+In-Reply-To: <ea06f0028a835c4cafda535f6a36b0d63035fd4c.1691152222.git.stefan@agner.ch>
+References: <ea06f0028a835c4cafda535f6a36b0d63035fd4c.1691152222.git.stefan@agner.ch>
 From: Aurelien Jarno <aurelien@aurel32.net>
 Date: Mon, 28 Nov 2022 19:47:17 +0100
 Subject: [PATCH] hwrng: add Rockchip SoC hwrng driver

@@ -12,6 +12,7 @@ Default Kernel tree: 6.1
 | Raspberry Pi 3 | 6.1.21 |
 | Raspberry Pi 4 | 6.1.21 |
 | Home Assistant Yellow | 6.1.21 |
+| Home Assistant Green | 6.1.45 |
 | Tinker Board | 6.1.45 |
 | ODROID-C2 | 6.1.45 |
 | ODROID-C4 | 6.1.45 |

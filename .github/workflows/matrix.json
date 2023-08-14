@@ -90,6 +90,12 @@
     "label": "board/yellow"
   },
   {
+    "id": "green",
+    "defconfig": "green",
+    "architecture": "aarch64",
+    "label": "board/green"
+  },
+  {
     "id": "tinker",
     "defconfig": "tinker",
     "architecture": "arm",

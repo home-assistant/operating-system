@@ -1,7 +1,7 @@
-From 8bb36ab21d6c44a8a0d690b3c9df3d5efe2f3685 Mon Sep 17 00:00:00 2001
-Message-ID: <8bb36ab21d6c44a8a0d690b3c9df3d5efe2f3685.1688490481.git.stefan@agner.ch>
-In-Reply-To: <d388735d551e09b00317a509859fca51776b9826.1688490481.git.stefan@agner.ch>
-References: <d388735d551e09b00317a509859fca51776b9826.1688490481.git.stefan@agner.ch>
+From f53dcb8fc3aeaa2b633d6a37086088add896149a Mon Sep 17 00:00:00 2001
+Message-ID: <f53dcb8fc3aeaa2b633d6a37086088add896149a.1691152222.git.stefan@agner.ch>
+In-Reply-To: <ea06f0028a835c4cafda535f6a36b0d63035fd4c.1691152222.git.stefan@agner.ch>
+References: <ea06f0028a835c4cafda535f6a36b0d63035fd4c.1691152222.git.stefan@agner.ch>
 From: Aurelien Jarno <aurelien@aurel32.net>
 Date: Mon, 28 Nov 2022 19:47:18 +0100
 Subject: [PATCH] arm64: dts: rockchip: add DT entry for RNG to RK356x
@@ -14,10 +14,10 @@ Signed-off-by: Aurelien Jarno <aurelien@aurel32.net>
  1 file changed, 9 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/rockchip/rk356x.dtsi b/arch/arm64/boot/dts/rockchip/rk356x.dtsi
-index 164708f1eb67..4be94ff45180 100644
+index 1d423daae971..2b26031de7f5 100644
 --- a/arch/arm64/boot/dts/rockchip/rk356x.dtsi
 +++ b/arch/arm64/boot/dts/rockchip/rk356x.dtsi
-@@ -1770,6 +1770,15 @@ usb2phy1_otg: otg-port {
+@@ -1771,6 +1771,15 @@ usb2phy1_otg: otg-port {
  		};
  	};
  
