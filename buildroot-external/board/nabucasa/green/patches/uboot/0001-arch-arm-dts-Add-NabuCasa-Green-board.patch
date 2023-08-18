@@ -1,8 +1,8 @@
-From 377934f736699077b3622949231f171b4f3c4386 Mon Sep 17 00:00:00 2001
-Message-ID: <377934f736699077b3622949231f171b4f3c4386.1689232931.git.stefan@agner.ch>
+From 2ab36c774a9f16c10a2bffeb602a9c914ffacd00 Mon Sep 17 00:00:00 2001
+Message-ID: <2ab36c774a9f16c10a2bffeb602a9c914ffacd00.1692346980.git.stefan@agner.ch>
 From: Zhangqun Ming <north_sea@qq.com>
 Date: Thu, 6 Jul 2023 10:06:35 +0000
-Subject: [PATCH] arch: arm: dts: Add NabuCasa Green board
+Subject: [PATCH 1/9] arch: arm: dts: Add NabuCasa Green board
 
 ---
  arch/arm/dts/Makefile                    |   1 +
@@ -62,7 +62,7 @@ index 0000000000..83fa66d591
 +};
 diff --git a/arch/arm/dts/rk3566-ha-green.dts b/arch/arm/dts/rk3566-ha-green.dts
 new file mode 100644
-index 0000000000..d0830df48d
+index 0000000000..15d2b73433
 --- /dev/null
 +++ b/arch/arm/dts/rk3566-ha-green.dts
 @@ -0,0 +1,685 @@
