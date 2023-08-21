@@ -1,0 +1,53 @@
+From c0ee04d554802a7b7af3e6ec6b3d9b4160c75126 Mon Sep 17 00:00:00 2001
+Message-ID: <c0ee04d554802a7b7af3e6ec6b3d9b4160c75126.1692346980.git.stefan@agner.ch>
+In-Reply-To: <2ab36c774a9f16c10a2bffeb602a9c914ffacd00.1692346980.git.stefan@agner.ch>
+References: <2ab36c774a9f16c10a2bffeb602a9c914ffacd00.1692346980.git.stefan@agner.ch>
+From: Stefan Agner <stefan@agner.ch>
+Date: Fri, 18 Aug 2023 10:06:24 +0200
+Subject: [PATCH 9/9] arch: arm: dts: green: drop SPI NOR flash partitions
+
+---
+ arch/arm/dts/rk3566-ha-green.dts | 27 ---------------------------
+ 1 file changed, 27 deletions(-)
+
+diff --git a/arch/arm/dts/rk3566-ha-green.dts b/arch/arm/dts/rk3566-ha-green.dts
+index 91afadf0e6..68d836911e 100644
+--- a/arch/arm/dts/rk3566-ha-green.dts
++++ b/arch/arm/dts/rk3566-ha-green.dts
+@@ -576,33 +576,6 @@
+ 		spi-max-frequency = <25000000>;
+ 		spi-rx-bus-width = <1>;
+ 		spi-tx-bus-width = <1>;
+-
+-		partitions {
+-			compatible = "fixed-partitions";
+-			#address-cells = <1>;
+-			#size-cells = <1>;
+-
+-			partition@0 {
+-				label = "SPL";
+-				reg = <0x0 0xe0000>;
+-			};
+-			partition@e0000 {
+-				label = "U-Boot Env";
+-				reg = <0xe0000 0x20000>;
+-			};
+-			partition@100000 {
+-				label = "U-Boot";
+-				reg = <0x100000 0x200000>;
+-			};
+-			partition@300000 {
+-				label = "splash";
+-				reg = <0x300000 0x100000>;
+-			};
+-			partition@400000 {
+-				label = "Filesystem";
+-				reg = <0x400000 0xc00000>;
+-			};
+-		};
+ 	};
+ };
+ 
+-- 
+2.41.0
+

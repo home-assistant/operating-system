@@ -1,14 +1,17 @@
-From 4ebfe11def93e82d9bd0c43414cb7c6f01a54d19 Mon Sep 17 00:00:00 2001
+From d4f52bc53540341dcb3408a3f2d4ec8bd1fe260a Mon Sep 17 00:00:00 2001
+Message-ID: <d4f52bc53540341dcb3408a3f2d4ec8bd1fe260a.1692346980.git.stefan@agner.ch>
+In-Reply-To: <2ab36c774a9f16c10a2bffeb602a9c914ffacd00.1692346980.git.stefan@agner.ch>
+References: <2ab36c774a9f16c10a2bffeb602a9c914ffacd00.1692346980.git.stefan@agner.ch>
 From: Zhangqun Ming <north_sea@qq.com>
 Date: Fri, 14 Jul 2023 14:13:39 +0000
-Subject: [PATCH 1/2] configs: green: Support USB boot
+Subject: [PATCH 2/9] configs: green: Support USB boot
 
 ---
  configs/green_defconfig | 52 ++++++++++++++++++++++++++++-------------
  1 file changed, 36 insertions(+), 16 deletions(-)
 
 diff --git a/configs/green_defconfig b/configs/green_defconfig
-index 0617d308..14960b67 100644
+index 0617d308aa..14960b67d2 100644
 --- a/configs/green_defconfig
 +++ b/configs/green_defconfig
 @@ -6,48 +6,54 @@ CONFIG_TEXT_BASE=0x00a00000
@@ -113,5 +116,5 @@ index 0617d308..14960b67 100644
 +CONFIG_USB_DWC3=y
  CONFIG_ERRNO_STR=y
 -- 
-2.25.1
+2.41.0
 
