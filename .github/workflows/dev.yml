@@ -51,25 +51,16 @@ jobs:
         with:
           script: |
             const boards = require('./.github/workflows/matrix.json')
-
-            if (context.eventName == "workflow_dispatch") {
-              const boardFilter = "${{ github.event.inputs.boards }}"
-              if (boardFilter == "") {
-                console.log("Run full build for all boards")
-                return { "board": boards }
-              } else {
-                console.log("Run partial build")
-                const boardSet = new Set(boardFilter.split(','))
-                const buildBoards = boards.filter(b => boardSet.has(b.id))
-                return { "board": buildBoards }
-              }
+            const boardFilter = "${{ github.event.inputs.boards }}"
+            if (boardFilter == "") {
+              console.log("Run full build for all boards")
+              return { "board": boards }
+            } else {
+              console.log("Run partial build")
+              const boardSet = new Set(boardFilter.split(","))
+              const buildBoards = boards.filter(b => boardSet.has(b.id))
+              return { "board": buildBoards }
             }
-
-            const labels = context.payload.pull_request.labels.map(l => l.name)
-            const labelsSet = new Set(labels)
-            const buildBoards = boards.filter(b => labelsSet.has(b.label))
-
-            return { "board": buildBoards }
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2.10.0
