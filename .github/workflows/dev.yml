@@ -9,40 +9,25 @@ on:
         description: 'List of boards to build (comma separated identifiers)'
         required: false
         type: string
-  pull_request_target:
-    types: [opened,synchronize,labeled]
 
 jobs:
   prepare:
-    if: ${{ github.event_name == 'workflow_dispatch' || contains(github.event.pull_request.labels.*.name, 'run-dev-build') }}
     name: Prepare build
-    environment: "dev_build"
     runs-on: ubuntu-22.04
     permissions:
       contents: read
       pull-requests: read
       packages: write
     outputs:
-      gitref: ${{ steps.generate_gitref.outputs.result }}
       version_main: ${{ steps.version_main.outputs.version_main }}
-      version_dev: ${{ steps.version_dev.outputs.version_dev }}${{ steps.version_pr.outputs.version_pr }}
+      version_dev: ${{ steps.version_dev.outputs.version_dev }}
       matrix: ${{ steps.generate_matrix.outputs.result }}
       build_container_image: ghcr.io/${{ github.repository_owner }}/haos-builder@${{ steps.build_haos_builder.outputs.digest }}
     steps:
-      - name: Define git reference
-        uses: actions/github-script@v6
-        id: generate_gitref
-        with:
-          script: |
-            if (context.eventName == "workflow_dispatch")
-              return { "ref": context.ref }
-            return { "ref": context.payload.pull_request.head.sha }
-
       - name: Checkout source
         uses: actions/checkout@v3
         with:
           persist-credentials: false
-          ref: ${{ fromJSON(steps.generate_gitref.outputs.result).ref }}
 
       - uses: actions/checkout@v3
       - name: Get Major/Minor version
@@ -59,14 +44,6 @@ jobs:
           version_dev="dev$(date --utc +'%Y%m%d')"
           echo "Development version \"${version_dev}\""
           echo "version_dev=${version_dev}" >> $GITHUB_OUTPUT
-      - name: Generate Development build version for PR
-        if: ${{ github.event.pull_request }}
-        shell: bash
-        id: version_pr
-        run: |
-          version_pr=$(printf "%05d" ${{ github.event.pull_request.number }})
-          echo "Development build for PR #${{ github.event.pull_request.number }}"
-          echo "version_pr=${version_pr}" >> $GITHUB_OUTPUT
 
       - name: Create build matrix
         uses: actions/github-script@v6
@@ -114,9 +91,7 @@ jobs:
           push: true
 
   build:
-    if: ${{ github.event_name == 'workflow_dispatch' || contains(github.event.pull_request.labels.*.name, 'run-dev-build') }}
     name: Development build for ${{ matrix.board.id }}
-    environment: "dev_build"
     needs: prepare
     strategy:
       fail-fast: false
@@ -129,7 +104,6 @@ jobs:
         with:
           submodules: true
           persist-credentials: false
-          ref: ${{ fromJSON(needs.prepare.outputs.gitref).ref }}
 
       - name: 'Add release PKI certs'
         env:
@@ -185,9 +159,9 @@ jobs:
 
   bump_version:
     name: Bump dev channel version
-    if: ${{ github.event_name == 'workflow_dispatch' && github.repository == 'home-assistant/operating-system' }}
+    if: ${{ github.repository == 'home-assistant/operating-system' }}
     needs: [ build, prepare ]
-    runs-on: [ "ubuntu-20.04" ]
+    runs-on: ubuntu-22.04
 
     steps:
     - name: Initialize git
