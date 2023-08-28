@@ -21,10 +21,34 @@ jobs:
       contents: read
       pull-requests: read
     outputs:
+      gitref: ${{ steps.generate_gitref.outputs.result }}
       version_main: ${{ steps.version_main.outputs.version_main }}
       version_dev: ${{ steps.version_dev.outputs.version_dev }}${{ steps.version_pr.outputs.version_pr }}
       matrix: ${{ steps.generate_matrix.outputs.result }}
     steps:
+      - name: Define git reference
+        uses: actions/github-script@v6
+        id: generate_gitref
+        with:
+          script: |
+            if (context.eventName == "workflow_dispatch")
+              return { "ref": context.ref }
+            return { "ref": context.payload.pull_request.head.sha }
+
+      - name: Checkout source
+        uses: actions/checkout@v3
+        with:
+          persist-credentials: false
+          ref: ${{ fromJSON(steps.generate_gitref.outputs.result).ref }}
+
+      - uses: actions/checkout@v3
+      - name: Get Major/Minor version
+        id: version_main
+        run: |
+          major=$(cat ${GITHUB_WORKSPACE}/buildroot-external/meta | grep VERSION_MAJOR | cut -d'=' -f2)
+          build=$(cat ${GITHUB_WORKSPACE}/buildroot-external/meta | grep VERSION_BUILD | cut -d'=' -f2)
+          echo "version_main=${major}.${build}" >> $GITHUB_OUTPUT
+
       - name: Generate Development build version
         shell: bash
         id: version_dev
@@ -40,13 +64,7 @@ jobs:
           version_pr=$(printf "%05d" ${{ github.event.pull_request.number }})
           echo "Development build for PR #${{ github.event.pull_request.number }}"
           echo "version_pr=${version_pr}" >> $GITHUB_OUTPUT
-      - uses: actions/checkout@v3
-      - name: Get Major/Minor version
-        id: version_main
-        run: |
-          major=$(cat ${GITHUB_WORKSPACE}/buildroot-external/meta | grep VERSION_MAJOR | cut -d'=' -f2)
-          build=$(cat ${GITHUB_WORKSPACE}/buildroot-external/meta | grep VERSION_BUILD | cut -d'=' -f2)
-          echo "version_main=${major}.${build}" >> $GITHUB_OUTPUT
+
       - name: Create build matrix
         uses: actions/github-script@v6
         id: generate_matrix
@@ -84,21 +102,12 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
-      - name: Define git reference
-        uses: actions/github-script@v6
-        id: generate_gitref
-        with:
-          script: |
-            if (context.eventName == "workflow_dispatch")
-              return { "ref": context.ref }
-            return { "ref": context.payload.pull_request.head.sha }
-
       - name: Checkout source
         uses: actions/checkout@v3
         with:
           submodules: true
           persist-credentials: false
-          ref: ${{ fromJSON(steps.generate_gitref.outputs.result).ref }}
+          ref: ${{ fromJSON(needs.prepare.outputs.gitref).ref }}
 
       - name: Build container
         run: docker build -t haos-builder .
