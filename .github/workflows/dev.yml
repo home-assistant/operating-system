@@ -9,37 +9,26 @@ on:
         description: 'List of boards to build (comma separated identifiers)'
         required: false
         type: string
-  pull_request_target:
-    types: [opened,synchronize,labeled]
 
 jobs:
   prepare:
-    if: ${{ github.event_name == 'workflow_dispatch' || contains(github.event.pull_request.labels.*.name, 'run-dev-build') }}
     name: Prepare build
     runs-on: ubuntu-22.04
     permissions:
       contents: read
       pull-requests: read
+      packages: write
     outputs:
       version_main: ${{ steps.version_main.outputs.version_main }}
-      version_dev: ${{ steps.version_dev.outputs.version_dev }}${{ steps.version_pr.outputs.version_pr }}
+      version_dev: ${{ steps.version_dev.outputs.version_dev }}
       matrix: ${{ steps.generate_matrix.outputs.result }}
+      build_container_image: ghcr.io/${{ github.repository_owner }}/haos-builder@${{ steps.build_haos_builder.outputs.digest }}
     steps:
-      - name: Generate Development build version
-        shell: bash
-        id: version_dev
-        run: |
-          version_dev="dev$(date --utc +'%Y%m%d')"
-          echo "Development version \"${version_dev}\""
-          echo "version_dev=${version_dev}" >> $GITHUB_OUTPUT
-      - name: Generate Development build version for PR
-        if: ${{ github.event.pull_request }}
-        shell: bash
-        id: version_pr
-        run: |
-          version_pr=$(printf "%05d" ${{ github.event.pull_request.number }})
-          echo "Development build for PR #${{ github.event.pull_request.number }}"
-          echo "version_pr=${version_pr}" >> $GITHUB_OUTPUT
+      - name: Checkout source
+        uses: actions/checkout@v3
+        with:
+          persist-credentials: false
+
       - uses: actions/checkout@v3
       - name: Get Major/Minor version
         id: version_main
@@ -47,36 +36,53 @@ jobs:
           major=$(cat ${GITHUB_WORKSPACE}/buildroot-external/meta | grep VERSION_MAJOR | cut -d'=' -f2)
           build=$(cat ${GITHUB_WORKSPACE}/buildroot-external/meta | grep VERSION_BUILD | cut -d'=' -f2)
           echo "version_main=${major}.${build}" >> $GITHUB_OUTPUT
+
+      - name: Generate Development build version
+        shell: bash
+        id: version_dev
+        run: |
+          version_dev="dev$(date --utc +'%Y%m%d')"
+          echo "Development version \"${version_dev}\""
+          echo "version_dev=${version_dev}" >> $GITHUB_OUTPUT
+
       - name: Create build matrix
         uses: actions/github-script@v6
         id: generate_matrix
         with:
           script: |
             const boards = require('./.github/workflows/matrix.json')
-
-            if (context.eventName == "workflow_dispatch") {
-              const boardFilter = "${{ github.event.inputs.boards }}"
-              if (boardFilter == "") {
-                console.log("Run full build for all boards")
-                return { "board": boards }
-              } else {
-                console.log("Run partial build")
-                const boardSet = new Set(boardFilter.split(','))
-                const buildBoards = boards.filter(b => boardSet.has(b.id))
-                return { "board": buildBoards }
-              }
+            const boardFilter = "${{ github.event.inputs.boards }}"
+            if (boardFilter == "") {
+              console.log("Run full build for all boards")
+              return { "board": boards }
+            } else {
+              console.log("Run partial build")
+              const boardSet = new Set(boardFilter.split(","))
+              const buildBoards = boards.filter(b => boardSet.has(b.id))
+              return { "board": buildBoards }
             }
 
-            const labels = context.payload.pull_request.labels.map(l => l.name)
-            const labelsSet = new Set(labels)
-            const buildBoards = boards.filter(b => labelsSet.has(b.label))
-
-            return { "board": buildBoards }
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2.10.0
+      - name: Log in to the GitHub container registry
+        uses: docker/login-action@v2.1.0
+        with:
+            registry: ghcr.io
+            username: ${{ github.repository_owner }}
+            password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build and Push
+        uses: docker/build-push-action@v4.1.1
+        id: build_haos_builder
+        with:
+          context: .
+          file: Dockerfile
+          tags: ghcr.io/${{ github.repository_owner }}/haos-builder
+          cache-from: ghcr.io/${{ github.repository_owner }}/haos-builder:cache-${{ steps.version_main.outputs.version_main }}
+          cache-to: ghcr.io/${{ github.repository_owner }}/haos-builder:cache-${{ steps.version_main.outputs.version_main }}
+          push: true
 
   build:
-    if: ${{ github.event_name == 'workflow_dispatch' || contains(github.event.pull_request.labels.*.name, 'run-dev-build') }}
     name: Development build for ${{ matrix.board.id }}
-    environment: "dev_build"
     needs: prepare
     strategy:
       fail-fast: false
@@ -84,24 +90,11 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
-      - name: Define git reference
-        uses: actions/github-script@v6
-        id: generate_gitref
-        with:
-          script: |
-            if (context.eventName == "workflow_dispatch")
-              return { "ref": context.ref }
-            return { "ref": context.payload.pull_request.head.sha }
-
       - name: Checkout source
         uses: actions/checkout@v3
         with:
           submodules: true
           persist-credentials: false
-          ref: ${{ fromJSON(steps.generate_gitref.outputs.result).ref }}
-
-      - name: Build container
-        run: docker build -t haos-builder .
 
       - name: 'Add release PKI certs'
         env:
@@ -139,7 +132,8 @@ jobs:
           docker run --rm --privileged -v "${GITHUB_WORKSPACE}:/build" \
             -e BUILDER_UID="${BUILDER_UID}" -e BUILDER_GID="${BUILDER_GID}" \
             -v "/mnt/cache:/cache" \
-            haos-builder make BUILDDIR=/build VERSION_DEV=${{ needs.prepare.outputs.version_dev }} ${{ matrix.board.defconfig }}
+            ${{ needs.prepare.outputs.build_container_image }} \
+            make BUILDDIR=/build VERSION_DEV=${{ needs.prepare.outputs.version_dev }} ${{ matrix.board.defconfig }}
 
       - name: Upload images
         uses: burnett01/rsync-deployments@5.2
@@ -156,9 +150,9 @@ jobs:
 
   bump_version:
     name: Bump dev channel version
-    if: ${{ github.event_name == 'workflow_dispatch' && github.repository == 'home-assistant/operating-system' }}
+    if: ${{ github.repository == 'home-assistant/operating-system' }}
     needs: [ build, prepare ]
-    runs-on: [ "ubuntu-20.04" ]
+    runs-on: ubuntu-22.04
 
     steps:
     - name: Initialize git
