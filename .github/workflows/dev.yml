@@ -29,7 +29,6 @@ jobs:
         with:
           persist-credentials: false
 
-      - uses: actions/checkout@v3
       - name: Get Major/Minor version
         id: version_main
         run: |
