@@ -116,13 +116,18 @@ jobs:
         uses: actions/cache@v3
         with:
           path: /mnt/cache/dl
-          key: haos-dl
+          key: haos-dl-${{ matrix.board.id }}-${{ hashFiles('/mnt/cache/dl/download-files.txt') }}
+          restore-keys: |
+            haos-dl-${{ matrix.board.id }}
+            haos-dl
 
       - name: Cache object files
         uses: actions/cache@v3
         with:
           path: /mnt/cache/cc
-          key: haos-cc-${{ matrix.board.architecture }}
+          key: haos-cc-${{ matrix.board.architecture }}-${{ github.run_id }}
+          restore-keys: |
+            haos-cc-${{ matrix.board.architecture }}
 
       - name: Build
         run: |
@@ -133,6 +138,10 @@ jobs:
             -v "/mnt/cache:/cache" \
             ${{ needs.prepare.outputs.build_container_image }} \
             make BUILDDIR=/build VERSION_DEV=${{ needs.prepare.outputs.version_dev }} ${{ matrix.board.defconfig }}
+
+      - name: List downloads
+        run: |
+          find /mnt/cache/dl > /mnt/cache/dl/download-files.txt
 
       - name: Upload images
         uses: burnett01/rsync-deployments@5.2
