@@ -113,21 +113,16 @@ jobs:
           sudo chown -R runner:runner /mnt/cache
 
       - name: Cache downloads
-        uses: actions/cache@v3
+        uses: actions/cache/restore@v3
         with:
           path: /mnt/cache/dl
-          key: haos-dl-${{ matrix.board.id }}-${{ hashFiles('/mnt/cache/dl/download-files.txt') }}
-          restore-keys: |
-            haos-dl-${{ matrix.board.id }}
-            haos-dl
+          key: haos-dl
 
       - name: Cache object files
-        uses: actions/cache@v3
+        uses: actions/cache/restore@v3
         with:
           path: /mnt/cache/cc
-          key: haos-cc-${{ matrix.board.architecture }}-${{ github.run_id }}
-          restore-keys: |
-            haos-cc-${{ matrix.board.architecture }}
+          key: haos-cc-${{ matrix.board.architecture }}
 
       - name: Build
         run: |
@@ -138,10 +133,6 @@ jobs:
             -v "/mnt/cache:/cache" \
             ${{ needs.prepare.outputs.build_container_image }} \
             make BUILDDIR=/build VERSION_DEV=${{ needs.prepare.outputs.version_dev }} ${{ matrix.board.defconfig }}
-
-      - name: List downloads
-        run: |
-          find /mnt/cache/dl > /mnt/cache/dl/download-files.txt
 
       - name: Upload images
         uses: burnett01/rsync-deployments@5.2
@@ -155,6 +146,68 @@ jobs:
           remote_user: ${{ secrets.DEV_USERNAME }}
           remote_key: ${{ secrets.DEV_SSH_KEY }}
 
+      - name: Cache downloads
+        uses: actions/cache/save@v3
+        with:
+          path: /mnt/cache/dl
+          key: haos-dl-${{ matrix.board.id }}-${{ github.run_id }}
+
+      - name: Cache build
+        uses: actions/cache/save@v3
+        with:
+          path: /mnt/cache/cc
+          key: haos-cc-${{ matrix.board.id }}-${{ github.run_id }}
+
+  combine_cache:
+    name: Combine caches for ${{ matrix.board.id }}
+    needs: [ build, prepare ]
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.prepare.outputs.matrix) }}
+    runs-on: ubuntu-22.04
+    concurrency: ${{ github.run_id }}
+
+    steps:
+      - name: Prepare /mnt
+        run: |
+          sudo mkdir /mnt/cache
+          sudo chown -R runner:runner /mnt/cache
+
+      - name: Restore global downloads cache
+        uses: actions/cache/restore@v3
+        with:
+          path: /mnt/cache/dl
+          key: haos-dl-${{ github.run_id }}
+      - name: Restore board specific downloads cache
+        id: cache-dl-restore
+        uses: actions/cache/restore@v3
+        with:
+          path: /mnt/cache/dl
+          key: haos-dl-${{ matrix.board.id }}-${{ github.run_id }}
+      - name: Upload new global downloads cache
+        if: ${{ steps.cache-dl-restore.outputs.cache-hit == 'true' }}
+        uses: actions/cache/save@v3
+        with:
+          path: /mnt/cache/dl
+          key: haos-dl-${{ github.run_id }}-with-${{ matrix.board.id }}
+
+      - name: Restore global build cache
+        uses: actions/cache/restore@v3
+        with:
+          path: /mnt/cache/cc
+          key: haos-cc-${{ matrix.board.architecture }}-${{ github.run_id }}
+      - name: Restore board specific build cache
+        id: cache-cc-restore
+        uses: actions/cache/restore@v3
+        with:
+          path: /mnt/cache/cc
+          key: haos-cc-${{ matrix.board.id }}-${{ github.run_id }}
+      - name: Upload new global build cache
+        if: ${{ steps.cache-cc-restore.outputs.cache-hit == 'true' }}
+        uses: actions/cache/save@v3
+        with:
+          path: /mnt/cache/cc
+          key: haos-cc-${{ matrix.board.architecture }}-${{ github.run_id }}-with-${{ matrix.board.id }}
 
   bump_version:
     name: Bump dev channel version
