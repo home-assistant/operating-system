@@ -1,0 +1,13 @@
+[Unit]
+Description=Remove Bluetooth cache entries
+ConditionPathExistsGlob=/var/lib/bluetooth/*/cache
+
+[Timer]
+OnCalendar=weekly
+AccuracySec=1h
+Persistent=true
+RandomizedDelaySec=6000
+
+[Install]
+WantedBy=timers.target
+
