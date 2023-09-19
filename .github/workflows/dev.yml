@@ -70,7 +70,7 @@ jobs:
             username: ${{ github.repository_owner }}
             password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build and Push
-        uses: docker/build-push-action@v4.2.1
+        uses: docker/build-push-action@v5.0.0
         id: build_haos_builder
         with:
           context: .
