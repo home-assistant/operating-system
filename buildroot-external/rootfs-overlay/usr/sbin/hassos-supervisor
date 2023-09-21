@@ -43,21 +43,25 @@ fi
 if [ -z "${SUPERVISOR_IMAGE_ID}" ]; then
     # Get the latest from update information
     # Using updater information instead of config. If the config version is
-    # broken, this creates a way (e.g., bad release).
-    SUPERVISOR_VERSION=$(jq -r '.supervisor // "latest"' "${SUPERVISOR_DATA}/updater.json" || echo "latest")
+    # broken, this creates a way back (e.g., bad release).
+    SUPERVISOR_VERSION=$(jq -r '.supervisor // "stable"' "${SUPERVISOR_DATA}/updater.json" || echo "stable")
+
+    # Get version from stable channel in case we have no local version
+    # information.
+    if [ "${SUPERVISOR_VERSION}" = "stable" ]; then
+        SUPERVISOR_VERSION="$(curl -s --location https://version.home-assistant.io/stable.json | jq -e -r '.supervisor')"
+    fi
 
     echo "[WARNING] Supervisor image missing, downloading a fresh one: ${SUPERVISOR_VERSION}"
 
     # Pull in the Supervisor
     if docker pull "${SUPERVISOR_IMAGE}:${SUPERVISOR_VERSION}"; then
-        # Tag as latest if versioned
-        if [ "${SUPERVISOR_VERSION}" != "latest" ]; then
-            docker tag "${SUPERVISOR_IMAGE}:${SUPERVISOR_VERSION}" "${SUPERVISOR_IMAGE}:latest"
-        fi
+        # Tag as latest
+        docker tag "${SUPERVISOR_IMAGE}:${SUPERVISOR_VERSION}" "${SUPERVISOR_IMAGE}:latest"
     else
         # Pull failed, updater info might be corrupted, re-trying with latest
-        echo "[WARNING] Supervisor downloading failed trying: latest"
-        docker pull "${SUPERVISOR_IMAGE}:latest"
+        echo "[ERROR] Supervisor downloading failed."
+        exit 1
     fi
 
     SUPERVISOR_IMAGE_ID=$(docker inspect --format='{{.Id}}' "${SUPERVISOR_IMAGE}" || echo "")
