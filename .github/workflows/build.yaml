@@ -21,8 +21,9 @@ jobs:
       pull-requests: read
       packages: write
     outputs:
-      version_main: ${{ steps.version_main.outputs.version_main }}
       version_dev: ${{ steps.version_dev.outputs.version_dev }}
+      version_main: ${{ steps.version.outputs.version_main }}
+      version_full: ${{ steps.version.outputs.version_full }}
       channel: ${{ steps.channel.outputs.channel }}
       matrix: ${{ steps.generate_matrix.outputs.result }}
       build_container_image: ghcr.io/${{ github.repository_owner }}/haos-builder@${{ steps.build_haos_builder.outputs.digest }}
@@ -32,32 +33,49 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Generate development version
+        shell: bash
+        id: version_dev
+        if: ${{ github.event_name != 'release' }}
+        run: |
+          version_dev="dev$(date --utc +'%Y%m%d')"
+          echo "Development version \"${version_dev}\""
+          echo "version_dev=${version_dev}" >> $GITHUB_OUTPUT
+
+      - name: Inject development version
+        if: ${{ github.event_name != 'release' }}
+        env:
+          VERSION_DEV: ${{ steps.version_dev.outputs.version_dev }}
+        run: |
+          sed -E "s/(^VERSION_SUFFIX=\").*(\"$)/\1${VERSION_DEV}\2/" buildroot-external/meta
+
       - name: Validate version
         id: version_check
         if: ${{ github.event_name == 'release' }}
         run: |
           major=$(cat ${GITHUB_WORKSPACE}/buildroot-external/meta | grep VERSION_MAJOR | cut -d'=' -f2)
-          build=$(cat ${GITHUB_WORKSPACE}/buildroot-external/meta | grep VERSION_BUILD | cut -d'=' -f2)
+          minor=$(cat ${GITHUB_WORKSPACE}/buildroot-external/meta | grep VERSION_MINOR | cut -d'=' -f2)
+          suffix=$(cat ${GITHUB_WORKSPACE}/buildroot-external/meta | grep VERSION_SUFFIX | cut -d'=' -f2)
           tag_major=$(echo "${{ github.event.release.tag_name }}" | cut -d '.' -f 1)
-          tag_build=$(echo "${{ github.event.release.tag_name }}" | cut -d '.' -f 2)
-          tag_dev=$(echo "${{ github.event.release.tag_name }}" | cut -d '.' -f 3)
-          if [ "${major}.${build}" != "${tag_major}.${tag_build}" ]; then
-            echo "Version number in Buildroot metadata is does not match tag (${major}.${build} vs ${{ github.event.release.tag_name }})."
+          tag_minor=$(echo "${{ github.event.release.tag_name }}" | cut -d '.' -f 2)
+          tag_suffix=$(echo "${{ github.event.release.tag_name }}" | cut -d '.' -f 3)
+          if [ "${major}.${minor}.${suffix}" != "${tag_major}.${tag_minor}.${tag_suffix}" ]; then
+            echo "Version number in Buildroot metadata does not match tag (${major}.${minor}.${suffix} vs ${{ github.event.release.tag_name }})."
             exit 1
           fi
-          if [ "" != "${tag_dev}" ]; then
-            echo "version=${major}.${build}.${tag_dev}" >> $GITHUB_OUTPUT
-          else
-            echo "version=${major}.${build}" >> $GITHUB_OUTPUT
-          fi
-          echo "version_dev=${tag_dev}" >> $GITHUB_OUTPUT
 
-      - name: Get Major/Minor version
-        id: version_main
+      - name: Get version
+        id: version
         run: |
           major=$(cat ${GITHUB_WORKSPACE}/buildroot-external/meta | grep VERSION_MAJOR | cut -d'=' -f2)
-          build=$(cat ${GITHUB_WORKSPACE}/buildroot-external/meta | grep VERSION_BUILD | cut -d'=' -f2)
-          echo "version_main=${major}.${build}" >> $GITHUB_OUTPUT
+          minor=$(cat ${GITHUB_WORKSPACE}/buildroot-external/meta | grep VERSION_MINOR | cut -d'=' -f2)
+          suffix=$(cat ${GITHUB_WORKSPACE}/buildroot-external/meta | grep VERSION_SUFFIX | cut -d'=' -f2)
+          echo "version_main=${major}.${minor}" >> $GITHUB_OUTPUT
+          if [ -z "${suffix}" ]; then
+            echo "version_full=${major}.${minor}" >> $GITHUB_OUTPUT
+          else
+            echo "version_full=${major}.${minor}.${suffix}" >> $GITHUB_OUTPUT
+          fi
 
       - name: Get channel
         id: channel
@@ -71,15 +89,6 @@ jobs:
           else
             echo "channel=dev" >> "$GITHUB_OUTPUT"
           fi
-
-      - name: Generate Development build version
-        shell: bash
-        id: version_dev
-        if: ${{ github.event_name != 'release' }}
-        run: |
-          version_dev="dev$(date --utc +'%Y%m%d')"
-          echo "Development version \"${version_dev}\""
-          echo "version_dev=${version_dev}" >> $GITHUB_OUTPUT
 
       - name: Create build matrix
         uses: actions/github-script@v6
@@ -138,6 +147,13 @@ jobs:
           submodules: true
           persist-credentials: false
 
+      - name: Inject development version
+        if: ${{ github.event_name != 'release' }}
+        env:
+          VERSION_DEV: ${{ needs.prepare.outputs.version_dev }}
+        run: |
+          sed -E "s/(^VERSION_SUFFIX=\").*(\"$)/\1${VERSION_DEV}\2/" buildroot-external/meta
+
       - name: 'Add release PKI certs'
         env:
           RAUC_CERTIFICATE: ${{ secrets.RAUC_CERTIFICATE }}
@@ -175,7 +191,7 @@ jobs:
             -e BUILDER_UID="${BUILDER_UID}" -e BUILDER_GID="${BUILDER_GID}" \
             -v "/mnt/cache:/cache" \
             ${{ needs.prepare.outputs.build_container_image }} \
-            make BUILDDIR=/build VERSION_DEV=${{ needs.prepare.outputs.version_dev }} ${{ matrix.board.defconfig }}
+            make BUILDDIR=/build ${{ matrix.board.defconfig }}
 
       - name: Upload images
         if: ${{ github.event_name != 'release' }}
@@ -184,7 +200,7 @@ jobs:
           rsh: -q
           switches: -aW
           path: output/images/haos_*
-          remote_path: ${{ secrets.DEV_TARGET_PATH }}/${{ needs.prepare.outputs.version_main }}.${{ needs.prepare.outputs.version_dev }}/
+          remote_path: ${{ secrets.DEV_TARGET_PATH }}/${{ needs.prepare.outputs.version_full }}/
           remote_host: ${{ secrets.DEV_HOST }}
           remote_port: ${{ secrets.DEV_PORT }}
           remote_user: ${{ secrets.DEV_USERNAME }}
@@ -228,5 +244,5 @@ jobs:
       with:
         key: "hassos[]"
         key-description: "Home Assistant OS"
-        version: ${{ needs.prepare.outputs.version_main }}.${{ needs.prepare.outputs.version_dev }}
+        version: ${{ needs.prepare.outputs.version_full }}
         channel: ${{ needs.prepare.outputs.channel }}
