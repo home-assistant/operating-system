@@ -10,4 +10,4 @@ Type=oneshot
 ExecStart=/usr/libexec/haos-swapfile
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=swap.target
