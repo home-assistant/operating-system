@@ -18,4 +18,8 @@ config BR2_PACKAGE_ROCKCHIP_BLOBS_TPL
 	help
 	  Rockchip TPL file
 
+config BR2_PACKAGE_ROCKCHIP_BLOBS_TEE
+	string "Rockchip OPTEE file"
+	help
+	  Rockchip OPTEE file
 endif
