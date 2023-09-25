@@ -47,34 +47,28 @@ jobs:
         env:
           VERSION_DEV: ${{ steps.version_dev.outputs.version_dev }}
         run: |
-          sed -E "s/(^VERSION_SUFFIX=\").*(\"$)/\1${VERSION_DEV}\2/" buildroot-external/meta
+          sed -i -E "s/(^VERSION_SUFFIX=\").*(\"$)/\1${VERSION_DEV}\2/" buildroot-external/meta
+
+      - name: Get version
+        id: version
+        run: |
+          . ${GITHUB_WORKSPACE}/buildroot-external/meta
+          echo "version_main=${VERSION_MAJOR}.${VERSION_MINOR}" >> $GITHUB_OUTPUT
+          if [ -z "${VERSION_SUFFIX}" ]; then
+            version_full="${VERSION_MAJOR}.${VERSION_MINOR}"
+          else
+            version_full="${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_SUFFIX}"
+          fi
+          echo "version_full=${version_full}" >> $GITHUB_OUTPUT
+          echo "Full version number of this release is \"${version_full}\"."
 
       - name: Validate version
         id: version_check
         if: ${{ github.event_name == 'release' }}
         run: |
-          major=$(cat ${GITHUB_WORKSPACE}/buildroot-external/meta | grep VERSION_MAJOR | cut -d'=' -f2)
-          minor=$(cat ${GITHUB_WORKSPACE}/buildroot-external/meta | grep VERSION_MINOR | cut -d'=' -f2)
-          suffix=$(cat ${GITHUB_WORKSPACE}/buildroot-external/meta | grep VERSION_SUFFIX | cut -d'=' -f2)
-          tag_major=$(echo "${{ github.event.release.tag_name }}" | cut -d '.' -f 1)
-          tag_minor=$(echo "${{ github.event.release.tag_name }}" | cut -d '.' -f 2)
-          tag_suffix=$(echo "${{ github.event.release.tag_name }}" | cut -d '.' -f 3)
-          if [ "${major}.${minor}.${suffix}" != "${tag_major}.${tag_minor}.${tag_suffix}" ]; then
-            echo "Version number in Buildroot metadata does not match tag (${major}.${minor}.${suffix} vs ${{ github.event.release.tag_name }})."
+          if [ "${{ steps.version.outputs.version_full }}" != "${{ github.event.release.tag_name }}" ]; then
+            echo "Version number in Buildroot metadata does not match tag (${{ steps.version.outputs.version_full }} vs ${{ github.event.release.tag_name }})."
             exit 1
-          fi
-
-      - name: Get version
-        id: version
-        run: |
-          major=$(cat ${GITHUB_WORKSPACE}/buildroot-external/meta | grep VERSION_MAJOR | cut -d'=' -f2)
-          minor=$(cat ${GITHUB_WORKSPACE}/buildroot-external/meta | grep VERSION_MINOR | cut -d'=' -f2)
-          suffix=$(cat ${GITHUB_WORKSPACE}/buildroot-external/meta | grep VERSION_SUFFIX | cut -d'=' -f2)
-          echo "version_main=${major}.${minor}" >> $GITHUB_OUTPUT
-          if [ -z "${suffix}" ]; then
-            echo "version_full=${major}.${minor}" >> $GITHUB_OUTPUT
-          else
-            echo "version_full=${major}.${minor}.${suffix}" >> $GITHUB_OUTPUT
           fi
 
       - name: Get channel
@@ -152,7 +146,7 @@ jobs:
         env:
           VERSION_DEV: ${{ needs.prepare.outputs.version_dev }}
         run: |
-          sed -E "s/(^VERSION_SUFFIX=\").*(\"$)/\1${VERSION_DEV}\2/" buildroot-external/meta
+          sed -i -E "s/(^VERSION_SUFFIX=\").*(\"$)/\1${VERSION_DEV}\2/" buildroot-external/meta
 
       - name: 'Add release PKI certs'
         env:
