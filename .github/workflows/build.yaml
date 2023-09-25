@@ -42,7 +42,7 @@ jobs:
           echo "Development version \"${version_dev}\""
           echo "version_dev=${version_dev}" >> $GITHUB_OUTPUT
 
-      - name: Inject development version
+      - name: Set version suffix
         if: ${{ github.event_name != 'release' }}
         env:
           VERSION_DEV: ${{ steps.version_dev.outputs.version_dev }}
@@ -147,7 +147,7 @@ jobs:
           submodules: true
           persist-credentials: false
 
-      - name: Inject development version
+      - name: Set version suffix
         if: ${{ github.event_name != 'release' }}
         env:
           VERSION_DEV: ${{ needs.prepare.outputs.version_dev }}
