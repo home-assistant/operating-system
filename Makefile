@@ -3,8 +3,6 @@ BUILDDIR:=$(shell pwd)
 BUILDROOT=$(BUILDDIR)/buildroot
 BUILDROOT_EXTERNAL=$(BUILDDIR)/buildroot-external
 DEFCONFIG_DIR = $(BUILDROOT_EXTERNAL)/configs
-VERSION_DATE := $(shell date --utc +'%Y%m%d')
-VERSION_DEV := "dev$(VERSION_DATE)"
 
 TARGETS := $(notdir $(patsubst %_defconfig,%,$(wildcard $(DEFCONFIG_DIR)/*_defconfig)))
 TARGETS_CONFIG := $(notdir $(patsubst %_defconfig,%-config,$(wildcard $(DEFCONFIG_DIR)/*_defconfig)))
@@ -32,7 +30,7 @@ $(TARGETS_CONFIG): %-config:
 
 $(TARGETS): %: %-config
 	@echo "build $@"
-	$(MAKE) -C $(BUILDROOT) O=$(O) BR2_EXTERNAL=$(BUILDROOT_EXTERNAL) VERSION_DEV=$(VERSION_DEV)
+	$(MAKE) -C $(BUILDROOT) O=$(O) BR2_EXTERNAL=$(BUILDROOT_EXTERNAL)
 
 	# Do not clean when building for one target
 ifneq ($(words $(filter $(TARGETS),$(MAKECMDGOALS))), 1)
