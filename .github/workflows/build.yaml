@@ -12,6 +12,9 @@ on:
         required: false
         type: string
 
+env:
+  PYTHON_VERSION: "3.10"
+
 jobs:
   prepare:
     name: Prepare build
@@ -141,6 +144,16 @@ jobs:
           submodules: true
           persist-credentials: false
 
+      - name: Setup Python version ${{ env.PYTHON_VERSION }}
+        if: ${{ github.event_name != 'release' }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install AWS CLI
+        if: ${{ github.event_name != 'release' }}
+        run: pip install awscli
+
       - name: Set version suffix
         if: ${{ github.event_name != 'release' }}
         env:
@@ -199,6 +212,19 @@ jobs:
           remote_port: ${{ secrets.DEV_PORT }}
           remote_user: ${{ secrets.DEV_USERNAME }}
           remote_key: ${{ secrets.DEV_SSH_KEY }}
+
+      - name: Upload artifacts
+        if: ${{ github.event_name != 'release' }}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_OS_ARTIFACTS_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_OS_ARTIFACTS_KEY }}
+        run: |
+          aws s3 sync \
+            output/images/ \
+            s3://${{ secrets.R2_OS_ARTIFACTS_BUCKET }}/${{ needs.prepare.outputs.version_full }}/ \
+            --exclude "*" \
+            --include "haos_*" \
+            --endpoint-url ${{ secrets.R2_OS_ARTIFACTS_ENDPOINT }}
 
       - name: Upload release assets
         if: ${{ github.event_name == 'release' }}
