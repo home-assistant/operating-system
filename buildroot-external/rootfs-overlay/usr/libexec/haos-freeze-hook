@@ -1,0 +1,15 @@
+#!/bin/sh
+set -e
+
+action="$1"
+
+if [ "${action}" = "freeze" ]; then
+	echo "File system freeze requested, freezing Home Assistant"
+	ha backups freeze
+elif [ "${action}" = "thaw" ]; then
+	echo "File system thaw requested, thawing Home Assistant"
+	ha backups thaw
+else
+	echo "Unknown action ${action}"
+fi
+
