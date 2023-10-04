@@ -1,15 +1,6 @@
 version = 2
 disabled_plugins = [
-  "io.containerd.snapshotter.v1.aufs",
-  "io.containerd.snapshotter.v1.devmapper",
-  "io.containerd.snapshotter.v1.zfs",
   "io.containerd.internal.v1.opt",
   "io.containerd.tracing.processor.v1.otlp",
   "io.containerd.internal.v1.tracing"
 ]
-
-[plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc]
-cni_conf_dir = "/run/cni/net.d"
-
-[plugins."io.containerd.grpc.v1.cri".cni]
-conf_dir = "/run/cni/net.d"
