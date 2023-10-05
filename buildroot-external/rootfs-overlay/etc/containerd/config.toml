@@ -1,4 +1,7 @@
 version = 2
+
+root = "/mnt/data/docker/containerd/daemon"
+
 disabled_plugins = [
   "io.containerd.internal.v1.opt",
   "io.containerd.tracing.processor.v1.otlp",
