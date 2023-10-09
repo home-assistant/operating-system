@@ -2,9 +2,6 @@
 compatible={{ env "ota_compatible" }}
 version={{ env "ota_version" }}
 
-[bundle]
-format=verity
-
 [hooks]
 filename=hook
 hooks=install-check;
