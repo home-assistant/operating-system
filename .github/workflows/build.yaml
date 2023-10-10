@@ -200,19 +200,6 @@ jobs:
             ${{ needs.prepare.outputs.build_container_image }} \
             make BUILDDIR=/build ${{ matrix.board.defconfig }}
 
-      - name: Upload images
-        if: ${{ github.event_name != 'release' }}
-        uses: burnett01/rsync-deployments@5.2
-        with:
-          rsh: -q
-          switches: -aW
-          path: output/images/haos_*
-          remote_path: ${{ secrets.DEV_TARGET_PATH }}/${{ needs.prepare.outputs.version_full }}/
-          remote_host: ${{ secrets.DEV_HOST }}
-          remote_port: ${{ secrets.DEV_PORT }}
-          remote_user: ${{ secrets.DEV_USERNAME }}
-          remote_key: ${{ secrets.DEV_SSH_KEY }}
-
       - name: Upload artifacts
         if: ${{ github.event_name != 'release' }}
         env:
