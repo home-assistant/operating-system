@@ -1,0 +1,92 @@
+name: Test HAOS image
+run-name: "Test HAOS ${{ inputs.version || format('(OS build #{0})', github.event.workflow_run.run_number) }}"
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Version of HAOS to test
+        required: true
+        type: string
+
+  workflow_run:
+    workflows: ["OS build"]  # must be in sync with build workflow `name`
+    types:
+      - completed
+
+jobs:
+  test:
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
+
+    env:
+      NO_KVM: 1
+
+    name: Test in QEMU
+    runs-on: ubuntu-22.04
+    defaults:
+      run:
+        working-directory: ./tests
+    steps:
+      - name: Install system dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y qemu-system-x86 ovmf
+
+      - name: Checkout source
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.12
+
+      - name: Install Python requirements
+        run:
+          pip install -r requirements.txt
+
+      - name: Download HAOS image
+        if: ${{ github.event_name == 'workflow_dispatch' }}
+        run: |
+          curl -sL https://os-artifacts.home-assistant.io/${{github.event.inputs.version}}/haos_ova-${{github.event.inputs.version}}.qcow2.xz > haos.qcow2.xz
+
+      - name: Get OS image artifact
+        if: ${{ github.event_name == 'workflow_run' }}
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          workflow: build.yaml
+          workflow_conclusion: success
+          name: ova-image
+
+      - name: Extract OS image
+        run: |
+          xz -dc haos*.qcow2.xz > haos.qcow2 && rm haos*.qcow2.xz
+
+      - name: Run smoke test
+        run: |
+          pytest --lg-env qemu-strategy.yaml --lg-log=lg_logs --junitxml=junit_reports/smoke_test.xml smoke_test
+
+      - name: Archive logs
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: logs
+          path: |
+            lg_logs/*
+
+      - name: Archive JUnit reports
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: junit_reports
+          path: |
+            junit_reports/*.xml
+
+      - name: Publish test report
+        uses: mikepenz/action-junit-report@v4
+        if: always()
+        with:
+          report_paths: 'junit_reports/*.xml'
+          annotate_only: true
+          detailed_summary: true

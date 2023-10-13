@@ -1,0 +1,31 @@
+targets:
+  main:
+    resources: []
+
+    drivers:
+      - QEMUDriver:
+          qemu_bin: qemu-x86_64
+          machine: pc
+          cpu: qemu64
+          memory: 1G
+          extra_args: "-snapshot -accel kvm"
+          nic: user,model=virtio-net-pci
+          disk: disk-image
+          bios: bios
+      - ShellDriver:
+          login_prompt: 'homeassistant login: '
+          username: 'root'
+          prompt: '# '
+          login_timeout: 300
+      - QEMUShellStrategy: {}
+
+tools:
+  qemu-x86_64: /usr/bin/qemu-system-x86_64
+
+images:
+  disk-image: ./haos.qcow2
+  bios: /usr/share/ovmf/OVMF.fd
+
+
+imports:
+  - qemu_shell_strategy.py
