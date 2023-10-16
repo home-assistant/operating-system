@@ -40,6 +40,7 @@ body:
         - rpi4-64  (Raspberry Pi 4/400 64-bit OS)
         - tinker (ASUS Tinker Board/Tinker Board S)
         - yellow (Home Assistant Yellow)
+        - green (Home Assistant Green)
       description: >
         Can be found in [Settings -> System -> Repairs -> System Information](https://my.home-assistant.io/redirect/system_health/). It is listed as the `Board` value.
 
