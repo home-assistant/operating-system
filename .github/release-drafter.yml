@@ -10,6 +10,8 @@ categories:
     label: 'board/raspberrypi'
   - title: 'Home Assistant Yellow'
     label: 'board/yellow'
+  - title: 'Home Assistant Green'
+    label: 'board/green'
   - title: 'Open Virtual Appliance'
     label: 'board/ova'
   - title: 'Generic x86-64'
