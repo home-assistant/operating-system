@@ -232,7 +232,7 @@ jobs:
           path: /mnt/cache/cc
           key: haos-cc-${{ matrix.board.id }}-${{ github.run_id }}
 
-      - name: Create x86 image artifact for test job
+      - name: Upload ova image to artifacts for test job
         uses: actions/upload-artifact@v3
         if: ${{ matrix.board.id == 'ova' }}
         with:

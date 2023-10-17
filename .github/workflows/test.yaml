@@ -49,7 +49,7 @@ jobs:
       - name: Download HAOS image
         if: ${{ github.event_name == 'workflow_dispatch' }}
         run: |
-          curl -sL https://os-artifacts.home-assistant.io/${{github.event.inputs.version}}/haos_ova-${{github.event.inputs.version}}.qcow2.xz > haos.qcow2.xz
+          curl -sfL -o haos.qcow2.xz  https://os-artifacts.home-assistant.io/${{github.event.inputs.version}}/haos_ova-${{github.event.inputs.version}}.qcow2.xz
 
       - name: Get OS image artifact
         if: ${{ github.event_name == 'workflow_run' }}
@@ -61,7 +61,7 @@ jobs:
 
       - name: Extract OS image
         run: |
-          xz -dc haos*.qcow2.xz > haos.qcow2 && rm haos*.qcow2.xz
+          unxz haos.qcow2.xz
 
       - name: Run smoke test
         run: |
