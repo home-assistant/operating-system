@@ -1,0 +1,14 @@
+# QEMU images
+*.qcow2
+
+# Generated logs
+/junit_reports
+/lg_logs
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtualenv
+venv

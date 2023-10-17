@@ -232,6 +232,14 @@ jobs:
           path: /mnt/cache/cc
           key: haos-cc-${{ matrix.board.id }}-${{ github.run_id }}
 
+      - name: Upload ova image to artifacts for test job
+        uses: actions/upload-artifact@v3
+        if: ${{ matrix.board.id == 'ova' }}
+        with:
+          name: ova-image
+          path: |
+            output/images/haos_ova*.qcow2.xz
+
   bump_version:
     name: Bump dev channel version
     if: ${{ github.repository == 'home-assistant/operating-system' }}
