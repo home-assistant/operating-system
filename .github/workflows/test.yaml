@@ -27,15 +27,15 @@ jobs:
       run:
         working-directory: ./tests
     steps:
-      - name: Install system dependencies
-        run: |
-          sudo apt update
-          sudo apt install -y qemu-system-x86 ovmf
-
       - name: Checkout source
         uses: actions/checkout@v4
         with:
           persist-credentials: false
+
+      - name: Install system dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y qemu-system-x86 ovmf
 
       - name: Setup Python
         uses: actions/setup-python@v4
