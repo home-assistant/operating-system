@@ -63,9 +63,9 @@ jobs:
         run: |
           unxz haos.qcow2.xz
 
-      - name: Run smoke test
+      - name: Run tests
         run: |
-          pytest --lg-env qemu-strategy.yaml --lg-log=lg_logs --junitxml=junit_reports/smoke_test.xml smoke_test
+          ./run_tests.sh
 
       - name: Archive logs
         uses: actions/upload-artifact@v3
