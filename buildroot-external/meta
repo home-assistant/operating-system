@@ -5,4 +5,4 @@ VERSION_SUFFIX="dev0"
 HASSOS_NAME="Home Assistant OS"
 HASSOS_ID="haos"
 
-DEPLOYMENT="production"
+DEPLOYMENT="${DEPLOYMENT:-development}"

@@ -28,6 +28,7 @@ jobs:
       version_main: ${{ steps.version.outputs.version_main }}
       version_full: ${{ steps.version.outputs.version_full }}
       channel: ${{ steps.channel.outputs.channel }}
+      deployment: ${{ steps.channel.outputs.deployment }}
       matrix: ${{ steps.generate_matrix.outputs.result }}
       build_container_image: ghcr.io/${{ github.repository_owner }}/haos-builder@${{ steps.build_haos_builder.outputs.digest }}
     steps:
@@ -74,17 +75,20 @@ jobs:
             exit 1
           fi
 
-      - name: Get channel
+      - name: Get channel and deployment
         id: channel
         run: |
           if [[ "${{ github.event_name }}" == "release" ]]; then
             if [[ "${{ github.event.release.prerelease }}" == "true" ]]; then
               echo "channel=beta" >> "$GITHUB_OUTPUT"
+              echo "deployment=staging" >> "$GITHUB_OUTPUT"
             else
               echo "channel=stable" >> "$GITHUB_OUTPUT"
+              echo "deployment=production" >> "$GITHUB_OUTPUT"
             fi
           else
             echo "channel=dev" >> "$GITHUB_OUTPUT"
+            echo "deployment=development" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Create build matrix
@@ -128,7 +132,7 @@ jobs:
           push: true
 
   build:
-    name: Development build for ${{ matrix.board.id }}
+    name: Build for ${{ matrix.board.id }}
     permissions:
       contents: write  # for actions/upload-release-asset to upload release asset
     needs: prepare
@@ -198,7 +202,7 @@ jobs:
             -e BUILDER_UID="${BUILDER_UID}" -e BUILDER_GID="${BUILDER_GID}" \
             -v "/mnt/cache:/cache" \
             ${{ needs.prepare.outputs.build_container_image }} \
-            make BUILDDIR=/build ${{ matrix.board.defconfig }}
+            make DEPLOYMENT=${{ needs.prepare.outputs.deployment }} BUILDDIR=/build ${{ matrix.board.defconfig }}
 
       - name: Upload artifacts
         if: ${{ github.event_name != 'release' }}
@@ -233,7 +237,7 @@ jobs:
           key: haos-cc-${{ matrix.board.id }}-${{ github.run_id }}
 
   bump_version:
-    name: Bump dev channel version
+    name: Bump ${{ needs.prepare.outputs.channel }} channel version
     if: ${{ github.repository == 'home-assistant/operating-system' }}
     needs: [ build, prepare ]
     runs-on: ubuntu-22.04
