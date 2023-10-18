@@ -73,7 +73,7 @@ jobs:
         with:
           name: logs
           path: |
-            lg_logs/*
+            tests/lg_logs/*
 
       - name: Archive JUnit reports
         uses: actions/upload-artifact@v3
@@ -81,12 +81,12 @@ jobs:
         with:
           name: junit_reports
           path: |
-            junit_reports/*.xml
+            tests/junit_reports/*.xml
 
       - name: Publish test report
         uses: mikepenz/action-junit-report@v4
         if: always()
         with:
-          report_paths: 'junit_reports/*.xml'
+          report_paths: 'tests/junit_reports/*.xml'
           annotate_only: true
           detailed_summary: true
