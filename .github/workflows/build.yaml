@@ -216,23 +216,6 @@ jobs:
             --include "index.json" \
             --endpoint-url ${{ secrets.R2_OS_ARTIFACTS_ENDPOINT }}
 
-      - name: Regenerate artifacts index
-        if: ${{ github.event_name != 'release' }}
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.R2_OS_ARTIFACTS_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_OS_ARTIFACTS_KEY }}
-        run: |
-          aws s3api list-objects-v2
-            --bucket "${{ secrets.R2_OS_ARTIFACTS_BUCKET }}" \
-            --endpoint-url ${{ secrets.R2_OS_ARTIFACTS_ENDPOINT }}
-            --query 'Contents[].Key' | jq 'map(split("/")[0]) | unique | sort' > index.json
-          aws s3 sync \
-            ./ \
-            s3://${{ secrets.R2_OS_ARTIFACTS_BUCKET }}/ \
-            --exclude "*" \
-            --include "index.json" \
-            --endpoint-url ${{ secrets.R2_OS_ARTIFACTS_ENDPOINT }}
-
       - name: Upload release assets
         if: ${{ github.event_name == 'release' }}
         uses: shogo82148/actions-upload-release-asset@v1
@@ -273,6 +256,23 @@ jobs:
         name: ${{ secrets.GIT_NAME }}
         email: ${{ secrets.GIT_EMAIL }}
         token: ${{ secrets.GIT_TOKEN }}
+
+    - name: Regenerate artifacts index
+      if: ${{ github.event_name != 'release' }}
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.R2_OS_ARTIFACTS_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_OS_ARTIFACTS_KEY }}
+      run: |
+        aws s3api list-objects-v2
+          --bucket "${{ secrets.R2_OS_ARTIFACTS_BUCKET }}" \
+          --endpoint-url ${{ secrets.R2_OS_ARTIFACTS_ENDPOINT }}
+          --query 'Contents[].Key' | jq 'map(split("/")[0]) | unique | sort' > index.json
+        aws s3 sync \
+          ./ \
+          s3://${{ secrets.R2_OS_ARTIFACTS_BUCKET }}/ \
+          --exclude "*" \
+          --include "index.json" \
+          --endpoint-url ${{ secrets.R2_OS_ARTIFACTS_ENDPOINT }}
 
     - name: Bump Home Assistant OS ${{ needs.prepare.outputs.channel }} channel version
       uses: home-assistant/actions/helpers/version-push@master
