@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Home Assistant OS - development builds</title>
+    </head>
+    <body>
+        <h1>Home Assistant OS - development builds</h1>
+        <select id="os-builds"></select>
+        <div id="os-builds-list"></div>
+        <script>
+            const buildSelect = document.getElementById('os-builds');
+            const osBuildsList = document.getElementById('os-builds-list');
+
+            const fillVersions = async () => {
+                try {
+                    const response = await fetch('index.json');
+                    const items = await response.json();
+                    items.reverse();
+
+                    items.forEach(buildVersion => {
+                        buildSelect.appendChild(new Option(buildVersion, buildVersion));
+                    });
+
+                    buildSelect.dispatchEvent(new Event('change'));
+                } catch (error) {
+                    console.error('Error fetching data:', error);
+                }
+            }
+
+            buildSelect.addEventListener('change', async function() {
+                osBuildsList.innerHTML = '';
+
+                const buildVersion = this.value;
+
+                try {
+                    const response = await fetch(buildVersion + '/index.json');
+                    const images = await response.json();
+
+                    const ul = document.createElement('ul');
+                    images.forEach(image => {
+                        const li = document.createElement('li');
+                        const url = "https://os-artifacts.home-assistant.io/" + buildVersion + "/" + image;
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.textContent = image;
+                        li.appendChild(a);
+                        ul.appendChild(li);
+                    });
+
+                    osBuildsList.appendChild(ul);
+                } catch (error) {
+                    console.error('Error fetching images:', error);
+                }
+            });
+
+            fillVersions();
+        </script>
+    </body>
+</html>

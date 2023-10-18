@@ -202,15 +202,35 @@ jobs:
 
       - name: Upload artifacts
         if: ${{ github.event_name != 'release' }}
+        working-directory: output/images/
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.R2_OS_ARTIFACTS_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_OS_ARTIFACTS_KEY }}
         run: |
+          ls haos_* | jq --raw-input | jq --slurp > index.json
           aws s3 sync \
-            output/images/ \
+            ./ \
             s3://${{ secrets.R2_OS_ARTIFACTS_BUCKET }}/${{ needs.prepare.outputs.version_full }}/ \
             --exclude "*" \
             --include "haos_*" \
+            --include "index.json" \
+            --endpoint-url ${{ secrets.R2_OS_ARTIFACTS_ENDPOINT }}
+
+      - name: Regenerate artifacts index
+        if: ${{ github.event_name != 'release' }}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_OS_ARTIFACTS_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_OS_ARTIFACTS_KEY }}
+        run: |
+          aws s3api list-objects-v2
+            --bucket "${{ secrets.R2_OS_ARTIFACTS_BUCKET }}" \
+            --endpoint-url ${{ secrets.R2_OS_ARTIFACTS_ENDPOINT }}
+            --query 'Contents[].Key' | jq 'map(split("/")[0]) | unique | sort' > index.json
+          aws s3 sync \
+            ./ \
+            s3://${{ secrets.R2_OS_ARTIFACTS_BUCKET }}/ \
+            --exclude "*" \
+            --include "index.json" \
             --endpoint-url ${{ secrets.R2_OS_ARTIFACTS_ENDPOINT }}
 
       - name: Upload release assets
