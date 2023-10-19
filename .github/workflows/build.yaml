@@ -274,6 +274,14 @@ jobs:
           --include "index.json" \
           --endpoint-url ${{ secrets.R2_OS_ARTIFACTS_ENDPOINT }}
 
+    - name: Flush CloudFlare cache
+      run: |
+        curl --silent --show-error --fail -X POST \
+	  "https://api.cloudflare.com/client/v4/zones/${{ secrets.CF_ZONE }}/purge_cache" \
+	  -H "Authorization: Bearer ${{ secrets.CF_TOKEN }}" \
+	  -H "Content-Type: application/json" \
+	  --data '{"files": [ "https://os-artifacts.home-assistant.io/index.json" ] }'
+
     - name: Bump Home Assistant OS ${{ needs.prepare.outputs.channel }} channel version
       uses: home-assistant/actions/helpers/version-push@master
       with:
