@@ -61,7 +61,7 @@ jobs:
 
       - name: Extract OS image
         run: |
-          unxz haos.qcow2.xz
+          xz -dc haos*.qcow2.xz > haos.qcow2
 
       - name: Run tests
         run: |
