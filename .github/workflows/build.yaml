@@ -128,7 +128,7 @@ jobs:
           push: true
 
   build:
-    name: Development build for ${{ matrix.board.id }}
+    name: Build for ${{ matrix.board.id }}
     permissions:
       contents: write  # for actions/upload-release-asset to upload release asset
     needs: prepare
@@ -241,8 +241,9 @@ jobs:
             output/images/haos_ova*.qcow2.xz
 
   bump_version:
-    name: Bump dev channel version
+    name: Bump ${{ needs.prepare.outputs.channel }} channel version
     if: ${{ github.repository == 'home-assistant/operating-system' }}
+    environment: "${{ github.event_name == 'release' && needs.prepare.outputs.channel || '' }}"
     needs: [ build, prepare ]
     runs-on: ubuntu-22.04
 
