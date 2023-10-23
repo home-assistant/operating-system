@@ -2,6 +2,8 @@
 
 set -e
 
+cd "$(dirname "$0")"
+
 if [ -z "$GITHUB_ACTIONS" ] && [ -z "$VIRTUAL_ENV" ]; then
   # Environment should be set up in separate GHA steps - which can also
   # handle caching of the dependecies, etc.
