@@ -1,5 +1,5 @@
-
 part start mmc ${devnum} hassos-bootstate mmc_env
+mmc dev ${devnum}
 
 setenv loadbootstate " \
     echo 'loading env...'; \
