@@ -128,7 +128,7 @@ jobs:
           push: true
 
   build:
-    name: Development build for ${{ matrix.board.id }}
+    name: Build for ${{ matrix.board.id }}
     permissions:
       contents: write  # for actions/upload-release-asset to upload release asset
     needs: prepare
