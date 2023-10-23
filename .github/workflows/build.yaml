@@ -243,7 +243,7 @@ jobs:
   bump_version:
     name: Bump ${{ needs.prepare.outputs.channel }} channel version
     if: ${{ github.repository == 'home-assistant/operating-system' }}
-    environment: "${{ github.event_name == 'release' && 'version_release' || '' }}"
+    environment: "${{ github.event_name == 'release' && needs.prepare.outputs.channel || '' }}"
     needs: [ build, prepare ]
     runs-on: ubuntu-22.04
 
