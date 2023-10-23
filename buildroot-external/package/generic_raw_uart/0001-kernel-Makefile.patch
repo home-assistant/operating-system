@@ -1,5 +1,7 @@
 kernel/Makefile: modification to get compile as buildroot package
 
+Upstream: Not applicable
+
 Signed-off-by: Jens Maus <mail@jens-maus.de>
 
 --- ./kernel/Makefile.orig	2020-12-14 13:09:44.406823210 +0100
