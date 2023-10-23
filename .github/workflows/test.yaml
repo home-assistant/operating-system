@@ -23,9 +23,6 @@ jobs:
 
     name: Test in QEMU
     runs-on: ubuntu-22.04
-    defaults:
-      run:
-        working-directory: ./tests
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
@@ -44,7 +41,7 @@ jobs:
 
       - name: Install Python requirements
         run:
-          pip install -r requirements.txt
+          pip install -r tests/requirements.txt
 
       - name: Download HAOS image
         if: ${{ github.event_name == 'workflow_dispatch' }}
@@ -61,11 +58,12 @@ jobs:
 
       - name: Extract OS image
         run: |
-          xz -dc haos*.qcow2.xz > haos.qcow2
+          xz -dc haos*.qcow2.xz > tests/haos.qcow2
+          rm haos*.qcow2.xz
 
       - name: Run tests
         run: |
-          ./run_tests.sh
+          ./tests/run_tests.sh
 
       - name: Archive logs
         uses: actions/upload-artifact@v3
