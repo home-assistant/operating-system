@@ -50,7 +50,7 @@
                 const buildVersion = this.value;
 
                 try {
-                    const response = await fetch(`/${buildVersion}/index.json`);
+                    const response = await fetch(`/indexes/${buildVersion}.json`);
                     if (!response.ok) {
                         const p = document.createElement('p');
                         p.className = "error";

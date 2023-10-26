@@ -214,12 +214,10 @@ jobs:
             --include "haos_*" \
             --endpoint-url ${{ secrets.R2_OS_ARTIFACTS_ENDPOINT }}
 
-          ls haos_* | jq --raw-input | jq --slurp > ${{ needs.prepare.outputs.version_full }}.json
-          aws s3 sync \
-            ./ \
+          ls haos_* | jq --raw-input | jq --slurp > "${{ needs.prepare.outputs.version_full }}.json"
+          aws s3 cp \
+            "${{ needs.prepare.outputs.version_full }}.json" \
             s3://${{ secrets.R2_OS_ARTIFACTS_BUCKET }}/indexes/ \
-            --exclude "*" \
-            --include "${{ needs.prepare.outputs.version_full }}.json" \
             --endpoint-url ${{ secrets.R2_OS_ARTIFACTS_ENDPOINT }}
 
       - name: Upload release assets
@@ -273,12 +271,10 @@ jobs:
           --bucket "${{ secrets.R2_OS_ARTIFACTS_BUCKET }}" \
           --endpoint-url "${{ secrets.R2_OS_ARTIFACTS_ENDPOINT }}" \
           --prefix "indexes/" \
-          --query 'Contents[].Key' | jq 'map(split("/")[0]) | unique | del(.[] | select(. | startswith("index"))) | sort' > index.json
-        aws s3 sync \
-          ./ \
+          --query 'Contents[].Key' | jq 'map(capture("indexes/(?<version>[[:digit:]].+).json").version) | sort' > index.json
+        aws s3 cp \
+          index.json \
           s3://${{ secrets.R2_OS_ARTIFACTS_BUCKET }}/ \
-          --exclude "*" \
-          --include "index.json" \
           --endpoint-url ${{ secrets.R2_OS_ARTIFACTS_ENDPOINT }}
 
     - name: Flush CloudFlare cache
