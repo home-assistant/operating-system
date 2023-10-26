@@ -272,7 +272,7 @@ jobs:
         aws s3api list-objects-v2 \
           --bucket "${{ secrets.R2_OS_ARTIFACTS_BUCKET }}" \
           --endpoint-url "${{ secrets.R2_OS_ARTIFACTS_ENDPOINT }}" \
-          --prefix "indexes/"
+          --prefix "indexes/" \
           --query 'Contents[].Key' | jq 'map(split("/")[0]) | unique | del(.[] | select(. | startswith("index"))) | sort' > index.json
         aws s3 sync \
           ./ \
