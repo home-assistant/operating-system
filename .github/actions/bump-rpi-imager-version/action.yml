@@ -1,0 +1,95 @@
+name: 'Bump RPi Imager OS version'
+description: 'Bump version of Home Assistant OS in RPi Imager'
+inputs:
+  version:
+    required: true
+    description: "Version of Home Assistant OS to bump to."
+  release-date:
+    required: true
+    description: "Release date as ISO 8601 date string."
+runs:
+  using: "composite"
+  steps:
+    - shell: bash
+      id: validate-input
+      env:
+        INPUTS_DATE: ${{ inputs.release-date }}
+      run: |
+        if [[ -z "$INPUTS_DATE" ]] || [[ ! "$INPUTS_DATE" =~ ^([0-9]{4})-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2})Z$ ]]; then
+          echo "::error::Argument 'release-date' must be an ISO 8601 date string."
+          exit 1
+        else
+          echo "date=$(date --date=${INPUTS_DATE} +'%Y-%m-%d')" >> "$GITHUB_OUTPUT"
+        fi
+
+    - shell: bash
+      run: git clone --depth 1 https://github.com/home-assistant/version.git /tmp/version
+
+    - shell: bash
+      env:
+        INPUTS_VERSION: ${{ inputs.version }}
+      run: |
+        function bump_entry() {
+          json=$1
+          version=$2
+          release_date=$3
+          image_id=$4
+          image_name=$5
+          url="https://github.com/home-assistant/operating-system/releases/download/${version}/haos_${image_id}-${version}.img.xz"
+          temp_image=$(mktemp --suffix=.img.xz)
+          temp_out=$(mktemp)
+
+          curl -fsL -o "$temp_image" "$url"
+          image_download_size=$(stat --printf="%s" "$temp_image")
+          image_download_sha256=$(sha256sum "$temp_image" | awk '{print $1}')
+          unxz "$temp_image"
+          temp_unpacked="${temp_image%.*}"
+          extract_size=$(stat --printf="%s" "$temp_unpacked")
+          extract_sha256=$(sha256sum "$temp_unpacked" | awk '{print $1}')
+
+          entry_name="Home Assistant OS ${version} (${image_name})"
+
+            jq '
+              . as $data
+              | $data
+              | .os_list = [
+                  .os_list[]
+                  | if .name | test("Home Assistant OS .* \\(" + $image_name + "\\)") then
+                    .name = "Home Assistant OS " + $version + " (" + $image_name + ")"
+                    | .url = $url
+                    | .extract_size = ($extract_size | tonumber)
+                    | .extract_sha256 = $extract_sha256
+                    | .release_date = $release_date
+                    | .image_download_size = ($image_download_size | tonumber)
+                    | .image_download_sha256 = $image_download_sha256
+                  else .
+                  end
+                ]' \
+              --arg version "$version" \
+              --arg image_name "$image_name" \
+              --arg entry_name "$entry_name" \
+              --arg release_date "$release_date" \
+              --arg url "$url" \
+              --arg image_download_size "$image_download_size" \
+              --arg image_download_sha256 "$image_download_sha256" \
+              --arg extract_size "$extract_size" \
+              --arg extract_sha256 "$extract_sha256" \
+              "$json" > "$temp_out"
+
+          mv "$temp_out" "$json"
+          rm -rf "$temp_unpacked" "$temp_out"
+        }
+
+        bump_entry /tmp/version/rpi-imager-haos.json "$INPUTS_VERSION" "${{ steps.validate-input.outputs.date }}" "rpi3-64" "RPi 3"
+        bump_entry /tmp/version/rpi-imager-haos.json "$INPUTS_VERSION" "${{ steps.validate-input.outputs.date }}" "rpi4-64" "RPi 4/400"
+
+    - shell: bash
+      env:
+        INPUTS_VERSION: ${{ inputs.version }}
+      run: |
+        cd /tmp/version
+        git commit -am "Bump Home Assistant OS to ${INPUTS_VERSION} for RPi Imager"
+        git push
+
+    - shell: bash
+      run: rm -rf /tmp/version
