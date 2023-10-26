@@ -271,9 +271,9 @@ jobs:
           --bucket "${{ secrets.R2_OS_ARTIFACTS_BUCKET }}" \
           --endpoint-url "${{ secrets.R2_OS_ARTIFACTS_ENDPOINT }}" \
           --prefix "indexes/" \
-          --query 'Contents[].Key' | jq 'map(capture("indexes/(?<version>[[:digit:]].+).json").version) | sort' > index.json
-        aws s3 cp \
-          index.json \
+          --query 'Contents[].Key' | jq 'map(capture("indexes/(?<version>[[:digit:]].+).json").version) | sort' > .github/os-artifacts/index.json
+        aws s3 sync \
+          .github/os-artifacts/ \
           s3://${{ secrets.R2_OS_ARTIFACTS_BUCKET }}/ \
           --endpoint-url ${{ secrets.R2_OS_ARTIFACTS_ENDPOINT }}
 
@@ -283,7 +283,10 @@ jobs:
 	  "https://api.cloudflare.com/client/v4/zones/${{ secrets.CF_ZONE }}/purge_cache" \
 	  -H "Authorization: Bearer ${{ secrets.CF_TOKEN }}" \
 	  -H "Content-Type: application/json" \
-	  --data '{"files": [ "https://os-artifacts.home-assistant.io/index.json" ] }'
+	  --data '{"files": [
+            "https://os-artifacts.home-assistant.io/index.html",
+            "https://os-artifacts.home-assistant.io/index.json"
+          ] }'
 
     - name: Bump Home Assistant OS ${{ needs.prepare.outputs.channel }} channel version
       uses: home-assistant/actions/helpers/version-push@master
