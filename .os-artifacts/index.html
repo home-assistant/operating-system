@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Home Assistant OS - development builds</title>
+        <link rel="shortcut icon" href="https://brands.home-assistant.io/homeassistant/icon.png">
+        <style>
+            body {
+                font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+            }
+
+            .error {
+                color: maroon;
+            }
+            </style>
+    </head>
+    <body>
+        <h1>Home Assistant OS - development builds</h1>
+        <select id="os-builds"></select>
+        <div id="os-builds-list"></div>
+        <script>
+            const buildSelect = document.getElementById('os-builds');
+            const osBuildsList = document.getElementById('os-builds-list');
+
+            const fillVersions = async () => {
+                try {
+                    const response = await fetch('/index.json');
+                    if (!response.ok) {
+                        const p = document.createElement('p');
+                        p.className = "error";
+                        p.textContent = "Could not load version index file.";
+                        osBuildsList.appendChild(p);
+                        return;
+                    }
+                    const items = await response.json();
+                    items.reverse();
+
+                    items.forEach(buildVersion => {
+                        buildSelect.appendChild(new Option(buildVersion, buildVersion));
+                    });
+
+                    buildSelect.dispatchEvent(new Event('change'));
+                } catch (error) {
+                    console.error('Error fetching data:', error);
+                }
+            }
+
+            buildSelect.addEventListener('change', async function() {
+                osBuildsList.innerHTML = '';
+
+                const buildVersion = this.value;
+
+                try {
+                    const response = await fetch(`/indexes/${buildVersion}.json`);
+                    if (!response.ok) {
+                        const p = document.createElement('p');
+                        p.className = "error";
+                        p.textContent = `Could not load index file for version ${buildVersion}.`;
+                        osBuildsList.appendChild(p);
+                        return;
+                    }
+                    const images = await response.json();
+
+                    const ul = document.createElement('ul');
+                    images.forEach(image => {
+                        const li = document.createElement('li');
+                        const a = document.createElement('a');
+                        a.href =`/${buildVersion}/${image}`;
+                        a.textContent = image;
+                        li.appendChild(a);
+                        ul.appendChild(li);
+                    });
+
+                    osBuildsList.appendChild(ul);
+                } catch (error) {
+                    console.error('Error fetching images:', error);
+                }
+            });
+
+            fillVersions();
+        </script>
+    </body>
+</html>

@@ -202,15 +202,22 @@ jobs:
 
       - name: Upload artifacts
         if: ${{ github.event_name != 'release' }}
+        working-directory: output/images/
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.R2_OS_ARTIFACTS_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_OS_ARTIFACTS_KEY }}
         run: |
           aws s3 sync \
-            output/images/ \
+            ./ \
             s3://${{ secrets.R2_OS_ARTIFACTS_BUCKET }}/${{ needs.prepare.outputs.version_full }}/ \
             --exclude "*" \
             --include "haos_*" \
+            --endpoint-url ${{ secrets.R2_OS_ARTIFACTS_ENDPOINT }}
+
+          ls haos_* | jq --raw-input | jq --slurp > "${{ needs.prepare.outputs.version_full }}.json"
+          aws s3 cp \
+            "${{ needs.prepare.outputs.version_full }}.json" \
+            s3://${{ secrets.R2_OS_ARTIFACTS_BUCKET }}/indexes/ \
             --endpoint-url ${{ secrets.R2_OS_ARTIFACTS_ENDPOINT }}
 
       - name: Upload release assets
@@ -254,6 +261,33 @@ jobs:
         name: ${{ secrets.GIT_NAME }}
         email: ${{ secrets.GIT_EMAIL }}
         token: ${{ secrets.GIT_TOKEN }}
+
+    - name: Regenerate artifacts index
+      if: ${{ github.event_name != 'release' }}
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.R2_OS_ARTIFACTS_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_OS_ARTIFACTS_KEY }}
+      run: |
+        aws s3api list-objects-v2 \
+          --bucket "${{ secrets.R2_OS_ARTIFACTS_BUCKET }}" \
+          --endpoint-url "${{ secrets.R2_OS_ARTIFACTS_ENDPOINT }}" \
+          --prefix "indexes/" \
+          --query 'Contents[].Key' | jq 'map(capture("indexes/(?<version>[[:digit:]].+).json").version) | sort' > .os-artifacts/index.json
+        aws s3 sync \
+          .os-artifacts/ \
+          s3://${{ secrets.R2_OS_ARTIFACTS_BUCKET }}/ \
+          --endpoint-url ${{ secrets.R2_OS_ARTIFACTS_ENDPOINT }}
+
+    - name: Flush CloudFlare cache
+      run: |
+        curl --silent --show-error --fail -X POST \
+	  "https://api.cloudflare.com/client/v4/zones/${{ secrets.CF_ZONE }}/purge_cache" \
+	  -H "Authorization: Bearer ${{ secrets.CF_TOKEN }}" \
+	  -H "Content-Type: application/json" \
+	  --data '{"files": [
+            "https://os-artifacts.home-assistant.io/index.html",
+            "https://os-artifacts.home-assistant.io/index.json"
+          ] }'
 
     - name: Bump Home Assistant OS ${{ needs.prepare.outputs.channel }} channel version
       uses: home-assistant/actions/helpers/version-push@master
