@@ -271,9 +271,9 @@ jobs:
           --bucket "${{ secrets.R2_OS_ARTIFACTS_BUCKET }}" \
           --endpoint-url "${{ secrets.R2_OS_ARTIFACTS_ENDPOINT }}" \
           --prefix "indexes/" \
-          --query 'Contents[].Key' | jq 'map(capture("indexes/(?<version>[[:digit:]].+).json").version) | sort' > .github/os-artifacts/index.json
+          --query 'Contents[].Key' | jq 'map(capture("indexes/(?<version>[[:digit:]].+).json").version) | sort' > .os-artifacts/index.json
         aws s3 sync \
-          .github/os-artifacts/ \
+          .os-artifacts/ \
           s3://${{ secrets.R2_OS_ARTIFACTS_BUCKET }}/ \
           --endpoint-url ${{ secrets.R2_OS_ARTIFACTS_ENDPOINT }}
 
