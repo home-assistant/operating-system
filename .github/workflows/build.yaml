@@ -262,3 +262,10 @@ jobs:
         key-description: "Home Assistant OS"
         version: ${{ needs.prepare.outputs.version_full }}
         channel: ${{ needs.prepare.outputs.channel }}
+
+    - name: Bump stable Home Assistant version for RPi Imager
+      if: ${{ github.event_name == 'release' && needs.prepare.outputs.channel == 'stable' }}
+      uses: "./.github/actions/bump-rpi-imager-version"
+      with:
+        version: ${{ needs.prepare.outputs.version_full }}
+        release-date: ${{ github.event.release.published_at }}
