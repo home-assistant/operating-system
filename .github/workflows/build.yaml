@@ -178,13 +178,7 @@ jobs:
           sudo mkdir /mnt/cache
           sudo chown -R runner:runner /mnt/cache
 
-      - name: Cache downloads
-        uses: actions/cache/restore@v3
-        with:
-          path: /mnt/cache/dl
-          key: haos-dl
-
-      - name: Cache object files
+      - name: "Restore cache: object files"
         uses: actions/cache/restore@v3
         with:
           path: /mnt/cache/cc
@@ -227,13 +221,8 @@ jobs:
           upload_url: ${{ github.event.release.upload_url }}
           asset_path: output/images/haos_*
 
-      - name: Cache downloads
-        uses: actions/cache/save@v3
-        with:
-          path: /mnt/cache/dl
-          key: haos-dl-${{ github.run_id }}
-
-      - name: Cache build
+      - name: "Save cache: object files"
+        if: github.ref == 'refs/heads/dev'
         uses: actions/cache/save@v3
         with:
           path: /mnt/cache/cc
