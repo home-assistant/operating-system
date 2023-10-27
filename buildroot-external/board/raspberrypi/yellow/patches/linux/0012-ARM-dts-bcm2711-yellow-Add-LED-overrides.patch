@@ -1,7 +1,7 @@
-From b8640b0861e289e98af98a0f8b6861af6d2a2fd7 Mon Sep 17 00:00:00 2001
-Message-Id: <b8640b0861e289e98af98a0f8b6861af6d2a2fd7.1677499716.git.stefan@agner.ch>
-In-Reply-To: <f0292972b38d512fce48384ebbb72b2da46f03bd.1677499716.git.stefan@agner.ch>
-References: <f0292972b38d512fce48384ebbb72b2da46f03bd.1677499716.git.stefan@agner.ch>
+From 17feb0a73ace80468b64cf52991a5b91e224a4f9 Mon Sep 17 00:00:00 2001
+Message-ID: <17feb0a73ace80468b64cf52991a5b91e224a4f9.1698393299.git.stefan@agner.ch>
+In-Reply-To: <808c5caa6bdefaadf7c63d9fb5c18c33dc1fe5b9.1698393299.git.stefan@agner.ch>
+References: <808c5caa6bdefaadf7c63d9fb5c18c33dc1fe5b9.1698393299.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Sat, 30 Jul 2022 11:21:31 +0200
 Subject: [PATCH] ARM: dts: bcm2711: yellow: Add LED overrides
@@ -64,5 +64,5 @@ index fa2b96e31a4f..f7fdf8bbb395 100644
  		eth_led1 = <&phy1>,"led-modes:4";
  
 -- 
-2.39.1
+2.42.0
 

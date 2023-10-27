@@ -1,7 +1,7 @@
-From e12a021cbc1c474580d68e3593ce86d10ffc0232 Mon Sep 17 00:00:00 2001
-Message-Id: <e12a021cbc1c474580d68e3593ce86d10ffc0232.1677499716.git.stefan@agner.ch>
-In-Reply-To: <f0292972b38d512fce48384ebbb72b2da46f03bd.1677499716.git.stefan@agner.ch>
-References: <f0292972b38d512fce48384ebbb72b2da46f03bd.1677499716.git.stefan@agner.ch>
+From aa2d31d8148440ca6e981c9793695dea056baeff Mon Sep 17 00:00:00 2001
+Message-ID: <aa2d31d8148440ca6e981c9793695dea056baeff.1698393299.git.stefan@agner.ch>
+In-Reply-To: <808c5caa6bdefaadf7c63d9fb5c18c33dc1fe5b9.1698393299.git.stefan@agner.ch>
+References: <808c5caa6bdefaadf7c63d9fb5c18c33dc1fe5b9.1698393299.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Thu, 4 Mar 2021 14:44:23 +0100
 Subject: [PATCH] ARM: dts: bcm2711: yellow: Mux debug UART5
@@ -46,5 +46,5 @@ index fa93ab5ca639..cc7e7b28ffc7 100644
  
  	aliases {
 -- 
-2.39.1
+2.42.0
 
