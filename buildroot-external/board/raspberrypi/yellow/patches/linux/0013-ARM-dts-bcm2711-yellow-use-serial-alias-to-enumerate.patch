@@ -1,7 +1,7 @@
-From 60e2cd5b6747992f47feef0ee36e2d0d80706c18 Mon Sep 17 00:00:00 2001
-Message-Id: <60e2cd5b6747992f47feef0ee36e2d0d80706c18.1685523528.git.stefan@agner.ch>
-In-Reply-To: <f0292972b38d512fce48384ebbb72b2da46f03bd.1685523528.git.stefan@agner.ch>
-References: <f0292972b38d512fce48384ebbb72b2da46f03bd.1685523528.git.stefan@agner.ch>
+From 4b9ccb624cb498b63475662c041c3efc4b230731 Mon Sep 17 00:00:00 2001
+Message-ID: <4b9ccb624cb498b63475662c041c3efc4b230731.1698393299.git.stefan@agner.ch>
+In-Reply-To: <808c5caa6bdefaadf7c63d9fb5c18c33dc1fe5b9.1698393299.git.stefan@agner.ch>
+References: <808c5caa6bdefaadf7c63d9fb5c18c33dc1fe5b9.1698393299.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Wed, 31 May 2023 10:57:43 +0200
 Subject: [PATCH] ARM: dts: bcm2711: yellow: use serial alias to enumerate
@@ -42,5 +42,5 @@ index f7fdf8bbb395..b8f0bc2df062 100644
  		mmc1 = &mmcnr;
  		mmc2 = &sdhost;
 -- 
-2.40.1
+2.42.0
 

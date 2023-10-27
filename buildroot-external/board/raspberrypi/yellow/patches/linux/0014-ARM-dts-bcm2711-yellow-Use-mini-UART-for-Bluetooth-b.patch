@@ -1,7 +1,7 @@
-From 51e62f1491c1fce95541008d29d154e4ae117a22 Mon Sep 17 00:00:00 2001
-Message-Id: <51e62f1491c1fce95541008d29d154e4ae117a22.1685609747.git.stefan@agner.ch>
-In-Reply-To: <f0292972b38d512fce48384ebbb72b2da46f03bd.1685609747.git.stefan@agner.ch>
-References: <f0292972b38d512fce48384ebbb72b2da46f03bd.1685609747.git.stefan@agner.ch>
+From a26f2b40904ce7b6ac96de951fdf40035877fce4 Mon Sep 17 00:00:00 2001
+Message-ID: <a26f2b40904ce7b6ac96de951fdf40035877fce4.1698393299.git.stefan@agner.ch>
+In-Reply-To: <808c5caa6bdefaadf7c63d9fb5c18c33dc1fe5b9.1698393299.git.stefan@agner.ch>
+References: <808c5caa6bdefaadf7c63d9fb5c18c33dc1fe5b9.1698393299.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Thu, 1 Jun 2023 10:22:12 +0200
 Subject: [PATCH] ARM: dts: bcm2711: yellow: Use mini-UART for Bluetooth by
@@ -75,5 +75,5 @@ index b8f0bc2df062..78e61e628d66 100644
  		brcm,pins = <0 1>;
  		brcm,function = <BCM2835_FSEL_ALT4>;
 -- 
-2.40.1
+2.42.0
 

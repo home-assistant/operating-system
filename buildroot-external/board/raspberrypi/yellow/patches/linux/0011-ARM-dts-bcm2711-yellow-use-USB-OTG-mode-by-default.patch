@@ -1,7 +1,7 @@
-From 36e8909a2dbfb10fc34df9f606ff3f7f612027f3 Mon Sep 17 00:00:00 2001
-Message-Id: <36e8909a2dbfb10fc34df9f606ff3f7f612027f3.1677499716.git.stefan@agner.ch>
-In-Reply-To: <f0292972b38d512fce48384ebbb72b2da46f03bd.1677499716.git.stefan@agner.ch>
-References: <f0292972b38d512fce48384ebbb72b2da46f03bd.1677499716.git.stefan@agner.ch>
+From cd5035e6a9105967200b46876ab35aca26cfa958 Mon Sep 17 00:00:00 2001
+Message-ID: <cd5035e6a9105967200b46876ab35aca26cfa958.1698393299.git.stefan@agner.ch>
+In-Reply-To: <808c5caa6bdefaadf7c63d9fb5c18c33dc1fe5b9.1698393299.git.stefan@agner.ch>
+References: <808c5caa6bdefaadf7c63d9fb5c18c33dc1fe5b9.1698393299.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Tue, 26 Jul 2022 15:53:59 +0200
 Subject: [PATCH] ARM: dts: bcm2711: yellow: use USB OTG mode by default
@@ -28,5 +28,5 @@ index 11da9ec9b828..fa2b96e31a4f 100644
  	g-rx-fifo-size = <558>;
  	g-tx-fifo-size = <512 512 512 512 512 256 256>;
 -- 
-2.39.1
+2.42.0
 

@@ -1,7 +1,7 @@
-From e83a7bddbe8981c96837b0258f07230e1a93e907 Mon Sep 17 00:00:00 2001
-Message-Id: <e83a7bddbe8981c96837b0258f07230e1a93e907.1677499716.git.stefan@agner.ch>
-In-Reply-To: <f0292972b38d512fce48384ebbb72b2da46f03bd.1677499716.git.stefan@agner.ch>
-References: <f0292972b38d512fce48384ebbb72b2da46f03bd.1677499716.git.stefan@agner.ch>
+From da56dbf0ce913c49bde27bd9196e68a4a2c38d66 Mon Sep 17 00:00:00 2001
+Message-ID: <da56dbf0ce913c49bde27bd9196e68a4a2c38d66.1698393299.git.stefan@agner.ch>
+In-Reply-To: <808c5caa6bdefaadf7c63d9fb5c18c33dc1fe5b9.1698393299.git.stefan@agner.ch>
+References: <808c5caa6bdefaadf7c63d9fb5c18c33dc1fe5b9.1698393299.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Thu, 4 Mar 2021 17:19:01 +0100
 Subject: [PATCH] ARM: dts: bcm2711: yellow: add I2S audio codec
@@ -63,5 +63,5 @@ index 72f437f4e81a..8ca65c696531 100644
  	pinctrl-names = "default";
  	pinctrl-0 = <&audio_pins>;
 -- 
-2.39.1
+2.42.0
 

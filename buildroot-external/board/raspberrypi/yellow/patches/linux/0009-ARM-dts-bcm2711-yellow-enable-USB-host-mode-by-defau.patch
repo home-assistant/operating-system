@@ -1,7 +1,7 @@
-From d9881c68f4263460ec2eee718ce8e2b3ed3eea9a Mon Sep 17 00:00:00 2001
-Message-Id: <d9881c68f4263460ec2eee718ce8e2b3ed3eea9a.1677499716.git.stefan@agner.ch>
-In-Reply-To: <f0292972b38d512fce48384ebbb72b2da46f03bd.1677499716.git.stefan@agner.ch>
-References: <f0292972b38d512fce48384ebbb72b2da46f03bd.1677499716.git.stefan@agner.ch>
+From 0a2890e4584562471b2568220605bbc35604b17d Mon Sep 17 00:00:00 2001
+Message-ID: <0a2890e4584562471b2568220605bbc35604b17d.1698393299.git.stefan@agner.ch>
+In-Reply-To: <808c5caa6bdefaadf7c63d9fb5c18c33dc1fe5b9.1698393299.git.stefan@agner.ch>
+References: <808c5caa6bdefaadf7c63d9fb5c18c33dc1fe5b9.1698393299.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Fri, 7 Jan 2022 17:10:00 +0100
 Subject: [PATCH] ARM: dts: bcm2711: yellow: enable USB host mode by default
@@ -35,5 +35,5 @@ index e867da211c9f..3866192a6f47 100644
  	led-modes = <0x00 0x08>; /* link/activity link */
  };
 -- 
-2.39.1
+2.42.0
 

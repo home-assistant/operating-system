@@ -1,7 +1,7 @@
-From d5f3fd27c65fb9ce56184f49c3001f2ef86f4e88 Mon Sep 17 00:00:00 2001
-Message-Id: <d5f3fd27c65fb9ce56184f49c3001f2ef86f4e88.1677499716.git.stefan@agner.ch>
-In-Reply-To: <f0292972b38d512fce48384ebbb72b2da46f03bd.1677499716.git.stefan@agner.ch>
-References: <f0292972b38d512fce48384ebbb72b2da46f03bd.1677499716.git.stefan@agner.ch>
+From f9291af2fba355e8ce432e5530adde568b51f9e6 Mon Sep 17 00:00:00 2001
+Message-ID: <f9291af2fba355e8ce432e5530adde568b51f9e6.1698393299.git.stefan@agner.ch>
+In-Reply-To: <808c5caa6bdefaadf7c63d9fb5c18c33dc1fe5b9.1698393299.git.stefan@agner.ch>
+References: <808c5caa6bdefaadf7c63d9fb5c18c33dc1fe5b9.1698393299.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Wed, 27 Apr 2022 20:36:19 +0200
 Subject: [PATCH] ARM: dts: bcm2711: yellow: use generic activity trigger for
@@ -29,5 +29,5 @@ index 3866192a6f47..11da9ec9b828 100644
  	};
  
 -- 
-2.39.1
+2.42.0
 
