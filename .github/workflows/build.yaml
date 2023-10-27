@@ -262,6 +262,16 @@ jobs:
         email: ${{ secrets.GIT_EMAIL }}
         token: ${{ secrets.GIT_TOKEN }}
 
+    - name: Setup Python version ${{ env.PYTHON_VERSION }}
+      if: ${{ github.event_name != 'release' }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+
+    - name: Install AWS CLI
+      if: ${{ github.event_name != 'release' }}
+      run: pip install awscli
+
     - name: Regenerate artifacts index
       if: ${{ github.event_name != 'release' }}
       env:
