@@ -232,7 +232,7 @@ jobs:
         run: |
           echo "Cache size: $(du -sh /mnt/cache/cc)"
           echo "Files total: $(find /mnt/cache/cc -mindepth 1 -type f | wc -l)"
-          echo "Old files: $(find /mnt/cache/cc -mindepth 1 -type f -not -anewer output/ | wc -l)"
+          echo "Old files: $(find /mnt/cache/cc -mindepth 1 -type f -not -anewer output/Makefile | wc -l)"
 
       - name: Upload ova image to artifacts for test job
         uses: actions/upload-artifact@v3
