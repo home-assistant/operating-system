@@ -255,6 +255,11 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
+    - name: Checkout source
+      uses: actions/checkout@v4
+      with:
+        persist-credentials: false
+
     - name: Initialize git
       uses: home-assistant/actions/helpers/git-init@master
       with:
