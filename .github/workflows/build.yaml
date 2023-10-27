@@ -228,6 +228,12 @@ jobs:
           path: /mnt/cache/cc
           key: haos-cc-${{ matrix.board.id }}-${{ github.run_id }}
 
+      - name: Print cache stats
+        run: |
+          echo "Cache size: $(du -sh /mnt/cache/cc)"
+          echo "Files total: $(find /mnt/cache/cc -mindepth 1 -type f | wc -l)"
+          echo "Old files: $(find /mnt/cache/cc -mindepth 1 -type f -not -anewer output/ | wc -l)"
+
       - name: Upload ova image to artifacts for test job
         uses: actions/upload-artifact@v3
         if: ${{ matrix.board.id == 'ova' }}
