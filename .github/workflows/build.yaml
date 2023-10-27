@@ -178,13 +178,7 @@ jobs:
           sudo mkdir /mnt/cache
           sudo chown -R runner:runner /mnt/cache
 
-      - name: Cache downloads
-        uses: actions/cache/restore@v3
-        with:
-          path: /mnt/cache/dl
-          key: haos-dl
-
-      - name: Cache object files
+      - name: "Restore cache: object files"
         uses: actions/cache/restore@v3
         with:
           path: /mnt/cache/cc
@@ -227,17 +221,18 @@ jobs:
           upload_url: ${{ github.event.release.upload_url }}
           asset_path: output/images/haos_*
 
-      - name: Cache downloads
-        uses: actions/cache/save@v3
-        with:
-          path: /mnt/cache/dl
-          key: haos-dl-${{ github.run_id }}
-
-      - name: Cache build
+      - name: "Save cache: object files"
+        if: github.ref == 'refs/heads/dev'
         uses: actions/cache/save@v3
         with:
           path: /mnt/cache/cc
           key: haos-cc-${{ matrix.board.id }}-${{ github.run_id }}
+
+      - name: Print cache stats
+        run: |
+          echo "Cache size: $(du -sh /mnt/cache/cc)"
+          echo "Files total: $(find /mnt/cache/cc -mindepth 1 -type f | wc -l)"
+          echo "Old files: $(find /mnt/cache/cc -mindepth 1 -type f -not -anewer output/Makefile | wc -l)"
 
       - name: Upload ova image to artifacts for test job
         uses: actions/upload-artifact@v3
