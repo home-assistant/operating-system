@@ -292,7 +292,7 @@ jobs:
       run: |
         curl --silent --show-error --fail -X POST \
           "https://api.cloudflare.com/client/v4/zones/${{ secrets.CF_ZONE }}/purge_cache" \
-          -H "Authorization: Bearer ${{ secrets.CF_TOKEN }}" \
+          -H "Authorization: Bearer ${{ secrets.CF_PURGE_TOKEN }}" \
           -H "Content-Type: application/json" \
           --data '{"files": [
             "https://os-artifacts.home-assistant.io/index.html",
