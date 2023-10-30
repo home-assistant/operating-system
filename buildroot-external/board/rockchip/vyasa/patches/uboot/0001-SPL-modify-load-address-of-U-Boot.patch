@@ -1,0 +1,28 @@
+From c84863edcd44b322fbfa36f10b3fc33bd49f1d6a Mon Sep 17 00:00:00 2001
+From: Michael Trimarchi <michael@amarulasolutions.com>
+Date: Thu, 26 Oct 2023 00:11:35 +0200
+Subject: [PATCH] SPL: modify load address of U-Boot
+
+Default load address of U-Boot is at sector 16384, which is where HAOS
+has its first partition. Use 0x2000 (8192) instead.
+
+Signed-off-by: Michael Trimarchi <michael@amarulasolutions.com>
+---
+ configs/vyasa-rk3288_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/configs/vyasa-rk3288_defconfig b/configs/vyasa-rk3288_defconfig
+index f503cc1..e7d70bd 100644
+--- a/configs/vyasa-rk3288_defconfig
++++ b/configs/vyasa-rk3288_defconfig
+@@ -29,6 +29,7 @@ CONFIG_SPL_NO_BSS_LIMIT=y
+ CONFIG_SPL_STACK=0xff718000
+ CONFIG_SPL_STACK_R=y
+ CONFIG_SPL_STACK_R_MALLOC_SIMPLE_LEN=0x2000
++CONFIG_SYS_MMCSD_RAW_MODE_U_BOOT_SECTOR=0x2000
+ CONFIG_SPL_OS_BOOT=y
+ CONFIG_SYS_SPL_ARGS_ADDR=0xffe5000
+ CONFIG_SPL_FALCON_BOOT_MMCSD=y
+-- 
+2.40.1
+

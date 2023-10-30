@@ -19,6 +19,8 @@ The following boards/devices are supported:
   - [ODROID-XU4](https://www.hardkernel.com/shop/odroid-xu4-special-price/)
 - Asus
   - [Tinker Board](https://tinker-board.asus.com/product/tinker-board.html)
+- Amarula
+  - [Vyasa Board](https://wiki.amarulasolutions.com/bsp/rockchip/rk3288/vyasa.html)
 - Generic x86-64 (UEFI, not suited for virtualization)
   - [Intel NUC5CPYH](https://www.intel.com/content/www/us/en/products/sku/85254/intel-nuc-kit-nuc5cpyh/specifications.html)
   - [Intel NUC6CAYH](https://www.intel.com/content/www/us/en/products/sku/95062/intel-nuc-kit-nuc6cayh/specifications.html)
@@ -52,3 +54,4 @@ Notes:
 |Tinker Board  |`make tinker`        |[tinker](../../buildroot-external/configs/tinker_defconfig)|[asus](./rockchip/)|
 |Generic x86-64|`make generic_x86_64`|[generic_x86_64](../../buildroot-external/configs/generic_x86_64_defconfig)|[generic-x86-64](./generic-x86-64/)|
 |OVA           |`make ova`           |[ova](../../buildroot-external/configs/ova_defconfig)|[ova](./ova/)|
+]Vyasa Board   |`make vyasa`         |[vyasa](../../buildroot-external/configs/vyasa_defconfig)|[vyasa](./rockchip)|

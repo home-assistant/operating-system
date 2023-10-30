@@ -4,11 +4,17 @@
 function hassos_pre_image() {
     local BOOT_DATA="$(path_boot_dir)"
     local SPL_IMG="$(path_spl_img)"
+    local BOARDS_DTB
+
+    if [ "x${BOARD_ID}" = "xtinker" ]; then
+        BOARDS_DTB="${BINARIES_DIR}/rk3288-tinker.dtb ${BINARIES_DIR}/rk3288-tinker-s.dtb"
+    elif [ "x${BOARD_ID}" = "xvyasa" ]; then
+        BOARDS_DTB="${BINARIES_DIR}/rk3288-vyasa.dtb"
+    fi
 
     cp -t "${BOOT_DATA}" \
         "${BINARIES_DIR}/boot.scr" \
-        "${BINARIES_DIR}/rk3288-tinker.dtb" \
-        "${BINARIES_DIR}/rk3288-tinker-s.dtb"
+        "${BOARDS_DTB}"
 
     mkdir -p "${BOOT_DATA}/overlays"
     cp "${BINARIES_DIR}"/*.dtbo "${BOOT_DATA}/overlays/"
