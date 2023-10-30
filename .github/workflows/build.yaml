@@ -312,6 +312,15 @@ jobs:
         version: ${{ needs.prepare.outputs.version_full }}
         channel: ${{ needs.prepare.outputs.channel }}
 
+    - name: Bump Home Assistant OS beta channel version on stable release
+      if: ${{ needs.prepare.outputs.channel == 'stable' }}
+      uses: home-assistant/actions/helpers/version-push@master
+      with:
+        key: "hassos[]"
+        key-description: "Home Assistant OS"
+        version: ${{ needs.prepare.outputs.version_full }}
+        channel: beta
+
     - name: Bump stable Home Assistant version for RPi Imager
       if: ${{ github.event_name == 'release' && needs.prepare.outputs.channel == 'stable' }}
       uses: "./.github/actions/bump-rpi-imager-version"
