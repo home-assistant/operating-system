@@ -2,6 +2,7 @@ name: Test HAOS image
 run-name: "Test HAOS ${{ inputs.version || format('(OS build #{0})', github.event.workflow_run.run_number) }}"
 
 on:
+  # Manual test of specified version
   workflow_dispatch:
     inputs:
       version:
@@ -9,10 +10,8 @@ on:
         required: true
         type: string
 
-  workflow_run:
-    workflows: ["OS build"]  # must be in sync with build workflow `name`
-    types:
-      - completed
+  # Called by other workflows (e.g. build.yaml)
+  workflow_call:
 
 jobs:
   test:
@@ -49,11 +48,9 @@ jobs:
           curl -sfL -o haos.qcow2.xz  https://os-artifacts.home-assistant.io/${{github.event.inputs.version}}/haos_ova-${{github.event.inputs.version}}.qcow2.xz
 
       - name: Get OS image artifact
-        if: ${{ github.event_name == 'workflow_run' }}
-        uses: dawidd6/action-download-artifact@v2
+        if: ${{ github.event_name == 'workflow_call' }}
+        uses: actions/download-artifact@v3
         with:
-          workflow: build.yaml
-          workflow_conclusion: success
           name: ova-image
 
       - name: Extract OS image
