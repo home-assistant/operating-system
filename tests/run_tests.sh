@@ -13,4 +13,4 @@ if [ -z "$GITHUB_ACTIONS" ] && [ -z "$VIRTUAL_ENV" ]; then
   pip3 install -r requirements.txt
 fi
 
-pytest --lg-env qemu-strategy.yaml --lg-log=lg_logs --junitxml=junit_reports/smoke_test.xml smoke_test
+pytest --lg-env qemu-strategy.yaml --lg-log=lg_logs --junitxml=junit_reports/tests.xml "$@"

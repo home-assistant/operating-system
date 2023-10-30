@@ -68,7 +68,7 @@ jobs:
         with:
           name: logs
           path: |
-            tests/lg_logs/*
+            tests/lg_logs/**
 
       - name: Archive JUnit reports
         uses: actions/upload-artifact@v3

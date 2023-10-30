@@ -1,6 +1,21 @@
+import json
+import logging
 import os
 
+from labgrid.driver import ShellDriver
 import pytest
+
+
+logger = logging.getLogger(__name__)
+
+
+@pytest.fixture(autouse=True, scope="module")
+def restart_qemu(strategy):
+    """Use fresh QEMU instance for each module."""
+    if strategy.status.name == "shell":
+        logger.info("Restarting QEMU before %s module tests.", strategy.target.name)
+        strategy.transition("off")
+        strategy.transition("shell")
 
 
 @pytest.hookimpl
@@ -11,11 +26,25 @@ def pytest_runtest_setup(item):
         return
 
     logging_plugin = item.config.pluginmanager.get_plugin("logging-plugin")
-    logging_plugin.set_log_path(os.path.join(log_dir, f"{item.name}.log"))
+    log_name = item.nodeid.replace(".py::", "/")
+    logging_plugin.set_log_path(os.path.join(log_dir, f"{log_name}.log"))
 
 
 @pytest.fixture
-def shell_command(target, strategy):
+def shell(target, strategy) -> ShellDriver:
+    """Fixture for accessing shell."""
     strategy.transition("shell")
     shell = target.get_driver("ShellDriver")
     return shell
+
+
+@pytest.fixture
+def shell_json(target, strategy) -> callable:
+    """Fixture for running CLI commands returning JSON string as output."""
+    strategy.transition("shell")
+    shell = target.get_driver("ShellDriver")
+
+    def get_json_response(command, *, timeout=60) -> dict:
+        return json.loads("\n".join(shell.run_check(command, timeout=timeout)))
+
+    return get_json_response
