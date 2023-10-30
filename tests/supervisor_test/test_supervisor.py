@@ -87,7 +87,7 @@ def test_update_supervisor(shell_json):
             raise AssertionError("Supervisor did not update in time")
 
 
-@pytest.mark.dependency(depends=["test_check_supervisor"])
+@pytest.mark.dependency(depends=["test_update_supervisor"])
 def test_supervisor_is_updated(shell_json):
     supervisor_info = shell_json("ha supervisor info --no-progress --raw-json", timeout=90)
     data = supervisor_info.get("data")
