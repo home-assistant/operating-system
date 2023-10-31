@@ -25,6 +25,11 @@ jobs:
     name: Build Home Assistant OS artifacts index
     runs-on: ubuntu-22.04
     steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
       - name: Setup Python version ${{ env.PYTHON_VERSION }}
         uses: actions/setup-python@v4
         with:
