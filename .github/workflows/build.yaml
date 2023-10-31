@@ -208,12 +208,6 @@ jobs:
             --include "haos_*" \
             --endpoint-url ${{ secrets.R2_OS_ARTIFACTS_ENDPOINT }}
 
-          ls haos_* | jq --raw-input | jq --slurp > "${{ needs.prepare.outputs.version_full }}.json"
-          aws s3 cp \
-            "${{ needs.prepare.outputs.version_full }}.json" \
-            s3://${{ secrets.R2_OS_ARTIFACTS_BUCKET }}/indexes/ \
-            --endpoint-url ${{ secrets.R2_OS_ARTIFACTS_ENDPOINT }}
-
       - name: Upload release assets
         if: ${{ github.event_name == 'release' }}
         uses: shogo82148/actions-upload-release-asset@v1
@@ -247,6 +241,14 @@ jobs:
     needs: [ build, prepare ]
     uses: ./.github/workflows/test.yaml
 
+  update_index:
+    name: Update artifacts index
+    if: ${{ github.event_name != 'release' }}
+    needs: [ build, prepare ]
+    uses: ./.github/workflows/artifacts-index.yaml
+    with:
+      version: ${{ needs.prepare.outputs.version_full }}
+
   bump_version:
     name: Bump ${{ needs.prepare.outputs.channel }} channel version
     if: ${{ github.repository == 'home-assistant/operating-system' }}
@@ -266,43 +268,6 @@ jobs:
         name: ${{ secrets.GIT_NAME }}
         email: ${{ secrets.GIT_EMAIL }}
         token: ${{ secrets.GIT_TOKEN }}
-
-    - name: Setup Python version ${{ env.PYTHON_VERSION }}
-      if: ${{ github.event_name != 'release' }}
-      uses: actions/setup-python@v4
-      with:
-        python-version: ${{ env.PYTHON_VERSION }}
-
-    - name: Install AWS CLI
-      if: ${{ github.event_name != 'release' }}
-      run: pip install awscli
-
-    - name: Regenerate artifacts index
-      if: ${{ github.event_name != 'release' }}
-      env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.R2_OS_ARTIFACTS_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_OS_ARTIFACTS_KEY }}
-      run: |
-        aws s3api list-objects-v2 \
-          --bucket "${{ secrets.R2_OS_ARTIFACTS_BUCKET }}" \
-          --endpoint-url "${{ secrets.R2_OS_ARTIFACTS_ENDPOINT }}" \
-          --prefix "indexes/" \
-          --query 'Contents[].Key' | jq 'map(capture("indexes/(?<version>[[:digit:]].+).json").version) | sort' > .os-artifacts/index.json
-        aws s3 sync \
-          .os-artifacts/ \
-          s3://${{ secrets.R2_OS_ARTIFACTS_BUCKET }}/ \
-          --endpoint-url ${{ secrets.R2_OS_ARTIFACTS_ENDPOINT }}
-
-    - name: Flush CloudFlare cache
-      run: |
-        curl --silent --show-error --fail -X POST \
-          "https://api.cloudflare.com/client/v4/zones/${{ secrets.CF_ZONE }}/purge_cache" \
-          -H "Authorization: Bearer ${{ secrets.CF_PURGE_TOKEN }}" \
-          -H "Content-Type: application/json" \
-          --data '{"files": [
-            "https://os-artifacts.home-assistant.io/index.html",
-            "https://os-artifacts.home-assistant.io/index.json"
-          ] }'
 
     - name: Bump Home Assistant OS ${{ needs.prepare.outputs.channel }} channel version
       uses: home-assistant/actions/helpers/version-push@master
