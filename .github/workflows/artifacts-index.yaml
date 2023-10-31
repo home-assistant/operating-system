@@ -1,0 +1,75 @@
+name: Update artifacts index
+
+on:
+  # Manual run for specified version
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Version of HAOS to build index for
+        required: true
+        type: string
+
+  # Called by other workflows (e.g. build.yaml)
+  workflow_call:
+    inputs:
+      version:
+        description: Version of HAOS to build index for
+        required: true
+        type: string
+
+env:
+  PYTHON_VERSION: "3.10"
+
+jobs:
+  build-index:
+    name: Build Home Assistant OS artifacts index
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Setup Python version ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install AWS CLI
+        run: pip install awscli
+
+      - name: Create build index
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_OS_ARTIFACTS_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_OS_ARTIFACTS_KEY }}
+        run: |
+          aws s3api list-objects-v2 \
+            --bucket "${{ secrets.R2_OS_ARTIFACTS_BUCKET }}" \
+            --endpoint-url "${{ secrets.R2_OS_ARTIFACTS_ENDPOINT }}" \
+            --prefix "${{ github.event.inputs.version }}/" \
+            --query 'Contents[].Key' | jq 'map(split("/")[1]) | sort' > "${{ github.event.inputs.version }}.json"
+          aws s3 cp \
+            "${{ github.event.inputs.version }}.json" \
+            s3://${{ secrets.R2_OS_ARTIFACTS_BUCKET }}/indexes/ \
+            --endpoint-url "${{ secrets.R2_OS_ARTIFACTS_ENDPOINT }}""
+
+      - name: Regenerate artifacts index
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_OS_ARTIFACTS_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_OS_ARTIFACTS_KEY }}
+        run: |
+          aws s3api list-objects-v2 \
+            --bucket "${{ secrets.R2_OS_ARTIFACTS_BUCKET }}" \
+            --endpoint-url "${{ secrets.R2_OS_ARTIFACTS_ENDPOINT }}" \
+            --prefix "indexes/" \
+            --query 'Contents[].Key' | jq 'map(capture("indexes/(?<version>[[:digit:]].+).json").version) | sort' > .os-artifacts/index.json
+          aws s3 sync \
+            .os-artifacts/ \
+            s3://${{ secrets.R2_OS_ARTIFACTS_BUCKET }}/ \
+            --endpoint-url "${{ secrets.R2_OS_ARTIFACTS_ENDPOINT }}" \
+
+      - name: Flush CloudFlare cache
+        run: |
+          curl --silent --show-error --fail -X POST \
+            "https://api.cloudflare.com/client/v4/zones/${{ secrets.CF_ZONE }}/purge_cache" \
+            -H "Authorization: Bearer ${{ secrets.CF_PURGE_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            --data '{"files": [
+              "https://os-artifacts.home-assistant.io/index.html",
+              "https://os-artifacts.home-assistant.io/index.json"
+            ] }'
