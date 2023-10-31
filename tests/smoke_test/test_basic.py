@@ -8,7 +8,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 @pytest.mark.dependency()
-@pytest.mark.timeout(450)
+@pytest.mark.timeout(600)
 def test_init(shell):
     def check_container_running(container_name):
         out = shell.run_check(

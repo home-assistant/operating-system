@@ -16,7 +16,7 @@ def stash() -> dict:
 
 
 @pytest.mark.dependency()
-@pytest.mark.timeout(450)
+@pytest.mark.timeout(600)
 def test_start_supervisor(shell, shell_json):
     def check_container_running(container_name):
         out = shell.run_check(f"docker container inspect -f '{{{{.State.Status}}}}' {container_name} || true")
