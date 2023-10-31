@@ -12,6 +12,13 @@ on:
 
   # Called by other workflows (e.g. build.yaml)
   workflow_call:
+    inputs:
+      use-artifact:
+        # Workaround for GH weirdness: https://github.com/actions/runner/discussions/1884
+        description: Download OS image using actions/download-artifact
+        required: false
+        type: boolean
+        default: true
 
 jobs:
   test:
@@ -43,12 +50,12 @@ jobs:
           pip install -r tests/requirements.txt
 
       - name: Download HAOS image
-        if: ${{ github.event_name == 'workflow_dispatch' }}
+        if: ${{ inputs.use-artifact }}
         run: |
           curl -sfL -o haos.qcow2.xz  https://os-artifacts.home-assistant.io/${{github.event.inputs.version}}/haos_ova-${{github.event.inputs.version}}.qcow2.xz
 
       - name: Get OS image artifact
-        if: ${{ github.event_name == 'workflow_call' }}
+        if: ${{ !inputs.use-artifact }}
         uses: actions/download-artifact@v3
         with:
           name: ova-image
