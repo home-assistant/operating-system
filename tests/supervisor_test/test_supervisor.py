@@ -16,30 +16,30 @@ def stash() -> dict:
 
 
 @pytest.mark.dependency()
+@pytest.mark.timeout(300)
 def test_start_supervisor(shell, shell_json):
     def check_container_running(container_name):
         out = shell.run_check(f"docker container inspect -f '{{{{.State.Status}}}}' {container_name} || true")
         return "running" in out
 
-    for _ in range(20):
+    while True:
         if check_container_running("homeassistant") and check_container_running("hassio_supervisor"):
             break
 
-        sleep(5)
+        sleep(1)
 
     supervisor_ip = "\n".join(
         shell.run_check("docker inspect --format='{{.NetworkSettings.IPAddress}}' hassio_supervisor")
     )
 
-    for _ in range(20):
+    while True:
         try:
             if shell_json(f"curl -sSL http://{supervisor_ip}/supervisor/ping").get("result") == "ok":
                 break
         except ExecutionError:
             pass  # avoid failure when the container is restarting
-        sleep(5)
-    else:
-        raise AssertionError("Supervisor did not start in time")
+
+        sleep(1)
 
 
 @pytest.mark.dependency(depends=["test_start_supervisor"])
@@ -55,6 +55,7 @@ def test_check_supervisor(shell_json):
 
 
 @pytest.mark.dependency(depends=["test_check_supervisor"])
+@pytest.mark.timeout(300)
 def test_update_supervisor(shell_json):
     supervisor_info = shell_json("ha supervisor info --no-progress --raw-json")
     supervisor_version = supervisor_info.get("data").get("version")
@@ -68,9 +69,9 @@ def test_update_supervisor(shell_json):
         else:
             assert result.get("result") == "ok", f"Supervisor update failed: {result}"
 
-        for _ in range(40):
+        while True:
             try:
-                supervisor_info = shell_json("ha supervisor info --no-progress --raw-json", timeout=90)
+                supervisor_info = shell_json("ha supervisor info --no-progress --raw-json")
                 data = supervisor_info.get("data")
                 if data and data.get("version") == data.get("version_latest"):
                     logger.info(
@@ -82,14 +83,13 @@ def test_update_supervisor(shell_json):
                     break
             except ExecutionError:
                 pass  # avoid failure when the container is restarting
-            sleep(5)
-        else:
-            raise AssertionError("Supervisor did not update in time")
+
+            sleep(1)
 
 
 @pytest.mark.dependency(depends=["test_update_supervisor"])
 def test_supervisor_is_updated(shell_json):
-    supervisor_info = shell_json("ha supervisor info --no-progress --raw-json", timeout=90)
+    supervisor_info = shell_json("ha supervisor info --no-progress --raw-json")
     data = supervisor_info.get("data")
     assert data and data.get("version") == data.get("version_latest")
 
@@ -98,7 +98,7 @@ def test_supervisor_is_updated(shell_json):
 def test_addon_install(shell_json):
     # install Core SSH add-on
     assert (
-        shell_json("ha addons install core_ssh --no-progress --raw-json", timeout=300).get("result") == "ok"
+        shell_json("ha addons install core_ssh --no-progress --raw-json").get("result") == "ok"
     ), "Core SSH add-on install failed"
     # check Core SSH add-on is installed
     assert (
@@ -153,6 +153,7 @@ def test_addon_uninstall(shell_json):
 
 
 @pytest.mark.dependency(depends=["test_supervisor_is_updated"])
+@pytest.mark.timeout(450)
 def test_restart_supervisor(shell, shell_json):
     result = shell_json("ha supervisor restart --no-progress --raw-json")
     assert result.get("result") == "ok", f"Supervisor restart failed: {result}"
@@ -161,24 +162,20 @@ def test_restart_supervisor(shell, shell_json):
         shell.run_check("docker inspect --format='{{.NetworkSettings.IPAddress}}' hassio_supervisor")
     )
 
-    for _ in range(100):
+    while True:
         try:
             if shell_json(f"curl -sSL http://{supervisor_ip}/supervisor/ping").get("result") == "ok":
                 if shell_json("ha os info --no-progress --raw-json").get("result") == "ok":
                     break
         except ExecutionError:
             pass  # avoid failure when the container is restarting
-        sleep(5)
-    else:
-        raise AssertionError("Supervisor did not start in time")
+
+        sleep(1)
 
 
 @pytest.mark.dependency(depends=["test_create_backup"])
 def test_restore_backup(shell_json, stash):
-    result = shell_json(
-        f"ha backups restore {stash.get('slug')} --addons core_ssh --no-progress --raw-json",
-        timeout=300,
-    )
+    result = shell_json(f"ha backups restore {stash.get('slug')} --addons core_ssh --no-progress --raw-json")
     assert result.get("result") == "ok", f"Backup restore failed: {result}"
     logger.info("Backup restore result: %s", result)
 

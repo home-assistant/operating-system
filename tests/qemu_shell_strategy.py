@@ -4,6 +4,7 @@ import os
 import attr
 
 from labgrid import target_factory, step
+from labgrid.driver import ShellDriver
 from labgrid.strategy import Strategy, StrategyError
 
 
@@ -15,12 +16,25 @@ class Status(enum.Enum):
 
 @target_factory.reg_driver
 @attr.s(eq=False)
+class CustomTimeoutShellDriver(ShellDriver):
+    """ShellDriver with a config-customizable timeout for run and run_check."""
+    command_timeout = attr.ib(default=30, validator=attr.validators.instance_of(int))
+
+    def run(self, cmd: str, *, timeout=None, codec="utf-8", decodeerrors="strict"):
+        return super().run(cmd, timeout=timeout or self.command_timeout, codec=codec, decodeerrors=decodeerrors)
+
+    def run_check(self, cmd: str, *, timeout=None, codec="utf-8", decodeerrors="strict"):
+        return super().run_check(cmd, timeout=timeout or self.command_timeout, codec=codec, decodeerrors=decodeerrors)
+
+
+@target_factory.reg_driver
+@attr.s(eq=False)
 class QEMUShellStrategy(Strategy):
     """Strategy for starting a QEMU VM and running shell commands within it."""
 
     bindings = {
         "qemu": "QEMUDriver",
-        "shell": "ShellDriver",
+        "shell": "CustomTimeoutShellDriver",
     }
 
     status = attr.ib(default=Status.unknown)

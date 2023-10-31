@@ -12,11 +12,12 @@ targets:
           nic: user,model=virtio-net-pci
           disk: disk-image
           bios: bios
-      - ShellDriver:
+      - CustomTimeoutShellDriver:
           login_prompt: 'homeassistant login: '
           username: 'root'
           prompt: '# '
           login_timeout: 300
+          command_timeout: 300
       - QEMUShellStrategy: {}
 
 tools:
