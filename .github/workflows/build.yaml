@@ -245,7 +245,7 @@ jobs:
     name: Update artifacts index
     if: ${{ github.event_name != 'release' }}
     needs: [ build, prepare ]
-    uses: ./.github/workflows/artifacts-index.yaml
+    uses: home-assistant/operating-system/.github/workflows/artifacts-index.yaml@dev
     with:
       version: ${{ needs.prepare.outputs.version_full }}
 

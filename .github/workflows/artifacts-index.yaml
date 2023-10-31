@@ -1,7 +1,7 @@
 name: Update artifacts index
 
 on:
-  # Manual test of specified version
+  # Manual run for specified version
   workflow_dispatch:
     inputs:
       version:
@@ -9,7 +9,7 @@ on:
         required: true
         type: string
 
- # Called by other workflows (e.g. build.yaml)
+  # Called by other workflows (e.g. build.yaml)
   workflow_call:
     inputs:
       version:
