@@ -87,7 +87,7 @@ def test_update_supervisor(shell_json):
             sleep(1)
 
 
-@pytest.mark.dependency(depends=["test_update_supervisor"])
+@pytest.mark.dependency(depends=["test_check_supervisor"])
 def test_supervisor_is_updated(shell_json):
     supervisor_info = shell_json("ha supervisor info --no-progress --raw-json")
     data = supervisor_info.get("data")
