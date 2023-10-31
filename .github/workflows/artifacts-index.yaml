@@ -16,6 +16,19 @@ on:
         description: Version of HAOS to build index for
         required: true
         type: string
+    secrets:
+      R2_OS_ARTIFACTS_ID:
+        required: true
+      R2_OS_ARTIFACTS_KEY:
+        required: true
+      R2_OS_ARTIFACTS_BUCKET:
+        required: true
+      R2_OS_ARTIFACTS_ENDPOINT:
+        required: true
+      CF_ZONE:
+        required: true
+      CF_PURGE_TOKEN:
+        required: true
 
 env:
   PYTHON_VERSION: "3.10"

@@ -248,6 +248,13 @@ jobs:
     uses: home-assistant/operating-system/.github/workflows/artifacts-index.yaml@dev
     with:
       version: ${{ needs.prepare.outputs.version_full }}
+    secrets:
+      R2_OS_ARTIFACTS_ID: ${{ secrets.R2_OS_ARTIFACTS_ID }}
+      R2_OS_ARTIFACTS_KEY: ${{ secrets.R2_OS_ARTIFACTS_KEY }}
+      R2_OS_ARTIFACTS_BUCKET: ${{ secrets.R2_OS_ARTIFACTS_BUCKET }}
+      R2_OS_ARTIFACTS_ENDPOINT: ${{ secrets.R2_OS_ARTIFACTS_ENDPOINT }}
+      CF_ZONE: ${{ secrets.CF_ZONE }}
+      CF_PURGE_TOKEN: ${{ secrets.CF_PURGE_TOKEN }}
 
   bump_version:
     name: Bump ${{ needs.prepare.outputs.channel }} channel version
