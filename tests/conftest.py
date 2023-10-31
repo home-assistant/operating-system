@@ -44,7 +44,7 @@ def shell_json(target, strategy) -> callable:
     strategy.transition("shell")
     shell = target.get_driver("ShellDriver")
 
-    def get_json_response(command, *, timeout=60) -> dict:
+    def get_json_response(command, *, timeout=None) -> dict:
         return json.loads("\n".join(shell.run_check(command, timeout=timeout)))
 
     return get_json_response

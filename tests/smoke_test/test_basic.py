@@ -1,10 +1,14 @@
 import logging
 from time import sleep
 
+import pytest
+
 
 _LOGGER = logging.getLogger(__name__)
 
 
+@pytest.mark.dependency()
+@pytest.mark.timeout(600)
 def test_init(shell):
     def check_container_running(container_name):
         out = shell.run_check(
@@ -13,35 +17,37 @@ def test_init(shell):
         return "running" in out
 
     # wait for important containers first
-    for _ in range(20):
+    while True:
         if check_container_running("homeassistant") and check_container_running("hassio_supervisor"):
             break
 
-        sleep(5)
+        sleep(1)
 
     # wait for system ready
-    for _ in range(20):
+    while True:
         output = "\n".join(shell.run_check("ha os info || true"))
         if "System is not ready" not in output:
             break
 
-        sleep(5)
+        sleep(1)
 
     output = shell.run_check("ha os info")
     _LOGGER.info("%s", "\n".join(output))
 
+
+@pytest.mark.dependency(depends=["test_init"])
 def test_dmesg(shell):
     output = shell.run_check("dmesg")
     _LOGGER.info("%s", "\n".join(output))
 
 
+@pytest.mark.dependency(depends=["test_init"])
 def test_supervisor_logs(shell):
     output = shell.run_check("ha su logs")
     _LOGGER.info("%s", "\n".join(output))
 
 
+@pytest.mark.dependency(depends=["test_init"])
 def test_systemctl_status(shell):
-    output = shell.run_check(
-        "systemctl --no-pager -l status -a || true", timeout=90
-    )
+    output = shell.run_check("systemctl --no-pager -l status -a || true")
     _LOGGER.info("%s", "\n".join(output))

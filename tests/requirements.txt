@@ -1,3 +1,4 @@
 labgrid==23.0.3
 pytest==7.2.2
 pytest-dependency==0.5.1
+pytest-timeout==2.2.0
