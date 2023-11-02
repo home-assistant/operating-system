@@ -89,5 +89,6 @@ jobs:
             -H "Content-Type: application/json" \
             --data '{"files": [
               "https://os-artifacts.home-assistant.io/index.html",
-              "https://os-artifacts.home-assistant.io/index.json"
+              "https://os-artifacts.home-assistant.io/index.json",
+              "https://os-artifacts.home-assistant.io/indexes/${{ github.event.inputs.version }}.json"
             ] }'
