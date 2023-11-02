@@ -219,7 +219,9 @@ jobs:
         run: |
           echo "Cache size: $(du -sh /mnt/cache/cc)"
           echo "Files total: $(find /mnt/cache/cc -mindepth 1 -type f | wc -l)"
-          echo "Old files: $(find /mnt/cache/cc -mindepth 1 -type f -not -anewer output/Makefile | wc -l)"
+          echo "Old files to remove: $(find /mnt/cache/cc -mindepth 1 -type f -not -anewer output/Makefile | wc -l)"
+          find /mnt/cache/cc -mindepth 1 -type f -not -anewer output/Makefile -delete
+          echo "Cache size after pruning: $(du -sh /mnt/cache/cc)"
 
       - name: "Save cache: object files"
         if: github.ref == 'refs/heads/dev'
