@@ -59,10 +59,10 @@ jobs:
           aws s3api list-objects-v2 \
             --bucket "${{ secrets.R2_OS_ARTIFACTS_BUCKET }}" \
             --endpoint-url "${{ secrets.R2_OS_ARTIFACTS_ENDPOINT }}" \
-            --prefix "${{ github.event.inputs.version }}/" \
-            --query 'Contents[].Key' | jq 'map(split("/")[1]) | sort' > "${{ github.event.inputs.version }}.json"
+            --prefix "${{ inputs.version }}/" \
+            --query 'Contents[].Key' | jq 'map(split("/")[1]) | sort' > "${{ inputs.version }}.json"
           aws s3 cp \
-            "${{ github.event.inputs.version }}.json" \
+            "${{ inputs.version }}.json" \
             s3://${{ secrets.R2_OS_ARTIFACTS_BUCKET }}/indexes/ \
             --endpoint-url "${{ secrets.R2_OS_ARTIFACTS_ENDPOINT }}"
 
