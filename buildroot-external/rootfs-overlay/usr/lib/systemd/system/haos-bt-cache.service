@@ -3,7 +3,7 @@ Description=Remove Bluetooth cache entries older than one week
 
 [Service]
 Type=oneshot
-ExecStart=/bin/sh -c 'find /var/lib/bluetooth/*/cache -mindepth 1 -type f -atime +7  -exec rm {} \;'
+ExecStart=/bin/sh -c 'find /var/lib/bluetooth/*/cache -mindepth 1 -type f -atime +7 -delete'
 PrivateDevices=yes
 PrivateNetwork=yes
 PrivateUsers=no
