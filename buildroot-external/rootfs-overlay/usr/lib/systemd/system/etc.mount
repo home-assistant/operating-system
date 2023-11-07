@@ -1,0 +1,14 @@
+[Unit]
+Description=/etc overlay mount
+Before=local-fs.target
+Wants=local-fs.target
+After=mnt-overlay.mount hassos-overlay.service
+
+[Mount]
+What=overlay
+Where=/etc
+Type=overlay
+Options=auto,lowerdir=/etc,upperdir=/mnt/overlay/etc/upper,workdir=/mnt/overlay/etc/workdir
+
+[Install]
+WantedBy=hassos-bind.target local-fs.target

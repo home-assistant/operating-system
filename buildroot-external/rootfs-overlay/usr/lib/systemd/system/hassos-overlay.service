@@ -10,6 +10,3 @@ After=mnt-overlay.mount
 Type=oneshot
 ExecStart=/usr/libexec/hassos-overlay
 RemainAfterExit=true
-
-[Install]
-WantedBy=local-fs.target
