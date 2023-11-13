@@ -14,7 +14,7 @@
 #
 ################################################################################
 
-RPI_RF_MOD_VERSION = bb916a6539e5e771528323135c95abad66729895
+RPI_RF_MOD_VERSION = 0ee62f7a87d26e990fb0e03b00befb505a7e44fd
 RPI_RF_MOD_SITE = $(call github,jens-maus,RaspberryMatic,$(RPI_RF_MOD_VERSION))
 RPI_RF_MOD_LICENSE = Apache-2.0
 RPI_RF_MOD_LICENSE_FILES = LICENSE
