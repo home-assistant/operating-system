@@ -17,3 +17,9 @@ sed -i "s/| \(Raspberry Pi.*\|Home Assistant Yellow\) | .* |/| \1 | $2 |/g" Docu
 git commit -m "RaspberryPi: Update kernel $2 - $1" "${defconfigs[@]}" Documentation/kernel.md
 
 ./scripts/check-kernel-patches.sh
+
+echo
+echo "WARNING: bumping RPi kernel usually requires bump of rpi-firmware"
+echo "package to version from the corresponding branch in raspberrypi/firmware"
+echo "repository (which is usually the stable branch), namely because the DT"
+echo "overlays are copied from this repository"
