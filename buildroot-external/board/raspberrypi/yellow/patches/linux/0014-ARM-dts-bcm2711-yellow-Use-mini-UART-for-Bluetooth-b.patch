@@ -1,22 +1,24 @@
-From a26f2b40904ce7b6ac96de951fdf40035877fce4 Mon Sep 17 00:00:00 2001
-Message-ID: <a26f2b40904ce7b6ac96de951fdf40035877fce4.1698393299.git.stefan@agner.ch>
-In-Reply-To: <808c5caa6bdefaadf7c63d9fb5c18c33dc1fe5b9.1698393299.git.stefan@agner.ch>
-References: <808c5caa6bdefaadf7c63d9fb5c18c33dc1fe5b9.1698393299.git.stefan@agner.ch>
-From: Stefan Agner <stefan@agner.ch>
-Date: Thu, 1 Jun 2023 10:22:12 +0200
+From 169075818f13e77f4d86c913bbac796e92bb5b14 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Jan=20=C4=8Cerm=C3=A1k?= <sairon@sairon.cz>
+Date: Thu, 16 Nov 2023 12:46:48 +0100
 Subject: [PATCH] ARM: dts: bcm2711: yellow: Use mini-UART for Bluetooth by
  default
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Use the mini UART for Bluetooth by default. This makes sure that the
-full UART is always available on J11.
+Apply changes from miniuart-bt-overlay.dts to Yellow DTS to use
+mini-UART for Bluetooth by default and initialize hci device in the
+kernel driver (can be overriden by setting dtparam=krnbt=off).
+Full UART should be available on J11.
 
-Signed-off-by: Stefan Agner <stefan@agner.ch>
+Signed-off-by: Jan Čermák <sairon@sairon.cz>
 ---
- .../boot/dts/bcm2711-rpi-cm4-ha-yellow.dts    | 23 ++++++++++++-------
- 1 file changed, 15 insertions(+), 8 deletions(-)
+ .../boot/dts/bcm2711-rpi-cm4-ha-yellow.dts    | 36 ++++++++++++++-----
+ 1 file changed, 28 insertions(+), 8 deletions(-)
 
 diff --git a/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
-index b8f0bc2df062..78e61e628d66 100644
+index b8f0bc2df062..26033f2d30d0 100644
 --- a/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
 +++ b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
 @@ -318,7 +318,7 @@ chosen {
@@ -28,7 +30,16 @@ index b8f0bc2df062..78e61e628d66 100644
  		serial1 = &uart4;
  		serial2 = &uart5;
  		mmc0 = &emmc2;
-@@ -348,12 +348,14 @@ &mmcnr {
+@@ -334,6 +334,8 @@ aliases {
+ 		spi4 = &spi4;
+ 		spi5 = &spi5;
+ 		spi6 = &spi6;
++		bluetooth = &uart1;
++
+ 		/delete-property/ intc;
+ 	};
+ 
+@@ -348,12 +350,22 @@ &mmcnr {
  };
  
  &uart0 {
@@ -40,40 +51,54 @@ index b8f0bc2df062..78e61e628d66 100644
  &uart1 {
 -	pinctrl-0 = <&uart1_pins>;
 +	pinctrl-names = "default";
-+	pinctrl-0 = <&uart1_pins &bt_pins &fake_bt_cts>;
++	pinctrl-0 = <&uart1_bt_pins>;
++	status = "okay";
++};
++
++&bt {
++	status = "disabled";
++};
++
++&minibt {
 +	status = "okay";
  };
  
  &spi0 {
-@@ -489,18 +491,23 @@ bt_pins: bt_pins {
- 		brcm,pull = <2>;
+@@ -490,15 +502,21 @@ bt_pins: bt_pins {
  	};
  
--	uart0_pins: uart0_pins {
--		brcm,pins = <32 33>;
+ 	uart0_pins: uart0_pins {
++		brcm,pins;
++		brcm,function;
++		brcm,pull;
++	};
++
++	uart1_pins: uart1_pins {
+ 		brcm,pins = <32 33>;
 -		brcm,function = <BCM2835_FSEL_ALT3>;
--		brcm,pull = <0 2>;
-+	fake_bt_cts: fake_bt_cts {
-+		brcm,pins = <31>;
-+		brcm,function = <1>; /* output */
++		brcm,function = <BCM2835_FSEL_ALT5>; /* alt5=UART1 */
+ 		brcm,pull = <0 2>;
  	};
  
 -	uart1_pins: uart1_pins {
-+	uart0_pins: uart0_pins {
- 		brcm,pins;
- 		brcm,function;
- 		brcm,pull;
+-		brcm,pins;
+-		brcm,function;
+-		brcm,pull;
++	uart1_bt_pins: uart1_bt_pins {
++		brcm,pins = <32 33 30 31>;
++		brcm,function = <BCM2835_FSEL_ALT5>; /* alt5=UART1 */
++		brcm,pull = <0 2 2 0>;
  	};
  
-+	uart1_pins: uart1_pins {
-+		brcm,pins = <32 33>;
-+		brcm,function = <2>; /* alt5=UART1 */
-+		brcm,pull = <0 2>;
-+	};
-+
  	uart2_pins: uart2_pins {
- 		brcm,pins = <0 1>;
- 		brcm,function = <BCM2835_FSEL_ALT4>;
+@@ -683,5 +701,7 @@ __overrides__ {
+ 		cam1_reg = <&cam1_reg>,"status";
+ 		cam1_reg_gpio = <&cam1_reg>,"gpio:4",
+ 				  <&cam1_reg>,"gpio:0=", <&gpio>;
++
++		krnbt = <&minibt>,"status";
+ 	};
+ };
 -- 
-2.42.0
+2.34.1
 
