@@ -35,16 +35,17 @@ function install_rauc_certs() {
     local cert="/build/cert.pem"
 
     if [ "${DEPLOYMENT}" == "development" ]; then
+        # Contains development and release certificate
         cp "${BR2_EXTERNAL_HASSOS_PATH}/ota/dev-ca.pem" "${TARGET_DIR}/etc/rauc/keyring.pem"
-
-        # Add local self-signed certificate (if not trusted by chain it is a
-        # self-signed certificate)
-        if ! openssl verify -CAfile "${BR2_EXTERNAL_HASSOS_PATH}/ota/dev-ca.pem" -no-CApath "${cert}"; then
-            echo "Adding self-signed certificate to keyring."
-            openssl x509 -in "${cert}" -text >> "${TARGET_DIR}/etc/rauc/keyring.pem"
-        fi
     else
         cp "${BR2_EXTERNAL_HASSOS_PATH}/ota/rel-ca.pem" "${TARGET_DIR}/etc/rauc/keyring.pem"
+    fi
+
+    # Add local self-signed certificate (if not trusted by the dev or release
+    # certificate it is a self-signed certificate, dev-ca.pem contains both)
+    if ! openssl verify -CAfile "${BR2_EXTERNAL_HASSOS_PATH}/ota/dev-ca.pem" -no-CApath "${cert}"; then
+        echo "Adding self-signed certificate to keyring."
+        openssl x509 -in "${cert}" -text >> "${TARGET_DIR}/etc/rauc/keyring.pem"
     fi
 }
 
