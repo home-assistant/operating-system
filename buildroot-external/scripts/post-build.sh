@@ -41,6 +41,7 @@ install_tini_docker
 
 
 # Setup RAUC
+prepare_rauc_signing
 write_rauc_config
 install_rauc_certs
 install_bootloader_config
