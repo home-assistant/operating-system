@@ -1,0 +1,10 @@
+[Unit]
+Description=Remove HCI kernel driver if WiFi/Bluetooth module is not present
+ConditionPathExists=!/sys/bus/sdio/devices/mmc1:0001:1
+
+[Service]
+Type=forking
+ExecStart=/usr/sbin/modprobe -r hci_uart
+
+[Install]
+WantedBy=hassos-hardware.target
