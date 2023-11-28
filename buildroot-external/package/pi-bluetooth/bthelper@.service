@@ -6,5 +6,6 @@ Before=bluetooth.service
 
 [Service]
 Type=oneshot
+ExecCondition=/bin/sh -c '[ "$(cat /proc/device-tree/$(cat /proc/device-tree/aliases/bluetooth)/status)" != "okay" ]'
 ExecStart=/usr/bin/bthelper %I
 RemainAfterExit=yes

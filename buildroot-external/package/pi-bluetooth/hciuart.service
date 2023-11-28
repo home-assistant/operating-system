@@ -5,6 +5,7 @@ After=dev-serial1.device
 
 [Service]
 Type=forking
+ExecCondition=/bin/sh -c '[ "$(cat /proc/device-tree/$(cat /proc/device-tree/aliases/bluetooth)/status)" != "okay" ]'
 ExecStart=/usr/bin/btuart
 
 [Install]
