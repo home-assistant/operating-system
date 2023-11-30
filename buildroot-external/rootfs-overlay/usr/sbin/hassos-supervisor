@@ -24,22 +24,20 @@ if [ -f "${SUPERVISOR_STARTUP_MARKER}" ]; then
     echo "[WARNING] Supervisor container did not remove the startup marker file. Assuming container image or container corruption."
     docker container rm --force hassio_supervisor || true
     SUPERVISOR_CONTAINER_ID=""
+
     # Make sure we delete all supervisor images
-    SUPERVISOR_IMAGE_IDS=$(docker images --no-trunc --filter "reference=${SUPERVISOR_IMAGE}" --format "{{.ID}}" | uniq || echo "")
-    docker image rm --force "${SUPERVISOR_IMAGE_IDS}" || true
+    SUPERVISOR_IMAGE_IDS=$(docker images --no-trunc --filter "reference=${SUPERVISOR_IMAGE}" --format "{{.ID}}" | sort | uniq || echo "")
+    # Intended splitting of SUPERVISOR_IMAGE_IDS
+    # Busybox sh doesn't support arrays
+    # shellcheck disable=SC2086
+    docker image rm --force ${SUPERVISOR_IMAGE_IDS} || true
     SUPERVISOR_IMAGE_ID=""
 fi
 
-# If Supervisor image is missing, pull it
 mkdir -p "$(dirname ${SUPERVISOR_STARTUP_MARKER})"
 touch ${SUPERVISOR_STARTUP_MARKER}
-if [ -z "${SUPERVISOR_IMAGE_ID}" ]; then
-    # Try tagging legacy image with current name and try get its ID
-    echo "[WARNING] Supervisor image missing, trying to use the legacy image name"
-    docker tag "homeassistant/${SUPERVISOR_ARCH}-hassio-supervisor:latest" "${SUPERVISOR_IMAGE}:latest" || true
-    SUPERVISOR_IMAGE_ID=$(docker images --no-trunc --filter "reference=${SUPERVISOR_IMAGE}:latest" --format "{{.ID}}" || echo "")
-fi
 
+# If Supervisor image is missing, pull it
 if [ -z "${SUPERVISOR_IMAGE_ID}" ]; then
     # Get the latest from update information
     # Using updater information instead of config. If the config version is
