@@ -166,7 +166,7 @@ jobs:
           RAUC_CERTIFICATE: ${{ secrets.RAUC_CERTIFICATE }}
           RAUC_PRIVATE_KEY: ${{ secrets.RAUC_PRIVATE_KEY }}
         run: |
-          if [ -z "${RAUC_CERTIFICATE}" ] || [ -z "${RAUC_KEY}" ]; then
+          if [ -z "${RAUC_CERTIFICATE}" ] || [ -z "${RAUC_PRIVATE_KEY}" ]; then
               echo "::warning:: RAUC certificate or key is missing. Building with a self-signed certificate!"
           else
               echo -e "-----BEGIN CERTIFICATE-----\n${RAUC_CERTIFICATE}\n-----END CERTIFICATE-----" > cert.pem
