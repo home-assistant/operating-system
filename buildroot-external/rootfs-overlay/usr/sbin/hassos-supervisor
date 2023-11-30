@@ -26,7 +26,7 @@ if [ -f "${SUPERVISOR_STARTUP_MARKER}" ]; then
     SUPERVISOR_CONTAINER_ID=""
 
     # Make sure we delete all supervisor images
-    SUPERVISOR_IMAGE_IDS=$(docker images --no-trunc --filter "reference=${SUPERVISOR_IMAGE}" --format "{{.ID}}" | uniq || echo "")
+    SUPERVISOR_IMAGE_IDS=$(docker images --no-trunc --filter "reference=${SUPERVISOR_IMAGE}" --format "{{.ID}}" | sort | uniq || echo "")
     # Intended splitting of SUPERVISOR_IMAGE_IDS
     # Busybox sh doesn't support arrays
     # shellcheck disable=SC2086
