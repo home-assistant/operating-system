@@ -43,6 +43,22 @@ function size2sectors() {
 }
 
 
+function _check_image_size() {
+    local image="${1}"
+    local max_size="${2}"
+
+    local image_size=$(stat -c %s "${image}")
+    local image_size_sectors=$((image_size / 512))
+    local max_size_sectors=$(size2sectors "${max_size}")
+
+
+    if [ "${image_size_sectors}" -gt "${max_size_sectors}" ]; then
+        echo "Image ${image} is too big: ${image_size_sectors} sectors > ${max_size_sectors} sectors" >&2
+        exit 1
+    fi
+}
+
+
 function get_boot_size() {
     # shellcheck disable=SC2153
     echo "${BOOT_SIZE}"
@@ -66,6 +82,8 @@ function create_boot_image() {
     truncate --size="$(get_boot_size)" "${boot_img}"
     mkfs.vfat -n "hassos-boot" "${boot_img}"
     mcopy -i "${boot_img}" -sv "${boot_data}"/* ::
+
+    _check_image_size "${boot_img}" "$(get_boot_size)"
 }
 
 
@@ -75,6 +93,8 @@ function create_overlay_image() {
     rm -f "${overlay_img}"
     truncate --size="${OVERLAY_SIZE}" "${overlay_img}"
     mkfs.ext4 -L "hassos-overlay" -I 256 -E lazy_itable_init=0,lazy_journal_init=0 "${overlay_img}"
+
+    _check_image_size "${overlay_img}" "${OVERLAY_SIZE}"
 }
 
 
@@ -86,10 +106,15 @@ function create_kernel_image() {
     # Make image
     rm -f "${kernel_img}"
     mksquashfs "${kernel}" "${kernel_img}" -comp lzo
+
+    _check_image_size "${kernel_img}" "${KERNEL_SIZE}"
 }
 
 
 function _prepare_disk_image() {
+    _check_image_size "$(path_data_img)" "${DATA_SIZE}"
+    _check_image_size "$(path_rootfs_img)" "${SYSTEM_SIZE}"
+
     create_boot_image
     create_overlay_image
     create_kernel_image
