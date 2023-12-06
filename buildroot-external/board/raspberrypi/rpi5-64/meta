@@ -1,7 +1,7 @@
 BOARD_ID=rpi5-64
 BOARD_NAME="RaspberryPi 5 64bit"
 CHASSIS=embedded
-BOOTLOADER=uboot
+BOOTLOADER=tryboot
 KERNEL_FILE=Image
 BOOT_SYS=gpt
 BOOT_SIZE=64M
