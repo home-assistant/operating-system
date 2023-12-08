@@ -2,6 +2,7 @@
 
 set -o errexit
 
+# shellcheck disable=SC2317  # Being usesd in trap which shellcheck can't follow
 cleanup_boot() {
     umount "${BOOT_NEW}"
     rm -rf "${BOOT_TMP}" "${BOOT_NEW}"
