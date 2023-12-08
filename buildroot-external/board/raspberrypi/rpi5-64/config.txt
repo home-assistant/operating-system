@@ -39,6 +39,10 @@ disable_overscan=1
 # Run as fast as firmware / board allows
 arm_boost=1
 
+# Use OS prefix for A/B slot (RAUC)
+os_prefix=slot-A/
+cmdline=/cmdline.txt
+
 [cm4]
 # Enable host mode on the 2711 built-in XHCI USB controller.
 # This line should be removed if the legacy DWC2 controller is required
