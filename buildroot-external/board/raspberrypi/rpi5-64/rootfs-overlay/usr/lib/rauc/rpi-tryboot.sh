@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# shellcheck source=buildroot-external/board/raspberrypi/rpi5-64/rootfs-overlay/usr/lib/rauc/cmdline.sh
+# shellcheck source=/dev/null # Our GitHub Actions tests this separately
 . /usr/lib/rauc/cmdline.sh
 
 # RAUC hook script for Raspberry Pi firmwaree tryboot
