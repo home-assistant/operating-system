@@ -1,5 +1,6 @@
 #!/bin/sh
 
+# shellcheck source=cmdline.sh
 . /usr/lib/rauc/cmdline.sh
 
 # RAUC hook script for Raspberry Pi firmwaree tryboot

@@ -1,3 +1,4 @@
+# shellcheck shell=sh
 # Shell script functions to manipulate kernel cmdline
 
 # Function to get the value of a key from a command line string
