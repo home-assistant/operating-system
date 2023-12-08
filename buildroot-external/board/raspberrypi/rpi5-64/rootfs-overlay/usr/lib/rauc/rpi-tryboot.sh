@@ -88,7 +88,7 @@ case "$1" in
 
     get-current)
         # We don't have a better detection then /proc/cmdline...
-        echo "No reliable to determine current slot with tryboot" >&2
+        echo "Cannot reliably determine current slot with tryboot" >&2
         exit 1
         ;;
 
