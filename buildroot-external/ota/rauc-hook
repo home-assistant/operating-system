@@ -102,7 +102,7 @@ post_install_kernel() {
 
     # Copy new OS to appropriate directory
     if [ "$RAUC_SYSTEM_COMPATIBLE" = "haos-rpi5-64" ]; then
-        rm -f "${BOOT_MNT}/slot-${RAUC_SLOT_BOOTNAME}"
+        rm -rf "${BOOT_MNT}/slot-${RAUC_SLOT_BOOTNAME}"
         mv "${BOOT_MNT}/slot-default" "${BOOT_MNT}/slot-${RAUC_SLOT_BOOTNAME}"
     fi
 }
