@@ -72,7 +72,7 @@ case "$1" in
         # state...
 
         # Check if tryboot is active
-        if ! cmp -n 4 /proc/device-tree/chosen/bootloader/tryboot /dev/zero; then
+        if ! cmp -s -n 4 /proc/device-tree/chosen/bootloader/tryboot /dev/zero; then
             cmdline_tryboot=$(head -n1 "${boot_dir}/cmdline-tryboot.txt")
             tryboot_slot=$(get_value rauc.slot "${cmdline_tryboot}")
 	    if [ "${tryboot_slot}" != "${slot_bootname}" ]; then
