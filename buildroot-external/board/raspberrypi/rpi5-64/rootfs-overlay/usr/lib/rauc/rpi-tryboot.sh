@@ -32,7 +32,7 @@ case "$1" in
         else
             exit 1
         fi
-        cmdline=$(set_value rauc.slot B "${cmdline}")
+        cmdline=$(set_value rauc.slot "${slot_bootname}" "${cmdline}")
         echo "${cmdline}" > "${boot_dir}/cmdline-tryboot.txt"
         sed -e "s/^\(os_prefix=\)slot-[A-Z]\/$/\1slot-${slot_bootname}\//" \
             -e "s/^\(cmdline=\).*$/\1\/cmdline-tryboot.txt/" \
