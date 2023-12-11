@@ -11,6 +11,7 @@ Default Kernel tree: 6.1
 | Raspberry Pi 2 | 6.1.63 |
 | Raspberry Pi 3 | 6.1.63 |
 | Raspberry Pi 4 | 6.1.63 |
+| Raspberry Pi 5 | 6.1.63 |
 | Home Assistant Yellow | 6.1.63 |
 | Home Assistant Green | 6.1.66 |
 | Tinker Board | 6.1.66 |
