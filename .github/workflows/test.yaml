@@ -41,7 +41,7 @@ jobs:
           sudo apt install -y qemu-system-x86 ovmf
 
       - name: Setup Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: 3.12
 
