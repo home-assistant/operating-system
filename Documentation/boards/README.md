@@ -9,8 +9,6 @@ The following boards/devices are supported:
   - Pi 4 Model B ([1 GB](https://www.raspberrypi.com/products/raspberry-pi-4-model-b/?variant=raspberry-pi-4-model-b-1gb), [2 GB](https://www.raspberrypi.com/products/raspberry-pi-4-model-b/?variant=raspberry-pi-4-model-b-2gb), [4 GB](https://www.raspberrypi.com/products/raspberry-pi-4-model-b/?variant=raspberry-pi-4-model-b-4gb) and [8 GB](https://www.raspberrypi.com/products/raspberry-pi-4-model-b/?variant=raspberry-pi-4-model-b-8gb) model) 32-bit or 64-bit (recommended)
   - [Pi 3 Model B](https://www.raspberrypi.com/products/raspberry-pi-3-model-b/) and [B+](https://www.raspberrypi.com/products/raspberry-pi-3-model-b-plus/) 32-bit or 64-bit (recommended)
   - [Pi 2](https://www.raspberrypi.com/products/raspberry-pi-2-model-b/) (not recommended)
-  - [Pi Zero-W](https://www.raspberrypi.com/products/raspberry-pi-zero-w/) (not recommended)
-  - [Pi](https://www.raspberrypi.com/products/raspberry-pi-1-model-b-plus/) (not recommended)
 - Hardkernel
   - [ODROID-C2](https://www.hardkernel.com/shop/odroid-c2/) (discontinued)
   - [ODROID-C4](https://www.hardkernel.com/shop/odroid-c4/)
