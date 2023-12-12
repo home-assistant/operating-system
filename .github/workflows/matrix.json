@@ -84,6 +84,12 @@
     "label": "board/raspberrypi"
   },
   {
+    "id": "rpi5-64",
+    "defconfig": "rpi5_64",
+    "architecture": "aarch64",
+    "label": "board/raspberrypi"
+  },
+  {
     "id": "yellow",
     "defconfig": "yellow",
     "architecture": "aarch64",
