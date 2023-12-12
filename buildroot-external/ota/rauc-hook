@@ -2,6 +2,12 @@
 
 set -o errexit
 
+# shellcheck disable=SC2317  # Being usesd in trap which shellcheck can't follow
+cleanup_boot() {
+    umount "${BOOT_NEW}"
+    rm -rf "${BOOT_TMP}" "${BOOT_NEW}"
+}
+
 install_boot() {
     BOOT_TMP=/tmp/boot-tmp
     BOOT_NEW=/tmp/boot-new
@@ -15,21 +21,24 @@ install_boot() {
         systemctl start mnt-boot.mount
     fi
     mount "${RAUC_IMAGE_NAME}" "${BOOT_NEW}"
+    trap cleanup_boot EXIT
 
     # Avoid stale/old overlays
     rm -f "${BOOT_MNT}"/overlays/* || true
 
-    # Backup boot config
-    cp -f "${BOOT_MNT}"/*.txt "${BOOT_TMP}/" || true
-
     # Update
-    cp -rf "${BOOT_NEW}"/* "${BOOT_MNT}/"
+    if [ "$RAUC_SYSTEM_COMPATIBLE" = "haos-rpi5-64" ]; then
+        rm -rf "${BOOT_MNT}/slot-default"
+        cp -r "${BOOT_NEW}/slot-A" "${BOOT_MNT}/slot-default"
+    else
+        # Backup boot config
+        cp -f "${BOOT_MNT}"/*.txt "${BOOT_TMP}/" || true
 
-    # Restore boot config
-    cp -f "${BOOT_TMP}"/*.txt "${BOOT_MNT}/" || true
+        cp -rf "${BOOT_NEW}"/* "${BOOT_MNT}/"
 
-    umount "${BOOT_NEW}"
-    rm -rf "${BOOT_TMP}" "${BOOT_NEW}"
+        # Restore boot config
+        cp -f "${BOOT_TMP}"/*.txt "${BOOT_MNT}/" || true
+    fi
 }
 
 install_spl() {
@@ -90,6 +99,12 @@ post_install_kernel() {
     if [ -f "${BOOT_MNT}"/EFI/BOOT/grub.cfg ] && ! command -v grub-editenv > /dev/null; then
         cp -f "${BOOT_MNT}/EFI/BOOT/grubenv-${RAUC_SLOT_BOOTNAME}" "${BOOT_MNT}"/EFI/BOOT/grubenv
         echo "Copied default GRUB environment grubenv-${RAUC_SLOT_BOOTNAME} as grubenv."
+    fi
+
+    # Copy new OS to appropriate directory
+    if [ "$RAUC_SYSTEM_COMPATIBLE" = "haos-rpi5-64" ]; then
+        rm -rf "${BOOT_MNT}/slot-${RAUC_SLOT_BOOTNAME}"
+        mv "${BOOT_MNT}/slot-default" "${BOOT_MNT}/slot-${RAUC_SLOT_BOOTNAME}"
     fi
 }
 

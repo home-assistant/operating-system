@@ -27,4 +27,14 @@ elif [ -e /usr/bin/grub-editenv ]; then
         echo "[INFO] machine-id is okay"
     fi
 
+else
+    if ! grep -q "systemd.machine_id=${MACHINE_ID}" /mnt/boot/cmdline.txt; then
+        echo "[INFO] set machine-id to ${MACHINE_ID}"
+        if sed -i "s/systemd.machine_id=[0-9a-fA-F]*/systemd.machine_id=${MACHINE_ID}/" /mnt/boot/cmdline.txt; then
+            sed -i "1 s/$/ systemd.machine_id=${MACHINE_ID}/" /mnt/boot/cmdline.txt
+        fi
+    else
+        echo "[INFO] machine-id is okay"
+    fi
+
 fi

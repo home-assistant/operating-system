@@ -8,6 +8,7 @@
 | Raspberry Pi 2 B    |2015           | not recommended | [rpi2](../../../buildroot-external/configs/rpi2_defconfig)             |
 | Raspberry Pi 3 B/B+ |2016/2018      | yes             | [rpi3](../../../buildroot-external/configs/rpi3_defconfig) / [rpi3_64](../../../buildroot-external/configs/rpi3_64_defconfig) |
 | Raspberry Pi 4 B    |2019           | yes             | [rpi4](../../../buildroot-external/configs/rpi4_defconfig) / [rpi4_64](../../../buildroot-external/configs/rpi4_64_defconfig) |
+| Raspberry Pi 5      |2023           | yes (beta)      | [rpi5_64](../../../buildroot-external/configs/rpi5_64_defconfig) |
 
 ## Serial console
 

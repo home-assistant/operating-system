@@ -5,6 +5,7 @@
 The following boards/devices are supported:
 
 - Raspberry Pi
+  - Pi 5 ([4 GB](https://www.raspberrypi.com/products/raspberry-pi-5/?variant=raspberry-pi-5-4gb) and [8 GB](https://www.raspberrypi.com/products/raspberry-pi-5/?variant=raspberry-pi-5-8gb) model) 64-bit
   - Pi 4 Model B ([1 GB](https://www.raspberrypi.com/products/raspberry-pi-4-model-b/?variant=raspberry-pi-4-model-b-1gb), [2 GB](https://www.raspberrypi.com/products/raspberry-pi-4-model-b/?variant=raspberry-pi-4-model-b-2gb), [4 GB](https://www.raspberrypi.com/products/raspberry-pi-4-model-b/?variant=raspberry-pi-4-model-b-4gb) and [8 GB](https://www.raspberrypi.com/products/raspberry-pi-4-model-b/?variant=raspberry-pi-4-model-b-8gb) model) 32-bit or 64-bit (recommended)
   - [Pi 3 Model B](https://www.raspberrypi.com/products/raspberry-pi-3-model-b/) and [B+](https://www.raspberrypi.com/products/raspberry-pi-3-model-b-plus/) 32-bit or 64-bit (recommended)
   - [Pi 2](https://www.raspberrypi.com/products/raspberry-pi-2-model-b/) (not recommended)
@@ -39,6 +40,7 @@ Notes:
 
 |Board|Build|Config|Docs|
 |-----|----|------|----|
+|Pi5 64-bit    |`make rpi5_64`       |[rpi5_64](../../buildroot-external/configs/rpi5_64_defconfig)|[raspberrypi](./raspberrypi/)|
 |Pi4B 64-bit   |`make rpi4_64`       |[rpi4_64](../../buildroot-external/configs/rpi4_64_defconfig)|[raspberrypi](./raspberrypi/)|
 |Pi4B 32-bit   |`make rpi4`          |[rpi4](../../buildroot-external/configs/rpi4_defconfig)|[raspberrypi](./raspberrypi/)|
 |Pi3B 64-bit   |`make rpi3_64`       |[rpi3_64](../../buildroot-external/configs/rpi3_64_defconfig)|[raspberrypi](./raspberrypi/)|
