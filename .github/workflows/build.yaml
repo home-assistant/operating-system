@@ -234,6 +234,22 @@ jobs:
           path: /mnt/cache/cc
           key: haos-cc-${{ matrix.board.id }}-${{ github.run_id }}
 
+      - name: Generate build summary
+        run: |
+          echo "# ${{ matrix.board.id }} build summary" >> $GITHUB_STEP_SUMMARY
+          echo "## Artifacts" >> $GITHUB_STEP_SUMMARY
+          echo "| File | Size (bytes) | Size (formatted) |" >> $GITHUB_STEP_SUMMARY
+          echo "|:-|:-|:-|" >> $GITHUB_STEP_SUMMARY
+          for f in output/images/haos_*; do
+            echo "| $(basename $f) | $(du -b $f | cut -f1) | $(du -bh $f | cut -f1) |" >> $GITHUB_STEP_SUMMARY
+          done
+          echo "## Partitions" >> $GITHUB_STEP_SUMMARY
+          echo "| File | Size (bytes) | Size (formatted) |" >> $GITHUB_STEP_SUMMARY
+          echo "|:-|:-|:-|" >> $GITHUB_STEP_SUMMARY
+          for f in boot.vfat kernel.img rootfs.squashfs overlay.ext4 data.ext4; do
+            echo "| ${f} | $(du -b output/images/$f | cut -f1) | $(du -bh output/images/$f | cut -f1) |" >> $GITHUB_STEP_SUMMARY
+          done
+
       - name: Upload ova image to artifacts for test job
         uses: actions/upload-artifact@v3
         if: ${{ matrix.board.id == 'ova' }}
