@@ -70,7 +70,7 @@ jobs:
           ./tests/run_tests.sh
 
       - name: Archive logs
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: logs
@@ -78,7 +78,7 @@ jobs:
             tests/lg_logs/**
 
       - name: Archive JUnit reports
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: junit_reports
