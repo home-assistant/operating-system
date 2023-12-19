@@ -292,7 +292,23 @@ jobs:
           path: |
             output/images/haos_${{ matrix.board.id }}-${{ needs.prepare.outputs.version_full }}.img.xz
 
-      - name: Upload OS KVM image artifact
+      - name: Upload RAUC bundle artifact
+        uses: actions/upload-artifact@v4
+        if: ${{ github.event_name != 'release' && needs.prepare.outputs.publish_build != 'true' }}
+        with:
+          name: haos_${{ matrix.board.id }}-${{ needs.prepare.outputs.version_full }}.raucb
+          path: |
+            output/images/haos_${{ matrix.board.id }}-${{ needs.prepare.outputs.version_full }}.raucb
+
+      - name: Upload Open Virtualization Format (OVA) artifact
+        uses: actions/upload-artifact@v4
+        if: ${{ github.event_name != 'release' && needs.prepare.outputs.publish_build != 'true' && matrix.board.id == 'ova' }}
+        with:
+          name: haos_${{ matrix.board.id }}-${{ needs.prepare.outputs.version_full }}.ova
+          path: |
+            output/images/haos_${{ matrix.board.id }}-${{ needs.prepare.outputs.version_full }}.ova
+
+      - name: Upload QEMU disk image artifact
         uses: actions/upload-artifact@v4
         if: ${{ github.event_name != 'release' && needs.prepare.outputs.publish_build != 'true' && (matrix.board.id == 'generic-aarch64' || matrix.board.id == 'ova') }}
         with:
@@ -300,7 +316,7 @@ jobs:
           path: |
             output/images/haos_${{ matrix.board.id }}-${{ needs.prepare.outputs.version_full }}.qcow2.xz
 
-      - name: Upload OS VirtualBox/VMware image artifact
+      - name: Upload VMware Virtual Machine Disk (VMDK) artifact
         uses: actions/upload-artifact@v4
         if: ${{ github.event_name != 'release' && needs.prepare.outputs.publish_build != 'true' && (matrix.board.id == 'generic-aarch64' || matrix.board.id == 'ova') }}
         with:
@@ -308,13 +324,21 @@ jobs:
           path: |
             output/images/haos_${{ matrix.board.id }}-${{ needs.prepare.outputs.version_full }}.vmdk.zip
 
-      - name: Upload RAUC update artifact
+      - name: Upload VirtualBox Virtual Disk Image (VDI) artifact
         uses: actions/upload-artifact@v4
-        if: ${{ github.event_name != 'release' && needs.prepare.outputs.publish_build != 'true' }}
+        if: ${{ github.event_name != 'release' && needs.prepare.outputs.publish_build != 'true' && matrix.board.id == 'ova' }}
         with:
-          name: haos_${{ matrix.board.id }}-${{ needs.prepare.outputs.version_full }}.raucb
+          name: haos_${{ matrix.board.id }}-${{ needs.prepare.outputs.version_full }}.vdi.zip
           path: |
-            output/images/haos_${{ matrix.board.id }}-${{ needs.prepare.outputs.version_full }}.raucb
+            output/images/haos_${{ matrix.board.id }}-${{ needs.prepare.outputs.version_full }}.vdi.zip
+
+      - name: Upload Virtual Hard Disk v2 (VHDX) artifact
+        uses: actions/upload-artifact@v4
+        if: ${{ github.event_name != 'release' && needs.prepare.outputs.publish_build != 'true' && matrix.board.id == 'ova' }}
+        with:
+          name: haos_${{ matrix.board.id }}-${{ needs.prepare.outputs.version_full }}.vhdx.zip
+          path: |
+            output/images/haos_${{ matrix.board.id }}-${{ needs.prepare.outputs.version_full }}.vhdx..zip
 
   test:
     name: Test OS image
