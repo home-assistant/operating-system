@@ -224,6 +224,15 @@ jobs:
             ${{ needs.prepare.outputs.build_container_image }} \
             make BUILDDIR=/build ${{ matrix.board.defconfig }}
 
+      - name: Check Linux config
+        run: |
+          docker run --rm --privileged -v "${GITHUB_WORKSPACE}:/build" \
+            -e BUILDER_UID="$(id -u)" -e BUILDER_GID="$(id -g)" \
+            -v "/mnt/cache:/cache" \
+            ${{ needs.prepare.outputs.build_container_image }} \
+            make -C buildroot O="/build/output" BR2_EXTERNAL="/build/buildroot-external" \
+            BR2_CHECK_DOTCONFIG_OPTS="--github-format --strip-path-prefix=/build/" linux-check-dotconfig
+
       - name: Upload artifacts
         if: ${{ github.event_name != 'release' && needs.prepare.outputs.publish_build == 'true' }}
         working-directory: output/images/
