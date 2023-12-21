@@ -20,7 +20,7 @@ on:
         type: boolean
         default: true
       version:
-        description: Version of HAOS to test (used in name of the qcow2 image artifact)
+        description: Version of HAOS to test (as used in the name of the qcow2 image artifact)
         required: true
         type: string
 
