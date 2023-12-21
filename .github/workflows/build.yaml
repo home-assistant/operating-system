@@ -36,6 +36,7 @@ jobs:
       matrix: ${{ steps.generate_matrix.outputs.result }}
       build_container_image: ghcr.io/${{ github.repository_owner }}/haos-builder@${{ steps.build_haos_builder.outputs.digest }}
       publish_build: ${{ steps.check_publish.outputs.publish_build }}
+      self_signed_cert: ${{ steps.generate_signing_key.outputs.self_signed }}
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
@@ -153,6 +154,26 @@ jobs:
           cache-to: ghcr.io/${{ github.repository_owner }}/haos-builder:cache-${{ steps.version_main.outputs.version_main }}
           push: true
 
+      - name: Generate self-signed certificate
+        id: generate_signing_key
+        env:
+          RAUC_CERTIFICATE: ${{ secrets.RAUC_CERTIFICATE }}
+          RAUC_PRIVATE_KEY: ${{ secrets.RAUC_PRIVATE_KEY }}
+        if: env.RAUC_CERTIFICATE == '' || env.RAUC_PRIVATE_KEY == ''
+        run: |
+          echo "::warning:: RAUC certificate or key is missing in the repository secrets. Building with a public self-signed certificate!"
+          buildroot-external/scripts/generate-signing-key.sh cert.pem key.pem
+          echo "self_signed_cert=true" >> $GITHUB_OUTPUT
+
+      - name: Create signing key
+        uses: actions/upload-artifact@v4
+        if: steps.generate_signing_key.outcome == 'success'
+        with:
+          name: signing-key
+          path: |
+            cert.pem
+            key.pem
+
   build:
     name: Build for ${{ matrix.board.id }}
     permissions:
@@ -188,16 +209,19 @@ jobs:
           sed -i -E "s/(^VERSION_SUFFIX=\").*(\"$)/\1${VERSION_DEV}\2/" buildroot-external/meta
 
       - name: 'Add release PKI certs'
+        if: ${{ needs.prepare.outputs.self_signed_cert != 'true' }}
         env:
           RAUC_CERTIFICATE: ${{ secrets.RAUC_CERTIFICATE }}
           RAUC_PRIVATE_KEY: ${{ secrets.RAUC_PRIVATE_KEY }}
         run: |
-          if [ -z "${RAUC_CERTIFICATE}" ] || [ -z "${RAUC_PRIVATE_KEY}" ]; then
-              echo "::warning:: RAUC certificate or key is missing. Building with a self-signed certificate!"
-          else
-              echo -e "-----BEGIN CERTIFICATE-----\n${RAUC_CERTIFICATE}\n-----END CERTIFICATE-----" > cert.pem
-              echo -e "-----BEGIN PRIVATE KEY-----\n${RAUC_PRIVATE_KEY}\n-----END PRIVATE KEY-----" > key.pem
-          fi
+          echo -e "-----BEGIN CERTIFICATE-----\n${RAUC_CERTIFICATE}\n-----END CERTIFICATE-----" > cert.pem
+          echo -e "-----BEGIN PRIVATE KEY-----\n${RAUC_PRIVATE_KEY}\n-----END PRIVATE KEY-----" > key.pem
+
+      - name: Get self-signed certificate from the prepare job
+        if: ${{ needs.prepare.outputs.self_signed_cert == 'true' }}
+        uses: actions/download-artifact@v4
+        with:
+          name: signing-key
 
       - name: Free space on build drive
         run: |
