@@ -1,5 +1,5 @@
-BOARD_ID=odroid-m1
-BOARD_NAME="Hardkernel ODROID-M1"
+BOARD_ID=odroid-m1s
+BOARD_NAME="Hardkernel ODROID-M1S"
 CHASSIS=embedded
 BOOTLOADER=uboot
 KERNEL_FILE=Image
