@@ -38,7 +38,7 @@ fi
 fileenv mmc ${devnum}:${boot_partnum} ${ramdisk_addr_r} cmdline.txt cmdline
 
 # Load device tree
-setenv fdtfile rk3568-odroid-m1.dtb
+setenv fdtfile rk3566-odroid-m1s.dtb
 echo "Loading standard device tree ${fdtfile}"
 fatload mmc ${devnum}:${boot_partnum} ${fdt_addr_r} ${fdtfile}
 fdt addr ${fdt_addr_r}
