@@ -309,14 +309,6 @@ jobs:
             echo "| ${f} | $(du -b output/images/$f | cut -f1) | $(du -bh output/images/$f | cut -f1) |" >> $GITHUB_STEP_SUMMARY
           done
 
-      - name: Upload ova image to artifacts for the test job
-        uses: actions/upload-artifact@v4
-        if: ${{ matrix.board.id == 'ova' }}
-        with:
-          name: ova-image
-          path: |
-            output/images/haos_ova*.qcow2.xz
-
       - name: Upload OS image artifact
         uses: actions/upload-artifact@v4
         if: ${{ github.event_name != 'release' && needs.prepare.outputs.publish_build != 'true' && matrix.board.id != 'ova' }}
@@ -343,7 +335,8 @@ jobs:
 
       - name: Upload QEMU disk image artifact
         uses: actions/upload-artifact@v4
-        if: ${{ github.event_name != 'release' && needs.prepare.outputs.publish_build != 'true' && (matrix.board.id == 'generic-aarch64' || matrix.board.id == 'ova') }}
+        # Create artifact for ova every time - it's used by the called tests workflow
+        if: ${{ matrix.board.id == 'ova' || (github.event_name != 'release' && needs.prepare.outputs.publish_build != 'true' && matrix.board.id == 'generic-aarch64') }}
         with:
           name: haos_${{ matrix.board.id }}-${{ needs.prepare.outputs.version_full }}.qcow2.xz
           path: |
@@ -377,6 +370,8 @@ jobs:
     name: Test OS image
     needs: [ build, prepare ]
     uses: ./.github/workflows/test.yaml
+    with:
+      version: ${{ needs.prepare.outputs.version_full }}
 
   update_index:
     name: Update artifacts index

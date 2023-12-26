@@ -19,6 +19,10 @@ on:
         required: false
         type: boolean
         default: true
+      version:
+        description: Version of HAOS to test (as used in the name of the qcow2 image artifact)
+        required: true
+        type: string
 
 jobs:
   test:
@@ -58,7 +62,7 @@ jobs:
         if: ${{ inputs.use-artifact }}
         uses: actions/download-artifact@v4
         with:
-          name: ova-image
+          name: haos_ova-${{ inputs.version }}.qcow2.xz
 
       - name: Extract OS image
         run: |
