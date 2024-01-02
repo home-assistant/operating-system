@@ -21,7 +21,7 @@ jobs:
     - name: Check shell scripts
       uses: ludeeus/action-shellcheck@2.0.0
       with:
-        ignore: buildroot
+        ignore_paths: buildroot
 
     - name: Check buildroot-external packages
       run: |
