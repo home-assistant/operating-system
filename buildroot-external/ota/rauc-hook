@@ -30,6 +30,7 @@ install_boot() {
     if [ "$RAUC_SYSTEM_COMPATIBLE" = "haos-rpi5-64" ]; then
         rm -rf "${BOOT_MNT}/slot-default"
         cp -r "${BOOT_NEW}/slot-A" "${BOOT_MNT}/slot-default"
+        sed -i "1 s/rootfstype=squashfs //" /mnt/boot/cmdline.txt
     else
         # Backup boot config
         cp -f "${BOOT_MNT}"/*.txt "${BOOT_TMP}/" || true
