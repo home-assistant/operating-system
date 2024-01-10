@@ -1,5 +1,4 @@
-From e7d59e0444170873e945a0675ed1565a65c99e17 Mon Sep 17 00:00:00 2001
-Message-Id: <e7d59e0444170873e945a0675ed1565a65c99e17.1676489173.git.stefan@agner.ch>
+From c51639443d3c90127a77f1534e39dd01fac1577f Mon Sep 17 00:00:00 2001
 From: memeka <mihailescu2m@gmail.com>
 Date: Fri, 18 Jan 2019 14:36:21 +1030
 Subject: [PATCH] ODROID-XU4: regulator: s2mps11: add ethernet power reset in
@@ -17,7 +16,7 @@ Signed-off-by: Marian Mihailescu <mihailescu2m@gmail.com>
  1 file changed, 55 insertions(+)
 
 diff --git a/drivers/regulator/s2mps11.c b/drivers/regulator/s2mps11.c
-index ebc67e3ddd4f..51f128076db9 100644
+index 570b61420f3a..286b606660a4 100644
 --- a/drivers/regulator/s2mps11.c
 +++ b/drivers/regulator/s2mps11.c
 @@ -1117,6 +1117,57 @@ static const struct regulator_desc s2mpu02_regulators[] = {
@@ -89,6 +88,3 @@ index ebc67e3ddd4f..51f128076db9 100644
  out:
  	kfree(rdata);
  
--- 
-2.39.1
-
