@@ -1,5 +1,4 @@
-From 3553f8a938dbb498aa1846a37ea343b7f53739da Mon Sep 17 00:00:00 2001
-Message-Id: <3553f8a938dbb498aa1846a37ea343b7f53739da.1676488094.git.stefan@agner.ch>
+From b4d676729c5bee4b9adb85362f6f2e32f833b6c2 Mon Sep 17 00:00:00 2001
 From: Stefan Agner <stefan@agner.ch>
 Date: Wed, 17 Feb 2021 19:55:41 +0100
 Subject: [PATCH] Revert "ARM: dts: rockchip: use DMA channels for UARTs for
@@ -7,13 +6,13 @@ Subject: [PATCH] Revert "ARM: dts: rockchip: use DMA channels for UARTs for
 
 This reverts commit 3425fe335c29310f6628faf9a7947d07f32d8962.
 ---
- arch/arm/boot/dts/rk3288.dtsi | 8 --------
+ arch/arm/boot/dts/rockchip/rk3288.dtsi | 8 --------
  1 file changed, 8 deletions(-)
 
-diff --git a/arch/arm/boot/dts/rk3288.dtsi b/arch/arm/boot/dts/rk3288.dtsi
-index 487b0e03d4b4..1569b1824c89 100644
---- a/arch/arm/boot/dts/rk3288.dtsi
-+++ b/arch/arm/boot/dts/rk3288.dtsi
+diff --git a/arch/arm/boot/dts/rockchip/rk3288.dtsi b/arch/arm/boot/dts/rockchip/rk3288.dtsi
+index cb9cdaddffd4..51f1273d6beb 100644
+--- a/arch/arm/boot/dts/rockchip/rk3288.dtsi
++++ b/arch/arm/boot/dts/rockchip/rk3288.dtsi
 @@ -378,8 +378,6 @@ uart0: serial@ff180000 {
  		reg-io-width = <4>;
  		clocks = <&cru SCLK_UART0>, <&cru PCLK_UART0>;
@@ -50,6 +49,3 @@ index 487b0e03d4b4..1569b1824c89 100644
  		pinctrl-names = "default";
  		pinctrl-0 = <&uart4_xfer>;
  		status = "disabled";
--- 
-2.39.1
-

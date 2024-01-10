@@ -1,7 +1,4 @@
-From 7d37754f29c379c5066c6abf38c8d01d654b1613 Mon Sep 17 00:00:00 2001
-Message-Id: <7d37754f29c379c5066c6abf38c8d01d654b1613.1676488094.git.stefan@agner.ch>
-In-Reply-To: <3553f8a938dbb498aa1846a37ea343b7f53739da.1676488094.git.stefan@agner.ch>
-References: <3553f8a938dbb498aa1846a37ea343b7f53739da.1676488094.git.stefan@agner.ch>
+From a0ef6a86e96920a9cf703d8c65d0126494037d37 Mon Sep 17 00:00:00 2001
 From: Myy Miouyouyou <myy@miouyouyou.fr>
 Date: Thu, 19 Oct 2017 21:24:47 +0200
 Subject: [PATCH] RK3288: DTSI: rk3288.dtsi: Add missing SPI2 pinctrl
@@ -13,13 +10,13 @@ This patch is taken from the patches provided by the ARMbian team.
 
 Signed-off-by: Myy Miouyouyou <myy@miouyouyou.fr>
 ---
- arch/arm/boot/dts/rk3288.dtsi | 2 +-
+ arch/arm/boot/dts/rockchip/rk3288.dtsi | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/rk3288.dtsi b/arch/arm/boot/dts/rk3288.dtsi
-index 1569b1824c89..478fd1bb85df 100644
---- a/arch/arm/boot/dts/rk3288.dtsi
-+++ b/arch/arm/boot/dts/rk3288.dtsi
+diff --git a/arch/arm/boot/dts/rockchip/rk3288.dtsi b/arch/arm/boot/dts/rockchip/rk3288.dtsi
+index 51f1273d6beb..d8663928bfe2 100644
+--- a/arch/arm/boot/dts/rockchip/rk3288.dtsi
++++ b/arch/arm/boot/dts/rockchip/rk3288.dtsi
 @@ -311,7 +311,7 @@ spi2: spi@ff130000 {
  		dma-names = "tx", "rx";
  		interrupts = <GIC_SPI 46 IRQ_TYPE_LEVEL_HIGH>;
@@ -29,6 +26,3 @@ index 1569b1824c89..478fd1bb85df 100644
  		reg = <0x0 0xff130000 0x0 0x1000>;
  		#address-cells = <1>;
  		#size-cells = <0>;
--- 
-2.39.1
-
