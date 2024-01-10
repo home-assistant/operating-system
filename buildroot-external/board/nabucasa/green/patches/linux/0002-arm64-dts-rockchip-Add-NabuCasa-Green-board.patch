@@ -1,7 +1,7 @@
-From 2a76efca88402072b61e4cb83d6707400da8dfae Mon Sep 17 00:00:00 2001
+From d28293ff078514e75a7b46cf3e776d7db8c46025 Mon Sep 17 00:00:00 2001
 From: Zhangqun Ming <north_sea@qq.com>
 Date: Thu, 6 Jul 2023 10:05:04 +0000
-Subject: [PATCH 2/2] arm64: dts: rockchip: Add NabuCasa Green board
+Subject: [PATCH] arm64: dts: rockchip: Add NabuCasa Green board
 
 ---
  arch/arm64/boot/dts/rockchip/Makefile         |   1 +
@@ -10,17 +10,20 @@ Subject: [PATCH 2/2] arm64: dts: rockchip: Add NabuCasa Green board
  create mode 100644 arch/arm64/boot/dts/rockchip/rk3566-ha-green.dts
 
 diff --git a/arch/arm64/boot/dts/rockchip/Makefile b/arch/arm64/boot/dts/rockchip/Makefile
-index 8c15593c0..997051975 100644
+index e7728007fd1b..475becd793ac 100644
 --- a/arch/arm64/boot/dts/rockchip/Makefile
 +++ b/arch/arm64/boot/dts/rockchip/Makefile
-@@ -72,3 +72,4 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-soquartz-cm4.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-bpi-r2-pro.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-evb1-v10.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-rock-3a.dtb
+@@ -75,6 +75,7 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-anbernic-rg353ps.dtb
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-anbernic-rg353v.dtb
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-anbernic-rg353vs.dtb
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-anbernic-rg503.dtb
 +dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-ha-green.dtb
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-pinenote-v1.1.dtb
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-pinenote-v1.2.dtb
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-quartz64-a.dtb
 diff --git a/arch/arm64/boot/dts/rockchip/rk3566-ha-green.dts b/arch/arm64/boot/dts/rockchip/rk3566-ha-green.dts
 new file mode 100644
-index 000000000..d0830df48
+index 000000000000..e38fbfd50156
 --- /dev/null
 +++ b/arch/arm64/boot/dts/rockchip/rk3566-ha-green.dts
 @@ -0,0 +1,685 @@
@@ -709,6 +712,3 @@ index 000000000..d0830df48
 +		remote-endpoint = <&hdmi_in_vp0>;
 +	};
 +};
--- 
-2.25.1
-

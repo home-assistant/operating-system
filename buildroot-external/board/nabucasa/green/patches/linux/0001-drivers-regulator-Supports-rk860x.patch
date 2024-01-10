@@ -1,7 +1,7 @@
-From b7957b94fe2649a1e8032b10ea293b106cda4532 Mon Sep 17 00:00:00 2001
+From 1c35579561f42558ef4e7646c1b99837e10eef28 Mon Sep 17 00:00:00 2001
 From: Zhangqun Ming <north_sea@qq.com>
 Date: Thu, 6 Jul 2023 10:04:39 +0000
-Subject: [PATCH 1/2] drivers: regulator: Supports rk860x
+Subject: [PATCH] drivers: regulator: Supports rk860x
 
 ---
  drivers/regulator/Kconfig            |  11 +
@@ -11,10 +11,10 @@ Subject: [PATCH 1/2] drivers: regulator: Supports rk860x
  create mode 100644 drivers/regulator/rk860x-regulator.c
 
 diff --git a/drivers/regulator/Kconfig b/drivers/regulator/Kconfig
-index 070e4403c..6a3c00c24 100644
+index 965d4f0c18a6..cb7eeda12892 100644
 --- a/drivers/regulator/Kconfig
 +++ b/drivers/regulator/Kconfig
-@@ -1047,6 +1047,17 @@ config REGULATOR_RK808
+@@ -1117,6 +1117,17 @@ config REGULATOR_RK808
  	  through regulator interface. The device supports multiple DCDC/LDO
  	  outputs which can be controlled by i2c communication.
  
@@ -33,10 +33,10 @@ index 070e4403c..6a3c00c24 100644
  	tristate "Ricoh RN5T567/618 voltage regulators"
  	depends on MFD_RN5T618
 diff --git a/drivers/regulator/Makefile b/drivers/regulator/Makefile
-index 5962307e1..76a156e98 100644
+index 23074714a81a..35fc727185e6 100644
 --- a/drivers/regulator/Makefile
 +++ b/drivers/regulator/Makefile
-@@ -125,6 +125,7 @@ obj-$(CONFIG_REGULATOR_PCF50633) += pcf50633-regulator.o
+@@ -132,6 +132,7 @@ obj-$(CONFIG_REGULATOR_RAA215300) += raa215300.o
  obj-$(CONFIG_REGULATOR_RASPBERRYPI_TOUCHSCREEN_ATTINY)  += rpi-panel-attiny-regulator.o
  obj-$(CONFIG_REGULATOR_RC5T583)  += rc5t583-regulator.o
  obj-$(CONFIG_REGULATOR_RK808)   += rk808-regulator.o
@@ -46,7 +46,7 @@ index 5962307e1..76a156e98 100644
  obj-$(CONFIG_REGULATOR_RT4801)	+= rt4801-regulator.o
 diff --git a/drivers/regulator/rk860x-regulator.c b/drivers/regulator/rk860x-regulator.c
 new file mode 100644
-index 000000000..4596761bd
+index 000000000000..4596761bdb40
 --- /dev/null
 +++ b/drivers/regulator/rk860x-regulator.c
 @@ -0,0 +1,607 @@
@@ -657,6 +657,3 @@ index 000000000..4596761bd
 +MODULE_AUTHOR("Elaine Zhang <zhangqing@rock-chips.com>");
 +MODULE_DESCRIPTION("rk860x regulator driver");
 +MODULE_LICENSE("GPL v2");
--- 
-2.25.1
-
