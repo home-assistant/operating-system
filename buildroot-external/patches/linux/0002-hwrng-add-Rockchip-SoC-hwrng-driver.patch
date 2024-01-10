@@ -1,7 +1,4 @@
-From c23703defb6008dde794e198abeaf2de008fe7ae Mon Sep 17 00:00:00 2001
-Message-ID: <c23703defb6008dde794e198abeaf2de008fe7ae.1691152222.git.stefan@agner.ch>
-In-Reply-To: <ea06f0028a835c4cafda535f6a36b0d63035fd4c.1691152222.git.stefan@agner.ch>
-References: <ea06f0028a835c4cafda535f6a36b0d63035fd4c.1691152222.git.stefan@agner.ch>
+From ef365072cb06f537f46a70d9e29dc4503aafb23d Mon Sep 17 00:00:00 2001
 From: Aurelien Jarno <aurelien@aurel32.net>
 Date: Mon, 28 Nov 2022 19:47:17 +0100
 Subject: [PATCH] hwrng: add Rockchip SoC hwrng driver
@@ -29,12 +26,12 @@ Signed-off-by: Stefan Agner <stefan@agner.ch>
  create mode 100644 drivers/char/hw_random/rockchip-rng.c
 
 diff --git a/drivers/char/hw_random/Kconfig b/drivers/char/hw_random/Kconfig
-index 3da8e85f8aae..8e5c88504f72 100644
+index 8de74dcfa18c..f7036ea8e65f 100644
 --- a/drivers/char/hw_random/Kconfig
 +++ b/drivers/char/hw_random/Kconfig
-@@ -549,6 +549,20 @@ config HW_RANDOM_CN10K
- 	 To compile this driver as a module, choose M here.
- 	 The module will be called cn10k_rng. If unsure, say Y.
+@@ -573,6 +573,20 @@ config HW_RANDOM_JH7110
+ 	  To compile this driver as a module, choose M here.
+ 	  The module will be called jh7110-trng.
  
 +config HW_RANDOM_ROCKCHIP
 +        tristate "Rockchip True Random Number Generator"
@@ -54,13 +51,13 @@ index 3da8e85f8aae..8e5c88504f72 100644
  
  config UML_RANDOM
 diff --git a/drivers/char/hw_random/Makefile b/drivers/char/hw_random/Makefile
-index 3e948cf04476..b7e989535fd6 100644
+index 32549a1186dc..5bf0e4692aca 100644
 --- a/drivers/char/hw_random/Makefile
 +++ b/drivers/char/hw_random/Makefile
-@@ -47,3 +47,4 @@ obj-$(CONFIG_HW_RANDOM_XIPHERA) += xiphera-trng.o
- obj-$(CONFIG_HW_RANDOM_ARM_SMCCC_TRNG) += arm_smccc_trng.o
+@@ -49,3 +49,4 @@ obj-$(CONFIG_HW_RANDOM_ARM_SMCCC_TRNG) += arm_smccc_trng.o
  obj-$(CONFIG_HW_RANDOM_CN10K) += cn10k-rng.o
  obj-$(CONFIG_HW_RANDOM_POLARFIRE_SOC) += mpfs-rng.o
+ obj-$(CONFIG_HW_RANDOM_JH7110) += jh7110-trng.o
 +obj-$(CONFIG_HW_RANDOM_ROCKCHIP) += rockchip-rng.o
 diff --git a/drivers/char/hw_random/rockchip-rng.c b/drivers/char/hw_random/rockchip-rng.c
 new file mode 100644
@@ -318,6 +315,3 @@ index 000000000000..9b7b334d6410
 +MODULE_DESCRIPTION("Rockchip True Random Number Generator driver");
 +MODULE_AUTHOR("Lin Jinhan <troy.lin@rock-chips.com>, Aurelien Jarno <aurelien@aurel32.net>");
 +MODULE_LICENSE("GPL v2");
--- 
-2.41.0
-
