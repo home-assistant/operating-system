@@ -1,7 +1,4 @@
-From d6b1ddfb5816b887470452920d273661e361632d Mon Sep 17 00:00:00 2001
-Message-Id: <d6b1ddfb5816b887470452920d273661e361632d.1676488652.git.stefan@agner.ch>
-In-Reply-To: <86f6a398d2c080f92d51048ededf45efbe3a96d4.1676488652.git.stefan@agner.ch>
-References: <86f6a398d2c080f92d51048ededf45efbe3a96d4.1676488652.git.stefan@agner.ch>
+From 1c9c3ca476adf09884295e9f8298288ea497e5ac Mon Sep 17 00:00:00 2001
 From: Hyeonki Hong <hhk7734@gmail.com>
 Date: Tue, 1 Mar 2022 21:51:50 +0100
 Subject: [PATCH] ODROID-C4: arm64/dts: add uart_A node
@@ -11,7 +8,7 @@ Subject: [PATCH] ODROID-C4: arm64/dts: add uart_A node
  1 file changed, 8 insertions(+), 1 deletion(-)
 
 diff --git a/arch/arm64/boot/dts/amlogic/meson-sm1-odroid.dtsi b/arch/arm64/boot/dts/amlogic/meson-sm1-odroid.dtsi
-index ddb1b345397f..49b88c1e11cd 100644
+index 1db2327bbd13..e67869fbb460 100644
 --- a/arch/arm64/boot/dts/amlogic/meson-sm1-odroid.dtsi
 +++ b/arch/arm64/boot/dts/amlogic/meson-sm1-odroid.dtsi
 @@ -10,8 +10,9 @@
@@ -25,7 +22,7 @@ index ddb1b345397f..49b88c1e11cd 100644
  	};
  
  	chosen {
-@@ -450,6 +451,12 @@ &tohdmitx {
+@@ -449,6 +450,12 @@ &tohdmitx {
  	status = "okay";
  };
  
@@ -38,6 +35,3 @@ index ddb1b345397f..49b88c1e11cd 100644
  &uart_AO {
  	status = "okay";
  	pinctrl-0 = <&uart_ao_a_pins>;
--- 
-2.39.1
-
