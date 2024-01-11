@@ -1,0 +1,32 @@
+From 37125610d7b79d2618671611641be7078653d24f Mon Sep 17 00:00:00 2001
+From: Aurelien Jarno <aurelien@aurel32.net>
+Date: Mon, 28 Nov 2022 19:47:18 +0100
+Subject: [PATCH] arm64: dts: rockchip: add DT entry for RNG to RK356x
+
+Enable the just added Rockchip RNG driver for RK356x SoCs.
+
+Signed-off-by: Aurelien Jarno <aurelien@aurel32.net>
+---
+ arch/arm64/boot/dts/rockchip/rk356x.dtsi | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/rockchip/rk356x.dtsi b/arch/arm64/boot/dts/rockchip/rk356x.dtsi
+index abee88911982..70f92adf86ac 100644
+--- a/arch/arm64/boot/dts/rockchip/rk356x.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk356x.dtsi
+@@ -1806,6 +1806,15 @@ usb2phy1_otg: otg-port {
+ 		};
+ 	};
+ 
++	rng: rng@fe388000 {
++		compatible = "rockchip,rk3568-rng";
++		reg = <0x0 0xfe388000 0x0 0x4000>;
++		clocks = <&cru CLK_TRNG_NS>, <&cru HCLK_TRNG_NS>;
++		clock-names = "trng_clk", "trng_hclk";
++		resets = <&cru SRST_TRNG_NS>;
++		reset-names = "reset";
++	};
++
+ 	pinctrl: pinctrl {
+ 		compatible = "rockchip,rk3568-pinctrl";
+ 		rockchip,grf = <&grf>;
