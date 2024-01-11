@@ -1,0 +1,35 @@
+From af4cac0d31d166c9ea5992e90b81973d817dd91d Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Jan=20=C4=8Cerm=C3=A1k?= <sairon@sairon.cz>
+Date: Thu, 11 Jan 2024 11:39:47 +0100
+Subject: [PATCH] Fix eq3_char_loop driver build on Linux 6.4+
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: Jan Čermák <sairon@sairon.cz>
+---
+ KernelDrivers/eq3_char_loop.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/KernelDrivers/eq3_char_loop.c b/KernelDrivers/eq3_char_loop.c
+index cc946fd..d01263a 100644
+--- a/KernelDrivers/eq3_char_loop.c
++++ b/KernelDrivers/eq3_char_loop.c
+@@ -950,7 +950,14 @@ static int __init eq3loop_init(void)
+ 		printk(KERN_ERR EQ3LOOP_DRIVER_NAME ": Unable to add driver\n");
+ 		goto out_unregister_chrdev_region;
+ 	}
++/* Linux changed signature of class_create in 6.4+
++ * see: https://lore.kernel.org/all/20230324100132.1633647-1-gregkh@linuxfoundation.org/
++*/
++#if LINUX_VERSION_CODE < KERNEL_VERSION(6, 4, 0)
+ 	control_data->class=class_create(THIS_MODULE, EQ3LOOP_DRIVER_NAME);
++#else
++	control_data->class=class_create(EQ3LOOP_DRIVER_NAME);
++#endif
+ 	if(IS_ERR(control_data->class)){
+ 		ret = -EIO;
+ 		printk(KERN_ERR EQ3LOOP_DRIVER_NAME ": Unable to register driver class\n");
+-- 
+2.34.1
+
