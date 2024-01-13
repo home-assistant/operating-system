@@ -36,7 +36,7 @@ jobs:
       matrix: ${{ steps.generate_matrix.outputs.result }}
       build_container_image: ghcr.io/${{ github.repository_owner }}/haos-builder@${{ steps.build_haos_builder.outputs.digest }}
       publish_build: ${{ steps.check_publish.outputs.publish_build }}
-      self_signed_cert: ${{ steps.generate_signing_key.outputs.self_signed }}
+      self_signed_cert: ${{ steps.generate_signing_key.outputs.self_signed_cert }}
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
