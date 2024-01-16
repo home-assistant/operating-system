@@ -43,6 +43,12 @@ arm_boost=1
 os_prefix=slot-A/
 cmdline=/cmdline.txt
 
+# Uncomment this to enable GPIO support for RPI-RF-MOD/HM-MOD-RPI-PCB
+#enable_uart=1
+#dtparam=i2c_arm=on
+#dtoverlay=miniuart-bt
+#dtoverlay=rpi-rf-mod
+
 [cm4]
 # Enable host mode on the 2711 built-in XHCI USB controller.
 # This line should be removed if the legacy DWC2 controller is required
