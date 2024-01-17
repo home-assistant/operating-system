@@ -67,7 +67,7 @@ case "$1" in
         else
             rm -f "${boot_dir}/slot-${slot_bootname}/.good"
             exit 0
-	fi
+        fi
 
         # It seems we call set-state in any case. Use this to "commit" tryboot
         # state...
@@ -76,13 +76,15 @@ case "$1" in
         if ! cmp -s -n 4 /proc/device-tree/chosen/bootloader/tryboot /dev/zero; then
             cmdline_tryboot=$(head -n1 "${boot_dir}/cmdline-tryboot.txt")
             tryboot_slot=$(get_value rauc.slot "${cmdline_tryboot}")
-	    if [ "${tryboot_slot}" != "${slot_bootname}" ]; then
+            if [ "${tryboot_slot}" != "${slot_bootname}" ]; then
                 echo "tryboot doesn't reflect the expected boot slot, not committing." >&2
                 exit 1
             fi
             echo "Committing tryboot state to primary boot" >&2
-            mv "${boot_dir}/tryboot.txt" "${boot_dir}/config.txt"
+            sed -e "s/^\(cmdline=\).*$/\1\/cmdline.txt/" \
+                "${boot_dir}/tryboot.txt" > "${boot_dir}/config.txt"
             mv "${boot_dir}/cmdline-tryboot.txt" "${boot_dir}/cmdline.txt"
+            rm "${boot_dir}/tryboot.txt"
         fi
         ;;
 
