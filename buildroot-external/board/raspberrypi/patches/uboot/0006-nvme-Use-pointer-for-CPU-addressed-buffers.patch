@@ -1,7 +1,4 @@
 From 4e7236a0e4a75dfca366ffc4ffb23a4bd43a52e7 Mon Sep 17 00:00:00 2001
-Message-ID: <4e7236a0e4a75dfca366ffc4ffb23a4bd43a52e7.1705930060.git.stefan@agner.ch>
-In-Reply-To: <45df955b5aa0460b9c93f63fb4a38f10807c0694.1705930060.git.stefan@agner.ch>
-References: <45df955b5aa0460b9c93f63fb4a38f10807c0694.1705930060.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Thu, 23 Sep 2021 23:58:35 +0200
 Subject: [PATCH] nvme: Use pointer for CPU addressed buffers

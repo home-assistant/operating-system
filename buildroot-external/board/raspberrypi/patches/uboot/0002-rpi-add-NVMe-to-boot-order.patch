@@ -1,7 +1,4 @@
 From f53b9a545132686b0286ce166203a57935502dbc Mon Sep 17 00:00:00 2001
-Message-ID: <f53b9a545132686b0286ce166203a57935502dbc.1705930060.git.stefan@agner.ch>
-In-Reply-To: <45df955b5aa0460b9c93f63fb4a38f10807c0694.1705930060.git.stefan@agner.ch>
-References: <45df955b5aa0460b9c93f63fb4a38f10807c0694.1705930060.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Tue, 29 Dec 2020 23:34:52 +0100
 Subject: [PATCH] rpi: add NVMe to boot order

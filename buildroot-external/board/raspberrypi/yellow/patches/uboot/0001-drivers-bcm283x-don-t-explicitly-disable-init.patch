@@ -1,5 +1,4 @@
 From 9577331a2ae167fcf149b60362c12d6328d3f3b9 Mon Sep 17 00:00:00 2001
-Message-ID: <9577331a2ae167fcf149b60362c12d6328d3f3b9.1705930411.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Thu, 14 Apr 2022 12:15:26 +0200
 Subject: [PATCH] drivers: bcm283x: don't explicitly disable init

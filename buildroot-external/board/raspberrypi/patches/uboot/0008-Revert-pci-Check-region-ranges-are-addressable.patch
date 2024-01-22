@@ -1,7 +1,4 @@
 From 5743e55d697959bcdcb58744bfc75d2fa99cca61 Mon Sep 17 00:00:00 2001
-Message-ID: <5743e55d697959bcdcb58744bfc75d2fa99cca61.1705930060.git.stefan@agner.ch>
-In-Reply-To: <45df955b5aa0460b9c93f63fb4a38f10807c0694.1705930060.git.stefan@agner.ch>
-References: <45df955b5aa0460b9c93f63fb4a38f10807c0694.1705930060.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Mon, 24 Apr 2023 15:44:15 +0200
 Subject: [PATCH] Revert "pci: Check region ranges are addressable"

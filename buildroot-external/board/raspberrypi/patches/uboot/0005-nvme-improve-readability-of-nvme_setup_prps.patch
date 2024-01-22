@@ -1,7 +1,4 @@
 From 66e2d5b7ba776587a4ebaca100f27798fa804c54 Mon Sep 17 00:00:00 2001
-Message-ID: <66e2d5b7ba776587a4ebaca100f27798fa804c54.1705930060.git.stefan@agner.ch>
-In-Reply-To: <45df955b5aa0460b9c93f63fb4a38f10807c0694.1705930060.git.stefan@agner.ch>
-References: <45df955b5aa0460b9c93f63fb4a38f10807c0694.1705930060.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Thu, 23 Sep 2021 23:52:44 +0200
 Subject: [PATCH] nvme: improve readability of nvme_setup_prps()

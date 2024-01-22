@@ -1,5 +1,4 @@
 From d44635df07c79c6e6e6832a5c59d27d27aacfa75 Mon Sep 17 00:00:00 2001
-Message-ID: <d44635df07c79c6e6e6832a5c59d27d27aacfa75.1705929734.git.stefan@agner.ch>
 From: Pascal Vizeli <pvizeli@syshack.ch>
 Date: Sun, 5 Aug 2018 20:43:03 +0000
 Subject: [PATCH] CMD: read string from fileinto env

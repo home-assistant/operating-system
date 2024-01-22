@@ -1,7 +1,4 @@
 From 5e92f768188d6534a0b38bbbec8541670d9182f4 Mon Sep 17 00:00:00 2001
-Message-ID: <5e92f768188d6534a0b38bbbec8541670d9182f4.1705930411.git.stefan@agner.ch>
-In-Reply-To: <9577331a2ae167fcf149b60362c12d6328d3f3b9.1705930411.git.stefan@agner.ch>
-References: <9577331a2ae167fcf149b60362c12d6328d3f3b9.1705930411.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Thu, 14 Apr 2022 12:18:41 +0200
 Subject: [PATCH] drivers: bcm283x: allow to spawn any PL011 UART
