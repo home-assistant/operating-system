@@ -1,7 +1,7 @@
-From ca73fb28fa86b7de243b6713d2756dee445c5f56 Mon Sep 17 00:00:00 2001
-Message-Id: <ca73fb28fa86b7de243b6713d2756dee445c5f56.1682350496.git.stefan@agner.ch>
-In-Reply-To: <01b4d231cbb66ca193ba422a22d25c75d21ff8ee.1682350496.git.stefan@agner.ch>
-References: <01b4d231cbb66ca193ba422a22d25c75d21ff8ee.1682350496.git.stefan@agner.ch>
+From f992eee16640831a3b2d8c093395a4dcaceff647 Mon Sep 17 00:00:00 2001
+Message-ID: <f992eee16640831a3b2d8c093395a4dcaceff647.1705930060.git.stefan@agner.ch>
+In-Reply-To: <45df955b5aa0460b9c93f63fb4a38f10807c0694.1705930060.git.stefan@agner.ch>
+References: <45df955b5aa0460b9c93f63fb4a38f10807c0694.1705930060.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Fri, 24 Sep 2021 00:27:39 +0200
 Subject: [PATCH] nvme: translate virtual addresses into the bus's address
@@ -29,10 +29,10 @@ Signed-off-by: Stefan Agner <stefan@agner.ch>
  2 files changed, 25 insertions(+), 14 deletions(-)
 
 diff --git a/drivers/nvme/nvme.c b/drivers/nvme/nvme.c
-index 352c94ea91..fdfc49677b 100644
+index 43ef819d11..9cd9037630 100644
 --- a/drivers/nvme/nvme.c
 +++ b/drivers/nvme/nvme.c
-@@ -66,7 +66,7 @@ static int nvme_setup_prps(struct nvme_dev *dev, u64 *prp2,
+@@ -67,7 +67,7 @@ static int nvme_setup_prps(struct nvme_dev *dev, u64 *prp2,
  		buffer += (page_size - offset);
  
  	if (length <= page_size) {
@@ -41,7 +41,7 @@ index 352c94ea91..fdfc49677b 100644
  		return 0;
  	}
  
-@@ -91,16 +91,16 @@ static int nvme_setup_prps(struct nvme_dev *dev, u64 *prp2,
+@@ -92,16 +92,16 @@ static int nvme_setup_prps(struct nvme_dev *dev, u64 *prp2,
  	i = 0;
  	while (nprps) {
  		if ((i == (prps_per_page - 1)) && nprps > 1) {
@@ -62,7 +62,7 @@ index 352c94ea91..fdfc49677b 100644
  
  	flush_dcache_range((ulong)dev->prp_pool, (ulong)dev->prp_pool +
  			   num_pages * page_size);
-@@ -353,6 +353,7 @@ static int nvme_configure_admin_queue(struct nvme_dev *dev)
+@@ -354,6 +354,7 @@ static int nvme_configure_admin_queue(struct nvme_dev *dev)
  	int result;
  	u32 aqa;
  	u64 cap = dev->cap;
@@ -70,7 +70,7 @@ index 352c94ea91..fdfc49677b 100644
  	struct nvme_queue *nvmeq;
  	/* most architectures use 4KB as the page size */
  	unsigned page_shift = 12;
-@@ -393,8 +394,10 @@ static int nvme_configure_admin_queue(struct nvme_dev *dev)
+@@ -394,8 +395,10 @@ static int nvme_configure_admin_queue(struct nvme_dev *dev)
  	dev->ctrl_config |= NVME_CC_IOSQES | NVME_CC_IOCQES;
  
  	writel(aqa, &dev->bar->aqa);
@@ -83,7 +83,7 @@ index 352c94ea91..fdfc49677b 100644
  
  	result = nvme_enable_ctrl(dev);
  	if (result)
-@@ -420,7 +423,7 @@ static int nvme_alloc_cq(struct nvme_dev *dev, u16 qid,
+@@ -421,7 +424,7 @@ static int nvme_alloc_cq(struct nvme_dev *dev, u16 qid,
  
  	memset(&c, 0, sizeof(c));
  	c.create_cq.opcode = nvme_admin_create_cq;
@@ -92,7 +92,7 @@ index 352c94ea91..fdfc49677b 100644
  	c.create_cq.cqid = cpu_to_le16(qid);
  	c.create_cq.qsize = cpu_to_le16(nvmeq->q_depth - 1);
  	c.create_cq.cq_flags = cpu_to_le16(flags);
-@@ -437,7 +440,7 @@ static int nvme_alloc_sq(struct nvme_dev *dev, u16 qid,
+@@ -438,7 +441,7 @@ static int nvme_alloc_sq(struct nvme_dev *dev, u16 qid,
  
  	memset(&c, 0, sizeof(c));
  	c.create_sq.opcode = nvme_admin_create_sq;
@@ -101,7 +101,7 @@ index 352c94ea91..fdfc49677b 100644
  	c.create_sq.sqid = cpu_to_le16(qid);
  	c.create_sq.qsize = cpu_to_le16(nvmeq->q_depth - 1);
  	c.create_sq.sq_flags = cpu_to_le16(flags);
-@@ -458,14 +461,14 @@ int nvme_identify(struct nvme_dev *dev, unsigned nsid,
+@@ -459,14 +462,14 @@ int nvme_identify(struct nvme_dev *dev, unsigned nsid,
  	memset(&c, 0, sizeof(c));
  	c.identify.opcode = nvme_admin_identify;
  	c.identify.nsid = cpu_to_le32(nsid);
@@ -118,7 +118,7 @@ index 352c94ea91..fdfc49677b 100644
  	}
  
  	c.identify.cns = cpu_to_le32(cns);
-@@ -490,7 +493,7 @@ int nvme_get_features(struct nvme_dev *dev, unsigned fid, unsigned nsid,
+@@ -491,7 +494,7 @@ int nvme_get_features(struct nvme_dev *dev, unsigned fid, unsigned nsid,
  	memset(&c, 0, sizeof(c));
  	c.features.opcode = nvme_admin_get_features;
  	c.features.nsid = cpu_to_le32(nsid);
@@ -127,7 +127,7 @@ index 352c94ea91..fdfc49677b 100644
  	c.features.fid = cpu_to_le32(fid);
  
  	ret = nvme_submit_admin_cmd(dev, &c, result);
-@@ -516,7 +519,7 @@ int nvme_set_features(struct nvme_dev *dev, unsigned fid, unsigned dword11,
+@@ -517,7 +520,7 @@ int nvme_set_features(struct nvme_dev *dev, unsigned fid, unsigned dword11,
  
  	memset(&c, 0, sizeof(c));
  	c.features.opcode = nvme_admin_set_features;
@@ -136,7 +136,7 @@ index 352c94ea91..fdfc49677b 100644
  	c.features.fid = cpu_to_le32(fid);
  	c.features.dword11 = cpu_to_le32(dword11);
  
-@@ -771,7 +774,7 @@ static ulong nvme_blk_rw(struct udevice *udev, lbaint_t blknr,
+@@ -784,7 +787,7 @@ static ulong nvme_blk_rw(struct udevice *udev, lbaint_t blknr,
  		c.rw.slba = cpu_to_le64(slba);
  		slba += lbas;
  		c.rw.length = cpu_to_le16(lbas - 1);
@@ -172,5 +172,5 @@ index bc1d612dde..f52103c009 100644
 +
  #endif /* __DRIVER_NVME_H__ */
 -- 
-2.40.0
+2.43.0
 

@@ -1,5 +1,5 @@
-From c8df96af414e6c9b1e6ff8ac5a56b6d3cb365636 Mon Sep 17 00:00:00 2001
-Message-Id: <c8df96af414e6c9b1e6ff8ac5a56b6d3cb365636.1645627108.git.stefan@agner.ch>
+From d44635df07c79c6e6e6832a5c59d27d27aacfa75 Mon Sep 17 00:00:00 2001
+Message-ID: <d44635df07c79c6e6e6832a5c59d27d27aacfa75.1705929734.git.stefan@agner.ch>
 From: Pascal Vizeli <pvizeli@syshack.ch>
 Date: Sun, 5 Aug 2018 20:43:03 +0000
 Subject: [PATCH] CMD: read string from fileinto env
@@ -13,12 +13,12 @@ Signed-off-by: Pascal Vizeli <pvizeli@syshack.ch>
  create mode 100644 cmd/fileenv.c
 
 diff --git a/cmd/Kconfig b/cmd/Kconfig
-index 02c298fdbe..959fff5b76 100644
+index df6d71c103..6cda4909d5 100644
 --- a/cmd/Kconfig
 +++ b/cmd/Kconfig
-@@ -1448,6 +1448,11 @@ config CMD_SETEXPR_FMT
- 	  Evaluate format string expression and store result in an environment
- 	    variable.
+@@ -1689,6 +1689,11 @@ config CMD_XXD
+ 	help
+ 	  Print file as hexdump to standard output
  
 +config CMD_FILEENV
 +	bool "fileenv"
@@ -29,11 +29,11 @@ index 02c298fdbe..959fff5b76 100644
  
  menu "Android support commands"
 diff --git a/cmd/Makefile b/cmd/Makefile
-index e31ac15ef7..eed8c7ebfe 100644
+index 9a6790cc17..a521653ff8 100644
 --- a/cmd/Makefile
 +++ b/cmd/Makefile
-@@ -143,6 +143,7 @@ obj-$(CONFIG_CMD_SCSI) += scsi.o disk.o
- obj-$(CONFIG_CMD_SHA1SUM) += sha1sum.o
+@@ -164,6 +164,7 @@ obj-$(CONFIG_CMD_SHA1SUM) += sha1sum.o
+ obj-$(CONFIG_CMD_SEAMA) += seama.o
  obj-$(CONFIG_CMD_SETEXPR) += setexpr.o
  obj-$(CONFIG_CMD_SETEXPR_FMT) += printf.o
 +obj-$(CONFIG_CMD_FILEENV) += fileenv.o
@@ -93,5 +93,5 @@ index 0000000000..9891cb05ab
 +	"    - Read file from fat32 and store it as env."
 +);
 -- 
-2.35.1
+2.43.0
 

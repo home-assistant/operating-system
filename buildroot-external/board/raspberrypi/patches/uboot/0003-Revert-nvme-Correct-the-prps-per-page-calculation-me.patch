@@ -1,7 +1,7 @@
-From 60afc919643d212439a63908c83523879af21032 Mon Sep 17 00:00:00 2001
-Message-Id: <60afc919643d212439a63908c83523879af21032.1682350496.git.stefan@agner.ch>
-In-Reply-To: <01b4d231cbb66ca193ba422a22d25c75d21ff8ee.1682350496.git.stefan@agner.ch>
-References: <01b4d231cbb66ca193ba422a22d25c75d21ff8ee.1682350496.git.stefan@agner.ch>
+From 8e63cbe8892eb6edc02674d42078a9f116ee8224 Mon Sep 17 00:00:00 2001
+Message-ID: <8e63cbe8892eb6edc02674d42078a9f116ee8224.1705930060.git.stefan@agner.ch>
+In-Reply-To: <45df955b5aa0460b9c93f63fb4a38f10807c0694.1705930060.git.stefan@agner.ch>
+References: <45df955b5aa0460b9c93f63fb4a38f10807c0694.1705930060.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Thu, 23 Sep 2021 23:43:31 +0200
 Subject: [PATCH] Revert "nvme: Correct the prps per page calculation method"
@@ -26,10 +26,10 @@ Cc: Wesley Sheng <wesleyshenggit@sina.com>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/nvme/nvme.c b/drivers/nvme/nvme.c
-index 6d0d3f3ca2..73db80a294 100644
+index c39cd41aa3..03a652863c 100644
 --- a/drivers/nvme/nvme.c
 +++ b/drivers/nvme/nvme.c
-@@ -52,7 +52,7 @@ static int nvme_setup_prps(struct nvme_dev *dev, u64 *prp2,
+@@ -53,7 +53,7 @@ static int nvme_setup_prps(struct nvme_dev *dev, u64 *prp2,
  	u64 *prp_pool;
  	int length = total_len;
  	int i, nprps;
@@ -39,5 +39,5 @@ index 6d0d3f3ca2..73db80a294 100644
  
  	length -= (page_size - offset);
 -- 
-2.40.0
+2.43.0
 
