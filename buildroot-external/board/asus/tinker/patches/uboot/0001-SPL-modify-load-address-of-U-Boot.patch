@@ -1,8 +1,7 @@
-From 966cd1782632bc8279667955ec315e93c89495e6 Mon Sep 17 00:00:00 2001
-Message-Id: <966cd1782632bc8279667955ec315e93c89495e6.1645627366.git.stefan@agner.ch>
+From 48021de3511573e8dda7c3c0446ba85eeb37921a Mon Sep 17 00:00:00 2001
 From: Pascal Vizeli <pvizeli@syshack.ch>
 Date: Fri, 24 Apr 2020 12:41:50 +0000
-Subject: [PATCH 1/2] SPL: modify load address of U-Boot
+Subject: [PATCH] SPL: modify load address of U-Boot
 
 Default load address of U-Boot is at sector 16384, which is where HAOS
 has its first partition. Use 0x2000 (8192) instead.
@@ -15,23 +14,23 @@ Signed-off-by: Stefan Agner <stefan@agner.ch>
  2 files changed, 2 insertions(+)
 
 diff --git a/configs/tinker-rk3288_defconfig b/configs/tinker-rk3288_defconfig
-index a9c9a122f6..b839fdb570 100644
+index 303c3295be..398ba196b5 100644
 --- a/configs/tinker-rk3288_defconfig
 +++ b/configs/tinker-rk3288_defconfig
-@@ -92,3 +92,4 @@ CONFIG_VIDEO_ROCKCHIP=y
+@@ -101,3 +101,4 @@ CONFIG_VIDEO_ROCKCHIP=y
  CONFIG_DISPLAY_ROCKCHIP_HDMI=y
  CONFIG_CMD_DHRYSTONE=y
  CONFIG_ERRNO_STR=y
 +CONFIG_SYS_MMCSD_RAW_MODE_U_BOOT_SECTOR=0x2000
 diff --git a/configs/tinker-s-rk3288_defconfig b/configs/tinker-s-rk3288_defconfig
-index f367c9370f..c52b0753ec 100644
+index 3267fdc082..1e781c18ae 100644
 --- a/configs/tinker-s-rk3288_defconfig
 +++ b/configs/tinker-s-rk3288_defconfig
-@@ -94,3 +94,4 @@ CONFIG_DISPLAY_ROCKCHIP_HDMI=y
+@@ -103,3 +103,4 @@ CONFIG_DISPLAY_ROCKCHIP_HDMI=y
  CONFIG_CONSOLE_SCROLL_LINES=10
  CONFIG_CMD_DHRYSTONE=y
  CONFIG_ERRNO_STR=y
 +CONFIG_SYS_MMCSD_RAW_MODE_U_BOOT_SECTOR=0x2000
 -- 
-2.35.1
+2.43.0
 
