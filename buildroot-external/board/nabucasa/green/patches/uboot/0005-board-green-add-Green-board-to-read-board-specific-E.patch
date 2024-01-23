@@ -1,11 +1,7 @@
-From 0088369711a0b57b598121dad60b52de0426a180 Mon Sep 17 00:00:00 2001
-Message-ID: <0088369711a0b57b598121dad60b52de0426a180.1692346980.git.stefan@agner.ch>
-In-Reply-To: <2ab36c774a9f16c10a2bffeb602a9c914ffacd00.1692346980.git.stefan@agner.ch>
-References: <2ab36c774a9f16c10a2bffeb602a9c914ffacd00.1692346980.git.stefan@agner.ch>
+From acec57c77e10230fc32820046301cb2a59c431d4 Mon Sep 17 00:00:00 2001
 From: Stefan Agner <stefan@agner.ch>
 Date: Thu, 17 Aug 2023 17:38:13 +0200
-Subject: [PATCH 5/9] board: green: add Green board to read board specific
- EEPROM
+Subject: [PATCH] board: green: add Green board to read board specific EEPROM
 
 Use board specific code to read serial number and MAC address from
 on-board I2C EEPROM.
@@ -44,7 +40,7 @@ index ea9d358099..91afadf0e6 100644
  
  &i2s0_8ch {
 diff --git a/arch/arm/mach-rockchip/rk3568/Kconfig b/arch/arm/mach-rockchip/rk3568/Kconfig
-index 94e04b79e7..5858c3921d 100644
+index baa51349f4..42652dec03 100644
 --- a/arch/arm/mach-rockchip/rk3568/Kconfig
 +++ b/arch/arm/mach-rockchip/rk3568/Kconfig
 @@ -17,6 +17,12 @@ config TARGET_ANBERNIC_RGXX3_RK3566
@@ -57,14 +53,15 @@ index 94e04b79e7..5858c3921d 100644
 +	  Nabu Casa's Home Assistant Green single board computer with a RK3566
 +	  SoC.
 +
- endchoice
- 
- config ROCKCHIP_BOOT_MODE_REG
-@@ -33,5 +39,6 @@ config SYS_MALLOC_F_LEN
- 
+ config TARGET_ODROID_M1_RK3568
+ 	bool "ODROID-M1"
+ 	help
+@@ -44,6 +50,7 @@ config SYS_MALLOC_F_LEN
  source "board/rockchip/evb_rk3568/Kconfig"
  source "board/anbernic/rgxx3_rk3566/Kconfig"
+ source "board/hardkernel/odroid_m1/Kconfig"
 +source "board/nabucasa/ha-green/Kconfig"
+ source "board/pine64/quartz64_rk3566/Kconfig"
  
  endif
 diff --git a/board/nabucasa/ha-green/Kconfig b/board/nabucasa/ha-green/Kconfig
@@ -207,5 +204,5 @@ index 0000000000..e42d9c8e8c
 +
 +#endif
 -- 
-2.41.0
+2.43.0
 

@@ -1,10 +1,7 @@
-From 9fd3b62354064d44fd391907f48d7800c6839c8a Mon Sep 17 00:00:00 2001
-Message-ID: <9fd3b62354064d44fd391907f48d7800c6839c8a.1692346980.git.stefan@agner.ch>
-In-Reply-To: <2ab36c774a9f16c10a2bffeb602a9c914ffacd00.1692346980.git.stefan@agner.ch>
-References: <2ab36c774a9f16c10a2bffeb602a9c914ffacd00.1692346980.git.stefan@agner.ch>
+From 51f1bdec59b8f62ac00a37e97a7bb8ebfc9f61d7 Mon Sep 17 00:00:00 2001
 From: syan <syan.cham@gmail.com>
 Date: Mon, 31 Jul 2023 09:39:55 +0000
-Subject: [PATCH 6/9] green: spl loader uboot order: sd-emmc-spi_nor
+Subject: [PATCH] green: spl loader uboot order: sd-emmc-spi_nor
 
 ---
  arch/arm/dts/rk3566-ha-green-u-boot.dtsi | 2 +-
@@ -24,5 +21,5 @@ index fa98078fce..48d7b61513 100644
  };
  
 -- 
-2.41.0
+2.43.0
 
