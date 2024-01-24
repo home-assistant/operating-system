@@ -1,7 +1,7 @@
-From 921f4b6d8cb3b997dd5c54fd436bb8223046421e Mon Sep 17 00:00:00 2001
-Message-Id: <921f4b6d8cb3b997dd5c54fd436bb8223046421e.1668448114.git.stefan@agner.ch>
-In-Reply-To: <85fb54b621c1ca79f1ec8634b0597a038338e51d.1668448114.git.stefan@agner.ch>
-References: <85fb54b621c1ca79f1ec8634b0597a038338e51d.1668448114.git.stefan@agner.ch>
+From 6ec30bbcaff0f45ce9a25f75e741eb3971d457b9 Mon Sep 17 00:00:00 2001
+Message-ID: <6ec30bbcaff0f45ce9a25f75e741eb3971d457b9.1705959834.git.stefan@agner.ch>
+In-Reply-To: <d93052cd62449759535c295d5b77dbd73d644478.1705959834.git.stefan@agner.ch>
+References: <d93052cd62449759535c295d5b77dbd73d644478.1705959834.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Thu, 14 Apr 2022 12:18:41 +0200
 Subject: [PATCH] drivers: bcm283x: allow to spawn any PL011 UART
@@ -22,7 +22,7 @@ Signed-off-by: Stefan Agner <stefan@agner.ch>
  1 file changed, 27 deletions(-)
 
 diff --git a/drivers/serial/serial_bcm283x_pl011.c b/drivers/serial/serial_bcm283x_pl011.c
-index fcba07f1c5..98628e1ca4 100644
+index cad24aab08..1ca2c5d831 100644
 --- a/drivers/serial/serial_bcm283x_pl011.c
 +++ b/drivers/serial/serial_bcm283x_pl011.c
 @@ -11,37 +11,10 @@
@@ -64,5 +64,5 @@ index fcba07f1c5..98628e1ca4 100644
  	 * Read the ofdata here rather than in an of_to_plat() method
  	 * since we need the soc simple-bus to be probed so that the 'ranges'
 -- 
-2.38.1
+2.43.0
 

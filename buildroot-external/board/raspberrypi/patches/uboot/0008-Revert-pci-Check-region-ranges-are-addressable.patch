@@ -1,7 +1,4 @@
-From 89df39ccb71062a06f4548c11fba9101dfd82445 Mon Sep 17 00:00:00 2001
-Message-Id: <89df39ccb71062a06f4548c11fba9101dfd82445.1682350496.git.stefan@agner.ch>
-In-Reply-To: <01b4d231cbb66ca193ba422a22d25c75d21ff8ee.1682350496.git.stefan@agner.ch>
-References: <01b4d231cbb66ca193ba422a22d25c75d21ff8ee.1682350496.git.stefan@agner.ch>
+From 5743e55d697959bcdcb58744bfc75d2fa99cca61 Mon Sep 17 00:00:00 2001
 From: Stefan Agner <stefan@agner.ch>
 Date: Mon, 24 Apr 2023 15:44:15 +0200
 Subject: [PATCH] Revert "pci: Check region ranges are addressable"
@@ -18,10 +15,10 @@ Signed-off-by: Stefan Agner <stefan@agner.ch>
  1 file changed, 1 insertion(+), 16 deletions(-)
 
 diff --git a/drivers/pci/pci-uclass.c b/drivers/pci/pci-uclass.c
-index 9343cfc62a..ac2a8c8aa0 100644
+index e0d01f6a85..ed3513480a 100644
 --- a/drivers/pci/pci-uclass.c
 +++ b/drivers/pci/pci-uclass.c
-@@ -1027,22 +1027,7 @@ static int decode_regions(struct pci_controller *hose, ofnode parent_node,
+@@ -1039,22 +1039,7 @@ static int decode_regions(struct pci_controller *hose, ofnode parent_node,
  
  		if (!IS_ENABLED(CONFIG_SYS_PCI_64BIT) &&
  		    type == PCI_REGION_MEM && upper_32_bits(pci_addr)) {
@@ -46,5 +43,5 @@ index 9343cfc62a..ac2a8c8aa0 100644
  		}
  
 -- 
-2.40.0
+2.43.0
 

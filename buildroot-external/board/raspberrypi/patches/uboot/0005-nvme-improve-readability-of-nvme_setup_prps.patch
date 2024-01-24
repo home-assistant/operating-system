@@ -1,7 +1,4 @@
-From 11176a6ca068e0b572abbe5da8fef1d57bd40e7a Mon Sep 17 00:00:00 2001
-Message-Id: <11176a6ca068e0b572abbe5da8fef1d57bd40e7a.1682350496.git.stefan@agner.ch>
-In-Reply-To: <01b4d231cbb66ca193ba422a22d25c75d21ff8ee.1682350496.git.stefan@agner.ch>
-References: <01b4d231cbb66ca193ba422a22d25c75d21ff8ee.1682350496.git.stefan@agner.ch>
+From 66e2d5b7ba776587a4ebaca100f27798fa804c54 Mon Sep 17 00:00:00 2001
 From: Stefan Agner <stefan@agner.ch>
 Date: Thu, 23 Sep 2021 23:52:44 +0200
 Subject: [PATCH] nvme: improve readability of nvme_setup_prps()
@@ -15,10 +12,10 @@ Signed-off-by: Stefan Agner <stefan@agner.ch>
  1 file changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/nvme/nvme.c b/drivers/nvme/nvme.c
-index 73db80a294..751abc3cd5 100644
+index 03a652863c..5c4fbd08dc 100644
 --- a/drivers/nvme/nvme.c
 +++ b/drivers/nvme/nvme.c
-@@ -47,12 +47,12 @@ static int nvme_wait_csts(struct nvme_dev *dev, u32 mask, u32 val)
+@@ -48,12 +48,12 @@ static int nvme_wait_csts(struct nvme_dev *dev, u32 mask, u32 val)
  static int nvme_setup_prps(struct nvme_dev *dev, u64 *prp2,
  			   int total_len, u64 dma_addr)
  {
@@ -33,7 +30,7 @@ index 73db80a294..751abc3cd5 100644
  	u32 num_pages;
  
  	length -= (page_size - offset);
-@@ -91,8 +91,8 @@ static int nvme_setup_prps(struct nvme_dev *dev, u64 *prp2,
+@@ -92,8 +92,8 @@ static int nvme_setup_prps(struct nvme_dev *dev, u64 *prp2,
  	i = 0;
  	while (nprps) {
  		if ((i == (prps_per_page - 1)) && nprps > 1) {
@@ -45,5 +42,5 @@ index 73db80a294..751abc3cd5 100644
  			prp_pool += page_size;
  		}
 -- 
-2.40.0
+2.43.0
 

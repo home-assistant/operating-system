@@ -1,10 +1,7 @@
-From e525d29174f335fe9aa72da8642699609631b2be Mon Sep 17 00:00:00 2001
-Message-ID: <e525d29174f335fe9aa72da8642699609631b2be.1692346980.git.stefan@agner.ch>
-In-Reply-To: <2ab36c774a9f16c10a2bffeb602a9c914ffacd00.1692346980.git.stefan@agner.ch>
-References: <2ab36c774a9f16c10a2bffeb602a9c914ffacd00.1692346980.git.stefan@agner.ch>
+From e14d7d56b293ba01c5b73a4b3483795d78c75172 Mon Sep 17 00:00:00 2001
 From: Zhangqun Ming <north_sea@qq.com>
 Date: Sat, 15 Jul 2023 08:46:09 +0000
-Subject: [PATCH 4/9] arch: arm: dts: green: spi nor uboot
+Subject: [PATCH] arch: arm: dts: green: spi nor uboot
 
 ---
  arch/arm/dts/rk3566-ha-green-u-boot.dtsi | 88 +++++++++++++++++++++++-
@@ -154,5 +151,5 @@ index 14960b67d2..5f94c06279 100644
  CONFIG_GMAC_ROCKCHIP=y
  CONFIG_PHY_ROCKCHIP_INNO_USB2=y
 -- 
-2.41.0
+2.43.0
 

@@ -1,5 +1,5 @@
-From 85fb54b621c1ca79f1ec8634b0597a038338e51d Mon Sep 17 00:00:00 2001
-Message-Id: <85fb54b621c1ca79f1ec8634b0597a038338e51d.1668448114.git.stefan@agner.ch>
+From d93052cd62449759535c295d5b77dbd73d644478 Mon Sep 17 00:00:00 2001
+Message-ID: <d93052cd62449759535c295d5b77dbd73d644478.1705959834.git.stefan@agner.ch>
 From: Stefan Agner <stefan@agner.ch>
 Date: Thu, 14 Apr 2022 12:15:26 +0200
 Subject: [PATCH] drivers: bcm283x: don't explicitly disable init
@@ -19,7 +19,7 @@ Signed-off-by: Stefan Agner <stefan@agner.ch>
  2 files changed, 3 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/serial/serial_bcm283x_pl011.c b/drivers/serial/serial_bcm283x_pl011.c
-index 7d172cdac0..fcba07f1c5 100644
+index 09a9868a38..cad24aab08 100644
 --- a/drivers/serial/serial_bcm283x_pl011.c
 +++ b/drivers/serial/serial_bcm283x_pl011.c
 @@ -51,12 +51,6 @@ static int bcm283x_pl011_serial_probe(struct udevice *dev)
@@ -36,19 +36,17 @@ index 7d172cdac0..fcba07f1c5 100644
  }
  
 diff --git a/include/configs/rpi.h b/include/configs/rpi.h
-index 7257659932..7fdf2a891d 100644
+index 8e56bdc84a..c137bd7e19 100644
 --- a/include/configs/rpi.h
 +++ b/include/configs/rpi.h
-@@ -33,6 +33,9 @@
+@@ -31,4 +31,7 @@
   */
- #define CONFIG_SYS_SDRAM_SIZE		SZ_128M
+ #define CFG_SYS_SDRAM_SIZE		SZ_128M
  
-+/* Define PL011 default clock */
-+#define CONFIG_PL011_CLOCK		48000000
++/* PL011 Serial Configuration */
++#define CFG_PL011_CLOCK		48000000
 +
- /* Devices */
- /* LCD */
- 
+ #endif
 -- 
-2.38.1
+2.43.0
 

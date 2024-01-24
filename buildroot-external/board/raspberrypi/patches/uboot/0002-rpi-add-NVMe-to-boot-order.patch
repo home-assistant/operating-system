@@ -1,7 +1,4 @@
-From 8870872f359771effddd74bcb4c7e0a4316d99f7 Mon Sep 17 00:00:00 2001
-Message-Id: <8870872f359771effddd74bcb4c7e0a4316d99f7.1682350496.git.stefan@agner.ch>
-In-Reply-To: <01b4d231cbb66ca193ba422a22d25c75d21ff8ee.1682350496.git.stefan@agner.ch>
-References: <01b4d231cbb66ca193ba422a22d25c75d21ff8ee.1682350496.git.stefan@agner.ch>
+From f53b9a545132686b0286ce166203a57935502dbc Mon Sep 17 00:00:00 2001
 From: Stefan Agner <stefan@agner.ch>
 Date: Tue, 29 Dec 2020 23:34:52 +0100
 Subject: [PATCH] rpi: add NVMe to boot order
@@ -11,34 +8,19 @@ order.
 
 Signed-off-by: Stefan Agner <stefan@agner.ch>
 ---
- include/configs/rpi.h | 7 +++++++
- 1 file changed, 7 insertions(+)
+ board/raspberrypi/rpi/rpi.env | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/configs/rpi.h b/include/configs/rpi.h
-index cd8fe8b518..7257659932 100644
---- a/include/configs/rpi.h
-+++ b/include/configs/rpi.h
-@@ -131,6 +131,12 @@
- 	#define BOOT_TARGET_MMC(func)
- #endif
+diff --git a/board/raspberrypi/rpi/rpi.env b/board/raspberrypi/rpi/rpi.env
+index 30228285ed..89f6c5a839 100644
+--- a/board/raspberrypi/rpi/rpi.env
++++ b/board/raspberrypi/rpi/rpi.env
+@@ -74,4 +74,4 @@ pxefile_addr_r=0x02500000
+ fdt_addr_r=0x02600000
+ ramdisk_addr_r=0x02700000
  
-+#if CONFIG_IS_ENABLED(CMD_NVME)
-+	#define BOOT_TARGET_NVME(func) func(NVME, nvme, 0)
-+#else
-+	#define BOOT_TARGET_NVME(func)
-+#endif
-+
- #if CONFIG_IS_ENABLED(CMD_USB)
- 	#define BOOT_TARGET_USB(func) func(USB, usb, 0)
- #else
-@@ -151,6 +157,7 @@
- 
- #define BOOT_TARGET_DEVICES(func) \
- 	BOOT_TARGET_MMC(func) \
-+	BOOT_TARGET_NVME(func) \
- 	BOOT_TARGET_USB(func) \
- 	BOOT_TARGET_PXE(func) \
- 	BOOT_TARGET_DHCP(func)
+-boot_targets=mmc usb pxe dhcp
++boot_targets=mmc nvme usb pxe dhcp
 -- 
-2.40.0
+2.43.0
 

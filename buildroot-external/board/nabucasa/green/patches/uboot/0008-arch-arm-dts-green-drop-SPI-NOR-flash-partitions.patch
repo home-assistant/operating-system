@@ -1,10 +1,7 @@
-From c0ee04d554802a7b7af3e6ec6b3d9b4160c75126 Mon Sep 17 00:00:00 2001
-Message-ID: <c0ee04d554802a7b7af3e6ec6b3d9b4160c75126.1692346980.git.stefan@agner.ch>
-In-Reply-To: <2ab36c774a9f16c10a2bffeb602a9c914ffacd00.1692346980.git.stefan@agner.ch>
-References: <2ab36c774a9f16c10a2bffeb602a9c914ffacd00.1692346980.git.stefan@agner.ch>
+From 846df62342a4904a91aace66e9204ae3ed4ca0af Mon Sep 17 00:00:00 2001
 From: Stefan Agner <stefan@agner.ch>
 Date: Fri, 18 Aug 2023 10:06:24 +0200
-Subject: [PATCH 9/9] arch: arm: dts: green: drop SPI NOR flash partitions
+Subject: [PATCH] arch: arm: dts: green: drop SPI NOR flash partitions
 
 ---
  arch/arm/dts/rk3566-ha-green.dts | 27 ---------------------------
@@ -49,5 +46,5 @@ index 91afadf0e6..68d836911e 100644
  };
  
 -- 
-2.41.0
+2.43.0
 

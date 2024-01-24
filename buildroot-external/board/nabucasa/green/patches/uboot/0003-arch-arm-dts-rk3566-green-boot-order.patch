@@ -1,10 +1,7 @@
-From c59235f8be1bdd261e1677177c1bef1bee1025ea Mon Sep 17 00:00:00 2001
-Message-ID: <c59235f8be1bdd261e1677177c1bef1bee1025ea.1692346980.git.stefan@agner.ch>
-In-Reply-To: <2ab36c774a9f16c10a2bffeb602a9c914ffacd00.1692346980.git.stefan@agner.ch>
-References: <2ab36c774a9f16c10a2bffeb602a9c914ffacd00.1692346980.git.stefan@agner.ch>
+From d8b8b614d19dbb3fa004677a2c2e50b685a80192 Mon Sep 17 00:00:00 2001
 From: Zhangqun Ming <north_sea@qq.com>
 Date: Fri, 14 Jul 2023 14:14:10 +0000
-Subject: [PATCH 3/9] arch: arm: dts: rk3566: green: boot order
+Subject: [PATCH] arch: arm: dts: rk3566: green: boot order
 
 ---
  arch/arm/dts/rk3566-ha-green-u-boot.dtsi | 6 +++++-
@@ -49,5 +46,5 @@ index 15d2b73433..bf0f81c3a1 100644
  		reg = <0>;
  		spi-max-frequency = <100000000>;
 -- 
-2.41.0
+2.43.0
 
