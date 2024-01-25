@@ -10,9 +10,6 @@
 # Enable audio (loads snd_bcm2835)
 dtparam=audio=on
 
-# Additional overlays and parameters are documented
-# /boot/firmware/overlays/README
-
 # Automatically load overlays for detected cameras
 camera_auto_detect=1
 
