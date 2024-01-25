@@ -364,7 +364,7 @@ jobs:
         with:
           name: haos_${{ matrix.board.id }}-${{ needs.prepare.outputs.version_full }}.vhdx.zip
           path: |
-            output/images/haos_${{ matrix.board.id }}-${{ needs.prepare.outputs.version_full }}.vhdx..zip
+            output/images/haos_${{ matrix.board.id }}-${{ needs.prepare.outputs.version_full }}.vhdx.zip
 
   test:
     name: Test OS image
