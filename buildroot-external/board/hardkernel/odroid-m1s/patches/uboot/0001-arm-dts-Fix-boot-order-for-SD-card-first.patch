@@ -1,0 +1,24 @@
+From 3484a71f90ad5056ddb8ae625b5c27943a200e2a Mon Sep 17 00:00:00 2001
+From: Tim Lunn <tim@feathertop.org>
+Date: Sun, 28 Jan 2024 19:28:25 +1100
+Subject: [PATCH] arm: dts: Fix boot order for SD card first
+
+---
+ arch/arm/dts/rk3568-generic-u-boot.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm/dts/rk3568-generic-u-boot.dtsi b/arch/arm/dts/rk3568-generic-u-boot.dtsi
+index 90022580a1..13b97f8ee8 100644
+--- a/arch/arm/dts/rk3568-generic-u-boot.dtsi
++++ b/arch/arm/dts/rk3568-generic-u-boot.dtsi
+@@ -5,6 +5,7 @@
+ / {
+ 	chosen {
+ 		stdout-path = &uart2;
++		u-boot,spl-boot-order = &sdmmc0, &sdhci;
+ 	};
+ };
+ 
+-- 
+2.40.1
+
