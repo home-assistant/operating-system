@@ -1,0 +1,335 @@
+From eb02261dd6c88a7fcf3c28e59a7976905815fa6b Mon Sep 17 00:00:00 2001
+From: Tim Lunn <tim@feathertop.org>
+Date: Sun, 28 Jan 2024 18:55:57 +1100
+Subject: [PATCH] arm64: dts: clean up as required for mainline linux
+
+---
+ .../boot/dts/rockchip/rk3566-odroid-m1s.dts   | 212 +++---------------
+ 1 file changed, 27 insertions(+), 185 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/rockchip/rk3566-odroid-m1s.dts b/arch/arm64/boot/dts/rockchip/rk3566-odroid-m1s.dts
+index 1cad9217c374..cbf2495901d7 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3566-odroid-m1s.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3566-odroid-m1s.dts
+@@ -18,12 +18,8 @@ / {
+ 
+ 	aliases {
+ 		ethernet1 = &gmac1;
+-		i2c0 = &i2c3;
+-		i2c3 = &i2c0;
+ 		mmc0 = &sdhci;
+ 		mmc1 = &sdmmc0;
+-		serial0 = &uart1;
+-		serial1 = &uart0;
+ 	};
+ 
+ 	chosen: chosen {
+@@ -52,7 +48,7 @@ leds {
+ 		compatible = "gpio-leds";
+ 		status = "okay";
+ 
+-		red_led: red {
++		red_led: led-0 {
+ 			gpios = <&gpio0 RK_PC6 GPIO_ACTIVE_LOW>;
+ 			linux,default-trigger = "default-on";
+ 			function = LED_FUNCTION_POWER;
+@@ -60,7 +56,7 @@ red_led: red {
+ 			pinctrl-names = "default";
+ 			pinctrl-0 = <&led_power_en>;
+ 		};
+-		blue_led: blue {
++		blue_led: led-1 {
+ 			gpios = <&gpio0 RK_PB7 GPIO_ACTIVE_HIGH>;
+ 			linux,default-trigger = "heartbeat";
+ 			function = LED_FUNCTION_HEARTBEAT;
+@@ -97,6 +93,25 @@ simple-audio-card,codec {
+ 		};
+ 	};
+ 
++	spdif_dit: spdif-dit {
++		compatible = "linux,spdif-dit";
++		#sound-dai-cells = <0>;
++		status = "disabled";
++	};
++
++	spdif_sound: spdif-sound {
++		compatible = "simple-audio-card";
++		status = "disabled";
++
++		simple-audio-card,cpu {
++			sound-dai = <&spdif>;
++		};
++
++		simple-audio-card,codec {
++			sound-dai = <&spdif_dit>;
++		};
++	};
++
+ 	vcc3v3_sys: vcc3v3-sys {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vcc3v3_sys";
+@@ -164,7 +179,6 @@ vcc5v0_usb_host: vcc5v0-usb3-regulator {
+ };
+ 
+ &combphy1 {
+-	phy-supply = <&vcc5v0_usb_host>;
+ 	status = "okay";
+ };
+ 
+@@ -215,121 +229,6 @@ &gmac1m1_rgmii_bus
+ 	status = "okay";
+ };
+ 
+-&gpio0 {
+-	gpio-line-names =
+-		/* GPIO0_A0-A3 */
+-		"", "", "", "",
+-		/* GPIO0_A4-A7 */
+-		"", "", "", "",
+-
+-		/* GPIO0_B0-B3 */
+-		"", "", "", "PIN_28",
+-		/* GPIO0_B4-B7 */
+-		"PIN_27", "PIN_33", "PIN_7", "",
+-
+-		/* GPIO0_C0-C3 */
+-		"PIN_11", "PIN_13", "PIN_15", "",
+-		/* GPIO0_C4-C7 */
+-		"", "", "", "",
+-
+-		/* GPIO0_D0-D3 */
+-		"", "", "", "",
+-		/* GPIO0_D4-D7 */
+-		"", "", "", "";
+-};
+-
+-&gpio1 {
+-	gpio-line-names =
+-		/* GPIO1_A0-A3 */
+-		"", "", "", "",
+-		/* GPIO1_A4-A7 */
+-		"", "", "", "",
+-
+-		/* GPIO1_B0-B3 */
+-		"", "", "", "",
+-		/* GPIO1_B4-B7 */
+-		"", "", "", "",
+-
+-		/* GPIO1_C0-C3 */
+-		"", "", "", "",
+-		/* GPIO1_C4-C7 */
+-		"", "", "", "",
+-
+-		/* GPIO1_D0-D3 */
+-		"", "", "", "",
+-		/* GPIO1_D4-D7 */
+-		"", "", "", "";
+-};
+-
+-&gpio2 {
+-	gpio-line-names =
+-		/* GPIO2_A0-A3 */
+-		"", "", "", "PIN_10",
+-		/* GPIO2_A4-A7 */
+-		"PIN_8", "PINN_35", "PIN_36", "PIN_12",
+-
+-		/* GPIO2_B0-B3 */
+-		"PIN_22", "PIN_26", "PIN_32", "",
+-		/* GPIO2_B4-B7 */
+-		"", "PIN_16", "PIN_18", "PIN_31",
+-
+-		/* GPIO2_C0-C3 */
+-		"PIN_29", "", "", "",
+-		/* GPIO2_C4-C7 */
+-		"", "", "", "",
+-
+-		/* GPIO2_D0-D3 */
+-		"", "", "", "",
+-		/* GPIO2_D4-D7 */
+-		"", "", "", "";
+-};
+-
+-&gpio3 {
+-	gpio-line-names =
+-		/* GPIO3_A0-A3 */
+-		"", "PIN_24", "", "",
+-		/* GPIO3_A4-A7 */
+-		"", "", "", "",
+-
+-		/* GPIO3_B0-B3 */
+-		"", "", "", "EXTPIN_13",
+-		/* GPIO3_B4-B7 */
+-		"EXTPIN_14", "PIN_5", "PIN_3", "",
+-
+-		/* GPIO3_C0-C3 */
+-		"", "PIN_19", "PIN_21", "PIN_23",
+-		/* GPIO3_C4-C7 */
+-		"EXTPIN_11", "EXTPIN_12", "", "",
+-
+-		/* GPIO3_D0-D3 */
+-		"", "", "", "",
+-		/* GPIO3_D4-D7 */
+-		"", "", "", "";
+-};
+-
+-&gpio4 {
+-	gpio-line-names =
+-		/* GPIO4_A0-A3 */
+-		"", "", "", "",
+-		/* GPIO4_A4-A7 */
+-		"", "", "", "",
+-
+-		/* GPIO4_B0-B3 */
+-		"", "", "", "",
+-		/* GPIO4_B4-B7 */
+-		"", "", "", "",
+-
+-		/* GPIO4_C0-C3 */
+-		"", "", "", "",
+-		/* GPIO4_C4-C7 */
+-		"", "", "", "",
+-
+-		/* GPIO4_D0-D3 */
+-		"", "", "", "",
+-		/* GPIO4_D4-D7 */
+-		"", "", "", "";
+-};
+-
+ &gpu {
+ 	mali-supply = <&vdd_gpu>;
+ 	status = "okay";
+@@ -368,7 +267,6 @@ vdd_cpu: tcs4525@1c {
+ 		regulator-name = "vdd_cpu";
+ 		regulator-min-microvolt = <712500>;
+ 		regulator-max-microvolt = <1390000>;
+-		regulator-init-microvolt = <900000>;
+ 		regulator-ramp-delay = <2300>;
+ 		fcs,suspend-voltage-selector = <1>;
+ 		regulator-boot-on;
+@@ -409,7 +307,6 @@ vdd_logic: DCDC_REG1 {
+ 				regulator-boot-on;
+ 				regulator-min-microvolt = <500000>;
+ 				regulator-max-microvolt = <1350000>;
+-				regulator-init-microvolt = <900000>;
+ 				regulator-ramp-delay = <6001>;
+ 				regulator-initial-mode = <0x2>;
+ 				regulator-name = "vdd_logic";
+@@ -423,7 +320,6 @@ vdd_gpu: DCDC_REG2 {
+ 				regulator-boot-on;
+ 				regulator-min-microvolt = <500000>;
+ 				regulator-max-microvolt = <1350000>;
+-				regulator-init-microvolt = <900000>;
+ 				regulator-ramp-delay = <6001>;
+ 				regulator-initial-mode = <0x2>;
+ 				regulator-name = "vdd_gpu";
+@@ -447,7 +343,6 @@ vdd_npu: DCDC_REG4 {
+ 				regulator-boot-on;
+ 				regulator-min-microvolt = <500000>;
+ 				regulator-max-microvolt = <1350000>;
+-				regulator-init-microvolt = <900000>;
+ 				regulator-ramp-delay = <6001>;
+ 				regulator-initial-mode = <0x2>;
+ 				regulator-name = "vdd_npu";
+@@ -587,6 +482,9 @@ regulator-state-mem {
+ 				};
+ 			};
+ 		};
++		codec {
++			rockchip,mic-in-differential;
++		};
+ 	};
+ };
+ 
+@@ -611,7 +509,7 @@ &i2s0_8ch {
+ 
+ &i2s1_8ch {
+ 	status = "okay";
+-	rockchip,clk-trcm = <1>;
++	rockchip,trcm-sync-tx-only;
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&i2s1m0_sclktx
+ 		     &i2s1m0_lrcktx
+@@ -620,7 +518,7 @@ &i2s1m0_sdi0
+ };
+ 
+ &mdio1 {
+-	rgmii_phy1: phy@0 {
++	rgmii_phy1: ethernet-phy@0 {
+ 		compatible = "ethernet-phy-ieee802.3-c22";
+ 		reg = <0x0>;
+ 	};
+@@ -634,62 +532,6 @@ &pcie2x1 {
+ };
+ 
+ &pinctrl {
+-	gmac1 {
+-		gmac1m1_miim: gmac1m1-miim {
+-			rockchip,pins =
+-				/* gmac1_mdcm1 */
+-				<4 RK_PB6 3 &pcfg_pull_none_drv_level_15>,
+-				/* gmac1_mdiom1 */
+-				<4 RK_PB7 3 &pcfg_pull_none_drv_level_15>;
+-		};
+-
+-		gmac1m1_clkinout: gmac1m1-clkinout {
+-			rockchip,pins =
+-				/* gmac1_mclkinoutm1 */
+-				<4 RK_PC1 3 &pcfg_pull_none_drv_level_15>;
+-		};
+-
+-		gmac1m1_rx_bus2: gmac1m1-rx-bus2 {
+-			rockchip,pins =
+-				/* gmac1_rxd0m1 */
+-				<4 RK_PA7 3 &pcfg_pull_none_drv_level_15>,
+-				/* gmac1_rxd1m1 */
+-				<4 RK_PB0 3 &pcfg_pull_none_drv_level_15>,
+-				/* gmac1_rxdvcrsm1 */
+-				<4 RK_PB1 3 &pcfg_pull_none_drv_level_15>;
+-		};
+-
+-		gmac1m1_tx_bus2: gmac1m1-tx-bus2 {
+-			rockchip,pins =
+-				/* gmac1_txd0m1 */
+-				<4 RK_PA4 3 &pcfg_pull_none_drv_level_15>,
+-				/* gmac1_txd1m1 */
+-				<4 RK_PA5 3 &pcfg_pull_none_drv_level_15>,
+-				/* gmac1_txenm1 */
+-				<4 RK_PA6 3 &pcfg_pull_none_drv_level_15>;
+-		};
+-
+-		gmac1m1_rgmii_clk: gmac1m1-rgmii-clk {
+-			rockchip,pins =
+-				/* gmac1_rxclkm1 */
+-				<4 RK_PA3 3 &pcfg_pull_none_drv_level_15>,
+-				/* gmac1_txclkm1 */
+-				<4 RK_PA0 3 &pcfg_pull_none_drv_level_15>;
+-		};
+-
+-		gmac1m1_rgmii_bus: gmac1m1-rgmii-bus {
+-			rockchip,pins =
+-				/* gmac1_rxd2m1 */
+-				<4 RK_PA1 3 &pcfg_pull_none_drv_level_15>,
+-				/* gmac1_rxd3m1 */
+-				<4 RK_PA2 3 &pcfg_pull_none_drv_level_15>,
+-				/* gmac1_txd2m1 */
+-				<3 RK_PD6 3 &pcfg_pull_none_drv_level_15>,
+-				/* gmac1_txd3m1 */
+-				<3 RK_PD7 3 &pcfg_pull_none_drv_level_15>;
+-		};
+-	};
+-
+ 	leds {
+ 		led_power_en: led_power_en {
+ 			rockchip,pins = <0 RK_PC6 RK_FUNC_GPIO &pcfg_pull_none>;
+@@ -825,7 +667,7 @@ &usb2phy0_host {
+ };
+ 
+ &usb2phy0_otg {
+-	vbus-supply = <&vcc5v0_usb_otg>;
++	phy-supply = <&vcc5v0_usb_otg>;
+ 	status = "okay";
+ };
+ 
+-- 
+2.40.1
+
