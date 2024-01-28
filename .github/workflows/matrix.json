@@ -42,6 +42,12 @@
     "label": "board/odroid"
   },
   {
+    "id": "odroid-m1s",
+    "defconfig": "odroid_m1s",
+    "architecture": "aarch64",
+    "label": "board/odroid"
+  },
+  {
     "id": "odroid-n2",
     "defconfig": "odroid_n2",
     "architecture": "aarch64",
