@@ -46,7 +46,6 @@ cmdline=/cmdline.txt
 # Uncomment this to enable GPIO support for RPI-RF-MOD/HM-MOD-RPI-PCB
 #enable_uart=1
 #dtparam=i2c_arm=on
-#dtoverlay=miniuart-bt
 #dtoverlay=rpi-rf-mod
 
 [cm4]
