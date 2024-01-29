@@ -1,4 +1,4 @@
-From b7838035263f62f5b2c7093cc77b6884a5de3c5c Mon Sep 17 00:00:00 2001
+From a059c130afbcbf075ec46352f60a41444292037a Mon Sep 17 00:00:00 2001
 From: Zhangqun Ming <north_sea@qq.com>
 Date: Wed, 12 Jul 2023 02:33:03 +0000
 Subject: [PATCH] drivers: mfd: rk808: set PWRON_LP_OFF_TIME 12s
@@ -9,10 +9,10 @@ Subject: [PATCH] drivers: mfd: rk808: set PWRON_LP_OFF_TIME 12s
  2 files changed, 6 insertions(+)
 
 diff --git a/drivers/mfd/rk8xx-core.c b/drivers/mfd/rk8xx-core.c
-index 11a831e92da8..2cb55dddfe5d 100644
+index a577f950c632..418a4506c99e 100644
 --- a/drivers/mfd/rk8xx-core.c
 +++ b/drivers/mfd/rk8xx-core.c
-@@ -240,6 +240,7 @@ static const struct rk808_reg_data rk817_pre_init_reg[] = {
+@@ -232,6 +232,7 @@ static const struct rk808_reg_data rk817_pre_init_reg[] = {
  	{RK817_GPIO_INT_CFG, RK817_INT_POL_MSK, RK817_INT_POL_L},
  	{RK817_SYS_CFG(1), RK817_HOTDIE_TEMP_MSK | RK817_TSD_TEMP_MSK,
  					   RK817_HOTDIE_105 | RK817_TSD_140},

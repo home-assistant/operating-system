@@ -1,8 +1,15 @@
-From d28293ff078514e75a7b46cf3e776d7db8c46025 Mon Sep 17 00:00:00 2001
+From b08b9fbfb0ce98a95c778eee9951292c32bea0ec Mon Sep 17 00:00:00 2001
 From: Zhangqun Ming <north_sea@qq.com>
 Date: Thu, 6 Jul 2023 10:05:04 +0000
 Subject: [PATCH] arm64: dts: rockchip: Add NabuCasa Green board
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+---
+
+[Replaced custom rk860x driver with upstream fan53555]
+Signed-off-by: Jan Čermák <sairon@sairon.cz>
 ---
  arch/arm64/boot/dts/rockchip/Makefile         |   1 +
  .../boot/dts/rockchip/rk3566-ha-green.dts     | 685 ++++++++++++++++++
@@ -23,7 +30,7 @@ index e7728007fd1b..475becd793ac 100644
  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-quartz64-a.dtb
 diff --git a/arch/arm64/boot/dts/rockchip/rk3566-ha-green.dts b/arch/arm64/boot/dts/rockchip/rk3566-ha-green.dts
 new file mode 100644
-index 000000000000..e38fbfd50156
+index 000000000000..ec8417425be1
 --- /dev/null
 +++ b/arch/arm64/boot/dts/rockchip/rk3566-ha-green.dts
 @@ -0,0 +1,685 @@
@@ -231,16 +238,16 @@ index 000000000000..e38fbfd50156
 +&i2c0 {
 +	status = "okay";
 +
-+	vdd_cpu: rk8601@41 {
-+		compatible = "rockchip,rk8601";
++	vdd_cpu: regulator@41 {
++		compatible = "rockchip,rk8600";
 +		reg = <0x41>;
 +		vin-supply = <&vcc5v0_sys>;
-+		regulator-compatible = "rk860x-reg";
++		regulator-compatible = "fan53555-reg";
 +		regulator-name = "vdd_cpu";
 +		regulator-min-microvolt = <712500>;
 +		regulator-max-microvolt = <1500000>;
 +		regulator-ramp-delay = <2300>;
-+		rockchip,suspend-voltage-selector = <1>;
++		fcs,suspend-voltage-selector = <1>;
 +		regulator-boot-on;
 +		regulator-always-on;
 +		regulator-state-mem {
