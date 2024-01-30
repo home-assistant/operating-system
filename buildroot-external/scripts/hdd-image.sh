@@ -162,9 +162,9 @@ function _create_disk_gpt() {
         # Make sure boot partition is shifted by SPL size
         boot_offset=$((boot_offset+$(size2sectors "${BOOT_SPL_SIZE}")))
     fi
-    if [ "${BOARD_ID}" == "odroid-m1" ]; then
+    if [ "${BOARD_ID}" == "odroid-m1" ] || [ "${BOARD_ID}" == "odroid-m1s" ]; then
         # Create partition for U-Boot binary (required by Hardkernel SPL to boot
-	# using default petitboot SPI
+        # using default petitboot SPI
         sgdisk -n "0:16384:+8M" -c 0:"uboot" -t 0:"21686148-6449-6E6F-744E-656564454649" "${hdd_img}"
     fi
     sgdisk -n "0:${boot_offset}:+$(get_boot_size)" -c 0:"hassos-boot" -t 0:"C12A7328-F81F-11D2-BA4B-00A0C93EC93B" -u 0:${BOOT_UUID} "${hdd_img}"
