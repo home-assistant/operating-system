@@ -9,4 +9,4 @@ linux-check-dotconfig: linux-check-configuration-done
 		$(BR2_CHECK_DOTCONFIG_OPTS) \
 		--src-kconfig $(LINUX_SRCDIR)Kconfig \
 		--actual-config $(LINUX_SRCDIR).config \
-		$(shell echo $(BR2_LINUX_KERNEL_CONFIG_FRAGMENT_FILES))
+		$(shell echo $(BR2_LINUX_KERNEL_CUSTOM_CONFIG_FILE) $(BR2_LINUX_KERNEL_CONFIG_FRAGMENT_FILES))
