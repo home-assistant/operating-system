@@ -1,4 +1,4 @@
-From 50e71cec0507fafd31441b1151f2f680ba5ff6d1 Mon Sep 17 00:00:00 2001
+From d958d2f147ee114123cb28061e2a2d90243e3c36 Mon Sep 17 00:00:00 2001
 From: Tim Lunn <tim@feathertop.org>
 Date: Mon, 25 Dec 2023 11:18:58 +1100
 Subject: [PATCH] Add board support for Odroid-M1S
