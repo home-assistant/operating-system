@@ -1,7 +1,4 @@
-From 940d61e1e04929166d5a2bcbc1934aa931952ca5 Mon Sep 17 00:00:00 2001
-Message-Id: <940d61e1e04929166d5a2bcbc1934aa931952ca5.1676488094.git.stefan@agner.ch>
-In-Reply-To: <3553f8a938dbb498aa1846a37ea343b7f53739da.1676488094.git.stefan@agner.ch>
-References: <3553f8a938dbb498aa1846a37ea343b7f53739da.1676488094.git.stefan@agner.ch>
+From ad1ffd6be5f54a0871e3c303602548687dfe0ffc Mon Sep 17 00:00:00 2001
 From: Myy Miouyouyou <myy@miouyouyou.fr>
 Date: Sun, 7 Jan 2018 01:52:44 +0100
 Subject: [PATCH] drivers: mmc: dw-mci-rockchip: Handle ASUS Tinkerboard reboot
@@ -24,7 +21,7 @@ Signed-off-by: Myy Miouyouyou <myy@miouyouyou.fr>
  1 file changed, 66 insertions(+)
 
 diff --git a/drivers/mmc/host/dw_mmc-rockchip.c b/drivers/mmc/host/dw_mmc-rockchip.c
-index 2a99f15f527f..181718374429 100644
+index b07190ba4b7a..0badaa1b404e 100644
 --- a/drivers/mmc/host/dw_mmc-rockchip.c
 +++ b/drivers/mmc/host/dw_mmc-rockchip.c
 @@ -12,6 +12,11 @@
@@ -114,6 +111,3 @@ index 2a99f15f527f..181718374429 100644
  
  	return 0;
  }
--- 
-2.39.1
-

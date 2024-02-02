@@ -1,7 +1,4 @@
-From 9a6bfcbf61975293991f44b1b319eb9731b85768 Mon Sep 17 00:00:00 2001
-Message-ID: <9a6bfcbf61975293991f44b1b319eb9731b85768.1691152222.git.stefan@agner.ch>
-In-Reply-To: <ea06f0028a835c4cafda535f6a36b0d63035fd4c.1691152222.git.stefan@agner.ch>
-References: <ea06f0028a835c4cafda535f6a36b0d63035fd4c.1691152222.git.stefan@agner.ch>
+From 852dec67f3678b98fbd100ac3a0a63550fd86811 Mon Sep 17 00:00:00 2001
 From: Aurelien Jarno <aurelien@aurel32.net>
 Date: Mon, 28 Nov 2022 19:47:16 +0100
 Subject: [PATCH] dt-bindings: RNG: Add Rockchip RNG bindings
@@ -80,6 +77,3 @@ index 000000000000..c2f5ef69cf07
 +    };
 +
 +...
--- 
-2.41.0
-

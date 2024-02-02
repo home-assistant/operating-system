@@ -1,0 +1,32 @@
+From f597ec583c262ed4c3264ddf661e22b503fb8a11 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Jan=20=C4=8Cerm=C3=A1k?= <sairon@sairon.cz>
+Date: Wed, 10 Jan 2024 16:29:59 +0100
+Subject: [PATCH] usb-audio: add ASUS TinkerBoard's ALC4040
+
+Converted to git-series patch from the original plain git diff file
+buildroot-external/board/asus/tinker/patches/linux/3001_Tinkerboard-4.19-audio.patch
+
+Co-authored-by: Pascal Vizeli <pascal.vizeli@syshack.ch>
+---
+ sound/usb/card.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/sound/usb/card.c b/sound/usb/card.c
+index 1b2edc0fd2e9..3069ac5b6759 100644
+--- a/sound/usb/card.c
++++ b/sound/usb/card.c
+@@ -521,6 +521,14 @@ static void usb_audio_make_shortname(struct usb_device *dev,
+ 	}
+ 
+ 	strim(card->shortname);
++
++	/* Tinker Board ALC4040 CODEC	*/
++
++	if(USB_ID_VENDOR(chip->usb_id) == 0x0bda &&
++		USB_ID_PRODUCT(chip->usb_id) == 0x481a) {
++			strlcat(card->shortname, " OnBoard", sizeof(card->shortname));
++	}
++	
+ }
+ 
+ static void usb_audio_make_longname(struct usb_device *dev,

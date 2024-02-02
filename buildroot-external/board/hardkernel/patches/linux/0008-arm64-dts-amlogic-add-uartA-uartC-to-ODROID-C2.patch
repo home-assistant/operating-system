@@ -1,7 +1,4 @@
-From 8263e17f170296c28d3a781d5b05e59778fe4a27 Mon Sep 17 00:00:00 2001
-Message-Id: <8263e17f170296c28d3a781d5b05e59778fe4a27.1676488652.git.stefan@agner.ch>
-In-Reply-To: <86f6a398d2c080f92d51048ededf45efbe3a96d4.1676488652.git.stefan@agner.ch>
-References: <86f6a398d2c080f92d51048ededf45efbe3a96d4.1676488652.git.stefan@agner.ch>
+From 299d45dd82df026c0164e170d476b56eada4aa77 Mon Sep 17 00:00:00 2001
 From: Stefan Agner <stefan@agner.ch>
 Date: Wed, 15 Feb 2023 20:15:07 +0100
 Subject: [PATCH] arm64: dts: amlogic: add uartA/uartC to ODROID-C2
@@ -12,7 +9,7 @@ Signed-off-by: Stefan Agner <stefan@agner.ch>
  1 file changed, 14 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts b/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
-index 201596247fd9..b2cb12fb46fd 100644
+index e6d2de7c45a9..c6a38d890db5 100644
 --- a/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
 +++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
 @@ -17,6 +17,8 @@ / {
@@ -24,7 +21,7 @@ index 201596247fd9..b2cb12fb46fd 100644
  		ethernet0 = &ethmac;
  	};
  
-@@ -399,6 +401,18 @@ &uart_AO {
+@@ -383,6 +385,18 @@ &uart_AO {
  	pinctrl-names = "default";
  };
  
@@ -43,6 +40,3 @@ index 201596247fd9..b2cb12fb46fd 100644
  &usb0_phy {
  	status = "disabled";
  	phy-supply = <&usb_otg_pwr>;
--- 
-2.39.1
-

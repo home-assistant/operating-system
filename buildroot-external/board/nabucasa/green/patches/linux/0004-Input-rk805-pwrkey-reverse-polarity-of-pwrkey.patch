@@ -1,7 +1,4 @@
-From 32ee0c67a53f541f42b3a953e992bac12d5375d6 Mon Sep 17 00:00:00 2001
-Message-ID: <32ee0c67a53f541f42b3a953e992bac12d5375d6.1689754249.git.stefan@agner.ch>
-In-Reply-To: <fa0e84b5fbb7b6ce0b161bfcfe495f3648d02110.1689754249.git.stefan@agner.ch>
-References: <fa0e84b5fbb7b6ce0b161bfcfe495f3648d02110.1689754249.git.stefan@agner.ch>
+From 0c8b1453993f15715836123bfc7c164e568913f2 Mon Sep 17 00:00:00 2001
 From: Stefan Agner <stefan@agner.ch>
 Date: Wed, 19 Jul 2023 10:08:06 +0200
 Subject: [PATCH] Input: rk805-pwrkey: reverse polarity of pwrkey
@@ -36,6 +33,3 @@ index 76873aa005b4..139419033c84 100644
  	input_sync(pwr);
  
  	return IRQ_HANDLED;
--- 
-2.41.0
-

@@ -1,7 +1,4 @@
-From e269c47ef68371dbed1ff5919a67fcc385d8c6da Mon Sep 17 00:00:00 2001
-Message-Id: <e269c47ef68371dbed1ff5919a67fcc385d8c6da.1676488652.git.stefan@agner.ch>
-In-Reply-To: <86f6a398d2c080f92d51048ededf45efbe3a96d4.1676488652.git.stefan@agner.ch>
-References: <86f6a398d2c080f92d51048ededf45efbe3a96d4.1676488652.git.stefan@agner.ch>
+From cff7ba94733d9103487d87a6474e2ab026bd718c Mon Sep 17 00:00:00 2001
 From: Stefan Agner <stefan@agner.ch>
 Date: Mon, 11 Jan 2021 11:38:54 +0100
 Subject: [PATCH] arm64: dts: meson: g12b: add GPIO fan support
@@ -12,15 +9,15 @@ cannot be modulated.
 
 Signed-off-by: Stefan Agner <stefan@agner.ch>
 ---
- arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi | 11 +++++++++++
+ arch/arm64/boot/dts/amlogic/meson-g12b-odroid.dtsi | 11 +++++++++++
  1 file changed, 11 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi
-index 06bdba57b04c..bcf6d8eacd6e 100644
---- a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi
-@@ -39,6 +39,17 @@ emmc_pwrseq: emmc-pwrseq {
- 		reset-gpios = <&gpio BOOT_12 GPIO_ACTIVE_LOW>;
+diff --git a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid.dtsi
+index c27eae6488ce..db8a2dfaf0b3 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid.dtsi
+@@ -49,6 +49,17 @@ power-button {
+ 		};
  	};
  
 +	/*
@@ -34,9 +31,6 @@ index 06bdba57b04c..bcf6d8eacd6e 100644
 +		status = "okay";
 +	};
 +
- 	gpio-keys-polled {
- 		compatible = "gpio-keys-polled";
- 		poll-interval = <100>;
--- 
-2.39.1
-
+ 	leds {
+ 		compatible = "gpio-leds";
+ 

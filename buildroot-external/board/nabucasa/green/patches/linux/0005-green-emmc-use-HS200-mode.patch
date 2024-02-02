@@ -1,4 +1,4 @@
-From 10c2c3afa62f58c4f795a0777aa8635428e3c78a Mon Sep 17 00:00:00 2001
+From 858d26179ee3a06fc7ebadf2c49dc337a7a98485 Mon Sep 17 00:00:00 2001
 From: zhangcy <chengyu.zhang@seeed.cc>
 Date: Mon, 14 Aug 2023 01:27:34 +0000
 Subject: [PATCH] green: emmc use HS200 mode
@@ -8,10 +8,10 @@ Subject: [PATCH] green: emmc use HS200 mode
  1 file changed, 1 insertion(+)
 
 diff --git a/arch/arm64/boot/dts/rockchip/rk3566-ha-green.dts b/arch/arm64/boot/dts/rockchip/rk3566-ha-green.dts
-index f742b904a..3b564950f 100644
+index debb9459a5aa..e4b1e80641b9 100644
 --- a/arch/arm64/boot/dts/rockchip/rk3566-ha-green.dts
 +++ b/arch/arm64/boot/dts/rockchip/rk3566-ha-green.dts
-@@ -533,6 +533,7 @@ &saradc {
+@@ -532,6 +532,7 @@ &saradc {
  
  &sdhci {
  	bus-width = <8>;
@@ -19,6 +19,3 @@ index f742b904a..3b564950f 100644
  	max-frequency = <200000000>;
  	non-removable;
  	pinctrl-names = "default";
--- 
-2.25.1
-

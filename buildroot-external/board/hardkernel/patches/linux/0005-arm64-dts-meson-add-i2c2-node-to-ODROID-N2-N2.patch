@@ -1,7 +1,4 @@
-From 00129576fb656015b66958f4d7370ee7e2d990e2 Mon Sep 17 00:00:00 2001
-Message-Id: <00129576fb656015b66958f4d7370ee7e2d990e2.1676488652.git.stefan@agner.ch>
-In-Reply-To: <86f6a398d2c080f92d51048ededf45efbe3a96d4.1676488652.git.stefan@agner.ch>
-References: <86f6a398d2c080f92d51048ededf45efbe3a96d4.1676488652.git.stefan@agner.ch>
+From f5676219e12b48a0f591e911797304fae05ca78c Mon Sep 17 00:00:00 2001
 From: Stefan Agner <stefan@agner.ch>
 Date: Thu, 29 Apr 2021 21:32:43 +0200
 Subject: [PATCH] arm64: dts: meson: add i2c2 node to ODROID N2/N2+
@@ -16,11 +13,11 @@ Signed-off-by: Stefan Agner <stefan@agner.ch>
  1 file changed, 6 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi
-index 7eaaced7893b..8d183253389c 100644
+index 91c9769fda20..ececc6b17639 100644
 --- a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi
 +++ b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi
-@@ -588,6 +588,12 @@ &ir {
- 	linux,rc-map-name = "rc-odroid";
+@@ -248,6 +248,12 @@ usb-hub-hog {
+ 	};
  };
  
 +&i2c2 {
@@ -32,6 +29,3 @@ index 7eaaced7893b..8d183253389c 100644
  &i2c3 {
  	status = "okay";
  	pinctrl-0 = <&i2c3_sda_a_pins>, <&i2c3_sck_a_pins>;
--- 
-2.39.1
-
