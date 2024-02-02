@@ -1,4 +1,4 @@
-From 988933abd79989fb89f339a0081701dd207c37c4 Mon Sep 17 00:00:00 2001
+From 3850733a82a25ae2ee82858e8cf4b322ebc91e98 Mon Sep 17 00:00:00 2001
 From: Aurelien Jarno <aurelien@aurel32.net>
 Date: Mon, 28 Nov 2022 19:47:17 +0100
 Subject: [PATCH] hwrng: add Rockchip SoC hwrng driver

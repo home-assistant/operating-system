@@ -1,4 +1,4 @@
-From c46d1b2e4af18046e0449888bf8e239298d2fdc1 Mon Sep 17 00:00:00 2001
+From 8ca53a7e5b51999c1a48ea27dbb3a56202a975ca Mon Sep 17 00:00:00 2001
 From: Aurelien Jarno <aurelien@aurel32.net>
 Date: Mon, 28 Nov 2022 19:47:18 +0100
 Subject: [PATCH] arm64: dts: rockchip: add DT entry for RNG to RK356x
