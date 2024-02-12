@@ -81,10 +81,10 @@ body:
     attributes:
       label: Anything in the Supervisor logs that might be useful for us?
       description: >
-        Supervisor Logs can be found in [Settings -> System -> Logs](https://my.home-assistant.io/redirect/logs/)
-        then choose `Supervisor` in the top right.
+        Supervisor Logs can be found in [Settings -> System -> Logs](https://my.home-assistant.io/redirect/logs/?provider=supervisor)
+        then choose `Supervisor` in the top right. Alternatively enter `ha supervisor logs` in the Home Assistant CLI.
 
-        [![Open your Home Assistant instance and show your Supervisor system logs.](https://my.home-assistant.io/badges/supervisor_logs.svg)](https://my.home-assistant.io/redirect/supervisor_logs/)
+        [![Open your Home Assistant instance and show your Supervisor system logs.](https://my.home-assistant.io/badges/supervisor_logs.svg)](https://my.home-assistant.io/redirect/logs/?provider=supervisor)
       render: txt
   - type: textarea
     validations:
@@ -92,8 +92,8 @@ body:
     attributes:
       label: Anything in the Host logs that might be useful for us?
       description: >
-        Host Logs can be found in [Settings -> System -> Logs](https://my.home-assistant.io/redirect/logs/)
-        then choose `Host` in the top right.
+        Host Logs can be found in [Settings -> System -> Logs](https://my.home-assistant.io/redirect/logs/?provider=host)
+        then choose `Host` in the top right. Alternatively enter `ha host logs` in the Home Assistant CLI.
       render: txt
   - type: textarea
     attributes:
