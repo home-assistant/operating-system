@@ -1,0 +1,4 @@
+# make sure all rpi-rf-mod led nodes in /sys are generated with permissions so that addons
+# can access it (e.g. raspberrymatic)
+SUBSYSTEM=="leds", ACTION=="add", KERNEL=="rpi_rf_mod:*", RUN+="/bin/chmod -R g=u,o=u /sys%p"
+SUBSYSTEM=="leds", ACTION=="change", KERNEL=="rpi_rf_mod:*", ENV{TRIGGER}!="none", RUN+="/bin/chmod -R g=u,o=u /sys%p"

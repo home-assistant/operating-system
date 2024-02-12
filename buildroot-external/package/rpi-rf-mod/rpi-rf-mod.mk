@@ -57,6 +57,7 @@ define RPI_RF_MOD_INSTALL_TARGET_CMDS
 	if [[ -n "$(RPI_RF_MOD_DTS_FILE_ALT)" ]]; then \
 		$(INSTALL) -D -m 0644 $(@D)/buildroot-external/package/rpi-rf-mod/dts/$(RPI_RF_MOD_DTS_FILE_ALT).dtbo $(BINARIES_DIR)/; \
 	fi
+	$(INSTALL) -D -m 644 $(RPI_RF_MOD_PKGDIR)/82-rpi-rf-mod-leds.rules $(TARGET_DIR)/lib/udev/rules.d/
 endef
 
 $(eval $(generic-package))
