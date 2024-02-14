@@ -226,11 +226,18 @@ jobs:
       - name: Free space on build drive
         run: |
           # Inspired by https://github.com/easimon/maximize-build-space/blob/v7/action.yml
+          df -h
           sudo rm -rf /usr/local/lib/android/sdk/ndk
           sudo rm -rf /opt/hostedtoolcache/CodeQL
-          # Make sure cache action can restore this lcoation
           sudo mkdir /mnt/cache
-          sudo chown -R runner:runner /mnt/cache
+          sudo mkdir /mnt/output
+          WORKSPACE_OWNER="$(stat -c '%U:%G' "${GITHUB_WORKSPACE}")"
+          # output directory is symlinked for easier access from workspace
+          # but for build container it must be mounted as a volume
+          sudo ln -sf /mnt/output "${GITHUB_WORKSPACE}/output"
+          sudo chown -R "${WORKSPACE_OWNER}" /mnt/cache
+          sudo chown -R "${WORKSPACE_OWNER}" /mnt/output
+          df -h
 
       - name: "Restore cache: object files"
         uses: actions/cache/restore@v4
@@ -242,17 +249,21 @@ jobs:
         run: |
           BUILDER_UID="$(id -u)"
           BUILDER_GID="$(id -g)"
-          docker run --rm --privileged -v "${GITHUB_WORKSPACE}:/build" \
+          docker run --rm --privileged \
             -e BUILDER_UID="${BUILDER_UID}" -e BUILDER_GID="${BUILDER_GID}" \
+            -v "${GITHUB_WORKSPACE}:/build" \
             -v "/mnt/cache:/cache" \
+            -v "/mnt/output:/build/output" \
             ${{ needs.prepare.outputs.build_container_image }} \
             make BUILDDIR=/build ${{ matrix.board.defconfig }}
 
       - name: Check Linux config
         run: |
-          docker run --rm --privileged -v "${GITHUB_WORKSPACE}:/build" \
+          docker run --rm --privileged \
             -e BUILDER_UID="$(id -u)" -e BUILDER_GID="$(id -g)" \
+            -v "${GITHUB_WORKSPACE}:/build" \
             -v "/mnt/cache:/cache" \
+            -v "/mnt/output:/build/output" \
             ${{ needs.prepare.outputs.build_container_image }} \
             make -C buildroot O="/build/output" BR2_EXTERNAL="/build/buildroot-external" \
             BR2_CHECK_DOTCONFIG_OPTS="--github-format --strip-path-prefix=/build/" linux-check-dotconfig
