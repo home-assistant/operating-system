@@ -1,0 +1,51 @@
+From b4d16cd88ec2701dcb15b9519a79288ea5d2bfec Mon Sep 17 00:00:00 2001
+From: Tim Lunn <tim@feathertop.org>
+Date: Sat, 3 Feb 2024 23:40:16 +1100
+Subject: [PATCH] Remove deprecated snps,reset properties
+
+---
+ arch/arm64/boot/dts/rockchip/rk3566-odroid-m1s.dts | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/rockchip/rk3566-odroid-m1s.dts b/arch/arm64/boot/dts/rockchip/rk3566-odroid-m1s.dts
+index b8adfd7024f9..e755d00b1d4f 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3566-odroid-m1s.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3566-odroid-m1s.dts
+@@ -192,8 +192,9 @@ &gmac1 {
+ 	assigned-clocks = <&cru SCLK_GMAC1_RX_TX>, <&cru SCLK_GMAC1_RGMII_SPEED>, <&cru SCLK_GMAC1>;
+ 	assigned-clock-parents = <&cru SCLK_GMAC1_RGMII_SPEED>, <&cru SCLK_GMAC1>, <&gmac1_clkin>;
+ 	clock_in_out = "input";
+-	phy-supply = <&vcc_3v3>;
++	phy-handle = <&rgmii_phy1>;
+ 	phy-mode = "rgmii";
++	phy-supply = <&vcc_3v3>;
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&gmac1m1_miim
+ 		     &gmac1m1_tx_bus2
+@@ -201,13 +202,8 @@ &gmac1m1_rx_bus2
+ 		     &gmac1m1_rgmii_clk
+ 		     &gmac1m1_rgmii_bus
+ 		     &gmac1m1_clkinout>;
+-	snps,reset-gpio = <&gpio3 RK_PB7 GPIO_ACTIVE_LOW>;
+-	snps,reset-active-low;
+-	/* Reset time is 20ms, 100ms for rtl8211f */
+-	snps,reset-delays-us = <0 20000 100000>;
+ 	tx_delay = <0x4f>;
+ 	rx_delay = <0x2d>;
+-	phy-handle = <&rgmii_phy1>;
+ 	status = "okay";
+ };
+ 
+@@ -504,6 +500,9 @@ &mdio1 {
+ 	rgmii_phy1: ethernet-phy@0 {
+ 		compatible = "ethernet-phy-ieee802.3-c22";
+ 		reg = <0x0>;
++		reset-assert-us = <20000>;
++		reset-deassert-us = <100000>;
++		reset-gpios = <&gpio3 RK_PB7 GPIO_ACTIVE_LOW>;
+ 	};
+ };
+ 
+-- 
+2.40.1
+

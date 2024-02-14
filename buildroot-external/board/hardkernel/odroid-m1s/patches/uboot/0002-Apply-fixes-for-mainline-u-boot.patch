@@ -1,0 +1,48 @@
+From ed61d0b5f18bf333ff7f35fc8546dd58d227b12f Mon Sep 17 00:00:00 2001
+From: Tim Lunn <tim@feathertop.org>
+Date: Sat, 3 Feb 2024 18:38:49 +1100
+Subject: [PATCH] Apply fixes for mainline u-boot
+
+---
+ arch/arm/dts/rk3566-odroid-m1s.dts  | 6 +-----
+ configs/odroid-m1s-rk3566_defconfig | 1 -
+ 2 files changed, 1 insertion(+), 6 deletions(-)
+
+diff --git a/arch/arm/dts/rk3566-odroid-m1s.dts b/arch/arm/dts/rk3566-odroid-m1s.dts
+index 73e29d80c7..2dba07ba19 100644
+--- a/arch/arm/dts/rk3566-odroid-m1s.dts
++++ b/arch/arm/dts/rk3566-odroid-m1s.dts
+@@ -17,12 +17,8 @@
+ 
+ 	aliases {
+ 		ethernet0 = &gmac1;
+-		i2c0 = &i2c3;
+-		i2c3 = &i2c0;
+ 		mmc0 = &sdhci;
+ 		mmc1 = &sdmmc0;
+-		serial0 = &uart1;
+-		serial1 = &uart0;
+ 	};
+ 
+ 	chosen {
+@@ -578,7 +574,7 @@
+ 	disable-wp;
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&sdmmc0_bus4 &sdmmc0_clk &sdmmc0_cmd &sdmmc0_det>;
+-	sd-uhs-sdr50;
++	sd-uhs-sdr104;
+ 	vmmc-supply = <&vcc3v3_sd>;
+ 	vqmmc-supply = <&vccio_sd>;
+ 	status = "okay";
+diff --git a/configs/odroid-m1s-rk3566_defconfig b/configs/odroid-m1s-rk3566_defconfig
+index d70a10dc08..61b6962063 100644
+--- a/configs/odroid-m1s-rk3566_defconfig
++++ b/configs/odroid-m1s-rk3566_defconfig
+@@ -106,4 +106,3 @@ CONFIG_USB_DWC3=y
+ CONFIG_USB_DWC3_GENERIC=y
+ CONFIG_FS_CRAMFS=y
+ CONFIG_ERRNO_STR=y
+-CONFIG_SYS_MMCSD_RAW_MODE_U_BOOT_SECTOR=0x0800
+-- 
+2.40.1
+

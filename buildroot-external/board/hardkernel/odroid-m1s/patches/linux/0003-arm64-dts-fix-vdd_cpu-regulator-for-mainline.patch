@@ -1,0 +1,43 @@
+From 641ec8e05726d42c8ec7fa3bda1d8a64f126b475 Mon Sep 17 00:00:00 2001
+From: Tim Lunn <tim@feathertop.org>
+Date: Fri, 12 Jan 2024 22:32:56 +1100
+Subject: [PATCH] arm64: dts: fix vdd_cpu regulator for mainline
+
+---
+ .../arm64/boot/dts/rockchip/rk3566-odroid-m1s.dts | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/rockchip/rk3566-odroid-m1s.dts b/arch/arm64/boot/dts/rockchip/rk3566-odroid-m1s.dts
+index cbf2495901d7..a5d9216b544b 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3566-odroid-m1s.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3566-odroid-m1s.dts
+@@ -259,18 +259,19 @@ &hdmi_sound {
+ 
+ &i2c0 {
+ 	status = "okay";
+-	vdd_cpu: tcs4525@1c {
+-		compatible = "tcs,tcs452x";
++
++	vdd_cpu: regulator@1c {
++		compatible = "tcs,tcs4525";
+ 		reg = <0x1c>;
+-		vin-supply = <&vcc5v0_sys>;
+-		regulator-compatible = "fan53555-reg";
++		fcs,suspend-voltage-selector = <1>;
+ 		regulator-name = "vdd_cpu";
++		regulator-always-on;
++		regulator-boot-on;
+ 		regulator-min-microvolt = <712500>;
+ 		regulator-max-microvolt = <1390000>;
+ 		regulator-ramp-delay = <2300>;
+-		fcs,suspend-voltage-selector = <1>;
+-		regulator-boot-on;
+-		regulator-always-on;
++		vin-supply = <&vcc3v3_sys>;
++
+ 		regulator-state-mem {
+ 			regulator-off-in-suspend;
+ 		};
+-- 
+2.40.1
+

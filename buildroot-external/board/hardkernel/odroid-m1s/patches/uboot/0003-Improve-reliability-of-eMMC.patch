@@ -1,0 +1,44 @@
+From 2a1d8f586799e4166e802babcce18c9980aa1f44 Mon Sep 17 00:00:00 2001
+From: Tim Lunn <tim@feathertop.org>
+Date: Thu, 1 Feb 2024 17:50:46 +1100
+Subject: [PATCH] Improve reliability of eMMC
+
+Cherry-picked from:
+20240126232615.6826-2-jonas@kwiboo.se
+---
+ arch/arm/dts/rk3566-odroid-m1s-u-boot.dtsi | 4 ----
+ configs/odroid-m1s-rk3566_defconfig        | 2 ++
+ 2 files changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/arch/arm/dts/rk3566-odroid-m1s-u-boot.dtsi b/arch/arm/dts/rk3566-odroid-m1s-u-boot.dtsi
+index 33a1d142b8..04d0cd17ef 100644
+--- a/arch/arm/dts/rk3566-odroid-m1s-u-boot.dtsi
++++ b/arch/arm/dts/rk3566-odroid-m1s-u-boot.dtsi
+@@ -14,11 +14,7 @@
+ 
+ &sdhci {
+ 	cap-mmc-highspeed;
+-	mmc-ddr-1_8v;
+ 	mmc-hs200-1_8v;
+-	mmc-hs400-1_8v;
+-	mmc-hs400-enhanced-strobe;
+-	pinctrl-0 = <&emmc_bus8 &emmc_clk &emmc_cmd &emmc_datastrobe>;
+ };
+ 
+ &uart2 {
+diff --git a/configs/odroid-m1s-rk3566_defconfig b/configs/odroid-m1s-rk3566_defconfig
+index 61b6962063..7920ef224d 100644
+--- a/configs/odroid-m1s-rk3566_defconfig
++++ b/configs/odroid-m1s-rk3566_defconfig
+@@ -70,6 +70,8 @@ CONFIG_ROCKCHIP_GPIO=y
+ CONFIG_SYS_I2C_ROCKCHIP=y
+ CONFIG_MISC=y
+ CONFIG_SUPPORT_EMMC_RPMB=y
++CONFIG_MMC_HS200_SUPPORT=y
++CONFIG_SPL_MMC_HS200_SUPPORT=y
+ CONFIG_MMC_DW=y
+ CONFIG_MMC_DW_ROCKCHIP=y
+ CONFIG_MMC_SDHCI=y
+-- 
+2.40.1
+

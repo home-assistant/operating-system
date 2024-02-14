@@ -1,0 +1,52 @@
+From 65a304151817626157e7be4e7e1581cdddca2a02 Mon Sep 17 00:00:00 2001
+From: Tim Lunn <tim@feathertop.org>
+Date: Sat, 3 Feb 2024 23:42:47 +1100
+Subject: [PATCH] Fix ethernet properties
+
+---
+ arch/arm/dts/rk3566-odroid-m1s.dts | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
+
+diff --git a/arch/arm/dts/rk3566-odroid-m1s.dts b/arch/arm/dts/rk3566-odroid-m1s.dts
+index 2dba07ba19..73b545109d 100644
+--- a/arch/arm/dts/rk3566-odroid-m1s.dts
++++ b/arch/arm/dts/rk3566-odroid-m1s.dts
+@@ -197,10 +197,9 @@
+ };
+ 
+ &gmac1 {
+-	assigned-clock-parents = <&cru SCLK_GMAC1_RGMII_SPEED>;
+-	assigned-clock-rates = <0>, <125000000>;
+-	assigned-clocks = <&cru SCLK_GMAC1_RX_TX>, <&cru SCLK_GMAC1>;
+-	clock_in_out = "output";
++	assigned-clocks = <&cru SCLK_GMAC1_RX_TX>, <&cru SCLK_GMAC1_RGMII_SPEED>, <&cru SCLK_GMAC1>;
++	assigned-clock-parents = <&cru SCLK_GMAC1_RGMII_SPEED>, <&cru SCLK_GMAC1>, <&gmac1_clkin>;
++	clock_in_out = "input";
+ 	phy-handle = <&rgmii_phy1>;
+ 	phy-mode = "rgmii";
+ 	phy-supply = <&vcc3v3_sys>;
+@@ -211,10 +210,9 @@
+ 		     &gmac1m1_rgmii_clk
+ 		     &gmac1m1_rgmii_bus
+ 		     &gmac1m1_clkinout>;
+-	status = "okay";
+-
+ 	tx_delay = <0x4f>;
+ 	rx_delay = <0x2d>;
++	status = "okay";
+ };
+ 
+ &gpu {
+@@ -496,6 +494,9 @@
+ 	rgmii_phy1: ethernet-phy@0 {
+ 		compatible = "ethernet-phy-ieee802.3-c22";
+ 		reg = <0x0>;
++		reset-assert-us = <20000>;
++		reset-deassert-us = <100000>;
++		reset-gpios = <&gpio3 RK_PB7 GPIO_ACTIVE_LOW>;
+ 	};
+ };
+ 
+-- 
+2.40.1
+
