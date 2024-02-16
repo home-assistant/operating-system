@@ -13,6 +13,7 @@ The following boards/devices are supported:
   - [ODROID-C2](https://www.hardkernel.com/shop/odroid-c2/) (discontinued)
   - [ODROID-C4](https://www.hardkernel.com/shop/odroid-c4/)
   - [ODROID-M1](https://www.hardkernel.com/shop/odroid-m1/)
+  - ODROID-M1S [4 GB](https://www.hardkernel.com/shop/odroid-m1s-with-4gbyte-ram/) or [8 GB](https://www.hardkernel.com/shop/odroid-m1s-with-8gbyte-ram/)
   - [ODROID-N2](https://www.hardkernel.com/shop/odroid-n2/) (discontinued)
   - ODROID-N2+ [2 GB](https://www.hardkernel.com/shop/odroid-n2-with-2gbyte-ram-2/) or [4 GB](https://www.hardkernel.com/shop/odroid-n2-with-4gbyte-ram-2/)
   - [ODROID-XU4](https://www.hardkernel.com/shop/odroid-xu4-special-price/)
@@ -47,6 +48,7 @@ Notes:
 |ODROID-C2     |`make odroid_c2`     |[odroid_c2](../../buildroot-external/configs/odroid_c2_defconfig)|[hardkernel](./hardkernel/)|
 |ODROID-C4     |`make odroid_c4`     |[odroid_c4](../../buildroot-external/configs/odroid_c4_defconfig)|[hardkernel](./hardkernel/)|
 |ODROID-M1     |`make odroid_m1`     |[odroid_m1](../../buildroot-external/configs/odroid_m1_defconfig)|[hardkernel](./hardkernel/)|
+|ODROID-M1S    |`make odroid_m1s`    |[odroid_m1s](../../buildroot-external/configs/odroid_m1s_defconfig)|[hardkernel](./hardkernel/)|
 |ODROID-N2/N2+ |`make odroid_n2`     |[odroid_n2](../../buildroot-external/configs/odroid_n2_defconfig)|[hardkernel](./hardkernel/)|
 |ODROID-XU4    |`make odroid_xu4`    |[odroid_xu4](../../buildroot-external/configs/odroid_xu4_defconfig)|[hardkernel](./hardkernel/)|
 |Tinker Board  |`make tinker`        |[tinker](../../buildroot-external/configs/tinker_defconfig)|[asus](./asus/)|
