@@ -18,6 +18,7 @@ Default Kernel tree: 6.1
 | ODROID-C2 | 6.6.16 |
 | ODROID-C4 | 6.6.16 |
 | ODROID-M1 | 6.6.16 |
+| ODROID-M1S | 6.6.16 |
 | ODROID-N2 | 6.6.16 |
 | ODROID-XU4 | 6.6.16 |
 | Generic aarch64 | 6.6.16 |
