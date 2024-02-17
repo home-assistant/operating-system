@@ -7,6 +7,7 @@
 | ODROID-C2      | 2016          | yes          | [odroid_c2](../../../buildroot-external/configs/odroid_c2_defconfig) |
 | ODROID-C4      | 2020          | yes          | [odroid_c4](../../../buildroot-external/configs/odroid_c4_defconfig) |
 | ODROID-M1      | 2022          | yes          | [odroid_m1](../../../buildroot-external/configs/odroid_m1_defconfig) |
+| ODROID-M1S     | 2023          | yes          | [odroid_m1s](../../../buildroot-external/configs/odroid_m1s_defconfig)|
 | ODROID-N2      | 2019          | yes          | [odroid_n2](../../../buildroot-external/configs/odroid_n2_defconfig) |
 | ODROID-XU4     | 2015          | yes          | [odroid_xu4](../../../buildroot-external/configs/odroid_xu4_defconfig)|
 
