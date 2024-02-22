@@ -20,7 +20,7 @@ endef
 
 define OS_AGENT_GO_VENDORING
 	(cd $(@D); \
-		$(HOST_DIR)/bin/go mod vendor)
+		$(OS_AGENT_DL_ENV) $(GO_BIN) env)
 endef
 
 OS_AGENT_POST_PATCH_HOOKS += OS_AGENT_GO_VENDORING
