@@ -1,14 +1,18 @@
-From abcac570bfe1db867fda504942e6c782ada2aa00 Mon Sep 17 00:00:00 2001
-Message-Id: <abcac570bfe1db867fda504942e6c782ada2aa00.1616318066.git.stefan@agner.ch>
+From 4cdd4955dc6b88a34fef1a8458344747dd94fcc2 Mon Sep 17 00:00:00 2001
 From: Stefan Agner <stefan@agner.ch>
 Date: Sat, 13 Mar 2021 14:39:31 +0100
 Subject: [PATCH] Isolate authorization specific functions into new compile
  unit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
 Introduce udisksauthorization.c for authorization related functionality.
 This allows to make polkit optional much easier.
 
 Signed-off-by: Stefan Agner <stefan@agner.ch>
+[Jan: Updated patch to reflect udisks 2.10+ changes]
+Signed-off-by: Jan Čermák <sairon@sairon.cz>
 ---
  src/Makefile.am                 |   1 +
  src/udisksauthorization.c       | 382 ++++++++++++++++++++++++++++++++
@@ -17,7 +21,7 @@ Signed-off-by: Stefan Agner <stefan@agner.ch>
  src/udisksdaemon.h              |   1 +
  src/udisksdaemontypes.h         |   1 -
  src/udisksdaemonutil.c          | 356 -----------------------------
- src/udisksdaemonutil.h          |  31 ---
+ src/udisksdaemonutil.h          |  32 ---
  src/udiskslinuxblock.c          |   1 +
  src/udiskslinuxdrive.c          |   1 +
  src/udiskslinuxdriveata.c       |   1 +
@@ -29,22 +33,22 @@ Signed-off-by: Stefan Agner <stefan@agner.ch>
  src/udiskslinuxpartition.c      |   1 +
  src/udiskslinuxpartitiontable.c |   1 +
  src/udiskslinuxswapspace.c      |   1 +
- 19 files changed, 459 insertions(+), 388 deletions(-)
+ 19 files changed, 459 insertions(+), 389 deletions(-)
  create mode 100644 src/udisksauthorization.c
  create mode 100644 src/udisksauthorization.h
 
 diff --git a/src/Makefile.am b/src/Makefile.am
-index 4048854c..bb09560a 100644
+index 5a174d1a..dad8d914 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
-@@ -92,6 +92,7 @@ libudisks_daemon_la_SOURCES =                                                  \
- 	udisksmount.h                  udisksmount.c                           \
- 	udisksmountmonitor.h           udisksmountmonitor.c                    \
- 	udisksdaemonutil.h             udisksdaemonutil.c                      \
-+	udisksauthorization.h          udisksauthorization.c                   \
- 	udiskslogging.h                udiskslogging.c                         \
- 	udisksstate.h                  udisksstate.c                           \
- 	udisksprivate.h                                                        \
+@@ -91,6 +91,7 @@ libudisks_daemon_la_SOURCES =
+ 	udisksmount.h                    udisksmount.c                           \
+ 	udisksmountmonitor.h             udisksmountmonitor.c                    \
+ 	udisksdaemonutil.h               udisksdaemonutil.c                      \
++	udisksauthorization.h            udisksauthorization.c                   \
+ 	udiskslogging.h                  udiskslogging.c                         \
+ 	udisksstate.h                    udisksstate.c                           \
+ 	udisksprivate.h                                                          \
 diff --git a/src/udisksauthorization.c b/src/udisksauthorization.c
 new file mode 100644
 index 00000000..f74e194a
@@ -515,7 +519,7 @@ index 71038ec9..08da42ce 100644
  
  #define MAX_SAMPLES 100
 diff --git a/src/udisksdaemon.h b/src/udisksdaemon.h
-index c175054d..19b4bda3 100644
+index 36dd285a..7bba921e 100644
 --- a/src/udisksdaemon.h
 +++ b/src/udisksdaemon.h
 @@ -23,6 +23,7 @@
@@ -527,7 +531,7 @@ index c175054d..19b4bda3 100644
  G_BEGIN_DECLS
  
 diff --git a/src/udisksdaemontypes.h b/src/udisksdaemontypes.h
-index f23a29c5..1f4e8ba1 100644
+index de5f6bda..1f9c216e 100644
 --- a/src/udisksdaemontypes.h
 +++ b/src/udisksdaemontypes.h
 @@ -23,7 +23,6 @@
@@ -539,7 +543,7 @@ index f23a29c5..1f4e8ba1 100644
  #include <gudev/gudev.h>
  
 diff --git a/src/udisksdaemonutil.c b/src/udisksdaemonutil.c
-index 60134765..66489cb9 100644
+index 3db92f58..f183da94 100644
 --- a/src/udisksdaemonutil.c
 +++ b/src/udisksdaemonutil.c
 @@ -617,362 +617,6 @@ udisks_daemon_util_setup_by_user (UDisksDaemon *daemon,
@@ -906,7 +910,7 @@ index 60134765..66489cb9 100644
  
  static gboolean
 diff --git a/src/udisksdaemonutil.h b/src/udisksdaemonutil.h
-index 2d7ac981..bd628acb 100644
+index 40dc6ba2..0ca3e036 100644
 --- a/src/udisksdaemonutil.h
 +++ b/src/udisksdaemonutil.h
 @@ -74,21 +74,6 @@ gboolean udisks_daemon_util_on_user_seat (UDisksDaemon          *daemon,
@@ -931,9 +935,9 @@ index 2d7ac981..bd628acb 100644
  gboolean udisks_daemon_util_get_user_info (const uid_t   uid,
                                             gid_t        *out_gid,
                                             gchar       **out_user_name,
-@@ -129,22 +114,6 @@ gchar *udisks_daemon_util_get_free_mdraid_device (void);
+@@ -137,23 +122,6 @@ guint16 udisks_ata_identify_get_word (const guchar *identify_data, guint word_nu
  
- guint16 udisks_ata_identify_get_word (const guchar *identify_data, guint word_number);
+ gboolean udisks_module_validate_name (const gchar *module_name);
  
 -/* Utility macro for policy verification. */
 -#define UDISKS_DAEMON_CHECK_AUTHORIZATION(daemon,                   \
@@ -951,14 +955,15 @@ index 2d7ac981..bd628acb 100644
 -    { \
 -      goto out; \
 -    }
- 
+-
  G_END_DECLS
  
+ #endif /* __UDISKS_DAEMON_UTIL_H__ */
 diff --git a/src/udiskslinuxblock.c b/src/udiskslinuxblock.c
-index 901426ad..b1dd869c 100644
+index 829dd5f7..23c5a9cb 100644
 --- a/src/udiskslinuxblock.c
 +++ b/src/udiskslinuxblock.c
-@@ -53,6 +53,7 @@
+@@ -54,6 +54,7 @@
  #include "udisksprivate.h"
  #include "udisksconfigmanager.h"
  #include "udisksdaemonutil.h"
@@ -967,7 +972,7 @@ index 901426ad..b1dd869c 100644
  #include "udisksfstabentry.h"
  #include "udiskscrypttabmonitor.h"
 diff --git a/src/udiskslinuxdrive.c b/src/udiskslinuxdrive.c
-index 592d3edc..f2f39b57 100644
+index d24cf2f3..6427c7f7 100644
 --- a/src/udiskslinuxdrive.c
 +++ b/src/udiskslinuxdrive.c
 @@ -49,6 +49,7 @@
@@ -979,10 +984,10 @@ index 592d3edc..f2f39b57 100644
  #include "udisksconfigmanager.h"
  
 diff --git a/src/udiskslinuxdriveata.c b/src/udiskslinuxdriveata.c
-index 5ebdcd76..cd153d72 100644
+index b86c3465..c83afdbb 100644
 --- a/src/udiskslinuxdriveata.c
 +++ b/src/udiskslinuxdriveata.c
-@@ -45,6 +45,7 @@
+@@ -46,6 +46,7 @@
  #include "udiskslinuxblockobject.h"
  #include "udisksdaemon.h"
  #include "udisksdaemonutil.h"
@@ -991,7 +996,7 @@ index 5ebdcd76..cd153d72 100644
  #include "udiskssimplejob.h"
  #include "udisksthreadedjob.h"
 diff --git a/src/udiskslinuxencrypted.c b/src/udiskslinuxencrypted.c
-index c3a0821a..5678cd47 100644
+index 9bcbd2f0..93c205d6 100644
 --- a/src/udiskslinuxencrypted.c
 +++ b/src/udiskslinuxencrypted.c
 @@ -37,6 +37,7 @@
@@ -1003,10 +1008,10 @@ index c3a0821a..5678cd47 100644
  #include "udiskslinuxdevice.h"
  #include "udiskslinuxblock.h"
 diff --git a/src/udiskslinuxfilesystem.c b/src/udiskslinuxfilesystem.c
-index 279d952b..5355fc8d 100644
+index 9f4880ad..5e1da2b6 100644
 --- a/src/udiskslinuxfilesystem.c
 +++ b/src/udiskslinuxfilesystem.c
-@@ -50,6 +50,7 @@
+@@ -49,6 +49,7 @@
  #include "udisksdaemon.h"
  #include "udisksstate.h"
  #include "udisksdaemonutil.h"
@@ -1015,7 +1020,7 @@ index 279d952b..5355fc8d 100644
  #include "udisksmount.h"
  #include "udiskslinuxdevice.h"
 diff --git a/src/udiskslinuxloop.c b/src/udiskslinuxloop.c
-index 5d7e3553..5854220e 100644
+index 5f162f1d..c88eeb0e 100644
 --- a/src/udiskslinuxloop.c
 +++ b/src/udiskslinuxloop.c
 @@ -42,6 +42,7 @@
@@ -1027,7 +1032,7 @@ index 5d7e3553..5854220e 100644
  #include "udiskssimplejob.h"
  
 diff --git a/src/udiskslinuxmanager.c b/src/udiskslinuxmanager.c
-index 8af65d97..f6601195 100644
+index 5bfeec10..037cd58e 100644
 --- a/src/udiskslinuxmanager.c
 +++ b/src/udiskslinuxmanager.c
 @@ -41,6 +41,7 @@
@@ -1037,9 +1042,9 @@ index 8af65d97..f6601195 100644
 +#include "udisksauthorization.h"
  #include "udisksstate.h"
  #include "udiskslinuxblockobject.h"
- #include "udiskslinuxdevice.h"
+ #include "udiskslinuxblock.h"
 diff --git a/src/udiskslinuxmdraid.c b/src/udiskslinuxmdraid.c
-index 4560a7ab..361383c9 100644
+index 900cd650..2999df53 100644
 --- a/src/udiskslinuxmdraid.c
 +++ b/src/udiskslinuxmdraid.c
 @@ -43,6 +43,7 @@
@@ -1051,7 +1056,7 @@ index 4560a7ab..361383c9 100644
  #include "udiskslinuxblock.h"
  #include "udiskssimplejob.h"
 diff --git a/src/udiskslinuxpartition.c b/src/udiskslinuxpartition.c
-index ff0fdfc0..7937257a 100644
+index c4433627..5b1cc53f 100644
 --- a/src/udiskslinuxpartition.c
 +++ b/src/udiskslinuxpartition.c
 @@ -40,6 +40,7 @@
@@ -1063,7 +1068,7 @@ index ff0fdfc0..7937257a 100644
  #include "udiskslinuxblock.h"
  #include "udiskssimplejob.h"
 diff --git a/src/udiskslinuxpartitiontable.c b/src/udiskslinuxpartitiontable.c
-index e43a0708..63c295bb 100644
+index 528b22ff..9016214c 100644
 --- a/src/udiskslinuxpartitiontable.c
 +++ b/src/udiskslinuxpartitiontable.c
 @@ -39,6 +39,7 @@
@@ -1075,7 +1080,7 @@ index e43a0708..63c295bb 100644
  #include "udiskslinuxblock.h"
  #include "udiskslinuxpartition.h"
 diff --git a/src/udiskslinuxswapspace.c b/src/udiskslinuxswapspace.c
-index bb47f3d4..6998b6ab 100644
+index 0c4fd9a4..5375f662 100644
 --- a/src/udiskslinuxswapspace.c
 +++ b/src/udiskslinuxswapspace.c
 @@ -35,6 +35,7 @@
@@ -1086,6 +1091,3 @@ index bb47f3d4..6998b6ab 100644
  #include "udisksmountmonitor.h"
  #include "udiskslinuxdevice.h"
  #include "udisksthreadedjob.h"
--- 
-2.30.2
-

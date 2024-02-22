@@ -1,5 +1,4 @@
-From a00ce68f8b08abb925bf22c0c46858958dd93866 Mon Sep 17 00:00:00 2001
-Message-Id: <a00ce68f8b08abb925bf22c0c46858958dd93866.1616668703.git.stefan@agner.ch>
+From 368deb08a3f54ed9a67854af81758a705e24af00 Mon Sep 17 00:00:00 2001
 From: Stefan Agner <stefan@agner.ch>
 Date: Thu, 25 Mar 2021 11:35:12 +0100
 Subject: [PATCH] Allow to explicitly disable libsystemd-login
@@ -15,10 +14,10 @@ Signed-off-by: Stefan Agner <stefan@agner.ch>
  1 file changed, 13 insertions(+), 8 deletions(-)
 
 diff --git a/configure.ac b/configure.ac
-index 53917998..0b3f0c9a 100644
+index 010269e7..cbea9845 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -197,16 +197,21 @@ if test "x$enable_daemon" = "xyes"; then
+@@ -194,16 +194,21 @@ if test "x$enable_daemon" = "xyes"; then
                  [AC_DEFINE([UUID_STR_LEN], 37, [compat UUID_STR_LEN define])],
                  [[#include <uuid/uuid.h>]])
  
@@ -48,6 +47,3 @@ index 53917998..0b3f0c9a 100644
  
    PKG_CHECK_MODULES(LIBELOGIND, [libelogind >= 219],
                      [have_libelogind=yes],
--- 
-2.30.2
-
