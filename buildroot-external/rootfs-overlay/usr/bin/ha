@@ -3,4 +3,4 @@
 # HA utility
 # ==============================================================================
 
-docker exec hassio_cli ha "$@"
+docker exec -it hassio_cli ha "$@"
