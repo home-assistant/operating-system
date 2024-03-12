@@ -187,6 +187,6 @@ def test_restore_backup(shell_json, stash):
 
 @pytest.mark.dependency(depends=["test_create_backup"])
 def test_restore_ssl_directory(shell_json, stash):
-    result = shell_json(f"ha backups restore {stash.get('slug')} --folders ssl --raw-json")
+    result = shell_json(f"ha backups restore {stash.get('slug')} --folders ssl --no-progress --raw-json")
     assert result.get("result") == "ok", f"Backup restore failed: {result}"
     logger.info("Backup restore result: %s", result)
