@@ -8,6 +8,12 @@ jobs:
   linters:
     runs-on: ubuntu-22.04
     steps:
+    - name: Install additional dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get -y install \
+          python3-flake8
+
     - name: Check out code
       uses: actions/checkout@v4
       with:
@@ -25,4 +31,4 @@ jobs:
 
     - name: Check buildroot-external packages
       run: |
-        buildroot/utils/check-package --exclude PackageHeader --br2-external buildroot-external/package/*/*
+        buildroot/utils/check-package --exclude PackageHeader --exclude Upstream --br2-external buildroot-external/package/*/*

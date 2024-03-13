@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-UDISKS2_VERSION = 2.9.2
+UDISKS2_VERSION = 2.10.1
 UDISKS2_SITE = https://github.com/storaged-project/udisks/releases/download/udisks-$(UDISKS2_VERSION)
 UDISKS2_SOURCE = udisks-$(UDISKS2_VERSION).tar.bz2
 UDISKS2_LICENSE = GPL-2.0+

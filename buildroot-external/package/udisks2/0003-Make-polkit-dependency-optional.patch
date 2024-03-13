@@ -1,10 +1,10 @@
-From 573a9b6988c48abb7579acbe634d6b532ecb8517 Mon Sep 17 00:00:00 2001
-Message-Id: <573a9b6988c48abb7579acbe634d6b532ecb8517.1616318066.git.stefan@agner.ch>
-In-Reply-To: <abcac570bfe1db867fda504942e6c782ada2aa00.1616318066.git.stefan@agner.ch>
-References: <abcac570bfe1db867fda504942e6c782ada2aa00.1616318066.git.stefan@agner.ch>
+From 50c2d270aa88121bc34cb2fd6b91316890e85e45 Mon Sep 17 00:00:00 2001
 From: Stefan Agner <stefan@agner.ch>
 Date: Sat, 13 Mar 2021 15:24:45 +0100
 Subject: [PATCH] Make polkit dependency optional
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
 Make authorization using polkit a compile time option. This allows to
 build udisks2 without polkit.
@@ -12,6 +12,8 @@ build udisks2 without polkit.
 Fixes: #615
 
 Signed-off-by: Stefan Agner <stefan@agner.ch>
+[Jan: Updated patch to reflect udisks 2.10+ changes]
+Signed-off-by: Jan Čermák <sairon@sairon.cz>
 ---
  configure.ac              | 33 +++++++++++++++----
  data/Makefile.am          |  2 ++
@@ -22,10 +24,10 @@ Signed-off-by: Stefan Agner <stefan@agner.ch>
  6 files changed, 89 insertions(+), 34 deletions(-)
 
 diff --git a/configure.ac b/configure.ac
-index 53917998..7d95bc91 100644
+index cbea9845..57e3558c 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -150,13 +150,31 @@ PKG_CHECK_MODULES(GIO, [gio-unix-2.0 >= 2.50])
+@@ -151,13 +151,31 @@ PKG_CHECK_MODULES(GIO, [gio-unix-2.0 >= 2.50])
  AC_SUBST(GIO_CFLAGS)
  AC_SUBST(GIO_LIBS)
  
@@ -64,16 +66,16 @@ index 53917998..7d95bc91 100644
  
  if test "x$enable_daemon" = "xyes"; then
    PKG_CHECK_MODULES(GUDEV, [gudev-1.0 >= 165])
-@@ -793,6 +811,7 @@ echo "
+@@ -689,6 +707,7 @@ echo "
          using libelogind:           ${have_libelogind}
          use /media for mounting:    ${fhs_media}
          acl support:                ${have_acl}
 +        polkit support:             ${have_polkit}
-         using libmount/utab:        ${have_libmount_utab}
  
          compiler:                   ${CC}
+         cflags:                     ${CFLAGS}
 diff --git a/data/Makefile.am b/data/Makefile.am
-index 758644be..bf4f29b8 100644
+index 946823de..d17f225d 100644
 --- a/data/Makefile.am
 +++ b/data/Makefile.am
 @@ -31,6 +31,7 @@ endif
@@ -201,10 +203,10 @@ index 4903bb57..64dcf4e4 100644
  G_BEGIN_DECLS
  
 diff --git a/src/udisksdaemon.c b/src/udisksdaemon.c
-index 51e2bb5c..8995167f 100644
+index cdb9e647..a892751f 100644
 --- a/src/udisksdaemon.c
 +++ b/src/udisksdaemon.c
-@@ -379,6 +379,7 @@ udisks_daemon_constructed (GObject *object)
+@@ -359,6 +359,7 @@ udisks_daemon_constructed (GObject *object)
    uuid_unparse (uuid, &uuid_buf[0]);
    daemon->uuid = g_strdup (uuid_buf);
  
@@ -212,7 +214,7 @@ index 51e2bb5c..8995167f 100644
    daemon->authority = polkit_authority_get_sync (NULL, &error);
    if (daemon->authority == NULL)
      {
-@@ -386,6 +387,7 @@ udisks_daemon_constructed (GObject *object)
+@@ -366,6 +367,7 @@ udisks_daemon_constructed (GObject *object)
                      error->message, g_quark_to_string (error->domain), error->code);
        g_clear_error (&error);
      }
@@ -221,7 +223,7 @@ index 51e2bb5c..8995167f 100644
    daemon->object_manager = g_dbus_object_manager_server_new ("/org/freedesktop/UDisks2");
  
 diff --git a/tools/udisksctl.c b/tools/udisksctl.c
-index 7a5de65d..feacfa6d 100644
+index 7d207f98..d380ceed 100644
 --- a/tools/udisksctl.c
 +++ b/tools/udisksctl.c
 @@ -35,9 +35,11 @@
@@ -261,6 +263,3 @@ index 7a5de65d..feacfa6d 100644
  
  
  /* ---------------------------------------------------------------------------------------------------- */
--- 
-2.30.2
-

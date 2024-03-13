@@ -25,7 +25,7 @@ XE_GUEST_UTILITIES_XENSTORE_ALIAS = \
 define XE_GUEST_UTILITIES_BUILD_CMDS
 	cd $(@D); \
 	$(HOST_GO_TARGET_ENV) $(TARGET_MAKE_ENV); \
-	$(GO_BIN) mod vendor; \
+	$(XE_GUEST_UTILITIES_DL_ENV) $(GO_BIN) mod vendor; \
 	$(MAKE)
 endef
 
