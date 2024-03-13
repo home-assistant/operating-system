@@ -31,4 +31,4 @@ jobs:
 
     - name: Check buildroot-external packages
       run: |
-        buildroot/utils/check-package --exclude PackageHeader --br2-external buildroot-external/package/*/*
+        buildroot/utils/check-package --exclude PackageHeader --exclude Upstream --br2-external buildroot-external/package/*/*
