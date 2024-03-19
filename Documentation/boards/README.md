@@ -43,6 +43,8 @@ Notes:
 
 |Board|Build|Config|Docs|
 |-----|----|------|----|
+|Green         |`make green`         |[green](../../buildroot-external/configs/green_defconfig)|-|
+|Yellow        |`make yellow`        |[yellow](../../buildroot-external/configs/yellow_defconfig)|-|
 |Pi5 64-bit    |`make rpi5_64`       |[rpi5_64](../../buildroot-external/configs/rpi5_64_defconfig)|[raspberrypi](./raspberrypi/)|
 |Pi4B 64-bit   |`make rpi4_64`       |[rpi4_64](../../buildroot-external/configs/rpi4_64_defconfig)|[raspberrypi](./raspberrypi/)|
 |Pi4B 32-bit   |`make rpi4`          |[rpi4](../../buildroot-external/configs/rpi4_defconfig)|[raspberrypi](./raspberrypi/)|
