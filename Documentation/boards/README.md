@@ -4,6 +4,10 @@
 
 The following boards/devices are supported:
 
+- Nabu Casa
+  - [Home Assistant Green](https://www.home-assistant.io/green/)
+  - [Home Assistant Yellow](https://www.home-assistant.io/yellow/) (based custom carrier board and powered by a Raspberry Pi 4 Compute Module)
+  - [Home Assistant Blue](https://www.home-assistant.io/blue/) (based on ODROID-N2+)
 - Raspberry Pi
   - Pi 5 ([4 GB](https://www.raspberrypi.com/products/raspberry-pi-5/?variant=raspberry-pi-5-4gb) and [8 GB](https://www.raspberrypi.com/products/raspberry-pi-5/?variant=raspberry-pi-5-8gb) model) 64-bit
   - Pi 4 Model B ([1 GB](https://www.raspberrypi.com/products/raspberry-pi-4-model-b/?variant=raspberry-pi-4-model-b-1gb), [2 GB](https://www.raspberrypi.com/products/raspberry-pi-4-model-b/?variant=raspberry-pi-4-model-b-2gb), [4 GB](https://www.raspberrypi.com/products/raspberry-pi-4-model-b/?variant=raspberry-pi-4-model-b-4gb) and [8 GB](https://www.raspberrypi.com/products/raspberry-pi-4-model-b/?variant=raspberry-pi-4-model-b-8gb) model) 32-bit or 64-bit (recommended)
@@ -39,6 +43,8 @@ Notes:
 
 |Board|Build|Config|Docs|
 |-----|----|------|----|
+|Green         |`make green`         |[green](../../buildroot-external/configs/green_defconfig)|-|
+|Yellow        |`make yellow`        |[yellow](../../buildroot-external/configs/yellow_defconfig)|-|
 |Pi5 64-bit    |`make rpi5_64`       |[rpi5_64](../../buildroot-external/configs/rpi5_64_defconfig)|[raspberrypi](./raspberrypi/)|
 |Pi4B 64-bit   |`make rpi4_64`       |[rpi4_64](../../buildroot-external/configs/rpi4_64_defconfig)|[raspberrypi](./raspberrypi/)|
 |Pi4B 32-bit   |`make rpi4`          |[rpi4](../../buildroot-external/configs/rpi4_defconfig)|[raspberrypi](./raspberrypi/)|
