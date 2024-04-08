@@ -3,4 +3,9 @@
 # HA utility
 # ==============================================================================
 
-docker exec -it hassio_cli ha "$@"
+if [ -t 1 ]; then
+	# stdout (fd 1) must be terminal, otherwise `-t` causes error
+	docker exec -it hassio_cli ha "$@"
+else
+	docker exec -i hassio_cli ha "$@"
+fi
