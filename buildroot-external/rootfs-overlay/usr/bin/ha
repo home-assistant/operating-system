@@ -4,8 +4,8 @@
 # ==============================================================================
 
 if [ -t 1 ]; then
-	# stdout (fd 1) must be terminal, otherwise `docker exec -it` fails
+	# stdout (fd 1) must be terminal, otherwise `-t` causes error
 	docker exec -it hassio_cli ha "$@"
 else
-	docker exec hassio_cli ha "$@"
+	docker exec -i hassio_cli ha "$@"
 fi
