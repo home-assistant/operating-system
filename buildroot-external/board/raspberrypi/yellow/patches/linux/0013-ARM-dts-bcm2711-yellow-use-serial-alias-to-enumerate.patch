@@ -1,7 +1,4 @@
-From 4b9ccb624cb498b63475662c041c3efc4b230731 Mon Sep 17 00:00:00 2001
-Message-ID: <4b9ccb624cb498b63475662c041c3efc4b230731.1698393299.git.stefan@agner.ch>
-In-Reply-To: <808c5caa6bdefaadf7c63d9fb5c18c33dc1fe5b9.1698393299.git.stefan@agner.ch>
-References: <808c5caa6bdefaadf7c63d9fb5c18c33dc1fe5b9.1698393299.git.stefan@agner.ch>
+From 614ff7a7904a769dee144ae4cf80e484d8ffade5 Mon Sep 17 00:00:00 2001
 From: Stefan Agner <stefan@agner.ch>
 Date: Wed, 31 May 2023 10:57:43 +0200
 Subject: [PATCH] ARM: dts: bcm2711: yellow: use serial alias to enumerate
@@ -12,13 +9,13 @@ make sure to correctly enumerate the serial aliases.
 
 Signed-off-by: Stefan Agner <stefan@agner.ch>
 ---
- arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts | 8 ++------
+ arch/arm/boot/dts/broadcom/bcm2711-rpi-cm4-ha-yellow.dts | 8 ++------
  1 file changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
-index f7fdf8bbb395..b8f0bc2df062 100644
---- a/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
-+++ b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
+diff --git a/arch/arm/boot/dts/broadcom/bcm2711-rpi-cm4-ha-yellow.dts b/arch/arm/boot/dts/broadcom/bcm2711-rpi-cm4-ha-yellow.dts
+index f7fdf8bbb395a..b8f0bc2df062d 100644
+--- a/arch/arm/boot/dts/broadcom/bcm2711-rpi-cm4-ha-yellow.dts
++++ b/arch/arm/boot/dts/broadcom/bcm2711-rpi-cm4-ha-yellow.dts
 @@ -17,11 +17,6 @@ / {
  	compatible = "raspberrypi,4-compute-module-ha-yellow", "raspberrypi,4-compute-module", "brcm,bcm2711";
  	model = "Raspberry Pi Compute Module 4 on Home Assistant Yellow";
@@ -41,6 +38,3 @@ index f7fdf8bbb395..b8f0bc2df062 100644
  		mmc0 = &emmc2;
  		mmc1 = &mmcnr;
  		mmc2 = &sdhost;
--- 
-2.42.0
-

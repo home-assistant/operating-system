@@ -1,7 +1,4 @@
-From bc62fb721d663f63c9b44371d875e6c52d5d6126 Mon Sep 17 00:00:00 2001
-Message-ID: <bc62fb721d663f63c9b44371d875e6c52d5d6126.1698393299.git.stefan@agner.ch>
-In-Reply-To: <808c5caa6bdefaadf7c63d9fb5c18c33dc1fe5b9.1698393299.git.stefan@agner.ch>
-References: <808c5caa6bdefaadf7c63d9fb5c18c33dc1fe5b9.1698393299.git.stefan@agner.ch>
+From e738be24b35b8c8df6e5149a64ad9c366c27ba59 Mon Sep 17 00:00:00 2001
 From: Stefan Agner <stefan@agner.ch>
 Date: Thu, 28 Oct 2021 19:38:04 +0200
 Subject: [PATCH] ARM: dts: bcm2711: yellow: add user LED
@@ -10,13 +7,13 @@ Add yellow user LED.
 
 Signed-off-by: Stefan Agner <stefan@agner.ch>
 ---
- arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts | 7 ++++++-
+ arch/arm/boot/dts/broadcom/bcm2711-rpi-cm4-ha-yellow.dts | 7 ++++++-
  1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
-index dcc36efcdcb1..6cdf595cdc2c 100644
---- a/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
-+++ b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
+diff --git a/arch/arm/boot/dts/broadcom/bcm2711-rpi-cm4-ha-yellow.dts b/arch/arm/boot/dts/broadcom/bcm2711-rpi-cm4-ha-yellow.dts
+index dcc36efcdcb14..6cdf595cdc2c3 100644
+--- a/arch/arm/boot/dts/broadcom/bcm2711-rpi-cm4-ha-yellow.dts
++++ b/arch/arm/boot/dts/broadcom/bcm2711-rpi-cm4-ha-yellow.dts
 @@ -315,7 +315,6 @@ soc {
  #include "bcm2711-rpi-ds.dtsi"
  #include "bcm283x-rpi-csi0-2lane.dtsi"
@@ -38,6 +35,3 @@ index dcc36efcdcb1..6cdf595cdc2c 100644
  };
  
  &pwm1 {
--- 
-2.42.0
-

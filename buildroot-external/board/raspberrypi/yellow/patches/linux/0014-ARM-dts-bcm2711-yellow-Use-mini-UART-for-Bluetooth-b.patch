@@ -1,4 +1,4 @@
-From 169075818f13e77f4d86c913bbac796e92bb5b14 Mon Sep 17 00:00:00 2001
+From 1743e9e6cf20309f9096489930543576a8297c85 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Jan=20=C4=8Cerm=C3=A1k?= <sairon@sairon.cz>
 Date: Thu, 16 Nov 2023 12:46:48 +0100
 Subject: [PATCH] ARM: dts: bcm2711: yellow: Use mini-UART for Bluetooth by
@@ -14,13 +14,13 @@ Full UART should be available on J11.
 
 Signed-off-by: Jan Čermák <sairon@sairon.cz>
 ---
- .../boot/dts/bcm2711-rpi-cm4-ha-yellow.dts    | 36 ++++++++++++++-----
+ .../broadcom/bcm2711-rpi-cm4-ha-yellow.dts    | 36 ++++++++++++++-----
  1 file changed, 28 insertions(+), 8 deletions(-)
 
-diff --git a/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
-index b8f0bc2df062..26033f2d30d0 100644
---- a/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
-+++ b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
+diff --git a/arch/arm/boot/dts/broadcom/bcm2711-rpi-cm4-ha-yellow.dts b/arch/arm/boot/dts/broadcom/bcm2711-rpi-cm4-ha-yellow.dts
+index b8f0bc2df062d..26033f2d30d0c 100644
+--- a/arch/arm/boot/dts/broadcom/bcm2711-rpi-cm4-ha-yellow.dts
++++ b/arch/arm/boot/dts/broadcom/bcm2711-rpi-cm4-ha-yellow.dts
 @@ -318,7 +318,7 @@ chosen {
  	};
  
@@ -99,6 +99,3 @@ index b8f0bc2df062..26033f2d30d0 100644
 +		krnbt = <&minibt>,"status";
  	};
  };
--- 
-2.34.1
-
