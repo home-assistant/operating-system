@@ -1,0 +1,41 @@
+From 0f005f5b3182e8ecb745f535a1bfeef31c3bfa5b Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Jan=20=C4=8Cerm=C3=A1k?= <sairon@sairon.cz>
+Date: Tue, 9 Apr 2024 14:18:17 +0200
+Subject: [PATCH] ARM: dts: bcm2711: yellow: Fix leds node referencing after
+ included dtsi changes
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+After a change [1] in the included bcm2835-rpi.dtsi it is no longer possible to
+reference leds node and the compatible string is missing. It was moved to
+bcm283x-rpi-led-deprecated.dtsi, but instead of including that, take over
+control and define it in Yellow DTS (like it's done e.g. for RPi 5 DTS).
+
+[1] https://lore.kernel.org/all/20221110173105.6633-3-stefan.wahren@i2se.com/
+
+Signed-off-by: Jan Čermák <sairon@sairon.cz>
+---
+ arch/arm/boot/dts/broadcom/bcm2711-rpi-cm4-ha-yellow.dts | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm/boot/dts/broadcom/bcm2711-rpi-cm4-ha-yellow.dts b/arch/arm/boot/dts/broadcom/bcm2711-rpi-cm4-ha-yellow.dts
+index 26033f2d30d0c..627ff93b7d044 100644
+--- a/arch/arm/boot/dts/broadcom/bcm2711-rpi-cm4-ha-yellow.dts
++++ b/arch/arm/boot/dts/broadcom/bcm2711-rpi-cm4-ha-yellow.dts
+@@ -45,9 +45,14 @@ user {
+ 		};
+ 	};
+ 
+-	leds {
++	leds: leds {
++		compatible = "gpio-leds";
++
+ 		led-act {
++			label = "ACT";
+ 			gpios = <&gpio 42 GPIO_ACTIVE_HIGH>;
++			default-state = "keep";
++			linux,default-trigger = "heartbeat";
+ 		};
+ 
+ 		led-pwr {

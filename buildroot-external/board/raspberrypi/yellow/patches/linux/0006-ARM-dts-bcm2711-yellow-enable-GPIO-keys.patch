@@ -1,20 +1,17 @@
-From 05d15d41fcd7b94521cb93a696ba25174627adfc Mon Sep 17 00:00:00 2001
-Message-ID: <05d15d41fcd7b94521cb93a696ba25174627adfc.1698393299.git.stefan@agner.ch>
-In-Reply-To: <808c5caa6bdefaadf7c63d9fb5c18c33dc1fe5b9.1698393299.git.stefan@agner.ch>
-References: <808c5caa6bdefaadf7c63d9fb5c18c33dc1fe5b9.1698393299.git.stefan@agner.ch>
+From 813ead66c6b09ce9eaab57b5ab6907314226368a Mon Sep 17 00:00:00 2001
 From: Stefan Agner <stefan@agner.ch>
 Date: Tue, 9 Mar 2021 15:02:53 +0100
 Subject: [PATCH] ARM: dts: bcm2711: yellow: enable GPIO keys
 
 Signed-off-by: Stefan Agner <stefan@agner.ch>
 ---
- .../boot/dts/bcm2711-rpi-cm4-ha-yellow.dts    | 31 +++++++++++++++++++
+ .../broadcom/bcm2711-rpi-cm4-ha-yellow.dts    | 31 +++++++++++++++++++
  1 file changed, 31 insertions(+)
 
-diff --git a/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
-index 8ca65c696531..dcc36efcdcb1 100644
---- a/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
-+++ b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
+diff --git a/arch/arm/boot/dts/broadcom/bcm2711-rpi-cm4-ha-yellow.dts b/arch/arm/boot/dts/broadcom/bcm2711-rpi-cm4-ha-yellow.dts
+index 8ca65c696531f..dcc36efcdcb14 100644
+--- a/arch/arm/boot/dts/broadcom/bcm2711-rpi-cm4-ha-yellow.dts
++++ b/arch/arm/boot/dts/broadcom/bcm2711-rpi-cm4-ha-yellow.dts
 @@ -11,6 +11,8 @@
  #undef i2c0
  //#include "bcm283x-rpi-usb-peripheral.dtsi"
@@ -67,6 +64,3 @@ index 8ca65c696531..dcc36efcdcb1 100644
  	spi0_pins: spi0_pins {
  		brcm,pins = <9 10 11>;
  		brcm,function = <BCM2835_FSEL_ALT0>;
--- 
-2.42.0
-

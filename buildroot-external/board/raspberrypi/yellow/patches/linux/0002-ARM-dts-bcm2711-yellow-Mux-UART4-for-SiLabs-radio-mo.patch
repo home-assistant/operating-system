@@ -1,7 +1,4 @@
-From e46bcfa7e1b577be494024b05c2b310f10a037c2 Mon Sep 17 00:00:00 2001
-Message-ID: <e46bcfa7e1b577be494024b05c2b310f10a037c2.1698393299.git.stefan@agner.ch>
-In-Reply-To: <808c5caa6bdefaadf7c63d9fb5c18c33dc1fe5b9.1698393299.git.stefan@agner.ch>
-References: <808c5caa6bdefaadf7c63d9fb5c18c33dc1fe5b9.1698393299.git.stefan@agner.ch>
+From 7bc3b341d90c95dc17d3da0930801006b00d2046 Mon Sep 17 00:00:00 2001
 From: Stefan Agner <stefan@agner.ch>
 Date: Thu, 4 Mar 2021 14:33:09 +0100
 Subject: [PATCH] ARM: dts: bcm2711: yellow: Mux UART4 for SiLabs radio module
@@ -10,13 +7,13 @@ Enable UART4 by default and mux pins including hardware flow control.
 
 Signed-off-by: Stefan Agner <stefan@agner.ch>
 ---
- arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts | 16 ++++++++++++++--
+ .../dts/broadcom/bcm2711-rpi-cm4-ha-yellow.dts   | 16 ++++++++++++++--
  1 file changed, 14 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
-index f92936d7cf16..fa93ab5ca639 100644
---- a/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
-+++ b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
+diff --git a/arch/arm/boot/dts/broadcom/bcm2711-rpi-cm4-ha-yellow.dts b/arch/arm/boot/dts/broadcom/bcm2711-rpi-cm4-ha-yellow.dts
+index f92936d7cf16b..fa93ab5ca639b 100644
+--- a/arch/arm/boot/dts/broadcom/bcm2711-rpi-cm4-ha-yellow.dts
++++ b/arch/arm/boot/dts/broadcom/bcm2711-rpi-cm4-ha-yellow.dts
 @@ -15,6 +15,10 @@ / {
  	compatible = "raspberrypi,4-compute-module-ha-yellow", "raspberrypi,4-compute-module", "brcm,bcm2711";
  	model = "Raspberry Pi Compute Module 4 on Home Assistant Yellow";
@@ -55,6 +52,3 @@ index f92936d7cf16..fa93ab5ca639 100644
  	};
  
  	uart5_pins: uart5_pins {
--- 
-2.42.0
-

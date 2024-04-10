@@ -1,7 +1,4 @@
-From 746ef4ac4f691fe588f8fd7947a900d616f74e5b Mon Sep 17 00:00:00 2001
-Message-ID: <746ef4ac4f691fe588f8fd7947a900d616f74e5b.1698393299.git.stefan@agner.ch>
-In-Reply-To: <808c5caa6bdefaadf7c63d9fb5c18c33dc1fe5b9.1698393299.git.stefan@agner.ch>
-References: <808c5caa6bdefaadf7c63d9fb5c18c33dc1fe5b9.1698393299.git.stefan@agner.ch>
+From 68b50046140a36790b004005b6305820de80520b Mon Sep 17 00:00:00 2001
 From: Stefan Agner <stefan@agner.ch>
 Date: Thu, 4 Mar 2021 14:48:48 +0100
 Subject: [PATCH] ARM: dts: bcm2711: yellow: Enable I2C6 by default
@@ -10,13 +7,13 @@ The main I2C bus used on Yellow is I2C6. Enable it by default.
 
 Signed-off-by: Stefan Agner <stefan@agner.ch>
 ---
- arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts | 6 ++++++
+ arch/arm/boot/dts/broadcom/bcm2711-rpi-cm4-ha-yellow.dts | 6 ++++++
  1 file changed, 6 insertions(+)
 
-diff --git a/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
-index cc7e7b28ffc7..72f437f4e81a 100644
---- a/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
-+++ b/arch/arm/boot/dts/bcm2711-rpi-cm4-ha-yellow.dts
+diff --git a/arch/arm/boot/dts/broadcom/bcm2711-rpi-cm4-ha-yellow.dts b/arch/arm/boot/dts/broadcom/bcm2711-rpi-cm4-ha-yellow.dts
+index cc7e7b28ffc76..72f437f4e81a1 100644
+--- a/arch/arm/boot/dts/broadcom/bcm2711-rpi-cm4-ha-yellow.dts
++++ b/arch/arm/boot/dts/broadcom/bcm2711-rpi-cm4-ha-yellow.dts
 @@ -510,6 +510,12 @@ &i2c1 {
  	clock-frequency = <100000>;
  };
@@ -30,6 +27,3 @@ index cc7e7b28ffc7..72f437f4e81a 100644
  &i2s {
  	pinctrl-names = "default";
  	pinctrl-0 = <&i2s_pins>;
--- 
-2.42.0
-

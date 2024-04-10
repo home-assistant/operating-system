@@ -1,5 +1,4 @@
-From 57188c09ac02bfa61cce55932ccba43ec7210e54 Mon Sep 17 00:00:00 2001
-Message-Id: <57188c09ac02bfa61cce55932ccba43ec7210e54.1677499675.git.stefan@agner.ch>
+From e2f2644f306f44e65bb8082bac3c26cb5e699664 Mon Sep 17 00:00:00 2001
 From: Pascal Vizeli <pvizeli@syshack.ch>
 Date: Tue, 2 Jun 2020 21:20:08 +0000
 Subject: [PATCH] ARM: dts: bcm283x: add compatible picked up by U-Boot
@@ -12,14 +11,14 @@ not using that compatible string.
 Signed-off-by: Pascal Vizeli <pvizeli@syshack.ch>
 Signed-off-by: Stefan Agner <stefan@agner.ch>
 ---
- arch/arm/boot/dts/bcm2711.dtsi | 8 ++++----
- arch/arm/boot/dts/bcm283x.dtsi | 2 +-
+ arch/arm/boot/dts/broadcom/bcm2711.dtsi | 8 ++++----
+ arch/arm/boot/dts/broadcom/bcm283x.dtsi | 2 +-
  2 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/arch/arm/boot/dts/bcm2711.dtsi b/arch/arm/boot/dts/bcm2711.dtsi
-index 941c4d16791b..3cd49fa4bafd 100644
---- a/arch/arm/boot/dts/bcm2711.dtsi
-+++ b/arch/arm/boot/dts/bcm2711.dtsi
+diff --git a/arch/arm/boot/dts/broadcom/bcm2711.dtsi b/arch/arm/boot/dts/broadcom/bcm2711.dtsi
+index 4a379a14966d8..30f6ccdcef178 100644
+--- a/arch/arm/boot/dts/broadcom/bcm2711.dtsi
++++ b/arch/arm/boot/dts/broadcom/bcm2711.dtsi
 @@ -128,7 +128,7 @@ rng@7e104000 {
  		};
  
@@ -56,11 +55,11 @@ index 941c4d16791b..3cd49fa4bafd 100644
  			reg = <0x7e201a00 0x200>;
  			interrupts = <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>;
  			clocks = <&clocks BCM2835_CLOCK_UART>,
-diff --git a/arch/arm/boot/dts/bcm283x.dtsi b/arch/arm/boot/dts/bcm283x.dtsi
-index d2d9c6e67f39..7b9a2e8cf529 100644
---- a/arch/arm/boot/dts/bcm283x.dtsi
-+++ b/arch/arm/boot/dts/bcm283x.dtsi
-@@ -302,7 +302,7 @@ uart1_ctsrts_gpio42: uart1_ctsrts_gpio42 {
+diff --git a/arch/arm/boot/dts/broadcom/bcm283x.dtsi b/arch/arm/boot/dts/broadcom/bcm283x.dtsi
+index 2ca8a2505a4db..6f91c85677d89 100644
+--- a/arch/arm/boot/dts/broadcom/bcm283x.dtsi
++++ b/arch/arm/boot/dts/broadcom/bcm283x.dtsi
+@@ -302,7 +302,7 @@ uart1_ctsrts_gpio42: uart1-ctsrts-gpio42 {
  		};
  
  		uart0: serial@7e201000 {
@@ -69,6 +68,3 @@ index d2d9c6e67f39..7b9a2e8cf529 100644
  			reg = <0x7e201000 0x200>;
  			interrupts = <2 25>;
  			clocks = <&clocks BCM2835_CLOCK_UART>,
--- 
-2.39.1
-
