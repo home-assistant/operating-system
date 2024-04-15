@@ -1,0 +1,30 @@
+From 8b7bfad7fda35949975f359c7e207bc57bc765db Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Jan=20=C4=8Cerm=C3=A1k?= <sairon@sairon.cz>
+Date: Mon, 15 Apr 2024 14:07:34 +0200
+Subject: [PATCH] USB: storage: Increase maximum length of the quirks string
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Maximum length of the quirks string is 127 characters which is not sufficient
+for the already long list of quirky controllers in HAOS. Increase the size of
+the quirks variable to allow up to 255 characters.
+
+Signed-off-by: Jan Čermák <sairon@sairon.cz>
+---
+ drivers/usb/storage/usb.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/usb/storage/usb.c b/drivers/usb/storage/usb.c
+index 7b36a3334fb34..9691e6b9fe5aa 100644
+--- a/drivers/usb/storage/usb.c
++++ b/drivers/usb/storage/usb.c
+@@ -71,7 +71,7 @@ static unsigned int delay_use = 1;
+ module_param(delay_use, uint, S_IRUGO | S_IWUSR);
+ MODULE_PARM_DESC(delay_use, "seconds to delay before using a new device");
+ 
+-static char quirks[128];
++static char quirks[256];
+ module_param_string(quirks, quirks, sizeof(quirks), S_IRUGO | S_IWUSR);
+ MODULE_PARM_DESC(quirks, "supplemental list of device IDs and their quirks");
+ 
