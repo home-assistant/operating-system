@@ -8,18 +8,18 @@ SD-card boot is supported via on-board bootloader (SPL) or recovery button.
 
 ## eMMC
 
-eMMC boot via on-board bootloader requires the latest version of Petitboot
-(spiboot 20230328). To install the latest version download the SPI boot image
+eMMC boot via on-board bootloader requires a newer version of Petitboot
+(spiboot 20230328 or later). To install the latest version download the SPI boot image
 from [linuxfactory.or.kr][1] as follows:
 
-1. Download `spiupdate_odroidm1_20220304.img.xz`
+1. Download `spiupdate_odroidm1_20240415.img.xz`
 2. Use balenaEtcher or another tool to flash the updater onto an SD card
-3. Download `spiboot-20230328.img`
-4. Rename the `spiboot-20230328.img` file to`spiboot.img`.
+3. Download `spiboot-20240109.img`
+4. Rename the `spiboot-20240109.img` file to`spiboot.img`.
 5. Paste the `spiboot.img` file onto the FAT partition of that same SD card.
 6. Plug-in that SD card to your ODROID-M1. Petitboot will update itself, you can verify the progress on the HDMI output.
-7. If you see the version 20230328 in the top right corner, the installation was successful.
-  * If you see any other version there, the installation failed. 
+7. If you see the version 20240109 in the top left corner, the installation was successful.\
+   If you see any other version there, the installation failed.
 
 Once Petitboot is updated you can flash Home Assistant OS directly onto an eMMC.
 
