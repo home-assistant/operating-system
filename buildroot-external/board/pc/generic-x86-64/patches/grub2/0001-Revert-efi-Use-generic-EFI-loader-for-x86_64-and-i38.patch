@@ -1,0 +1,302 @@
+From f983d53d6ddbe1d30b5ad9c2ff280881ebed19e4 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Jan=20=C4=8Cerm=C3=A1k?= <sairon@sairon.cz>
+Date: Tue, 23 Apr 2024 16:14:12 +0200
+Subject: [PATCH] Revert "efi: Use generic EFI loader for x86_64 and i386"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+This reverts commit cfbfae1aef0694b416aa199291cfef7596cdfc20.
+
+The generic EFI loader doesn't play well with boards based on Intel
+NM10, and possibly some more AMD based boards. Reverting this page
+before a proper fix is found is the only way to boot system with GRUB
+2.12 on those systems.
+
+Makefile.am is only modified to prevent autoreconf from running, since
+GRUB is built from the release tarball and doesn't use autotools.
+
+Signed-off-by: Jan Čermák <sairon@sairon.cz>
+---
+ grub-core/Makefile.am         |  2 ++
+ grub-core/Makefile.core.am    |  4 +--
+ grub-core/Makefile.core.def   |  2 --
+ grub-core/Makefile.in         |  6 ++---
+ grub-core/loader/efi/linux.c  | 49 ++++-------------------------------
+ grub-core/loader/i386/linux.c |  8 ------
+ include/grub/efi/efi.h        |  2 +-
+ 7 files changed, 12 insertions(+), 61 deletions(-)
+
+diff --git a/grub-core/Makefile.am b/grub-core/Makefile.am
+index f18550c..f09a770 100644
+--- a/grub-core/Makefile.am
++++ b/grub-core/Makefile.am
+@@ -516,3 +516,5 @@ windowsdir: $(PROGRAMS) $(starfield_DATA) $(platform_DATA)
+ 	for x in $(platform_DATA); do \
+ 		cp -fp $$x $(windowsdir)/$(target_cpu)-$(platform)/$$x; \
+ 	done
++
++# no autoreconf, please | added by 'Revert "efi: Use generic EFI loader for x86_64 and i386"' patch
+diff --git a/grub-core/Makefile.core.am b/grub-core/Makefile.core.am
+index 20efe61..b8a28bd 100644
+--- a/grub-core/Makefile.core.am
++++ b/grub-core/Makefile.core.am
+@@ -15107,7 +15107,7 @@ endif
+ if COND_i386_efi
+ platform_PROGRAMS += linux.module
+ MODULE_FILES += linux.module$(EXEEXT)
+-linux_module_SOURCES  = lib/cmdline.c loader/efi/linux.c loader/i386/linux.c loader/linux.c  ## platform sources
++linux_module_SOURCES  = lib/cmdline.c loader/i386/linux.c loader/linux.c  ## platform sources
+ nodist_linux_module_SOURCES  =  ## platform nodist sources
+ linux_module_LDADD  = 
+ linux_module_CFLAGS  = $(AM_CFLAGS) $(CFLAGS_MODULE) 
+@@ -15222,7 +15222,7 @@ endif
+ if COND_x86_64_efi
+ platform_PROGRAMS += linux.module
+ MODULE_FILES += linux.module$(EXEEXT)
+-linux_module_SOURCES  = lib/cmdline.c loader/efi/linux.c loader/i386/linux.c loader/linux.c  ## platform sources
++linux_module_SOURCES  = lib/cmdline.c loader/i386/linux.c loader/linux.c  ## platform sources
+ nodist_linux_module_SOURCES  =  ## platform nodist sources
+ linux_module_LDADD  = 
+ linux_module_CFLAGS  = $(AM_CFLAGS) $(CFLAGS_MODULE) 
+diff --git a/grub-core/Makefile.core.def b/grub-core/Makefile.core.def
+index 1571421..db5800e 100644
+--- a/grub-core/Makefile.core.def
++++ b/grub-core/Makefile.core.def
+@@ -1854,8 +1854,6 @@ module = {
+   loongarch64 = loader/efi/linux.c;
+   riscv32 = loader/efi/linux.c;
+   riscv64 = loader/efi/linux.c;
+-  i386_efi = loader/efi/linux.c;
+-  x86_64_efi = loader/efi/linux.c;
+   emu = loader/emu/linux.c;
+   common = loader/linux.c;
+   common = lib/cmdline.c;
+diff --git a/grub-core/Makefile.in b/grub-core/Makefile.in
+index ce6601f..98ef33f 100644
+--- a/grub-core/Makefile.in
++++ b/grub-core/Makefile.in
+@@ -12351,7 +12351,6 @@ am__linux_module_SOURCES_DIST = lib/cmdline.c loader/efi/linux.c \
+ @COND_arm64_efi_FALSE@@COND_arm_coreboot_FALSE@@COND_arm_efi_FALSE@@COND_arm_uboot_FALSE@@COND_emu_FALSE@@COND_i386_coreboot_FALSE@@COND_i386_efi_FALSE@@COND_i386_ieee1275_FALSE@@COND_i386_multiboot_FALSE@@COND_i386_pc_FALSE@@COND_i386_qemu_FALSE@@COND_i386_xen_FALSE@@COND_i386_xen_pvh_FALSE@@COND_ia64_efi_FALSE@@COND_loongarch64_efi_FALSE@@COND_mips_arc_FALSE@@COND_mips_loongson_FALSE@@COND_mips_qemu_mips_FALSE@@COND_powerpc_ieee1275_FALSE@@COND_riscv32_efi_FALSE@@COND_riscv64_efi_FALSE@@COND_sparc64_ieee1275_FALSE@@COND_x86_64_efi_FALSE@@COND_x86_64_xen_TRUE@	loader/i386/linux_module-xen.$(OBJEXT) \
+ @COND_arm64_efi_FALSE@@COND_arm_coreboot_FALSE@@COND_arm_efi_FALSE@@COND_arm_uboot_FALSE@@COND_emu_FALSE@@COND_i386_coreboot_FALSE@@COND_i386_efi_FALSE@@COND_i386_ieee1275_FALSE@@COND_i386_multiboot_FALSE@@COND_i386_pc_FALSE@@COND_i386_qemu_FALSE@@COND_i386_xen_FALSE@@COND_i386_xen_pvh_FALSE@@COND_ia64_efi_FALSE@@COND_loongarch64_efi_FALSE@@COND_mips_arc_FALSE@@COND_mips_loongson_FALSE@@COND_mips_qemu_mips_FALSE@@COND_powerpc_ieee1275_FALSE@@COND_riscv32_efi_FALSE@@COND_riscv64_efi_FALSE@@COND_sparc64_ieee1275_FALSE@@COND_x86_64_efi_FALSE@@COND_x86_64_xen_TRUE@	loader/linux_module-linux.$(OBJEXT)
+ @COND_arm64_efi_FALSE@@COND_arm_coreboot_FALSE@@COND_arm_efi_FALSE@@COND_arm_uboot_FALSE@@COND_emu_FALSE@@COND_i386_coreboot_FALSE@@COND_i386_efi_FALSE@@COND_i386_ieee1275_FALSE@@COND_i386_multiboot_FALSE@@COND_i386_pc_FALSE@@COND_i386_qemu_FALSE@@COND_i386_xen_FALSE@@COND_i386_xen_pvh_FALSE@@COND_ia64_efi_FALSE@@COND_loongarch64_efi_FALSE@@COND_mips_arc_FALSE@@COND_mips_loongson_FALSE@@COND_mips_qemu_mips_FALSE@@COND_powerpc_ieee1275_FALSE@@COND_riscv32_efi_FALSE@@COND_riscv64_efi_FALSE@@COND_sparc64_ieee1275_FALSE@@COND_x86_64_efi_TRUE@am_linux_module_OBJECTS = lib/linux_module-cmdline.$(OBJEXT) \
+-@COND_arm64_efi_FALSE@@COND_arm_coreboot_FALSE@@COND_arm_efi_FALSE@@COND_arm_uboot_FALSE@@COND_emu_FALSE@@COND_i386_coreboot_FALSE@@COND_i386_efi_FALSE@@COND_i386_ieee1275_FALSE@@COND_i386_multiboot_FALSE@@COND_i386_pc_FALSE@@COND_i386_qemu_FALSE@@COND_i386_xen_FALSE@@COND_i386_xen_pvh_FALSE@@COND_ia64_efi_FALSE@@COND_loongarch64_efi_FALSE@@COND_mips_arc_FALSE@@COND_mips_loongson_FALSE@@COND_mips_qemu_mips_FALSE@@COND_powerpc_ieee1275_FALSE@@COND_riscv32_efi_FALSE@@COND_riscv64_efi_FALSE@@COND_sparc64_ieee1275_FALSE@@COND_x86_64_efi_TRUE@	loader/efi/linux_module-linux.$(OBJEXT) \
+ @COND_arm64_efi_FALSE@@COND_arm_coreboot_FALSE@@COND_arm_efi_FALSE@@COND_arm_uboot_FALSE@@COND_emu_FALSE@@COND_i386_coreboot_FALSE@@COND_i386_efi_FALSE@@COND_i386_ieee1275_FALSE@@COND_i386_multiboot_FALSE@@COND_i386_pc_FALSE@@COND_i386_qemu_FALSE@@COND_i386_xen_FALSE@@COND_i386_xen_pvh_FALSE@@COND_ia64_efi_FALSE@@COND_loongarch64_efi_FALSE@@COND_mips_arc_FALSE@@COND_mips_loongson_FALSE@@COND_mips_qemu_mips_FALSE@@COND_powerpc_ieee1275_FALSE@@COND_riscv32_efi_FALSE@@COND_riscv64_efi_FALSE@@COND_sparc64_ieee1275_FALSE@@COND_x86_64_efi_TRUE@	loader/i386/linux_module-linux.$(OBJEXT) \
+ @COND_arm64_efi_FALSE@@COND_arm_coreboot_FALSE@@COND_arm_efi_FALSE@@COND_arm_uboot_FALSE@@COND_emu_FALSE@@COND_i386_coreboot_FALSE@@COND_i386_efi_FALSE@@COND_i386_ieee1275_FALSE@@COND_i386_multiboot_FALSE@@COND_i386_pc_FALSE@@COND_i386_qemu_FALSE@@COND_i386_xen_FALSE@@COND_i386_xen_pvh_FALSE@@COND_ia64_efi_FALSE@@COND_loongarch64_efi_FALSE@@COND_mips_arc_FALSE@@COND_mips_loongson_FALSE@@COND_mips_qemu_mips_FALSE@@COND_powerpc_ieee1275_FALSE@@COND_riscv32_efi_FALSE@@COND_riscv64_efi_FALSE@@COND_sparc64_ieee1275_FALSE@@COND_x86_64_efi_TRUE@	loader/linux_module-linux.$(OBJEXT)
+ @COND_arm64_efi_FALSE@@COND_arm_coreboot_FALSE@@COND_arm_efi_FALSE@@COND_arm_uboot_FALSE@@COND_emu_FALSE@@COND_i386_coreboot_FALSE@@COND_i386_efi_FALSE@@COND_i386_ieee1275_FALSE@@COND_i386_multiboot_FALSE@@COND_i386_pc_FALSE@@COND_i386_qemu_FALSE@@COND_i386_xen_FALSE@@COND_i386_xen_pvh_FALSE@@COND_ia64_efi_FALSE@@COND_loongarch64_efi_FALSE@@COND_mips_arc_FALSE@@COND_mips_loongson_FALSE@@COND_mips_qemu_mips_FALSE@@COND_powerpc_ieee1275_FALSE@@COND_riscv32_efi_FALSE@@COND_riscv64_efi_FALSE@@COND_sparc64_ieee1275_TRUE@am_linux_module_OBJECTS = lib/linux_module-cmdline.$(OBJEXT) \
+@@ -12402,7 +12401,6 @@ am__linux_module_SOURCES_DIST = lib/cmdline.c loader/efi/linux.c \
+ @COND_arm64_efi_FALSE@@COND_arm_coreboot_FALSE@@COND_arm_efi_FALSE@@COND_arm_uboot_FALSE@@COND_emu_FALSE@@COND_i386_coreboot_FALSE@@COND_i386_efi_FALSE@@COND_i386_ieee1275_TRUE@	loader/i386/linux_module-linux.$(OBJEXT) \
+ @COND_arm64_efi_FALSE@@COND_arm_coreboot_FALSE@@COND_arm_efi_FALSE@@COND_arm_uboot_FALSE@@COND_emu_FALSE@@COND_i386_coreboot_FALSE@@COND_i386_efi_FALSE@@COND_i386_ieee1275_TRUE@	loader/linux_module-linux.$(OBJEXT)
+ @COND_arm64_efi_FALSE@@COND_arm_coreboot_FALSE@@COND_arm_efi_FALSE@@COND_arm_uboot_FALSE@@COND_emu_FALSE@@COND_i386_coreboot_FALSE@@COND_i386_efi_TRUE@am_linux_module_OBJECTS = lib/linux_module-cmdline.$(OBJEXT) \
+-@COND_arm64_efi_FALSE@@COND_arm_coreboot_FALSE@@COND_arm_efi_FALSE@@COND_arm_uboot_FALSE@@COND_emu_FALSE@@COND_i386_coreboot_FALSE@@COND_i386_efi_TRUE@	loader/efi/linux_module-linux.$(OBJEXT) \
+ @COND_arm64_efi_FALSE@@COND_arm_coreboot_FALSE@@COND_arm_efi_FALSE@@COND_arm_uboot_FALSE@@COND_emu_FALSE@@COND_i386_coreboot_FALSE@@COND_i386_efi_TRUE@	loader/i386/linux_module-linux.$(OBJEXT) \
+ @COND_arm64_efi_FALSE@@COND_arm_coreboot_FALSE@@COND_arm_efi_FALSE@@COND_arm_uboot_FALSE@@COND_emu_FALSE@@COND_i386_coreboot_FALSE@@COND_i386_efi_TRUE@	loader/linux_module-linux.$(OBJEXT)
+ @COND_arm64_efi_FALSE@@COND_arm_coreboot_FALSE@@COND_arm_efi_FALSE@@COND_arm_uboot_FALSE@@COND_emu_FALSE@@COND_i386_coreboot_TRUE@am_linux_module_OBJECTS = lib/linux_module-cmdline.$(OBJEXT) \
+@@ -24164,7 +24162,7 @@ setjmp_module_DEPENDENCIES = $(TARGET_OBJ2ELF)
+ @COND_arm_uboot_TRUE@linux_module_SOURCES = lib/cmdline.c loader/arm/linux.c loader/linux.c  ## platform sources
+ @COND_emu_TRUE@linux_module_SOURCES = lib/cmdline.c loader/emu/linux.c loader/linux.c  ## platform sources
+ @COND_i386_coreboot_TRUE@linux_module_SOURCES = lib/cmdline.c loader/i386/linux.c loader/linux.c  ## platform sources
+-@COND_i386_efi_TRUE@linux_module_SOURCES = lib/cmdline.c loader/efi/linux.c loader/i386/linux.c loader/linux.c  ## platform sources
++@COND_i386_efi_TRUE@linux_module_SOURCES = lib/cmdline.c loader/i386/linux.c loader/linux.c  ## platform sources
+ @COND_i386_ieee1275_TRUE@linux_module_SOURCES = lib/cmdline.c loader/i386/linux.c loader/linux.c  ## platform sources
+ @COND_i386_multiboot_TRUE@linux_module_SOURCES = lib/cmdline.c loader/i386/linux.c loader/linux.c  ## platform sources
+ @COND_i386_pc_TRUE@linux_module_SOURCES = lib/cmdline.c lib/i386/pc/vesa_modes_table.c loader/i386/linux.c loader/linux.c  ## platform sources
+@@ -24180,7 +24178,7 @@ setjmp_module_DEPENDENCIES = $(TARGET_OBJ2ELF)
+ @COND_riscv32_efi_TRUE@linux_module_SOURCES = lib/cmdline.c loader/efi/linux.c loader/linux.c  ## platform sources
+ @COND_riscv64_efi_TRUE@linux_module_SOURCES = lib/cmdline.c loader/efi/linux.c loader/linux.c  ## platform sources
+ @COND_sparc64_ieee1275_TRUE@linux_module_SOURCES = lib/cmdline.c loader/linux.c loader/sparc64/ieee1275/linux.c  ## platform sources
+-@COND_x86_64_efi_TRUE@linux_module_SOURCES = lib/cmdline.c loader/efi/linux.c loader/i386/linux.c loader/linux.c  ## platform sources
++@COND_x86_64_efi_TRUE@linux_module_SOURCES = lib/cmdline.c loader/i386/linux.c loader/linux.c  ## platform sources
+ @COND_x86_64_xen_TRUE@linux_module_SOURCES = lib/cmdline.c loader/i386/xen.c loader/linux.c  ## platform sources
+ @COND_arm64_efi_TRUE@nodist_linux_module_SOURCES = ## platform nodist sources
+ @COND_arm_coreboot_TRUE@nodist_linux_module_SOURCES = ## platform nodist sources
+diff --git a/grub-core/loader/efi/linux.c b/grub-core/loader/efi/linux.c
+index bfbd95a..f1806d8 100644
+--- a/grub-core/loader/efi/linux.c
++++ b/grub-core/loader/efi/linux.c
+@@ -70,12 +70,6 @@ static initrd_media_device_path_t initrd_lf2_device_path = {
+   }
+ };
+ 
+-extern grub_err_t
+-grub_cmd_linux_x86_legacy (grub_command_t cmd, int argc, char *argv[]);
+-
+-extern grub_err_t
+-grub_cmd_initrd_x86_legacy (grub_command_t cmd, int argc, char *argv[]);
+-
+ static grub_efi_status_t __grub_efi_api
+ grub_efi_initrd_load_file2 (grub_efi_load_file2_t *this,
+                             grub_efi_device_path_t *device_path,
+@@ -135,7 +129,6 @@ grub_arch_efi_linux_load_image_header (grub_file_t file,
+   return GRUB_ERR_NONE;
+ }
+ 
+-#if !defined(__i386__) && !defined(__x86_64__)
+ static grub_err_t
+ finalize_params_linux (void)
+ {
+@@ -180,7 +173,6 @@ failure:
+   grub_fdt_unload();
+   return grub_error(GRUB_ERR_BAD_OS, "failed to install/update FDT");
+ }
+-#endif
+ 
+ grub_err_t
+ grub_arch_efi_linux_boot_image (grub_addr_t addr, grub_size_t size, char *args)
+@@ -250,10 +242,8 @@ unload:
+ static grub_err_t
+ grub_linux_boot (void)
+ {
+-#if !defined(__i386__) && !defined(__x86_64__)
+   if (finalize_params_linux () != GRUB_ERR_NONE)
+     return grub_errno;
+-#endif
+ 
+   return grub_arch_efi_linux_boot_image ((grub_addr_t) kernel_addr,
+ 					 kernel_size, linux_args);
+@@ -274,9 +264,7 @@ grub_linux_unload (void)
+   if (kernel_addr)
+     grub_efi_free_pages ((grub_addr_t) kernel_addr,
+ 			 GRUB_EFI_BYTES_TO_PAGES (kernel_size));
+-#if !defined(__i386__) && !defined(__x86_64__)
+   grub_fdt_unload ();
+-#endif
+ 
+   if (initrd_lf2_handle != NULL)
+     {
+@@ -292,7 +280,6 @@ grub_linux_unload (void)
+   return GRUB_ERR_NONE;
+ }
+ 
+-#if !defined(__i386__) && !defined(__x86_64__)
+ /*
+  * As per linux/Documentation/arm/Booting
+  * ARM initrd needs to be covered by kernel linear mapping,
+@@ -328,7 +315,6 @@ allocate_initrd_mem (int initrd_pages)
+ 				       GRUB_EFI_ALLOCATE_MAX_ADDRESS,
+ 				       GRUB_EFI_LOADER_DATA);
+ }
+-#endif
+ 
+ static grub_efi_status_t __grub_efi_api
+ grub_efi_initrd_load_file2 (grub_efi_load_file2_t *this,
+@@ -370,8 +356,8 @@ static grub_err_t
+ grub_cmd_initrd (grub_command_t cmd __attribute__ ((unused)),
+ 		 int argc, char *argv[])
+ {
+-  int __attribute__ ((unused)) initrd_size, initrd_pages;
+-  void *__attribute__ ((unused)) initrd_mem = NULL;
++  int initrd_size, initrd_pages;
++  void *initrd_mem = NULL;
+   grub_efi_boot_services_t *b = grub_efi_system_table->boot_services;
+   grub_efi_status_t status;
+ 
+@@ -381,11 +367,6 @@ grub_cmd_initrd (grub_command_t cmd __attribute__ ((unused)),
+       goto fail;
+     }
+ 
+-#if defined(__i386__) || defined(__x86_64__)
+-  if (!initrd_use_loadfile2)
+-    return grub_cmd_initrd_x86_legacy (cmd, argc, argv);
+-#endif
+-
+   if (!loaded)
+     {
+       grub_error (GRUB_ERR_BAD_ARGUMENT,
+@@ -421,7 +402,6 @@ grub_cmd_initrd (grub_command_t cmd __attribute__ ((unused)),
+       return GRUB_ERR_NONE;
+     }
+ 
+-#if !defined(__i386__) && !defined(__x86_64__)
+   initrd_size = grub_get_initrd_size (&initrd_ctx);
+   grub_dprintf ("linux", "Loading initrd\n");
+ 
+@@ -435,19 +415,17 @@ grub_cmd_initrd (grub_command_t cmd __attribute__ ((unused)),
+     }
+ 
+   if (grub_initrd_load (&initrd_ctx, initrd_mem))
+-    {
+-      grub_efi_free_pages ((grub_addr_t) initrd_mem, initrd_pages);
+-      goto fail;
+-    }
++    goto fail;
+ 
+   initrd_start = (grub_addr_t) initrd_mem;
+   initrd_end = initrd_start + initrd_size;
+   grub_dprintf ("linux", "[addr=%p, size=0x%x]\n",
+ 		(void *) initrd_start, initrd_size);
+-#endif
+ 
+  fail:
+   grub_initrd_close (&initrd_ctx);
++  if (initrd_mem && !initrd_start)
++    grub_efi_free_pages ((grub_addr_t) initrd_mem, initrd_pages);
+ 
+   return grub_errno;
+ }
+@@ -491,24 +469,7 @@ grub_cmd_linux (grub_command_t cmd __attribute__ ((unused)),
+   kernel_size = grub_file_size (file);
+ 
+   if (grub_arch_efi_linux_load_image_header (file, &lh) != GRUB_ERR_NONE)
+-#if !defined(__i386__) && !defined(__x86_64__)
+     goto fail;
+-#else
+-    goto fallback;
+-
+-  if (!initrd_use_loadfile2)
+-    {
+-      /*
+-       * This is a EFI stub image but it is too old to implement the LoadFile2
+-       * based initrd loading scheme, and Linux/x86 does not support the DT
+-       * based method either. So fall back to the x86-specific loader that
+-       * enters Linux in EFI mode but without going through its EFI stub.
+-       */
+-fallback:
+-      grub_file_close (file);
+-      return grub_cmd_linux_x86_legacy (cmd, argc, argv);
+-    }
+-#endif
+ 
+   grub_loader_unset();
+ 
+diff --git a/grub-core/loader/i386/linux.c b/grub-core/loader/i386/linux.c
+index 977757f..459b201 100644
+--- a/grub-core/loader/i386/linux.c
++++ b/grub-core/loader/i386/linux.c
+@@ -1148,7 +1148,6 @@ grub_cmd_initrd (grub_command_t cmd __attribute__ ((unused)),
+   return grub_errno;
+ }
+ 
+-#ifndef GRUB_MACHINE_EFI
+ static grub_command_t cmd_linux, cmd_initrd;
+ 
+ GRUB_MOD_INIT(linux)
+@@ -1165,10 +1164,3 @@ GRUB_MOD_FINI(linux)
+   grub_unregister_command (cmd_linux);
+   grub_unregister_command (cmd_initrd);
+ }
+-#else
+-extern grub_err_t __attribute__((alias("grub_cmd_linux")))
+-grub_cmd_linux_x86_legacy (grub_command_t cmd, int argc, char *argv[]);
+-
+-extern grub_err_t __attribute__((alias("grub_cmd_initrd")))
+-grub_cmd_initrd_x86_legacy (grub_command_t cmd, int argc, char *argv[]);
+-#endif
+diff --git a/include/grub/efi/efi.h b/include/grub/efi/efi.h
+index a5cd99e..11b5ce4 100644
+--- a/include/grub/efi/efi.h
++++ b/include/grub/efi/efi.h
+@@ -125,12 +125,12 @@ EXPORT_FUNC (grub_efi_find_configuration_table) (const grub_guid_t *target_guid)
+ #if defined(__arm__) || defined(__aarch64__) || defined(__riscv) || defined(__loongarch__)
+ void *EXPORT_FUNC(grub_efi_get_firmware_fdt)(void);
+ grub_err_t EXPORT_FUNC(grub_efi_get_ram_base)(grub_addr_t *);
+-#endif
+ #include <grub/file.h>
+ grub_err_t grub_arch_efi_linux_load_image_header(grub_file_t file,
+                                                 struct linux_arch_kernel_header *lh);
+ grub_err_t grub_arch_efi_linux_boot_image(grub_addr_t addr, grub_size_t size,
+                                            char *args);
++#endif
+ 
+ grub_addr_t grub_efi_section_addr (const char *section);
+ 
