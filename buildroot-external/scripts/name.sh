@@ -4,6 +4,10 @@ function hassos_image_name() {
     echo "${BINARIES_DIR}/${HASSOS_ID}_${BOARD_ID}-$(hassos_version).${1}"
 }
 
+function hassos_image_basename() {
+    echo "${BINARIES_DIR}/${HASSOS_ID}_${BOARD_ID}-$(hassos_version)"
+}
+
 function hassos_rauc_compatible() {
     echo "${HASSOS_ID}-${BOARD_ID}"
 }
@@ -14,10 +18,6 @@ function hassos_version() {
     else
         echo "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_SUFFIX}"
     fi
-}
-
-function path_spl_img() {
-    echo "${BINARIES_DIR}/spl.img"
 }
 
 function path_kernel_img() {
