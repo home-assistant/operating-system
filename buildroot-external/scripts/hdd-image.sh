@@ -203,14 +203,12 @@ function _create_disk_gpt() {
     dd if="${overlay_img}" of="${hdd_img}" conv=notrunc,sparse bs=512 seek="${overlay_offset}"
     dd if="${data_img}" of="${hdd_img}" conv=notrunc,sparse bs=512 seek="${data_offset}"
 
-    # Set Hyprid partition
-    if [ "${BOOT_SYS}" == "hybrid" ]; then
-        _fix_disk_hybrid
-    fi
-
-    # Write SPL
     if [ "${BOOT_SPL}" == "true" ]; then
+        # Write hybrid partition table and SPL
         _fix_disk_spl_gpt
+    elif [ "${BOOT_SYS}" == "hybrid" ]; then
+        # Write hybrid partition table
+        _fix_disk_hybrid
     fi
 }
 
