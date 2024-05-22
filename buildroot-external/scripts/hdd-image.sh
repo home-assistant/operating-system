@@ -124,7 +124,7 @@ function _prepare_disk_image() {
 function create_disk_image() {
     _prepare_disk_image
 
-    if [ "${BOOT_SYS}" == "mbr" ]; then
+    if [ "${PARTITION_TABLE_TYPE}" == "mbr" ]; then
         _create_disk_mbr
     else
         _create_disk_gpt
@@ -206,7 +206,7 @@ function _create_disk_gpt() {
     if [ "${BOOT_SPL}" == "true" ]; then
         # Write hybrid partition table and SPL
         _fix_disk_spl_gpt
-    elif [ "${BOOT_SYS}" == "hybrid" ]; then
+    elif [ "${PARTITION_TABLE_TYPE}" == "hybrid" ]; then
         # Write hybrid partition table
         _fix_disk_hybrid
     fi
