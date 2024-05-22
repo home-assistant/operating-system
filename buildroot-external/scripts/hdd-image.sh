@@ -139,7 +139,7 @@ function _create_disk_gpt() {
     local data_img="$(path_data_img)"
     local kernel_img="$(path_kernel_img)"
     local hdd_img="$(hassos_image_name img)"
-    local hdd_count=${DISK_SIZE:-2}
+    local disk_size="${DISK_SIZE:-2G}"
 
     local boot_offset=0
     local rootfs_offset=0
@@ -150,7 +150,7 @@ function _create_disk_gpt() {
     ##
     # Write new image & GPT
     rm -f "${hdd_img}"
-    truncate --size="${hdd_count}G" "${hdd_img}"
+    truncate --size="${disk_size}" "${hdd_img}"
     sgdisk -o "${hdd_img}"
 
     ##
@@ -220,7 +220,7 @@ function _create_disk_mbr() {
     local data_img="$(path_data_img)"
     local kernel_img="$(path_kernel_img)"
     local hdd_img="$(hassos_image_name img)"
-    local hdd_count=${DISK_SIZE:-2}
+    local disk_size="${DISK_SIZE:-2G}"
     local disk_layout="${BINARIES_DIR}/disk.layout"
 
     # All boards with MBR disk layout have SPL
@@ -254,7 +254,7 @@ function _create_disk_mbr() {
 
     # Write new image & MBR
     rm -f "${hdd_img}"
-    truncate --size="${hdd_count}G" "${hdd_img}"
+    truncate --size="${disk_size}" "${hdd_img}"
 
     # Update disk layout
     (
