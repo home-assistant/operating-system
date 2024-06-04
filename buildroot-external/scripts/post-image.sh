@@ -1,6 +1,6 @@
 #!/bin/bash
 # shellcheck disable=SC1090,SC1091
-set -e
+set -ex
 
 SCRIPT_DIR=${BR2_EXTERNAL_HASSOS_PATH}/scripts
 BOARD_DIR=${2}
@@ -13,6 +13,7 @@ HOOK_FILE=${3}
 . "${SCRIPT_DIR}/rootfs-layer.sh"
 . "${SCRIPT_DIR}/name.sh"
 . "${SCRIPT_DIR}/rauc.sh"
+. "${SCRIPT_DIR}/ota.sh"
 . "${HOOK_FILE}"
 
 # Cleanup
@@ -24,6 +25,8 @@ hassos_pre_image
 
 # Disk & OTA
 create_disk_image
+create_disk_image_genimage
+create_ota_update
 
 # Hook post image build stuff
-hassos_post_image  # TODO: XZ compress & rest in genimage?
+hassos_post_image

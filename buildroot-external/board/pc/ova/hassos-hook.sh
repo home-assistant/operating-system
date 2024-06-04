@@ -23,7 +23,7 @@ function hassos_pre_image() {
 
 
 function hassos_post_image() {
-    local hdd_img="$(hassos_image_name img)"
+    # local hdd_img="$(hassos_image_name img)"
 
     # Virtual Disk images
     convert_disk_image_virtual vmdk
@@ -40,5 +40,5 @@ function hassos_post_image() {
     convert_disk_image_ova
 
     # Cleanup
-    rm -f "${hdd_img}"
+    # rm -f "${hdd_img}"
 }
