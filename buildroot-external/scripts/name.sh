@@ -20,16 +20,12 @@ function hassos_version() {
     fi
 }
 
-function path_spl_img() {
-    echo "${BINARIES_DIR}/spl.img.old"
-}
-
 function path_kernel_img() {
-    echo "${BINARIES_DIR}/kernel.img.old"
+    echo "${BINARIES_DIR}/kernel.img"
 }
 
 function path_boot_img() {
-    echo "${BINARIES_DIR}/boot.vfat.old"
+    echo "${BINARIES_DIR}/boot.vfat"
 }
 
 function path_boot_dir() {
@@ -41,7 +37,7 @@ function path_data_img() {
 }
 
 function path_overlay_img() {
-    echo "${BINARIES_DIR}/overlay.ext4.old"
+    echo "${BINARIES_DIR}/overlay.ext4"
 }
 
 function path_rootfs_img() {

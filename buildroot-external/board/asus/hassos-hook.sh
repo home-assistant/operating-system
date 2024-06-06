@@ -3,7 +3,6 @@
 
 function hassos_pre_image() {
     local BOOT_DATA="$(path_boot_dir)"
-    local SPL_IMG="$(path_spl_img)"
 
     cp -t "${BOOT_DATA}" \
         "${BINARIES_DIR}/boot.scr" \
@@ -15,11 +14,6 @@ function hassos_pre_image() {
     cp "${BOARD_DIR}/boot-env.txt" "${BOOT_DATA}/haos-config.txt"
 
     echo "console=tty1" > "${BOOT_DATA}/cmdline.txt"
-
-    # SPL
-    create_spl_image
-
-    dd if="${BINARIES_DIR}/u-boot-rockchip.bin" of="${SPL_IMG}" conv=notrunc bs=512 seek=64
 }
 
 

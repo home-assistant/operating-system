@@ -8,11 +8,7 @@ bootloader=custom
 bootloader={{ env "BOOTLOADER" }}
 {{- end }}
 {{- if eq (env "BOOTLOADER") "grub" }}
-{{- if eq (env "BOOT_SYS") "efi" }}
 grubenv=/mnt/boot/EFI/BOOT/grubenv
-{{- else }}
-grubenv=/mnt/boot/grubenv
-{{- end }}
 {{- end }}
 
 {{- if eq (env "BOOTLOADER") "tryboot" }}
