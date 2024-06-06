@@ -268,51 +268,26 @@ jobs:
             make -C buildroot O="/build/output" BR2_EXTERNAL="/build/buildroot-external" \
             BR2_CHECK_DOTCONFIG_OPTS="--github-format --strip-path-prefix=/build/" linux-check-dotconfig
 
-      - name: Compare SPL images
-        continue-on-error: true
+      - name: Upload artifacts
+        if: ${{ github.event_name != 'release' && needs.prepare.outputs.publish_build == 'true' }}
+        working-directory: output/images/
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_OS_ARTIFACTS_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_OS_ARTIFACTS_KEY }}
         run: |
-          META="buildroot-external/$(sed -n -e 's/^BR2_ROOTFS_POST_SCRIPT_ARGS=\"$(BR2_EXTERNAL_HASSOS_PATH)\/\(.*\) $(BR2_EXTERNAL_HASSOS_PATH)\/.*$/\1/p' buildroot-external/configs/${{ matrix.board.defconfig }}_defconfig)/meta"
-          source "$META"
+          aws s3 sync \
+            ./ \
+            s3://${{ secrets.R2_OS_ARTIFACTS_BUCKET }}/${{ needs.prepare.outputs.version_full }}/ \
+            --exclude "*" \
+            --include "haos_*" \
+            --endpoint-url ${{ secrets.R2_OS_ARTIFACTS_ENDPOINT }}
 
-          if [ "${BOOT_SPL}" == "true" ]; then
-            sha256sum output/images/spl.img*
-            cmp -bl output/images/spl.img output/images/spl.img.old  || echo "::warning:: ${{ matrix.board.id }} SPL images differ"
-          fi
-
-      - name: Compare partition tables
-        continue-on-error: true
-        run: |
-          IMAGE="output/images/haos_${{ matrix.board.id }}-${{ needs.prepare.outputs.version_full }}.img"
-          META="buildroot-external/$(sed -n -e 's/^BR2_ROOTFS_POST_SCRIPT_ARGS=\"$(BR2_EXTERNAL_HASSOS_PATH)\/\(.*\) $(BR2_EXTERNAL_HASSOS_PATH)\/.*$/\1/p' buildroot-external/configs/${{ matrix.board.defconfig }}_defconfig)/meta"
-          source "$META"
-
-          if [ "${PARTITION_TABLE_TYPE}" == "mbr" ]; then
-            output/host/sbin/sfdisk -d "${IMAGE}" > "${IMAGE}.sfdisk"
-            output/host/sbin/sfdisk -d "${IMAGE}.old" | sed 's/img\.old/img/g' > "${IMAGE}.old.sfdisk"
-            diff -u "${IMAGE}.sfdisk" "${IMAGE}.old.sfdisk" || echo "::warning:: ${{ matrix.board.id }} sfdisk table differs"
-          fi
-
-          if [ "${PARTITION_TABLE_TYPE}" == "gpt" ] || [ "${PARTITION_TABLE_TYPE}" == "hybrid" ]; then
-            output/host/sbin/sgdisk -p "${IMAGE}" > "${IMAGE}.sgdisk"
-            output/host/sbin/sgdisk -p "${IMAGE}.old" | sed 's/img\.old/img/g' > "${IMAGE}.old.sgdisk"
-            diff -u "${IMAGE}.sgdisk" "${IMAGE}.old.sgdisk" || echo "::warning:: ${{ matrix.board.id }} sgdisk table differs"
-          fi
-
-      - name: Binary compare image head
-        continue-on-error: true
-        run: |
-          META="buildroot-external/$(sed -n -e 's/^BR2_ROOTFS_POST_SCRIPT_ARGS=\"$(BR2_EXTERNAL_HASSOS_PATH)\/\(.*\) $(BR2_EXTERNAL_HASSOS_PATH)\/.*$/\1/p' buildroot-external/configs/${{ matrix.board.defconfig }}_defconfig)/meta"
-          source "$META"
-          IMAGE="output/images/haos_${{ matrix.board.id }}-${{ needs.prepare.outputs.version_full }}.img"
-
-          CMP_SIZE="512"
-          if [ "${BOOT_SPL}" == "true" ]; then
-            CMP_SIZE="${BOOT_SPL_SIZE}"
-          elif [ "${PARTITION_TABLE_TYPE}" == "gpt" ] || [ "${PARTITION_TABLE_TYPE}" == "hybrid" ]; then
-            CMP_SIZE="16k"
-          fi
-          diff -u <(dd if="${IMAGE}" bs="${CMP_SIZE}" count=1 | xxd) <(dd if="${IMAGE}.old" bs="${CMP_SIZE}" count=1 | xxd) || true
-          cmp -bl -n "${CMP_SIZE}" "${IMAGE}" "${IMAGE}.old" || echo "::warning:: ${{ matrix.board.id }} image binary differs"
+      - name: Upload release assets
+        if: ${{ github.event_name == 'release' }}
+        uses: shogo82148/actions-upload-release-asset@v1
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: output/images/haos_*
 
       - name: Print cache stats
         run: |
@@ -344,3 +319,126 @@ jobs:
           for f in boot.vfat kernel.img rootfs.squashfs overlay.ext4 data.ext4; do
             echo "| ${f} | $(du -b output/images/$f | cut -f1) | $(du -bh output/images/$f | cut -f1) |" >> $GITHUB_STEP_SUMMARY
           done
+
+      - name: Upload OS image artifact
+        uses: actions/upload-artifact@v4
+        if: ${{ github.event_name != 'release' && needs.prepare.outputs.publish_build != 'true' && matrix.board.id != 'ova' }}
+        with:
+          name: haos_${{ matrix.board.id }}-${{ needs.prepare.outputs.version_full }}.img.xz
+          path: |
+            output/images/haos_${{ matrix.board.id }}-${{ needs.prepare.outputs.version_full }}.img.xz
+
+      - name: Upload RAUC bundle artifact
+        uses: actions/upload-artifact@v4
+        if: ${{ github.event_name != 'release' && needs.prepare.outputs.publish_build != 'true' }}
+        with:
+          name: haos_${{ matrix.board.id }}-${{ needs.prepare.outputs.version_full }}.raucb
+          path: |
+            output/images/haos_${{ matrix.board.id }}-${{ needs.prepare.outputs.version_full }}.raucb
+
+      - name: Upload Open Virtualization Format (OVA) artifact
+        uses: actions/upload-artifact@v4
+        if: ${{ github.event_name != 'release' && needs.prepare.outputs.publish_build != 'true' && matrix.board.id == 'ova' }}
+        with:
+          name: haos_${{ matrix.board.id }}-${{ needs.prepare.outputs.version_full }}.ova
+          path: |
+            output/images/haos_${{ matrix.board.id }}-${{ needs.prepare.outputs.version_full }}.ova
+
+      - name: Upload QEMU disk image artifact
+        uses: actions/upload-artifact@v4
+        # Create artifact for ova every time - it's used by the called tests workflow
+        if: ${{ matrix.board.id == 'ova' || (github.event_name != 'release' && needs.prepare.outputs.publish_build != 'true' && matrix.board.id == 'generic-aarch64') }}
+        with:
+          name: haos_${{ matrix.board.id }}-${{ needs.prepare.outputs.version_full }}.qcow2.xz
+          path: |
+            output/images/haos_${{ matrix.board.id }}-${{ needs.prepare.outputs.version_full }}.qcow2.xz
+
+      - name: Upload VMware Virtual Machine Disk (VMDK) artifact
+        uses: actions/upload-artifact@v4
+        if: ${{ github.event_name != 'release' && needs.prepare.outputs.publish_build != 'true' && (matrix.board.id == 'generic-aarch64' || matrix.board.id == 'ova') }}
+        with:
+          name: haos_${{ matrix.board.id }}-${{ needs.prepare.outputs.version_full }}.vmdk.zip
+          path: |
+            output/images/haos_${{ matrix.board.id }}-${{ needs.prepare.outputs.version_full }}.vmdk.zip
+
+      - name: Upload VirtualBox Virtual Disk Image (VDI) artifact
+        uses: actions/upload-artifact@v4
+        if: ${{ github.event_name != 'release' && needs.prepare.outputs.publish_build != 'true' && matrix.board.id == 'ova' }}
+        with:
+          name: haos_${{ matrix.board.id }}-${{ needs.prepare.outputs.version_full }}.vdi.zip
+          path: |
+            output/images/haos_${{ matrix.board.id }}-${{ needs.prepare.outputs.version_full }}.vdi.zip
+
+      - name: Upload Virtual Hard Disk v2 (VHDX) artifact
+        uses: actions/upload-artifact@v4
+        if: ${{ github.event_name != 'release' && needs.prepare.outputs.publish_build != 'true' && matrix.board.id == 'ova' }}
+        with:
+          name: haos_${{ matrix.board.id }}-${{ needs.prepare.outputs.version_full }}.vhdx.zip
+          path: |
+            output/images/haos_${{ matrix.board.id }}-${{ needs.prepare.outputs.version_full }}.vhdx.zip
+
+  test:
+    name: Test OS image
+    needs: [ build, prepare ]
+    uses: ./.github/workflows/test.yaml
+    with:
+      version: ${{ needs.prepare.outputs.version_full }}
+
+  update_index:
+    name: Update artifacts index
+    if: ${{ github.event_name != 'release' && needs.prepare.outputs.publish_build == 'true' }}
+    needs: [ build, prepare ]
+    uses: home-assistant/operating-system/.github/workflows/artifacts-index.yaml@dev
+    with:
+      version: ${{ needs.prepare.outputs.version_full }}
+    secrets:
+      R2_OS_ARTIFACTS_ID: ${{ secrets.R2_OS_ARTIFACTS_ID }}
+      R2_OS_ARTIFACTS_KEY: ${{ secrets.R2_OS_ARTIFACTS_KEY }}
+      R2_OS_ARTIFACTS_BUCKET: ${{ secrets.R2_OS_ARTIFACTS_BUCKET }}
+      R2_OS_ARTIFACTS_ENDPOINT: ${{ secrets.R2_OS_ARTIFACTS_ENDPOINT }}
+      CF_ZONE: ${{ secrets.CF_ZONE }}
+      CF_PURGE_TOKEN: ${{ secrets.CF_PURGE_TOKEN }}
+
+  bump_version:
+    name: Bump ${{ needs.prepare.outputs.channel }} channel version
+    if: ${{ github.repository == 'home-assistant/operating-system' && needs.prepare.outputs.publish_build == 'true' }}
+    environment: ${{ needs.prepare.outputs.channel }}
+    needs: [ build, prepare ]
+    runs-on: ubuntu-22.04
+
+    steps:
+    - name: Checkout source
+      uses: actions/checkout@v4
+      with:
+        persist-credentials: false
+
+    - name: Initialize git
+      uses: home-assistant/actions/helpers/git-init@master
+      with:
+        name: ${{ secrets.GIT_NAME }}
+        email: ${{ secrets.GIT_EMAIL }}
+        token: ${{ secrets.GIT_TOKEN }}
+
+    - name: Bump Home Assistant OS ${{ needs.prepare.outputs.channel }} channel version
+      uses: home-assistant/actions/helpers/version-push@master
+      with:
+        key: "hassos[]"
+        key-description: "Home Assistant OS"
+        version: ${{ needs.prepare.outputs.version_full }}
+        channel: ${{ needs.prepare.outputs.channel }}
+
+    - name: Bump Home Assistant OS beta channel version on stable release
+      if: ${{ needs.prepare.outputs.channel == 'stable' }}
+      uses: home-assistant/actions/helpers/version-push@master
+      with:
+        key: "hassos[]"
+        key-description: "Home Assistant OS"
+        version: ${{ needs.prepare.outputs.version_full }}
+        channel: beta
+
+    - name: Bump stable Home Assistant version for RPi Imager
+      if: ${{ github.event_name == 'release' && needs.prepare.outputs.channel == 'stable' }}
+      uses: "./.github/actions/bump-rpi-imager-version"
+      with:
+        version: ${{ needs.prepare.outputs.version_full }}
+        release-date: ${{ github.event.release.published_at }}
