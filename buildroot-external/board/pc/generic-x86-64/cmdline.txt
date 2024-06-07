@@ -1,1 +1,1 @@
-console=tty1
+console=tty0
