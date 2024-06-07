@@ -26,4 +26,4 @@ hassos_pre_image
 create_disk_image
 
 # Hook post image build stuff
-hassos_post_image  # TODO: XZ compress & rest in genimage?
+hassos_post_image

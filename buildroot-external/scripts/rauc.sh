@@ -57,7 +57,6 @@ function install_bootloader_config() {
     # Fix MBR
     if [ "${PARTITION_TABLE_TYPE}" == "mbr" ]; then
         mkdir -p "${TARGET_DIR}/usr/lib/udev/rules.d"
-        # FIXME: partition numbers are different with current genimage layout
         cp -f "${BR2_EXTERNAL_HASSOS_PATH}/bootloader/mbr-part.rules" "${TARGET_DIR}/usr/lib/udev/rules.d/"
     fi
 }
