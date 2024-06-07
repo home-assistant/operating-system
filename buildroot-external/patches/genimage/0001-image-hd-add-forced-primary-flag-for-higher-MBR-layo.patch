@@ -1,0 +1,598 @@
+From 90f09d1766dfaad29f1c19c39f6b4b7a8483a86e Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Jan=20=C4=8Cerm=C3=A1k?= <sairon@sairon.cz>
+Date: Tue, 28 May 2024 15:49:32 +0200
+Subject: [PATCH] image-hd: add forced-primary flag for higher MBR layout
+ flexibility
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+The current limitation of Genimage is that it is not able to create
+MBR images that have primary partitions that start after a logical
+partition. This can be useful for images that can be later resized based
+on the actual device size - for this operation the partition must be at
+the end of the device, and if it is present in a logical partition, it
+must be resized first, making it a two-step process.
+
+This commit adds the "forced-primary" flag which can be used to indicate
+that the partition should be put into the disk's MBR instead of creating
+another logical partition. Validation ensures that this syntax allows to
+create such partitions only after an existing logical partition, and
+that the maximum number of MBR entries woudn't be exceeded by doing so.
+
+Test cases for valid and invalid configuiration has been added. Also
+added few more details in the debug print to make it more obvious how
+the MBR/EBR layout looks like.
+
+Signed-off-by: Jan Čermák <sairon@sairon.cz>
+Upstream: https://github.com/pengutronix/genimage/pull/248
+---
+ README.rst                         |   5 ++
+ genimage.c                         |   2 +
+ genimage.h                         |   3 +-
+ image-hd.c                         | 116 +++++++++++++++++++----------
+ test/hdimage-fail10.config         |  33 ++++++++
+ test/hdimage-fail11.config         |  32 ++++++++
+ test/hdimage-fail8.config          |  28 +++++++
+ test/hdimage-fail9.config          |  27 +++++++
+ test/hdimage-forced-primary.config |  47 ++++++++++++
+ test/hdimage-forced-primary.fdisk  |  10 +++
+ test/hdimage.test                  |  14 +++-
+ 11 files changed, 275 insertions(+), 42 deletions(-)
+ create mode 100644 test/hdimage-fail10.config
+ create mode 100644 test/hdimage-fail11.config
+ create mode 100644 test/hdimage-fail8.config
+ create mode 100644 test/hdimage-fail9.config
+ create mode 100644 test/hdimage-forced-primary.config
+ create mode 100644 test/hdimage-forced-primary.fdisk
+
+diff --git a/README.rst b/README.rst
+index d908ff5..7e2a0c5 100644
+--- a/README.rst
++++ b/README.rst
+@@ -131,6 +131,11 @@ Partition options:
+ :bootable:		Boolean specifying whether to set the bootable flag.
+ :in-partition-table:	Boolean specifying whether to include this partition in
+ 			the partition table. Defaults to true.
++:forced-primary:	Force this partition to be a primary partition in the
++			MBR partition table, useful when the extended partition should be
++			followed by primary partitions. If there are more partitions
++			defined after the first forced-primary, they must be also defined
++			as forced-primary. Defaults to false.
+ :partition-uuid:	UUID string used by GPT partition tables to specify the partition
+ 			id. Defaults to a random value.
+ :partition-type-uuid:	String used by GPT partition tables to specify the partition type.
+diff --git a/genimage.c b/genimage.c
+index 5bd235b..2fa9fa2 100644
+--- a/genimage.c
++++ b/genimage.c
+@@ -96,6 +96,7 @@ static cfg_opt_t partition_opts[] = {
+ 	CFG_STR("align", NULL, CFGF_NONE),
+ 	CFG_INT("partition-type", 0, CFGF_NONE),
+ 	CFG_BOOL("bootable", cfg_false, CFGF_NONE),
++	CFG_BOOL("forced-primary", cfg_false, CFGF_NONE),
+ 	CFG_BOOL("read-only", cfg_false, CFGF_NONE),
+ 	CFG_BOOL("hidden", cfg_false, CFGF_NONE),
+ 	CFG_BOOL("no-automount", cfg_false, CFGF_NONE),
+@@ -396,6 +397,7 @@ static int parse_partitions(struct image *image, cfg_t *imagesec)
+ 		part->align = cfg_getint_suffix(partsec, "align");
+ 		part->partition_type = cfg_getint(partsec, "partition-type");
+ 		part->bootable = cfg_getbool(partsec, "bootable");
++		part->forced_primary = cfg_getbool(partsec, "forced-primary");
+ 		part->read_only = cfg_getbool(partsec, "read-only");
+ 		part->hidden = cfg_getbool(partsec, "hidden");
+ 		part->no_automount = cfg_getbool(partsec, "no-automount");
+diff --git a/genimage.h b/genimage.h
+index 8c86e77..b630984 100644
+--- a/genimage.h
++++ b/genimage.h
+@@ -39,7 +39,8 @@ struct partition {
+ 	unsigned long long align;
+ 	unsigned char partition_type;
+ 	cfg_bool_t bootable;
+-	cfg_bool_t extended;
++	cfg_bool_t logical;
++	cfg_bool_t forced_primary;
+ 	cfg_bool_t read_only;
+ 	cfg_bool_t hidden;
+ 	cfg_bool_t no_automount;
+diff --git a/image-hd.c b/image-hd.c
+index 4ea55b6..6fb850f 100644
+--- a/image-hd.c
++++ b/image-hd.c
+@@ -35,10 +35,12 @@
+ #define TYPE_GPT    2
+ #define TYPE_HYBRID (TYPE_MBR|TYPE_GPT)
+ 
++#define PARTITION_TYPE_EXTENDED 0x0F
++
+ struct hdimage {
+-	unsigned int extended_partition;
++	unsigned int extended_partition_index;
++	struct partition *extended_partition;
+ 	unsigned long long align;
+-	unsigned long long extended_lba;
+ 	uint32_t disksig;
+ 	const char *disk_uuid;
+ 	int table_type;
+@@ -151,32 +153,24 @@ static int hdimage_insert_mbr(struct image *image, struct list_head *partitions)
+ 	list_for_each_entry(part, partitions, list) {
+ 		struct mbr_partition_entry *entry;
+ 
+-		if (!part->in_partition_table)
++		if (!part->in_partition_table || part->logical)
+ 			continue;
+ 
+ 		if (hd->table_type == TYPE_HYBRID && !part->partition_type)
+ 			continue;
+ 
+-		if (hd->table_type == TYPE_HYBRID && part->extended)
+-			continue;
+-
+ 		entry = &mbr.part_entry[i];
+ 
+ 		entry->boot = part->bootable ? 0x80 : 0x00;
+-		if (!part->extended) {
+-			entry->partition_type = part->partition_type;
+-			entry->relative_sectors = part->offset/512;
+-			entry->total_sectors = part->size/512;
+-		}
+-		else {
+-			entry->partition_type = 0x0F;
+-			entry->relative_sectors = (hd->extended_lba)/512;
+-			entry->total_sectors = (image->size - hd->extended_lba)/512;
+-		}
++		entry->partition_type = part->partition_type;
++		entry->relative_sectors = part->offset/512;
++		entry->total_sectors = part->size/512;
+ 		hdimage_setup_chs(entry);
+ 
+-		if (part->extended)
+-			break;
++		image_debug(image, "[MBR entry %d]: type=%x start=%d size=%d\n",
++					i, entry->partition_type,
++					entry->relative_sectors, entry->total_sectors);
++
+ 		i++;
+ 	}
+ 
+@@ -215,8 +209,9 @@ static int hdimage_insert_ebr(struct image *image, struct partition *part)
+ 	struct mbr_partition_entry *entry;
+ 	char ebr[4*sizeof(struct mbr_partition_entry)+2], *part_table;
+ 	int ret;
++	unsigned long long ebr_offset = part->offset - hd->align + 446;
+ 
+-	image_info(image, "writing EBR\n");
++	image_debug(image, "writing EBR to sector %llu\n", ebr_offset / 512);
+ 
+ 	memset(ebr, 0, sizeof(ebr));
+ 	part_table = ebr;
+@@ -229,12 +224,12 @@ static int hdimage_insert_ebr(struct image *image, struct partition *part)
+ 	hdimage_setup_chs(entry);
+ 	struct partition *p = part;
+ 	list_for_each_entry_continue(p, &image->partitions, list) {
+-		if (!p->extended)
++		if (!p->logical)
+ 			continue;
+ 		++entry;
+ 		entry->boot = 0x00;
+-		entry->partition_type = 0x0F;
+-		entry->relative_sectors = (p->offset - hd->align - hd->extended_lba)/512;
++		entry->partition_type = PARTITION_TYPE_EXTENDED;
++		entry->relative_sectors = (p->offset - hd->align - hd->extended_partition->offset)/512;
+ 		entry->total_sectors = (p->size + hd->align)/512;
+ 		hdimage_setup_chs(entry);
+ 		break;
+@@ -245,7 +240,7 @@ static int hdimage_insert_ebr(struct image *image, struct partition *part)
+ 	part_table[1] = 0xaa;
+ 
+ 	ret = insert_data(image, ebr, imageoutfile(image), sizeof(ebr),
+-			  part->offset - hd->align + 446);
++			  ebr_offset);
+ 	if (ret) {
+ 		image_error(image, "failed to write EBR\n");
+ 		return ret;
+@@ -577,13 +572,15 @@ static int hdimage_generate(struct image *image)
+ 	list_for_each_entry(part, &image->partitions, list) {
+ 		struct image *child;
+ 
+-		image_info(image, "adding partition '%s'%s%s%s%s ...\n", part->name,
++		image_info(image, "adding %s partition '%s'%s%s%s%s ...\n",
++			part->logical ? "logical" : "primary",
++			part->name,
+ 			part->in_partition_table ? " (in MBR)" : "",
+ 			part->image ? " from '": "",
+ 			part->image ? part->image : "",
+ 			part->image ? "'" : "");
+ 
+-		if (part->extended) {
++		if (part->logical) {
+ 			ret = hdimage_insert_ebr(image, part);
+ 			if (ret) {
+ 				image_error(image, "failed to write EBR\n");
+@@ -756,13 +753,14 @@ static int hdimage_setup(struct image *image, cfg_t *cfg)
+ 	struct partition *autoresize_part = NULL;
+ 	int has_extended;
+ 	unsigned int partition_table_entries = 0, hybrid_entries = 0;
++	unsigned int mbr_entries = 0, forced_primary_entries = 0;
+ 	unsigned long long now = 0;
+ 	const char *disk_signature, *table_type;
+ 	struct hdimage *hd = xzalloc(sizeof(*hd));
+ 	struct partition *gpt_backup = NULL;
+ 
+ 	hd->align = cfg_getint_suffix(cfg, "align");
+-	hd->extended_partition = cfg_getint(cfg, "extended-partition");
++	hd->extended_partition_index = cfg_getint(cfg, "extended-partition");
+ 	disk_signature = cfg_getstr(cfg, "disk-signature");
+ 	table_type = cfg_getstr(cfg, "partition-table-type");
+ 	hd->gpt_location = cfg_getint_suffix(cfg, "gpt-location");
+@@ -809,10 +807,10 @@ static int hdimage_setup(struct image *image, cfg_t *cfg)
+ 	if (!hd->align)
+ 		hd->align = hd->table_type == TYPE_NONE ? 1 : 512;
+ 
+-	if (hd->extended_partition > 4) {
++	if (hd->extended_partition_index > 4) {
+ 		image_error(image, "invalid extended partition index (%i). must be "
+ 				"inferior or equal to 4 (0 for automatic)\n",
+-				hd->extended_partition);
++				hd->extended_partition_index);
+ 		return -EINVAL;
+ 	}
+ 
+@@ -821,11 +819,41 @@ static int hdimage_setup(struct image *image, cfg_t *cfg)
+ 				"multiple of 1 sector (512 bytes)\n", hd->align);
+ 		return -EINVAL;
+ 	}
++	if (hd->table_type == TYPE_MBR && hd->extended_partition_index)
++		mbr_entries = hd->extended_partition_index;
++
++	has_extended = hd->extended_partition_index > 0;
++
+ 	list_for_each_entry(part, &image->partitions, list) {
+ 		if (hd->table_type == TYPE_NONE)
+ 			part->in_partition_table = false;
+ 		if (part->in_partition_table)
+ 			++partition_table_entries;
++		if (hd->table_type == TYPE_MBR && part->in_partition_table) {
++			if (!hd->extended_partition_index && partition_table_entries > 4) {
++				hd->extended_partition_index = mbr_entries = 4;
++				has_extended = true;
++			}
++			if (part->forced_primary) {
++				++forced_primary_entries;
++				++mbr_entries;
++				if (partition_table_entries <= hd->extended_partition_index) {
++					image_error(image, "partition %s: forced-primary can only be used for "
++							   "partitions following the extended partition\n",
++						    part->name);
++					return -EINVAL;
++				}
++			} else if (forced_primary_entries > 0) {
++				image_error(image,
++					    "cannot create non-primary partition %s after forced-primary partition\n",
++					    part->name);
++				return -EINVAL;
++			}
++			if (mbr_entries > 4) {
++				image_error(image, "too many primary partitions\n");
++				return -EINVAL;
++			}
++		}
+ 		if (!part->align)
+ 			part->align = (part->in_partition_table || hd->table_type == TYPE_NONE) ? hd->align : 1;
+ 		if (part->in_partition_table && part->align % hd->align) {
+@@ -834,10 +862,6 @@ static int hdimage_setup(struct image *image, cfg_t *cfg)
+ 				    part->align, part->name, hd->align);
+ 		}
+ 	}
+-	if (hd->table_type == TYPE_MBR && !hd->extended_partition &&
+-			partition_table_entries > 4)
+-		hd->extended_partition = 4;
+-	has_extended = hd->extended_partition > 0;
+ 
+ 	if (hd->disk_uuid) {
+ 		if (!(hd->table_type & TYPE_GPT)) {
+@@ -958,12 +982,12 @@ static int hdimage_setup(struct image *image, cfg_t *cfg)
+ 			if (part->partition_type)
+ 				++hybrid_entries;
+ 		}
+-		/* reserve space for extended boot record if necessary */
+ 		if (part->in_partition_table)
+ 			++partition_table_entries;
+-		part->extended = has_extended && part->in_partition_table &&
+-			(partition_table_entries >= hd->extended_partition);
+-		if (part->extended) {
++		part->logical = !part->forced_primary && has_extended && part->in_partition_table &&
++				(partition_table_entries >= hd->extended_partition_index);
++		if (part->logical) {
++			/* reserve space for extended boot record */
+ 			now += hd->align;
+ 			now = roundup(now, part->align);
+ 		}
+@@ -978,8 +1002,6 @@ static int hdimage_setup(struct image *image, cfg_t *cfg)
+ 		if (!part->offset && (part->in_partition_table || hd->table_type == TYPE_NONE)) {
+ 			part->offset = roundup(now, part->align);
+ 		}
+-		if (part->extended && !hd->extended_lba)
+-			hd->extended_lba = part->offset - hd->align;
+ 
+ 		if (part->offset % part->align) {
+ 			image_error(image, "part %s offset (%lld) must be a"
+@@ -1027,7 +1049,7 @@ static int hdimage_setup(struct image *image, cfg_t *cfg)
+ 					part->name);
+ 			return -EINVAL;
+ 		}
+-		if (!part->extended) {
++		if (!part->logical) {
+ 			int ret = check_overlap(image, part);
+ 			if (ret)
+ 				return ret;
+@@ -1051,8 +1073,22 @@ static int hdimage_setup(struct image *image, cfg_t *cfg)
+ 				hd->file_size = part->offset + child->size;
+ 			}
+ 		}
+-		else if (part->extended)
++		else if (part->logical)
+ 			hd->file_size = part->offset - hd->align + 512;
++
++		if (has_extended && hd->extended_partition_index == partition_table_entries) {
++			struct partition *p = fake_partition("[Extended]", now - hd->align - part->size,
++							     0);
++			p->in_partition_table = true;
++			p->partition_type = PARTITION_TYPE_EXTENDED;
++
++			hd->extended_partition = p;
++			list_add_tail(&p->list, &part->list);
++		}
++
++		if (part->logical) {
++			hd->extended_partition->size = now - hd->extended_partition->offset;
++		}
+ 	}
+ 
+ 	if (hybrid_entries > 3) {
+diff --git a/test/hdimage-fail10.config b/test/hdimage-fail10.config
+new file mode 100644
+index 0000000..782c090
+--- /dev/null
++++ b/test/hdimage-fail10.config
+@@ -0,0 +1,33 @@
++image test.hdimage {
++	hdimage {
++		align = 1M
++		extended-partition = 3
++	}
++	partition primary1 {
++		image = "part1.img"
++		partition-type = 0x83
++	}
++	partition primary2 {
++		image = "part1.img"
++		partition-type = 0x83
++	}
++	partition extended1 {
++		image = "part1.img"
++		partition-type = 0x83
++	}
++	partition extended2 {
++		image = "part1.img"
++		partition-type = 0x83
++	}
++	partition primary3 {
++		image = "part1.img"
++		partition-type = 0x83
++		forced-primary = "yes"
++	}
++	partition primary4 {
++		image = "part1.img"
++		partition-type = 0x83
++		/* would be 5th primary partition */
++		forced-primary = "yes"
++	}
++}
+diff --git a/test/hdimage-fail11.config b/test/hdimage-fail11.config
+new file mode 100644
+index 0000000..06bf64b
+--- /dev/null
++++ b/test/hdimage-fail11.config
+@@ -0,0 +1,32 @@
++image test.hdimage {
++	hdimage {
++		align = 1M
++		extended-partition = 1
++	}
++	partition extended1 {
++		image = "part1.img"
++		partition-type = 0x83
++	}
++	partition extended2 {
++		image = "part1.img"
++		partition-type = 0x83
++	}
++	partition extended3 {
++		image = "part1.img"
++		partition-type = 0x83
++	}
++	partition extended4 {
++		image = "part1.img"
++		partition-type = 0x83
++	}
++	partition primary2 {
++		image = "part1.img"
++		partition-type = 0x83
++		forced-primary = "yes"
++	}
++	partition extended5 {
++		image = "part1.img"
++		partition-type = 0x83
++		/* extended partition would overlap the forced-primary one */
++	}
++}
+diff --git a/test/hdimage-fail8.config b/test/hdimage-fail8.config
+new file mode 100644
+index 0000000..8f55faa
+--- /dev/null
++++ b/test/hdimage-fail8.config
+@@ -0,0 +1,28 @@
++image test.hdimage {
++	hdimage {
++		align = 1M
++		extended-partition = 1
++	}
++	partition part1 {
++		image = "part1.img"
++		partition-type = 0x83
++		forced-primary = "yes"
++		/* forced-primary can be only used for partitions defined after the extended partition */
++	}
++	partition part2 {
++		image = "part1.img"
++		partition-type = 0x83
++	}
++	partition part3 {
++		image = "part1.img"
++		partition-type = 0x83
++	}
++	partition part4 {
++		image = "part1.img"
++		partition-type = 0x83
++	}
++	partition part5 {
++		image = "part1.img"
++		partition-type = 0x83
++	}
++}
+diff --git a/test/hdimage-fail9.config b/test/hdimage-fail9.config
+new file mode 100644
+index 0000000..d811b7b
+--- /dev/null
++++ b/test/hdimage-fail9.config
+@@ -0,0 +1,27 @@
++image test.hdimage {
++	hdimage {
++		align = 1M
++	}
++	partition primary1 {
++		image = "part1.img"
++		partition-type = 0x83
++	}
++	partition primary2 {
++		image = "part1.img"
++		partition-type = 0x83
++	}
++	partition primary3 {
++		image = "part1.img"
++		partition-type = 0x83
++	}
++	partition primary4 {
++		image = "part1.img"
++		partition-type = 0x83
++	}
++	partition primary5 {
++		image = "part1.img"
++		partition-type = 0x83
++		/* part4 is implicitly extended -> too many primary entries */
++		forced-primary = "yes"
++	}
++}
+diff --git a/test/hdimage-forced-primary.config b/test/hdimage-forced-primary.config
+new file mode 100644
+index 0000000..c15b3a5
+--- /dev/null
++++ b/test/hdimage-forced-primary.config
+@@ -0,0 +1,47 @@
++image test.hdimage {
++	hdimage {
++		align = 1M
++		disk-signature = 0x12345678
++		extended-partition = 2
++	}
++	partition part1 {
++		image = "part1.img"
++		partition-type = 0xc
++		bootable = "yes"
++	}
++	/*
++	* partition 2 will be the extended partition entry
++	* partitions 3-4 will be primary partitions at the end
++	* partition 5 is first logical partition of the extended partition
++	*/
++	partition part5-logical {
++		image = "part1.img"
++		partition-type = 0x83
++	}
++	partition part6-logical {
++		image = "part2.img"
++		partition-type = 0x83
++	}
++	partition part7-logical {
++		image = "part1.img"
++		partition-type = 0x83
++	}
++	partition part8-logical {
++		image = "part2.img"
++		partition-type = 0x83
++	}
++	partition part9-logical {
++		image = "part1.img"
++		partition-type = 0x83
++	}
++	partition part3 {
++		image = "part1.img"
++		partition-type = 0x83
++		forced-primary = "yes"
++	}
++	partition part4 {
++		image = "part2.img"
++		partition-type = 0x82
++		forced-primary = "yes"
++	}
++}
+diff --git a/test/hdimage-forced-primary.fdisk b/test/hdimage-forced-primary.fdisk
+new file mode 100644
+index 0000000..ff0e903
+--- /dev/null
++++ b/test/hdimage-forced-primary.fdisk
+@@ -0,0 +1,10 @@
++Disk identifier: 0x12345678
++images/test.hdimage1:start=2048,size=2048,type=c,bootable
++images/test.hdimage2:start=4096,size=20480,type=f
++images/test.hdimage3:start=24576,size=2048,type=83
++images/test.hdimage4:start=26624,size=2048,type=82
++images/test.hdimage5:start=6144,size=2048,type=83
++images/test.hdimage6:start=10240,size=2048,type=83
++images/test.hdimage7:start=14336,size=2048,type=83
++images/test.hdimage8:start=18432,size=2048,type=83
++images/test.hdimage9:start=22528,size=2048,type=83
+diff --git a/test/hdimage.test b/test/hdimage.test
+index c284613..a81c3f1 100755
+--- a/test/hdimage.test
++++ b/test/hdimage.test
+@@ -96,7 +96,11 @@ test_expect_success "hdimage syntax" "
+ 	test_must_fail run_genimage hdimage-fail4.config &&
+ 	test_must_fail run_genimage hdimage-fail5.config &&
+ 	test_must_fail run_genimage hdimage-fail6.config &&
+-	test_must_fail run_genimage hdimage-fail7.config
++	test_must_fail run_genimage hdimage-fail7.config &&
++	test_must_fail run_genimage hdimage-fail8.config &&
++	test_must_fail run_genimage hdimage-fail9.config &&
++	test_must_fail run_genimage hdimage-fail10.config &&
++	test_must_fail run_genimage hdimage-fail11.config
+ "
+ 
+ setup_gpt_files() {
+@@ -163,6 +167,14 @@ test_expect_success "hdimage no-partition" "
+ 	test_cmp 'hdimage-nopart.hexdump' '${testdir}/hdimage-nopart.hexdump'
+ "
+ 
++test_expect_success "hdimage forced-primary" "
++  setup_test_images &&
++	run_genimage hdimage-forced-primary.config &&
++	sfdisk_validate images/test.hdimage &&
++	sanitized_fdisk_sfdisk images/test.hdimage > hdimage.fdisk &&
++	test_cmp '${testdir}/hdimage-forced-primary.fdisk' hdimage.fdisk
++"
++
+ test_done
+ 
+ # vim: syntax=sh

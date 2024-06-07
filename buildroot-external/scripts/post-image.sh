@@ -13,7 +13,6 @@ HOOK_FILE=${3}
 . "${SCRIPT_DIR}/rootfs-layer.sh"
 . "${SCRIPT_DIR}/name.sh"
 . "${SCRIPT_DIR}/rauc.sh"
-. "${SCRIPT_DIR}/ota.sh"
 . "${HOOK_FILE}"
 
 # Cleanup
@@ -25,7 +24,6 @@ hassos_pre_image
 
 # Disk & OTA
 create_disk_image
-create_ota_update
 
 # Hook post image build stuff
 hassos_post_image

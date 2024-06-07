@@ -20,7 +20,7 @@ function write_rauc_config() {
     ota_compatible="$(hassos_rauc_compatible)"
 
     export ota_compatible
-    export BOOTLOADER BOOT_SYS BOOT_SPL
+    export BOOTLOADER PARTITION_TABLE_TYPE BOOT_SPL
 
     (
         "${HOST_DIR}/bin/tempio" \
@@ -50,13 +50,13 @@ function install_rauc_certs() {
 
 function install_bootloader_config() {
     if [ "${BOOTLOADER}" == "uboot" ]; then
-    	# shellcheck disable=SC1117
+        # shellcheck disable=SC1117
         echo -e "/dev/disk/by-partlabel/hassos-bootstate\t0x0000\t${BOOT_ENV_SIZE}" > "${TARGET_DIR}/etc/fw_env.config"
     fi
 
     # Fix MBR
-    if [ "${BOOT_SYS}" == "mbr" ]; then
+    if [ "${PARTITION_TABLE_TYPE}" == "mbr" ]; then
         mkdir -p "${TARGET_DIR}/usr/lib/udev/rules.d"
-	    cp -f "${BR2_EXTERNAL_HASSOS_PATH}/bootloader/mbr-part.rules" "${TARGET_DIR}/usr/lib/udev/rules.d/"
+        cp -f "${BR2_EXTERNAL_HASSOS_PATH}/bootloader/mbr-part.rules" "${TARGET_DIR}/usr/lib/udev/rules.d/"
     fi
 }
