@@ -23,6 +23,7 @@ body:
       required: true
     attributes:
       label: What operating system image do you use?
+      default: 0
       options:
         - generic-x86-64 (Generic UEFI capable x86-64 systems)
         - generic-aarch64 (Generic UEFI capable aarch64 systems)
@@ -59,10 +60,21 @@ body:
     validations:
       required: true
     attributes:
-      label: Did you upgrade the Operating System.
+      label: Did the problem occur after upgrading the Operating System?
+      default: 0
       options:
-        - "Yes"
         - "No"
+        - "Yes"
+  - type: textarea
+    validations:
+      required: true
+    attributes:
+      label: Hardware details
+      description: >
+        Provide details about the hardware used for your install.
+        This is especially important for bare-metal x86 installations.
+        If you have any USB devices attached, please list them here.
+        For VMs, include the hypervisor type and version.
   - type: textarea
     validations:
       required: true
