@@ -1,0 +1,42 @@
+From 766d53ce6143b7e5f09a5f478e328cf8a1f183d4 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Jan=20=C4=8Cerm=C3=A1k?= <sairon@sairon.cz>
+Date: Wed, 12 Jun 2024 15:20:46 +0200
+Subject: [PATCH] green: Do not use eMMC DDR52 mode
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+There is a known issue on RK356x boards that the eMMC writing fails when
+DDR52 mode is used. Disable this mode and other HS modes, keep only
+HS200 which works reliably with the eMMC used on Green. For more details
+see the upstream commit and mailing list discussion [1].
+
+[1] https://patchwork.ozlabs.org/project/uboot/patch/20240204205312.2342868-2-jonas@kwiboo.se/
+
+Signed-off-by: Jan Čermák <sairon@sairon.cz>
+---
+ arch/arm/dts/rk3566-ha-green-u-boot.dtsi | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+diff --git a/arch/arm/dts/rk3566-ha-green-u-boot.dtsi b/arch/arm/dts/rk3566-ha-green-u-boot.dtsi
+index 48d7b61513..8dc1585aac 100644
+--- a/arch/arm/dts/rk3566-ha-green-u-boot.dtsi
++++ b/arch/arm/dts/rk3566-ha-green-u-boot.dtsi
+@@ -71,10 +71,7 @@
+ 
+ &sdhci {
+ 	cap-mmc-highspeed;
+-	mmc-ddr-1_8v;
+ 	mmc-hs200-1_8v;
+-	mmc-hs400-1_8v;
+-	mmc-hs400-enhanced-strobe;
+ };
+ 
+ &sfc {
+@@ -115,4 +112,4 @@
+ 
+ &vcc5v0_usb_host {
+ 	regulator-boot-on;
+-};
+\ No newline at end of file
++};
