@@ -1,0 +1,39 @@
+#!/bin/sh
+# shellcheck disable=SC1091
+
+set -e
+
+if grep -q 'slot\.boot\.0' /mnt/data/rauc.db; then
+    echo "[INFO] rauc.db already contains slot information"
+    exit 0
+fi
+
+echo "[INFO] Generating rauc.db from os-release data"
+
+eval "$(rauc status --output-format=shell)"
+
+if [ -z "${RAUC_SYSTEM_BOOTED_BOOTNAME}" ]; then
+    echo "[ERROR] RAUC_SYSTEM_BOOTED_BOOTNAME is empty"
+    exit 1
+fi
+
+CURRENT_SLOT_ID=$(test "${RAUC_SYSTEM_BOOTED_BOOTNAME}" = "A" && echo 0 || echo 1)
+
+. /etc/os-release
+
+cat >> /mnt/data/rauc.db <<EOF
+
+[slot.boot.0]
+bundle.compatible=${RAUC_SYSTEM_COMPATIBLE}
+bundle.version=${VERSION_ID}
+
+[slot.kernel.${CURRENT_SLOT_ID}]
+bundle.compatible=${RAUC_SYSTEM_COMPATIBLE}
+bundle.version=${VERSION_ID}
+
+[slot.rootfs.${CURRENT_SLOT_ID}]
+bundle.compatible=${RAUC_SYSTEM_COMPATIBLE}
+bundle.version=${VERSION_ID}
+EOF
+
+/usr/bin/systemctl restart rauc.service

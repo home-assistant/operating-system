@@ -1,0 +1,12 @@
+[Unit]
+Description=Ensure rauc.db contains version information
+After=rauc.service
+Before=hassos-supervisor.service
+RequiresMountsFor=/mnt/data
+
+[Service]
+Type=oneshot
+ExecStart=/usr/libexec/raucdb-update
+
+[Install]
+WantedBy=multi-user.target
