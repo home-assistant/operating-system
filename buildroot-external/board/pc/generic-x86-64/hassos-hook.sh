@@ -17,6 +17,7 @@ function hassos_pre_image() {
     grub-editenv "${EFIPART_DATA}/EFI/BOOT/grubenv-B" set ORDER="B A"
     grub-editenv "${EFIPART_DATA}/EFI/BOOT/grubenv-B" set B_OK=1
     grub-editenv "${EFIPART_DATA}/EFI/BOOT/grubenv-B" set B_TRY=0
+    cp "${EFIPART_DATA}/EFI/BOOT/grubenv-A" "${EFIPART_DATA}/EFI/BOOT/grubenv"
 
     cp -r "${EFIPART_DATA}/"* "${BOOT_DATA}/"
 }

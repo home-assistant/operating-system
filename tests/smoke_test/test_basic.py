@@ -36,6 +36,14 @@ def test_init(shell):
 
 
 @pytest.mark.dependency(depends=["test_init"])
+def test_rauc_status(shell):
+    output = shell.run_check("rauc status --output-format=shell")
+    # RAUC_BOOT_PRIMARY won't be set if correct grub env is missing
+    assert "RAUC_BOOT_PRIMARY='kernel.0'" in output
+    assert "rauc-WARNING" not in "\n".join(output)
+
+
+@pytest.mark.dependency(depends=["test_init"])
 def test_dmesg(shell):
     output = shell.run_check("dmesg")
     _LOGGER.info("%s", "\n".join(output))
