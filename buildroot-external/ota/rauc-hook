@@ -34,11 +34,13 @@ install_boot() {
     else
         # Backup boot config
         cp -f "${BOOT_MNT}"/*.txt "${BOOT_TMP}/" || true
+        cp -f "${BOOT_MNT}"/EFI/BOOT/grubenv "${BOOT_TMP}/" || true
 
         cp -rf "${BOOT_NEW}"/* "${BOOT_MNT}/"
 
         # Restore boot config
         cp -f "${BOOT_TMP}"/*.txt "${BOOT_MNT}/" || true
+        cp -f "${BOOT_TMP}"/grubenv "${BOOT_MNT}"/EFI/BOOT/ || true
     fi
 }
 
