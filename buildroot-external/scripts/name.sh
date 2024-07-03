@@ -29,5 +29,5 @@ function path_data_img() {
 }
 
 function path_rootfs_img() {
-    echo "${BINARIES_DIR}/rootfs.squashfs"
+    echo "${BINARIES_DIR}/rootfs.erofs"
 }
