@@ -316,7 +316,7 @@ jobs:
           echo "## Partitions" >> $GITHUB_STEP_SUMMARY
           echo "| File | Size (bytes) | Size (formatted) |" >> $GITHUB_STEP_SUMMARY
           echo "|:-|:-|:-|" >> $GITHUB_STEP_SUMMARY
-          for f in boot.vfat kernel.img rootfs.squashfs overlay.ext4 data.ext4; do
+          for f in boot.vfat kernel.img rootfs.erofs overlay.ext4 data.ext4; do
             echo "| ${f} | $(du -b output/images/$f | cut -f1) | $(du -bh output/images/$f | cut -f1) |" >> $GITHUB_STEP_SUMMARY
           done
 
