@@ -96,14 +96,6 @@ post_install_kernel() {
         systemctl start mnt-boot.mount
     fi
 
-    # OS 7 -> 8 upgrade path:
-    # If grub is installed, and the current system lacks GRUB environment
-    # manipulation tools, manually create a grubenv for the right boot slot
-    if [ -f "${BOOT_MNT}"/EFI/BOOT/grub.cfg ] && ! command -v grub-editenv > /dev/null; then
-        cp -f "${BOOT_MNT}/EFI/BOOT/grubenv-${RAUC_SLOT_BOOTNAME}" "${BOOT_MNT}"/EFI/BOOT/grubenv
-        echo "Copied default GRUB environment grubenv-${RAUC_SLOT_BOOTNAME} as grubenv."
-    fi
-
     # Copy new OS to appropriate directory
     if [ "$RAUC_SYSTEM_COMPATIBLE" = "haos-rpi5-64" ]; then
         rm -rf "${BOOT_MNT}/slot-${RAUC_SLOT_BOOTNAME}"
@@ -118,20 +110,8 @@ case "$1" in
      install-check)
          if [ "$RAUC_MF_COMPATIBLE" = "$RAUC_SYSTEM_COMPATIBLE" ]; then
              # Check if GRUB env has been corrupted. This is only problematic
-             # with OS 8, where compatible matches.
+             # with OS 8+, where compatible matches.
              check_grubenv
-             exit 0
-         fi
-         # Be compatible with hassos OS ID
-         # shellcheck disable=SC3060
-         rauc_os_compatible=${RAUC_MF_COMPATIBLE/haos-/hassos-}
-         if [ "$rauc_os_compatible" = "$RAUC_SYSTEM_COMPATIBLE" ]; then
-             exit 0
-         fi
-         # generic-x86-64: Be compatible with intel-nuc
-         # shellcheck disable=SC3060
-         rauc_board_compatible=${rauc_os_compatible/generic-x86-64/intel-nuc}
-         if [ "${rauc_board_compatible}" = "$RAUC_SYSTEM_COMPATIBLE" ]; then
              exit 0
          fi
          echo "Compatible does not match!" 1>&2

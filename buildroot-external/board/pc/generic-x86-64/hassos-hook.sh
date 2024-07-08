@@ -9,15 +9,10 @@ function hassos_pre_image() {
 
     cp "${BOARD_DIR}/../grub.cfg" "${EFIPART_DATA}/EFI/BOOT/grub.cfg"
     cp "${BOARD_DIR}/cmdline.txt" "${EFIPART_DATA}/cmdline.txt"
-    grub-editenv "${EFIPART_DATA}/EFI/BOOT/grubenv-A" create
-    grub-editenv "${EFIPART_DATA}/EFI/BOOT/grubenv-A" set ORDER="A B"
-    grub-editenv "${EFIPART_DATA}/EFI/BOOT/grubenv-A" set A_OK=1
-    grub-editenv "${EFIPART_DATA}/EFI/BOOT/grubenv-A" set A_TRY=0
-    grub-editenv "${EFIPART_DATA}/EFI/BOOT/grubenv-B" create
-    grub-editenv "${EFIPART_DATA}/EFI/BOOT/grubenv-B" set ORDER="B A"
-    grub-editenv "${EFIPART_DATA}/EFI/BOOT/grubenv-B" set B_OK=1
-    grub-editenv "${EFIPART_DATA}/EFI/BOOT/grubenv-B" set B_TRY=0
-    cp "${EFIPART_DATA}/EFI/BOOT/grubenv-A" "${EFIPART_DATA}/EFI/BOOT/grubenv"
+    grub-editenv "${EFIPART_DATA}/EFI/BOOT/grubenv" create
+    grub-editenv "${EFIPART_DATA}/EFI/BOOT/grubenv" set ORDER="A B"
+    grub-editenv "${EFIPART_DATA}/EFI/BOOT/grubenv" set A_OK=1
+    grub-editenv "${EFIPART_DATA}/EFI/BOOT/grubenv" set A_TRY=0
 
     cp -r "${EFIPART_DATA}/"* "${BOOT_DATA}/"
 }
