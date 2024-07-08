@@ -38,7 +38,7 @@ The Home Assistant Operating System documentation can be found on the [Home Assi
 ### Components
 
 - **Bootloader:**
-  - [Barebox](https://barebox.org/) for devices that support UEFI
+  - [GRUB](https://www.gnu.org/software/grub/) for devices that support UEFI
   - [U-Boot](https://www.denx.de/wiki/U-Boot) for devices that don't support UEFI
 - **Operating System:**
   - [Buildroot](https://buildroot.org/) LTS Linux
