@@ -42,8 +42,8 @@ elif gpio input GPIO26; then
 fi
 
 # HassOS system A/B
-setenv bootargs_a "root=PARTUUID=8d3d53e3-6d49-4c38-8349-aff6859e82fd rootfstype=squashfs ro"
-setenv bootargs_b "root=PARTUUID=a3ec664e-32ce-4665-95ea-7ae90ce9aa20 rootfstype=squashfs ro"
+setenv bootargs_a "root=PARTUUID=8d3d53e3-6d49-4c38-8349-aff6859e82fd ro"
+setenv bootargs_b "root=PARTUUID=a3ec664e-32ce-4665-95ea-7ae90ce9aa20 ro"
 
 # Preserve origin bootargs
 setenv bootargs_rpi
