@@ -1,0 +1,120 @@
+From c18ab299696dbb2fc092242e271068534ce9159c Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Jan=20=C4=8Cerm=C3=A1k?= <sairon@sairon.cz>
+Date: Tue, 30 Jul 2024 18:27:24 +0200
+Subject: [PATCH 1/1] loader/efi/linux: use legacy loader for broken Intel NM10
+ platforms
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Some Intel boards have been reported [1] to have issues with the generic
+EFI loader which is now default for x86_64 and i386. It was suggested to
+identify these boards based on SMBIOS data [2] and fall back to using
+the legacy loader there.
+
+This is my clumsy attempt at doing so. From user reports, all the
+affected boards have one of two possible CPU IDs, so we can use this
+value to make the decision. dmidecode outputs found on the internet also
+show the same CPU ID have some other CPUs from the same family/chipset,
+these were not reported by users yet but it's likely they will have the
+same issue. It's also not expected the fallback would apply on boards
+that can not use the legacy loader, causing any unexpected failures.
+
+[1] https://lists.gnu.org/archive/html/grub-devel/2024-05/msg00117.html
+[2] https://lists.gnu.org/archive/html/grub-devel/2024-07/msg00009.html
+
+Signed-off-by: Jan Čermák <sairon@sairon.cz>
+---
+ grub-core/loader/efi/linux.c | 65 +++++++++++++++++++++++++++++++++++-
+ 1 file changed, 64 insertions(+), 1 deletion(-)
+
+diff --git a/grub-core/loader/efi/linux.c b/grub-core/loader/efi/linux.c
+index bfbd95aee..f4fc6d25c 100644
+--- a/grub-core/loader/efi/linux.c
++++ b/grub-core/loader/efi/linux.c
+@@ -24,6 +24,7 @@
+ #include <grub/linux.h>
+ #include <grub/loader.h>
+ #include <grub/mm.h>
++#include <grub/smbios.h>
+ #include <grub/types.h>
+ #include <grub/efi/efi.h>
+ #include <grub/efi/fdtload.h>
+@@ -452,6 +453,67 @@ grub_cmd_initrd (grub_command_t cmd __attribute__ ((unused)),
+   return grub_errno;
+ }
+ 
++static grub_efi_boolean_t
++grub_efi_has_broken_efi_stub_loader(void) {
++  grub_addr_t eps_start;
++  grub_addr_t eps_end;
++  grub_uint16_t structures;
++
++  static grub_guid_t smbios_guid = GRUB_EFI_SMBIOS_TABLE_GUID;
++  static grub_guid_t smbios3_guid = GRUB_EFI_SMBIOS3_TABLE_GUID;
++
++  struct grub_smbios_eps3 *eps3 = grub_efi_find_configuration_table(&smbios3_guid);
++  if (eps3 != NULL)
++    {
++      eps_start = (grub_addr_t) eps3->table_address;
++      eps_end = (grub_addr_t) eps_start + eps3->maximum_table_length;
++      structures = 0;
++    }
++  else
++    {
++      struct grub_smbios_eps *eps = grub_efi_find_configuration_table(&smbios_guid);
++      eps_start = (grub_addr_t) eps->intermediate.table_address;
++      eps_end = eps_start + eps->intermediate.table_length;
++      structures = eps->intermediate.structures;
++    }
++
++  const grub_uint8_t *ptr = (const grub_uint8_t *) eps_start;
++  const grub_uint8_t *table_end = (const grub_uint8_t *) eps_end;
++  grub_uint16_t structure_count = 0;
++
++  while (ptr < table_end
++         && ptr[1] >= 4 /* Valid structures include the 4-byte header. */
++         && (structure_count++ < structures || structures == 0))
++    {
++      grub_uint8_t structure_type = ptr[0];
++
++      if (structure_type == 4) // Processor Information (QWORD)
++        {
++          grub_uint64_t processor_id = grub_get_unaligned64(ptr + 8);
++
++          /*
++           * Use the whole processor ID as identifier of the broken platforms,
++           * so far only two have been reported to have the issue. This should
++           * be safer than reading BIOS information (which might yield false
++           * negatives) or partial CPU identification (which might lead to
++           * false positives instead).
++           */
++          return (processor_id == 0xbfebfbff61060300      // D2xxx/N2xxx
++                  || processor_id == 0xbfebfbff000106ca); // D525
++        }
++      else
++        {
++          ptr += ptr[1];
++          while ((*ptr++ != 0 || *ptr++ != 0) && ptr < table_end);
++        }
++
++      if (structure_type == GRUB_SMBIOS_TYPE_END_OF_TABLE)
++        break;
++    }
++
++  return 0;
++}
++
+ static grub_err_t
+ grub_cmd_linux (grub_command_t cmd __attribute__ ((unused)),
+ 		int argc, char *argv[])
+@@ -490,7 +552,8 @@ grub_cmd_linux (grub_command_t cmd __attribute__ ((unused)),
+ 
+   kernel_size = grub_file_size (file);
+ 
+-  if (grub_arch_efi_linux_load_image_header (file, &lh) != GRUB_ERR_NONE)
++  if (grub_arch_efi_linux_load_image_header (file, &lh) != GRUB_ERR_NONE
++      || grub_efi_has_broken_efi_stub_loader ())
+ #if !defined(__i386__) && !defined(__x86_64__)
+     goto fail;
+ #else
