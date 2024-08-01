@@ -9,6 +9,18 @@ import pytest
 logger = logging.getLogger(__name__)
 
 
+@pytest.fixture(scope="function")
+def without_internet(strategy):
+    default_nic = strategy.qemu.nic
+    if strategy.status.name == "shell":
+        strategy.transition("off")
+    strategy.qemu.nic = "user,net=192.168.76.0/24,dhcpstart=192.168.76.10,restrict=yes"
+    strategy.transition("shell")
+    yield
+    strategy.transition("off")
+    strategy.qemu.nic = default_nic
+
+
 @pytest.fixture(autouse=True, scope="module")
 def restart_qemu(strategy):
     """Use fresh QEMU instance for each module."""
