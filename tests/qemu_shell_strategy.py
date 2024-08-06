@@ -56,8 +56,7 @@ class QEMUShellStrategy(Strategy):
             step.skip("nothing to do")
             return  # nothing to do
         elif status == Status.off:
-            self.target.activate(self.qemu)
-            self.qemu.off()
+            self.target.deactivate(self.qemu)
             self.target.deactivate(self.shell)
         elif status == Status.shell:
             self.target.activate(self.qemu)
