@@ -1,8 +1,6 @@
 
 # Kernel Version
 
-Default Kernel tree: 6.1
-
 | Board | Version |
 |-------|---------|
 | Open Virtual Appliance | 6.6.44 |
