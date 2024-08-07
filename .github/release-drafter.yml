@@ -4,8 +4,6 @@ version-template: "$MAJOR.$MINOR"
 categories:
   - title: 'Home Assistant Operating System'
     label: 'os'
-  - title: 'Build System'
-    label: 'build'
   - title: 'Raspberry Pi'
     label: 'board/raspberrypi'
   - title: 'Home Assistant Yellow'
@@ -24,6 +22,12 @@ categories:
     label: 'board/khadas'
   - title: 'Generic aarch64'
     label: 'board/generic-aarch64'
+  - title: 'Documentation'
+    label: 'documentation'
+  - title: 'Build System'
+    label: 'build'
+  - title: 'Dependencies'
+    label: 'dependencies'
 filter-by-commitish: true
 template: |
   ## Changes
