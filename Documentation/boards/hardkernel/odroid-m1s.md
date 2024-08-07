@@ -10,8 +10,8 @@ ODROID-M1S can boot HAOS directly from an SD card, as it has higher priority tha
 
 HAOS can be installed directly to the eMMC using a special boot image, to do that:
 
-1. Download [`ODROID-M1S_EMMC2UMS.img`][1]
-2. Use balenaEtcher or another tool to flash the UMS utility onto an SD card.
+1. Download the _UMS Utility_ image: [`ODROID-M1S_EMMC2UMS.img`][1]. The _UMS Utility_ is a special image that switches ODROID-M1S to USB Mass Storage device.
+2. Use balenaEtcher or another tool to flash the _UMS utility_ onto an SD card.
 3. Plug-in that SD card to your ODROID-M1S and boot it. Connect your PC to the Micro USB OTG port.
 4. The eMMC will show as a drive on your PC and you can directly flash the HAOS image with balenaEther.
 
