@@ -1,7 +1,7 @@
-From 766d53ce6143b7e5f09a5f478e328cf8a1f183d4 Mon Sep 17 00:00:00 2001
+From 331826e0c52d6bdd65d862e06834f23b3a750276 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Jan=20=C4=8Cerm=C3=A1k?= <sairon@sairon.cz>
 Date: Wed, 12 Jun 2024 15:20:46 +0200
-Subject: [PATCH] green: Do not use eMMC DDR52 mode
+Subject: [PATCH] green: Do not use eMMC DDR52 mode, enable HS200
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -11,12 +11,15 @@ DDR52 mode is used. Disable this mode and other HS modes, keep only
 HS200 which works reliably with the eMMC used on Green. For more details
 see the upstream commit and mailing list discussion [1].
 
+Also enable HS200 support in defconfig.
+
 [1] https://patchwork.ozlabs.org/project/uboot/patch/20240204205312.2342868-2-jonas@kwiboo.se/
 
 Signed-off-by: Jan Čermák <sairon@sairon.cz>
 ---
  arch/arm/dts/rk3566-ha-green-u-boot.dtsi | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ configs/green_defconfig                  | 2 ++
+ 2 files changed, 3 insertions(+), 4 deletions(-)
 
 diff --git a/arch/arm/dts/rk3566-ha-green-u-boot.dtsi b/arch/arm/dts/rk3566-ha-green-u-boot.dtsi
 index 48d7b61513..8dc1585aac 100644
@@ -40,3 +43,16 @@ index 48d7b61513..8dc1585aac 100644
 -};
 \ No newline at end of file
 +};
+diff --git a/configs/green_defconfig b/configs/green_defconfig
+index 71c9257d7d..7b5a705686 100644
+--- a/configs/green_defconfig
++++ b/configs/green_defconfig
+@@ -65,6 +65,8 @@ CONFIG_MISC=y
+ CONFIG_I2C_EEPROM=y
+ CONFIG_SYS_I2C_EEPROM_ADDR=0x0
+ CONFIG_SUPPORT_EMMC_RPMB=y
++CONFIG_MMC_HS200_SUPPORT=y
++CONFIG_SPL_MMC_HS200_SUPPORT=y
+ CONFIG_MMC_DW=y
+ CONFIG_MMC_DW_ROCKCHIP=y
+ CONFIG_MMC_SDHCI=y
