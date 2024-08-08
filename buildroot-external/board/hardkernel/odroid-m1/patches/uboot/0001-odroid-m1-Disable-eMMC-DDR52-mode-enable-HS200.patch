@@ -1,0 +1,46 @@
+From 023bc5bd23d3239494bca81d807d3c093f78c131 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Jan=20=C4=8Cerm=C3=A1k?= <sairon@sairon.cz>
+Date: Thu, 8 Aug 2024 17:52:47 +0200
+Subject: [PATCH] odroid-m1: Disable eMMC DDR52 mode, enable HS200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Disable DDR52 mode on odroid-m1 to fix eMMC writes. Also enable HS200,
+as it's supposed to work more reliably than slower modes.
+
+Signed-off-by: Jan Čermák <sairon@sairon.cz>
+Upstream: https://patchwork.ozlabs.org/project/uboot/cover/20240204205312.2342868-1-jonas@kwiboo.se/
+---
+ arch/arm/dts/rk3568-odroid-m1-u-boot.dtsi | 3 ---
+ configs/odroid-m1-rk3568_defconfig        | 2 ++
+ 2 files changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/arch/arm/dts/rk3568-odroid-m1-u-boot.dtsi b/arch/arm/dts/rk3568-odroid-m1-u-boot.dtsi
+index 0fc360b06d..f9d34d3b77 100644
+--- a/arch/arm/dts/rk3568-odroid-m1-u-boot.dtsi
++++ b/arch/arm/dts/rk3568-odroid-m1-u-boot.dtsi
+@@ -14,10 +14,7 @@
+ 
+ &sdhci {
+ 	cap-mmc-highspeed;
+-	mmc-ddr-1_8v;
+ 	mmc-hs200-1_8v;
+-	mmc-hs400-1_8v;
+-	mmc-hs400-enhanced-strobe;
+ 	pinctrl-0 = <&emmc_bus8 &emmc_clk &emmc_cmd &emmc_datastrobe>;
+ };
+ 
+diff --git a/configs/odroid-m1-rk3568_defconfig b/configs/odroid-m1-rk3568_defconfig
+index 96b4e9ecda..517ac0575d 100644
+--- a/configs/odroid-m1-rk3568_defconfig
++++ b/configs/odroid-m1-rk3568_defconfig
+@@ -72,6 +72,8 @@ CONFIG_ROCKCHIP_GPIO=y
+ CONFIG_SYS_I2C_ROCKCHIP=y
+ CONFIG_MISC=y
+ CONFIG_SUPPORT_EMMC_RPMB=y
++CONFIG_MMC_HS200_SUPPORT=y
++CONFIG_SPL_MMC_HS200_SUPPORT=y
+ CONFIG_MMC_DW=y
+ CONFIG_MMC_DW_ROCKCHIP=y
+ CONFIG_MMC_SDHCI=y
