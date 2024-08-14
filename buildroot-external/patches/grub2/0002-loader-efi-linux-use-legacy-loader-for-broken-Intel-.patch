@@ -89,7 +89,7 @@ index bfbd95aee..f4fc6d25c 100644
 +           * negatives) or partial CPU identification (which might lead to
 +           * false positives instead).
 +           */
-+          return (processor_id == 0xbfebfbff61060300      // D2xxx/N2xxx
++          return (processor_id == 0xbfebfbff00030661      // D2xxx/N2xxx
 +                  || processor_id == 0xbfebfbff000106ca); // D525
 +        }
 +      else
