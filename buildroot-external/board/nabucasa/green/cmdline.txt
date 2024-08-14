@@ -1,1 +1,1 @@
-console=tty0
+console=ttyS2,1500000n8 console=tty0
