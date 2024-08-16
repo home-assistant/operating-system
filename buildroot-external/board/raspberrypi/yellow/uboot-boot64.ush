@@ -23,21 +23,29 @@ test -n "${MACHINE_ID}" || setenv BOOT_CONDITION "systemd.condition-first-boot=t
 # HassOS bootargs
 setenv bootargs_hassos "zram.enabled=1 zram.num_devices=3 rootwait systemd.machine_id=${MACHINE_ID} cgroup_enable=memory fsck.repair=yes ${BOOT_CONDITION}"
 
+setenv confirm_reset_handled ' \
+    led usr on; \
+    echo "Waiting for red button to be released";
+    while gpio input GPIO27; do sleep 0.5; done;'
+
 # Red Button pressed?
 if gpio input GPIO27; then
   sleep 1
   # ... and Blue Button Pressed?
   if gpio input GPIO26; then
     echo "Boot wipe has been pressed, deleting boot files to trigger USB boot..."
+    run confirm_reset_handled
     fatrm ${devtype} ${devnum}:1 /start4.elf
     reset
   fi
   # Red still pressed?
   if gpio input GPIO27; then
     echo "Device wipe button has been pressed, setting wipe flag..."
+    run confirm_reset_handled
     setenv bootargs_hassos "${bootargs_hassos} haos.wipe=1"
   fi
 elif gpio input GPIO26; then
+  led usr on
   ums 0 ${devtype} ${devnum}
 fi
 
