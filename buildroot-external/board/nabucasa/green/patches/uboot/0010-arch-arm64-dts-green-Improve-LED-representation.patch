@@ -1,0 +1,52 @@
+From d3fb1ec2364b20025d71e2263514a71208cfb61e Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Jan=20=C4=8Cerm=C3=A1k?= <sairon@sairon.cz>
+Date: Tue, 13 Aug 2024 17:51:29 +0200
+Subject: [PATCH] arch: arm64: dts: green: Improve LED representation
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Fix color and use labels/node names according to the LEDs functionality.
+
+Signed-off-by: Jan Čermák <sairon@sairon.cz>
+Co-authored-by: Stefan Agner <stefan@agner.ch>
+---
+ arch/arm/dts/rk3566-ha-green.dts | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
+
+diff --git a/arch/arm/dts/rk3566-ha-green.dts b/arch/arm/dts/rk3566-ha-green.dts
+index 68d836911e..c3adc59904 100644
+--- a/arch/arm/dts/rk3566-ha-green.dts
++++ b/arch/arm/dts/rk3566-ha-green.dts
+@@ -48,16 +48,18 @@
+ 	leds {
+ 		compatible = "gpio-leds";
+ 
+-		led_power: led-0 {
++		led_power: led-power {
++			label = "power";
+ 			gpios = <&gpio0 RK_PB6 GPIO_ACTIVE_HIGH>;
+ 			function = LED_FUNCTION_POWER;
+-			color = <LED_COLOR_ID_RED>;
++			color = <LED_COLOR_ID_WHITE>;
+ 			default-state = "keep";
+ 			linux,default-trigger = "default-on";
+ 			pinctrl-names = "default";
+ 			pinctrl-0 = <&led_power_pin>;
+ 		};
+-		led_act: led-1 {
++		led_act: led-activity {
++			label = "activity";
+ 			gpios = <&gpio0 RK_PB7 GPIO_ACTIVE_HIGH>;
+ 			function = LED_FUNCTION_ACTIVITY;
+ 			color = <LED_COLOR_ID_GREEN>;
+@@ -65,7 +67,8 @@
+ 			pinctrl-names = "default";
+ 			pinctrl-0 = <&led_act_pin>;
+ 		};
+-		led_user: led-2 {
++		led_user: led-user {
++			label = "user";
+ 			gpios = <&gpio0 RK_PC5 GPIO_ACTIVE_HIGH>;
+ 			function = LED_FUNCTION_HEARTBEAT;
+ 			color = <LED_COLOR_ID_YELLOW>;

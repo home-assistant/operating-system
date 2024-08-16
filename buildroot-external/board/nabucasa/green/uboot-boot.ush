@@ -27,6 +27,36 @@ test -n "${MACHINE_ID}" || setenv BOOT_CONDITION "systemd.condition-first-boot=t
 # HassOS bootargs
 setenv bootargs_hassos "zram.enabled=1 zram.num_devices=3 rootwait systemd.machine_id=${MACHINE_ID} fsck.repair=yes ${BOOT_CONDITION}"
 
+i2c dev 0
+setenv check_btn_pressed ' \
+    i2c read 0x20 0xf0.1 1 ${loadaddr}; \
+    setexpr PWRON_STS *${loadaddr} \\\& 0x80; \
+    test ${PWRON_STS} -eq 0x0;'
+
+# Check if button is held for device wipe
+setenv counter 0
+while test ${counter} -lt 2; do
+  if run check_btn_pressed; then
+    echo "Reset button pressed for ${counter} seconds"
+    setexpr counter ${counter} + 1
+
+    if test ${counter} -eq 2; then
+      led user on
+      echo "Waiting for button to be released"
+      while run check_btn_pressed; do
+        sleep 0.5
+      done
+      echo "Proceeding with device wipe"
+      setenv bootargs_hassos "${bootargs_hassos} haos.wipe=1"
+    else
+      sleep 1
+    fi
+  else
+    # U-Boot has no break statement :')
+    setenv counter 2
+  fi
+done
+
 # HassOS system A/B
 setenv bootargs_a "root=PARTUUID=8d3d53e3-6d49-4c38-8349-aff6859e82fd ro"
 setenv bootargs_b "root=PARTUUID=a3ec664e-32ce-4665-95ea-7ae90ce9aa20 ro"
