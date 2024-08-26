@@ -1,7 +1,7 @@
-From c18ab299696dbb2fc092242e271068534ce9159c Mon Sep 17 00:00:00 2001
+From 545edfcbb505dfa0fc007416dc8b69a8e65f9557 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Jan=20=C4=8Cerm=C3=A1k?= <sairon@sairon.cz>
 Date: Tue, 30 Jul 2024 18:27:24 +0200
-Subject: [PATCH 1/1] loader/efi/linux: use legacy loader for broken Intel NM10
+Subject: [PATCH] loader/efi/linux: use legacy loader for broken Intel NM10
  platforms
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -23,13 +23,19 @@ that can not use the legacy loader, causing any unexpected failures.
 [1] https://lists.gnu.org/archive/html/grub-devel/2024-05/msg00117.html
 [2] https://lists.gnu.org/archive/html/grub-devel/2024-07/msg00009.html
 
+----
+
+Also AMD GX-212JC in HP t520 seems to be affected as reported in [3].
+
+[3] https://github.com/home-assistant/operating-system/issues/3557
+
 Signed-off-by: Jan Čermák <sairon@sairon.cz>
 ---
- grub-core/loader/efi/linux.c | 65 +++++++++++++++++++++++++++++++++++-
- 1 file changed, 64 insertions(+), 1 deletion(-)
+ grub-core/loader/efi/linux.c | 66 +++++++++++++++++++++++++++++++++++-
+ 1 file changed, 65 insertions(+), 1 deletion(-)
 
 diff --git a/grub-core/loader/efi/linux.c b/grub-core/loader/efi/linux.c
-index bfbd95aee..f4fc6d25c 100644
+index bfbd95aee..efeb692f8 100644
 --- a/grub-core/loader/efi/linux.c
 +++ b/grub-core/loader/efi/linux.c
 @@ -24,6 +24,7 @@
@@ -40,7 +46,7 @@ index bfbd95aee..f4fc6d25c 100644
  #include <grub/types.h>
  #include <grub/efi/efi.h>
  #include <grub/efi/fdtload.h>
-@@ -452,6 +453,67 @@ grub_cmd_initrd (grub_command_t cmd __attribute__ ((unused)),
+@@ -452,6 +453,68 @@ grub_cmd_initrd (grub_command_t cmd __attribute__ ((unused)),
    return grub_errno;
  }
  
@@ -90,7 +96,8 @@ index bfbd95aee..f4fc6d25c 100644
 +           * false positives instead).
 +           */
 +          return (processor_id == 0xbfebfbff00030661      // D2xxx/N2xxx
-+                  || processor_id == 0xbfebfbff000106ca); // D525
++                  || processor_id == 0xbfebfbff000106ca   // D525
++                  || processor_id == 0x00730f01178bfbff); // AMD GX-212JC (HP t520)
 +        }
 +      else
 +        {
@@ -108,7 +115,7 @@ index bfbd95aee..f4fc6d25c 100644
  static grub_err_t
  grub_cmd_linux (grub_command_t cmd __attribute__ ((unused)),
  		int argc, char *argv[])
-@@ -490,7 +552,8 @@ grub_cmd_linux (grub_command_t cmd __attribute__ ((unused)),
+@@ -490,7 +553,8 @@ grub_cmd_linux (grub_command_t cmd __attribute__ ((unused)),
  
    kernel_size = grub_file_size (file);
  
