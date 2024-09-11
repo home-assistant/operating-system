@@ -31,7 +31,7 @@ on:
         required: true
 
 env:
-  PYTHON_VERSION: "3.10"
+  PYTHON_VERSION: "3.13"
 
 jobs:
   build-index:
