@@ -1,0 +1,41 @@
+From 13cf1bb9c5fa91762184c3b0dddea1328c2746bc Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Jan=20=C4=8Cerm=C3=A1k?= <sairon@sairon.cz>
+Date: Wed, 11 Sep 2024 17:25:00 +0200
+Subject: [PATCH] systemd-timesyncd: delay start after network-online.target
+
+As explained in [1], it's desired for the systemd-timesyncd to run after
+the network is deemed online, otherwise the connectivity (at least on
+HAOS with NetworkManager) is not operational when the NTP sync is
+attempted and it fails, delaying the boot and leading to other problems.
+Because it's not possible to remove dependencies of existing units using
+drop-ins, patch the service template file for systemd-timesyncd unit
+instead, avoiding the need for complete unit file override as in [2].
+
+[1] https://github.com/home-assistant/operating-system/pull/2068
+[2] https://github.com/home-assistant/operating-system/pull/2082
+---
+ units/systemd-timesyncd.service.in | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/units/systemd-timesyncd.service.in b/units/systemd-timesyncd.service.in
+index c606461..5870744 100644
+--- a/units/systemd-timesyncd.service.in
++++ b/units/systemd-timesyncd.service.in
+@@ -13,8 +13,8 @@ Documentation=man:systemd-timesyncd.service(8)
+ ConditionCapability=CAP_SYS_TIME
+ ConditionVirtualization=!container
+ DefaultDependencies=no
+-After=systemd-sysusers.service
+-Before=time-set.target sysinit.target shutdown.target
++After=systemd-sysusers.service network-online.target
++Before=time-set.target shutdown.target
+ Conflicts=shutdown.target
+ Wants=time-set.target
+ 
+@@ -56,5 +56,5 @@ User=systemd-timesync
+ {{SERVICE_WATCHDOG}}
+ 
+ [Install]
+-WantedBy=sysinit.target
++WantedBy=time-sync.target
+ Alias=dbus-org.freedesktop.timesync1.service
