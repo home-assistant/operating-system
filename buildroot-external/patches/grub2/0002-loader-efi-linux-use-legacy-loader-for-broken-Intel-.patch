@@ -1,4 +1,4 @@
-From 545edfcbb505dfa0fc007416dc8b69a8e65f9557 Mon Sep 17 00:00:00 2001
+From 6c0a2197bad3c339a638ea59b1eb36b5e449f7b8 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Jan=20=C4=8Cerm=C3=A1k?= <sairon@sairon.cz>
 Date: Tue, 30 Jul 2024 18:27:24 +0200
 Subject: [PATCH] loader/efi/linux: use legacy loader for broken Intel NM10
@@ -29,13 +29,22 @@ Also AMD GX-212JC in HP t520 seems to be affected as reported in [3].
 
 [3] https://github.com/home-assistant/operating-system/issues/3557
 
+----
+
+Added CPU ID for Macbook Air's Intel i5 CPU reported in [4]. This will
+likely target also other i5-based systems that are not affected by the
+EFI bug but it should cause no harm, as the legacy loader was used in
+pre-2.12 GRUB anyway.
+
+[4] https://github.com/home-assistant/operating-system/issues/3305#issuecomment-2360633688
+
 Signed-off-by: Jan Čermák <sairon@sairon.cz>
 ---
- grub-core/loader/efi/linux.c | 66 +++++++++++++++++++++++++++++++++++-
- 1 file changed, 65 insertions(+), 1 deletion(-)
+ grub-core/loader/efi/linux.c | 67 +++++++++++++++++++++++++++++++++++-
+ 1 file changed, 66 insertions(+), 1 deletion(-)
 
 diff --git a/grub-core/loader/efi/linux.c b/grub-core/loader/efi/linux.c
-index bfbd95aee..efeb692f8 100644
+index bfbd95a..98ac99c 100644
 --- a/grub-core/loader/efi/linux.c
 +++ b/grub-core/loader/efi/linux.c
 @@ -24,6 +24,7 @@
@@ -46,7 +55,7 @@ index bfbd95aee..efeb692f8 100644
  #include <grub/types.h>
  #include <grub/efi/efi.h>
  #include <grub/efi/fdtload.h>
-@@ -452,6 +453,68 @@ grub_cmd_initrd (grub_command_t cmd __attribute__ ((unused)),
+@@ -452,6 +453,69 @@ grub_cmd_initrd (grub_command_t cmd __attribute__ ((unused)),
    return grub_errno;
  }
  
@@ -97,7 +106,8 @@ index bfbd95aee..efeb692f8 100644
 +           */
 +          return (processor_id == 0xbfebfbff00030661      // D2xxx/N2xxx
 +                  || processor_id == 0xbfebfbff000106ca   // D525
-+                  || processor_id == 0x00730f01178bfbff); // AMD GX-212JC (HP t520)
++                  || processor_id == 0x00730f01178bfbff   // AMD GX-212JC (HP t520)
++                  || processor_id == 0xbfebfbff000206a7); // Intel i5-2xxx (Macbook Air A1370)
 +        }
 +      else
 +        {
@@ -115,7 +125,7 @@ index bfbd95aee..efeb692f8 100644
  static grub_err_t
  grub_cmd_linux (grub_command_t cmd __attribute__ ((unused)),
  		int argc, char *argv[])
-@@ -490,7 +553,8 @@ grub_cmd_linux (grub_command_t cmd __attribute__ ((unused)),
+@@ -490,7 +554,8 @@ grub_cmd_linux (grub_command_t cmd __attribute__ ((unused)),
  
    kernel_size = grub_file_size (file);
  
