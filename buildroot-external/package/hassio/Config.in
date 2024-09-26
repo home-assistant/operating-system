@@ -4,7 +4,7 @@ menuconfig BR2_PACKAGE_HASSIO
 	  This is the Application layer they build the
 	  data partition with configurations.
 
-	  https://github.com/home-assistant/supervisor
+    https://github.com/MySmart-Homes/supervisor
 
 if BR2_PACKAGE_HASSIO
 

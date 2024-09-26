@@ -1,0 +1,117 @@
+[
+  {
+    "id": "ova",
+    "defconfig": "ova",
+    "architecture": "x86-64",
+    "label": "board/ova"
+  },
+  {
+    "id": "generic-x86-64",
+    "defconfig": "generic_x86_64",
+    "architecture": "x86-64",
+    "label": "board/generic-x86-64"
+  },
+  {
+    "id": "generic-aarch64",
+    "defconfig": "generic_aarch64",
+    "architecture": "aarch64",
+    "label": "board/generic-aarch64"
+  }
+  {
+    "id": "khadas-vim3",
+    "defconfig": "khadas_vim3",
+    "architecture": "aarch64",
+    "label": "board/khadas"
+  },
+  {
+    "id": "odroid-c2",
+    "defconfig": "odroid_c2",
+    "architecture": "aarch64",
+    "label": "board/odroid"
+  },
+  {
+    "id": "odroid-c4",
+    "defconfig": "odroid_c4",
+    "architecture": "aarch64",
+    "label": "board/odroid"
+  },
+  {
+    "id": "odroid-m1",
+    "defconfig": "odroid_m1",
+    "architecture": "aarch64",
+    "label": "board/odroid"
+  },
+  {
+    "id": "odroid-m1s",
+    "defconfig": "odroid_m1s",
+    "architecture": "aarch64",
+    "label": "board/odroid"
+  },
+  {
+    "id": "odroid-n2",
+    "defconfig": "odroid_n2",
+    "architecture": "aarch64",
+    "label": "board/odroid"
+  },
+  {
+    "id": "odroid-xu4",
+    "defconfig": "odroid_xu4",
+    "architecture": "aarch64",
+    "label": "board/odroid"
+  },
+  {
+    "id": "rpi2",
+    "defconfig": "rpi2",
+    "architecture": "arm",
+    "label": "board/raspberrypi"
+  },
+  {
+    "id": "rpi3",
+    "defconfig": "rpi3",
+    "architecture": "arm",
+    "label": "board/raspberrypi"
+  },
+  {
+    "id": "rpi3-64",
+    "defconfig": "rpi3_64",
+    "architecture": "aarch64",
+    "label": "board/raspberrypi"
+  },
+  {
+    "id": "rpi4",
+    "defconfig": "rpi4",
+    "architecture": "arm",
+    "label": "board/raspberrypi"
+  },
+  {
+    "id": "rpi4-64",
+    "defconfig": "rpi4_64",
+    "architecture": "aarch64",
+    "label": "board/raspberrypi"
+  },
+  {
+    "id": "rpi5-64",
+    "defconfig": "rpi5_64",
+    "architecture": "aarch64",
+    "label": "board/raspberrypi"
+  },
+  {
+    "id": "yellow",
+    "defconfig": "yellow",
+    "architecture": "aarch64",
+    "label": "board/yellow"
+  },
+  {
+    "id": "green",
+    "defconfig": "green",
+    "architecture": "aarch64",
+    "label": "board/green"
+  },
+  {
+    "id": "tinker",
+    "defconfig": "tinker",
+    "architecture": "arm",
+    "label": "board/tinker"
+  }
+  */
+]
