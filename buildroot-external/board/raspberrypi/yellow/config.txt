@@ -28,6 +28,10 @@ gpu_mem=32
 
 # Additional overlays and parameters are documented /boot/overlays/README
 
-[all]
+[cm4]
 device_tree=bcm2711-rpi-cm4-ha-yellow.dtb
 
+[cm5]
+device_tree=bcm2712-rpi-cm5-ha-yellow.dtb
+
+[all]
