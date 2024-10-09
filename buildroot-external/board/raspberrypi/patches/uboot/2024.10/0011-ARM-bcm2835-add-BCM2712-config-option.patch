@@ -1,0 +1,47 @@
+From 61693f4e8db08d263c6036afeecd6d30e7b23660 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Jan=20=C4=8Cerm=C3=A1k?= <sairon@sairon.cz>
+Date: Thu, 3 Oct 2024 11:09:53 +0200
+Subject: [PATCH] ARM: bcm2835: add BCM2712 config option
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Add config option for RPi 5's BCM2712, which can only run in 64bit mode.
+Also tie the PCIe controller's option to the required reset controllers
+if PCI_BRCMSTB is enabled along the BCM2712 option.
+
+Signed-off-by: Jan Čermák <sairon@sairon.cz>
+---
+ arch/arm/mach-bcm283x/Kconfig | 5 +++++
+ drivers/pci/Kconfig           | 2 ++
+ 2 files changed, 7 insertions(+)
+
+diff --git a/arch/arm/mach-bcm283x/Kconfig b/arch/arm/mach-bcm283x/Kconfig
+index b3287ce8bc..3b8672cfe0 100644
+--- a/arch/arm/mach-bcm283x/Kconfig
++++ b/arch/arm/mach-bcm283x/Kconfig
+@@ -44,6 +44,11 @@ config BCM2711_64B
+ 	select BCM2711
+ 	select ARM64
+ 
++config BCM2712
++	bool "Broadcom BCM2712 SoC support (64-bit only)"
++	depends on ARCH_BCM283X
++	select ARM64
++
+ menu "Broadcom BCM283X family"
+ 	depends on ARCH_BCM283X
+ 
+diff --git a/drivers/pci/Kconfig b/drivers/pci/Kconfig
+index 22a56f4ca3..6badc60d13 100644
+--- a/drivers/pci/Kconfig
++++ b/drivers/pci/Kconfig
+@@ -386,6 +386,8 @@ config PCIE_DW_ROCKCHIP
+ config PCI_BRCMSTB
+ 	bool "Broadcom STB PCIe controller"
+ 	depends on ARCH_BCM283X
++	select RESET_BRCMSTB if BCM2712
++	select RESET_BRCMSTB_RESCAL if BCM2712
+ 	help
+ 	  Say Y here if you want to enable support for PCIe controller
+ 	  on Broadcom set-top-box (STB) SoCs.

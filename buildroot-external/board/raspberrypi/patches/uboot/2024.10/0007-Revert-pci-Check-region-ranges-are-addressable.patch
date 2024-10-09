@@ -1,0 +1,44 @@
+From 418664bb1dfa61b8fc1a0292adb00ec93e1a7619 Mon Sep 17 00:00:00 2001
+From: Stefan Agner <stefan@agner.ch>
+Date: Mon, 24 Apr 2023 15:44:15 +0200
+Subject: [PATCH] Revert "pci: Check region ranges are addressable"
+
+This reverts commit ec8eba8c2d4e10e77699c56918d2078210aa1339.
+
+This commit seems to cause boot hangs when USB via XHCI is enabled on
+Raspberry Pi 4 32-bit. Reverting the commit fixes USB device detection
+and makes the devices boot again.
+
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+---
+ drivers/pci/pci-uclass.c | 17 +----------------
+ 1 file changed, 1 insertion(+), 16 deletions(-)
+
+diff --git a/drivers/pci/pci-uclass.c b/drivers/pci/pci-uclass.c
+index 6571e65304..803d5c25fc 100644
+--- a/drivers/pci/pci-uclass.c
++++ b/drivers/pci/pci-uclass.c
+@@ -1038,22 +1038,7 @@ static int decode_regions(struct pci_controller *hose, ofnode parent_node,
+ 
+ 		if (!IS_ENABLED(CONFIG_SYS_PCI_64BIT) &&
+ 		    type == PCI_REGION_MEM && upper_32_bits(pci_addr)) {
+-			debug(" - pci_addr beyond the 32-bit boundary, ignoring\n");
+-			continue;
+-		}
+-
+-		if (!IS_ENABLED(CONFIG_PHYS_64BIT) && upper_32_bits(addr)) {
+-			debug(" - addr beyond the 32-bit boundary, ignoring\n");
+-			continue;
+-		}
+-
+-		if (~((pci_addr_t)0) - pci_addr < size) {
+-			debug(" - PCI range exceeds max address, ignoring\n");
+-			continue;
+-		}
+-
+-		if (~((phys_addr_t)0) - addr < size) {
+-			debug(" - phys range exceeds max address, ignoring\n");
++			debug(" - beyond the 32-bit boundary, ignoring\n");
+ 			continue;
+ 		}
+ 
