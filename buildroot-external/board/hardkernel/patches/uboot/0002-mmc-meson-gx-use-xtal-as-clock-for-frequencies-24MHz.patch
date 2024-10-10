@@ -1,0 +1,56 @@
+From 77ec70c4d73c772b7da0d007946f697f7d27a7a7 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Jan=20=C4=8Cerm=C3=A1k?= <sairon@sairon.cz>
+Date: Thu, 10 Oct 2024 19:06:24 +0200
+Subject: [PATCH] mmc: meson-gx: use xtal as clock for frequencies <= 24MHz
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+The patch from Neil Armstrong that aims to fix stability on some eMMCs
+by capping the clock to 24 MHz has a nasty side effect that it breaks
+communication with some Kingston eMMCs. After the patch, the clock rates
+that are applied are not precisely 24 MHz but values that can correspond
+to the PLL divider applied to the 1G clock, which yields 23,809,523 Hz
+(divider 42) after the cap.
+
+Testing shows that setting this eMMC clock frequency, or 23,255,813 Hz
+(divider 43), always leads to mmc_select_mode_and_width() failing. For
+whatever reason, only these two values are problematic, setting it to
+use divider <42 or >43 (even after the cap is returned to 100M), the
+eMMC is probed correctly. It's not clear if clock quality is the issue
+or if there's some other reason why Kingston doesn't like these two
+values. However, by changing the clock source to xtal, we can achieve
+precise 24 MHz which seems to be fine for Kingston and the difference
+from the problematic frequencies is negligible, hopefully not affecting
+other eMMCs that were happy with the ~23.8M speed. Since all values from
+mmc_mode2freq were effectively set to 24M, no other speeds have been
+used with the previous patch.
+
+Ultimately, coming up with a proper fix for the issue with uncapped
+frequency would be the best, however, I am not able to reproduce it so
+going this way might be easier now.
+
+Signed-off-by: Jan Čermák <sairon@sairon.cz>
+---
+ drivers/mmc/meson_gx_mmc.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/mmc/meson_gx_mmc.c b/drivers/mmc/meson_gx_mmc.c
+index 6ded4b619b..88a80b2985 100644
+--- a/drivers/mmc/meson_gx_mmc.c
++++ b/drivers/mmc/meson_gx_mmc.c
+@@ -52,8 +52,12 @@ static void meson_mmc_config_clock(struct mmc *mmc)
+ 
+ 	/* TOFIX This should use the proper clock taken from DT */
+ 
+-	/* 1GHz / CLK_MAX_DIV = 15,9 MHz */
+-	if (mmc->clock > 16000000) {
++	/*
++	 * With f_max=24M, we almost always end up with 24M anyway and
++	 * granularity between 24M and 12M isn't needed, so try to use
++	 * xtal clock source directly.
++	 */
++	if (mmc->clock > SD_EMMC_CLKSRC_24M) {
+ 		clk = SD_EMMC_CLKSRC_DIV2;
+ 		clk_src = CLK_SRC_DIV2;
+ 	} else {
