@@ -1,6 +1,8 @@
 #!/bin/sh
 set -e
 
+channel=$1
+
 APPARMOR_URL="https://version.home-assistant.io/apparmor.txt"
 
 # Make sure we can talk to the Docker daemon
@@ -27,3 +29,5 @@ docker tag "${supervisor}" "ghcr.io/home-assistant/${arch}-hassio-supervisor:lat
 # Setup AppArmor
 mkdir -p "/data/supervisor/apparmor"
 wget -O "/data/supervisor/apparmor/hassio-supervisor" "${APPARMOR_URL}"
+
+echo "{ \"channel\": \"${channel}\" }" > /data/supervisor/updater.json

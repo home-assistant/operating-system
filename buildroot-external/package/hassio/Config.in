@@ -18,4 +18,10 @@ config BR2_PACKAGE_HASSIO_MACHINE
 	help
 	  Machine to pull containers for (used for landing page).
 
+config BR2_PACKAGE_HASSIO_CHANNEL
+	string "Default Channel"
+	default "stable"
+	help
+	  Channel to use by default.
+
 endif
