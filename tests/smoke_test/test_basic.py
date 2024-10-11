@@ -71,3 +71,8 @@ def test_supervisor_logs(shell):
 def test_systemctl_status(shell):
     output = shell.run_check("systemctl --no-pager -l status -a || true")
     _LOGGER.info("%s", "\n".join(output))
+
+@pytest.mark.dependency(depends=["test_init"])
+def test_systemctl_check_no_failed(shell):
+    output = shell.run_check("systemctl --no-pager -l list-units --state=failed")
+    assert "0 loaded units listed." in output, f"Some units failed:\n{"\n".join(output)}"

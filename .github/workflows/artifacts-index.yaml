@@ -83,11 +83,20 @@ jobs:
 
       - name: Flush CloudFlare cache
         run: |
-          curl --silent --show-error --fail -X POST \
-            "https://api.cloudflare.com/client/v4/zones/${{ secrets.CF_ZONE }}/purge_cache" \
-            -H "Authorization: Bearer ${{ secrets.CF_PURGE_TOKEN }}" \
-            -H "Content-Type: application/json" \
-            --data '{"files": [
-              "https://os-artifacts.home-assistant.io/index.html",
-              "https://os-artifacts.home-assistant.io/index.json"
-            ] }'
+          # Create purge list of all artifacts
+          jq -r '. | map("https://os-artifacts.home-assistant.io/${{ inputs.version }}/" + .) | join("\n")' < "${{ inputs.version }}.json" > purge_list
+          # Add indexes to purge list too
+          echo "https://os-artifacts.home-assistant.io/indexes/${{ inputs.version }}.json" >> purge_list
+          echo "https://os-artifacts.home-assistant.io/index.html" >> purge_list
+          echo "https://os-artifacts.home-assistant.io/index.json" >> purge_list
+          # Split to chunks of 30 files (limit of CF API)
+          split -d -l30 purge_list purge_list_chunked
+          # Convert chunked lists to JSON arrays and call CF purge API
+          for f in purge_list_chunked*; do
+            files=$(jq -R -s 'split("\n")[:-1]' < "$f")
+            curl --silent --show-error --fail -X POST \
+              "https://api.cloudflare.com/client/v4/zones/${{ secrets.CF_ZONE }}/purge_cache" \
+              -H "Authorization: Bearer ${{ secrets.CF_PURGE_TOKEN }}" \
+              -H "Content-Type: application/json" \
+              --data "{\"files\": ${files}}"
+          done
