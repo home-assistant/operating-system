@@ -11,7 +11,8 @@ def _check_connectivity(shell, *, connected):
     for target in ["home-assistant.io", "1.1.1.1"]:
         try:
             output = shell.run_check(f"ping {target}")
-            if f"{target} is alive!" in output:
+           # if f"{target} is alive!" in output:
+            if "bytes from" in output or "time=" in output:
                 if connected:
                     return True
                 else:
