@@ -32,24 +32,36 @@ def test_start_supervisor(shell, shell_json):
         shell.run_check("docker inspect --format='{{.NetworkSettings.IPAddress}}' hassio_supervisor")
     )
 
-    while True:
-        retries = 0
-      max_retries = 300  # example: wait for max 300 seconds
-       while retries < max_retries:
-    if check_container_running("homeassistant") and check_container_running("hassio_supervisor"):
-        break
-    retries += 1
-    sleep(1)
-else:
-    raise TimeoutError("Containers did not start in time")
-        
-        try:
-            if shell_json(f"curl -sSL http://{supervisor_ip}/supervisor/ping").get("result") == "ok":
-                break
-        except ExecutionError:
-            pass  # avoid failure when the container is restarting
-
-        sleep(1)
+    MAX_WAIT_TIME = 120  # 2 minutes should be sufficient
++    retries = 0
++    # Wait for containers to start
++    while retries < MAX_WAIT_TIME:
++        if check_container_running("homeassistant") and check_container_running("hassio_supervisor"):
++            break
++        retries += 1
++        sleep(1)
++    else:
++        raise TimeoutError(
++            f"Containers did not start within {MAX_WAIT_TIME} seconds. "
++            "Container status: "
++            f"homeassistant={check_container_running('homeassistant')}, "
++            f"hassio_supervisor={check_container_running('hassio_supervisor')}"
++        )
++
++    # Wait for supervisor ping
++    retries = 0
++    while retries < MAX_WAIT_TIME:
++        try:
++            if shell_json(f"curl -sSL http://{supervisor_ip}/supervisor/ping").get("result") == "ok":
++                break
++        except ExecutionError:
++            pass  # avoid failure when the container is restarting
++        retries += 1
++        sleep(1)
++    else:
++        raise TimeoutError(
++            f"Supervisor ping did not respond within {MAX_WAIT_TIME} seconds"
++        )
 
 
 @pytest.mark.dependency(depends=["test_start_supervisor"])
