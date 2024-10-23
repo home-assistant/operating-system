@@ -43,6 +43,8 @@ def test_ha_runs_offline(shell):
             if "Supervisor" in " ".join(nm_conns):
                 break
         sleep(1)
+else:
+    raise AssertionError("supervisor network creation timed out")
 
     # To simulate situation where HAOS is not connected to internet, we need to add
     # default gateway to the supervisor connection. So we add a default route to
