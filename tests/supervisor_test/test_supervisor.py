@@ -33,6 +33,16 @@ def test_start_supervisor(shell, shell_json):
     )
 
     while True:
+        retries = 0
+      max_retries = 300  # example: wait for max 300 seconds
+       while retries < max_retries:
+    if check_container_running("homeassistant") and check_container_running("hassio_supervisor"):
+        break
+    retries += 1
+    sleep(1)
+else:
+    raise TimeoutError("Containers did not start in time")
+        
         try:
             if shell_json(f"curl -sSL http://{supervisor_ip}/supervisor/ping").get("result") == "ok":
                 break
