@@ -1,0 +1,145 @@
+From 81100e760c8ed3d697696de5353d51e8e1af2be4 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Jan=20=C4=8Cerm=C3=A1k?= <sairon@sairon.cz>
+Date: Mon, 30 Sep 2024 17:56:45 +0200
+Subject: [PATCH] reset: reset-brcmstb: Add Broadcom STB reset controller
+ driver
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Add driver for the brcm,brcmstb-reset compatible used on RPi 5 by
+porting the upstream Linux driver. Assert/deassert functions are adapted
+to the U-Boot way of handling individual resets' IDs.
+
+Signed-off-by: Jan Čermák <sairon@sairon.cz>
+---
+ drivers/reset/Kconfig         |  6 +++
+ drivers/reset/Makefile        |  1 +
+ drivers/reset/reset-brcmstb.c | 89 +++++++++++++++++++++++++++++++++++
+ 3 files changed, 96 insertions(+)
+ create mode 100644 drivers/reset/reset-brcmstb.c
+
+diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
+index fe5c1214f5..10a364b2a8 100644
+--- a/drivers/reset/Kconfig
++++ b/drivers/reset/Kconfig
+@@ -63,6 +63,12 @@ config RESET_BCM6345
+ 	help
+ 	  Support reset controller on BCM6345.
+ 
++config RESET_BRCMSTB
++	bool "Broadcom STB reset controller"
++	help
++	  This enables the reset controller driver for Broadcom STB SoCs using
++	  a SUN_TOP_CTRL_SW_INIT style controller.
++
+ config RESET_UNIPHIER
+ 	bool "Reset controller driver for UniPhier SoCs"
+ 	depends on ARCH_UNIPHIER
+diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
+index 2eb639e4a6..d7e9ac1a88 100644
+--- a/drivers/reset/Makefile
++++ b/drivers/reset/Makefile
+@@ -13,6 +13,7 @@ obj-$(CONFIG_TEGRA186_RESET) += tegra186-reset.o
+ obj-$(CONFIG_RESET_TI_SCI) += reset-ti-sci.o
+ obj-$(CONFIG_RESET_HSDK) += reset-hsdk.o
+ obj-$(CONFIG_RESET_BCM6345) += reset-bcm6345.o
++obj-$(CONFIG_RESET_BRCMSTB) += reset-brcmstb.o
+ obj-$(CONFIG_RESET_UNIPHIER) += reset-uniphier.o
+ obj-$(CONFIG_RESET_AST2500) += reset-ast2500.o
+ obj-$(CONFIG_RESET_AST2600) += reset-ast2600.o
+diff --git a/drivers/reset/reset-brcmstb.c b/drivers/reset/reset-brcmstb.c
+new file mode 100644
+index 0000000000..c0aef5f124
+--- /dev/null
++++ b/drivers/reset/reset-brcmstb.c
+@@ -0,0 +1,89 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Broadcom STB generic reset controller for SW_INIT style reset controller
++ *
++ * Based on upstream Linux driver:
++ * drivers/reset/reset-brcmstb.c
++ * Author: Florian Fainelli <f.fainelli@gmail.com>
++ * Copyright (C) 2018 Broadcom
++ */
++
++#include <dm.h>
++#include <errno.h>
++#include <log.h>
++#include <malloc.h>
++#include <reset-uclass.h>
++#include <asm/io.h>
++#include <linux/bitops.h>
++#include <linux/delay.h>
++
++#define SW_INIT_SET		0x00
++#define SW_INIT_CLEAR		0x04
++#define SW_INIT_STATUS		0x08
++
++#define SW_INIT_BIT(id)		BIT((id) & 0x1f)
++#define SW_INIT_BANK(id)	((id) >> 5)
++
++/* A full bank contains extra registers that we are not utilizing but still
++ * qualify as a single bank.
++ */
++#define SW_INIT_BANK_SIZE	0x18
++
++struct brcmstb_reset_priv {
++	void __iomem *base;
++};
++
++static int brcmstb_reset_assert(struct reset_ctl *rst)
++{
++	unsigned int off = SW_INIT_BANK(rst->id) * SW_INIT_BANK_SIZE;
++	struct brcmstb_reset_priv *priv = dev_get_priv(rst->dev);
++
++	writel_relaxed(SW_INIT_BIT(rst->id), priv->base + off + SW_INIT_SET);
++
++	return 0;
++}
++
++static int brcmstb_reset_deassert(struct reset_ctl *rst)
++{
++  unsigned int off = SW_INIT_BANK(rst->id) * SW_INIT_BANK_SIZE;
++	struct brcmstb_reset_priv *priv = dev_get_priv(rst->dev);
++
++	writel_relaxed(SW_INIT_BIT(rst->id), priv->base + off + SW_INIT_CLEAR);
++	/* Maximum reset delay after de-asserting a line and seeing block
++	* operation is typically 14us for the worst case, build some slack
++	* here.
++	*/
++	udelay(200);
++
++  return 0;
++}
++
++struct reset_ops brcmstb_reset_reset_ops = {
++	.rst_assert = brcmstb_reset_assert,
++	.rst_deassert = brcmstb_reset_deassert,
++};
++
++static const struct udevice_id brcmstb_reset_ids[] = {
++	{ .compatible = "brcm,brcmstb-reset" },
++	{ /* sentinel */ }
++};
++
++static int brcmstb_reset_probe(struct udevice *dev)
++{
++	struct brcmstb_reset_priv *priv = dev_get_priv(dev);
++
++	priv->base = dev_remap_addr(dev);
++	if (!priv->base)
++		return -EINVAL;
++
++	return 0;
++}
++
++U_BOOT_DRIVER(brcmstb_reset) = {
++	.name = "brcmstb-reset",
++	.id = UCLASS_RESET,
++	.of_match = brcmstb_reset_ids,
++	.ops = &brcmstb_reset_reset_ops,
++	.probe = brcmstb_reset_probe,
++	.priv_auto	= sizeof(struct brcmstb_reset_priv),
++};

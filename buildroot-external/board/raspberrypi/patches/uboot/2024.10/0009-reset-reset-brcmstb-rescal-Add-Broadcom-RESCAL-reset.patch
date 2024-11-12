@@ -1,0 +1,158 @@
+From eb7dd5b1afa4831e6eca2edb2650bd9db9a6d6eb Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Jan=20=C4=8Cerm=C3=A1k?= <sairon@sairon.cz>
+Date: Mon, 30 Sep 2024 18:09:29 +0200
+Subject: [PATCH] reset: reset-brcmstb-rescal: Add Broadcom RESCAL reset
+ controller driver
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Add driver for brcm,bcm7216-pcie-sata-rescal compatible, based on
+upstream Linux driver. Unlike most of other reset controllers, RESCAL
+takes no reset IDs, so a custom of_xlate function is used that makes the
+driver slightly different from the original implementation.
+
+Signed-off-by: Jan Čermák <sairon@sairon.cz>
+---
+ drivers/reset/Kconfig                |   6 ++
+ drivers/reset/Makefile               |   1 +
+ drivers/reset/reset-brcmstb-rescal.c | 101 +++++++++++++++++++++++++++
+ 3 files changed, 108 insertions(+)
+ create mode 100644 drivers/reset/reset-brcmstb-rescal.c
+
+diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
+index 10a364b2a8..fd1eb05a41 100644
+--- a/drivers/reset/Kconfig
++++ b/drivers/reset/Kconfig
+@@ -69,6 +69,12 @@ config RESET_BRCMSTB
+ 	  This enables the reset controller driver for Broadcom STB SoCs using
+ 	  a SUN_TOP_CTRL_SW_INIT style controller.
+ 
++config RESET_BRCMSTB_RESCAL
++	bool "Broadcom STB RESCAL reset controller"
++	help
++	  This enables the RESCAL reset controller found on BCM2712 and some other
++	  Broadcom STB SoCs (BCM7216).
++
+ config RESET_UNIPHIER
+ 	bool "Reset controller driver for UniPhier SoCs"
+ 	depends on ARCH_UNIPHIER
+diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
+index d7e9ac1a88..45cf2f1b4d 100644
+--- a/drivers/reset/Makefile
++++ b/drivers/reset/Makefile
+@@ -14,6 +14,7 @@ obj-$(CONFIG_RESET_TI_SCI) += reset-ti-sci.o
+ obj-$(CONFIG_RESET_HSDK) += reset-hsdk.o
+ obj-$(CONFIG_RESET_BCM6345) += reset-bcm6345.o
+ obj-$(CONFIG_RESET_BRCMSTB) += reset-brcmstb.o
++obj-$(CONFIG_RESET_BRCMSTB_RESCAL) += reset-brcmstb-rescal.o
+ obj-$(CONFIG_RESET_UNIPHIER) += reset-uniphier.o
+ obj-$(CONFIG_RESET_AST2500) += reset-ast2500.o
+ obj-$(CONFIG_RESET_AST2600) += reset-ast2600.o
+diff --git a/drivers/reset/reset-brcmstb-rescal.c b/drivers/reset/reset-brcmstb-rescal.c
+new file mode 100644
+index 0000000000..37096bb9ff
+--- /dev/null
++++ b/drivers/reset/reset-brcmstb-rescal.c
+@@ -0,0 +1,101 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Broadcom RESCAL reset controller, based on upstream Linux driver:
++ * drivers/reset/reset-brcmstb-rescal.c
++ *
++ * Copyright (C) 2018-2020 Broadcom
++ */
++
++#include <dm.h>
++#include <errno.h>
++#include <malloc.h>
++#include <reset-uclass.h>
++#include <asm/io.h>
++#include <linux/bitops.h>
++#include <linux/delay.h>
++#include <linux/iopoll.h>
++
++#define BRCM_RESCAL_START	0x0
++#define  BRCM_RESCAL_START_BIT	BIT(0)
++#define BRCM_RESCAL_CTRL	0x4
++#define BRCM_RESCAL_STATUS	0x8
++#define  BRCM_RESCAL_STATUS_BIT	BIT(0)
++
++struct brcm_rescal_reset_priv {
++	void __iomem *base;
++};
++
++static int brcm_rescal_reset_assert(struct reset_ctl *rst)
++{
++	return 0;
++}
++
++static int brcm_rescal_reset_deassert(struct reset_ctl *rst)
++{
++	struct brcm_rescal_reset_priv *priv = dev_get_priv(rst->dev);
++	u32 reg;
++	int ret;
++
++	reg = readl(priv->base + BRCM_RESCAL_START);
++	writel(reg | BRCM_RESCAL_START_BIT, priv->base + BRCM_RESCAL_START);
++	reg = readl(priv->base + BRCM_RESCAL_START);
++	if (!(reg & BRCM_RESCAL_START_BIT)) {
++		printf("failed to start SATA/PCIe rescal\n");
++		return -EIO;
++	}
++
++	ret = read_poll_timeout(readl, reg, (reg & BRCM_RESCAL_STATUS_BIT),
++				100, 1000, priv->base + BRCM_RESCAL_STATUS);
++	if (ret) {
++		printf("time out on SATA/PCIe rescal\n");
++		return ret;
++	}
++
++	reg = readl(priv->base + BRCM_RESCAL_START);
++	writel(reg & ~BRCM_RESCAL_START_BIT, priv->base + BRCM_RESCAL_START);
++
++	return ret;
++}
++
++static int brcm_rescal_reset_of_xlate(struct reset_ctl *reset_ctl,
++				      struct ofnode_phandle_args *args)
++{
++	/* Rescal takes no parameters. */
++	if (args->args_count != 0) {
++		printf("Invalid args_count: %d\n", args->args_count);
++		return -EINVAL;
++	}
++
++	return 0;
++}
++
++struct reset_ops brcm_rescal_reset_reset_ops = {
++	.rst_assert = brcm_rescal_reset_assert,
++	.rst_deassert = brcm_rescal_reset_deassert,
++	.of_xlate = brcm_rescal_reset_of_xlate,
++};
++
++static const struct udevice_id brcm_rescal_reset_ids[] = {
++	{ .compatible = "brcm,bcm7216-pcie-sata-rescal" },
++	{ /* sentinel */ }
++};
++
++static int brcm_rescal_reset_probe(struct udevice *dev)
++{
++	struct brcm_rescal_reset_priv *priv = dev_get_priv(dev);
++
++	priv->base = dev_remap_addr(dev);
++	if (!priv->base)
++		return -EINVAL;
++
++	return 0;
++}
++
++U_BOOT_DRIVER(brcmstb_rescal_reset) = {
++	.name = "brcm-rescal-reset",
++	.id = UCLASS_RESET,
++	.of_match = brcm_rescal_reset_ids,
++	.ops = &brcm_rescal_reset_reset_ops,
++	.probe = brcm_rescal_reset_probe,
++	.priv_auto	= sizeof(struct brcm_rescal_reset_priv),
++};

@@ -1,0 +1,386 @@
+From 6e16ad9e01d746f78f8a2391dec9aae3f39a96e5 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Jan=20=C4=8Cerm=C3=A1k?= <sairon@sairon.cz>
+Date: Mon, 30 Sep 2024 18:13:09 +0200
+Subject: [PATCH] pci: pcie-brcmstb: Add basic support for BCM2712 PCIe
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Add support for BCM2712 (Raspberry Pi 5) by adapting the Raspberry Pi's
+dowstream kernel driver. Apart from resets handled by dedicated reset
+controllers, there are couple of hacks that were needed to be ported
+over from the reference implementation, most notably the function
+adjusting the controller's reference clock and the BAR2 config address
+remapping. None of these seem to be present in the upstream kernel
+driver so eventually it'd be worthwile to check what does
+U-Boot/downstream do differently that it's not needed in upstream (and
+check that upstream really works with BCM2712 - it's still not merged
+yet [1]).
+
+Methods for handling the resets and address of the relocated hard debug
+register are defined in new driver data structures that are implemented
+in a similar fashion as in upstream/downstream Linux drivers.
+
+[1] https://lore.kernel.org/lkml/20240910151845.17308-1-svarbanov@suse.de/
+
+Signed-off-by: Jan Čermák <sairon@sairon.cz>
+---
+ arch/arm/mach-bcm283x/init.c |  10 +-
+ drivers/pci/pcie_brcmstb.c   | 191 +++++++++++++++++++++++++++++++++--
+ 2 files changed, 189 insertions(+), 12 deletions(-)
+
+diff --git a/arch/arm/mach-bcm283x/init.c b/arch/arm/mach-bcm283x/init.c
+index 1b459707bc..2d34d67075 100644
+--- a/arch/arm/mach-bcm283x/init.c
++++ b/arch/arm/mach-bcm283x/init.c
+@@ -18,7 +18,7 @@
+ #ifdef CONFIG_ARM64
+ #include <asm/armv8/mmu.h>
+ 
+-#define MEM_MAP_MAX_ENTRIES (4)
++#define MEM_MAP_MAX_ENTRIES (5)
+ 
+ static struct mm_region bcm283x_mem_map[MEM_MAP_MAX_ENTRIES] = {
+ 	{
+@@ -83,6 +83,14 @@ static struct mm_region bcm2712_mem_map[MEM_MAP_MAX_ENTRIES] = {
+ 		.attrs = PTE_BLOCK_MEMTYPE(MT_DEVICE_NGNRNE) |
+ 			 PTE_BLOCK_NON_SHARE |
+ 			 PTE_BLOCK_PXN | PTE_BLOCK_UXN
++	}, {
++		/* PCIe1 memory region */
++		.virt = 0x1B80000000UL,
++		.phys = 0x1B80000000UL,
++		.size = 0x0000400000UL,
++		.attrs = PTE_BLOCK_MEMTYPE(MT_DEVICE_NGNRNE) |
++			PTE_BLOCK_NON_SHARE |
++			PTE_BLOCK_PXN | PTE_BLOCK_UXN
+ 	}, {
+ 		/* SoC bus */
+ 		.virt = 0x107c000000UL,
+diff --git a/drivers/pci/pcie_brcmstb.c b/drivers/pci/pcie_brcmstb.c
+index f978c64365..df3e177629 100644
+--- a/drivers/pci/pcie_brcmstb.c
++++ b/drivers/pci/pcie_brcmstb.c
+@@ -16,6 +16,7 @@
+ #include <dm.h>
+ #include <dm/ofnode.h>
+ #include <pci.h>
++#include <reset.h>
+ #include <asm/io.h>
+ #include <linux/bitfield.h>
+ #include <linux/log2.h>
+@@ -39,6 +40,10 @@
+ #define PCIE_RC_DL_MDIO_WR_DATA				0x1104
+ #define PCIE_RC_DL_MDIO_RD_DATA				0x1108
+ 
++#define PCIE_RC_PL_PHY_CTL_15				0x184c
++#define  PCIE_RC_PL_PHY_CTL_15_DIS_PLL_PD_MASK		0x400000
++#define  PCIE_RC_PL_PHY_CTL_15_PM_CLK_PERIOD_MASK	0xff
++
+ #define PCIE_MISC_MISC_CTRL				0x4008
+ #define  MISC_CTRL_SCB_ACCESS_EN_MASK			0x1000
+ #define  MISC_CTRL_CFG_READ_UR_MODE_MASK		0x2000
+@@ -64,6 +69,10 @@
+ #define PCIE_MISC_RC_BAR3_CONFIG_LO			0x403c
+ #define  RC_BAR3_CONFIG_LO_SIZE_MASK			0x1f
+ 
++#define PCIE_MISC_PCIE_CTRL				0x4064
++#define  PCIE_MISC_PCIE_CTRL_PCIE_L23_REQUEST_MASK	0x1
++#define PCIE_MISC_PCIE_CTRL_PCIE_PERSTB_MASK		0x4
++
+ #define PCIE_MISC_PCIE_STATUS				0x4068
+ #define  STATUS_PCIE_PORT_MASK				0x80
+ #define  STATUS_PCIE_PORT_SHIFT				7
+@@ -89,9 +98,11 @@
+ #define PCIE_MEM_WIN0_LIMIT_HI(win)	\
+ 	 PCIE_MISC_CPU_2_PCIE_MEM_WIN0_LIMIT_HI + ((win) * 8)
+ 
+-#define PCIE_MISC_HARD_PCIE_HARD_DEBUG			0x4204
+ #define  PCIE_HARD_DEBUG_SERDES_IDDQ_MASK		0x08000000
+ 
++#define PCIE_MISC_UBUS_BAR2_CONFIG_REMAP		0x40b4
++#define  PCIE_MISC_UBUS_BAR2_CONFIG_REMAP_ACCESS_ENABLE_MASK	BIT(0)
++
+ #define PCIE_MSI_INTR2_CLR				0x4508
+ #define PCIE_MSI_INTR2_MASK_SET				0x4510
+ 
+@@ -130,6 +141,26 @@
+ #define SSC_STATUS_PLL_LOCK_MASK			0x800
+ #define SSC_STATUS_PLL_LOCK_SHIFT			11
+ 
++#define HARD_DEBUG(pcie)		((pcie)->reg_offsets[PCIE_HARD_DEBUG])
++
++struct brcm_pcie;
++
++enum {
++	PCIE_HARD_DEBUG,
++};
++
++enum pcie_soc_base {
++	BCM2711,
++	BCM2712,
++};
++
++struct pcie_cfg_data {
++	const int *offsets;
++	const enum pcie_soc_base soc_base;
++	int (*perst_set)(struct brcm_pcie *pcie, u32 val);
++	int (*bridge_sw_init_set)(struct brcm_pcie *pcie, u32 val);
++};
++
+ /**
+  * struct brcm_pcie - the PCIe controller state
+  * @base: Base address of memory mapped IO registers of the controller
+@@ -140,8 +171,15 @@
+ struct brcm_pcie {
+ 	void __iomem		*base;
+ 
++	const int		*reg_offsets;
++	enum pcie_soc_base	soc_base;
+ 	int			gen;
+ 	bool			ssc;
++
++	struct reset_ctl	*rescal;
++	struct reset_ctl	*bridge_reset;
++	int			(*perst_set)(struct brcm_pcie *pcie, u32 val);
++	int			(*bridge_sw_init_set)(struct brcm_pcie *pcie, u32 val);
+ };
+ 
+ /**
+@@ -367,6 +405,27 @@ static int brcm_pcie_set_ssc(void __iomem *base)
+ 	return ssc && pll ? 0 : -EIO;
+ }
+ 
++static void brcm_pcie_munge_pll(struct brcm_pcie *pcie)
++{
++	/* Upstream Linux doesn't touch these so maybe there's other way */
++
++	u32 tmp;
++	int i;
++	u8 regs[] =  { 0x16,   0x17,   0x18,   0x19,   0x1b,   0x1c,   0x1e };
++	u16 data[] = { 0x50b9, 0xbda1, 0x0094, 0x97b4, 0x5030, 0x5030, 0x0007 };
++
++	brcm_pcie_mdio_write(pcie->base, MDIO_PORT0, SET_ADDR_OFFSET,
++			     0x1600);
++	for (i = 0; i < ARRAY_SIZE(regs); i++) {
++		brcm_pcie_mdio_read(pcie->base, MDIO_PORT0, regs[i], &tmp);
++	}
++	for (i = 0; i < ARRAY_SIZE(regs); i++) {
++		brcm_pcie_mdio_write(pcie->base, MDIO_PORT0, regs[i], data[i]);
++		brcm_pcie_mdio_read(pcie->base, MDIO_PORT0, regs[i], &tmp);
++	}
++	udelay(200);
++}
++
+ /**
+  * brcm_pcie_set_gen() - Limits operation to a specific generation (1, 2 or 3)
+  * @pcie: pointer to the PCIe controller state
+@@ -426,6 +485,52 @@ static void brcm_pcie_set_outbound_win(struct brcm_pcie *pcie,
+ 	writel(tmp, base + PCIE_MEM_WIN0_LIMIT_HI(win));
+ }
+ 
++static int brcm_pcie_perst_set_generic(struct brcm_pcie *pcie, u32 val)
++{
++	if (val)
++		setbits_le32(pcie->base + PCIE_RGR1_SW_INIT_1, RGR1_SW_INIT_1_PERST_MASK);
++	else
++		clrbits_le32(pcie->base + PCIE_RGR1_SW_INIT_1, RGR1_SW_INIT_1_PERST_MASK);
++
++	return 0;
++}
++
++static int brcm_pcie_bridge_sw_init_set_generic(struct brcm_pcie *pcie, u32 val)
++{
++	int ret = 0;
++
++	if (pcie->bridge_reset) {
++		if (val)
++			ret = reset_assert(pcie->bridge_reset);
++		else
++			ret = reset_deassert(pcie->bridge_reset);
++
++		if (ret)
++			printf("PCIe BRCM: failed to %s bridge reset: err=%d\n",
++			       val ? "assert" : "deassert", ret);
++
++		return ret;
++	}
++
++	if (val)
++		setbits_le32(pcie->base + PCIE_RGR1_SW_INIT_1, RGR1_SW_INIT_1_INIT_MASK);
++	else
++		clrbits_le32(pcie->base + PCIE_RGR1_SW_INIT_1, RGR1_SW_INIT_1_INIT_MASK);
++
++	return ret;
++}
++
++static int brcm_pcie_perst_set_2712(struct brcm_pcie *pcie, u32 val)
++{
++	/* Perst bit has moved and assert value is 0 */
++	if (val)
++		clrbits_le32(pcie->base + PCIE_MISC_PCIE_CTRL, PCIE_MISC_PCIE_CTRL_PCIE_PERSTB_MASK);
++	else
++		setbits_le32(pcie->base + PCIE_MISC_PCIE_CTRL, PCIE_MISC_PCIE_CTRL_PCIE_PERSTB_MASK);
++
++	return 0;
++}
++
+ static int brcm_pcie_probe(struct udevice *dev)
+ {
+ 	struct udevice *ctlr = pci_get_controller(dev);
+@@ -441,13 +546,17 @@ static int brcm_pcie_probe(struct udevice *dev)
+ 	u16 nlw, cls, lnksta;
+ 	u32 tmp;
+ 
++	if (pcie->rescal)
++		reset_deassert(pcie->rescal);
++
+ 	/*
+ 	 * Reset the bridge, assert the fundamental reset. Note for some SoCs,
+ 	 * e.g. BCM7278, the fundamental reset should not be asserted here.
+ 	 * This will need to be changed when support for other SoCs is added.
+ 	 */
+-	setbits_le32(base + PCIE_RGR1_SW_INIT_1,
+-		     RGR1_SW_INIT_1_INIT_MASK | RGR1_SW_INIT_1_PERST_MASK);
++	pcie->perst_set(pcie, 1);
++	pcie->bridge_sw_init_set(pcie, 1);
++
+ 	/*
+ 	 * The delay is a safety precaution to preclude the reset signal
+ 	 * from looking like a glitch.
+@@ -455,14 +564,26 @@ static int brcm_pcie_probe(struct udevice *dev)
+ 	udelay(100);
+ 
+ 	/* Take the bridge out of reset */
+-	clrbits_le32(base + PCIE_RGR1_SW_INIT_1, RGR1_SW_INIT_1_INIT_MASK);
++	pcie->bridge_sw_init_set(pcie, 0);
+ 
+-	clrbits_le32(base + PCIE_MISC_HARD_PCIE_HARD_DEBUG,
++	clrbits_le32(base + HARD_DEBUG(pcie),
+ 		     PCIE_HARD_DEBUG_SERDES_IDDQ_MASK);
+ 
+ 	/* Wait for SerDes to be stable */
+ 	udelay(100);
+ 
++	if (pcie->soc_base == BCM2712) {
++		/* Hack from RPi downstream, unable to probe without it */
++		/* Allow a 54MHz (xosc) refclk source */
++		brcm_pcie_munge_pll(pcie);
++		/* Fix for L1SS errata */
++		tmp = readl(base + PCIE_RC_PL_PHY_CTL_15);
++		tmp &= ~PCIE_RC_PL_PHY_CTL_15_PM_CLK_PERIOD_MASK;
++		/* PM clock period is 18.52ns (round down) */
++		tmp |= 0x12;
++		writel(tmp, base + PCIE_RC_PL_PHY_CTL_15);
++	}
++
+ 	/* Set SCB_MAX_BURST_SIZE, CFG_READ_UR_MODE, SCB_ACCESS_EN */
+ 	clrsetbits_le32(base + PCIE_MISC_MISC_CTRL,
+ 			MISC_CTRL_MAX_BURST_SIZE_MASK,
+@@ -481,6 +602,13 @@ static int brcm_pcie_probe(struct udevice *dev)
+ 	writel(upper_32_bits(rc_bar2_offset),
+ 	       base + PCIE_MISC_RC_BAR2_CONFIG_HI);
+ 
++	if (pcie->soc_base == BCM2712) {
++		/* RPi downstream kernel does do this also for 2711 - is it okay?  */
++		tmp = readl(base + PCIE_MISC_UBUS_BAR2_CONFIG_REMAP);
++		u32p_replace_bits(&tmp, 1, PCIE_MISC_UBUS_BAR2_CONFIG_REMAP_ACCESS_ENABLE_MASK);
++		writel(tmp, base + PCIE_MISC_UBUS_BAR2_CONFIG_REMAP);
++	}
++
+ 	scb_size_val = rc_bar2_size ?
+ 		       ilog2(rc_bar2_size) - 15 : 0xf; /* 0xf is 1GB */
+ 
+@@ -507,8 +635,7 @@ static int brcm_pcie_probe(struct udevice *dev)
+ 		brcm_pcie_set_gen(pcie, pcie->gen);
+ 
+ 	/* Unassert the fundamental reset */
+-	clrbits_le32(pcie->base + PCIE_RGR1_SW_INIT_1,
+-		     RGR1_SW_INIT_1_PERST_MASK);
++	pcie->perst_set(pcie, 0);
+ 
+ 	/*
+ 	 * Wait for 100ms after PERST# deassertion; see PCIe CEM specification
+@@ -595,20 +722,23 @@ static int brcm_pcie_remove(struct udevice *dev)
+ 	void __iomem *base = pcie->base;
+ 
+ 	/* Assert fundamental reset */
+-	setbits_le32(base + PCIE_RGR1_SW_INIT_1, RGR1_SW_INIT_1_PERST_MASK);
++	pcie->perst_set(pcie, 1);
+ 
+ 	/* Turn off SerDes */
+-	setbits_le32(base + PCIE_MISC_HARD_PCIE_HARD_DEBUG,
++	setbits_le32(base + HARD_DEBUG(pcie),
+ 		     PCIE_HARD_DEBUG_SERDES_IDDQ_MASK);
+ 
+ 	/* Shutdown bridge */
+-	setbits_le32(base + PCIE_RGR1_SW_INIT_1, RGR1_SW_INIT_1_INIT_MASK);
++	/* On BCM2712 it will block access to the RESCAL, so don't do it. */
++	if (pcie->soc_base != BCM2712)
++		pcie->bridge_sw_init_set(pcie, 1);
+ 
+ 	return 0;
+ }
+ 
+ static int brcm_pcie_of_to_plat(struct udevice *dev)
+ {
++	const struct pcie_cfg_data *data;
+ 	struct brcm_pcie *pcie = dev_get_priv(dev);
+ 	ofnode dn = dev_ofnode(dev);
+ 	u32 max_link_speed;
+@@ -619,6 +749,22 @@ static int brcm_pcie_of_to_plat(struct udevice *dev)
+ 	if (!pcie->base)
+ 		return -EINVAL;
+ 
++	data = (struct pcie_cfg_data *)dev_get_driver_data(dev);
++
++	pcie->soc_base = data->soc_base;
++	pcie->reg_offsets = data->offsets;
++	pcie->perst_set = data->perst_set;
++	pcie->bridge_sw_init_set = data->bridge_sw_init_set;
++
++	pcie->rescal = devm_reset_control_get_optional(dev, "rescal");
++	if (IS_ERR(pcie->rescal)) {
++		return PTR_ERR(pcie->rescal);
++	}
++	pcie->bridge_reset = devm_reset_control_get_optional(dev, "bridge");
++	if (IS_ERR(pcie->bridge_reset)) {
++		return PTR_ERR(pcie->bridge_reset);
++	}
++
+ 	pcie->ssc = ofnode_read_bool(dn, "brcm,enable-ssc");
+ 
+ 	ret = ofnode_read_u32(dn, "max-link-speed", &max_link_speed);
+@@ -635,8 +781,31 @@ static const struct dm_pci_ops brcm_pcie_ops = {
+ 	.write_config	= brcm_pcie_write_config,
+ };
+ 
++static const int pcie_offsets[] = {
++	[PCIE_HARD_DEBUG]	= 0x4204,
++};
++
++static const int pcie_offsets_bcm2712[] = {
++	[PCIE_HARD_DEBUG]	= 0x4304,
++};
++
++static const struct pcie_cfg_data bcm2711_cfg = {
++	.offsets	= pcie_offsets,
++	.soc_base	= BCM2711,
++	.perst_set	= brcm_pcie_perst_set_generic,
++	.bridge_sw_init_set = brcm_pcie_bridge_sw_init_set_generic,
++};
++
++static const struct pcie_cfg_data bcm2712_cfg = {
++	.offsets	= pcie_offsets_bcm2712,
++	.soc_base	= BCM2712,
++	.perst_set	= brcm_pcie_perst_set_2712,
++	.bridge_sw_init_set = brcm_pcie_bridge_sw_init_set_generic,
++};
++
+ static const struct udevice_id brcm_pcie_ids[] = {
+-	{ .compatible = "brcm,bcm2711-pcie" },
++	{ .compatible = "brcm,bcm2711-pcie", .data = (ulong)&bcm2711_cfg },
++	{ .compatible = "brcm,bcm2712-pcie", .data = (ulong)&bcm2712_cfg },
+ 	{ }
+ };
+ 

@@ -1,0 +1,23 @@
+From 3d9bd29941ce291e44aab60be1339d4c116ebda5 Mon Sep 17 00:00:00 2001
+From: Stefan Agner <stefan@agner.ch>
+Date: Tue, 29 Dec 2020 23:34:52 +0100
+Subject: [PATCH] rpi: add NVMe to boot order
+
+The Compute Module 4 I/O Board can support a NVMe. Add NVMe to the boot
+order.
+
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+---
+ board/raspberrypi/rpi/rpi.env | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/board/raspberrypi/rpi/rpi.env b/board/raspberrypi/rpi/rpi.env
+index 30228285ed..89f6c5a839 100644
+--- a/board/raspberrypi/rpi/rpi.env
++++ b/board/raspberrypi/rpi/rpi.env
+@@ -74,4 +74,4 @@ pxefile_addr_r=0x02500000
+ fdt_addr_r=0x02600000
+ ramdisk_addr_r=0x02700000
+ 
+-boot_targets=mmc usb pxe dhcp
++boot_targets=mmc nvme usb pxe dhcp

@@ -1,0 +1,54 @@
+From d613be9ca405b2e65ac03b137cf6351b1aae7154 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Jan=20=C4=8Cerm=C3=A1k?= <sairon@sairon.cz>
+Date: Mon, 7 Oct 2024 15:13:40 +0200
+Subject: [PATCH] pci: pcie-brcmstb: HACK - add DT property for skipping device
+ probe
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+It appears that when pcie2 on RPi 5 is probed by U-Boot, the controller
+is not initialized properly and initialization of the RP1 fails when
+Linux is loaded. Add u-boot,no-probe boolean parameter that can be added
+to the node that doesn't need to be probed in U-Boot now. This would
+need to be sorted out when we actually need to control RP1 from U-Boot
+but since we only need pcie1 for NVMe now, we can ignore the other
+device.
+
+Signed-off-by: Jan Čermák <sairon@sairon.cz>
+---
+ drivers/pci/pcie_brcmstb.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/drivers/pci/pcie_brcmstb.c b/drivers/pci/pcie_brcmstb.c
+index df3e177629..02d9e7a1b3 100644
+--- a/drivers/pci/pcie_brcmstb.c
++++ b/drivers/pci/pcie_brcmstb.c
+@@ -175,6 +175,7 @@ struct brcm_pcie {
+ 	enum pcie_soc_base	soc_base;
+ 	int			gen;
+ 	bool			ssc;
++	bool			no_probe;
+ 
+ 	struct reset_ctl	*rescal;
+ 	struct reset_ctl	*bridge_reset;
+@@ -546,6 +547,11 @@ static int brcm_pcie_probe(struct udevice *dev)
+ 	u16 nlw, cls, lnksta;
+ 	u32 tmp;
+ 
++	if (pcie->no_probe) {
++		printf("PCIe BRCM: skipping probe\n");
++		return 0;
++	}
++
+ 	if (pcie->rescal)
+ 		reset_deassert(pcie->rescal);
+ 
+@@ -766,6 +772,7 @@ static int brcm_pcie_of_to_plat(struct udevice *dev)
+ 	}
+ 
+ 	pcie->ssc = ofnode_read_bool(dn, "brcm,enable-ssc");
++	pcie->no_probe = ofnode_read_bool(dn, "u-boot,no-probe");
+ 
+ 	ret = ofnode_read_u32(dn, "max-link-speed", &max_link_speed);
+ 	if (ret < 0 || max_link_speed > 4)
