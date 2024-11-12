@@ -29,7 +29,7 @@ index 10a364b2a8..fd1eb05a41 100644
  	  a SUN_TOP_CTRL_SW_INIT style controller.
  
 +config RESET_BRCMSTB_RESCAL
-+	tristate "Broadcom STB RESCAL reset controller"
++	bool "Broadcom STB RESCAL reset controller"
 +	help
 +	  This enables the RESCAL reset controller found on BCM2712 and some other
 +	  Broadcom STB SoCs (BCM7216).

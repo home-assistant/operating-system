@@ -28,7 +28,7 @@ index fe5c1214f5..10a364b2a8 100644
  	  Support reset controller on BCM6345.
  
 +config RESET_BRCMSTB
-+	tristate "Broadcom STB reset controller"
++	bool "Broadcom STB reset controller"
 +	help
 +	  This enables the reset controller driver for Broadcom STB SoCs using
 +	  a SUN_TOP_CTRL_SW_INIT style controller.
