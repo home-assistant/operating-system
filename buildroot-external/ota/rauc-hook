@@ -91,7 +91,7 @@ check_grubenv() {
 post_install_boot() {
     BOOT_MNT=/mnt/boot
 
-    # Add CM5 support for Yellow. Can be removed in HAOS 15.
+    # Add CM5 support for Yellow. Can be removed in HAOS 15. Make sure manifest.raucm.gtpl is updated.
     if [ "$RAUC_SYSTEM_COMPATIBLE" = "haos-yellow" ]; then
         # Mount boot
         if ! systemctl -q is-active mnt-boot.mount; then
