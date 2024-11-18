@@ -9,13 +9,20 @@ HASSIO_LICENSE = Apache License 2.0
 # HASSIO_LICENSE_FILES = $(BR2_EXTERNAL_HASSOS_PATH)/../LICENSE
 HASSIO_SITE = $(BR2_EXTERNAL_HASSOS_PATH)/package/hassio
 HASSIO_SITE_METHOD = local
-HASSIO_VERSION_URL = "https://version.home-assistant.io/$(BR2_PACKAGE_HASSIO_CHANNEL).json"
+HASSIO_VERSION_URL = "https://version.home-assistant.io/"
+ifeq ($(BR2_PACKAGE_HASSIO_CHANNEL_STABLE),y)
+HASSIO_VERSION_FILE = "stable.json"
+else ifeq ($(BR2_PACKAGE_HASSIO_CHANNEL_BETA),y)
+HASSIO_VERSION_FILE = "beta.json"
+else ifeq ($(BR2_PACKAGE_HASSIO_CHANNEL_DEV),y)
+HASSIO_VERSION_FILE = "dev.json"
+endif
 
 HASSIO_CONTAINER_IMAGES_ARCH = supervisor dns audio cli multicast observer core
 
 define HASSIO_CONFIGURE_CMDS
 	# Deploy only landing page for "core" by setting version to "landingpage"
-	curl -s $(HASSIO_VERSION_URL) | jq '.core = "landingpage"' > $(@D)/version.json
+	curl -s $(HASSIO_VERSION_URL)$(HASSIO_VERSION_FILE) | jq '.core = "landingpage"' > $(@D)/version.json
 endef
 
 define HASSIO_BUILD_CMDS
