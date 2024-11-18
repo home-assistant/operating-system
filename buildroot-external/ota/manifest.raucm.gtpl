@@ -11,11 +11,7 @@ hooks=install-check;
 
 [image.boot]
 filename=boot.vfat
-{{- if eq (env "ota_compatible") "haos-yellow" }}
-hooks=install;post-install;
-{{- else }}
 hooks=install;
-{{- end }}
 
 [image.kernel]
 filename=kernel.img
