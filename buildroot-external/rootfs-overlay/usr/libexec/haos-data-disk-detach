@@ -1,4 +1,5 @@
 #!/bin/sh
+# shellcheck disable=SC1091
 
 # Find root using rdev command
 rootpart=$(rdev | cut -f 1 -d ' ')
@@ -9,15 +10,53 @@ sleep 10s
 
 datapartitions=$(blkid --match-token LABEL="hassos-data" --output device)
 
-for datapart in ${datapartitions}
-do
-	datadev=$(lsblk -no pkname "${datapart}")
+. /etc/os-release
 
-	# If major does not match our root device major, it is an external data
-	# disk. Rename to make sure it gets ignored.
-	if [ "$rootdev" != "$datadev" ]
-	then
-		echo "Found external data disk device on ${datapart}, mark it disabled..."
-		e2label "${datapart}" hassos-data-dis
-	fi
-done
+disable_data_partition() {
+    e2label "${1}" hassos-data-dis
+}
+
+if [ "$VARIANT_ID" = "yellow" ]; then
+    emmc_data_partition=""
+    nvme_data_partition=""
+
+    for datapart in ${datapartitions}; do
+        datadev=$(lsblk -no pkname "${datapart}")
+
+        case "${datadev}" in
+            mmc*)
+                # Data partition on internal eMMC
+                if [ "$rootdev" = "$datadev" ]; then
+                    emmc_data_partition="${datapart}"
+                fi
+                ;;
+            nvme0*)
+                # Data partition on first NVMe disk
+                nvme_data_partition="${datapart}"
+                ;;
+            *)
+                # Disable all other data disks as normally
+                if [ "$rootdev" != "$datadev" ]; then
+                    echo "Found extra external data disk device on ${datapart}, marking it disabled..."
+                    disable_data_partition "${datapart}"
+                fi
+                ;;
+        esac
+    done
+
+    if [ -n "${emmc_data_partition}" ] && [ -n "${nvme_data_partition}" ]; then
+        echo "Found both eMMC and NVMe data disk devices, marking eMMC as disabled"
+        disable_data_partition "${emmc_data_partition}"
+    fi
+else
+    for datapart in ${datapartitions}; do
+        datadev=$(lsblk -no pkname "${datapart}")
+
+        # If major does not match our root device major, it is an external data
+        # disk. Rename to make sure it gets ignored.
+        if [ "$rootdev" != "$datadev" ]; then
+            echo "Found external data disk device on ${datapart}, marking it disabled..."
+            disable_data_partition "${datapart}"
+        fi
+    done
+fi
