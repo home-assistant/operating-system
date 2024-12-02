@@ -1,0 +1,44 @@
+From 9639a7a0f20cbd4a7b9968f6a3ede4727d96d297 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Jan=20=C4=8Cerm=C3=A1k?= <sairon@sairon.cz>
+Date: Thu, 28 Nov 2024 18:05:55 +0100
+Subject: [PATCH] ARM: dts: bcm2712: yellow: Disable SD/SDIO modes on eMMC
+ interface
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+If the eMMC card is not initialized properly (probably a side-effect of its
+usage in U-Boot), every command sent to it takes over 10 seconds before
+timeout. With SD and SDIO modes not disabled in the device tree, it takes up
+over 130 seconds before the card is reset. Disabling these two modes reduces
+this by 100 seconds.
+
+While this is added as a partial workaround for the issue, disabling these mode
+should make no harm anyway.
+
+Signed-off-by: Jan Čermák <sairon@sairon.cz>
+---
+ .../boot/dts/broadcom/bcm2712-rpi-cm5-ha-yellow.dts    | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/broadcom/bcm2712-rpi-cm5-ha-yellow.dts b/arch/arm64/boot/dts/broadcom/bcm2712-rpi-cm5-ha-yellow.dts
+index c85d608da2043..189c17fe2028e 100644
+--- a/arch/arm64/boot/dts/broadcom/bcm2712-rpi-cm5-ha-yellow.dts
++++ b/arch/arm64/boot/dts/broadcom/bcm2712-rpi-cm5-ha-yellow.dts
+@@ -851,6 +851,16 @@ &rp1_usb1 {
+ 	status = "disabled";
+ };
+ 
++/*
++ * Yellow doesn't need to use eMMC interface as SD/SDIO, disable those
++ * modes to speed up boot. This is particularly handy to work around
++ * an issue with eMMC initialization but won't harm in general.
++ */
++&sdio1 {
++	no-sdio;
++	no-sd;
++};
++
+ &leds {
+ 	led_act: led-act {
+ 		label = "act";
