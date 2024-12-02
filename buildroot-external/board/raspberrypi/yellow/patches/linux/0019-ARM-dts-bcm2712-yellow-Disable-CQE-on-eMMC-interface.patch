@@ -1,0 +1,50 @@
+From 0d9aed86fbaf650cf15ea0977e05cee2980ed054 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Jan=20=C4=8Cerm=C3=A1k?= <sairon@sairon.cz>
+Date: Mon, 2 Dec 2024 16:07:00 +0100
+Subject: [PATCH] ARM: dts: bcm2712: yellow: Disable CQE on eMMC interface
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Testing shows that enabling CQE causes random hangs on I/O operations, often
+during the swap boostrapping on the first boot:
+
+[  242.826099]       Tainted: G         C         6.6.51-haos-raspi #54
+[  242.832463] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+[  242.840429] INFO: task jbd2/mmcblk0p7-:300 blocked for more than 120 seconds.
+[  242.847572]       Tainted: G         C         6.6.51-haos-raspi #54
+[  242.853928] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+[  242.861789] INFO: task jbd2/mmcblk0p8-:344 blocked for more than 120 seconds.
+[  242.868926]       Tainted: G         C         6.6.51-haos-raspi #54
+[  242.875277] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+[  242.883149] INFO: task systemd-timesyn:569 blocked for more than 120 seconds.
+[  242.890282]       Tainted: G         C         6.6.51-haos-raspi #54
+[  242.896628] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+[  242.904522] INFO: task dockerd:606 blocked for more than 120 seconds.
+[  242.910958]       Tainted: G         C         6.6.51-haos-raspi #54
+[  242.917304] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+[  242.925200] INFO: task runc:[2:INIT]:1504 blocked for more than 120 seconds.
+[  242.932249]       Tainted: G         C         6.6.51-haos-raspi #54
+[  242.938595] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+
+This is a known issue currently for some SD cards but it hasn't been
+acknowledged for eMMC yet. By removing the CQE capability, the issue seems to
+go away.
+
+Signed-off-by: Jan Čermák <sairon@sairon.cz>
+---
+ arch/arm64/boot/dts/broadcom/bcm2712-rpi-cm5-ha-yellow.dts | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/arch/arm64/boot/dts/broadcom/bcm2712-rpi-cm5-ha-yellow.dts b/arch/arm64/boot/dts/broadcom/bcm2712-rpi-cm5-ha-yellow.dts
+index 189c17fe2028e..469d0fdc971a8 100644
+--- a/arch/arm64/boot/dts/broadcom/bcm2712-rpi-cm5-ha-yellow.dts
++++ b/arch/arm64/boot/dts/broadcom/bcm2712-rpi-cm5-ha-yellow.dts
+@@ -352,7 +352,6 @@ &sdio1 {
+ 	mmc-hs400-1_8v;
+ 	mmc-hs400-enhanced-strobe;
+ 	broken-cd;
+-	supports-cqe;
+ 	status = "okay";
+ };
+ 
