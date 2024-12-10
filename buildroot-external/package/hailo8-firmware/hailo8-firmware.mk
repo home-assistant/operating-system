@@ -13,9 +13,13 @@ define HAILO8_FIRMWARE_EXTRACT_CMDS
 	cp $(HAILO8_FIRMWARE_DL_DIR)/$(HAILO8_FIRMWARE_SOURCE) $(@D)
 endef
 
+define HAILO8_FIRMWARE_BUILD_CMDS
+	cp $(@D)/$(HAILO8_FIRMWARE_SOURCE) $(@D)/hailo8_fw.bin
+endef
+
 define HAILO8_FIRMWARE_INSTALL_TARGET_CMDS
 	$(INSTALL) -d $(TARGET_DIR)/lib/firmware/hailo
-	$(INSTALL) -m 0644 $(@D)/$(HAILO8_FIRMWARE_SOURCE) $(TARGET_DIR)/lib/firmware/hailo/
+	$(INSTALL) -m 0644 $(@D)/hailo8_fw.bin $(TARGET_DIR)/lib/firmware/hailo/
 endef
 
 $(eval $(generic-package))
