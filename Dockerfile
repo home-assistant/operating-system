@@ -47,6 +47,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         vim \
         wget \
         zip \
+	automake \
+	texinfo \
+	help2man \
     && rm -rf /var/lib/apt/lists/*
 
 # Init entry

@@ -1,0 +1,12 @@
+diff --git a/kernel/generic_raw_uart.c
+index e227333e0..99946a3ad 100644
+--- a/kernel/generic_raw_uart.c
++++ b/kernel/generic_raw_uart.c
+@@ -147,7 +147,6 @@ static int generic_raw_uart_get_device_type(struct generic_raw_uart_instance *in
+ static struct file_operations generic_raw_uart_fops =
+ {
+   .owner = THIS_MODULE,
+-  .llseek = no_llseek,
+   .read = generic_raw_uart_read,
+   .write = generic_raw_uart_write,
+   .open = generic_raw_uart_open,

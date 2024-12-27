@@ -57,7 +57,7 @@ if [ "$TYPE" = "swap" ] && [ "$SIZE" -eq "0" ]; then
 fi
 
 # Init device
-zramctl "$DEVICE" -s "$SIZE" -a lz4
+zramctl "$DEVICE" -s "$SIZE"
 
 # Swap
 if [ "$TYPE" = "swap" ]; then

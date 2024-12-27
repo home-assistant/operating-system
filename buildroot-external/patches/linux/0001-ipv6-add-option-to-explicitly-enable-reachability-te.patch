@@ -44,8 +44,8 @@ index 56525b5b95a2..916769b9a772 100644
  
  	strict |= flags & RT6_LOOKUP_F_IFACE;
  	strict |= flags & RT6_LOOKUP_F_IGNORE_LINKSTATE;
--	if (net->ipv6.devconf_all->forwarding == 0)
-+	if (net->ipv6.devconf_all->forwarding == 0 ||
+-	if (READ_ONCE(net->ipv6.devconf_all->forwarding) == 0)
++	if (READ_ONCE(net->ipv6.devconf_all->forwarding) == 0 ||
 +	    IS_ENABLED(CONFIG_IPV6_REACHABILITY_PROBE))
  		strict |= RT6_LOOKUP_F_REACHABLE;
  

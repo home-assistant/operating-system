@@ -1,0 +1,13 @@
+diff --git a/kernel/hb_rf_eth.c b/kernel/hb_rf_eth.c
+index 9d949c003..c8d5f15bf 100644
+--- a/kernel/hb_rf_eth.c
++++ b/kernel/hb_rf_eth.c
+@@ -715,7 +715,7 @@ static int __init hb_rf_eth_init(void)
+   gc.base = -1;
+   gc.can_sleep = false;
+ 
+-  err = gpiochip_add(&gc);
++  err = gpiochip_add_data(&gc, NULL);
+   if (err)
+     goto failed_gc_create;
+ 
