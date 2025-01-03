@@ -14,6 +14,7 @@ refs:
 no_llseek has been hard dropped in linux-6.12
 
 Signed-off-by: Rudi Heitbaum <rudi@heitbaum.com>
+Upstream: https://github.com/google/gasket-driver/pull/35
 ---
  src/gasket_core.c | 2 ++
  1 file changed, 2 insertions(+)
