@@ -42,6 +42,16 @@ install_boot() {
         cp -f "${BOOT_TMP}"/*.txt "${BOOT_MNT}/" || true
         cp -f "${BOOT_TMP}"/grubenv "${BOOT_MNT}"/EFI/BOOT/ || true
     fi
+
+    # Add CM5 support for Yellow. Can be removed in HAOS 15.
+    if [ "$RAUC_SYSTEM_COMPATIBLE" = "haos-yellow" ]; then
+        if ! grep -q "\[cm5\]" "${BOOT_MNT}/config.txt"; then
+            echo "Adding CM5 config to config.txt"
+
+            # Remove old single device_tree config and add CM-specific ones
+            sed -i '/device_tree=bcm2711-rpi-cm4-ha-yellow.dtb/d; s/\[all\]/\[cm4\]\ndevice_tree=bcm2711-rpi-cm4-ha-yellow.dtb\n\n\[cm5\]\ndevice_tree=bcm2712-rpi-cm5-ha-yellow.dtb\n\n\[all\]/' "${BOOT_MNT}/config.txt"
+        fi
+    fi
 }
 
 install_spl() {
@@ -125,6 +135,9 @@ case "$1" in
         fi
         ;;
     slot-post-install)
+        if [ "${RAUC_SLOT_CLASS}" = "boot" ]; then
+            post_install_boot
+        fi
         if [ "${RAUC_SLOT_CLASS}" = "kernel" ]; then
             post_install_kernel
         fi

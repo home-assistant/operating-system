@@ -83,6 +83,7 @@ runs:
         bump_entry /tmp/version/rpi-imager-haos.json "$INPUTS_VERSION" "${{ steps.validate-input.outputs.date }}" "rpi3-64" "RPi 3"
         bump_entry /tmp/version/rpi-imager-haos.json "$INPUTS_VERSION" "${{ steps.validate-input.outputs.date }}" "rpi4-64" "RPi 4/400"
         bump_entry /tmp/version/rpi-imager-haos.json "$INPUTS_VERSION" "${{ steps.validate-input.outputs.date }}" "rpi5-64" "RPi 5"
+        bump_entry /tmp/version/rpi-imager-haos.json "$INPUTS_VERSION" "${{ steps.validate-input.outputs.date }}" "yellow" "Yellow"
 
     - shell: bash
       env:

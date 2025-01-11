@@ -1,0 +1,170 @@
+From 1c9ebd44d5af878719f041d6a2329cc81674134c Mon Sep 17 00:00:00 2001
+From: Stefan Agner <stefan@agner.ch>
+Date: Fri, 24 Sep 2021 00:27:39 +0200
+Subject: [PATCH] nvme: translate virtual addresses into the bus's address
+ space
+
+So far we've been content with passing physical/CPU addresses when
+configuring memory addresses into NVMe controllers, but not all
+platforms have buses with transparent mappings. Specifically the
+Raspberry Pi 4 might introduce an offset to memory accesses incoming
+from its PCIe port.
+
+Introduce nvme_virt_to_bus() and nvme_bus_to_virt() to cater with these
+limitations, and make sure we don't break non DM users.
+For devices where PCIe's view of host memory doesn't match the memory
+as seen by the CPU.
+
+A similar change has been introduced for XHCI controller with
+commit 1a474559d90a ("xhci: translate virtual addresses into the bus's
+address space").
+
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+---
+ drivers/nvme/nvme.c | 31 +++++++++++++++++--------------
+ drivers/nvme/nvme.h |  8 ++++++++
+ 2 files changed, 25 insertions(+), 14 deletions(-)
+
+diff --git a/drivers/nvme/nvme.c b/drivers/nvme/nvme.c
+index f626a472ff..70ce63f205 100644
+--- a/drivers/nvme/nvme.c
++++ b/drivers/nvme/nvme.c
+@@ -66,7 +66,7 @@ static int nvme_setup_prps(struct nvme_dev *dev, u64 *prp2,
+ 		buffer += (page_size - offset);
+ 
+ 	if (length <= page_size) {
+-		*prp2 = (u64)buffer;
++		*prp2 = nvme_virt_to_bus(dev, buffer);
+ 		return 0;
+ 	}
+ 
+@@ -91,16 +91,16 @@ static int nvme_setup_prps(struct nvme_dev *dev, u64 *prp2,
+ 	i = 0;
+ 	while (nprps) {
+ 		if ((i == (prps_per_page - 1)) && nprps > 1) {
+-			u64 next_prp_list = (u64)prp_pool + page_size;
+-			*(prp_pool + i) = cpu_to_le64(next_prp_list);
++			u64 next = nvme_virt_to_bus(dev, prp_pool + page_size);
++			*(prp_pool + i) = cpu_to_le64(next);
+ 			i = 0;
+ 			prp_pool += page_size;
+ 		}
+-		*(prp_pool + i++) = cpu_to_le64((u64)buffer);
++		*(prp_pool + i++) = cpu_to_le64(nvme_virt_to_bus(dev, buffer));
+ 		buffer += page_size;
+ 		nprps--;
+ 	}
+-	*prp2 = (u64)dev->prp_pool;
++	*prp2 = nvme_virt_to_bus(dev, dev->prp_pool);
+ 
+ 	flush_dcache_range((ulong)dev->prp_pool, (ulong)dev->prp_pool +
+ 			   num_pages * page_size);
+@@ -353,6 +353,7 @@ static int nvme_configure_admin_queue(struct nvme_dev *dev)
+ 	int result;
+ 	u32 aqa;
+ 	u64 cap = dev->cap;
++	u64 dma_addr;
+ 	struct nvme_queue *nvmeq;
+ 	/* most architectures use 4KB as the page size */
+ 	unsigned page_shift = 12;
+@@ -393,8 +394,10 @@ static int nvme_configure_admin_queue(struct nvme_dev *dev)
+ 	dev->ctrl_config |= NVME_CC_IOSQES | NVME_CC_IOCQES;
+ 
+ 	writel(aqa, &dev->bar->aqa);
+-	nvme_writeq((ulong)nvmeq->sq_cmds, &dev->bar->asq);
+-	nvme_writeq((ulong)nvmeq->cqes, &dev->bar->acq);
++	dma_addr = nvme_virt_to_bus(dev, nvmeq->sq_cmds);
++	nvme_writeq(dma_addr, &dev->bar->asq);
++	dma_addr = nvme_virt_to_bus(dev, nvmeq->cqes);
++	nvme_writeq(dma_addr, &dev->bar->acq);
+ 
+ 	result = nvme_enable_ctrl(dev);
+ 	if (result)
+@@ -420,7 +423,7 @@ static int nvme_alloc_cq(struct nvme_dev *dev, u16 qid,
+ 
+ 	memset(&c, 0, sizeof(c));
+ 	c.create_cq.opcode = nvme_admin_create_cq;
+-	c.create_cq.prp1 = cpu_to_le64((ulong)nvmeq->cqes);
++	c.create_cq.prp1 = cpu_to_le64(nvme_virt_to_bus(dev, nvmeq->cqes));
+ 	c.create_cq.cqid = cpu_to_le16(qid);
+ 	c.create_cq.qsize = cpu_to_le16(nvmeq->q_depth - 1);
+ 	c.create_cq.cq_flags = cpu_to_le16(flags);
+@@ -437,7 +440,7 @@ static int nvme_alloc_sq(struct nvme_dev *dev, u16 qid,
+ 
+ 	memset(&c, 0, sizeof(c));
+ 	c.create_sq.opcode = nvme_admin_create_sq;
+-	c.create_sq.prp1 = cpu_to_le64((ulong)nvmeq->sq_cmds);
++	c.create_sq.prp1 = cpu_to_le64(nvme_virt_to_bus(dev, nvmeq->sq_cmds));
+ 	c.create_sq.sqid = cpu_to_le16(qid);
+ 	c.create_sq.qsize = cpu_to_le16(nvmeq->q_depth - 1);
+ 	c.create_sq.sq_flags = cpu_to_le16(flags);
+@@ -458,14 +461,14 @@ int nvme_identify(struct nvme_dev *dev, unsigned nsid,
+ 	memset(&c, 0, sizeof(c));
+ 	c.identify.opcode = nvme_admin_identify;
+ 	c.identify.nsid = cpu_to_le32(nsid);
+-	c.identify.prp1 = cpu_to_le64((u64)buffer);
++	c.identify.prp1 = cpu_to_le64(nvme_virt_to_bus(dev, buffer));
+ 
+ 	length -= (page_size - offset);
+ 	if (length <= 0) {
+ 		c.identify.prp2 = 0;
+ 	} else {
+ 		buffer += (page_size - offset);
+-		c.identify.prp2 = cpu_to_le64((u64)buffer);
++		c.identify.prp2 = cpu_to_le64(nvme_virt_to_bus(dev, buffer));
+ 	}
+ 
+ 	c.identify.cns = cpu_to_le32(cns);
+@@ -490,7 +493,7 @@ int nvme_get_features(struct nvme_dev *dev, unsigned fid, unsigned nsid,
+ 	memset(&c, 0, sizeof(c));
+ 	c.features.opcode = nvme_admin_get_features;
+ 	c.features.nsid = cpu_to_le32(nsid);
+-	c.features.prp1 = cpu_to_le64((u64)buffer);
++	c.features.prp1 = cpu_to_le64(nvme_virt_to_bus(dev, buffer));
+ 	c.features.fid = cpu_to_le32(fid);
+ 
+ 	ret = nvme_submit_admin_cmd(dev, &c, result);
+@@ -516,7 +519,7 @@ int nvme_set_features(struct nvme_dev *dev, unsigned fid, unsigned dword11,
+ 
+ 	memset(&c, 0, sizeof(c));
+ 	c.features.opcode = nvme_admin_set_features;
+-	c.features.prp1 = cpu_to_le64((u64)buffer);
++	c.features.prp1 = cpu_to_le64(nvme_virt_to_bus(dev, buffer));
+ 	c.features.fid = cpu_to_le32(fid);
+ 	c.features.dword11 = cpu_to_le32(dword11);
+ 
+@@ -785,7 +788,7 @@ static ulong nvme_blk_rw(struct udevice *udev, lbaint_t blknr,
+ 		c.rw.slba = cpu_to_le64(slba);
+ 		slba += lbas;
+ 		c.rw.length = cpu_to_le16(lbas - 1);
+-		c.rw.prp1 = cpu_to_le64(temp_buffer);
++		c.rw.prp1 = cpu_to_le64(nvme_virt_to_bus(dev, temp_buffer));
+ 		c.rw.prp2 = cpu_to_le64(prp2);
+ 		status = nvme_submit_sync_cmd(dev->queues[NVME_IO_Q],
+ 				&c, NULL, IO_TIMEOUT);
+diff --git a/drivers/nvme/nvme.h b/drivers/nvme/nvme.h
+index bc1d612dde..f52103c009 100644
+--- a/drivers/nvme/nvme.h
++++ b/drivers/nvme/nvme.h
+@@ -7,8 +7,11 @@
+ #ifndef __DRIVER_NVME_H__
+ #define __DRIVER_NVME_H__
+ 
++#include <phys2bus.h>
+ #include <asm/io.h>
+ 
++#define nvme_to_dev(_dev)	_dev->udev
++
+ struct nvme_id_power_state {
+ 	__le16			max_power;	/* centiwatts */
+ 	__u8			rsvd2;
+@@ -705,4 +708,9 @@ int nvme_init(struct udevice *udev);
+  */
+ int nvme_shutdown(struct udevice *udev);
+ 
++static inline dma_addr_t nvme_virt_to_bus(struct nvme_dev *dev, void *addr)
++{
++	return dev_phys_to_bus(nvme_to_dev(dev)->parent, virt_to_phys(addr));
++}
++
+ #endif /* __DRIVER_NVME_H__ */

@@ -1,0 +1,14 @@
+[Unit]
+Description=Remove adopted rauc.db on first boot
+After=rauc.service
+Before=raucdb-update.service
+RequiresMountsFor=/mnt/data
+ConditionFirstBoot=yes
+ConditionFileNotEmpty=/mnt/data/rauc.db
+
+[Service]
+Type=oneshot
+ExecStart=/bin/rm -f /mnt/data/rauc.db
+
+[Install]
+WantedBy=multi-user.target

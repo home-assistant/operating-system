@@ -1,0 +1,6 @@
+config BR2_PACKAGE_HAILO8_FIRMWARE
+	bool "Hailo-8 Firmware"
+	help
+	  Firmware for Hailo-8 PCIe device found e.g. on Raspberry Pi
+	  AI Kit and Raspberry Pi AI HAT+. Required for hailo_pci kernel
+	  module.

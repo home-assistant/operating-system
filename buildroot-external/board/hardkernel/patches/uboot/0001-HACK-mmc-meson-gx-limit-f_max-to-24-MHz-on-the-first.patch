@@ -1,0 +1,81 @@
+From 024796cbf752d2e210341ae8609792803641eb92 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Jan=20=C4=8Cerm=C3=A1k?= <sairon@sairon.cz>
+Date: Thu, 7 Nov 2024 12:39:02 +0100
+Subject: [PATCH] HACK: mmc: meson-gx: limit f_max to 24 MHz on the first try
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+To initialize some eMMCs cards properly, ODROID N2 needed to have
+maximum clock rate limited to 24 MHz. This was working good until ODROID
+released eMMC modules with Kingson chips which do not initialize at the
+limited frequency at all - instead it seems it's best for the if
+no limit is set (which would result in using 52 MHz anyway).
+
+Instead of hard-limiting the frequency, add a boolean flag that caps the
+frequency to the proven 24 MHz, and if mmc_select_mode_and_width fails,
+remove this cap and use f_max set to 100 MHz, as limited in upstream
+U-Boot.
+
+Signed-off-by: Jan Čermák <sairon@sairon.cz>
+---
+ drivers/mmc/meson_gx_mmc.c |  2 ++
+ drivers/mmc/mmc.c          | 11 +++++++++++
+ include/mmc.h              |  2 ++
+ 3 files changed, 15 insertions(+)
+
+diff --git a/drivers/mmc/meson_gx_mmc.c b/drivers/mmc/meson_gx_mmc.c
+index fcf4f03d1e..715dce3522 100644
+--- a/drivers/mmc/meson_gx_mmc.c
++++ b/drivers/mmc/meson_gx_mmc.c
+@@ -283,6 +283,8 @@ static int meson_mmc_probe(struct udevice *dev)
+ 	cfg->b_max = 511; /* max 512 - 1 blocks */
+ 	cfg->name = dev->name;
+ 
++	mmc->meson_gx_f_max_hack = true;
++
+ 	mmc->priv = pdata;
+ 	upriv->mmc = mmc;
+ 
+diff --git a/drivers/mmc/mmc.c b/drivers/mmc/mmc.c
+index d96db7a0f8..c8dc676612 100644
+--- a/drivers/mmc/mmc.c
++++ b/drivers/mmc/mmc.c
+@@ -1652,6 +1652,10 @@ int mmc_set_clock(struct mmc *mmc, uint clock, bool disable)
+ 			clock = mmc->cfg->f_min;
+ 	}
+ 
++	/* Apply 24 MHz limit that fixes issues with some cards on meson. */
++	if (mmc->meson_gx_f_max_hack && clock > 24000000)
++		clock = 24000000;
++
+ 	mmc->clock = clock;
+ 	mmc->clk_disable = disable;
+ 
+@@ -2647,6 +2651,13 @@ static int mmc_startup(struct mmc *mmc)
+ 		if (err)
+ 			return err;
+ 		err = mmc_select_mode_and_width(mmc, mmc->card_caps);
++		if (err && mmc->meson_gx_f_max_hack) {
++			/* Some eMMCs (namely Kingston) do not initialize at limited frequency. */
++			printf("Card failed to initialize at %d Hz, disabling meson_gx hack.\n",
++			       mmc->clock);
++			mmc->meson_gx_f_max_hack = false;
++			err = mmc_select_mode_and_width(mmc, mmc->card_caps);
++		}
+ 	}
+ #endif
+ 	if (err)
+diff --git a/include/mmc.h b/include/mmc.h
+index 1022db3ffa..0ea48c6fd9 100644
+--- a/include/mmc.h
++++ b/include/mmc.h
+@@ -739,6 +739,8 @@ struct mmc {
+ 	u8 hs400_tuning;
+ 
+ 	enum bus_mode user_speed_mode; /* input speed mode from user */
++
++	bool meson_gx_f_max_hack;
+ };
+ 
+ #if CONFIG_IS_ENABLED(DM_MMC)

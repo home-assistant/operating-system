@@ -68,7 +68,7 @@ for BOOT_SLOT in "${BOOT_ORDER}"; do
       setexpr BOOT_A_LEFT ${BOOT_A_LEFT} - 1
       echo "Trying to boot slot A, ${BOOT_A_LEFT} attempts remaining. Loading kernel ..."
       if load ${devtype} ${devnum}:2 ${kernel_addr_r} Image; then
-          setenv bootargs "${bootargs_hassos} ${bootargs_rpi} ${bootargs_a} rauc.slot=A"
+          setenv bootargs "${bootargs_rpi} ${bootargs_hassos} ${bootargs_a} rauc.slot=A"
       fi
     fi
   elif test "x${BOOT_SLOT}" = "xB"; then
@@ -76,7 +76,7 @@ for BOOT_SLOT in "${BOOT_ORDER}"; do
       setexpr BOOT_B_LEFT ${BOOT_B_LEFT} - 1
       echo "Trying to boot slot B, ${BOOT_B_LEFT} attempts remaining. Loading kernel ..."
       if load ${devtype} ${devnum}:4 ${kernel_addr_r} Image; then
-          setenv bootargs "${bootargs_hassos} ${bootargs_rpi} ${bootargs_b} rauc.slot=B"
+          setenv bootargs "${bootargs_rpi} ${bootargs_hassos} ${bootargs_b} rauc.slot=B"
       fi
     fi
   fi

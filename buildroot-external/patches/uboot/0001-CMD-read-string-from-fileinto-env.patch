@@ -1,4 +1,4 @@
-From d44635df07c79c6e6e6832a5c59d27d27aacfa75 Mon Sep 17 00:00:00 2001
+From 01d614198feedef81ce60e61bbdf5f1ddc62be52 Mon Sep 17 00:00:00 2001
 From: Pascal Vizeli <pvizeli@syshack.ch>
 Date: Sun, 5 Aug 2018 20:43:03 +0000
 Subject: [PATCH] CMD: read string from fileinto env
@@ -7,8 +7,8 @@ Signed-off-by: Pascal Vizeli <pvizeli@syshack.ch>
 ---
  cmd/Kconfig   |  5 +++++
  cmd/Makefile  |  1 +
- cmd/fileenv.c | 46 ++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 52 insertions(+)
+ cmd/fileenv.c | 45 +++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 51 insertions(+)
  create mode 100644 cmd/fileenv.c
 
 diff --git a/cmd/Kconfig b/cmd/Kconfig
@@ -41,12 +41,11 @@ index 9a6790cc17..a521653ff8 100644
  obj-$(CONFIG_CMD_SMC) += smccc.o
 diff --git a/cmd/fileenv.c b/cmd/fileenv.c
 new file mode 100644
-index 0000000000..9891cb05ab
+index 0000000000..4154c8df0f
 --- /dev/null
 +++ b/cmd/fileenv.c
-@@ -0,0 +1,46 @@
+@@ -0,0 +1,45 @@
 +#include <config.h>
-+#include <common.h>
 +#include <command.h>
 +#include <fs.h>
 +#include <linux/ctype.h>
@@ -91,6 +90,3 @@ index 0000000000..9891cb05ab
 +	"<interface> <dev:part> <addr> <filename> <envname>\n"
 +	"    - Read file from fat32 and store it as env."
 +);
--- 
-2.43.0
-
