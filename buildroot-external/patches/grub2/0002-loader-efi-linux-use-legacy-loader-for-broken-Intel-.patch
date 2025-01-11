@@ -39,6 +39,13 @@ pre-2.12 GRUB anyway.
 [4] https://github.com/home-assistant/operating-system/issues/3305#issuecomment-2360633688
 
 Signed-off-by: Jan Čermák <sairon@sairon.cz>
+
+----
+
+Just added exceptions for Ryzen 5 2400GE, AMD Ryzen Embedded R1505G and AMD G-T56N as mentioned in [5].
+
+[5] https://github.com/home-assistant/operating-system/issues/3692
+
 ---
  grub-core/loader/efi/linux.c | 67 +++++++++++++++++++++++++++++++++++-
  1 file changed, 66 insertions(+), 1 deletion(-)
@@ -107,7 +114,10 @@ index bfbd95a..98ac99c 100644
 +          return (processor_id == 0xbfebfbff00030661      // D2xxx/N2xxx
 +                  || processor_id == 0xbfebfbff000106ca   // D525
 +                  || processor_id == 0x00730f01178bfbff   // AMD GX-212JC (HP t520)
-+                  || processor_id == 0xbfebfbff000206a7); // Intel i5-2xxx (Macbook Air A1370)
++                  || processor_id == 0xbfebfbff000206a7)  // Intel i5-2xxx (Macbook Air A1370)
++                  || processor_id == 0x178bfbff00730f00   // AMD Ryzen 5 2400GE
++                  || processor_id == 0x178bfbff00730f81   // AMD Ryzen Embedded R1505G
++                  || processor_id == 0x500f01007ffffff);  // AMD G-T56N
 +        }
 +      else
 +        {
