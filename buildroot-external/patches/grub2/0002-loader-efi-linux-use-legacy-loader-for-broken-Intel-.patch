@@ -112,15 +112,12 @@ index bfbd95a..98ac99c 100644
 +           * false positives instead).
 +           */
 +          return (processor_id == 0xbfebfbff00030661      // D2xxx/N2xxx
-+                  || processor_id == 0xbfebfbff000106ca   // D525
-+                  || processor_id == 0x00730f01178bfbff   // AMD GX-212JC (HP t520)
-          return (processor_id == 0xbfebfbff00030661      // D2xxx/N2xxx
-           || processor_id == 0xbfebfbff000106ca   // D525
-           || processor_id == 0x00730f01178bfbff   // AMD GX-212JC (HP t520)
-           || processor_id == 0xbfebfbff000206a7   // Intel i5-2xxx (Macbook Air A1370)
-           || processor_id == 0x178bfbff00730f00   // AMD Ryzen 5 2400GE
-           || processor_id == 0x178bfbff00730f81   // AMD Ryzen Embedded R1505G
-           || processor_id == 0x500f01007ffffff);  // AMD G-T56N
++           || processor_id == 0xbfebfbff000106ca   // D525
++           || processor_id == 0x00730f01178bfbff   // AMD GX-212JC (HP t520)
++           || processor_id == 0xbfebfbff000206a7   // Intel i5-2xxx (Macbook Air A1370)
++           || processor_id == 0x178bfbff00730f00   // AMD Ryzen 5 2400GE
++           || processor_id == 0x178bfbff00730f81   // AMD Ryzen Embedded R1505G
++           || processor_id == 0x500f01007ffffff);  // AMD G-T56N
 +        }
 +      else
 +        {
