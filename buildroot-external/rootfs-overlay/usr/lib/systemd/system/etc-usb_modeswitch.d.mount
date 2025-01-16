@@ -1,0 +1,14 @@
+[Unit]
+Description=USB modeswitch persistent directory
+Requires=mnt-overlay.mount
+After=mnt-overlay.mount
+Before=hassos-config.service
+
+[Mount]
+What=/mnt/overlay/etc/usb_modeswitch.d
+Where=/etc/usb_modeswitch.d
+Type=None
+Options=bind
+
+[Install]
+WantedBy=hassos-bind.target
