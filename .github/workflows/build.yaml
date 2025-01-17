@@ -199,7 +199,7 @@ jobs:
 
       - name: Install AWS CLI
         if: ${{ github.event_name != 'release' && needs.prepare.outputs.publish_build == 'true' }}
-        run: pip install awscli
+        run: pip install 'awscli<1.37.0'
 
       - name: Set version suffix
         if: ${{ github.event_name != 'release' }}
