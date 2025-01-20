@@ -1,7 +1,7 @@
 [Unit]
 Description=Migrate rauc.db to boot partition
 Before=rauc.service
-RequiresMountsFor=/mnt/boot mnt/data
+RequiresMountsFor=/mnt/boot /mnt/data
 ConditionPathExists=/mnt/boot/migrate-raucdb
 
 [Service]
