@@ -76,3 +76,11 @@ def test_systemctl_status(shell):
 def test_systemctl_check_no_failed(shell):
     output = shell.run_check("systemctl --no-pager -l list-units --state=failed")
     assert "0 loaded units listed." in output, f"Some units failed:\n{"\n".join(output)}"
+
+
+@pytest.mark.dependency(depends=["test_init"])
+def test_kernel_not_tainted(shell):
+    """Check if the kernel is not tainted - do it at the end of the
+    test suite to increase the chance of catching issues."""
+    output = shell.run_check("cat /proc/sys/kernel/tainted")
+    assert output == "0\n", f"Kernel tainted: {output}"
