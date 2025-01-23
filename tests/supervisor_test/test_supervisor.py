@@ -190,3 +190,11 @@ def test_restore_ssl_directory(shell_json, stash):
     result = shell_json(f"ha backups restore {stash.get('slug')} --folders ssl --no-progress --raw-json")
     assert result.get("result") == "ok", f"Backup restore failed: {result}"
     logger.info("Backup restore result: %s", result)
+
+
+@pytest.mark.dependency(depends=["test_start_supervisor"])
+def test_kernel_not_tainted(shell):
+    """Check if the kernel is not tainted - do it at the end of the
+    test suite to increase the chance of catching issues."""
+    output = shell.run_check("cat /proc/sys/kernel/tainted")
+    assert "\n".join(output) == "0", f"Kernel tainted: {output}"
