@@ -1,0 +1,19 @@
+Replace `gpiochip_add` removed in 6.11 (3ff1180) with `gpiochip_add_data` added in 4.5 (b08ea35)
+
+Signed-off-by: Nick Venenga <nick@venenga.com>
+Upstream: https://github.com/alexreinert/piVCCU/pull/533
+
+--- a/kernel/hb_rf_eth.c
++++ b/kernel/hb_rf_eth.c
+@@ -715,7 +715,11 @@ static int __init hb_rf_eth_init(void)
+   gc.base = -1;
+   gc.can_sleep = false;
+
++#if LINUX_VERSION_CODE < KERNEL_VERSION(4, 5, 0)
+   err = gpiochip_add(&gc);
++#else
++  err = gpiochip_add_data(&gc, NULL);
++#endif
+   if (err)
+     goto failed_gc_create;
+ 

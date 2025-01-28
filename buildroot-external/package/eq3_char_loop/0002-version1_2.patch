@@ -1,5 +1,7 @@
 KernelDrivers/eq3_char_loop.c: updated to latest 1.1 version
 
+Upstream: Not applicable
+
 Signed-off-by: Jens Maus <mail@jens-maus.de>
 
 --- ./KernelDrivers/eq3_char_loop.c.orig	2017-05-14 22:57:19.109181928 +0200
@@ -42,7 +44,7 @@ Signed-off-by: Jens Maus <mail@jens-maus.de>
  	if(ret < 0)
  	{
 -		printk( KERN_INFO EQ3LOOP_DRIVER_NAME ": eq3loop_write_master() retrun error:");
-+		printk( KERN_INFO EQ3LOOP_DRIVER_NAME ": eq3loop_write_master() return error: %ld", ret);
++		printk( KERN_INFO EQ3LOOP_DRIVER_NAME ": eq3loop_write_master() return error: %zd", ret);
  	}
  	if( ret > 0 || CIRC_CNT(channel->master2slave_buf.head,channel->master2slave_buf.tail,BUFSIZE) )
  	{
@@ -110,4 +112,4 @@ Signed-off-by: Jens Maus <mail@jens-maus.de>
  MODULE_DESCRIPTION("eQ-3 IPC loopback char driver");
  MODULE_LICENSE("GPL");
 -
-+MODULE_VERSION("1.1");
++MODULE_VERSION("1.2");

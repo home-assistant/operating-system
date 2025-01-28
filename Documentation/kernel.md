@@ -20,5 +20,5 @@
 | ODROID-N2 | 6.6.73 |
 | ODROID-XU4 | 6.6.73 |
 | Generic aarch64 | 6.6.73 |
-| Generic x86-64 | 6.6.73 |
+| Generic x86-64 | 6.12.6 |
 | Khadas VIM3 | 6.6.73 |

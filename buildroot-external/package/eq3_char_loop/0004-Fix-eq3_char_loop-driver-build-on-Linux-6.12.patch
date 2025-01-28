@@ -1,0 +1,17 @@
+Remove llseek NULL'd in 6.0 (868941b) removed in 6.12 (cb787f4)
+
+Signed-off-by: Nick Venenga <nick@venenga.com>
+Upstream: https://github.com/jens-maus/occu/pull/1
+
+--- a/KernelDrivers/eq3_char_loop.c
++++ b/KernelDrivers/eq3_char_loop.c
+@@ -898,7 +898,9 @@ static int eq3loop_open(struct inode *inode, struct file *filp)
+ 
+ static struct file_operations eq3loop_fops = {
+ 	.owner		= THIS_MODULE,
++#if LINUX_VERSION_CODE < KERNEL_VERSION(6, 0, 0)
+	.llseek		= no_llseek,
++#endif
+ 	.read		= eq3loop_read,
+ 	.write		= eq3loop_write,
+ 	.open		= eq3loop_open,
