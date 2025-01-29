@@ -3,7 +3,7 @@
 
 | Board | Version |
 |-------|---------|
-| Open Virtual Appliance | 6.6.73 |
+| Open Virtual Appliance | 6.12.6 |
 | Raspberry Pi | 6.6.62 |
 | Raspberry Pi 0-W | 6.6.62 |
 | Raspberry Pi 2 | 6.6.62 |
