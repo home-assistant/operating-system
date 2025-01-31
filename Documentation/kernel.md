@@ -12,7 +12,7 @@
 | Raspberry Pi 5 | 6.6.62 |
 | Home Assistant Yellow | 6.6.62 |
 | Home Assistant Green | 6.12.11 |
-| Tinker Board | 6.6.73 |
+| Tinker Board | 6.12.11 |
 | ODROID-C2 | 6.12.11 |
 | ODROID-C4 | 6.12.11 |
 | ODROID-M1 | 6.12.11 |
