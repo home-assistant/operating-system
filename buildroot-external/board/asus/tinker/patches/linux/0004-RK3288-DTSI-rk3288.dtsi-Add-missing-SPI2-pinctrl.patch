@@ -1,4 +1,4 @@
-From a0ef6a86e96920a9cf703d8c65d0126494037d37 Mon Sep 17 00:00:00 2001
+From d6c44c231fc4518ad69bb7870a193bb10c563f2a Mon Sep 17 00:00:00 2001
 From: Myy Miouyouyou <myy@miouyouyou.fr>
 Date: Thu, 19 Oct 2017 21:24:47 +0200
 Subject: [PATCH] RK3288: DTSI: rk3288.dtsi: Add missing SPI2 pinctrl
@@ -14,10 +14,10 @@ Signed-off-by: Myy Miouyouyou <myy@miouyouyou.fr>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/arch/arm/boot/dts/rockchip/rk3288.dtsi b/arch/arm/boot/dts/rockchip/rk3288.dtsi
-index 51f1273d6beb..d8663928bfe2 100644
+index becf3abd8367f..e78fa883b9841 100644
 --- a/arch/arm/boot/dts/rockchip/rk3288.dtsi
 +++ b/arch/arm/boot/dts/rockchip/rk3288.dtsi
-@@ -311,7 +311,7 @@ spi2: spi@ff130000 {
+@@ -320,7 +320,7 @@ spi2: spi@ff130000 {
  		dma-names = "tx", "rx";
  		interrupts = <GIC_SPI 46 IRQ_TYPE_LEVEL_HIGH>;
  		pinctrl-names = "default";

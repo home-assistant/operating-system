@@ -1,4 +1,4 @@
-From 01ac730fa92a030690a7701c9b8781bc4ef7bcae Mon Sep 17 00:00:00 2001
+From 742764eb039d8d96aa43afeb62a89b122073bb98 Mon Sep 17 00:00:00 2001
 From: Hyeonki Hong <hhk7734@gmail.com>
 Date: Fri, 27 Mar 2020 17:05:22 +0900
 Subject: [PATCH] arm64: dts: meson: add uart_A node
@@ -12,7 +12,7 @@ Signed-off-by: Stefan Agner <stefan@agner.ch>
  1 file changed, 7 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid.dtsi
-index 843e66332369..61caadd679e2 100644
+index 13624c6522abc..6a1330b40cf4d 100644
 --- a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid.dtsi
 +++ b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid.dtsi
 @@ -12,6 +12,7 @@

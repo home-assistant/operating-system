@@ -1,4 +1,4 @@
-From f5676219e12b48a0f591e911797304fae05ca78c Mon Sep 17 00:00:00 2001
+From bb0da00e7b89510fb66c7a8a1acf16d9f58a45fe Mon Sep 17 00:00:00 2001
 From: Stefan Agner <stefan@agner.ch>
 Date: Thu, 29 Apr 2021 21:32:43 +0200
 Subject: [PATCH] arm64: dts: meson: add i2c2 node to ODROID N2/N2+
@@ -13,11 +13,11 @@ Signed-off-by: Stefan Agner <stefan@agner.ch>
  1 file changed, 6 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi
-index 91c9769fda20..ececc6b17639 100644
+index 3bca8023638d4..45f6dada0edee 100644
 --- a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi
 +++ b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi
-@@ -248,6 +248,12 @@ usb-hub-hog {
- 	};
+@@ -264,6 +264,12 @@ &gpio {
+ 		"PIN_36"; /* GPIOX_19 */
  };
  
 +&i2c2 {

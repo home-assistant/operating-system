@@ -1,4 +1,4 @@
-From e828e0fc2be98e5ad20c93981681505fc97b063b Mon Sep 17 00:00:00 2001
+From dfb0232e9fae1267d04247aaf171739038c1659e Mon Sep 17 00:00:00 2001
 From: "Miouyouyou (Myy)" <myy@miouyouyou.fr>
 Date: Mon, 5 Nov 2018 20:16:05 +0100
 Subject: [PATCH] ARM: DTSI: rk3288-tinker: Improving the CPU max voltage
@@ -11,7 +11,7 @@ Signed-off-by: Miouyouyou (Myy) <myy@miouyouyou.fr>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/arch/arm/boot/dts/rockchip/rk3288-tinker.dtsi b/arch/arm/boot/dts/rockchip/rk3288-tinker.dtsi
-index 395afc2b2283..c7e79e594720 100644
+index 395afc2b2283c..c7e79e5947206 100644
 --- a/arch/arm/boot/dts/rockchip/rk3288-tinker.dtsi
 +++ b/arch/arm/boot/dts/rockchip/rk3288-tinker.dtsi
 @@ -184,7 +184,7 @@ vdd_cpu: DCDC_REG1 {

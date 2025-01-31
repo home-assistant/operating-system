@@ -1,4 +1,4 @@
-From 822994ede606e50b5ed5459ddb48078001b01f7a Mon Sep 17 00:00:00 2001
+From 015fa4136338919a43c1c6e47e8c07679cefbaa2 Mon Sep 17 00:00:00 2001
 From: Zhangqun Ming <north_sea@qq.com>
 Date: Thu, 6 Jul 2023 10:05:04 +0000
 Subject: [PATCH] arm64: dts: rockchip: Add NabuCasa Green board

@@ -1,4 +1,4 @@
-From a699fbe94cea1f391d7af438e98f6008d8c790f1 Mon Sep 17 00:00:00 2001
+From d4ec3799c0773b3a6d3d90f4b16eec1f50e4b032 Mon Sep 17 00:00:00 2001
 From: memeka <mihailescu2m@gmail.com>
 Date: Fri, 18 Jan 2019 14:36:21 +1030
 Subject: [PATCH] ODROID-XU4: regulator: s2mps11: add ethernet power reset in

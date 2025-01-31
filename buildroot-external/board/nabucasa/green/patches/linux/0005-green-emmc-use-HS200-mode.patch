@@ -1,4 +1,4 @@
-From 858d26179ee3a06fc7ebadf2c49dc337a7a98485 Mon Sep 17 00:00:00 2001
+From 3d75827d0318c792d4d7a68d7d7076deee3e7ad3 Mon Sep 17 00:00:00 2001
 From: zhangcy <chengyu.zhang@seeed.cc>
 Date: Mon, 14 Aug 2023 01:27:34 +0000
 Subject: [PATCH] green: emmc use HS200 mode
@@ -8,10 +8,10 @@ Subject: [PATCH] green: emmc use HS200 mode
  1 file changed, 1 insertion(+)
 
 diff --git a/arch/arm64/boot/dts/rockchip/rk3566-ha-green.dts b/arch/arm64/boot/dts/rockchip/rk3566-ha-green.dts
-index debb9459a5aa..e4b1e80641b9 100644
+index 6336fe758819f..61083a9885a78 100644
 --- a/arch/arm64/boot/dts/rockchip/rk3566-ha-green.dts
 +++ b/arch/arm64/boot/dts/rockchip/rk3566-ha-green.dts
-@@ -532,6 +532,7 @@ &saradc {
+@@ -536,6 +536,7 @@ &saradc {
  
  &sdhci {
  	bus-width = <8>;
