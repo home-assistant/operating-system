@@ -21,4 +21,4 @@
 | ODROID-XU4 | 6.6.73 |
 | Generic aarch64 | 6.12.11 |
 | Generic x86-64 | 6.12.6 |
-| Khadas VIM3 | 6.6.73 |
+| Khadas VIM3 | 6.12.11 |
