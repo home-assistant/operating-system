@@ -1,12 +1,12 @@
-From 411b308e89929c2b13ef902fd97c1735d8280023 Mon Sep 17 00:00:00 2001
+From aadb32828c0ac829ee9664f91f9302000a79f02d Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Jan=20=C4=8Cerm=C3=A1k?= <sairon@sairon.cz>
-Date: Wed, 29 Jan 2025 16:28:26 +0100
+Date: Fri, 31 Jan 2025 10:26:36 +0100
 Subject: [PATCH] Revert "phy: rockchip: naneng-combphy: fix phy reset"
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-This reverts commit 908806a2e789998f8897ebab83be10b4b058b6e2.
+This reverts commit 5cdf336412a928ae0f05a3117b3132366a1f7d21.
 
 This commit causes USB3 and PCIe regression on ODROID-M1 and ODROID-M1S. Revert
 it before a fix is merged upstream.
@@ -18,7 +18,7 @@ Signed-off-by: Jan Čermák <sairon@sairon.cz>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/phy/rockchip/phy-rockchip-naneng-combphy.c b/drivers/phy/rockchip/phy-rockchip-naneng-combphy.c
-index 9c231094ba359..26b157f53f3da 100644
+index 2eb3329ca23f6..0a9989e41237f 100644
 --- a/drivers/phy/rockchip/phy-rockchip-naneng-combphy.c
 +++ b/drivers/phy/rockchip/phy-rockchip-naneng-combphy.c
 @@ -309,7 +309,7 @@ static int rockchip_combphy_parse_dt(struct device *dev, struct rockchip_combphy
