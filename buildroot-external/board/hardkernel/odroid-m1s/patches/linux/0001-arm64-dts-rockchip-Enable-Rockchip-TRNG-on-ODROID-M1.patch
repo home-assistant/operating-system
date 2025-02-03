@@ -1,0 +1,32 @@
+From 60b24f8c30181ef60964ce186c2a6d05b85f3be1 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Jan=20=C4=8Cerm=C3=A1k?= <sairon@sairon.cz>
+Date: Fri, 31 Jan 2025 16:13:48 +0100
+Subject: [PATCH] arm64: dts: rockchip: Enable Rockchip TRNG on ODROID-M1S
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+HAOS with 6.6 kernel had the RNG disbled because of a downstream patch. Now the
+rk356x.dtsi has it's enabled only in rk3568.dtsi. We want it enabled also for
+RK3566 on ODROID-M1S.
+
+Signed-off-by: Jan Čermák <sairon@sairon.cz>
+---
+ arch/arm64/boot/dts/rockchip/rk3566-odroid-m1s.dts | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/rockchip/rk3566-odroid-m1s.dts b/arch/arm64/boot/dts/rockchip/rk3566-odroid-m1s.dts
+index 33bc5249d729b..a0d912b5ce4aa 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3566-odroid-m1s.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3566-odroid-m1s.dts
+@@ -551,6 +551,10 @@ &pmu_io_domains {
+ 	status = "okay";
+ };
+ 
++&rng {
++	status = "okay";
++};
++
+ &saradc {
+ 	vref-supply = <&vcca_1v8>;
+ 	status = "okay";
