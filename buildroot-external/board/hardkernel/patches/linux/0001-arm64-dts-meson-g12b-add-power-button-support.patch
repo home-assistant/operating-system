@@ -1,4 +1,4 @@
-From e780a5f405a02e3102c471415f7b0ad73a5cc036 Mon Sep 17 00:00:00 2001
+From 8286ad3b1e761138e3c574160a5e1a2d6ed06084 Mon Sep 17 00:00:00 2001
 From: Stefan Agner <stefan@agner.ch>
 Date: Mon, 11 Jan 2021 11:20:48 +0100
 Subject: [PATCH] arm64: dts: meson: g12b: add power button support
@@ -13,7 +13,7 @@ Signed-off-by: Stefan Agner <stefan@agner.ch>
  1 file changed, 11 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid.dtsi
-index 9e12a34b2840..c27eae6488ce 100644
+index 09d959aefb184..6be653ac77fac 100644
 --- a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid.dtsi
 +++ b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid.dtsi
 @@ -38,6 +38,17 @@ fan: gpio-fan {

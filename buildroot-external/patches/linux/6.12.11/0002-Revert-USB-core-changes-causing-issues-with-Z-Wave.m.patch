@@ -1,4 +1,4 @@
-From f9037c133775498d0ff2f035a957ce4f294e4e81 Mon Sep 17 00:00:00 2001
+From 557c96b3f40753fa22ebfe1cb57de360273a92c3 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Jan=20=C4=8Cerm=C3=A1k?= <sairon@sairon.cz>
 Date: Wed, 6 Mar 2024 13:25:41 +0100
 Subject: [PATCH] Revert USB core changes causing issues with Z-Wave.me UZB
@@ -33,10 +33,10 @@ Signed-off-by: Jan Čermák <sairon@sairon.cz>
  4 files changed, 166 insertions(+), 213 deletions(-)
 
 diff --git a/drivers/usb/core/hcd.c b/drivers/usb/core/hcd.c
-index 12b6dfeaf658c..d895f6ebbc400 100644
+index 0b2490347b9fe..ab0826d90cc13 100644
 --- a/drivers/usb/core/hcd.c
 +++ b/drivers/usb/core/hcd.c
-@@ -958,7 +958,6 @@ static int register_root_hub(struct usb_hcd *hcd)
+@@ -956,7 +956,6 @@ static int register_root_hub(struct usb_hcd *hcd)
  {
  	struct device *parent_dev = hcd->self.controller;
  	struct usb_device *usb_dev = hcd->self.root_hub;
@@ -44,7 +44,7 @@ index 12b6dfeaf658c..d895f6ebbc400 100644
  	const int devnum = 1;
  	int retval;
  
-@@ -970,16 +969,13 @@ static int register_root_hub(struct usb_hcd *hcd)
+@@ -968,16 +967,13 @@ static int register_root_hub(struct usb_hcd *hcd)
  	mutex_lock(&usb_bus_idr_lock);
  
  	usb_dev->ep0.desc.wMaxPacketSize = cpu_to_le16(64);
@@ -65,10 +65,10 @@ index 12b6dfeaf658c..d895f6ebbc400 100644
  	if (le16_to_cpu(usb_dev->descriptor.bcdUSB) >= 0x0201) {
  		retval = usb_get_bos_descriptor(usb_dev);
 diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
-index 1ba3feb5e1900..ef1d63537a9b7 100644
+index 21ac9b464696f..0962411898b00 100644
 --- a/drivers/usb/core/hub.c
 +++ b/drivers/usb/core/hub.c
-@@ -4742,67 +4742,6 @@ static int hub_enable_device(struct usb_device *udev)
+@@ -4776,67 +4776,6 @@ static int hub_enable_device(struct usb_device *udev)
  	return hcd->driver->enable_device(hcd, udev);
  }
  
@@ -136,7 +136,7 @@ index 1ba3feb5e1900..ef1d63537a9b7 100644
  /* Reset device, (re)assign address, get device descriptor.
   * Device connection must be stable, no more debouncing needed.
   * Returns device in USB_STATE_ADDRESS, except on error.
-@@ -4812,17 +4751,10 @@ static int get_bMaxPacketSize0(struct usb_device *udev,
+@@ -4846,17 +4785,10 @@ static int get_bMaxPacketSize0(struct usb_device *udev,
   * the port lock.  For a newly detected device that is not accessible
   * through any global pointers, it's not necessary to lock the device,
   * but it is still necessary to lock the port.
@@ -155,7 +155,7 @@ index 1ba3feb5e1900..ef1d63537a9b7 100644
  {
  	struct usb_device	*hdev = hub->hdev;
  	struct usb_hcd		*hcd = bus_to_hcd(hdev->bus);
-@@ -4834,13 +4766,6 @@ hub_port_init(struct usb_hub *hub, struct usb_device *udev, int port1,
+@@ -4868,13 +4800,6 @@ hub_port_init(struct usb_hub *hub, struct usb_device *udev, int port1,
  	int			devnum = udev->devnum;
  	const char		*driver_name;
  	bool			do_new_scheme;
@@ -169,7 +169,7 @@ index 1ba3feb5e1900..ef1d63537a9b7 100644
  
  	/* root hub ports have a slightly longer reset period
  	 * (from USB 2.0 spec, section 7.1.7.5)
-@@ -4873,31 +4798,31 @@ hub_port_init(struct usb_hub *hub, struct usb_device *udev, int port1,
+@@ -4907,31 +4832,31 @@ hub_port_init(struct usb_hub *hub, struct usb_device *udev, int port1,
  	}
  	oldspeed = udev->speed;
  
@@ -225,7 +225,7 @@ index 1ba3feb5e1900..ef1d63537a9b7 100644
  	}
  
  	speed = usb_speed_string(udev->speed);
-@@ -4917,24 +4842,22 @@ hub_port_init(struct usb_hub *hub, struct usb_device *udev, int port1,
+@@ -4951,24 +4876,22 @@ hub_port_init(struct usb_hub *hub, struct usb_device *udev, int port1,
  	if (udev->speed < USB_SPEED_SUPER)
  		dev_info(&udev->dev,
  				"%s %s USB device number %d using %s\n",
@@ -263,7 +263,7 @@ index 1ba3feb5e1900..ef1d63537a9b7 100644
  	}
  
  	/* Why interleave GET_DESCRIPTOR and SET_ADDRESS this way?
-@@ -4958,6 +4881,9 @@ hub_port_init(struct usb_hub *hub, struct usb_device *udev, int port1,
+@@ -4992,6 +4915,9 @@ hub_port_init(struct usb_hub *hub, struct usb_device *udev, int port1,
  		}
  
  		if (do_new_scheme) {
@@ -273,7 +273,7 @@ index 1ba3feb5e1900..ef1d63537a9b7 100644
  			retval = hub_enable_device(udev);
  			if (retval < 0) {
  				dev_err(&udev->dev,
-@@ -4966,14 +4892,52 @@ hub_port_init(struct usb_hub *hub, struct usb_device *udev, int port1,
+@@ -5000,14 +4926,52 @@ hub_port_init(struct usb_hub *hub, struct usb_device *udev, int port1,
  				goto fail;
  			}
  
@@ -333,7 +333,7 @@ index 1ba3feb5e1900..ef1d63537a9b7 100644
  
  			retval = hub_port_reset(hub, port1, udev, delay, false);
  			if (retval < 0)		/* error or disconnect */
-@@ -4984,13 +4948,14 @@ hub_port_init(struct usb_hub *hub, struct usb_device *udev, int port1,
+@@ -5018,13 +4982,14 @@ hub_port_init(struct usb_hub *hub, struct usb_device *udev, int port1,
  				retval = -ENODEV;
  				goto fail;
  			}
@@ -352,7 +352,7 @@ index 1ba3feb5e1900..ef1d63537a9b7 100644
  		}
  
  		for (operations = 0; operations < SET_ADDRESS_TRIES; ++operations) {
-@@ -5031,21 +4996,18 @@ hub_port_init(struct usb_hub *hub, struct usb_device *udev, int port1,
+@@ -5065,21 +5030,18 @@ hub_port_init(struct usb_hub *hub, struct usb_device *udev, int port1,
  		if (do_new_scheme)
  			break;
  
@@ -379,7 +379,7 @@ index 1ba3feb5e1900..ef1d63537a9b7 100644
  
  			delay = udev->parent->hub_delay;
  			udev->hub_delay = min_t(u32, delay,
-@@ -5064,62 +5026,48 @@ hub_port_init(struct usb_hub *hub, struct usb_device *udev, int port1,
+@@ -5098,62 +5060,48 @@ hub_port_init(struct usb_hub *hub, struct usb_device *udev, int port1,
  		goto fail;
  
  	/*
@@ -472,7 +472,7 @@ index 1ba3feb5e1900..ef1d63537a9b7 100644
  		goto fail;
  	}
  
-@@ -5145,7 +5093,6 @@ hub_port_init(struct usb_hub *hub, struct usb_device *udev, int port1,
+@@ -5179,7 +5127,6 @@ hub_port_init(struct usb_hub *hub, struct usb_device *udev, int port1,
  		hub_port_disable(hub, port1, 0);
  		update_devnum(udev, devnum);	/* for disconnect processing */
  	}
@@ -480,7 +480,7 @@ index 1ba3feb5e1900..ef1d63537a9b7 100644
  	return retval;
  }
  
-@@ -5226,7 +5173,7 @@ hub_power_remaining(struct usb_hub *hub)
+@@ -5260,7 +5207,7 @@ hub_power_remaining(struct usb_hub *hub)
  
  
  static int descriptors_changed(struct usb_device *udev,
@@ -489,7 +489,7 @@ index 1ba3feb5e1900..ef1d63537a9b7 100644
  		struct usb_host_bos *old_bos)
  {
  	int		changed = 0;
-@@ -5237,8 +5184,8 @@ static int descriptors_changed(struct usb_device *udev,
+@@ -5271,8 +5218,8 @@ static int descriptors_changed(struct usb_device *udev,
  	int		length;
  	char		*buf;
  
@@ -500,7 +500,7 @@ index 1ba3feb5e1900..ef1d63537a9b7 100644
  		return 1;
  
  	if ((old_bos && !udev->bos) || (!old_bos && udev->bos))
-@@ -5415,7 +5362,7 @@ static void hub_port_connect(struct usb_hub *hub, int port1, u16 portstatus,
+@@ -5449,7 +5396,7 @@ static void hub_port_connect(struct usb_hub *hub, int port1, u16 portstatus,
  		}
  
  		/* reset (non-USB 3.0 devices) and get descriptor */
@@ -509,7 +509,7 @@ index 1ba3feb5e1900..ef1d63537a9b7 100644
  		if (status < 0)
  			goto loop;
  
-@@ -5562,8 +5509,9 @@ static void hub_port_connect_change(struct usb_hub *hub, int port1,
+@@ -5596,8 +5543,9 @@ static void hub_port_connect_change(struct usb_hub *hub, int port1,
  {
  	struct usb_port *port_dev = hub->ports[port1 - 1];
  	struct usb_device *udev = port_dev->child;
@@ -520,7 +520,7 @@ index 1ba3feb5e1900..ef1d63537a9b7 100644
  
  	dev_dbg(&port_dev->dev, "status %04x, change %04x, %s\n", portstatus,
  			portchange, portspeed(hub, portstatus));
-@@ -5590,20 +5538,23 @@ static void hub_port_connect_change(struct usb_hub *hub, int port1,
+@@ -5624,20 +5572,23 @@ static void hub_port_connect_change(struct usb_hub *hub, int port1,
  			 * changed device descriptors before resuscitating the
  			 * device.
  			 */
@@ -550,7 +550,7 @@ index 1ba3feb5e1900..ef1d63537a9b7 100644
  			}
  #ifdef CONFIG_PM
  		} else if (udev->state == USB_STATE_SUSPENDED &&
-@@ -6060,7 +6011,7 @@ static int usb_reset_and_verify_device(struct usb_device *udev)
+@@ -6094,7 +6045,7 @@ static int usb_reset_and_verify_device(struct usb_device *udev)
  	struct usb_device		*parent_hdev = udev->parent;
  	struct usb_hub			*parent_hub;
  	struct usb_hcd			*hcd = bus_to_hcd(udev->bus);
@@ -559,7 +559,7 @@ index 1ba3feb5e1900..ef1d63537a9b7 100644
  	struct usb_host_bos		*bos;
  	int				i, j, ret = 0;
  	int				port1 = udev->portnum;
-@@ -6096,7 +6047,7 @@ static int usb_reset_and_verify_device(struct usb_device *udev)
+@@ -6130,7 +6081,7 @@ static int usb_reset_and_verify_device(struct usb_device *udev)
  		/* ep0 maxpacket size may change; let the HCD know about it.
  		 * Other endpoints will be handled by re-enumeration. */
  		usb_ep0_reinit(udev);
@@ -568,7 +568,7 @@ index 1ba3feb5e1900..ef1d63537a9b7 100644
  		if (ret >= 0 || ret == -ENOTCONN || ret == -ENODEV)
  			break;
  	}
-@@ -6108,6 +6059,7 @@ static int usb_reset_and_verify_device(struct usb_device *udev)
+@@ -6142,6 +6093,7 @@ static int usb_reset_and_verify_device(struct usb_device *udev)
  	/* Device might have changed firmware (DFU or similar) */
  	if (descriptors_changed(udev, &descriptor, bos)) {
  		dev_info(&udev->dev, "device firmware changed\n");
@@ -577,7 +577,7 @@ index 1ba3feb5e1900..ef1d63537a9b7 100644
  	}
  
 diff --git a/drivers/usb/core/message.c b/drivers/usb/core/message.c
-index 077dfe48d01c1..0d2bfc909019b 100644
+index d2b2787be4092..8bc0168e3af56 100644
 --- a/drivers/usb/core/message.c
 +++ b/drivers/usb/core/message.c
 @@ -1041,35 +1041,40 @@ char *usb_cache_string(struct usb_device *udev, int index)
@@ -634,7 +634,7 @@ index 077dfe48d01c1..0d2bfc909019b 100644
  
  /*
 diff --git a/drivers/usb/core/usb.h b/drivers/usb/core/usb.h
-index 60363153fc3f3..69ca59841083b 100644
+index b8324ea05b20f..82fcef57ce3a9 100644
 --- a/drivers/usb/core/usb.h
 +++ b/drivers/usb/core/usb.h
 @@ -43,8 +43,8 @@ extern bool usb_endpoint_is_ignored(struct usb_device *udev,

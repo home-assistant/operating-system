@@ -1,4 +1,4 @@
-From 0c8b1453993f15715836123bfc7c164e568913f2 Mon Sep 17 00:00:00 2001
+From c3f803f835db301e586127b061bd473fb61ec13a Mon Sep 17 00:00:00 2001
 From: Stefan Agner <stefan@agner.ch>
 Date: Wed, 19 Jul 2023 10:08:06 +0200
 Subject: [PATCH] Input: rk805-pwrkey: reverse polarity of pwrkey
@@ -12,7 +12,7 @@ Signed-off-by: Stefan Agner <stefan@agner.ch>
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/input/misc/rk805-pwrkey.c b/drivers/input/misc/rk805-pwrkey.c
-index 76873aa005b4..139419033c84 100644
+index 76873aa005b41..139419033c84a 100644
 --- a/drivers/input/misc/rk805-pwrkey.c
 +++ b/drivers/input/misc/rk805-pwrkey.c
 @@ -19,7 +19,7 @@ static irqreturn_t pwrkey_fall_irq(int irq, void *_pwr)

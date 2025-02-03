@@ -1,4 +1,4 @@
-From 6b926b041e939655d3a88202bde32f4901459a65 Mon Sep 17 00:00:00 2001
+From 6219da5138cdcdd0186187e8591010bbda5dc8a9 Mon Sep 17 00:00:00 2001
 From: Stefan Agner <stefan@agner.ch>
 Date: Mon, 4 Sep 2023 22:36:10 +0200
 Subject: [PATCH] arch: arm64: dts: green: Improve LED representation
@@ -9,7 +9,7 @@ Fix color and use labels/node names according to the LEDs functionality.
  1 file changed, 7 insertions(+), 4 deletions(-)
 
 diff --git a/arch/arm64/boot/dts/rockchip/rk3566-ha-green.dts b/arch/arm64/boot/dts/rockchip/rk3566-ha-green.dts
-index e4b1e80641b9..1d0db11db3e0 100644
+index 61083a9885a78..df260be4211d9 100644
 --- a/arch/arm64/boot/dts/rockchip/rk3566-ha-green.dts
 +++ b/arch/arm64/boot/dts/rockchip/rk3566-ha-green.dts
 @@ -48,16 +48,18 @@ hdmi_con_in: endpoint {

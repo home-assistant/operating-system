@@ -1,4 +1,4 @@
-From bf7869033cf3caa50912cbdfa548428a6571c104 Mon Sep 17 00:00:00 2001
+From 1a15fc7f6a241895a31b00c1f324d358d408a610 Mon Sep 17 00:00:00 2001
 From: Stefan Agner <stefan@agner.ch>
 Date: Fri, 4 Sep 2020 21:57:55 +0200
 Subject: [PATCH] ARM: dts: rockchip: enable I2C1/4 on rk3288-tinker
@@ -11,7 +11,7 @@ Signed-off-by: Stefan Agner <stefan@agner.ch>
  1 file changed, 8 insertions(+)
 
 diff --git a/arch/arm/boot/dts/rockchip/rk3288-tinker.dtsi b/arch/arm/boot/dts/rockchip/rk3288-tinker.dtsi
-index 30430d2e64b9..395afc2b2283 100644
+index 30430d2e64b93..395afc2b2283c 100644
 --- a/arch/arm/boot/dts/rockchip/rk3288-tinker.dtsi
 +++ b/arch/arm/boot/dts/rockchip/rk3288-tinker.dtsi
 @@ -342,10 +342,18 @@ regulator-state-mem {
