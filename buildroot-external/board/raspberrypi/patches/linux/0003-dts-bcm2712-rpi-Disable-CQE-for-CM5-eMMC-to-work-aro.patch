@@ -25,8 +25,8 @@ index 099d14ecf19a4..d49fc876cccc1 100644
  	mmc-hs400-1_8v;
  	mmc-hs400-enhanced-strobe;
  	broken-cd;
--	supports-cqe;
-+	//supports-cqe;
+-	supports-cqe = <1>;
++	supports-cqe = <0>;
  	status = "okay";
  };
  
