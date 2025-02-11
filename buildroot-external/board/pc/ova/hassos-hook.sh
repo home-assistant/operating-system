@@ -24,11 +24,13 @@ function hassos_post_image() {
     # Virtual Disk images
     convert_disk_image_virtual vmdk
     convert_disk_image_virtual vhdx
+    convert_disk_image_virtual vhd
     convert_disk_image_virtual vdi
     convert_disk_image_virtual qcow2
 
     convert_disk_image_zip vmdk
     convert_disk_image_zip vhdx
+    convert_disk_image_zip vhd
     convert_disk_image_zip vdi
     convert_disk_image_xz qcow2
 
