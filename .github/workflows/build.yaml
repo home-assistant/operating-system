@@ -34,7 +34,7 @@ jobs:
       version_full: ${{ steps.version.outputs.version_full }}
       channel: ${{ steps.channel.outputs.channel }}
       matrix: ${{ steps.generate_matrix.outputs.result }}
-      build_container_image: ghcr.io/${{ github.repository_owner | toLowerCase }}/haos-builder@${{ steps.build_haos_builder.outputs.digest }}
+      build_container_image: ghcr.io/newfuture/haos-builder@${{ steps.build_haos_builder.outputs.digest }}
       publish_build: ${{ steps.check_publish.outputs.publish_build }}
       self_signed_cert: ${{ steps.generate_signing_key.outputs.self_signed_cert }}
     steps:
@@ -149,9 +149,9 @@ jobs:
         with:
           context: .
           file: Dockerfile
-          tags: ghcr.io/${{ github.repository_owner | toLowerCase }}/haos-builder
-          cache-from: ghcr.io/${{ github.repository_owner | toLowerCase }}/haos-builder:cache-${{ steps.version.outputs.version_main }}
-          cache-to: ghcr.io/${{ github.repository_owner | toLowerCase }}/haos-builder:cache-${{ steps.version.outputs.version_main }}
+          tags: ghcr.io/newfuture/haos-builder
+          cache-from: ghcr.io/newfuture/haos-builder:cache-${{ steps.version.outputs.version_main }}
+          cache-to: ghcr.io/newfuture/haos-builder:cache-${{ steps.version.outputs.version_main }}
           push: true
 
       - name: Generate self-signed certificate
