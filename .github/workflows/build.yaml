@@ -15,7 +15,7 @@ on:
         description: 'Publish build artifacts to R2 (not applicable to forks)'
         required: true
         type: boolean
-        default: true
+        default: false
 
 env:
   PYTHON_VERSION: "3.10"
@@ -373,17 +373,17 @@ jobs:
         uses: actions/upload-artifact@v4
         if: ${{ github.event_name != 'release' && needs.prepare.outputs.publish_build != 'true' && matrix.board.id == 'ova' }}
         with:
-          name: haos_${{ matrix.board.id }}-${{ needs.prepare.outputs.version_full }}.vhdx.zip
+          name: haos_${{ matrix.board.id }}-${{ needs.prepare.outputs.version_full }}.vhdx
           path: |
-            output/images/haos_${{ matrix.board.id }}-${{ needs.prepare.outputs.version_full }}.vhdx.zip
+            output/images/haos_${{ matrix.board.id }}-${{ needs.prepare.outputs.version_full }}.vhdx
 
-      - name: Upload Virtual Hard Disk (VHD) artifact
+      - name: Upload Virtual Hard Disk (vpc) artifact
         uses: actions/upload-artifact@v4
         if: ${{ github.event_name != 'release' && needs.prepare.outputs.publish_build != 'true' && matrix.board.id == 'ova' }}
         with:
-          name: haos_${{ matrix.board.id }}-${{ needs.prepare.outputs.version_full }}.vhd.zip
+          name: haos_${{ matrix.board.id }}-${{ needs.prepare.outputs.version_full }}.vpc
           path: |
-            output/images/haos_${{ matrix.board.id }}-${{ needs.prepare.outputs.version_full }}.vhd.zip
+            output/images/haos_${{ matrix.board.id }}-${{ needs.prepare.outputs.version_full }}.vpc
 
   test:
     name: Test OS image
