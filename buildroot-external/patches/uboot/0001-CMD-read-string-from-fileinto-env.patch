@@ -1,4 +1,4 @@
-From 01d614198feedef81ce60e61bbdf5f1ddc62be52 Mon Sep 17 00:00:00 2001
+From 4af7bcd52d0b6c8df3129a2f35035c6a1b62848d Mon Sep 17 00:00:00 2001
 From: Pascal Vizeli <pvizeli@syshack.ch>
 Date: Sun, 5 Aug 2018 20:43:03 +0000
 Subject: [PATCH] CMD: read string from fileinto env
@@ -12,10 +12,10 @@ Signed-off-by: Pascal Vizeli <pvizeli@syshack.ch>
  create mode 100644 cmd/fileenv.c
 
 diff --git a/cmd/Kconfig b/cmd/Kconfig
-index df6d71c103..6cda4909d5 100644
+index 1d7ddb4ed36..0c0ce749000 100644
 --- a/cmd/Kconfig
 +++ b/cmd/Kconfig
-@@ -1689,6 +1689,11 @@ config CMD_XXD
+@@ -1792,6 +1792,11 @@ config CMD_XXD
  	help
  	  Print file as hexdump to standard output
  
@@ -26,22 +26,22 @@ index df6d71c103..6cda4909d5 100644
 +
  endmenu
  
- menu "Android support commands"
+ if NET || NET_LWIP
 diff --git a/cmd/Makefile b/cmd/Makefile
-index 9a6790cc17..a521653ff8 100644
+index d1f369deec0..7ad9d3720c0 100644
 --- a/cmd/Makefile
 +++ b/cmd/Makefile
-@@ -164,6 +164,7 @@ obj-$(CONFIG_CMD_SHA1SUM) += sha1sum.o
+@@ -170,6 +170,7 @@ obj-$(CONFIG_CMD_SHA1SUM) += sha1sum.o
  obj-$(CONFIG_CMD_SEAMA) += seama.o
  obj-$(CONFIG_CMD_SETEXPR) += setexpr.o
  obj-$(CONFIG_CMD_SETEXPR_FMT) += printf.o
 +obj-$(CONFIG_CMD_FILEENV) += fileenv.o
  obj-$(CONFIG_CMD_SPI) += spi.o
  obj-$(CONFIG_CMD_STRINGS) += strings.o
- obj-$(CONFIG_CMD_SMC) += smccc.o
+ obj-$(CONFIG_CMD_SMBIOS) += smbios.o
 diff --git a/cmd/fileenv.c b/cmd/fileenv.c
 new file mode 100644
-index 0000000000..4154c8df0f
+index 00000000000..4154c8df0f0
 --- /dev/null
 +++ b/cmd/fileenv.c
 @@ -0,0 +1,45 @@
