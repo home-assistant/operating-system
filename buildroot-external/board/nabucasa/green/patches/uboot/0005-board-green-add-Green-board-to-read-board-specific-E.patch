@@ -1,4 +1,4 @@
-From acec57c77e10230fc32820046301cb2a59c431d4 Mon Sep 17 00:00:00 2001
+From c1b3736623b9a6e5d027ca202dbc53b7eb7e4662 Mon Sep 17 00:00:00 2001
 From: Stefan Agner <stefan@agner.ch>
 Date: Thu, 17 Aug 2023 17:38:13 +0200
 Subject: [PATCH] board: green: add Green board to read board specific EEPROM
@@ -12,17 +12,17 @@ Signed-off-by: Stefan Agner <stefan@agner.ch>
  arch/arm/mach-rockchip/rk3568/Kconfig |  7 +++
  board/nabucasa/ha-green/Kconfig       | 15 +++++++
  board/nabucasa/ha-green/Makefile      |  3 ++
- board/nabucasa/ha-green/ha-green.c    | 65 +++++++++++++++++++++++++++
+ board/nabucasa/ha-green/ha-green.c    | 64 +++++++++++++++++++++++++++
  configs/green_defconfig               |  3 ++
  include/configs/ha-green.h            | 11 +++++
- 7 files changed, 111 insertions(+)
+ 7 files changed, 110 insertions(+)
  create mode 100644 board/nabucasa/ha-green/Kconfig
  create mode 100644 board/nabucasa/ha-green/Makefile
  create mode 100644 board/nabucasa/ha-green/ha-green.c
  create mode 100644 include/configs/ha-green.h
 
 diff --git a/arch/arm/dts/rk3566-ha-green.dts b/arch/arm/dts/rk3566-ha-green.dts
-index ea9d358099..91afadf0e6 100644
+index ea9d358099b..91afadf0e65 100644
 --- a/arch/arm/dts/rk3566-ha-green.dts
 +++ b/arch/arm/dts/rk3566-ha-green.dts
 @@ -449,6 +449,13 @@
@@ -40,7 +40,7 @@ index ea9d358099..91afadf0e6 100644
  
  &i2s0_8ch {
 diff --git a/arch/arm/mach-rockchip/rk3568/Kconfig b/arch/arm/mach-rockchip/rk3568/Kconfig
-index baa51349f4..42652dec03 100644
+index ce327ed6f9e..5f675b11491 100644
 --- a/arch/arm/mach-rockchip/rk3568/Kconfig
 +++ b/arch/arm/mach-rockchip/rk3568/Kconfig
 @@ -17,6 +17,12 @@ config TARGET_ANBERNIC_RGXX3_RK3566
@@ -56,17 +56,17 @@ index baa51349f4..42652dec03 100644
  config TARGET_ODROID_M1_RK3568
  	bool "ODROID-M1"
  	help
-@@ -44,6 +50,7 @@ config SYS_MALLOC_F_LEN
- source "board/rockchip/evb_rk3568/Kconfig"
+@@ -81,6 +87,7 @@ source "board/rockchip/evb_rk3568/Kconfig"
  source "board/anbernic/rgxx3_rk3566/Kconfig"
  source "board/hardkernel/odroid_m1/Kconfig"
+ source "board/hardkernel/odroid_m1s/Kconfig"
 +source "board/nabucasa/ha-green/Kconfig"
  source "board/pine64/quartz64_rk3566/Kconfig"
- 
- endif
+ source "board/powkiddy/x55/Kconfig"
+ source "board/qnap/ts433/Kconfig"
 diff --git a/board/nabucasa/ha-green/Kconfig b/board/nabucasa/ha-green/Kconfig
 new file mode 100644
-index 0000000000..863afd4363
+index 00000000000..863afd43632
 --- /dev/null
 +++ b/board/nabucasa/ha-green/Kconfig
 @@ -0,0 +1,15 @@
@@ -87,7 +87,7 @@ index 0000000000..863afd4363
 +endif
 diff --git a/board/nabucasa/ha-green/Makefile b/board/nabucasa/ha-green/Makefile
 new file mode 100644
-index 0000000000..bf711fe8c4
+index 00000000000..bf711fe8c44
 --- /dev/null
 +++ b/board/nabucasa/ha-green/Makefile
 @@ -0,0 +1,3 @@
@@ -96,10 +96,10 @@ index 0000000000..bf711fe8c4
 +obj-y    += ha-green.o
 diff --git a/board/nabucasa/ha-green/ha-green.c b/board/nabucasa/ha-green/ha-green.c
 new file mode 100644
-index 0000000000..b9a0c32441
+index 00000000000..3f0ede747bc
 --- /dev/null
 +++ b/board/nabucasa/ha-green/ha-green.c
-@@ -0,0 +1,65 @@
+@@ -0,0 +1,64 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
 + * Copyright 2023 Nabu Casa, Inc.
@@ -109,7 +109,6 @@ index 0000000000..b9a0c32441
 +#include <errno.h>
 +#include <dm/device.h>
 +#include <dm/uclass.h>
-+#include <common.h>
 +#include <dm.h>
 +#include <eeprom.h>
 +#include <env.h>
@@ -166,7 +165,7 @@ index 0000000000..b9a0c32441
 +	return 0;
 +}
 diff --git a/configs/green_defconfig b/configs/green_defconfig
-index 5f94c06279..a97391f295 100644
+index 5f94c062798..a97391f2954 100644
 --- a/configs/green_defconfig
 +++ b/configs/green_defconfig
 @@ -16,6 +16,7 @@ CONFIG_SPL_ROCKCHIP_COMMON_BOARD=y
@@ -188,7 +187,7 @@ index 5f94c06279..a97391f295 100644
  CONFIG_MMC_DW_ROCKCHIP=y
 diff --git a/include/configs/ha-green.h b/include/configs/ha-green.h
 new file mode 100644
-index 0000000000..e42d9c8e8c
+index 00000000000..e42d9c8e8c9
 --- /dev/null
 +++ b/include/configs/ha-green.h
 @@ -0,0 +1,11 @@
@@ -203,6 +202,3 @@ index 0000000000..e42d9c8e8c
 +#include <configs/rk3568_common.h>
 +
 +#endif
--- 
-2.43.0
-

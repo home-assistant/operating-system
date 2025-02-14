@@ -1,4 +1,4 @@
-From 51f1bdec59b8f62ac00a37e97a7bb8ebfc9f61d7 Mon Sep 17 00:00:00 2001
+From 6ae9e30259812a3cbc8d4990a5acfe459053a225 Mon Sep 17 00:00:00 2001
 From: syan <syan.cham@gmail.com>
 Date: Mon, 31 Jul 2023 09:39:55 +0000
 Subject: [PATCH] green: spl loader uboot order: sd-emmc-spi_nor
@@ -8,7 +8,7 @@ Subject: [PATCH] green: spl loader uboot order: sd-emmc-spi_nor
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/arch/arm/dts/rk3566-ha-green-u-boot.dtsi b/arch/arm/dts/rk3566-ha-green-u-boot.dtsi
-index fa98078fce..48d7b61513 100644
+index fa98078fce2..48d7b615137 100644
 --- a/arch/arm/dts/rk3566-ha-green-u-boot.dtsi
 +++ b/arch/arm/dts/rk3566-ha-green-u-boot.dtsi
 @@ -9,7 +9,7 @@
@@ -20,6 +20,3 @@ index fa98078fce..48d7b61513 100644
  	};
  };
  
--- 
-2.43.0
-

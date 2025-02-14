@@ -1,4 +1,4 @@
-From d3fb1ec2364b20025d71e2263514a71208cfb61e Mon Sep 17 00:00:00 2001
+From 2bdc5718a00ce5cb9c1fa27c8a1ff6893b016455 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Jan=20=C4=8Cerm=C3=A1k?= <sairon@sairon.cz>
 Date: Tue, 13 Aug 2024 17:51:29 +0200
 Subject: [PATCH] arch: arm64: dts: green: Improve LED representation
@@ -15,7 +15,7 @@ Co-authored-by: Stefan Agner <stefan@agner.ch>
  1 file changed, 7 insertions(+), 4 deletions(-)
 
 diff --git a/arch/arm/dts/rk3566-ha-green.dts b/arch/arm/dts/rk3566-ha-green.dts
-index 68d836911e..c3adc59904 100644
+index 68d836911ec..c3adc599049 100644
 --- a/arch/arm/dts/rk3566-ha-green.dts
 +++ b/arch/arm/dts/rk3566-ha-green.dts
 @@ -48,16 +48,18 @@
