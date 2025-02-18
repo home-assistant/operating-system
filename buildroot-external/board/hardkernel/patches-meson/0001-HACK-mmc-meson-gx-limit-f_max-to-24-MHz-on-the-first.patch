@@ -1,4 +1,4 @@
-From 024796cbf752d2e210341ae8609792803641eb92 Mon Sep 17 00:00:00 2001
+From f63ef87b9a9bf9997aa4017f8380567b20a1810c Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Jan=20=C4=8Cerm=C3=A1k?= <sairon@sairon.cz>
 Date: Thu, 7 Nov 2024 12:39:02 +0100
 Subject: [PATCH] HACK: mmc: meson-gx: limit f_max to 24 MHz on the first try
@@ -25,10 +25,10 @@ Signed-off-by: Jan Čermák <sairon@sairon.cz>
  3 files changed, 15 insertions(+)
 
 diff --git a/drivers/mmc/meson_gx_mmc.c b/drivers/mmc/meson_gx_mmc.c
-index fcf4f03d1e..715dce3522 100644
+index 5852b24c6d2..0e0265de359 100644
 --- a/drivers/mmc/meson_gx_mmc.c
 +++ b/drivers/mmc/meson_gx_mmc.c
-@@ -283,6 +283,8 @@ static int meson_mmc_probe(struct udevice *dev)
+@@ -282,6 +282,8 @@ static int meson_mmc_probe(struct udevice *dev)
  	cfg->b_max = 511; /* max 512 - 1 blocks */
  	cfg->name = dev->name;
  
@@ -38,10 +38,10 @@ index fcf4f03d1e..715dce3522 100644
  	upriv->mmc = mmc;
  
 diff --git a/drivers/mmc/mmc.c b/drivers/mmc/mmc.c
-index d96db7a0f8..c8dc676612 100644
+index 799586891af..85b6210f220 100644
 --- a/drivers/mmc/mmc.c
 +++ b/drivers/mmc/mmc.c
-@@ -1652,6 +1652,10 @@ int mmc_set_clock(struct mmc *mmc, uint clock, bool disable)
+@@ -1694,6 +1694,10 @@ int mmc_set_clock(struct mmc *mmc, uint clock, bool disable)
  			clock = mmc->cfg->f_min;
  	}
  
@@ -52,7 +52,7 @@ index d96db7a0f8..c8dc676612 100644
  	mmc->clock = clock;
  	mmc->clk_disable = disable;
  
-@@ -2647,6 +2651,13 @@ static int mmc_startup(struct mmc *mmc)
+@@ -2701,6 +2705,13 @@ static int mmc_startup(struct mmc *mmc)
  		if (err)
  			return err;
  		err = mmc_select_mode_and_width(mmc, mmc->card_caps);
@@ -67,13 +67,13 @@ index d96db7a0f8..c8dc676612 100644
  #endif
  	if (err)
 diff --git a/include/mmc.h b/include/mmc.h
-index 1022db3ffa..0ea48c6fd9 100644
+index e4b960b7294..5ad40cf2ed1 100644
 --- a/include/mmc.h
 +++ b/include/mmc.h
-@@ -739,6 +739,8 @@ struct mmc {
- 	u8 hs400_tuning;
- 
+@@ -760,6 +760,8 @@ struct mmc {
  	enum bus_mode user_speed_mode; /* input speed mode from user */
+ 
+ 	CONFIG_IS_ENABLED(CYCLIC, (struct cyclic_info cyclic));
 +
 +	bool meson_gx_f_max_hack;
  };

@@ -1,4 +1,4 @@
-From 8c5910539c7e4e97f233789c2489c800f87ddf81 Mon Sep 17 00:00:00 2001
+From cd66ee3e5f0a3c86702cf898c5b6d13227cd29b7 Mon Sep 17 00:00:00 2001
 From: Stefan Agner <stefan@agner.ch>
 Date: Thu, 23 Sep 2021 23:52:44 +0200
 Subject: [PATCH] nvme: improve readability of nvme_setup_prps()
@@ -12,7 +12,7 @@ Signed-off-by: Stefan Agner <stefan@agner.ch>
  1 file changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/nvme/nvme.c b/drivers/nvme/nvme.c
-index 0b2496cf26..b1d8eecdca 100644
+index 0b2496cf26f..b1d8eecdcaf 100644
 --- a/drivers/nvme/nvme.c
 +++ b/drivers/nvme/nvme.c
 @@ -47,12 +47,12 @@ static int nvme_wait_csts(struct nvme_dev *dev, u32 mask, u32 val)

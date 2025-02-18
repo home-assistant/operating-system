@@ -1,4 +1,4 @@
-From 331826e0c52d6bdd65d862e06834f23b3a750276 Mon Sep 17 00:00:00 2001
+From bda29ba9030c8ad9aa245d68033a83106de4f633 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Jan=20=C4=8Cerm=C3=A1k?= <sairon@sairon.cz>
 Date: Wed, 12 Jun 2024 15:20:46 +0200
 Subject: [PATCH] green: Do not use eMMC DDR52 mode, enable HS200
@@ -22,7 +22,7 @@ Signed-off-by: Jan Čermák <sairon@sairon.cz>
  2 files changed, 3 insertions(+), 4 deletions(-)
 
 diff --git a/arch/arm/dts/rk3566-ha-green-u-boot.dtsi b/arch/arm/dts/rk3566-ha-green-u-boot.dtsi
-index 48d7b61513..8dc1585aac 100644
+index 48d7b615137..8dc1585aacd 100644
 --- a/arch/arm/dts/rk3566-ha-green-u-boot.dtsi
 +++ b/arch/arm/dts/rk3566-ha-green-u-boot.dtsi
 @@ -71,10 +71,7 @@
@@ -44,7 +44,7 @@ index 48d7b61513..8dc1585aac 100644
 \ No newline at end of file
 +};
 diff --git a/configs/green_defconfig b/configs/green_defconfig
-index 71c9257d7d..7b5a705686 100644
+index 71c9257d7d4..7b5a7056868 100644
 --- a/configs/green_defconfig
 +++ b/configs/green_defconfig
 @@ -65,6 +65,8 @@ CONFIG_MISC=y

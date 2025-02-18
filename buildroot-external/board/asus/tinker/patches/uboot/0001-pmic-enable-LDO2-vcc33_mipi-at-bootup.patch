@@ -1,30 +1,29 @@
-From defc964eaa9f4ccc9cd1568ade4e4d81f35b9e07 Mon Sep 17 00:00:00 2001
+From 78bd1a46cfc585773719963ce8e0a380e9676a93 Mon Sep 17 00:00:00 2001
 From: Pascal Vizeli <pvizeli@syshack.ch>
 Date: Fri, 24 Apr 2020 11:37:55 +0000
 Subject: [PATCH] pmic: enable LDO2 vcc33_mipi at bootup
 
 Signed-off-by: Pascal Vizeli <pvizeli@syshack.ch>
 ---
- board/rockchip/tinker_rk3288/tinker-rk3288.c | 37 ++++++++++++++++++++
- 1 file changed, 37 insertions(+)
+ board/rockchip/tinker_rk3288/tinker-rk3288.c | 36 ++++++++++++++++++++
+ 1 file changed, 36 insertions(+)
 
 diff --git a/board/rockchip/tinker_rk3288/tinker-rk3288.c b/board/rockchip/tinker_rk3288/tinker-rk3288.c
-index f85209c649..6fa1bb0c66 100644
+index e966e9f201a..2944d8c084f 100644
 --- a/board/rockchip/tinker_rk3288/tinker-rk3288.c
 +++ b/board/rockchip/tinker_rk3288/tinker-rk3288.c
-@@ -13,6 +13,7 @@
+@@ -9,6 +9,7 @@
+ #include <init.h>
+ #include <net.h>
  #include <netdev.h>
- #include <asm/arch-rockchip/bootrom.h>
- #include <asm/io.h>
 +#include <power/regulator.h>
  
  static int get_ethaddr_from_eeprom(u8 *addr)
  {
-@@ -48,3 +49,39 @@ int mmc_get_env_dev(void)
+@@ -34,3 +35,38 @@ int rk3288_board_late_init(void)
  
- 	return 1;
+ 	return 0;
  }
-+
 +
 +#ifdef CONFIG_DM_PMIC
 +static int rockchip_set_regulator_on(const char *name, uint uv)
@@ -60,6 +59,3 @@ index f85209c649..6fa1bb0c66 100644
 +	return 0;
 +}
 +#endif
--- 
-2.43.0
-

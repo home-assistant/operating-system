@@ -1,4 +1,4 @@
-From d613be9ca405b2e65ac03b137cf6351b1aae7154 Mon Sep 17 00:00:00 2001
+From 57a416a55ebd7ab43fbebd972f984470f7f71973 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Jan=20=C4=8Cerm=C3=A1k?= <sairon@sairon.cz>
 Date: Mon, 7 Oct 2024 15:13:40 +0200
 Subject: [PATCH] pci: pcie-brcmstb: HACK - add DT property for skipping device
@@ -21,10 +21,10 @@ Signed-off-by: Jan Čermák <sairon@sairon.cz>
  1 file changed, 7 insertions(+)
 
 diff --git a/drivers/pci/pcie_brcmstb.c b/drivers/pci/pcie_brcmstb.c
-index df3e177629..02d9e7a1b3 100644
+index 51b7351b8ce..cd2d395947a 100644
 --- a/drivers/pci/pcie_brcmstb.c
 +++ b/drivers/pci/pcie_brcmstb.c
-@@ -175,6 +175,7 @@ struct brcm_pcie {
+@@ -84,6 +84,7 @@ struct brcm_pcie {
  	enum pcie_soc_base	soc_base;
  	int			gen;
  	bool			ssc;
@@ -32,7 +32,7 @@ index df3e177629..02d9e7a1b3 100644
  
  	struct reset_ctl	*rescal;
  	struct reset_ctl	*bridge_reset;
-@@ -546,6 +547,11 @@ static int brcm_pcie_probe(struct udevice *dev)
+@@ -455,6 +456,11 @@ static int brcm_pcie_probe(struct udevice *dev)
  	u16 nlw, cls, lnksta;
  	u32 tmp;
  
@@ -44,7 +44,7 @@ index df3e177629..02d9e7a1b3 100644
  	if (pcie->rescal)
  		reset_deassert(pcie->rescal);
  
-@@ -766,6 +772,7 @@ static int brcm_pcie_of_to_plat(struct udevice *dev)
+@@ -675,6 +681,7 @@ static int brcm_pcie_of_to_plat(struct udevice *dev)
  	}
  
  	pcie->ssc = ofnode_read_bool(dn, "brcm,enable-ssc");

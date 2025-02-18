@@ -1,4 +1,4 @@
-From 4e7236a0e4a75dfca366ffc4ffb23a4bd43a52e7 Mon Sep 17 00:00:00 2001
+From 76cde18c3c80d4f7c2d53e4731e1c5d9689a6f49 Mon Sep 17 00:00:00 2001
 From: Stefan Agner <stefan@agner.ch>
 Date: Thu, 23 Sep 2021 23:58:35 +0200
 Subject: [PATCH] nvme: Use pointer for CPU addressed buffers
@@ -15,10 +15,10 @@ Signed-off-by: Stefan Agner <stefan@agner.ch>
  3 files changed, 33 insertions(+), 33 deletions(-)
 
 diff --git a/drivers/nvme/nvme.c b/drivers/nvme/nvme.c
-index 5c4fbd08dc..43ef819d11 100644
+index b1d8eecdcaf..f626a472ffa 100644
 --- a/drivers/nvme/nvme.c
 +++ b/drivers/nvme/nvme.c
-@@ -46,11 +46,11 @@ static int nvme_wait_csts(struct nvme_dev *dev, u32 mask, u32 val)
+@@ -45,11 +45,11 @@ static int nvme_wait_csts(struct nvme_dev *dev, u32 mask, u32 val)
  }
  
  static int nvme_setup_prps(struct nvme_dev *dev, u64 *prp2,
@@ -32,7 +32,7 @@ index 5c4fbd08dc..43ef819d11 100644
  	u64 *prp_pool;
  	int length = total_len;
  	int i, nprps;
-@@ -64,10 +64,10 @@ static int nvme_setup_prps(struct nvme_dev *dev, u64 *prp2,
+@@ -63,10 +63,10 @@ static int nvme_setup_prps(struct nvme_dev *dev, u64 *prp2,
  	}
  
  	if (length)
@@ -45,7 +45,7 @@ index 5c4fbd08dc..43ef819d11 100644
  		return 0;
  	}
  
-@@ -97,11 +97,11 @@ static int nvme_setup_prps(struct nvme_dev *dev, u64 *prp2,
+@@ -96,11 +96,11 @@ static int nvme_setup_prps(struct nvme_dev *dev, u64 *prp2,
  			i = 0;
  			prp_pool += page_size;
  		}
@@ -60,7 +60,7 @@ index 5c4fbd08dc..43ef819d11 100644
  
  	flush_dcache_range((ulong)dev->prp_pool, (ulong)dev->prp_pool +
  			   num_pages * page_size);
-@@ -448,42 +448,42 @@ static int nvme_alloc_sq(struct nvme_dev *dev, u16 qid,
+@@ -447,42 +447,42 @@ static int nvme_alloc_sq(struct nvme_dev *dev, u16 qid,
  }
  
  int nvme_identify(struct nvme_dev *dev, unsigned nsid,
@@ -113,7 +113,7 @@ index 5c4fbd08dc..43ef819d11 100644
  {
  	struct nvme_command c;
  	int ret;
-@@ -491,7 +491,7 @@ int nvme_get_features(struct nvme_dev *dev, unsigned fid, unsigned nsid,
+@@ -490,7 +490,7 @@ int nvme_get_features(struct nvme_dev *dev, unsigned fid, unsigned nsid,
  	memset(&c, 0, sizeof(c));
  	c.features.opcode = nvme_admin_get_features;
  	c.features.nsid = cpu_to_le32(nsid);
@@ -122,7 +122,7 @@ index 5c4fbd08dc..43ef819d11 100644
  	c.features.fid = cpu_to_le32(fid);
  
  	ret = nvme_submit_admin_cmd(dev, &c, result);
-@@ -511,13 +511,13 @@ int nvme_get_features(struct nvme_dev *dev, unsigned fid, unsigned nsid,
+@@ -510,13 +510,13 @@ int nvme_get_features(struct nvme_dev *dev, unsigned fid, unsigned nsid,
  }
  
  int nvme_set_features(struct nvme_dev *dev, unsigned fid, unsigned dword11,
@@ -138,7 +138,7 @@ index 5c4fbd08dc..43ef819d11 100644
  	c.features.fid = cpu_to_le32(fid);
  	c.features.dword11 = cpu_to_le32(dword11);
  
-@@ -568,7 +568,7 @@ static int nvme_set_queue_count(struct nvme_dev *dev, int count)
+@@ -567,7 +567,7 @@ static int nvme_set_queue_count(struct nvme_dev *dev, int count)
  	u32 q_count = (count - 1) | ((count - 1) << 16);
  
  	status = nvme_set_features(dev, NVME_FEAT_NUM_QUEUES,
@@ -147,7 +147,7 @@ index 5c4fbd08dc..43ef819d11 100644
  
  	if (status < 0)
  		return status;
-@@ -629,7 +629,7 @@ static int nvme_get_info_from_identify(struct nvme_dev *dev)
+@@ -628,7 +628,7 @@ static int nvme_get_info_from_identify(struct nvme_dev *dev)
  	if (!ctrl)
  		return -ENOMEM;
  
@@ -156,7 +156,7 @@ index 5c4fbd08dc..43ef819d11 100644
  	if (ret) {
  		free(ctrl);
  		return -EIO;
-@@ -717,7 +717,7 @@ static int nvme_blk_probe(struct udevice *udev)
+@@ -718,7 +718,7 @@ static int nvme_blk_probe(struct udevice *udev)
  	ns->dev = ndev;
  	/* extract the namespace id from the block device name */
  	ns->ns_id = trailing_strtol(udev->name);
@@ -165,7 +165,7 @@ index 5c4fbd08dc..43ef819d11 100644
  		free(id);
  		return -EIO;
  	}
-@@ -751,7 +751,7 @@ static ulong nvme_blk_rw(struct udevice *udev, lbaint_t blknr,
+@@ -752,7 +752,7 @@ static ulong nvme_blk_rw(struct udevice *udev, lbaint_t blknr,
  	u64 prp2;
  	u64 total_len = blkcnt << desc->log2blksz;
  	u64 temp_len = total_len;
@@ -174,7 +174,7 @@ index 5c4fbd08dc..43ef819d11 100644
  
  	u64 slba = blknr;
  	u16 lbas = 1 << (dev->max_transfer_shift - ns->lba_shift);
-@@ -889,7 +889,7 @@ int nvme_init(struct udevice *udev)
+@@ -890,7 +890,7 @@ int nvme_init(struct udevice *udev)
  		char name[20];
  
  		memset(id, 0, sizeof(*id));
@@ -184,10 +184,10 @@ index 5c4fbd08dc..43ef819d11 100644
  			goto free_id;
  		}
 diff --git a/drivers/nvme/nvme_show.c b/drivers/nvme/nvme_show.c
-index 72cbac82bc..ac9b5cc9bd 100644
+index b06cb5c6d51..ad1a260f9ab 100644
 --- a/drivers/nvme/nvme_show.c
 +++ b/drivers/nvme/nvme_show.c
-@@ -114,7 +114,7 @@ int nvme_print_info(struct udevice *udev)
+@@ -113,7 +113,7 @@ int nvme_print_info(struct udevice *udev)
  	if (!ctrl)
  		return -ENOMEM;
  
@@ -196,7 +196,7 @@ index 72cbac82bc..ac9b5cc9bd 100644
  		ret = -EIO;
  		goto free_ctrl;
  	}
-@@ -129,7 +129,7 @@ int nvme_print_info(struct udevice *udev)
+@@ -128,7 +128,7 @@ int nvme_print_info(struct udevice *udev)
  		goto free_ctrl;
  	}
  
@@ -206,7 +206,7 @@ index 72cbac82bc..ac9b5cc9bd 100644
  		goto free_id;
  	}
 diff --git a/include/nvme.h b/include/nvme.h
-index 2cdf8ce320..8ff823cd81 100644
+index 2cdf8ce320c..8ff823cd81c 100644
 --- a/include/nvme.h
 +++ b/include/nvme.h
 @@ -18,12 +18,12 @@ struct nvme_dev;
@@ -256,6 +256,3 @@ index 2cdf8ce320..8ff823cd81 100644
  
  /**
   * nvme_scan_namespace - scan all namespaces attached to NVMe controllers
--- 
-2.43.0
-

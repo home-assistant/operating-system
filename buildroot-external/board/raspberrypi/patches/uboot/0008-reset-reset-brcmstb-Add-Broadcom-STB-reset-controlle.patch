@@ -1,4 +1,4 @@
-From 81100e760c8ed3d697696de5353d51e8e1af2be4 Mon Sep 17 00:00:00 2001
+From ad9ce9d8ba273fffeff3d98ae1fc978dd217ab1d Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Jan=20=C4=8Cerm=C3=A1k?= <sairon@sairon.cz>
 Date: Mon, 30 Sep 2024 17:56:45 +0200
 Subject: [PATCH] reset: reset-brcmstb: Add Broadcom STB reset controller
@@ -20,7 +20,7 @@ Signed-off-by: Jan Čermák <sairon@sairon.cz>
  create mode 100644 drivers/reset/reset-brcmstb.c
 
 diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-index fe5c1214f5..10a364b2a8 100644
+index fe5c1214f57..186dd963bc4 100644
 --- a/drivers/reset/Kconfig
 +++ b/drivers/reset/Kconfig
 @@ -63,6 +63,12 @@ config RESET_BCM6345
@@ -37,7 +37,7 @@ index fe5c1214f5..10a364b2a8 100644
  	bool "Reset controller driver for UniPhier SoCs"
  	depends on ARCH_UNIPHIER
 diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
-index 2eb639e4a6..d7e9ac1a88 100644
+index d99a78c9828..8d9181e8af7 100644
 --- a/drivers/reset/Makefile
 +++ b/drivers/reset/Makefile
 @@ -13,6 +13,7 @@ obj-$(CONFIG_TEGRA186_RESET) += tegra186-reset.o
@@ -50,7 +50,7 @@ index 2eb639e4a6..d7e9ac1a88 100644
  obj-$(CONFIG_RESET_AST2600) += reset-ast2600.o
 diff --git a/drivers/reset/reset-brcmstb.c b/drivers/reset/reset-brcmstb.c
 new file mode 100644
-index 0000000000..c0aef5f124
+index 00000000000..c0aef5f1241
 --- /dev/null
 +++ b/drivers/reset/reset-brcmstb.c
 @@ -0,0 +1,89 @@

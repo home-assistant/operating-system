@@ -1,4 +1,4 @@
-From 8e63cbe8892eb6edc02674d42078a9f116ee8224 Mon Sep 17 00:00:00 2001
+From 16508d6d1a166ac2c7c03550876633cf9828e0e0 Mon Sep 17 00:00:00 2001
 From: Stefan Agner <stefan@agner.ch>
 Date: Thu, 23 Sep 2021 23:43:31 +0200
 Subject: [PATCH] Revert "nvme: Correct the prps per page calculation method"
@@ -23,10 +23,10 @@ Cc: Wesley Sheng <wesleyshenggit@sina.com>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/nvme/nvme.c b/drivers/nvme/nvme.c
-index c39cd41aa3..03a652863c 100644
+index 7c58ceb78f5..0b2496cf26f 100644
 --- a/drivers/nvme/nvme.c
 +++ b/drivers/nvme/nvme.c
-@@ -53,7 +53,7 @@ static int nvme_setup_prps(struct nvme_dev *dev, u64 *prp2,
+@@ -52,7 +52,7 @@ static int nvme_setup_prps(struct nvme_dev *dev, u64 *prp2,
  	u64 *prp_pool;
  	int length = total_len;
  	int i, nprps;
@@ -35,6 +35,3 @@ index c39cd41aa3..03a652863c 100644
  	u32 num_pages;
  
  	length -= (page_size - offset);
--- 
-2.43.0
-

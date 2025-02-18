@@ -1,4 +1,4 @@
-From e14d7d56b293ba01c5b73a4b3483795d78c75172 Mon Sep 17 00:00:00 2001
+From 107a4b9bf7d335de4a6dc7e6097a1f38fdab38c7 Mon Sep 17 00:00:00 2001
 From: Zhangqun Ming <north_sea@qq.com>
 Date: Sat, 15 Jul 2023 08:46:09 +0000
 Subject: [PATCH] arch: arm: dts: green: spi nor uboot
@@ -10,7 +10,7 @@ Subject: [PATCH] arch: arm: dts: green: spi nor uboot
  3 files changed, 91 insertions(+), 3 deletions(-)
 
 diff --git a/arch/arm/dts/rk3566-ha-green-u-boot.dtsi b/arch/arm/dts/rk3566-ha-green-u-boot.dtsi
-index 7f2ed298ce..fa98078fce 100644
+index 7f2ed298ce3..fa98078fce2 100644
 --- a/arch/arm/dts/rk3566-ha-green-u-boot.dtsi
 +++ b/arch/arm/dts/rk3566-ha-green-u-boot.dtsi
 @@ -13,15 +13,96 @@
@@ -123,7 +123,7 @@ index 7f2ed298ce..fa98078fce 100644
 +};
 \ No newline at end of file
 diff --git a/arch/arm/dts/rk3566-ha-green.dts b/arch/arm/dts/rk3566-ha-green.dts
-index bf0f81c3a1..ea9d358099 100644
+index bf0f81c3a15..ea9d358099b 100644
 --- a/arch/arm/dts/rk3566-ha-green.dts
 +++ b/arch/arm/dts/rk3566-ha-green.dts
 @@ -566,8 +566,8 @@
@@ -138,7 +138,7 @@ index bf0f81c3a1..ea9d358099 100644
  
  		partitions {
 diff --git a/configs/green_defconfig b/configs/green_defconfig
-index 14960b67d2..5f94c06279 100644
+index 14960b67d26..5f94c062798 100644
 --- a/configs/green_defconfig
 +++ b/configs/green_defconfig
 @@ -68,6 +68,8 @@ CONFIG_MMC_SDHCI_SDMA=y
@@ -150,6 +150,3 @@ index 14960b67d2..5f94c06279 100644
  CONFIG_ETH_DESIGNWARE=y
  CONFIG_GMAC_ROCKCHIP=y
  CONFIG_PHY_ROCKCHIP_INNO_USB2=y
--- 
-2.43.0
-
