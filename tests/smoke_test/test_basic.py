@@ -79,6 +79,31 @@ def test_systemctl_check_no_failed(shell):
 
 
 @pytest.mark.dependency(depends=["test_init"])
+def test_custom_swap_size(shell, target):
+    output = shell.run_check("stat -c '%s' /mnt/data/swapfile")
+    # set new swap size to half of the previous size - round to 4k blocks
+    new_swap_size = (int(output[0]) // 2 // 4096) * 4096
+    shell.run_check(f"echo 'SWAPSIZE={new_swap_size/1024/1024}M' > /etc/default/haos-swapfile; reboot")
+    # reactivate ShellDriver to handle login again
+    target.deactivate(shell)
+    target.activate(shell)
+    output = shell.run_check("stat -c '%s' /mnt/data/swapfile")
+    assert int(output[0]) == new_swap_size, f"Incorrect swap size {new_swap_size}B: {output}"
+
+
+@pytest.mark.dependency(depends=["test_custom_swap_size"])
+def test_no_swap(shell, target):
+    output = shell.run_check("echo 'SWAPSIZE=0' > /etc/default/haos-swapfile; reboot")
+    # reactivate ShellDriver to handle login again
+    target.deactivate(shell)
+    target.activate(shell)
+    output = shell.run_check("systemctl --no-pager -l list-units --state=failed")
+    assert "0 loaded units listed." in output, f"Some units failed:\n{"\n".join(output)}"
+    swapon = shell.run_check("swapon --show")
+    assert swapon == [], f"Swapfile still exists: {swapon}"
+
+
+@pytest.mark.dependency(depends=["test_init"])
 def test_kernel_not_tainted(shell):
     """Check if the kernel is not tainted - do it at the end of the
     test suite to increase the chance of catching issues."""

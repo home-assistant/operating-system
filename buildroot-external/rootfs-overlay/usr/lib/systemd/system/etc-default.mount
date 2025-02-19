@@ -1,0 +1,13 @@
+[Unit]
+Description=Persistent /etc/default directory
+Requires=mnt-overlay.mount
+After=mnt-overlay.mount
+
+[Mount]
+What=/mnt/overlay/etc/default
+Where=/etc/default
+Type=None
+Options=bind
+
+[Install]
+WantedBy=hassos-bind.target

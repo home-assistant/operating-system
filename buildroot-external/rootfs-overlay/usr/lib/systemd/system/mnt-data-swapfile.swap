@@ -1,5 +1,6 @@
 [Unit]
 Description=HAOS swap file
+ConditionFileNotEmpty=/mnt/data/swapfile
 
 [Swap]
 What=/mnt/data/swapfile
