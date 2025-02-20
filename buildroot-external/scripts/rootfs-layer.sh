@@ -12,6 +12,10 @@ function fix_rootfs() {
     rm -rf "${TARGET_DIR:?}/srv"
     rm -rf "${TARGET_DIR:?}/opt"
 
+    # Remove info pages
+    rm -rf "${TARGET_DIR:?}/share/info"
+    rm -rf "${TARGET_DIR:?}/usr/share/info"
+
     # Cleanup miscs
     rm -rf "${TARGET_DIR}/usr/lib/modules-load.d"
 
