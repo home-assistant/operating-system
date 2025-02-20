@@ -26,6 +26,15 @@ function fix_rootfs() {
 
     # Use systemd-resolved for Host OS resolve
     sed -i '/^hosts:/ {/resolve/! s/files/resolve [!UNAVAIL=return] files/}' "${TARGET_DIR}/etc/nsswitch.conf"
+
+    # Remove unnecessary grub userspace tools, config, modules and translations
+    find "${TARGET_DIR}"/usr/{,s}bin -name "grub-*" -not -name "grub-editenv" -delete
+    rm -rf "${TARGET_DIR}/etc/grub.d"
+    rm -rf "${TARGET_DIR}/usr/lib/grub"
+    if [ -d "${TARGET_DIR}/share/locale" ]; then
+        find "${TARGET_DIR}/share/locale" -name "grub.mo" -delete
+        find "${TARGET_DIR}/share/locale" -type d -empty -delete
+    fi
 }
 
 
