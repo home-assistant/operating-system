@@ -73,9 +73,8 @@ case "$1" in
         slot_bootname="$2"
         new_state="$3"
         echo "tryboot set-state $slot_bootname $new_state" >&2
-        if [ "${new_state}" = "good" ]; then
-            touch "${boot_dir}/slot-${slot_bootname}/.good"
-        else
+
+        if [ "${new_state}" != "good" ]; then
             rm -f "${boot_dir}/slot-${slot_bootname}/.good"
             exit 0
         fi
@@ -85,6 +84,20 @@ case "$1" in
 
         # Check if tryboot is active
         if ! cmp -s -n 4 /proc/device-tree/chosen/bootloader/tryboot /dev/zero; then
+            if [ ! -f "${boot_dir}/cmdline-tryboot.txt" ]; then
+                if [ -f "${boot_dir}/slot-${slot_bootname}/.good" ]; then
+                    # Most probably already handled on this boot before, do nothing
+                    exit 0
+                else
+                    echo "cmdline-tryboot.txt not found, can't commit current state." >&2
+                    exit 1
+                fi
+            fi
+            # tryboot.txt MUST exist at this point
+            if [ ! -f "${boot_dir}/tryboot.txt" ]; then
+                echo "tryboot.txt not found, can't commit current state." >&2
+                exit 1
+            fi
             cmdline_tryboot=$(head -n1 "${boot_dir}/cmdline-tryboot.txt")
             tryboot_slot=$(get_value rauc.slot "${cmdline_tryboot}")
             if [ "${tryboot_slot}" != "${slot_bootname}" ]; then
@@ -97,6 +110,10 @@ case "$1" in
             mv "${boot_dir}/cmdline-tryboot.txt" "${boot_dir}/cmdline.txt"
             rm "${boot_dir}/tryboot.txt"
             rm /run/systemd/reboot-param
+        fi
+
+        if [ "${new_state}" = "good" ]; then
+            touch "${boot_dir}/slot-${slot_bootname}/.good"
         fi
         ;;
 
