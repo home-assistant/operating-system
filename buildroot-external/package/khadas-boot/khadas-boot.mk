@@ -14,14 +14,14 @@ KHADAS_BOOT_DEPENDENCIES = uboot
 ifeq ($(BR2_PACKAGE_KHADAS_BOOT_VIM3),y)
 KHADAS_BOOT_FIP_DIR = $(@D)/VIM3
 
-AML_ENCRYPT = aml_encrypt_g12b
+KHADAS_BOOT_AML_ENCRYPT = aml_encrypt_g12b
 
 endif
 
 ifeq ($(BR2_PACKAGE_KHADAS_BOOT_VIM3L),y)
 KHADAS_BOOT_FIP_DIR = $(@D)/VIM3L
 
-AML_ENCRYPT = aml_encrypt_g12a
+KHADAS_BOOT_AML_ENCRYPT = aml_encrypt_g12a
 
 endif
 
@@ -70,26 +70,26 @@ define KHADAS_BOOT_BUILD_CMDS
 		bl2
 
 	cd $(@D); \
-	$(KHADAS_BOOT_FIP_DIR)/$(AML_ENCRYPT) --bl30sig --input fip/bl30_new.bin \
+	$(KHADAS_BOOT_FIP_DIR)/$(KHADAS_BOOT_AML_ENCRYPT) --bl30sig --input fip/bl30_new.bin \
 					--output fip/bl30_new.bin.g12a.enc \
 					--level v3
 	cd $(@D); \
-	$(KHADAS_BOOT_FIP_DIR)/$(AML_ENCRYPT) --bl3sig --input fip/bl30_new.bin.g12a.enc \
+	$(KHADAS_BOOT_FIP_DIR)/$(KHADAS_BOOT_AML_ENCRYPT) --bl3sig --input fip/bl30_new.bin.g12a.enc \
 					--output fip/bl30_new.bin.enc \
 					--level v3 --type bl30
 	cd $(@D); \
-	$(KHADAS_BOOT_FIP_DIR)/$(AML_ENCRYPT) --bl3sig --input fip/bl31.img \
+	$(KHADAS_BOOT_FIP_DIR)/$(KHADAS_BOOT_AML_ENCRYPT) --bl3sig --input fip/bl31.img \
 					--output fip/bl31.img.enc \
 					--level v3 --type bl31
 	cd $(@D); \
-	$(KHADAS_BOOT_FIP_DIR)/$(AML_ENCRYPT) --bl3sig --input fip/bl33.bin --compress lz4 \
+	$(KHADAS_BOOT_FIP_DIR)/$(KHADAS_BOOT_AML_ENCRYPT) --bl3sig --input fip/bl33.bin --compress lz4 \
 					--output fip/bl33.bin.enc \
 					--level v3 --type bl33 --compress lz4
 	cd $(@D); \
-	$(KHADAS_BOOT_FIP_DIR)/$(AML_ENCRYPT) --bl2sig --input fip/bl2_new.bin \
+	$(KHADAS_BOOT_FIP_DIR)/$(KHADAS_BOOT_AML_ENCRYPT) --bl2sig --input fip/bl2_new.bin \
 					--output fip/bl2.n.bin.sig
 	cd $(@D); \
-	$(KHADAS_BOOT_FIP_DIR)/$(AML_ENCRYPT) --bootmk \
+	$(KHADAS_BOOT_FIP_DIR)/$(KHADAS_BOOT_AML_ENCRYPT) --bootmk \
 		--output fip/u-boot.bin \
 		--bl2 fip/bl2.n.bin.sig \
 		--bl30 fip/bl30_new.bin.enc \
