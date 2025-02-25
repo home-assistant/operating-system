@@ -7,7 +7,7 @@ USE_USB=0
 
 # Check and mount usb CONFIG to folder
 if findfs LABEL="CONFIG" > /dev/null 2>&1; then
-    echo "[Info] Use USB stick for import CONFIG"
+    echo "[Info] Attempting to import CONFIG from USB stick"
 
     systemctl start mnt-config.mount
     if ! systemctl -q is-active mnt-config.mount; then
@@ -21,13 +21,14 @@ fi
 
 # Use boot CONFIG folder
 if [ ${USE_USB} = 0 ] && [ -d ${BOOT_CONFIG} ]; then
-    echo "[Info] Use boot partition for import CONFIG"
+    echo "[Info] Attempting to import CONFIG from boot partition"
     CONFIG_DIR=${BOOT_CONFIG}
 elif [ ${USE_USB} = 0 ]; then
     echo "[Warning] No config partition found"
     exit 0
 fi
 
+echo "[Info] Imported CONFIG succesfully"
 
 ##
 # NetworkManager
@@ -97,7 +98,7 @@ fi
 # Firmware update / Only USB
 UPTIME=$(awk '{printf "%0.f", $1}' /proc/uptime)
 if ls ${USB_CONFIG}/*.raucb > /dev/null 2>&1 && [ "${UPTIME}" -ge "300" ]; then
-    echo "[Info] Performe a firmware update"
+    echo "[Info] Performing a firmware update"
 
     # shellcheck disable=SC2012
     rauc_filename=$(ls ${USB_CONFIG}/*.raucb | head -n 1)
@@ -105,7 +106,7 @@ if ls ${USB_CONFIG}/*.raucb > /dev/null 2>&1 && [ "${UPTIME}" -ge "300" ]; then
         echo "[Info] Firmware update success"
         systemctl reboot
     else
-        echo "[Error] Firmware update fails"
+        echo "[Error] Firmware update failed"
     fi
 fi
 

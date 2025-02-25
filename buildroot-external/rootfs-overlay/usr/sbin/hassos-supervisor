@@ -60,7 +60,7 @@ if [ -z "${SUPERVISOR_IMAGE_ID}" ]; then
         # Pull failed, updater info might be corrupted or the release might have
 	# been removed from the container registry, delete the updater info
 	# to start from scratch on next try.
-        echo "[ERROR] Supervisor downloading failed."
+        echo "[ERROR] Supervisor download failed."
         rm -f "${SUPERVISOR_DATA}/updater.json"
         exit 1
     fi
