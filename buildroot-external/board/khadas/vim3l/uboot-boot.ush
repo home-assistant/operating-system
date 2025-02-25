@@ -1,0 +1,107 @@
+
+###########################################
+
+part start ${devtype} ${devnum} 9 mmc_env
+${devtype} dev ${devnum}
+setenv loadbootstate " \
+    echo 'loading env...'; \
+    ${devtype} read ${ramdisk_addr_r} ${mmc_env} 0x10; \
+    env import -c ${ramdisk_addr_r} 0x2000;"
+
+setenv storebootstate " \
+    echo 'storing env...'; \
+    env export -c -s 0x2000 ${ramdisk_addr_r} BOOT_ORDER BOOT_A_LEFT BOOT_B_LEFT MACHINE_ID; \
+    ${devtype} write ${ramdisk_addr_r} ${mmc_env} 0x10;"
+
+run loadbootstate
+test -n "${BOOT_ORDER}" || setenv BOOT_ORDER "A B"
+test -n "${BOOT_A_LEFT}" || setenv BOOT_A_LEFT 3
+test -n "${BOOT_B_LEFT}" || setenv BOOT_B_LEFT 3
+
+# Allows ConditionFirstBoot=
+test -n "${MACHINE_ID}" || setenv BOOT_CONDITION "systemd.condition-first-boot=true"
+
+# HassOS bootargs
+setenv bootargs_hassos "zram.enabled=1 zram.num_devices=3 systemd.machine_id=${MACHINE_ID} fsck.repair=yes ${BOOT_CONDITION}"
+
+# HassOS system A/B
+setenv bootargs_a "root=PARTUUID=48617373-06 ro rootwait"
+setenv bootargs_b "root=PARTUUID=48617373-08 ro rootwait"
+
+# Load environment from haos-config.txt
+if test -e ${devtype} ${devnum}:1 haos-config.txt; then
+  fatload ${devtype} ${devnum}:1 ${ramdisk_addr_r} haos-config.txt
+  env import -t ${ramdisk_addr_r} ${filesize}
+fi
+
+# Load extraargs
+fileenv ${devtype} ${devnum}:1 ${ramdisk_addr_r} cmdline.txt cmdline
+
+# Load device tree
+setenv fdtfile "meson-sm1-khadas-vim3l.dtb"
+echo "Loading standard device tree ${fdtfile}"
+fatload ${devtype} ${devnum}:1 ${fdt_addr_r} ${fdtfile}
+fdt addr ${fdt_addr_r}
+
+# load dt overlays
+fdt resize 65536
+for overlay_file in ${overlays}; do
+  if fatload ${devtype} ${devnum}:1 ${ramdisk_addr_r} overlays/${overlay_file}.dtbo; then
+    echo "Applying kernel provided DT overlay ${overlay_file}.dtbo"
+    fdt apply ${ramdisk_addr_r} || setenv overlay_error "true"
+  fi
+done
+if test "${overlay_error}" = "true"; then
+  echo "Error applying DT overlays, restoring original DT"
+  fatload ${devtype} ${devnum}:1 ${fdt_addr_r} ${fdtfile}
+fi
+
+# logical volumes get numbered after physical ones.
+# 1. boot
+# 2. Extended partition
+# 3. Overlay
+# 4. Data
+# 5. KernelA
+# 6. SystemA
+# 7. KernelB
+# 8. SystemB
+# 9. BootInfo
+setenv bootargs
+for BOOT_SLOT in "${BOOT_ORDER}"; do
+  if test "x${bootargs}" != "x"; then
+    # skip remaining slots
+  elif test "x${BOOT_SLOT}" = "xA"; then
+    if test ${BOOT_A_LEFT} -gt 0; then
+      setexpr BOOT_A_LEFT ${BOOT_A_LEFT} - 1
+      echo "Trying to boot slot A, ${BOOT_A_LEFT} attempts remaining. Loading kernel ..."
+      if load ${devtype} ${devnum}:5 ${kernel_addr_r} Image; then
+          setenv bootargs "${bootargs_hassos} ${bootargs_a} rauc.slot=A ${cmdline}"
+      fi
+    fi
+  elif test "x${BOOT_SLOT}" = "xB"; then
+    if test ${BOOT_B_LEFT} -gt 0; then
+      setexpr BOOT_B_LEFT ${BOOT_B_LEFT} - 1
+      echo "Trying to boot slot B, ${BOOT_B_LEFT} attempts remaining. Loading kernel ..."
+      if load ${devtype} ${devnum}:7 ${kernel_addr_r} Image; then
+          setenv bootargs "${bootargs_hassos} ${bootargs_b} rauc.slot=B ${cmdline}"
+      fi
+    fi
+  fi
+done
+
+if test -n "${bootargs}"; then
+  run storebootstate
+else
+  echo "No valid slot found, resetting tries to 3"
+  setenv BOOT_A_LEFT 3
+  setenv BOOT_B_LEFT 3
+  run storebootstate
+  reset
+fi
+
+printenv bootargs
+echo "Starting kernel"
+booti ${kernel_addr_r} - ${fdt_addr_r}
+
+echo "Boot failed, resetting..."
+reset

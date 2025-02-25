@@ -1,0 +1,2 @@
+# Uncomment this to enable GPIO support for RPI-RF-MOD/HM-MOD-RPI-PCB
+#overlays=rpi-rf-mod
