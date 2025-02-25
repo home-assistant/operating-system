@@ -15,7 +15,7 @@ config BR2_PACKAGE_KHADAS_BOOT_VIM3
 	  Build boot loader for Khadas VIM3
 
 config BR2_PACKAGE_KHADAS_BOOT_VIM3L
-	bool "VIM3"
+	bool "VIM3L"
 	help
 	  Build boot loader for Khadas VIM3L
 
