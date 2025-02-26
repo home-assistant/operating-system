@@ -23,7 +23,7 @@ container=$(docker run --privileged -e DOCKER_TLS_CERTDIR="" \
 	-v "${build_dir}/data/":/data \
 	-v "${build_dir}/data/docker/":/var/lib/docker \
 	-v "${build_dir}":/build \
-	-d docker:27.2-dind --storage-driver overlay2)
+	-d docker:28.0-dind --storage-driver overlay2)
 
 docker exec "${container}" sh /build/dind-import-containers.sh "${channel}"
 
