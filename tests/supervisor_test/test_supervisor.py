@@ -193,6 +193,13 @@ def test_restore_ssl_directory(shell_json, stash):
 
 
 @pytest.mark.dependency(depends=["test_start_supervisor"])
+def test_no_apparmor_denies(shell):
+    """Check there are no AppArmor denies in the logs raised during Supervisor tests."""
+    output = shell.run_check("journalctl -t audit | grep DENIED || true")
+    assert not output, f"AppArmor denies found: {output}"
+
+
+@pytest.mark.dependency(depends=["test_start_supervisor"])
 def test_kernel_not_tainted(shell):
     """Check if the kernel is not tainted - do it at the end of the
     test suite to increase the chance of catching issues."""
