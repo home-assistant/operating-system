@@ -8,7 +8,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 @pytest.mark.dependency()
-@pytest.mark.timeout(600)
+@pytest.mark.timeout(120)
 def test_init(shell):
     def check_container_running(container_name):
         out = shell.run_check(
@@ -35,7 +35,6 @@ def test_init(shell):
     _LOGGER.info("%s", "\n".join(output))
 
 
-@pytest.mark.dependency(depends=["test_init"])
 def test_rauc_status(shell, shell_json):
     rauc_status = shell.run_check("rauc status --output-format=shell --detailed")
     # RAUC_BOOT_PRIMARY won't be set if correct grub env is missing
@@ -55,7 +54,6 @@ def test_rauc_status(shell, shell_json):
     assert f"RAUC_SLOT_STATUS_BUNDLE_VERSION_{booted_idx + 1}='{expected_version}'" in rauc_status
 
 
-@pytest.mark.dependency(depends=["test_init"])
 def test_dmesg(shell):
     output = shell.run_check("dmesg")
     _LOGGER.info("%s", "\n".join(output))
@@ -67,15 +65,20 @@ def test_supervisor_logs(shell):
     _LOGGER.info("%s", "\n".join(output))
 
 
-@pytest.mark.dependency(depends=["test_init"])
 def test_systemctl_status(shell):
     output = shell.run_check("systemctl --no-pager -l status -a || true")
     _LOGGER.info("%s", "\n".join(output))
 
-@pytest.mark.dependency(depends=["test_init"])
+
 def test_systemctl_check_no_failed(shell):
     output = shell.run_check("systemctl --no-pager -l list-units --state=failed")
     assert "0 loaded units listed." in output, f"Some units failed:\n{"\n".join(output)}"
+
+
+def test_systemctl_no_cycles(shell):
+    # we don't have systemd-analyze available, so check it naively using grep
+    output = shell.run_check("journalctl -b0 | grep 'ordering cycle' || true")
+    assert not output, f"Found Systemd dependency cycles:\n{"\n".join(output)}"
 
 
 @pytest.mark.dependency(depends=["test_init"])
@@ -103,7 +106,6 @@ def test_no_swap(shell, target):
     assert swapon == [], f"Swapfile still exists: {swapon}"
 
 
-@pytest.mark.dependency(depends=["test_init"])
 def test_kernel_not_tainted(shell):
     """Check if the kernel is not tainted - do it at the end of the
     test suite to increase the chance of catching issues."""
