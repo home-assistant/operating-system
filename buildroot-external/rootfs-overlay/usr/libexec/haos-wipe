@@ -1,0 +1,30 @@
+#!/bin/sh
+set -e
+
+PARTITION_OVERLAY="/dev/disk/by-label/hassos-overlay"
+PARTITION_DATA="/dev/disk/by-label/hassos-data"
+
+if [ ! -b "$PARTITION_OVERLAY" ]; then
+    echo "[ERROR] Overlay partition not found"
+    exit 1
+elif findmnt "$PARTITION_OVERLAY" > /dev/null; then
+    echo "[ERROR] Unable to wipe overlay partition while it is already mounted"
+    exit 1
+fi
+
+if [ ! -b "$PARTITION_DATA" ]; then
+    echo "[ERROR] Data partition not found"
+    exit 1
+elif findmnt "$PARTITION_DATA" > /dev/null; then
+    echo "[ERROR] Unable to wipe data partition while it is already mounted"
+    exit 1
+fi
+
+echo "[INFO] Wiping data partition"
+mkfs.ext4 -L "hassos-data" -E lazy_itable_init=0,lazy_journal_init=0 "$PARTITION_DATA"
+
+echo "[INFO] Wiping overlay partition"
+mkfs.ext4 -L "hassos-overlay" -I 256 -E lazy_itable_init=0,lazy_journal_init=0 "$PARTITION_OVERLAY"
+
+echo "[INFO] Removing wipe flag from cmdline.txt"
+/usr/bin/sed -i 's/\s*haos.wipe=1//g' /mnt/boot/cmdline.txt
