@@ -10,6 +10,7 @@ ConditionKernelCommandLine=haos.wipe=1
 
 [Service]
 Type=oneshot
+RemainAfterExit=yes
 ExecStart=/usr/libexec/haos-wipe
 
 [Install]
