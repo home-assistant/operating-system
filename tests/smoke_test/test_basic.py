@@ -65,6 +65,12 @@ def test_supervisor_logs(shell):
     _LOGGER.info("%s", "\n".join(output))
 
 
+@pytest.mark.dependency(depends=["test_init"])
+def test_landing_page(shell):
+    web_index = shell.run_check("curl http://localhost:8123")
+    assert "</html>" in " ".join(web_index)
+
+
 def test_systemctl_status(shell):
     output = shell.run_check("systemctl --no-pager -l status -a || true")
     _LOGGER.info("%s", "\n".join(output))
