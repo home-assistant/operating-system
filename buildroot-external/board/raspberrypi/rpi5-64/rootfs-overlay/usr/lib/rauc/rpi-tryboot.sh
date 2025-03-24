@@ -10,19 +10,30 @@ boot_dir="/mnt/boot"
 root_slot_a="PARTUUID=8d3d53e3-6d49-4c38-8349-aff6859e82fd"
 root_slot_b="PARTUUID=a3ec664e-32ce-4665-95ea-7ae90ce9aa20"
 
+get_primary() {
+    echo "tryboot get-primary" >&2
+    cmdline=$(head -n1 "${boot_dir}/cmdline.txt")
+    get_value rauc.slot "${cmdline}"
+}
+
 case "$1" in
     get-primary)
         # Actions to be performed when getting the primary bootloader
         # Example: Output the path to the current primary bootloader
-        echo "tryboot get-primary" >&2
-        cmdline=$(head -n1 "${boot_dir}/cmdline.txt")
-        get_value rauc.slot "${cmdline}"
+        get_primary
         ;;
 
     set-primary)
         # Actions to be performed when setting the primary bootloader
         # Example: Set the specified bootloader as the primary one
         slot_bootname="$2"
+
+        # Do nothing if we're already booted in the requested slot
+        if [ "$(get_primary)" = "${slot_bootname}" ]; then
+            echo "tryboot set-primary $slot_bootname: already set" >&2
+            exit 0
+        fi
+
         echo "tryboot set-primary $slot_bootname" >&2
         cmdline=$(head -n1 "${boot_dir}/cmdline.txt")
         if [ "${slot_bootname}" = "A" ]; then
@@ -62,9 +73,8 @@ case "$1" in
         slot_bootname="$2"
         new_state="$3"
         echo "tryboot set-state $slot_bootname $new_state" >&2
-        if [ "${new_state}" = "good" ]; then
-            touch "${boot_dir}/slot-${slot_bootname}/.good"
-        else
+
+        if [ "${new_state}" != "good" ]; then
             rm -f "${boot_dir}/slot-${slot_bootname}/.good"
             exit 0
         fi
@@ -74,6 +84,20 @@ case "$1" in
 
         # Check if tryboot is active
         if ! cmp -s -n 4 /proc/device-tree/chosen/bootloader/tryboot /dev/zero; then
+            if [ ! -f "${boot_dir}/cmdline-tryboot.txt" ]; then
+                if [ -f "${boot_dir}/slot-${slot_bootname}/.good" ]; then
+                    # Most probably already handled on this boot before, do nothing
+                    exit 0
+                else
+                    echo "cmdline-tryboot.txt not found, can't commit current state." >&2
+                    exit 1
+                fi
+            fi
+            # tryboot.txt MUST exist at this point
+            if [ ! -f "${boot_dir}/tryboot.txt" ]; then
+                echo "tryboot.txt not found, can't commit current state." >&2
+                exit 1
+            fi
             cmdline_tryboot=$(head -n1 "${boot_dir}/cmdline-tryboot.txt")
             tryboot_slot=$(get_value rauc.slot "${cmdline_tryboot}")
             if [ "${tryboot_slot}" != "${slot_bootname}" ]; then
@@ -85,6 +109,11 @@ case "$1" in
                 "${boot_dir}/tryboot.txt" > "${boot_dir}/config.txt"
             mv "${boot_dir}/cmdline-tryboot.txt" "${boot_dir}/cmdline.txt"
             rm "${boot_dir}/tryboot.txt"
+            rm /run/systemd/reboot-param
+        fi
+
+        if [ "${new_state}" = "good" ]; then
+            touch "${boot_dir}/slot-${slot_bootname}/.good"
         fi
         ;;
 

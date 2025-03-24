@@ -1,33 +1,35 @@
-From 501ac314ef709d6ecac3047310d5e48a473df638 Mon Sep 17 00:00:00 2001
+From 99fdcac59b4c993dcac1869e8372dc895ffa0ae5 Mon Sep 17 00:00:00 2001
 From: Zhangqun Ming <north_sea@qq.com>
 Date: Thu, 6 Jul 2023 10:06:35 +0000
 Subject: [PATCH] arch: arm: dts: Add NabuCasa Green board
 
 ---
- arch/arm/dts/Makefile                    |   1 +
+ arch/arm/dts/Makefile                    |   3 +
  arch/arm/dts/rk3566-ha-green-u-boot.dtsi |  28 +
  arch/arm/dts/rk3566-ha-green.dts         | 685 +++++++++++++++++++++++
  configs/green_defconfig                  |  74 +++
- 4 files changed, 788 insertions(+)
+ 4 files changed, 790 insertions(+)
  create mode 100644 arch/arm/dts/rk3566-ha-green-u-boot.dtsi
  create mode 100644 arch/arm/dts/rk3566-ha-green.dts
  create mode 100644 configs/green_defconfig
 
 diff --git a/arch/arm/dts/Makefile b/arch/arm/dts/Makefile
-index 9d28a485be..f78839f9cc 100644
+index 6ad59aeed5f..92c6fa54caa 100644
 --- a/arch/arm/dts/Makefile
 +++ b/arch/arm/dts/Makefile
-@@ -172,6 +172,7 @@ dtb-$(CONFIG_ROCKCHIP_RK3399) += \
+@@ -87,6 +87,9 @@ dtb-$(CONFIG_ROCKCHIP_RK3368) += \
+ 	rk3368-geekbox.dtb \
+ 	rk3368-px5-evb.dtb \
  
- dtb-$(CONFIG_ROCKCHIP_RK3568) += \
- 	rk3566-anbernic-rgxx3.dtb \
-+	rk3566-ha-green.dtb \
- 	rk3566-quartz64-a.dtb \
- 	rk3566-quartz64-b.dtb \
- 	rk3566-radxa-cm3-io.dtb \
++dtb-$(CONFIG_ROCKCHIP_RK3568) += \
++	rk3566-ha-green.dtb
++
+ dtb-$(CONFIG_ARCH_S5P4418) += \
+ 	s5p4418-nanopi2.dtb
+ 
 diff --git a/arch/arm/dts/rk3566-ha-green-u-boot.dtsi b/arch/arm/dts/rk3566-ha-green-u-boot.dtsi
 new file mode 100644
-index 0000000000..83fa66d591
+index 00000000000..83fa66d591e
 --- /dev/null
 +++ b/arch/arm/dts/rk3566-ha-green-u-boot.dtsi
 @@ -0,0 +1,28 @@
@@ -61,7 +63,7 @@ index 0000000000..83fa66d591
 +};
 diff --git a/arch/arm/dts/rk3566-ha-green.dts b/arch/arm/dts/rk3566-ha-green.dts
 new file mode 100644
-index 0000000000..15d2b73433
+index 00000000000..15d2b734338
 --- /dev/null
 +++ b/arch/arm/dts/rk3566-ha-green.dts
 @@ -0,0 +1,685 @@
@@ -752,7 +754,7 @@ index 0000000000..15d2b73433
 +};
 diff --git a/configs/green_defconfig b/configs/green_defconfig
 new file mode 100644
-index 0000000000..0617d308aa
+index 00000000000..0617d308aa2
 --- /dev/null
 +++ b/configs/green_defconfig
 @@ -0,0 +1,74 @@
@@ -830,6 +832,3 @@ index 0000000000..0617d308aa
 +CONFIG_SYSRESET=y
 +# CONFIG_BINMAN_FDT is not set
 +CONFIG_ERRNO_STR=y
--- 
-2.43.0
-

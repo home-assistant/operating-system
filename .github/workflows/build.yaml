@@ -18,7 +18,7 @@ on:
         default: true
 
 env:
-  PYTHON_VERSION: "3.10"
+  PYTHON_VERSION: "3.13"
 
 jobs:
   prepare:
@@ -136,15 +136,15 @@ jobs:
             }
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3.8.0
+        uses: docker/setup-buildx-action@v3.10.0
       - name: Log in to the GitHub container registry
-        uses: docker/login-action@v3.3.0
+        uses: docker/login-action@v3.4.0
         with:
             registry: ghcr.io
             username: ${{ github.repository_owner }}
             password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build and Push
-        uses: docker/build-push-action@v6.10.0
+        uses: docker/build-push-action@v6.15.0
         id: build_haos_builder
         with:
           context: .
@@ -199,7 +199,7 @@ jobs:
 
       - name: Install AWS CLI
         if: ${{ github.event_name != 'release' && needs.prepare.outputs.publish_build == 'true' }}
-        run: pip install awscli
+        run: pip install 'awscli<1.37.0'
 
       - name: Set version suffix
         if: ${{ github.event_name != 'release' }}

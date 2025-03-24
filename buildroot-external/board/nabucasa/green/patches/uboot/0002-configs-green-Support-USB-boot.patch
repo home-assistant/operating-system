@@ -1,4 +1,4 @@
-From 6441bdb22a25649ff8fd69aa8f8a7285d9c37266 Mon Sep 17 00:00:00 2001
+From 634b3b17d96b6def645b15b379fbe617620e6665 Mon Sep 17 00:00:00 2001
 From: Zhangqun Ming <north_sea@qq.com>
 Date: Fri, 14 Jul 2023 14:13:39 +0000
 Subject: [PATCH] configs: green: Support USB boot
@@ -8,7 +8,7 @@ Subject: [PATCH] configs: green: Support USB boot
  1 file changed, 36 insertions(+), 16 deletions(-)
 
 diff --git a/configs/green_defconfig b/configs/green_defconfig
-index 0617d308aa..14960b67d2 100644
+index 0617d308aa2..14960b67d26 100644
 --- a/configs/green_defconfig
 +++ b/configs/green_defconfig
 @@ -6,48 +6,54 @@ CONFIG_TEXT_BASE=0x00a00000
@@ -112,6 +112,3 @@ index 0617d308aa..14960b67d2 100644
 +CONFIG_USB_OHCI_GENERIC=y
 +CONFIG_USB_DWC3=y
  CONFIG_ERRNO_STR=y
--- 
-2.43.0
-

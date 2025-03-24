@@ -1,24 +1,59 @@
 #!/bin/sh
 set -e
 
-swapfile="/mnt/data/swapfile"
+size2kilobytes() {
+	bytes="$(echo "$1" | awk \
+	  'BEGIN{IGNORECASE = 1}
+	   function tobytes(n,b,p) {printf "%u\n", n*b^p/1024}
+	   /[0-9]B?$/{tobytes($1,  1, 0); next};
+	   /K(i?B)?$/{tobytes($1,  2, 10); next};
+	   /M(i?B)?$/{tobytes($1,  2, 20); next};
+	   /G(i?B)?$/{tobytes($1,  2, 30); next};
+	   {print -1}')"
+	echo "$bytes"
+}
+
+if [ -f /etc/default/haos-swapfile ]; then
+    # shellcheck disable=SC1091
+    . /etc/default/haos-swapfile
+fi
+SWAPFILE="/mnt/data/swapfile"
+
+# Swap size in kilobytes (as it's also what meminfo shows)
+SWAPSIZE="$(size2kilobytes "${SWAPSIZE}")"
+
+if [ -z "${SWAPSIZE}" ] || [ "${SWAPSIZE}" = "-1" ]; then
+	# Default to 33% of total memory
+	SWAPSIZE="$(awk '/MemTotal/{ print int($2 * 0.33) }' /proc/meminfo)"
+	echo "[INFO] Using default swapsize of 33% RAM (${SWAPSIZE} kB)"
+fi
+
 # Swap space in 4k blocks
-swapsize="$(awk '/MemTotal/{ print int($2 * 0.33 / 4) }' /proc/meminfo)"
+SWAPSIZE_BLOCKS=$((SWAPSIZE / 4))
 
+if [ "${SWAPSIZE_BLOCKS}" -lt 10 ]; then
+    echo "[INFO] Requested swap size smaller than 40kB, disabling swap"
 
-if [ ! -s "${swapfile}" ] || [ "$(stat "${swapfile}" -c '%s')" -lt $((swapsize * 4096)) ]; then
-	# Check free space (in 4k blocks)
-	if [ "$(stat -f /mnt/data -c '%f')" -lt "${swapsize}" ]; then
-		echo "[WARNING] Not enough space to allocate swapfile"
-		exit 1
-	fi
+    if [ -f "${SWAPFILE}" ]; then
+        echo "[INFO] Removing existing swapfile"
+        rm -f "${SWAPFILE}"
+    fi
 
-	echo "[INFO] Creating swapfile of size $((swapsize *4))k"
-	umask 0077
-	dd if=/dev/zero of="${swapfile}" bs=4k count="${swapsize}"
+    exit 0
 fi
 
-if ! swaplabel "${swapfile}" > /dev/null 2>&1; then
-	/usr/lib/systemd/systemd-makefs swap "${swapfile}"
+if [ ! -s "${SWAPFILE}" ] || [ "$(stat "${SWAPFILE}" -c '%s')" -ne $((SWAPSIZE_BLOCKS * 4096)) ]; then
+    # Check free space (in 4k blocks)
+    if [ "$(stat -f /mnt/data -c '%f')" -lt "${SWAPSIZE_BLOCKS}" ]; then
+        echo "[ERROR] Not enough space to allocate swapfile"
+        exit 1
+    fi
+
+    echo "[INFO] Creating swapfile of size ${SWAPSIZE} kB (rounded to ${SWAPSIZE_BLOCKS} blocks)"
+    umask 0077
+    dd if=/dev/zero of="${SWAPFILE}" bs=4k count="${SWAPSIZE_BLOCKS}"
 fi
 
+if ! swaplabel "${SWAPFILE}" > /dev/null 2>&1; then
+    /usr/lib/systemd/systemd-makefs swap "${SWAPFILE}"
+fi

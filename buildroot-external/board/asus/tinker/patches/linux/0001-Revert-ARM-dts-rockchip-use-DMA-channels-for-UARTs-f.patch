@@ -1,4 +1,4 @@
-From b4d676729c5bee4b9adb85362f6f2e32f833b6c2 Mon Sep 17 00:00:00 2001
+From 675fbbc309e4f7c805cf4fbd7c463cfc8308b54e Mon Sep 17 00:00:00 2001
 From: Stefan Agner <stefan@agner.ch>
 Date: Wed, 17 Feb 2021 19:55:41 +0100
 Subject: [PATCH] Revert "ARM: dts: rockchip: use DMA channels for UARTs for
@@ -10,10 +10,10 @@ This reverts commit 3425fe335c29310f6628faf9a7947d07f32d8962.
  1 file changed, 8 deletions(-)
 
 diff --git a/arch/arm/boot/dts/rockchip/rk3288.dtsi b/arch/arm/boot/dts/rockchip/rk3288.dtsi
-index cb9cdaddffd4..51f1273d6beb 100644
+index 3f1d640afafae..becf3abd8367f 100644
 --- a/arch/arm/boot/dts/rockchip/rk3288.dtsi
 +++ b/arch/arm/boot/dts/rockchip/rk3288.dtsi
-@@ -378,8 +378,6 @@ uart0: serial@ff180000 {
+@@ -387,8 +387,6 @@ uart0: serial@ff180000 {
  		reg-io-width = <4>;
  		clocks = <&cru SCLK_UART0>, <&cru PCLK_UART0>;
  		clock-names = "baudclk", "apb_pclk";
@@ -22,7 +22,7 @@ index cb9cdaddffd4..51f1273d6beb 100644
  		pinctrl-names = "default";
  		pinctrl-0 = <&uart0_xfer>;
  		status = "disabled";
-@@ -393,8 +391,6 @@ uart1: serial@ff190000 {
+@@ -402,8 +400,6 @@ uart1: serial@ff190000 {
  		reg-io-width = <4>;
  		clocks = <&cru SCLK_UART1>, <&cru PCLK_UART1>;
  		clock-names = "baudclk", "apb_pclk";
@@ -31,7 +31,7 @@ index cb9cdaddffd4..51f1273d6beb 100644
  		pinctrl-names = "default";
  		pinctrl-0 = <&uart1_xfer>;
  		status = "disabled";
-@@ -421,8 +417,6 @@ uart3: serial@ff1b0000 {
+@@ -430,8 +426,6 @@ uart3: serial@ff1b0000 {
  		reg-io-width = <4>;
  		clocks = <&cru SCLK_UART3>, <&cru PCLK_UART3>;
  		clock-names = "baudclk", "apb_pclk";
@@ -40,7 +40,7 @@ index cb9cdaddffd4..51f1273d6beb 100644
  		pinctrl-names = "default";
  		pinctrl-0 = <&uart3_xfer>;
  		status = "disabled";
-@@ -436,8 +430,6 @@ uart4: serial@ff1c0000 {
+@@ -445,8 +439,6 @@ uart4: serial@ff1c0000 {
  		reg-io-width = <4>;
  		clocks = <&cru SCLK_UART4>, <&cru PCLK_UART4>;
  		clock-names = "baudclk", "apb_pclk";

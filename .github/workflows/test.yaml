@@ -74,7 +74,7 @@ jobs:
 
       - name: Run tests
         run: |
-          ./tests/run_tests.sh
+          ./tests/run_tests.sh --durations=0 --durations-min=5.0
 
       - name: Archive logs
         uses: actions/upload-artifact@v4

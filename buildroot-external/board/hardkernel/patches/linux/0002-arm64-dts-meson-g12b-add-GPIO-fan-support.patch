@@ -1,4 +1,4 @@
-From cff7ba94733d9103487d87a6474e2ab026bd718c Mon Sep 17 00:00:00 2001
+From 6835f658a2c21d38730c1280587cf3768a82ad60 Mon Sep 17 00:00:00 2001
 From: Stefan Agner <stefan@agner.ch>
 Date: Mon, 11 Jan 2021 11:38:54 +0100
 Subject: [PATCH] arm64: dts: meson: g12b: add GPIO fan support
@@ -13,7 +13,7 @@ Signed-off-by: Stefan Agner <stefan@agner.ch>
  1 file changed, 11 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid.dtsi
-index c27eae6488ce..db8a2dfaf0b3 100644
+index 6be653ac77fac..10dd23a3b44bc 100644
 --- a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid.dtsi
 +++ b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid.dtsi
 @@ -49,6 +49,17 @@ power-button {

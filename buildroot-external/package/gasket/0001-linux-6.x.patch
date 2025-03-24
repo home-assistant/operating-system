@@ -1,0 +1,35 @@
+From 4b2a1464f3b619daaf0f6c664c954a42c4b7ce00 Mon Sep 17 00:00:00 2001
+From: Rudi Heitbaum <rudi@heitbaum.com>
+Date: Sat, 26 Oct 2024 11:06:10 +0000
+Subject: [PATCH] stop using no_llseek
+
+Since commit 868941b ("fs: remove no_llseek"), no_llseek() is
+simply defined to be NULL, and a NULL llseek means seeking is
+unsupported.
+
+refs:
+- https://github.com/torvalds/linux/commit/cb787f4ac0c2e439ea8d7e6387b925f74576bdf8
+- https://github.com/torvalds/linux/commit/868941b14441282ba08761b770fc6cad69d5bdb7
+
+no_llseek has been hard dropped in linux-6.12
+
+Signed-off-by: Rudi Heitbaum <rudi@heitbaum.com>
+Upstream: https://github.com/google/gasket-driver/pull/35
+---
+ src/gasket_core.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/src/gasket_core.c b/src/gasket_core.c
+index b1c2726..5402e2a 100644
+--- a/src/gasket_core.c
++++ b/src/gasket_core.c
+@@ -1373,7 +1373,9 @@ static long gasket_ioctl(struct file *filp, uint cmd, ulong arg)
+ /* File operations for all Gasket devices. */
+ static const struct file_operations gasket_file_ops = {
+ 	.owner = THIS_MODULE,
++#if LINUX_VERSION_CODE < KERNEL_VERSION(6, 0, 0)
+ 	.llseek = no_llseek,
++#endif
+ 	.mmap = gasket_mmap,
+ 	.open = gasket_open,
+ 	.release = gasket_release,

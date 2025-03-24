@@ -4,15 +4,14 @@ DefaultDependencies=no
 RefuseManualStart=true
 RefuseManualStop=true
 Wants=mnt-boot.mount
-Requires=haos-agent.service
-After=haos-agent.service mnt-boot.mount
+After=mnt-boot.mount
 Before=mnt-data.mount mnt-overlay.mount
 ConditionKernelCommandLine=haos.wipe=1
 
 [Service]
 Type=oneshot
-ExecStart=/usr/bin/busctl --verbose --timeout=1h call io.hass.os /io/hass/os/System io.hass.os.System WipeDevice
-ExecStartPost=/usr/bin/sed -i 's/\s*haos.wipe=1//g' /mnt/boot/cmdline.txt
+RemainAfterExit=yes
+ExecStart=/usr/libexec/haos-wipe
 
 [Install]
 WantedBy=sysinit.target

@@ -1,4 +1,4 @@
-From d8b8b614d19dbb3fa004677a2c2e50b685a80192 Mon Sep 17 00:00:00 2001
+From 80fc442a51ecab7b822145561421e3adff899bc9 Mon Sep 17 00:00:00 2001
 From: Zhangqun Ming <north_sea@qq.com>
 Date: Fri, 14 Jul 2023 14:14:10 +0000
 Subject: [PATCH] arch: arm: dts: rk3566: green: boot order
@@ -9,7 +9,7 @@ Subject: [PATCH] arch: arm: dts: rk3566: green: boot order
  2 files changed, 6 insertions(+), 2 deletions(-)
 
 diff --git a/arch/arm/dts/rk3566-ha-green-u-boot.dtsi b/arch/arm/dts/rk3566-ha-green-u-boot.dtsi
-index 83fa66d591..7f2ed298ce 100644
+index 83fa66d591e..7f2ed298ce3 100644
 --- a/arch/arm/dts/rk3566-ha-green-u-boot.dtsi
 +++ b/arch/arm/dts/rk3566-ha-green-u-boot.dtsi
 @@ -9,7 +9,7 @@
@@ -33,7 +33,7 @@ index 83fa66d591..7f2ed298ce 100644
  	clock-frequency = <24000000>;
  	bootph-all;
 diff --git a/arch/arm/dts/rk3566-ha-green.dts b/arch/arm/dts/rk3566-ha-green.dts
-index 15d2b73433..bf0f81c3a1 100644
+index 15d2b734338..bf0f81c3a15 100644
 --- a/arch/arm/dts/rk3566-ha-green.dts
 +++ b/arch/arm/dts/rk3566-ha-green.dts
 @@ -563,7 +563,7 @@
@@ -45,6 +45,3 @@ index 15d2b73433..bf0f81c3a1 100644
  		compatible = "jedec,spi-nor";
  		reg = <0>;
  		spi-max-frequency = <100000000>;
--- 
-2.43.0
-

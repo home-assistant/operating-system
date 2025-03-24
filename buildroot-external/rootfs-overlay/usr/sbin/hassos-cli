@@ -10,7 +10,7 @@ while [ ! "$(docker ps -q -f name=hassio_cli)" ]; do
     sleep 1
     i=$((i+1))
     if [ $i = 60 ]; then
-        echo "[WARN] Home Assistant CLI not starting! Jump into emergency console..."
+        echo "[WARN] Home Assistant CLI not starting! Jumping into emergency console..."
         exec /bin/ash -l
     fi
 done

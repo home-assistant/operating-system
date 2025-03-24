@@ -1,4 +1,4 @@
-From 02c7d9bb23f497993d52f5a41341ed955e6a2745 Mon Sep 17 00:00:00 2001
+From 37b4467356113f17f55066aef54db55b64daa030 Mon Sep 17 00:00:00 2001
 From: "Miouyouyou (Myy)" <myy@miouyouyou.fr>
 Date: Mon, 5 Nov 2018 22:15:14 +0100
 Subject: [PATCH] ARM: DTS: rk3288-tinker: Defining the SPI interface
@@ -18,7 +18,7 @@ Signed-off-by: Stefan Agner <stefan@agner.ch>
  1 file changed, 19 insertions(+)
 
 diff --git a/arch/arm/boot/dts/rockchip/rk3288-tinker.dtsi b/arch/arm/boot/dts/rockchip/rk3288-tinker.dtsi
-index 09618bb7d872..30430d2e64b9 100644
+index 09618bb7d872c..30430d2e64b93 100644
 --- a/arch/arm/boot/dts/rockchip/rk3288-tinker.dtsi
 +++ b/arch/arm/boot/dts/rockchip/rk3288-tinker.dtsi
 @@ -483,6 +483,25 @@ &sdio0 {

@@ -1,4 +1,4 @@
-From 1c9c3ca476adf09884295e9f8298288ea497e5ac Mon Sep 17 00:00:00 2001
+From 37b8576e97c3a130160bd5908220c67b2258a443 Mon Sep 17 00:00:00 2001
 From: Hyeonki Hong <hhk7734@gmail.com>
 Date: Tue, 1 Mar 2022 21:51:50 +0100
 Subject: [PATCH] ODROID-C4: arm64/dts: add uart_A node
@@ -8,7 +8,7 @@ Subject: [PATCH] ODROID-C4: arm64/dts: add uart_A node
  1 file changed, 8 insertions(+), 1 deletion(-)
 
 diff --git a/arch/arm64/boot/dts/amlogic/meson-sm1-odroid.dtsi b/arch/arm64/boot/dts/amlogic/meson-sm1-odroid.dtsi
-index 1db2327bbd13..e67869fbb460 100644
+index 7b0e9817a615d..a41fc1cfdeead 100644
 --- a/arch/arm64/boot/dts/amlogic/meson-sm1-odroid.dtsi
 +++ b/arch/arm64/boot/dts/amlogic/meson-sm1-odroid.dtsi
 @@ -10,8 +10,9 @@
@@ -22,7 +22,7 @@ index 1db2327bbd13..e67869fbb460 100644
  	};
  
  	chosen {
-@@ -449,6 +450,12 @@ &tohdmitx {
+@@ -453,6 +454,12 @@ &tohdmitx {
  	status = "okay";
  };
  

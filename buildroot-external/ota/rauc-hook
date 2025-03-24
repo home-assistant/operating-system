@@ -52,6 +52,17 @@ install_boot() {
             sed -i '/device_tree=bcm2711-rpi-cm4-ha-yellow.dtb/d; s/\[all\]/\[cm4\]\ndevice_tree=bcm2711-rpi-cm4-ha-yellow.dtb\n\n\[cm5\]\ndevice_tree=bcm2712-rpi-cm5-ha-yellow.dtb\n\n\[all\]/' "${BOOT_MNT}/config.txt"
         fi
     fi
+
+    # Prepare rauc.db for migration, should be removed in HAOS 16
+    # (along with raucdb-migrate.service and related raucdb-update changes)
+    if [ -f /mnt/data/rauc.db ]; then
+        # shellcheck disable=SC1091
+        . /etc/os-release
+        # Do not migrate if already running on OS 15.
+        if [ "${VERSION_ID%%.*}" != "15" ]; then
+            touch /mnt/boot/migrate-raucdb
+        fi
+    fi
 }
 
 install_spl() {

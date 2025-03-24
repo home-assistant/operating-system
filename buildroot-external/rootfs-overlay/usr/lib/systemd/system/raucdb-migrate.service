@@ -1,0 +1,13 @@
+[Unit]
+Description=Migrate rauc.db to boot partition
+Before=rauc.service
+RequiresMountsFor=/mnt/boot /mnt/data
+ConditionPathExists=/mnt/boot/migrate-raucdb
+
+[Service]
+Type=oneshot
+ExecStart=/bin/cp /mnt/data/rauc.db /mnt/boot/
+ExecStartPost=/bin/rm /mnt/boot/migrate-raucdb
+
+[Install]
+WantedBy=multi-user.target

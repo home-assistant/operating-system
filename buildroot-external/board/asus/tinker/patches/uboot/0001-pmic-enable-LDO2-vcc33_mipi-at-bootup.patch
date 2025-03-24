@@ -1,0 +1,61 @@
+From 78bd1a46cfc585773719963ce8e0a380e9676a93 Mon Sep 17 00:00:00 2001
+From: Pascal Vizeli <pvizeli@syshack.ch>
+Date: Fri, 24 Apr 2020 11:37:55 +0000
+Subject: [PATCH] pmic: enable LDO2 vcc33_mipi at bootup
+
+Signed-off-by: Pascal Vizeli <pvizeli@syshack.ch>
+---
+ board/rockchip/tinker_rk3288/tinker-rk3288.c | 36 ++++++++++++++++++++
+ 1 file changed, 36 insertions(+)
+
+diff --git a/board/rockchip/tinker_rk3288/tinker-rk3288.c b/board/rockchip/tinker_rk3288/tinker-rk3288.c
+index e966e9f201a..2944d8c084f 100644
+--- a/board/rockchip/tinker_rk3288/tinker-rk3288.c
++++ b/board/rockchip/tinker_rk3288/tinker-rk3288.c
+@@ -9,6 +9,7 @@
+ #include <init.h>
+ #include <net.h>
+ #include <netdev.h>
++#include <power/regulator.h>
+ 
+ static int get_ethaddr_from_eeprom(u8 *addr)
+ {
+@@ -34,3 +35,38 @@ int rk3288_board_late_init(void)
+ 
+ 	return 0;
+ }
++
++#ifdef CONFIG_DM_PMIC
++static int rockchip_set_regulator_on(const char *name, uint uv)
++{
++	struct udevice *dev;
++	int ret;
++
++	ret = regulator_get_by_platname(name, &dev);
++	if (ret) {
++		debug("%s: Cannot find regulator %s\n", __func__, name);
++		return ret;
++	}
++	ret = regulator_set_value(dev, uv);
++	if (ret) {
++		debug("%s: Cannot set regulator %s\n", __func__, name);
++		return ret;
++	}
++	ret = regulator_set_enable(dev, 1);
++	if (ret) {
++		debug("%s: Cannot enable regulator %s\n", __func__, name);
++		return ret;
++	}
++
++	return 0;
++}
++
++int power_init_board(void)
++{
++	int ret = rockchip_set_regulator_on("vcc33_mipi", 3300000);
++	if (ret)
++		return ret;
++
++	return 0;
++}
++#endif

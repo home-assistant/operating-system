@@ -1,4 +1,4 @@
-From 4e6c3d013c847f199664a3075934f5ca52d8cba4 Mon Sep 17 00:00:00 2001
+From 74227462bbe9236dca234dd24cce4191fa71bdf9 Mon Sep 17 00:00:00 2001
 From: Stefan Agner <stefan@agner.ch>
 Date: Tue, 10 May 2022 22:57:26 +0200
 Subject: [PATCH] ARM: dts: rockchip: Add Bluetooth to rk3288-tinker
@@ -12,7 +12,7 @@ Signed-off-by: Stefan Agner <stefan@agner.ch>
  1 file changed, 26 insertions(+)
 
 diff --git a/arch/arm/boot/dts/rockchip/rk3288-tinker.dtsi b/arch/arm/boot/dts/rockchip/rk3288-tinker.dtsi
-index c7e79e594720..5d261fae6e72 100644
+index c7e79e5947206..5d261fae6e72a 100644
 --- a/arch/arm/boot/dts/rockchip/rk3288-tinker.dtsi
 +++ b/arch/arm/boot/dts/rockchip/rk3288-tinker.dtsi
 @@ -386,6 +386,20 @@ bl_en: bl-en {

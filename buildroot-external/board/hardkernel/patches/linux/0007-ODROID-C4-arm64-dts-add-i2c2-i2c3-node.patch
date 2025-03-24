@@ -1,4 +1,4 @@
-From 9cd343da01d9b69ad33444105208949775c909b4 Mon Sep 17 00:00:00 2001
+From 837c71af687b26385467b5c1e58208de325f6d26 Mon Sep 17 00:00:00 2001
 From: Hyeonki Hong <hhk7734@gmail.com>
 Date: Tue, 1 Mar 2022 21:53:32 +0100
 Subject: [PATCH] ODROID-C4: arm64/dts: add i2c2, i2c3 node
@@ -8,7 +8,7 @@ Subject: [PATCH] ODROID-C4: arm64/dts: add i2c2, i2c3 node
  1 file changed, 53 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/amlogic/meson-sm1-odroid.dtsi b/arch/arm64/boot/dts/amlogic/meson-sm1-odroid.dtsi
-index e67869fbb460..90d2eea7fe24 100644
+index a41fc1cfdeead..ceb8a182820fd 100644
 --- a/arch/arm64/boot/dts/amlogic/meson-sm1-odroid.dtsi
 +++ b/arch/arm64/boot/dts/amlogic/meson-sm1-odroid.dtsi
 @@ -11,6 +11,8 @@
@@ -20,7 +20,7 @@ index e67869fbb460..90d2eea7fe24 100644
  		serial0 = &uart_AO;
  		serial1 = &uart_A;
  	};
-@@ -386,6 +388,57 @@ &ir {
+@@ -390,6 +392,57 @@ &ir {
  	pinctrl-names = "default";
  };
  
