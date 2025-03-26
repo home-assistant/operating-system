@@ -63,7 +63,7 @@ install_boot() {
                 sed -i '/^\[pi3\]/a # Added to fix #3965\ninitial_turbo=0' "${BOOT_MNT}/config.txt"
             else
                 echo "Adding [pi3] section with initial_turbo=0 to config.txt"
-                sed -i 's/^\[pi4\]/\[pi3\]\n# Added to fix #3965\ninitial_turbo=0\n\n\[pi4\]/' "${BOOT_MNT}/config.txt"
+                sed -i 's/^\[all\]/\[pi3\]\n# Added to fix #3965\ninitial_turbo=0\n\n\[all\]/' "${BOOT_MNT}/config.txt"
             fi
         fi
     fi
