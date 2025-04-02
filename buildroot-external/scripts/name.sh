@@ -16,7 +16,7 @@ function hassos_version() {
     if [ -z "${VERSION_SUFFIX}" ]; then
         echo "${VERSION_MAJOR}.${VERSION_MINOR}"
     else
-        echo "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_SUFFIX}"
+        echo "${VERSION_MAJOR}.${VERSION_MINOR}~${VERSION_SUFFIX}"
     fi
 }
 
