@@ -59,7 +59,9 @@ def test_check_supervisor(shell_json):
 def test_update_supervisor(shell_json):
     supervisor_info = shell_json("ha supervisor info --no-progress --raw-json")
     supervisor_version = supervisor_info.get("data").get("version")
-    if supervisor_version == supervisor_info.get("data").get("version_latest"):
+    supervisor_version_latest = supervisor_info.get("data").get("version_latest")
+    assert supervisor_version_latest, "Missing latest supervisor version info"
+    if supervisor_version == supervisor_version_latest:
         logger.info("Supervisor is already up to date")
         pytest.skip("Supervisor is already up to date")
     else:

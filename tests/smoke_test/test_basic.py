@@ -87,6 +87,29 @@ def test_systemctl_no_cycles(shell):
     assert not output, f"Found Systemd dependency cycles:\n{"\n".join(output)}"
 
 
+def test_host_connectivity(shell):
+    output = shell.run_check("curl -f https://checkonline.home-assistant.io/online.txt")
+    assert "NetworkManager is online" in output
+    output = shell.run_check("nmcli network connectivity check")
+    assert "full" in output, f"Connectivity check failed, nmcli reports: {output}"
+
+
+@pytest.mark.dependency(depends=["test_init"])
+@pytest.mark.timeout(10)
+def test_supervisor_connectivity(shell):
+    # checks URL used by connectivity checks via docker0 bridge
+    output = shell.run_check("docker exec -ti hassio_supervisor curl -f https://checkonline.home-assistant.io/online.txt")
+    assert "NetworkManager is online" in output
+
+
+@pytest.mark.dependency(depends=["test_init"])
+@pytest.mark.timeout(10)
+def test_hassio_connectivity(shell):
+    # checks URL used by connectivity checks via hassio bridge
+    output = shell.run_check("docker exec -ti hassio_cli curl -f https://checkonline.home-assistant.io/online.txt")
+    assert "NetworkManager is online" in output
+
+
 @pytest.mark.dependency(depends=["test_init"])
 def test_custom_swap_size(shell, target):
     output = shell.run_check("stat -c '%s' /mnt/data/swapfile")
