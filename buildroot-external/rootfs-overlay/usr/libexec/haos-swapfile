@@ -21,11 +21,13 @@ SWAPFILE="/mnt/data/swapfile"
 
 # Swap size in kilobytes (as it's also what meminfo shows)
 SWAPSIZE="$(size2kilobytes "${SWAPSIZE}")"
+SWAPSIZE_TOLERANCE=0
 
 if [ -z "${SWAPSIZE}" ] || [ "${SWAPSIZE}" = "-1" ]; then
 	# Default to 33% of total memory
 	SWAPSIZE="$(awk '/MemTotal/{ print int($2 * 0.33) }' /proc/meminfo)"
 	echo "[INFO] Using default swapsize of 33% RAM (${SWAPSIZE} kB)"
+	SWAPSIZE_TOLERANCE=$((32*1024))  # allow for 32MB fluctuations
 fi
 
 # Swap space in 4k blocks
@@ -42,7 +44,12 @@ if [ "${SWAPSIZE_BLOCKS}" -lt 10 ]; then
     exit 0
 fi
 
-if [ ! -s "${SWAPFILE}" ] || [ "$(stat "${SWAPFILE}" -c '%s')" -ne $((SWAPSIZE_BLOCKS * 4096)) ]; then
+CURRENT_SIZE="$([ -f "${SWAPFILE}" ] && stat "${SWAPFILE}" -c '%s' || echo 0)"
+
+if [ -s "${SWAPFILE}" ] && [ "${CURRENT_SIZE}" -ge $(((SWAPSIZE - SWAPSIZE_TOLERANCE) * 1024)) ] \
+    && [ "${CURRENT_SIZE}" -le $(((SWAPSIZE + SWAPSIZE_TOLERANCE) * 1024)) ]; then
+    echo "[INFO] Swapfile already exists with size ${CURRENT_SIZE} bytes"
+elif [ ! -s "${SWAPFILE}" ] || [ "${CURRENT_SIZE}" -ne $((SWAPSIZE_BLOCKS * 4096)) ]; then
     # Check free space (in 4k blocks)
     if [ "$(stat -f /mnt/data -c '%f')" -lt "${SWAPSIZE_BLOCKS}" ]; then
         echo "[ERROR] Not enough space to allocate swapfile"
