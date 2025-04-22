@@ -1,0 +1,37 @@
+From 1812508c56075e1ea38e57987fe5b596f1791ebc Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Jan=20=C4=8Cerm=C3=A1k?= <sairon@sairon.cz>
+Date: Tue, 22 Apr 2025 16:53:59 +0200
+Subject: [PATCH] ARM: dts: bcm2711: yellow: Fix includes for rpi-6.12.y
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Fix duplicate i2c0mux label that's now present both in bcm2711-rpi.dtsi and
+bcm270x.dtsi. Use the same include order as in bcm2711-rpi-cm4.dts.
+
+Signed-off-by: Jan Čermák <sairon@sairon.cz>
+---
+ arch/arm/boot/dts/broadcom/bcm2711-rpi-cm4-ha-yellow.dts | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm/boot/dts/broadcom/bcm2711-rpi-cm4-ha-yellow.dts b/arch/arm/boot/dts/broadcom/bcm2711-rpi-cm4-ha-yellow.dts
+index b3d57a53d2224..1aaadaa8e1bfc 100644
+--- a/arch/arm/boot/dts/broadcom/bcm2711-rpi-cm4-ha-yellow.dts
++++ b/arch/arm/boot/dts/broadcom/bcm2711-rpi-cm4-ha-yellow.dts
+@@ -3,13 +3,14 @@
+ #define BCM2711
+ #define i2c0 i2c0if
+ #include "bcm2711.dtsi"
++#include "bcm2711-rpi.dtsi"
++/delete-node/&i2c0mux;
++#include "bcm283x-rpi-led-deprecated.dtsi"
+ #include "bcm283x-rpi-wifi-bt.dtsi"
+ #undef i2c0
+ #include "bcm270x.dtsi"
+ #define i2c0 i2c0mux
+-#include "bcm2711-rpi.dtsi"
+ #undef i2c0
+-//#include "bcm283x-rpi-usb-peripheral.dtsi"
+ 
+ #include <dt-bindings/input/input.h>
+ 
