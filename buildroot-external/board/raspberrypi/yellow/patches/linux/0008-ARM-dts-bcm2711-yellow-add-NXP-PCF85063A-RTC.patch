@@ -1,4 +1,4 @@
-From 1ac9e238e1e9ec9c7cfc8dc84304a6949fe1d958 Mon Sep 17 00:00:00 2001
+From 04192e0855d21ed9c52e734a04ada0216ef7278b Mon Sep 17 00:00:00 2001
 From: Stefan Agner <stefan@agner.ch>
 Date: Fri, 12 Nov 2021 17:33:32 +0100
 Subject: [PATCH] ARM: dts: bcm2711: yellow: add NXP PCF85063A RTC

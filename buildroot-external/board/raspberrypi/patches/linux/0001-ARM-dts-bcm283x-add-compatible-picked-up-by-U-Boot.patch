@@ -1,4 +1,4 @@
-From e2f2644f306f44e65bb8082bac3c26cb5e699664 Mon Sep 17 00:00:00 2001
+From cc54354a5cd983d27ba3e800cfdf2d8cf70b812f Mon Sep 17 00:00:00 2001
 From: Pascal Vizeli <pvizeli@syshack.ch>
 Date: Tue, 2 Jun 2020 21:20:08 +0000
 Subject: [PATCH] ARM: dts: bcm283x: add compatible picked up by U-Boot
@@ -16,7 +16,7 @@ Signed-off-by: Stefan Agner <stefan@agner.ch>
  2 files changed, 5 insertions(+), 5 deletions(-)
 
 diff --git a/arch/arm/boot/dts/broadcom/bcm2711.dtsi b/arch/arm/boot/dts/broadcom/bcm2711.dtsi
-index 4a379a14966d8..30f6ccdcef178 100644
+index bb137d8da1a82..cd03157437780 100644
 --- a/arch/arm/boot/dts/broadcom/bcm2711.dtsi
 +++ b/arch/arm/boot/dts/broadcom/bcm2711.dtsi
 @@ -128,7 +128,7 @@ rng@7e104000 {
@@ -56,7 +56,7 @@ index 4a379a14966d8..30f6ccdcef178 100644
  			interrupts = <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>;
  			clocks = <&clocks BCM2835_CLOCK_UART>,
 diff --git a/arch/arm/boot/dts/broadcom/bcm283x.dtsi b/arch/arm/boot/dts/broadcom/bcm283x.dtsi
-index 2ca8a2505a4db..6f91c85677d89 100644
+index 562c4e9d08cc0..d10e441b0df53 100644
 --- a/arch/arm/boot/dts/broadcom/bcm283x.dtsi
 +++ b/arch/arm/boot/dts/broadcom/bcm283x.dtsi
 @@ -302,7 +302,7 @@ uart1_ctsrts_gpio42: uart1-ctsrts-gpio42 {

@@ -1,4 +1,4 @@
-From 0f005f5b3182e8ecb745f535a1bfeef31c3bfa5b Mon Sep 17 00:00:00 2001
+From e59c8869089fd28889fa6bb680ebabc2e0db8378 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Jan=20=C4=8Cerm=C3=A1k?= <sairon@sairon.cz>
 Date: Tue, 9 Apr 2024 14:18:17 +0200
 Subject: [PATCH] ARM: dts: bcm2711: yellow: Fix leds node referencing after
@@ -20,7 +20,7 @@ Signed-off-by: Jan Čermák <sairon@sairon.cz>
  1 file changed, 6 insertions(+), 1 deletion(-)
 
 diff --git a/arch/arm/boot/dts/broadcom/bcm2711-rpi-cm4-ha-yellow.dts b/arch/arm/boot/dts/broadcom/bcm2711-rpi-cm4-ha-yellow.dts
-index 26033f2d30d0c..627ff93b7d044 100644
+index 26033f2d30d0c..b3d57a53d2224 100644
 --- a/arch/arm/boot/dts/broadcom/bcm2711-rpi-cm4-ha-yellow.dts
 +++ b/arch/arm/boot/dts/broadcom/bcm2711-rpi-cm4-ha-yellow.dts
 @@ -45,9 +45,14 @@ user {

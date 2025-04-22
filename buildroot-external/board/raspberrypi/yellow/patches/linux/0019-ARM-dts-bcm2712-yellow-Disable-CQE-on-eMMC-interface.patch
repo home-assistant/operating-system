@@ -1,4 +1,4 @@
-From 0d9aed86fbaf650cf15ea0977e05cee2980ed054 Mon Sep 17 00:00:00 2001
+From cc7be19cb5afc0b02b252ac8af09f920243d7b7c Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Jan=20=C4=8Cerm=C3=A1k?= <sairon@sairon.cz>
 Date: Mon, 2 Dec 2024 16:07:00 +0100
 Subject: [PATCH] ARM: dts: bcm2712: yellow: Disable CQE on eMMC interface

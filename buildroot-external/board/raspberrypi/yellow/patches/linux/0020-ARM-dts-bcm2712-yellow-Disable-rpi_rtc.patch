@@ -1,4 +1,4 @@
-From fc558b6a7174e2b5c37936dd8c13ca29e9273472 Mon Sep 17 00:00:00 2001
+From 9cd3f4dba1f692dff9c875dc855b826948f3804d Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Jan=20=C4=8Cerm=C3=A1k?= <sairon@sairon.cz>
 Date: Mon, 2 Dec 2024 17:22:04 +0100
 Subject: [PATCH] ARM: dts: bcm2712: yellow: Disable rpi_rtc

@@ -1,4 +1,4 @@
-From 06b9732139c9dfa46beb4cc56992f2104a528b54 Mon Sep 17 00:00:00 2001
+From 6350fee42ecbe22410df8b19a5757117a5c86593 Mon Sep 17 00:00:00 2001
 From: Stefan Agner <stefan@agner.ch>
 Date: Tue, 26 Jul 2022 15:53:59 +0200
 Subject: [PATCH] ARM: dts: bcm2711: yellow: use USB OTG mode by default

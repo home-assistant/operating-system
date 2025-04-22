@@ -1,4 +1,4 @@
-From 65dd5542d4baf35595fc85cd7a9e0aa51dc371cc Mon Sep 17 00:00:00 2001
+From 8672f7e15ffd650d944452699dd1b0b10e1535c1 Mon Sep 17 00:00:00 2001
 From: Stefan Agner <stefan@agner.ch>
 Date: Thu, 4 Mar 2021 14:44:23 +0100
 Subject: [PATCH] ARM: dts: bcm2711: yellow: Mux debug UART5

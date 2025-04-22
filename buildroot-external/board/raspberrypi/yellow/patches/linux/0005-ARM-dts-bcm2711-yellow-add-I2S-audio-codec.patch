@@ -1,4 +1,4 @@
-From fef283110d29ff46fba6f1b2d24519128ce8a79b Mon Sep 17 00:00:00 2001
+From 3f94bd6ffd33cbfcdbb4cad51d4fc878bacc4b12 Mon Sep 17 00:00:00 2001
 From: Stefan Agner <stefan@agner.ch>
 Date: Thu, 4 Mar 2021 17:19:01 +0100
 Subject: [PATCH] ARM: dts: bcm2711: yellow: add I2S audio codec

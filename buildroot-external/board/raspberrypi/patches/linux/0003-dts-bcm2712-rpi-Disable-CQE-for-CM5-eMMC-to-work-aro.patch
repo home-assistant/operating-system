@@ -1,4 +1,4 @@
-From ec7a5ea27ef759c67225b1616e4266bcff0d7fb4 Mon Sep 17 00:00:00 2001
+From 7d8fa172abf09d8c93d53a4468c74888a5f3db24 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Jan=20=C4=8Cerm=C3=A1k?= <sairon@sairon.cz>
 Date: Tue, 14 Jan 2025 18:27:20 +0100
 Subject: [PATCH] dts: bcm2712-rpi: Disable CQE for CM5 eMMC to work around FS
@@ -18,10 +18,10 @@ Signed-off-by: Jan Čermák <sairon@sairon.cz>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/arch/arm64/boot/dts/broadcom/bcm2712-rpi-cm5.dtsi b/arch/arm64/boot/dts/broadcom/bcm2712-rpi-cm5.dtsi
-index 099d14ecf19a4..d49fc876cccc1 100644
+index 94f8d4b789d05..d32ad279914b6 100644
 --- a/arch/arm64/boot/dts/broadcom/bcm2712-rpi-cm5.dtsi
 +++ b/arch/arm64/boot/dts/broadcom/bcm2712-rpi-cm5.dtsi
-@@ -339,7 +339,7 @@ &sdio1 {
+@@ -297,7 +297,7 @@ &sdio1 {
  	mmc-hs400-1_8v;
  	mmc-hs400-enhanced-strobe;
  	broken-cd;

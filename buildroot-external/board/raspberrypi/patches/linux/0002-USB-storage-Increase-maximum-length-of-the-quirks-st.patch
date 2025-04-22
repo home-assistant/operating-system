@@ -1,4 +1,4 @@
-From 8b7bfad7fda35949975f359c7e207bc57bc765db Mon Sep 17 00:00:00 2001
+From 1c96ac8457c0131f256fe8208946dae548f28d67 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Jan=20=C4=8Cerm=C3=A1k?= <sairon@sairon.cz>
 Date: Mon, 15 Apr 2024 14:07:34 +0200
 Subject: [PATCH] USB: storage: Increase maximum length of the quirks string
@@ -16,12 +16,12 @@ Signed-off-by: Jan Čermák <sairon@sairon.cz>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/usb/storage/usb.c b/drivers/usb/storage/usb.c
-index 7b36a3334fb34..9691e6b9fe5aa 100644
+index d36f3b6992bbd..f976f074350bc 100644
 --- a/drivers/usb/storage/usb.c
 +++ b/drivers/usb/storage/usb.c
-@@ -71,7 +71,7 @@ static unsigned int delay_use = 1;
- module_param(delay_use, uint, S_IRUGO | S_IWUSR);
- MODULE_PARM_DESC(delay_use, "seconds to delay before using a new device");
+@@ -165,7 +165,7 @@ static const struct kernel_param_ops delay_use_ops = {
+ module_param_cb(delay_use, &delay_use_ops, &delay_use, 0644);
+ MODULE_PARM_DESC(delay_use, "time to delay before using a new device");
  
 -static char quirks[128];
 +static char quirks[256];

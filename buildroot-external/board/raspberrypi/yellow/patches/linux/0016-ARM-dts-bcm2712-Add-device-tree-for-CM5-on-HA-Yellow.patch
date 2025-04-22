@@ -1,4 +1,4 @@
-From 15124b1c4c08b408540e020d3f6fdb006ad274cd Mon Sep 17 00:00:00 2001
+From a42b2ff69a6fcecfbcf0a0f469ddbfe01ad48570 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Jan=20=C4=8Cerm=C3=A1k?= <sairon@sairon.cz>
 Date: Thu, 3 Oct 2024 13:40:53 +0200
 Subject: [PATCH] ARM: dts: bcm2712: Add device tree for CM5 on HA Yellow
@@ -10,10 +10,10 @@ Subject: [PATCH] ARM: dts: bcm2712: Add device tree for CM5 on HA Yellow
  create mode 100644 arch/arm64/boot/dts/broadcom/bcm2712-rpi-cm5-ha-yellow.dts
 
 diff --git a/arch/arm64/boot/dts/broadcom/Makefile b/arch/arm64/boot/dts/broadcom/Makefile
-index 06ae79a9bcfca..89f4e9aa427a2 100644
+index 1388cc1164f96..058cf8aea9311 100644
 --- a/arch/arm64/boot/dts/broadcom/Makefile
 +++ b/arch/arm64/boot/dts/broadcom/Makefile
-@@ -20,6 +20,7 @@ dtb-$(CONFIG_ARCH_BCM2835) += bcm2710-rpi-3-b-plus.dtb
+@@ -23,6 +23,7 @@ dtb-$(CONFIG_ARCH_BCM2835) += bcm2710-rpi-cm0.dtb
  dtb-$(CONFIG_ARCH_BCM2835) += bcm2710-rpi-cm3.dtb
  dtb-$(CONFIG_ARCH_BCM2835) += bcm2711-rpi-cm4.dtb
  dtb-$(CONFIG_ARCH_BCM2835) += bcm2711-rpi-cm4-ha-yellow.dtb

@@ -1,4 +1,4 @@
-From 1743e9e6cf20309f9096489930543576a8297c85 Mon Sep 17 00:00:00 2001
+From 12ce243471d8bf7f2b6a738ee2c7b0fe16266cc2 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Jan=20=C4=8Cerm=C3=A1k?= <sairon@sairon.cz>
 Date: Thu, 16 Nov 2023 12:46:48 +0100
 Subject: [PATCH] ARM: dts: bcm2711: yellow: Use mini-UART for Bluetooth by
