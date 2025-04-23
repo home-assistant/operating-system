@@ -1,4 +1,4 @@
-From 124e2b8e4b7ebda8acc488704fe11c5bf5e44bd1 Mon Sep 17 00:00:00 2001
+From d4b16a0df4d853b2cb029470009c6cf1c5fdac2b Mon Sep 17 00:00:00 2001
 From: Stefan Agner <stefan@agner.ch>
 Date: Fri, 7 Jan 2022 17:10:00 +0100
 Subject: [PATCH] ARM: dts: bcm2711: yellow: enable USB host mode by default

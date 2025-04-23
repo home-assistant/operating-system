@@ -1,4 +1,4 @@
-From 813ead66c6b09ce9eaab57b5ab6907314226368a Mon Sep 17 00:00:00 2001
+From 43d6b901b3762e4af752efef15f3188668a5b4ca Mon Sep 17 00:00:00 2001
 From: Stefan Agner <stefan@agner.ch>
 Date: Tue, 9 Mar 2021 15:02:53 +0100
 Subject: [PATCH] ARM: dts: bcm2711: yellow: enable GPIO keys

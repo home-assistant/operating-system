@@ -1,4 +1,4 @@
-From 68f9deead3ac327dadd096e004d24a6166f57158 Mon Sep 17 00:00:00 2001
+From b48420ec60d5767c3a70454e90d0d32cbe6a1259 Mon Sep 17 00:00:00 2001
 From: Stefan Agner <stefan@agner.ch>
 Date: Wed, 27 Apr 2022 20:36:19 +0200
 Subject: [PATCH] ARM: dts: bcm2711: yellow: use generic activity trigger for

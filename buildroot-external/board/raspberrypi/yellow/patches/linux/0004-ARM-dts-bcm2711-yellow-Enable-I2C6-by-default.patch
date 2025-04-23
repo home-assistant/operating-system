@@ -1,4 +1,4 @@
-From 68b50046140a36790b004005b6305820de80520b Mon Sep 17 00:00:00 2001
+From 89522cbb3089abd679a9064b0d6ee14c41790fd0 Mon Sep 17 00:00:00 2001
 From: Stefan Agner <stefan@agner.ch>
 Date: Thu, 4 Mar 2021 14:48:48 +0100
 Subject: [PATCH] ARM: dts: bcm2711: yellow: Enable I2C6 by default

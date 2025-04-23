@@ -1,4 +1,4 @@
-From 9639a7a0f20cbd4a7b9968f6a3ede4727d96d297 Mon Sep 17 00:00:00 2001
+From 018d79b0f323b710d3843bd7f7fc64f75aedceb7 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Jan=20=C4=8Cerm=C3=A1k?= <sairon@sairon.cz>
 Date: Thu, 28 Nov 2024 18:05:55 +0100
 Subject: [PATCH] ARM: dts: bcm2712: yellow: Disable SD/SDIO modes on eMMC

@@ -1,4 +1,4 @@
-From d889b7cf38a0ea4990c91380d7c911ed3c9fab5b Mon Sep 17 00:00:00 2001
+From 0f92ffeb7f8edfcb3dc77aa44b5029f4a5186cf5 Mon Sep 17 00:00:00 2001
 From: Stefan Agner <stefan@agner.ch>
 Date: Sat, 30 Jul 2022 11:21:31 +0200
 Subject: [PATCH] ARM: dts: bcm2711: yellow: Add LED overrides

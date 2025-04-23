@@ -1,4 +1,4 @@
-From e738be24b35b8c8df6e5149a64ad9c366c27ba59 Mon Sep 17 00:00:00 2001
+From 2029c766475dec5107d03ffd1a630b281f789d43 Mon Sep 17 00:00:00 2001
 From: Stefan Agner <stefan@agner.ch>
 Date: Thu, 28 Oct 2021 19:38:04 +0200
 Subject: [PATCH] ARM: dts: bcm2711: yellow: add user LED

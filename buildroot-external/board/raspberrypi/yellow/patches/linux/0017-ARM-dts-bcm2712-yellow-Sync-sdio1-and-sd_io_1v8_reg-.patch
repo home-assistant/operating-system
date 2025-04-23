@@ -1,4 +1,4 @@
-From e29e2cfad33afa692f2f727f492dab02d5ff3948 Mon Sep 17 00:00:00 2001
+From 40121453f8be78adccc89273d60ce924fd4889b4 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Jan=20=C4=8Cerm=C3=A1k?= <sairon@sairon.cz>
 Date: Thu, 21 Nov 2024 14:26:20 +0100
 Subject: [PATCH] ARM: dts: bcm2712: yellow: Sync sdio1 and sd_io_1v8_reg nodes

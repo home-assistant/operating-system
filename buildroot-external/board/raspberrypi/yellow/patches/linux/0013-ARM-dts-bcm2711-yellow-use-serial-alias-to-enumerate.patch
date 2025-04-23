@@ -1,4 +1,4 @@
-From 614ff7a7904a769dee144ae4cf80e484d8ffade5 Mon Sep 17 00:00:00 2001
+From c2375d4ef4d55523dfc434b555ac55e33c1cc1c7 Mon Sep 17 00:00:00 2001
 From: Stefan Agner <stefan@agner.ch>
 Date: Wed, 31 May 2023 10:57:43 +0200
 Subject: [PATCH] ARM: dts: bcm2711: yellow: use serial alias to enumerate

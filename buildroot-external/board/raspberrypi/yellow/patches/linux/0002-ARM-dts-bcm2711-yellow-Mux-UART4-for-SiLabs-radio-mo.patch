@@ -1,4 +1,4 @@
-From 7bc3b341d90c95dc17d3da0930801006b00d2046 Mon Sep 17 00:00:00 2001
+From bde94ec948ccc701e656eb817d82198cefcde3c1 Mon Sep 17 00:00:00 2001
 From: Stefan Agner <stefan@agner.ch>
 Date: Thu, 4 Mar 2021 14:33:09 +0100
 Subject: [PATCH] ARM: dts: bcm2711: yellow: Mux UART4 for SiLabs radio module
