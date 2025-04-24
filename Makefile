@@ -49,4 +49,4 @@ help:
 	@echo ""
 	@echo "Supported targets: $(TARGETS)"
 	@echo ""
-	@echo "Unknown Makefile targets fall back to Buildroot make - for detauls run 'make buildroot-help'"
+	@echo "Unknown Makefile targets fall back to Buildroot make - for details run 'make buildroot-help'"
