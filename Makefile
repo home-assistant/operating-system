@@ -16,7 +16,7 @@ endif
 
 .NOTPARALLEL: $(TARGETS) $(TARGETS_CONFIG) all
 
-.PHONY: $(TARGETS) $(TARGETS_CONFIG) all buildroot-help clean help
+.PHONY: $(TARGETS) $(TARGETS_CONFIG) all buildroot-help help
 
 all: $(TARGETS)
 
@@ -35,9 +35,6 @@ ifneq ($(words $(filter $(TARGETS),$(MAKECMDGOALS))), 1)
 endif
 	@echo "finished $@"
 
-clean:
-	$(MAKE) -C $(BUILDROOT) O=$(O) BR2_EXTERNAL=$(BUILDROOT_EXTERNAL) clean
-
 .DEFAULT:
 	@echo "falling back to Buildroot target '$@'"
 	$(MAKE) -C $(BUILDROOT) O=$(O) BR2_EXTERNAL=$(BUILDROOT_EXTERNAL) "$@"
@@ -48,7 +45,6 @@ buildroot-help:
 help:
 	@echo "Run 'make <target>' to build a target image."
 	@echo "Run 'make all' to build all target images."
-	@echo "Run 'make clean' to clean the build output."
 	@echo "Run 'make <target>-config' to configure buildroot for a target."
 	@echo ""
 	@echo "Supported targets: $(TARGETS)"
