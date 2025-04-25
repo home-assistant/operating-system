@@ -40,6 +40,7 @@ $(TARGETS_CONFIG): %-config:
 		echo "$(COLOR_WARN)WARNING: Output directory '$(O)' already contains files for another target!$(TERM_RESET)"; \
 		echo "         Before running build for a different target, run 'make distclean' first."; \
 		echo ""; \
+		bash -c 'read -t 10 -p "Waiting 10s, press enter to continue or Ctrl-C to abort..."' || true; \
 	fi
 	@echo "$(COLOR_STEP)=== Using $*_defconfig ===$(TERM_RESET)"
 	$(MAKE) -C $(BUILDROOT) O=$(O) BR2_EXTERNAL=$(BUILDROOT_EXTERNAL) "$*_defconfig"
