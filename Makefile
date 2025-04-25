@@ -16,13 +16,9 @@ endif
 
 .NOTPARALLEL: $(TARGETS) $(TARGETS_CONFIG) all
 
-.PHONY: $(TARGETS) $(TARGETS_CONFIG) all clean help
+.PHONY: $(TARGETS) $(TARGETS_CONFIG) all buildroot-help help
 
 all: $(TARGETS)
-
-savedefconfig:
-	@echo "config $*"
-	$(MAKE) -C $(BUILDROOT) O=$(O) BR2_EXTERNAL=$(BUILDROOT_EXTERNAL) "savedefconfig"
 
 $(TARGETS_CONFIG): %-config:
 	@echo "config $*"
@@ -39,12 +35,18 @@ ifneq ($(words $(filter $(TARGETS),$(MAKECMDGOALS))), 1)
 endif
 	@echo "finished $@"
 
-clean:
-	$(MAKE) -C $(BUILDROOT) O=$(O) BR2_EXTERNAL=$(BUILDROOT_EXTERNAL) clean
+.DEFAULT:
+	@echo "falling back to Buildroot target '$@'"
+	$(MAKE) -C $(BUILDROOT) O=$(O) BR2_EXTERNAL=$(BUILDROOT_EXTERNAL) "$@"
+
+buildroot-help:
+	$(MAKE) -C $(BUILDROOT) O=$(O) BR2_EXTERNAL=$(BUILDROOT_EXTERNAL) help
 
 help:
-	@echo "Supported targets: $(TARGETS)"
 	@echo "Run 'make <target>' to build a target image."
 	@echo "Run 'make all' to build all target images."
-	@echo "Run 'make clean' to clean the build output."
 	@echo "Run 'make <target>-config' to configure buildroot for a target."
+	@echo ""
+	@echo "Supported targets: $(TARGETS)"
+	@echo ""
+	@echo "Unknown Makefile targets fall back to Buildroot make - for details run 'make buildroot-help'"
