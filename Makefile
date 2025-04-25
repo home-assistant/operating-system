@@ -36,9 +36,8 @@ default:
 	$(MAKE) -C $(BUILDROOT) O=$(O) BR2_EXTERNAL=$(BUILDROOT_EXTERNAL)
 
 $(TARGETS_CONFIG): %-config:
-	@if [ -d $(O) ] && [ "$$(ls -A $(O))" ]; then \
-		echo "$(COLOR_WARN)WARNING: Output directory '$(O)' is not empty!$(TERM_RESET)"; \
-		echo "         This may cause errors if it was previously used for a different target."; \
+	@if [ -f $(O)/.config ] && ! grep -q 'BR2_DEFCONFIG="$(DEFCONFIG_DIR)/$*_defconfig"' $(O)/.config; then \
+		echo "$(COLOR_WARN)WARNING: Output directory '$(O)' already contains files for another target!$(TERM_RESET)"; \
 		echo "         Before running build for a different target, run 'make distclean' first."; \
 		echo ""; \
 	fi
