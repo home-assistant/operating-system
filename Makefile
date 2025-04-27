@@ -14,37 +14,46 @@ else
 override O := $(BUILDDIR)/$(O)
 endif
 
-.NOTPARALLEL: $(TARGETS) $(TARGETS_CONFIG) all
+################################################################################
 
-.PHONY: $(TARGETS) $(TARGETS_CONFIG) all buildroot-help help
+COLOR_STEP := $(shell tput smso 2>/dev/null)
+COLOR_WARN := $(shell (tput setab 3; tput setaf 0) 2>/dev/null)
+TERM_RESET := $(shell tput sgr0 2>/dev/null)
 
-all: $(TARGETS)
+################################################################################
+
+.NOTPARALLEL: $(TARGETS) $(TARGETS_CONFIG) default
+
+.PHONY: $(TARGETS) $(TARGETS_CONFIG) default buildroot-help help
+
+# fallback target when target undefined here is given
+.DEFAULT:
+	@echo "$(COLOR_STEP)=== Falling back to Buildroot target '$@' ===$(TERM_RESET)"
+	$(MAKE) -C $(BUILDROOT) O=$(O) BR2_EXTERNAL=$(BUILDROOT_EXTERNAL) "$@"
+
+# default target when no target is given - must be first in Makefile
+default:
+	$(MAKE) -C $(BUILDROOT) O=$(O) BR2_EXTERNAL=$(BUILDROOT_EXTERNAL)
 
 $(TARGETS_CONFIG): %-config:
-	@echo "config $*"
+	@if [ -f $(O)/.config ] && ! grep -q 'BR2_DEFCONFIG="$(DEFCONFIG_DIR)/$*_defconfig"' $(O)/.config; then \
+		echo "$(COLOR_WARN)WARNING: Output directory '$(O)' already contains files for another target!$(TERM_RESET)"; \
+		echo "         Before running build for a different target, run 'make distclean' first."; \
+		echo ""; \
+		bash -c 'read -t 10 -p "Waiting 10s, press enter to continue or Ctrl-C to abort..."' || true; \
+	fi
+	@echo "$(COLOR_STEP)=== Using $*_defconfig ===$(TERM_RESET)"
 	$(MAKE) -C $(BUILDROOT) O=$(O) BR2_EXTERNAL=$(BUILDROOT_EXTERNAL) "$*_defconfig"
 
 $(TARGETS): %: %-config
-	@echo "build $@"
+	@echo "$(COLOR_STEP)=== Building $@ ===$(TERM_RESET)"
 	$(MAKE) -C $(BUILDROOT) O=$(O) BR2_EXTERNAL=$(BUILDROOT_EXTERNAL)
-
-	# Do not clean when building for one target
-ifneq ($(words $(filter $(TARGETS),$(MAKECMDGOALS))), 1)
-	@echo "clean $@"
-	$(MAKE) -C $(BUILDROOT) O=$(O) BR2_EXTERNAL=$(BUILDROOT_EXTERNAL) clean
-endif
-	@echo "finished $@"
-
-.DEFAULT:
-	@echo "falling back to Buildroot target '$@'"
-	$(MAKE) -C $(BUILDROOT) O=$(O) BR2_EXTERNAL=$(BUILDROOT_EXTERNAL) "$@"
 
 buildroot-help:
 	$(MAKE) -C $(BUILDROOT) O=$(O) BR2_EXTERNAL=$(BUILDROOT_EXTERNAL) help
 
 help:
 	@echo "Run 'make <target>' to build a target image."
-	@echo "Run 'make all' to build all target images."
 	@echo "Run 'make <target>-config' to configure buildroot for a target."
 	@echo ""
 	@echo "Supported targets: $(TARGETS)"
