@@ -1,0 +1,22 @@
+name: "Run command in HAOS build container"
+inputs:
+  image:
+    description: "HAOS builder image to use"
+    required: true
+  command:
+    description: "Command to run in the container"
+    required: true
+runs:
+  using: 'composite'
+  steps:
+  - name: "Run command in HAOS build container"
+    shell: bash
+    run: |
+      docker run --rm --privileged \
+        -e BUILDER_UID="$(id -u)" \
+        -e BUILDER_GID="$(id -g)" \
+        -v "${GITHUB_WORKSPACE}:/build" \
+        -v "/mnt/cache:/cache" \
+        -v "/mnt/output:/build/output" \
+        ${{ inputs.image }} \
+        ${{ inputs.command }}
