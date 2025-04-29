@@ -16,6 +16,16 @@ on:
         required: true
         type: boolean
         default: true
+      hassio_channel:
+        description: 'Release channel to use (default: stable for GH releases, dev otherwise)'
+        type: choice
+        required: true
+        default: default
+        options:
+          - default
+          - stable
+          - beta
+          - dev
 
 env:
   PYTHON_VERSION: "3.13"
@@ -33,6 +43,7 @@ jobs:
       version_main: ${{ steps.version.outputs.version_main }}
       version_full: ${{ steps.version.outputs.version_full }}
       channel: ${{ steps.channel.outputs.channel }}
+      hassio_channel_option: ${{ steps.channel.outputs.hassio_channel_option }}
       matrix: ${{ steps.generate_matrix.outputs.result }}
       build_container_image: ghcr.io/${{ github.repository_owner }}/haos-builder@${{ steps.build_haos_builder.outputs.digest }}
       publish_build: ${{ steps.check_publish.outputs.publish_build }}
@@ -112,6 +123,22 @@ jobs:
             fi
           else
             echo "channel=dev" >> "$GITHUB_OUTPUT"
+          fi
+
+          if [[ "${{ inputs.hassio_channel }}" == "default" ]]; then
+            if [[ "${{ github.event_name }}" == "release" ]]; then
+              echo "hassio_channel_option=BR2_PACKAGE_HASSIO_CHANNEL_STABLE" >> "$GITHUB_OUTPUT"
+            else
+              echo "hassio_channel_option=BR2_PACKAGE_HASSIO_CHANNEL_DEV" >> "$GITHUB_OUTPUT"
+            fi
+          else
+            if [[ "${{ inputs.hassio_channel }}" == "stable" ]]; then
+              echo "hassio_channel_option=BR2_PACKAGE_HASSIO_CHANNEL_STABLE" >> "$GITHUB_OUTPUT"
+            elif [[ "${{ inputs.hassio_channel }}" == "beta" ]]; then
+              echo "hassio_channel_option=BR2_PACKAGE_HASSIO_CHANNEL_BETA" >> "$GITHUB_OUTPUT"
+            elif [[ "${{ inputs.hassio_channel }}" == "dev" ]]; then
+              echo "hassio_channel_option=BR2_PACKAGE_HASSIO_CHANNEL_DEV" >> "$GITHUB_OUTPUT"
+            fi
           fi
 
       - name: Create build matrix
@@ -245,28 +272,32 @@ jobs:
           path: /mnt/cache/cc
           key: haos-cc-${{ matrix.board.id }}
 
+      - name: Generate build config
+        uses: "./.github/actions/haos-builder-command"
+        with:
+          image: ${{ needs.prepare.outputs.build_container_image }}
+          command: make ${{ matrix.board.defconfig }}_defconfig
+
+      - name: Override release channel
+        if: ${{ needs.prepare.outputs.hassio_channel_option != 'BR2_PACKAGE_HASSIO_CHANNEL_STABLE' }}
+        uses: "./.github/actions/haos-builder-command"
+        with:
+          image: ${{ needs.prepare.outputs.build_container_image }}
+          command: |
+            bash -c 'echo "${{ needs.prepare.outputs.hassio_channel_option }}=y" >> /build/.config && make olddefconfig'
+
       - name: Build
-        run: |
-          BUILDER_UID="$(id -u)"
-          BUILDER_GID="$(id -g)"
-          docker run --rm --privileged \
-            -e BUILDER_UID="${BUILDER_UID}" -e BUILDER_GID="${BUILDER_GID}" \
-            -v "${GITHUB_WORKSPACE}:/build" \
-            -v "/mnt/cache:/cache" \
-            -v "/mnt/output:/build/output" \
-            ${{ needs.prepare.outputs.build_container_image }} \
-            make BUILDDIR=/build ${{ matrix.board.defconfig }}
+        uses: "./.github/actions/haos-builder-command"
+        with:
+          image: ${{ needs.prepare.outputs.build_container_image }}
+          command: make
 
       - name: Check Linux config
-        run: |
-          docker run --rm --privileged \
-            -e BUILDER_UID="$(id -u)" -e BUILDER_GID="$(id -g)" \
-            -v "${GITHUB_WORKSPACE}:/build" \
-            -v "/mnt/cache:/cache" \
-            -v "/mnt/output:/build/output" \
-            ${{ needs.prepare.outputs.build_container_image }} \
-            make -C buildroot O="/build/output" BR2_EXTERNAL="/build/buildroot-external" \
-            BR2_CHECK_DOTCONFIG_OPTS="--github-format --strip-path-prefix=/build/" linux-check-dotconfig
+        uses: "./.github/actions/haos-builder-command"
+        with:
+          image: ${{ needs.prepare.outputs.build_container_image }}
+          command: |
+            make BR2_CHECK_DOTCONFIG_OPTS="--github-format --strip-path-prefix=/build/" linux-check-dotconfig
 
       - name: Upload artifacts
         if: ${{ github.event_name != 'release' && needs.prepare.outputs.publish_build == 'true' }}
