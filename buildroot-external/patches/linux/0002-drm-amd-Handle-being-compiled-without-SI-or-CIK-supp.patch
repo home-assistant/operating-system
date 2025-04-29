@@ -1,0 +1,119 @@
+From adee1a842735a55adde3575be523cafa424ab2ef Mon Sep 17 00:00:00 2001
+From: Mario Limonciello <mario.limonciello@amd.com>
+Date: Wed, 19 Mar 2025 11:58:31 -0500
+Subject: [PATCH] drm/amd: Handle being compiled without SI or CIK support
+ better
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+If compiled without SI or CIK support but amdgpu tries to load it
+will run into failures with uninitialized callbacks.
+
+Show a nicer message in this case and fail probe instead.
+
+Closes: https://gitlab.freedesktop.org/drm/amd/-/issues/4050
+Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Cc: stable@vger.kernel.org
+Upstream: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?id=5f054ddead33c1622ea9c0c0aaf07c6843fc7ab0
+Signed-off-by: Jan Čermák <sairon@sairon.cz>
+---
+ drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c | 44 ++++++++++++++-----------
+ 1 file changed, 24 insertions(+), 20 deletions(-)
+
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
+index 32afcf9485245..e0c33e93e29f5 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
+@@ -1795,7 +1795,6 @@ static const u16 amdgpu_unsupported_pciidlist[] = {
+ };
+ 
+ static const struct pci_device_id pciidlist[] = {
+-#ifdef CONFIG_DRM_AMDGPU_SI
+ 	{0x1002, 0x6780, PCI_ANY_ID, PCI_ANY_ID, 0, 0, CHIP_TAHITI},
+ 	{0x1002, 0x6784, PCI_ANY_ID, PCI_ANY_ID, 0, 0, CHIP_TAHITI},
+ 	{0x1002, 0x6788, PCI_ANY_ID, PCI_ANY_ID, 0, 0, CHIP_TAHITI},
+@@ -1868,8 +1867,6 @@ static const struct pci_device_id pciidlist[] = {
+ 	{0x1002, 0x6665, PCI_ANY_ID, PCI_ANY_ID, 0, 0, CHIP_HAINAN|AMD_IS_MOBILITY},
+ 	{0x1002, 0x6667, PCI_ANY_ID, PCI_ANY_ID, 0, 0, CHIP_HAINAN|AMD_IS_MOBILITY},
+ 	{0x1002, 0x666F, PCI_ANY_ID, PCI_ANY_ID, 0, 0, CHIP_HAINAN|AMD_IS_MOBILITY},
+-#endif
+-#ifdef CONFIG_DRM_AMDGPU_CIK
+ 	/* Kaveri */
+ 	{0x1002, 0x1304, PCI_ANY_ID, PCI_ANY_ID, 0, 0, CHIP_KAVERI|AMD_IS_MOBILITY|AMD_IS_APU},
+ 	{0x1002, 0x1305, PCI_ANY_ID, PCI_ANY_ID, 0, 0, CHIP_KAVERI|AMD_IS_APU},
+@@ -1952,7 +1949,6 @@ static const struct pci_device_id pciidlist[] = {
+ 	{0x1002, 0x985D, PCI_ANY_ID, PCI_ANY_ID, 0, 0, CHIP_MULLINS|AMD_IS_MOBILITY|AMD_IS_APU},
+ 	{0x1002, 0x985E, PCI_ANY_ID, PCI_ANY_ID, 0, 0, CHIP_MULLINS|AMD_IS_MOBILITY|AMD_IS_APU},
+ 	{0x1002, 0x985F, PCI_ANY_ID, PCI_ANY_ID, 0, 0, CHIP_MULLINS|AMD_IS_MOBILITY|AMD_IS_APU},
+-#endif
+ 	/* topaz */
+ 	{0x1002, 0x6900, PCI_ANY_ID, PCI_ANY_ID, 0, 0, CHIP_TOPAZ},
+ 	{0x1002, 0x6901, PCI_ANY_ID, PCI_ANY_ID, 0, 0, CHIP_TOPAZ},
+@@ -2284,14 +2280,14 @@ static int amdgpu_pci_probe(struct pci_dev *pdev,
+ 		return -ENOTSUPP;
+ 	}
+ 
++	switch (flags & AMD_ASIC_MASK) {
++	case CHIP_TAHITI:
++	case CHIP_PITCAIRN:
++	case CHIP_VERDE:
++	case CHIP_OLAND:
++	case CHIP_HAINAN:
+ #ifdef CONFIG_DRM_AMDGPU_SI
+-	if (!amdgpu_si_support) {
+-		switch (flags & AMD_ASIC_MASK) {
+-		case CHIP_TAHITI:
+-		case CHIP_PITCAIRN:
+-		case CHIP_VERDE:
+-		case CHIP_OLAND:
+-		case CHIP_HAINAN:
++		if (!amdgpu_si_support) {
+ 			dev_info(&pdev->dev,
+ 				 "SI support provided by radeon.\n");
+ 			dev_info(&pdev->dev,
+@@ -2299,16 +2295,18 @@ static int amdgpu_pci_probe(struct pci_dev *pdev,
+ 				);
+ 			return -ENODEV;
+ 		}
+-	}
++		break;
++#else
++		dev_info(&pdev->dev, "amdgpu is built without SI support.\n");
++		return -ENODEV;
+ #endif
++	case CHIP_KAVERI:
++	case CHIP_BONAIRE:
++	case CHIP_HAWAII:
++	case CHIP_KABINI:
++	case CHIP_MULLINS:
+ #ifdef CONFIG_DRM_AMDGPU_CIK
+-	if (!amdgpu_cik_support) {
+-		switch (flags & AMD_ASIC_MASK) {
+-		case CHIP_KAVERI:
+-		case CHIP_BONAIRE:
+-		case CHIP_HAWAII:
+-		case CHIP_KABINI:
+-		case CHIP_MULLINS:
++		if (!amdgpu_cik_support) {
+ 			dev_info(&pdev->dev,
+ 				 "CIK support provided by radeon.\n");
+ 			dev_info(&pdev->dev,
+@@ -2316,8 +2314,14 @@ static int amdgpu_pci_probe(struct pci_dev *pdev,
+ 				);
+ 			return -ENODEV;
+ 		}
+-	}
++		break;
++#else
++		dev_info(&pdev->dev, "amdgpu is built without CIK support.\n");
++		return -ENODEV;
+ #endif
++	default:
++		break;
++	}
+ 
+ 	adev = devm_drm_dev_alloc(&pdev->dev, &amdgpu_kms_driver, typeof(*adev), ddev);
+ 	if (IS_ERR(adev))

@@ -1,4 +1,4 @@
-From ad1ffd6be5f54a0871e3c303602548687dfe0ffc Mon Sep 17 00:00:00 2001
+From 4955695e410289df07258b00290d4028c3ac8fb1 Mon Sep 17 00:00:00 2001
 From: Myy Miouyouyou <myy@miouyouyou.fr>
 Date: Sun, 7 Jan 2018 01:52:44 +0100
 Subject: [PATCH] drivers: mmc: dw-mci-rockchip: Handle ASUS Tinkerboard reboot
@@ -21,7 +21,7 @@ Signed-off-by: Myy Miouyouyou <myy@miouyouyou.fr>
  1 file changed, 66 insertions(+)
 
 diff --git a/drivers/mmc/host/dw_mmc-rockchip.c b/drivers/mmc/host/dw_mmc-rockchip.c
-index b07190ba4b7a..0badaa1b404e 100644
+index f96260fd143b4..fa779ce8fb661 100644
 --- a/drivers/mmc/host/dw_mmc-rockchip.c
 +++ b/drivers/mmc/host/dw_mmc-rockchip.c
 @@ -12,6 +12,11 @@
@@ -36,7 +36,7 @@ index b07190ba4b7a..0badaa1b404e 100644
  #include "dw_mmc.h"
  #include "dw_mmc-pltfm.h"
  
-@@ -340,6 +345,66 @@ static const struct of_device_id dw_mci_rockchip_match[] = {
+@@ -527,6 +532,66 @@ static const struct of_device_id dw_mci_rockchip_match[] = {
  };
  MODULE_DEVICE_TABLE(of, dw_mci_rockchip_match);
  
@@ -103,7 +103,7 @@ index b07190ba4b7a..0badaa1b404e 100644
  static int dw_mci_rockchip_probe(struct platform_device *pdev)
  {
  	const struct dw_mci_drv_data *drv_data;
-@@ -367,6 +432,7 @@ static int dw_mci_rockchip_probe(struct platform_device *pdev)
+@@ -554,6 +619,7 @@ static int dw_mci_rockchip_probe(struct platform_device *pdev)
  	}
  
  	pm_runtime_put_autosuspend(&pdev->dev);

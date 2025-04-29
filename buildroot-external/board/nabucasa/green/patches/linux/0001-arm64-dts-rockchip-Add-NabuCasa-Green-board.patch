@@ -1,4 +1,4 @@
-From 9b1367f47f2e790f155d4aab39878233eedf7b22 Mon Sep 17 00:00:00 2001
+From 015fa4136338919a43c1c6e47e8c07679cefbaa2 Mon Sep 17 00:00:00 2001
 From: Zhangqun Ming <north_sea@qq.com>
 Date: Thu, 6 Jul 2023 10:05:04 +0000
 Subject: [PATCH] arm64: dts: rockchip: Add NabuCasa Green board
@@ -8,30 +8,32 @@ Content-Transfer-Encoding: 8bit
 
 [Replaced custom rk860x driver with upstream fan53555]
 Signed-off-by: Jan Čermák <sairon@sairon.cz>
+[Enabled Rockchip RNG from rk356x.dtsi]
+Signed-off-by: Jan Čermák <sairon@sairon.cz>
 ---
  arch/arm64/boot/dts/rockchip/Makefile         |   1 +
- .../boot/dts/rockchip/rk3566-ha-green.dts     | 684 ++++++++++++++++++
- 2 files changed, 685 insertions(+)
+ .../boot/dts/rockchip/rk3566-ha-green.dts     | 688 ++++++++++++++++++
+ 2 files changed, 689 insertions(+)
  create mode 100644 arch/arm64/boot/dts/rockchip/rk3566-ha-green.dts
 
 diff --git a/arch/arm64/boot/dts/rockchip/Makefile b/arch/arm64/boot/dts/rockchip/Makefile
-index e7728007fd1b..475becd793ac 100644
+index 09423070c9928..1f5a9d690648f 100644
 --- a/arch/arm64/boot/dts/rockchip/Makefile
 +++ b/arch/arm64/boot/dts/rockchip/Makefile
-@@ -75,6 +75,7 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-anbernic-rg353ps.dtb
+@@ -83,6 +83,7 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-anbernic-rg353ps.dtb
  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-anbernic-rg353v.dtb
  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-anbernic-rg353vs.dtb
  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-anbernic-rg503.dtb
 +dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-ha-green.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-pinenote-v1.1.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-pinenote-v1.2.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-quartz64-a.dtb
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-odroid-m1s.dtb
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-orangepi-3b-v1.1.dtb
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-orangepi-3b-v2.1.dtb
 diff --git a/arch/arm64/boot/dts/rockchip/rk3566-ha-green.dts b/arch/arm64/boot/dts/rockchip/rk3566-ha-green.dts
 new file mode 100644
-index 000000000000..b5e4a67b3fc7
+index 0000000000000..d6a86cc57b65e
 --- /dev/null
 +++ b/arch/arm64/boot/dts/rockchip/rk3566-ha-green.dts
-@@ -0,0 +1,684 @@
+@@ -0,0 +1,688 @@
 +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
 +/*
 + * Copyright (c) 2023 Seeed Co., Ltd.
@@ -556,6 +558,10 @@ index 000000000000..b5e4a67b3fc7
 +	vccio5-supply = <&vcc_1v8>;
 +	vccio6-supply = <&vcc_1v8>;
 +	vccio7-supply = <&vcc_3v3>;
++	status = "okay";
++};
++
++&rng {
 +	status = "okay";
 +};
 +

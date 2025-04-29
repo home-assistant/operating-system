@@ -1,4 +1,4 @@
-From 846df62342a4904a91aace66e9204ae3ed4ca0af Mon Sep 17 00:00:00 2001
+From 71ad7d9b73ff14283e61fbb1d3d214982f8c9967 Mon Sep 17 00:00:00 2001
 From: Stefan Agner <stefan@agner.ch>
 Date: Fri, 18 Aug 2023 10:06:24 +0200
 Subject: [PATCH] arch: arm: dts: green: drop SPI NOR flash partitions
@@ -8,7 +8,7 @@ Subject: [PATCH] arch: arm: dts: green: drop SPI NOR flash partitions
  1 file changed, 27 deletions(-)
 
 diff --git a/arch/arm/dts/rk3566-ha-green.dts b/arch/arm/dts/rk3566-ha-green.dts
-index 91afadf0e6..68d836911e 100644
+index 91afadf0e65..68d836911ec 100644
 --- a/arch/arm/dts/rk3566-ha-green.dts
 +++ b/arch/arm/dts/rk3566-ha-green.dts
 @@ -576,33 +576,6 @@
@@ -45,6 +45,3 @@ index 91afadf0e6..68d836911e 100644
  	};
  };
  
--- 
-2.43.0
-

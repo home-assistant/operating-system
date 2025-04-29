@@ -1,5 +1,4 @@
-From d93052cd62449759535c295d5b77dbd73d644478 Mon Sep 17 00:00:00 2001
-Message-ID: <d93052cd62449759535c295d5b77dbd73d644478.1705959834.git.stefan@agner.ch>
+From c3b3682d6314eee9b7d42926f96e1559b8bb91dd Mon Sep 17 00:00:00 2001
 From: Stefan Agner <stefan@agner.ch>
 Date: Thu, 14 Apr 2022 12:15:26 +0200
 Subject: [PATCH] drivers: bcm283x: don't explicitly disable init
@@ -19,10 +18,10 @@ Signed-off-by: Stefan Agner <stefan@agner.ch>
  2 files changed, 3 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/serial/serial_bcm283x_pl011.c b/drivers/serial/serial_bcm283x_pl011.c
-index 09a9868a38..cad24aab08 100644
+index 2abc1c4658f..cfafa5fed91 100644
 --- a/drivers/serial/serial_bcm283x_pl011.c
 +++ b/drivers/serial/serial_bcm283x_pl011.c
-@@ -51,12 +51,6 @@ static int bcm283x_pl011_serial_probe(struct udevice *dev)
+@@ -50,12 +50,6 @@ static int bcm283x_pl011_serial_probe(struct udevice *dev)
  	if (ret)
  		return ret;
  
@@ -36,7 +35,7 @@ index 09a9868a38..cad24aab08 100644
  }
  
 diff --git a/include/configs/rpi.h b/include/configs/rpi.h
-index 8e56bdc84a..c137bd7e19 100644
+index 8e56bdc84a8..c137bd7e19a 100644
 --- a/include/configs/rpi.h
 +++ b/include/configs/rpi.h
 @@ -31,4 +31,7 @@
@@ -47,6 +46,3 @@ index 8e56bdc84a..c137bd7e19 100644
 +#define CFG_PL011_CLOCK		48000000
 +
  #endif
--- 
-2.43.0
-

@@ -21,6 +21,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # Build tools
 RUN apt-get update && apt-get install -y --no-install-recommends \
+	automake \
         bash \
         bc \
         binutils \
@@ -30,6 +31,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         file \
         git \
         graphviz \
+	help2man \
         jq \
         make \
         ncurses-dev \
@@ -43,6 +45,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         rsync \
         skopeo \
         sudo \
+	texinfo \
         unzip \
         vim \
         wget \

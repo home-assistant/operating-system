@@ -1,0 +1,3 @@
+# assumed -zlz4hc,12:lzma,9 for optimal compression
+16384   1 usr/lib/firmware/
+16384   1 usr/lib/modules/

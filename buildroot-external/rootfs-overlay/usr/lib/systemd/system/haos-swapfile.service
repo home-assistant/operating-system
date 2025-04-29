@@ -1,8 +1,8 @@
 [Unit]
 Description=HAOS swap
 DefaultDependencies=no
-Requires=mnt-data.mount
-After=mnt-data.mount systemd-growfs@mnt-data.service
+Requires=etc-default.mount mnt-data.mount
+After=etc-default.mount mnt-data.mount systemd-growfs@mnt-data.service
 Before=mnt-data-swapfile.swap
 
 [Service]

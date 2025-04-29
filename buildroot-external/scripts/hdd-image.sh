@@ -81,7 +81,7 @@ function convert_disk_image_ova() {
 
     cp -a "${BOARD_DIR}/home-assistant.ovf" "${ova_data}/home-assistant.ovf"
     qemu-img convert -O vmdk -o subformat=streamOptimized,adapter_type=lsilogic "${hdd_img}" "${ova_data}/home-assistant.vmdk"
-    (cd "${ova_data}" || exit 1; "${HOST_DIR}/bin/openssl" sha256 home-assistant.* >home-assistant.mf)
+    (cd "${ova_data}" || exit 1; "${HOST_DIR}/bin/openssl" sha256 home-assistant.* | sed 's/SHA2-256/SHA256/' > home-assistant.mf)
     tar -C "${ova_data}" --owner=root --group=root -cf "${hdd_ova}" home-assistant.ovf home-assistant.vmdk home-assistant.mf
 }
 

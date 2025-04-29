@@ -1,4 +1,4 @@
-From f597ec583c262ed4c3264ddf661e22b503fb8a11 Mon Sep 17 00:00:00 2001
+From eb29ab60a69353f355b3af58b06fff1a89d17992 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Jan=20=C4=8Cerm=C3=A1k?= <sairon@sairon.cz>
 Date: Wed, 10 Jan 2024 16:29:59 +0100
 Subject: [PATCH] usb-audio: add ASUS TinkerBoard's ALC4040
@@ -12,10 +12,10 @@ Co-authored-by: Pascal Vizeli <pascal.vizeli@syshack.ch>
  1 file changed, 8 insertions(+)
 
 diff --git a/sound/usb/card.c b/sound/usb/card.c
-index 1b2edc0fd2e9..3069ac5b6759 100644
+index 9c411b82a218d..672136e25c81d 100644
 --- a/sound/usb/card.c
 +++ b/sound/usb/card.c
-@@ -521,6 +521,14 @@ static void usb_audio_make_shortname(struct usb_device *dev,
+@@ -533,6 +533,14 @@ static void usb_audio_make_shortname(struct usb_device *dev,
  	}
  
  	strim(card->shortname);

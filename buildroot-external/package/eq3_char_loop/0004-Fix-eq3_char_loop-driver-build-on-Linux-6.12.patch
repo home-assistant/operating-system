@@ -1,0 +1,18 @@
+Upstream: Not applicable
+
+Signed-off-by: Alexander Reinert <alex@areinert.de>
+
+--- a/KernelDrivers/eq3_char_loop.c
++++ b/KernelDrivers/eq3_char_loop.c
+@@ -917,7 +917,11 @@ static int eq3loop_open(struct inode *inode, struct file *filp)
+ 
+ static struct file_operations eq3loop_fops = {
+ 	.owner		= THIS_MODULE,
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(6, 12, 0))
++	.llseek		= noop_llseek,
++#else
+ 	.llseek		= no_llseek,
++#endif
+ 	.read		= eq3loop_read,
+ 	.write		= eq3loop_write,
+ 	.open		= eq3loop_open,

@@ -1,8 +1,11 @@
-From c51639443d3c90127a77f1534e39dd01fac1577f Mon Sep 17 00:00:00 2001
+From d4ec3799c0773b3a6d3d90f4b16eec1f50e4b032 Mon Sep 17 00:00:00 2001
 From: memeka <mihailescu2m@gmail.com>
 Date: Fri, 18 Jan 2019 14:36:21 +1030
 Subject: [PATCH] ODROID-XU4: regulator: s2mps11: add ethernet power reset in
  shutdown function
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
 Ethernet device cannot be detected on warm boot sometimes. This patch is
 to add the power reset routines for ethernet device using PMIC. Then
@@ -11,15 +14,17 @@ ethernet device can be reset hardware-wise.
 Change-Id: Iffbe2966da7e4679f63b91ab79241167391792df
 Signed-off-by: Brian Kim <brian.kim@hardkernel.com>
 Signed-off-by: Marian Mihailescu <mihailescu2m@gmail.com>
+[Updated patch for Linux 6.11+ after scoped memory allocation refactor]
+Signed-off-by: Jan Čermák <sairon@sairon.cz>
 ---
- drivers/regulator/s2mps11.c | 55 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 55 insertions(+)
+ drivers/regulator/s2mps11.c | 56 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 56 insertions(+)
 
 diff --git a/drivers/regulator/s2mps11.c b/drivers/regulator/s2mps11.c
-index 570b61420f3a..286b606660a4 100644
+index 7dcf92af8f15e..f08f6f494fe0b 100644
 --- a/drivers/regulator/s2mps11.c
 +++ b/drivers/regulator/s2mps11.c
-@@ -1117,6 +1117,57 @@ static const struct regulator_desc s2mpu02_regulators[] = {
+@@ -1118,6 +1118,57 @@ static const struct regulator_desc s2mpu02_regulators[] = {
  	regulator_desc_s2mpu02_buck7(7),
  };
  
@@ -77,7 +82,7 @@ index 570b61420f3a..286b606660a4 100644
  static int s2mps11_pmic_probe(struct platform_device *pdev)
  {
  	struct sec_pmic_dev *iodev = dev_get_drvdata(pdev->dev.parent);
-@@ -1219,6 +1270,10 @@ static int s2mps11_pmic_probe(struct platform_device *pdev)
+@@ -1219,6 +1270,11 @@ static int s2mps11_pmic_probe(struct platform_device *pdev)
  		}
  	}
  
@@ -85,6 +90,7 @@ index 570b61420f3a..286b606660a4 100644
 +	s2mps11_pmic_ethonoff(pdev, false);
 +	mdelay(10);
 +	s2mps11_pmic_ethonoff(pdev, true);
- out:
- 	kfree(rdata);
++
+ 	return 0;
+ }
  

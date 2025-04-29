@@ -1,4 +1,4 @@
-From 41026603d639007895de1f48437813f78edb62ea Mon Sep 17 00:00:00 2001
+From c0430945cd4a6a5b4072662b44cb6a44d3f7ecc2 Mon Sep 17 00:00:00 2001
 From: Zhangqun Ming <north_sea@qq.com>
 Date: Sat, 15 Jul 2023 08:28:16 +0000
 Subject: [PATCH] arch: arm64: dts: green: Remove spiflash partitions
@@ -8,10 +8,10 @@ Subject: [PATCH] arch: arm64: dts: green: Remove spiflash partitions
  1 file changed, 2 insertions(+), 29 deletions(-)
 
 diff --git a/arch/arm64/boot/dts/rockchip/rk3566-ha-green.dts b/arch/arm64/boot/dts/rockchip/rk3566-ha-green.dts
-index b5e4a67b3fc7..debb9459a5aa 100644
+index d6a86cc57b65e..6336fe758819f 100644
 --- a/arch/arm64/boot/dts/rockchip/rk3566-ha-green.dts
 +++ b/arch/arm64/boot/dts/rockchip/rk3566-ha-green.dts
-@@ -565,36 +565,9 @@ &sfc {
+@@ -569,36 +569,9 @@ &sfc {
  	flash@0 {
  		compatible = "jedec,spi-nor";
  		reg = <0>;

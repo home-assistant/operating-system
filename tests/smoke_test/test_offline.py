@@ -27,7 +27,7 @@ def _check_connectivity(shell, *, connected):
         raise AssertionError(f"expecting connected but all targets are down")
 
 
-@pytest.mark.timeout(300)  # takes quite a while also because of 90s NTP sync timeout
+@pytest.mark.timeout(120)
 @pytest.mark.usefixtures("without_internet")
 def test_ha_runs_offline(shell):
     def check_container_running(container_name):

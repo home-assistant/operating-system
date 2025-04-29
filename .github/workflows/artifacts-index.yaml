@@ -31,7 +31,7 @@ on:
         required: true
 
 env:
-  PYTHON_VERSION: "3.10"
+  PYTHON_VERSION: "3.13"
 
 jobs:
   build-index:
@@ -49,7 +49,7 @@ jobs:
           python-version: ${{ env.PYTHON_VERSION }}
 
       - name: Install AWS CLI
-        run: pip install awscli
+        run: pip install 'awscli<1.37.0'
 
       - name: Create build index
         env:

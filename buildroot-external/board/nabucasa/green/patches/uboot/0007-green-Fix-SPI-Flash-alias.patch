@@ -1,4 +1,4 @@
-From 0142d1a99d2aa4a6dad7181dcd74958b2ee0fe31 Mon Sep 17 00:00:00 2001
+From b6c7fc08198300d8620f9896db468e0e50e8838a Mon Sep 17 00:00:00 2001
 From: Stefan Agner <stefan@agner.ch>
 Date: Thu, 17 Aug 2023 17:51:07 +0200
 Subject: [PATCH] green: Fix SPI Flash alias
@@ -12,7 +12,7 @@ Signed-off-by: Stefan Agner <stefan@agner.ch>
  1 file changed, 5 insertions(+), 2 deletions(-)
 
 diff --git a/configs/green_defconfig b/configs/green_defconfig
-index a97391f295..71c9257d7d 100644
+index a97391f2954..71c9257d7d4 100644
 --- a/configs/green_defconfig
 +++ b/configs/green_defconfig
 @@ -55,6 +55,7 @@ CONFIG_CMD_REGULATOR=y
@@ -38,6 +38,3 @@ index a97391f295..71c9257d7d 100644
  CONFIG_ETH_DESIGNWARE=y
  CONFIG_GMAC_ROCKCHIP=y
  CONFIG_PHY_ROCKCHIP_INNO_USB2=y
--- 
-2.43.0
-
