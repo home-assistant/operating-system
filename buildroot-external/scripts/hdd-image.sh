@@ -62,11 +62,13 @@ function convert_disk_image_virtual() {
 
     if [ "${hdd_ext}" == "vmdk" ]; then
         qemu_img_opts=("-o" "adapter_type=lsilogic")
+    elif [ "${hdd_ext}" == "vhd" ]; then
+        qemu_img_opts=("-o" "subformat=fixed,force_size")
     fi
 
     rm -f "${hdd_virt}"
 
-    qemu-img convert -O "${hdd_ext}" "${qemu_img_opts[@]}" "${hdd_img}" "${hdd_virt}"
+    qemu-img convert -O "${hdd_ext}" "${qemu_img_opts[@]}" "${hdd_img}" "${hdd_virt}"    
 }
 
 function convert_disk_image_ova() {
