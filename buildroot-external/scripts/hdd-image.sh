@@ -64,6 +64,7 @@ function convert_disk_image_virtual() {
         qemu_img_opts=("-o" "adapter_type=lsilogic")
     elif [ "${hdd_ext}" == "vhd" ]; then
         qemu_img_opts=("-o" "subformat=fixed,force_size")
+        hdd_ext = "vpc"
     fi
 
     rm -f "${hdd_virt}"
