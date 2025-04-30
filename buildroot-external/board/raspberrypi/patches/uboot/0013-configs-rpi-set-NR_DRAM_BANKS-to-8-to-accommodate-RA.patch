@@ -15,6 +15,7 @@ GiB CM5 as reported in [1].
 [1] https://github.com/home-assistant/operating-system/issues/3989
 
 Signed-off-by: Jan Čermák <sairon@sairon.cz>
+Upstream: https://patchwork.ozlabs.org/project/uboot/patch/20250430171555.144243-1-sairon@sairon.cz/
 ---
  configs/rpi_arm64_defconfig | 1 +
  1 file changed, 1 insertion(+)
