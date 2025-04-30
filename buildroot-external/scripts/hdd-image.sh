@@ -69,7 +69,7 @@ function convert_disk_image_virtual() {
 
     rm -f "${hdd_virt}"
 
-    qemu-img convert -O "${hdd_ext}" "${qemu_img_opts[@]}" "${hdd_img}" "${hdd_virt}"    
+    qemu-img convert -O "${hdd_ext}" "${qemu_img_opts[@]}" "${hdd_img}" "${hdd_virt}"
 }
 
 function convert_disk_image_ova() {
