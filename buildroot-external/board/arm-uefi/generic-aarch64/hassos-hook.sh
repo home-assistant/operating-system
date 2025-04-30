@@ -28,6 +28,8 @@ function hassos_post_image() {
 
     #convert_disk_image_zip vmdk
     convert_disk_image_xz qcow2
+    convert_disk_image_zip vhdx
+    convert_disk_image_zip vhd
 
     convert_disk_image_xz
 }

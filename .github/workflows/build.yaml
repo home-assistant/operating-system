@@ -375,7 +375,7 @@ jobs:
         with:
           name: haos_${{ matrix.board.id }}-${{ needs.prepare.outputs.version_full }}.vhdx
           path: |
-            output/images/haos_${{ matrix.board.id }}-${{ needs.prepare.outputs.version_full }}.vhdx
+            output/images/haos_${{ matrix.board.id }}-${{ needs.prepare.outputs.version_full }}.vhdx*
 
       - name: Upload Virtual Hard Disk (vpc) artifact
         uses: actions/upload-artifact@v4
@@ -383,7 +383,7 @@ jobs:
         with:
           name: haos_${{ matrix.board.id }}-${{ needs.prepare.outputs.version_full }}.vhd
           path: |
-            output/images/haos*.vhd
+            output/images/haos*.vhd*
 
   test:
     name: Test OS image
