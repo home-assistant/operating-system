@@ -373,17 +373,17 @@ jobs:
         uses: actions/upload-artifact@v4
         if: ${{ github.event_name != 'release' && needs.prepare.outputs.publish_build != 'true' && (matrix.board.id == 'generic-aarch64' || matrix.board.id == 'ova') }}
         with:
-          name: haos_${{ matrix.board.id }}-${{ needs.prepare.outputs.version_full }}.vhdx.zip
+          name: haos_${{ matrix.board.id }}-${{ needs.prepare.outputs.version_full }}.vhdx
           path: |
-            output/images/haos_${{ matrix.board.id }}-${{ needs.prepare.outputs.version_full }}.vhdx.zip
+            output/images/haos_${{ matrix.board.id }}-${{ needs.prepare.outputs.version_full }}.vhdx
 
       - name: Upload Virtual Hard Disk (vpc) artifact
         uses: actions/upload-artifact@v4
         if: ${{ github.event_name != 'release' && needs.prepare.outputs.publish_build != 'true' && (matrix.board.id == 'generic-aarch64' || matrix.board.id == 'ova') }}
         with:
-          name: haos_${{ matrix.board.id }}-${{ needs.prepare.outputs.version_full }}.vhd.zip
+          name: haos_${{ matrix.board.id }}-${{ needs.prepare.outputs.version_full }}.vhd
           path: |
-            output/images/haos*.vhd.zip
+            output/images/haos*.vhd
 
   test:
     name: Test OS image
