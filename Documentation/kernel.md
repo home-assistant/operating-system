@@ -4,13 +4,13 @@
 | Board | Version |
 |-------|---------|
 | Open Virtual Appliance | 6.12.27 |
-| Raspberry Pi | 6.12.20 |
-| Raspberry Pi 0-W | 6.12.20 |
-| Raspberry Pi 2 | 6.12.20 |
-| Raspberry Pi 3 | 6.12.20 |
-| Raspberry Pi 4 | 6.12.20 |
-| Raspberry Pi 5 | 6.12.20 |
-| Home Assistant Yellow | 6.12.20 |
+| Raspberry Pi | 6.12.25 |
+| Raspberry Pi 0-W | 6.12.25 |
+| Raspberry Pi 2 | 6.12.25 |
+| Raspberry Pi 3 | 6.12.25 |
+| Raspberry Pi 4 | 6.12.25 |
+| Raspberry Pi 5 | 6.12.25 |
+| Home Assistant Yellow | 6.12.25 |
 | Home Assistant Green | 6.12.27 |
 | Tinker Board | 6.12.27 |
 | ODROID-C2 | 6.12.27 |
