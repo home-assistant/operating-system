@@ -3,7 +3,7 @@
 
 | Board | Version |
 |-------|---------|
-| Open Virtual Appliance | 6.12.27 |
+| Open Virtual Appliance | 6.12.28 |
 | Raspberry Pi | 6.12.25 |
 | Raspberry Pi 0-W | 6.12.25 |
 | Raspberry Pi 2 | 6.12.25 |
@@ -11,14 +11,14 @@
 | Raspberry Pi 4 | 6.12.25 |
 | Raspberry Pi 5 | 6.12.25 |
 | Home Assistant Yellow | 6.12.25 |
-| Home Assistant Green | 6.12.27 |
-| Tinker Board | 6.12.27 |
-| ODROID-C2 | 6.12.27 |
-| ODROID-C4 | 6.12.27 |
-| ODROID-M1 | 6.12.27 |
-| ODROID-M1S | 6.12.27 |
-| ODROID-N2 | 6.12.27 |
-| ODROID-XU4 | 6.12.27 |
-| Generic aarch64 | 6.12.27 |
-| Generic x86-64 | 6.12.27 |
-| Khadas VIM3 | 6.12.27 |
+| Home Assistant Green | 6.12.28 |
+| Tinker Board | 6.12.28 |
+| ODROID-C2 | 6.12.28 |
+| ODROID-C4 | 6.12.28 |
+| ODROID-M1 | 6.12.28 |
+| ODROID-M1S | 6.12.28 |
+| ODROID-N2 | 6.12.28 |
+| ODROID-XU4 | 6.12.28 |
+| Generic aarch64 | 6.12.28 |
+| Generic x86-64 | 6.12.28 |
+| Khadas VIM3 | 6.12.28 |
