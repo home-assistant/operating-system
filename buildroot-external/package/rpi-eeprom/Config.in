@@ -1,6 +1,37 @@
 config BR2_PACKAGE_RPI_EEPROM
 	bool "rpi-eeprom"
+	select BR2_PACKAGE_PYTHON3
+	select BR2_PACKAGE_VCGENCMD
 	help
-	  EEPROM bootloader firmware for Raspberry Pi 4
+	  EEPROM bootloader firmware update tool for Raspberry Pi
 
 	  https://github.com/raspberrypi/rpi-eeprom
+
+if BR2_PACKAGE_RPI_EEPROM
+
+choice
+	prompt "Target platform"
+	default BR2_PACKAGE_RPI_EEPROM_TARGET_ANY
+	help
+	  Select the target platform for the EEPROM files to be
+	  installed. The default is to install all EEPROM files for
+	  all Raspberry Pi boards.
+
+config BR2_PACKAGE_RPI_EEPROM_TARGET_ANY
+	bool "Any Raspberry Pi"
+	help
+	  Install all EEPROM files for all Raspberry Pi boards.
+
+config BR2_PACKAGE_RPI_EEPROM_TARGET_RPI4
+	bool "Raspberry Pi 4"
+	help
+	  Install EEPROM files for Raspberry Pi 4 boards only.
+
+config BR2_PACKAGE_RPI_EEPROM_TARGET_RPI5
+	bool "Raspberry Pi 5"
+	help
+	  Install EEPROM files for Raspberry Pi 5 boards only.
+
+endchoice
+
+endif
