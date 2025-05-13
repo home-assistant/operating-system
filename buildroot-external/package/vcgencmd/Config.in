@@ -1,0 +1,5 @@
+config BR2_PACKAGE_VCGENCMD
+	bool "vcgencmd"
+	help
+	  Command line utility that can get various pieces of
+	  information from the VideoCore GPU on the Raspberry Pi.
