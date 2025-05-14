@@ -284,7 +284,7 @@ jobs:
         with:
           image: ${{ needs.prepare.outputs.build_container_image }}
           command: |
-            bash -c 'echo "${{ needs.prepare.outputs.hassio_channel_option }}=y" >> /build/.config && make olddefconfig'
+            bash -c 'echo "${{ needs.prepare.outputs.hassio_channel_option }}=y" >> /build/output/.config && make olddefconfig'
 
       - name: Build
         uses: "./.github/actions/haos-builder-command"
