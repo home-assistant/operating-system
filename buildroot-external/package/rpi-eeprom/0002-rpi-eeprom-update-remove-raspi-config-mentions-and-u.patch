@@ -1,0 +1,68 @@
+From bea845559542e556dfaffcec7334695a6387e0d9 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Jan=20=C4=8Cerm=C3=A1k?= <sairon@sairon.cz>
+Date: Tue, 13 May 2025 18:07:13 +0200
+Subject: [PATCH] rpi-eeprom-update: remove raspi-config mentions and
+ unnecessary sudo in help
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+There is no sudo on HAOS, remove it from messages that could be shown to
+users. Also remove raspi-config mention, we will only carry the default
+release.
+
+Signed-off-by: Jan Čermák <sairon@sairon.cz>
+Upstream: not applicable
+---
+ rpi-eeprom-update | 10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
+
+diff --git a/rpi-eeprom-update b/rpi-eeprom-update
+index 720efb7..eb19872 100755
+--- a/rpi-eeprom-update
++++ b/rpi-eeprom-update
+@@ -30,7 +30,6 @@ FIRMWARE_RELEASE_STATUS=${FIRMWARE_RELEASE_STATUS:-default}
+ FIRMWARE_BACKUP_DIR=${FIRMWARE_BACKUP_DIR:-/var/lib/raspberrypi/bootloader/backup}
+ ENABLE_VL805_UPDATES=${ENABLE_VL805_UPDATES:-1}
+ CM4_ENABLE_RPI_EEPROM_UPDATE=${CM4_ENABLE_RPI_EEPROM_UPDATE:-0}
+-RPI_EEPROM_UPDATE_CONFIG_TOOL="${RPI_EEPROM_UPDATE_CONFIG_TOOL:-raspi-config}"
+ 
+ # Self-update is preferred to using recovery.bin because it avoids modifiy the
+ # boot partition in order to rename recovery.bin after use. Since the 2711 ROM
+@@ -315,7 +314,7 @@ applyRecoveryUpdate()
+    echo "EEPROM updates pending. Please reboot to apply the update."
+ 
+    if [ "${RPI_EEPROM_USE_FLASHROM}" = 0 ]; then
+-      echo "To cancel a pending update run \"sudo rpi-eeprom-update -r\"."
++      echo "To cancel a pending update run \"rpi-eeprom-update -r\"."
+    fi
+ }
+ 
+@@ -634,7 +633,7 @@ To update the configuration file in an EEPROM image:
+    rpi-eeprom-config pieeprom.bin --config bootconf.txt --out pieeprom-new.bin
+ 
+ To flash the new image:
+-   sudo rpi-eeprom-update -d -f ./pieeprom-new.bin
++   rpi-eeprom-update -d -f ./pieeprom-new.bin
+ 
+ The syntax is the same as config.txt See online documentation for the list of parameters.
+ 
+@@ -694,7 +693,6 @@ printVersions()
+    echo "   CURRENT: $(date -u "-d@${BOOTLOADER_CURRENT_VERSION}") (${BOOTLOADER_CURRENT_VERSION})"
+    echo "    LATEST: $(date -u "-d@${BOOTLOADER_UPDATE_VERSION}") (${BOOTLOADER_UPDATE_VERSION})"
+    echo "   RELEASE: ${FIRMWARE_RELEASE_STATUS} (${FIRMWARE_IMAGE_DIR})"
+-   echo "            Use ${RPI_EEPROM_UPDATE_CONFIG_TOOL} to change the release."
+ 
+    if [ "${BCM_CHIP}" = 2711 ]; then
+       echo ""
+@@ -905,9 +903,7 @@ checkVersion()
+    if [ "${ACTION_UPDATE_BOOTLOADER}" = 1 ] || [ "${ACTION_UPDATE_VL805}" = 1 ]; then
+       echo "*** UPDATE AVAILABLE ***"
+       echo ""
+-      echo "Run \"sudo rpi-eeprom-update -a\" to install this update now."
+-      echo
+-      echo "To configure the bootloader update policy run \"sudo ${RPI_EEPROM_UPDATE_CONFIG_TOOL}\""
++      echo "Run \"rpi-eeprom-update -a\" to install this update now."
+       echo ""
+       printVersions
+       write_status_info "EXIT_UPDATE_REQUIRED"
