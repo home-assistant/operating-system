@@ -42,42 +42,6 @@ install_boot() {
         cp -f "${BOOT_TMP}"/*.txt "${BOOT_MNT}/" || true
         cp -f "${BOOT_TMP}"/grubenv "${BOOT_MNT}"/EFI/BOOT/ || true
     fi
-
-    # Add CM5 support for Yellow. Can be removed in HAOS 15.
-    if [ "$RAUC_SYSTEM_COMPATIBLE" = "haos-yellow" ]; then
-        if ! grep -q "\[cm5\]" "${BOOT_MNT}/config.txt"; then
-            echo "Adding CM5 config to config.txt"
-
-            # Remove old single device_tree config and add CM-specific ones
-            sed -i '/device_tree=bcm2711-rpi-cm4-ha-yellow.dtb/d; s/\[all\]/\[cm4\]\ndevice_tree=bcm2711-rpi-cm4-ha-yellow.dtb\n\n\[cm5\]\ndevice_tree=bcm2712-rpi-cm5-ha-yellow.dtb\n\n\[all\]/' "${BOOT_MNT}/config.txt"
-        fi
-    fi
-
-    # Fix for Pi3 not booting from some SD cards with now default initial_turbo=60
-    # see: https://github.com/home-assistant/operating-system/issues/3965
-    if [ "$RAUC_SYSTEM_COMPATIBLE" = "haos-rpi3" ] || [ "$RAUC_SYSTEM_COMPATIBLE" = "haos-rpi3-64" ]; then
-        # Don't change anything if initial_turbo is already set anywhere
-        if ! grep -q "^initial_turbo=" "${BOOT_MNT}/config.txt"; then
-            if grep -q '^\[pi3\]' "${BOOT_MNT}/config.txt"; then
-                echo "Adding initial_turbo=0 to [pi3] section of config.txt"
-                sed -i '/^\[pi3\]/a # Added to fix #3965\ninitial_turbo=0' "${BOOT_MNT}/config.txt"
-            else
-                echo "Adding [pi3] section with initial_turbo=0 to config.txt"
-                sed -i 's/^\[all\]/\[pi3\]\n# Added to fix #3965\ninitial_turbo=0\n\n\[all\]/' "${BOOT_MNT}/config.txt"
-            fi
-        fi
-    fi
-
-    # Prepare rauc.db for migration, should be removed in HAOS 16
-    # (along with raucdb-migrate.service and related raucdb-update changes)
-    if [ -f /mnt/data/rauc.db ]; then
-        # shellcheck disable=SC1091
-        . /etc/os-release
-        # Do not migrate if already running on OS 15.
-        if [ "${VERSION_ID%%.*}" != "15" ]; then
-            touch /mnt/boot/migrate-raucdb
-        fi
-    fi
 }
 
 install_spl() {
