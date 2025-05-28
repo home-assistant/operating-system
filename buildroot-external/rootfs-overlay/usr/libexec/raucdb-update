@@ -3,11 +3,6 @@
 
 set -e
 
-# Remove rauc.db from old location before migration in HAOS 15.
-if [ -f /mnt/data/rauc.db ]; then
-    rm -f /mnt/data/rauc.db
-fi
-
 if grep -q 'slot\.boot\.0' /mnt/boot/rauc.db; then
     echo "[INFO] rauc.db already contains slot information"
     exit 0
