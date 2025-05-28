@@ -1,0 +1,225 @@
+From ddfb78d5e8fd91e34ec6c9889d651f75e25a68b6 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Jan=20=C4=8Cerm=C3=A1k?= <sairon@sairon.cz>
+Date: Thu, 22 May 2025 19:30:31 +0200
+Subject: [PATCH] journal-gatewayd: add /boots endpoint
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Add endpoint for listing boots. Output format mimics `journalctl
+--list-boots -ojson`, so it's a plain array containing index, boot ID
+and timestamps of the first and last entry. Initial implementation
+returns boots ordered starting with the current one and doesn't allow
+any filtering (i.e. equivalent of --lines argument).
+---
+(Backported for v256.x)
+Signed-off-by: Jan Čermák <sairon@sairon.cz>
+Upstream: https://github.com/systemd/systemd/pull/37574
+---
+ src/journal-remote/journal-gatewayd.c         | 129 ++++++++++++++++++
+ src/shared/logs-show.c                        |   2 +-
+ src/shared/logs-show.h                        |   6 +
+ .../units/TEST-04-JOURNAL.journal-gatewayd.sh |   6 +
+ 4 files changed, 142 insertions(+), 1 deletion(-)
+
+diff --git a/src/journal-remote/journal-gatewayd.c b/src/journal-remote/journal-gatewayd.c
+index dd91f22923..0999234f42 100644
+--- a/src/journal-remote/journal-gatewayd.c
++++ b/src/journal-remote/journal-gatewayd.c
+@@ -63,6 +63,9 @@ typedef struct RequestMeta {
+         uint64_t n_entries;
+         bool n_entries_set, since_set, until_set;
+ 
++        sd_id128_t previous_boot_id;
++        int32_t boot_index;
++
+         FILE *tmp;
+         uint64_t delta, size;
+ 
+@@ -885,6 +888,129 @@ static int request_handler_machine(
+         return MHD_queue_response(connection, MHD_HTTP_OK, response);
+ }
+ 
++static int output_boot(FILE *f, BootId boot, int boot_display_index) {
++        _cleanup_(json_variant_unrefp) JsonVariant *json = NULL;
++        int r;
++
++        r = json_build(
++                        &json,
++                        JSON_BUILD_OBJECT(
++                                        JSON_BUILD_PAIR_INTEGER("index", boot_display_index),
++                                        JSON_BUILD_PAIR_ID128("boot_id", boot.id),
++                                        JSON_BUILD_PAIR_UNSIGNED("first_entry", boot.first_usec),
++                                        JSON_BUILD_PAIR_UNSIGNED("last_entry", boot.last_usec)));
++        if (r < 0)
++                return r;
++
++        return json_variant_dump(json, JSON_FORMAT_SEQ, f, /* prefix= */ NULL);
++}
++
++static ssize_t request_reader_boots(
++                void *cls,
++                uint64_t pos,
++                char *buf,
++                size_t max) {
++
++        RequestMeta *m = ASSERT_PTR(cls);
++        int r;
++
++        assert(buf);
++        assert(max > 0);
++        assert(pos >= m->delta);
++
++        pos -= m->delta;
++
++        while (pos >= m->size) {
++                BootId boot;
++                off_t sz;
++
++                /* We're seeking from tail (newest boot) so advance to older. */
++                r = discover_next_boot(
++                                m->journal,
++                                m->previous_boot_id,
++                                /* advance_older = */ true,
++                                &boot);
++                if (r < 0) {
++                        log_error_errno(r, "Failed to advance boot index: %m");
++                        return MHD_CONTENT_READER_END_WITH_ERROR;
++                }
++                if (r == 0)
++                        return MHD_CONTENT_READER_END_OF_STREAM;
++
++                pos -= m->size;
++                m->delta += m->size;
++
++                r = request_meta_ensure_tmp(m);
++                if (r < 0) {
++                        log_error_errno(r, "Failed to create temporary file: %m");
++                        return MHD_CONTENT_READER_END_WITH_ERROR;
++                }
++
++                r = output_boot(m->tmp, boot, m->boot_index);
++                if (r < 0) {
++                        log_error_errno(r, "Failed to serialize boot: %m");
++                        return MHD_CONTENT_READER_END_WITH_ERROR;
++                }
++
++                sz = ftello(m->tmp);
++                if (sz < 0) {
++                        log_error_errno(errno, "Failed to retrieve file position: %m");
++                        return MHD_CONTENT_READER_END_WITH_ERROR;
++                }
++
++                m->size = (uint64_t) sz;
++
++                m->previous_boot_id = boot.id;
++                m->boot_index -= 1;
++        }
++
++        if (fseeko(m->tmp, pos, SEEK_SET) < 0) {
++                log_error_errno(errno, "Failed to seek to position: %m");
++                return MHD_CONTENT_READER_END_WITH_ERROR;
++        }
++
++        size_t n = MIN(m->size - pos, max);
++
++        errno = 0;
++        size_t k = fread(buf, 1, n, m->tmp);
++        if (k != n) {
++                log_error("Failed to read from file: %s", STRERROR_OR_EOF(errno));
++                return MHD_CONTENT_READER_END_WITH_ERROR;
++        }
++
++        return (ssize_t) k;
++}
++
++static int request_handler_boots(
++                struct MHD_Connection *connection,
++                void *connection_cls) {
++
++        _cleanup_(MHD_destroy_responsep) struct MHD_Response *response = NULL;
++        RequestMeta *m = ASSERT_PTR(connection_cls);
++        int r;
++
++        assert(connection);
++
++        r = open_journal(m);
++        if (r < 0)
++                return mhd_respondf(connection, r, MHD_HTTP_INTERNAL_SERVER_ERROR, "Failed to open journal: %m");
++
++        m->previous_boot_id = SD_ID128_NULL;
++        m->boot_index = 0;
++        r = sd_journal_seek_tail(m->journal); /* seek to newest */
++        if (r < 0)
++                return mhd_respondf(connection, r, MHD_HTTP_INTERNAL_SERVER_ERROR, "Failed to seek in journal: %m");
++
++        response = MHD_create_response_from_callback(MHD_SIZE_UNKNOWN, 4*1024, request_reader_boots, m, NULL);
++        if (!response)
++                return respond_oom(connection);
++
++        if (MHD_add_response_header(response, "Content-Type", "application/json-seq") == MHD_NO)
++                return respond_oom(connection);
++
++        return MHD_queue_response(connection, MHD_HTTP_OK, response);
++}
++
+ static mhd_result request_handler(
+                 void *cls,
+                 struct MHD_Connection *connection,
+@@ -931,6 +1057,9 @@ static mhd_result request_handler(
+         if (streq(url, "/machine"))
+                 return request_handler_machine(connection, *connection_cls);
+ 
++        if (streq(url, "/boots"))
++                return request_handler_boots(connection, *connection_cls);
++
+         return mhd_respond(connection, MHD_HTTP_NOT_FOUND, "Not found.");
+ }
+ 
+diff --git a/src/shared/logs-show.c b/src/shared/logs-show.c
+index 153a4110ce..014c8b690a 100644
+--- a/src/shared/logs-show.c
++++ b/src/shared/logs-show.c
+@@ -1765,7 +1765,7 @@ int show_journal_by_unit(
+         return show_journal(f, j, mode, n_columns, not_before, how_many, flags, ellipsized);
+ }
+ 
+-static int discover_next_boot(
++int discover_next_boot(
+                 sd_journal *j,
+                 sd_id128_t previous_boot_id,
+                 bool advance_older,
+diff --git a/src/shared/logs-show.h b/src/shared/logs-show.h
+index 7e7b2af901..e6162caf55 100644
+--- a/src/shared/logs-show.h
++++ b/src/shared/logs-show.h
+@@ -70,6 +70,12 @@ void json_escape(
+                 size_t l,
+                 OutputFlags flags);
+ 
++int discover_next_boot(
++                sd_journal *j,
++                sd_id128_t previous_boot_id,
++                bool advance_older,
++                BootId *ret);
++
+ int journal_find_boot(sd_journal *j, sd_id128_t boot_id, int offset, sd_id128_t *ret);
+ int journal_get_boots(
+                 sd_journal *j,
+diff --git a/test/units/TEST-04-JOURNAL.journal-gatewayd.sh b/test/units/TEST-04-JOURNAL.journal-gatewayd.sh
+index 9c7a3d05bb..35ac91ba40 100755
+--- a/test/units/TEST-04-JOURNAL.journal-gatewayd.sh
++++ b/test/units/TEST-04-JOURNAL.journal-gatewayd.sh
+@@ -139,6 +139,12 @@ curl -LSfs http://localhost:19531/fields/_TRANSPORT
+ (! curl -LSfs http://localhost:19531/fields)
+ (! curl -LSfs http://localhost:19531/fields/foo-bar-baz)
+ 
++# /boots
++curl -LSfs http://localhost:19531/boots >"$LOG_FILE"
++jq --seq -s . "$LOG_FILE"
++LAST_BOOT_ID=$(journalctl --list-boots -ojson -n1 | jq -r '.[0].boot_id')
++jq --seq -se ".[0] | select(.boot_id == \"$LAST_BOOT_ID\")" "$LOG_FILE"
++
+ systemctl stop systemd-journal-gatewayd.{socket,service}
+ 
+ if ! command -v openssl >/dev/null; then
