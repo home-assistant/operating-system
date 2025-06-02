@@ -171,7 +171,7 @@ jobs:
             username: ${{ github.repository_owner }}
             password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build and Push
-        uses: docker/build-push-action@v6.17.0
+        uses: docker/build-push-action@v6.18.0
         id: build_haos_builder
         with:
           context: .
