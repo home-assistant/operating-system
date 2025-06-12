@@ -1,4 +1,4 @@
-From f0fb974644a132ecc4bd2dc5cce9622435d0ec13 Mon Sep 17 00:00:00 2001
+From bb1ca7f6ce619e93492c95d355ae735df794186b Mon Sep 17 00:00:00 2001
 From: Heiner Kallweit <hkallweit1@gmail.com>
 Date: Thu, 24 Oct 2024 22:42:33 +0200
 Subject: [PATCH] r8169: add support for RTL8125D
@@ -23,7 +23,7 @@ Signed-off-by: Jan Čermák <sairon@sairon.cz>
  3 files changed, 27 insertions(+), 7 deletions(-)
 
 diff --git a/drivers/net/ethernet/realtek/r8169.h b/drivers/net/ethernet/realtek/r8169.h
-index e2db944e6fa8b..be4c9622618d8 100644
+index e2db944e6fa8..be4c9622618d 100644
 --- a/drivers/net/ethernet/realtek/r8169.h
 +++ b/drivers/net/ethernet/realtek/r8169.h
 @@ -68,6 +68,7 @@ enum mac_version {
@@ -35,7 +35,7 @@ index e2db944e6fa8b..be4c9622618d8 100644
  	RTL_GIGA_MAC_VER_66,
  	RTL_GIGA_MAC_NONE
 diff --git a/drivers/net/ethernet/realtek/r8169_main.c b/drivers/net/ethernet/realtek/r8169_main.c
-index 5ed2818bac257..1cbde7ebd6f30 100644
+index 85bb5121cd24..7b82779e4cd5 100644
 --- a/drivers/net/ethernet/realtek/r8169_main.c
 +++ b/drivers/net/ethernet/realtek/r8169_main.c
 @@ -55,6 +55,7 @@
@@ -95,7 +95,7 @@ index 5ed2818bac257..1cbde7ebd6f30 100644
  		RTL_W32(tp, RxConfig, RX_FETCH_DFLT_8125 | RX_DMA_BURST |
  			RX_PAUSE_SLOT_ON);
  		break;
-@@ -3814,6 +3815,12 @@ static void rtl_hw_start_8125b(struct rtl8169_private *tp)
+@@ -3840,6 +3841,12 @@ static void rtl_hw_start_8125b(struct rtl8169_private *tp)
  	rtl_hw_start_8125_common(tp);
  }
  
@@ -107,8 +107,8 @@ index 5ed2818bac257..1cbde7ebd6f30 100644
 +
  static void rtl_hw_start_8126a(struct rtl8169_private *tp)
  {
- 	rtl_set_def_aspm_entry_latency(tp);
-@@ -3862,6 +3869,7 @@ static void rtl_hw_config(struct rtl8169_private *tp)
+ 	rtl_disable_zrxdc_timeout(tp);
+@@ -3889,6 +3896,7 @@ static void rtl_hw_config(struct rtl8169_private *tp)
  		[RTL_GIGA_MAC_VER_53] = rtl_hw_start_8117,
  		[RTL_GIGA_MAC_VER_61] = rtl_hw_start_8125a_2,
  		[RTL_GIGA_MAC_VER_63] = rtl_hw_start_8125b,
@@ -116,7 +116,7 @@ index 5ed2818bac257..1cbde7ebd6f30 100644
  		[RTL_GIGA_MAC_VER_65] = rtl_hw_start_8126a,
  		[RTL_GIGA_MAC_VER_66] = rtl_hw_start_8126a,
  	};
-@@ -3879,6 +3887,7 @@ static void rtl_hw_start_8125(struct rtl8169_private *tp)
+@@ -3906,6 +3914,7 @@ static void rtl_hw_start_8125(struct rtl8169_private *tp)
  	/* disable interrupt coalescing */
  	switch (tp->mac_version) {
  	case RTL_GIGA_MAC_VER_61:
@@ -125,7 +125,7 @@ index 5ed2818bac257..1cbde7ebd6f30 100644
  			RTL_W32(tp, i, 0);
  		break;
 diff --git a/drivers/net/ethernet/realtek/r8169_phy_config.c b/drivers/net/ethernet/realtek/r8169_phy_config.c
-index cf29b12084826..d09b2a41cd062 100644
+index cf29b1208482..d09b2a41cd06 100644
 --- a/drivers/net/ethernet/realtek/r8169_phy_config.c
 +++ b/drivers/net/ethernet/realtek/r8169_phy_config.c
 @@ -1104,6 +1104,15 @@ static void rtl8125b_hw_phy_config(struct rtl8169_private *tp,
