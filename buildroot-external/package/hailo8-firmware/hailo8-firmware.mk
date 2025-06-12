@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-HAILO8_FIRMWARE_VERSION = 4.20.1
+HAILO8_FIRMWARE_VERSION = 4.21.0
 HAILO8_FIRMWARE_LICENSE = PROPRIETARY
 HAILO8_FIRMWARE_SOURCE= hailo8_fw.$(HAILO8_FIRMWARE_VERSION).bin
 HAILO8_FIRMWARE_SITE="https://hailo-hailort.s3.eu-west-2.amazonaws.com/Hailo8/$(HAILO8_FIRMWARE_VERSION)/FW"
