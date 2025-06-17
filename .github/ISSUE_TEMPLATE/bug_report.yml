@@ -1,6 +1,5 @@
 name: Bug Report Form
 description: Report an issue related to the Home Assistant Operating System.
-labels: bug
 body:
   - type: markdown
     attributes:
