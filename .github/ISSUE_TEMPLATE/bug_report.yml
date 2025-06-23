@@ -1,4 +1,4 @@
-name: Bug Report Form
+name: Report an issue with Home Assistant Operating System
 description: Report an issue related to the Home Assistant Operating System.
 body:
   - type: markdown
