@@ -9,7 +9,7 @@ contact_links:
     about: Our developer documentation has its own issue tracker. Please report issues with the website there.
 
   - name: Request a feature for the Operating System
-    url: https://community.home-assistant.io/c/feature-requests
+    url: https://github.com/orgs/home-assistant/discussions
     about: Request an new feature for the Operating System.
 
   - name: I have a question or need support
