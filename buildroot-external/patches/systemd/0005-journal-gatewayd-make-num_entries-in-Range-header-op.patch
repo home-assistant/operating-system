@@ -1,0 +1,147 @@
+From a7a18e1be478c0114a7f8e285ce238aacd4c2ba7 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Jan=20=C4=8Cerm=C3=A1k?= <sairon@sairon.cz>
+Date: Wed, 18 Jun 2025 17:32:49 +0200
+Subject: [PATCH] journal-gatewayd: make num_entries in Range header optional
+ again
+
+Since 435c372ce5059082212d37ac7039844f14f34a80 added in v256,
+num_entries part of the Range header is mandatory and error is returned
+when it's not filled in. This makes using the "follow" argument clumsy,
+because for an indefinite following of the logs, arbitrary high number
+must be specified. This change makes it possible to omit it again and
+documents this behavior in the man page.
+
+Moreover, as the cursor part of the header was never mandatory, enclose
+it in square brackets in the documentation as well and elaborate how
+indexing works.
+
+Following are some concrete examples of the Range header which are now
+accepted:
+
+ entries= (or entries=:)
+  - everything starting from the first event
+
+ entries=cursor
+  - everything starting from `cursor`
+
+ entries=:-9:10
+  - last 10 events and close the connection
+
+If the follow flag is set:
+
+ entries=:-4:10
+  - last 5 events, wait for 5 new and close connection
+
+ entries=:-9:
+  - last 10 events and keep streaming
+
+Note that only the very last one is changing current behavior, but
+reintroduces pre-v256 compatibility.
+
+Fixes #37172
+---
+(Backported for v256.x)
+Signed-off-by: Jan Čermák <sairon@sairon.cz>
+Upstream: https://github.com/systemd/systemd/pull/37883
+---
+ man/systemd-journal-gatewayd.service.xml       | 13 ++++++++-----
+ src/journal-remote/journal-gatewayd.c          | 14 ++++++++------
+ test/units/TEST-04-JOURNAL.journal-gatewayd.sh | 15 +++++++++++++++
+ 3 files changed, 31 insertions(+), 11 deletions(-)
+
+diff --git a/man/systemd-journal-gatewayd.service.xml b/man/systemd-journal-gatewayd.service.xml
+index 38adfe6b4e..5dbdace78e 100644
+--- a/man/systemd-journal-gatewayd.service.xml
++++ b/man/systemd-journal-gatewayd.service.xml
+@@ -275,20 +275,23 @@
+     <title>Range header</title>
+ 
+     <para>
+-      <option>Range: entries=<replaceable>cursor</replaceable>[[:<replaceable>num_skip</replaceable>]:<replaceable>num_entries</replaceable>]</option>
++      <option>Range: entries=[<replaceable>cursor</replaceable>][[:<replaceable>num_skip</replaceable>]:[<replaceable>num_entries</replaceable>]]</option>
+     </para>
+     <para>
+       <option>Range: realtime=[<replaceable>since</replaceable>]:[<replaceable>until</replaceable>][[:<replaceable>num_skip</replaceable>]:<replaceable>num_entries</replaceable>]</option>
+     </para>
+ 
+     <para>where
+-      <replaceable>cursor</replaceable> is a cursor string,
++      <replaceable>cursor</replaceable> is a cursor string, defaults to the first entry,
+       <replaceable>since</replaceable> and <replaceable>until</replaceable> are timestamps (seconds since 1970-01-01 00:00:00 UTC),
+       <replaceable>num_skip</replaceable> is an integer,
+       <replaceable>num_entries</replaceable> is an unsigned integer.
+     </para>
+ 
+     <para>Range defaults to all available events.</para>
++
++    <para>If <replaceable>num_skip</replaceable> is negative and no <replaceable>cursor</replaceable> is
++    given, the last entry will be the reference point.</para>
+   </refsect1>
+ 
+   <refsect1>
+@@ -300,9 +303,9 @@
+       <varlistentry>
+         <term><uri>follow</uri></term>
+ 
+-        <listitem><para>wait for new events
+-        (like <command>journalctl --follow</command>, except that
+-        the number of events returned is not limited).</para>
++        <listitem><para>wait for new events (like <command>journalctl --follow</command>, the number of
++        events returned is not limited, unless <replaceable>num_entries</replaceable> is specified in the
++        <replaceable>Range</replaceable> header).</para>
+ 
+         <xi:include href="version-info.xml" xpointer="v197"/>
+         </listitem>
+diff --git a/src/journal-remote/journal-gatewayd.c b/src/journal-remote/journal-gatewayd.c
+index 0999234f42..0661ecb1cf 100644
+--- a/src/journal-remote/journal-gatewayd.c
++++ b/src/journal-remote/journal-gatewayd.c
+@@ -332,14 +332,16 @@ static int request_parse_range_skip_and_n_entries(
+         }
+ 
+         p = (colon2 ?: colon) + 1;
+-        r = safe_atou64(p, &m->n_entries);
+-        if (r < 0)
+-                return r;
++        if (!isempty(p)) {
++                r = safe_atou64(p, &m->n_entries);
++                if (r < 0)
++                        return r;
+ 
+-        if (m->n_entries <= 0)
+-                return -EINVAL;
++                if (m->n_entries <= 0)
++                        return -EINVAL;
+ 
+-        m->n_entries_set = true;
++                m->n_entries_set = true;
++        }
+ 
+         return 0;
+ }
+diff --git a/test/units/TEST-04-JOURNAL.journal-gatewayd.sh b/test/units/TEST-04-JOURNAL.journal-gatewayd.sh
+index 35ac91ba40..ef85dc17c6 100755
+--- a/test/units/TEST-04-JOURNAL.journal-gatewayd.sh
++++ b/test/units/TEST-04-JOURNAL.journal-gatewayd.sh
+@@ -67,6 +67,21 @@ curl -LSfs \
+      --header "Range: entries=$BOOT_CURSOR:5:10" \
+      http://localhost:19531/entries >"$LOG_FILE"
+ jq -se "length == 10" "$LOG_FILE"
++# Check that follow with no num_entries follows "indefinitely"
++(
++    set +e; \
++    timeout 5 curl -LSfs \
++         --header "Accept: application/json" \
++         --header "Range: entries=:-1:" \
++         http://localhost:19531/entries?follow >"$LOG_FILE" ; \
++    test $? -eq 124 # timeout should kill the curl process waiting for new entries
++)
++# Check that follow with num_entries returns the specified number of entries and exits
++timeout 5 curl -LSfs \
++     --header "Accept: application/json" \
++     --header "Range: entries=:-20:10" \
++     http://localhost:19531/entries?follow >"$LOG_FILE"
++jq -se "length == 10" "$LOG_FILE"
+ # Check if the specified cursor refers to an existing entry and return just that entry
+ curl -LSfs \
+      --header "Accept: application/json" \
