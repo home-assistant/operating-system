@@ -1,0 +1,73 @@
+From 56e744bc45713ef7575032cfdb20073013ec0a8d Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Jan=20=C4=8Cerm=C3=A1k?= <sairon@sairon.cz>
+Date: Tue, 24 Jun 2025 18:54:44 +0200
+Subject: [PATCH] journal-gatewayd: fix handling of num_skip pointing beyond
+ the last entry
+
+When `num_skip` is supplied to the `Range` header, journal-gatewayd
+always returns the very last record even though it should have been
+skipped. This is because the `sd_journal_next_skip` always returns
+non-zero value on the first call, leading to one iteration of the
+`request_reader_entries` returning the last record.
+
+To avoid this unexpected behavior, check that the number of lines we
+have skipped by is not lower than the requested skip value. If it is,
+then it means there are lines which should not be returned now -
+decrement the n_skip counter then and return from the function, closing
+the stream if follow flag is not set.
+
+Fixes #37954
+---
+(Backported for v256.x)
+Signed-off-by: Jan Čermák <sairon@sairon.cz>
+Upstream: https://github.com/systemd/systemd/pull/37955
+---
+src/journal-remote/journal-gatewayd.c          | 16 ++++++++++++++--
+ test/units/TEST-04-JOURNAL.journal-gatewayd.sh |  6 ++++++
+ 2 files changed, 20 insertions(+), 2 deletions(-)
+
+diff --git a/src/journal-remote/journal-gatewayd.c b/src/journal-remote/journal-gatewayd.c
+index 0661ecb1cf..5bce48d485 100644
+--- a/src/journal-remote/journal-gatewayd.c
++++ b/src/journal-remote/journal-gatewayd.c
+@@ -181,9 +181,21 @@ static ssize_t request_reader_entries(
+ 
+                 if (m->n_skip < 0)
+                         r = sd_journal_previous_skip(m->journal, (uint64_t) -m->n_skip + 1);
+-                else if (m->n_skip > 0)
++                else if (m->n_skip > 0) {
+                         r = sd_journal_next_skip(m->journal, (uint64_t) m->n_skip + 1);
+-                else
++                        if (r < 0) {
++                                log_error_errno(r, "Failed to skip journal entries: %m");
++                                return MHD_CONTENT_READER_END_WITH_ERROR;
++                        }
++                        /* We skipped beyond the end, make sure entries between the cursor and n_skip offset
++                         * from it are not returned. */
++                        if (r < m->n_skip + 1) {
++                                m->n_skip -= r;
++                                if (m->follow)
++                                        return 0;
++                                return MHD_CONTENT_READER_END_OF_STREAM;
++                        }
++                } else
+                         r = sd_journal_next(m->journal);
+ 
+                 if (r < 0) {
+diff --git a/test/units/TEST-04-JOURNAL.journal-gatewayd.sh b/test/units/TEST-04-JOURNAL.journal-gatewayd.sh
+index ef85dc17c6..b6dc860b63 100755
+--- a/test/units/TEST-04-JOURNAL.journal-gatewayd.sh
++++ b/test/units/TEST-04-JOURNAL.journal-gatewayd.sh
+@@ -82,6 +82,12 @@ timeout 5 curl -LSfs \
+      --header "Range: entries=:-20:10" \
+      http://localhost:19531/entries?follow >"$LOG_FILE"
+ jq -se "length == 10" "$LOG_FILE"
++# Test positive skip beyond the last entry
++curl -LSfs \
++     --header "Accept: application/json" \
++     --header "Range: entries=$TEST_CURSOR:1:1" \
++     http://localhost:19531/entries?SYSLOG_IDENTIFIER="$TEST_TAG" >"$LOG_FILE"
++jq -se "length == 0" "$LOG_FILE"
+ # Check if the specified cursor refers to an existing entry and return just that entry
+ curl -LSfs \
+      --header "Accept: application/json" \
