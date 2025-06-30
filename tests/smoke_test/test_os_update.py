@@ -57,7 +57,7 @@ def test_os_update(shell, shell_json, target):
 
         sleep(5)
 
-    shell.console.expect("Booting `Slot ")
+    shell.console.expect("Booting `Slot ", timeout=60)
 
     # reactivate ShellDriver to handle login again
     target.deactivate(shell)
@@ -83,7 +83,9 @@ def test_boot_other_slot(shell, shell_json, target):
     os_info = shell_json("ha os info --no-progress --raw-json")
     other_version = os_info["data"]["boot_slots"]["A"]["version"]
 
-    shell.run_check(f"ha os boot-slot other --no-progress || true")
+    # as we sometimes don't get another shell prompt after the boot slot switch,
+    # use plain sendline instead of the run_check method
+    shell.console.sendline(f"ha os boot-slot other --no-progress || true")
 
     shell.console.expect("Booting `Slot ", timeout=60)
 
