@@ -95,6 +95,7 @@ if [ -z "${SUPERVISOR_CONTAINER_ID}" ]; then
         --oom-score-adj=-300 \
         -v /run/docker.sock:/run/docker.sock:rw \
         -v /run/containerd/containerd.sock:/run/containerd/containerd.sock:rw \
+        -v /run/systemd/journal/socket:/run/systemd/journal/socket:rw \
         -v /run/systemd-journal-gatewayd.sock:/run/systemd-journal-gatewayd.sock:rw \
         -v /run/dbus:/run/dbus:ro \
         -v /run/supervisor:/run/os:rw \
