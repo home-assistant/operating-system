@@ -115,7 +115,8 @@ def test_custom_swap_size(shell, target):
     output = shell.run_check("stat -c '%s' /mnt/data/swapfile")
     # set new swap size to half of the previous size - round to 4k blocks
     new_swap_size = (int(output[0]) // 2 // 4096) * 4096
-    shell.run_check(f"echo 'SWAPSIZE={new_swap_size/1024/1024}M' > /etc/default/haos-swapfile; reboot")
+    shell.console.sendline(f"echo 'SWAPSIZE={new_swap_size/1024/1024}M' > /etc/default/haos-swapfile; reboot")
+    shell.console.expect("Booting `Slot ", timeout=60)
     # reactivate ShellDriver to handle login again
     target.deactivate(shell)
     target.activate(shell)
@@ -125,7 +126,8 @@ def test_custom_swap_size(shell, target):
 
 @pytest.mark.dependency(depends=["test_custom_swap_size"])
 def test_no_swap(shell, target):
-    output = shell.run_check("echo 'SWAPSIZE=0' > /etc/default/haos-swapfile; reboot")
+    shell.console.sendline("echo 'SWAPSIZE=0' > /etc/default/haos-swapfile; reboot")
+    shell.console.expect("Booting `Slot ", timeout=60)
     # reactivate ShellDriver to handle login again
     target.deactivate(shell)
     target.activate(shell)
