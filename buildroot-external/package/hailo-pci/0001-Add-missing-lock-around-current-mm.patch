@@ -1,0 +1,64 @@
+From 6c80e322d23337a8b9e5df85677be89f50561d10 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Jan=20=C4=8Cerm=C3=A1k?= <sairon@sairon.cz>
+Date: Wed, 2 Jul 2025 14:09:30 +0200
+Subject: [PATCH] Add missing lock around current->mm
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Backport patch on top of v4.21.0 to hold lock during mmap access.
+Without this patch, kernel traces are generated when e.g. Frigate uses the driver:
+
+WARNING: CPU: 3 PID: 5063 at include/linux/rwsem.h:80 find_vma+0x6c/0x80
+Modules linked in: broadcom bcm_phy_ptp wireguard libchacha20poly1305 chacha_neon poly1305_neon ip6_udp_tunnel udp_tunnel libcurve25519_generic libchacha rfcomm nf_conntrack_netlink xt_set ip_set nft_chain_nat nft_compat nf_tables xfrm_user algif_hash algif_skcipher af_alg bnep btsdio sch_fq_codel brcmfmac_wcc vc4 snd_soc_hdmi_codec drm_display_helper brcmfmac cec hci_uart btqca btrtl btbcm btintel spidev drm_dma_helper brcmutil bluetooth snd_soc_core snd_compress snd_pcm_dmaengine v3d ecdh_generic rpi_hevc_dec snd_pcm pisp_be cfg80211 aes_ce_blk aes_ce_cipher v4l2_mem2mem ghash_ce videobuf2_dma_contig videobuf2_memops snd_timer ecc gpu_sched videobuf2_v4l2 sha2_ce sha256_arm64 sha1_ce libaes sha1_generic raspberrypi_hwmon rfkill snd videobuf2_common rp1_pio spi_bcm2835 drm_shmem_helper gpio_keys raspberrypi_gpiomem hailo_pci(O) rp1_mailbox i2c_brcmstb drm_kms_helper pwm_fan rp1_adc nvmem_rmem rp1 uio_pdrv_genirq uio fuse drm drm_panel_orientation_quirks backlight nfnetlink
+CPU: 3 UID: 0 PID: 5063 Comm: frigate.detecto Tainted: G        W  O       6.12.25-haos-raspi #1
+Tainted: [W]=WARN, [O]=OOT_MODULE
+Hardware name: Raspberry Pi 5 Model B Rev 1.1 (DT)
+pstate: 80400009 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : find_vma+0x6c/0x80
+lr : hailo_vdma_buffer_map+0xe4/0x620 [hailo_pci]
+sp : ffffffc082f0bc20
+x29: ffffffc082f0bc30 x28: ffffff8194dea100 x27: 0000000000000000
+x26: 0000000000000000 x25: ffffff8109c04c80 x24: ffffffd03ff91000
+x23: 0000000000040f70 x22: 0000000000000001 x21: ffffff8101d570c8
+x20: 0000000000000000 x19: 0000007f8c087000 x18: 0000000000000000
+x17: 0000000000000000 x16: ffffffd08c730828 x15: 0000007f81bdcb48
+x14: 0000000000000000 x13: 0000000000000000 x12: 0000000000000000
+x11: 0000000000000000 x10: 0000007f81bdcb48 x9 : ffffffd03ff8b744
+x8 : ffffff8109c04d00 x7 : 0000000000000000 x6 : 000000000000003f
+x5 : 0000000000000040 x4 : 0000000000000080 x3 : 0000000000000000
+x2 : 0000000000000000 x1 : 0000007f8c087000 x0 : ffffff8177b56880
+Call trace:
+ find_vma+0x6c/0x80
+ hailo_vdma_buffer_map+0xe4/0x620 [hailo_pci]
+ hailo_vdma_buffer_map_ioctl+0xdc/0x348 [hailo_pci]
+ hailo_vdma_ioctl+0xcc/0x258 [hailo_pci]
+ hailo_pcie_fops_unlockedioctl+0x1e4/0x798 [hailo_pci]
+ __arm64_sys_ioctl+0xb0/0x100
+ invoke_syscall+0x50/0x120
+ el0_svc_common.constprop.0+0xc8/0xf0
+ do_el0_svc+0x24/0x38
+ el0_svc+0x30/0xd0
+ el0t_64_sync_handler+0x120/0x130
+ el0t_64_sync+0x190/0x198
+
+Upstream: https://github.com/hailo-ai/hailort-drivers/commit/8edb23bdb6130f89f9f73d6dc90f9db3d1f407c6
+Signed-off-by: Jan Čermák <sairon@sairon.cz>
+---
+ linux/vdma/memory.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/linux/vdma/memory.c b/linux/vdma/memory.c
+index 7ad4a68..7a78cc5 100644
+--- a/linux/vdma/memory.c
++++ b/linux/vdma/memory.c
+@@ -167,7 +167,9 @@ struct hailo_vdma_buffer *hailo_vdma_buffer_map(struct device *dev,
+     }
+ 
+     if (HAILO_DMA_DMABUF_BUFFER != buffer_type) {
++        mmap_read_lock(current->mm);
+         vma = find_vma(current->mm, addr_or_fd);
++        mmap_read_unlock(current->mm);
+         if (IS_ENABLED(HAILO_SUPPORT_MMIO_DMA_MAPPING)) {
+             if (NULL == vma) {
+                 dev_err(dev, "no vma for virt_addr/size = 0x%08lx/0x%08zx\n", addr_or_fd, size);
