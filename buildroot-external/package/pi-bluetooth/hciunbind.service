@@ -1,0 +1,14 @@
+[Unit]
+Description=Unbind Broadcom HCI driver if WiFi/Bluetooth module is not present
+ConditionPathExists=!/sys/bus/sdio/devices/mmc1:0001:1
+ConditionPathExists=/sys/bus/serial/drivers/hci_uart_bcm/unbind
+ConditionPathExists=/proc/device-tree/chosen/rpi-boardrev-ext
+Before=bluetooth.service
+
+[Service]
+Type=oneshot
+ExecCondition=/bin/sh -c 'test $((16#$(xxd -p -g4 /proc/device-tree/chosen/rpi-boardrev-ext) & 16#40000000)) -gt 0'
+ExecStart=/bin/sh -c 'echo "serial0-0" > /sys/bus/serial/drivers/hci_uart_bcm/unbind'
+
+[Install]
+WantedBy=hassos-hardware.target
