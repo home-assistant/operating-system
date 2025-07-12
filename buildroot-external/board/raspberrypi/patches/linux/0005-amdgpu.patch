@@ -1,0 +1,1407 @@
+From 3b1c3faee904279c0acec654711f12bea3c384a2 Mon Sep 17 00:00:00 2001
+From: Pepijn de Vos <pepijndevos@gmail.com>
+Date: Tue, 8 Jul 2025 13:29:01 +0200
+Subject: [PATCH 1/4] amdgpu: uses memset_io where applicable
+
+---
+ drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c        |  2 +-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_device.c    |  2 +-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_gfx.c       |  2 +-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_mes.c       |  8 ++---
+ drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c       | 18 +++++------
+ drivers/gpu/drm/amd/amdgpu/amdgpu_sa.c        |  2 +-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_seq64.c     |  2 +-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_ucode.c     |  6 ++--
+ drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c       |  2 +-
+ drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c        | 12 +++----
+ drivers/gpu/drm/amd/amdgpu/gfx_v11_0.c        | 12 +++----
+ drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c         | 14 ++++----
+ drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c         | 32 +++++++++----------
+ drivers/gpu/drm/amd/amdgpu/mes_v11_0.c        | 10 +++---
+ drivers/gpu/drm/amd/amdgpu/psp_v13_0.c        |  8 ++---
+ drivers/gpu/drm/amd/amdgpu/psp_v13_0_4.c      |  8 ++---
+ drivers/gpu/drm/amd/amdkfd/kfd_kernel_queue.c |  8 ++---
+ .../gpu/drm/amd/amdkfd/kfd_mqd_manager_v10.c  | 12 +++----
+ .../gpu/drm/amd/amdkfd/kfd_mqd_manager_v11.c  |  8 ++---
+ .../display/dc/clk_mgr/dcn30/dcn30_clk_mgr.c  |  2 +-
+ .../display/dc/clk_mgr/dcn301/vg_clk_mgr.c    |  4 +--
+ .../display/dc/clk_mgr/dcn31/dcn31_clk_mgr.c  |  4 +--
+ .../dc/clk_mgr/dcn314/dcn314_clk_mgr.c        |  4 +--
+ .../dc/clk_mgr/dcn315/dcn315_clk_mgr.c        |  4 +--
+ .../dc/clk_mgr/dcn316/dcn316_clk_mgr.c        |  4 +--
+ .../display/dc/clk_mgr/dcn32/dcn32_clk_mgr.c  |  2 +-
+ 26 files changed, 96 insertions(+), 96 deletions(-)
+
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c
+index 5df21529b3b13e..fdd7a3f54244a0 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c
+@@ -1056,7 +1056,7 @@ static int amdgpu_cs_patch_ibs(struct amdgpu_cs_parser *p,
+ 		kptr += va_start - (m->start * AMDGPU_GPU_PAGE_SIZE);
+ 
+ 		if (ring->funcs->parse_cs) {
+-			memcpy(ib->ptr, kptr, ib->length_dw * 4);
++			memcpy_fromio(ib->ptr, kptr, ib->length_dw * 4);
+ 			amdgpu_bo_kunmap(aobj);
+ 
+ 			r = amdgpu_ring_parse_cs(ring, p, job, ib);
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+index a55e611605fcab..7ca0b4011353d9 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+@@ -1486,7 +1486,7 @@ static int amdgpu_device_wb_init(struct amdgpu_device *adev)
+ 		memset(&adev->wb.used, 0, sizeof(adev->wb.used));
+ 
+ 		/* clear wb memory */
+-		memset((char *)adev->wb.wb, 0, AMDGPU_MAX_WB * sizeof(uint32_t) * 8);
++		memset_io((char *)adev->wb.wb, 0, AMDGPU_MAX_WB * sizeof(uint32_t) * 8);
+ 	}
+ 
+ 	return 0;
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_gfx.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_gfx.c
+index 3c2ac5f4e814b7..79c7f7745f6220 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_gfx.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_gfx.c
+@@ -370,7 +370,7 @@ int amdgpu_gfx_kiq_init(struct amdgpu_device *adev,
+ 		return r;
+ 	}
+ 
+-	memset(hpd, 0, hpd_size);
++	memset_io(hpd, 0, hpd_size);
+ 
+ 	r = amdgpu_bo_reserve(kiq->eop_obj, true);
+ 	if (unlikely(r != 0))
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_mes.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_mes.c
+index 7d4b540340e021..f29313e8266517 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_mes.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_mes.c
+@@ -291,7 +291,7 @@ int amdgpu_mes_create_process(struct amdgpu_device *adev, int pasid,
+ 		DRM_ERROR("failed to allocate process context bo\n");
+ 		goto clean_up_memory;
+ 	}
+-	memset(process->proc_ctx_cpu_ptr, 0, AMDGPU_MES_PROC_CTX_SIZE);
++	memset_io(process->proc_ctx_cpu_ptr, 0, AMDGPU_MES_PROC_CTX_SIZE);
+ 
+ 	/*
+ 	 * Avoid taking any other locks under MES lock to avoid circular
+@@ -415,7 +415,7 @@ int amdgpu_mes_add_gang(struct amdgpu_device *adev, int pasid,
+ 		DRM_ERROR("failed to allocate process context bo\n");
+ 		goto clean_up_mem;
+ 	}
+-	memset(gang->gang_ctx_cpu_ptr, 0, AMDGPU_MES_GANG_CTX_SIZE);
++	memset_io(gang->gang_ctx_cpu_ptr, 0, AMDGPU_MES_GANG_CTX_SIZE);
+ 
+ 	/*
+ 	 * Avoid taking any other locks under MES lock to avoid circular
+@@ -563,7 +563,7 @@ static int amdgpu_mes_queue_alloc_mqd(struct amdgpu_device *adev,
+ 		dev_warn(adev->dev, "failed to create queue mqd bo (%d)", r);
+ 		return r;
+ 	}
+-	memset(q->mqd_cpu_ptr, 0, mqd_size);
++	memset_io(q->mqd_cpu_ptr, 0, mqd_size);
+ 
+ 	r = amdgpu_bo_reserve(q->mqd_obj, false);
+ 	if (unlikely(r != 0))
+@@ -1279,7 +1279,7 @@ int amdgpu_mes_ctx_alloc_meta_data(struct amdgpu_device *adev,
+ 	if (!ctx_data->meta_data_obj)
+ 		return -ENOMEM;
+ 
+-	memset(ctx_data->meta_data_ptr, 0,
++	memset_io(ctx_data->meta_data_ptr, 0,
+ 	       sizeof(struct amdgpu_mes_ctx_meta_data));
+ 
+ 	return 0;
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c
+index 48e30e5f833891..567793ad98b652 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c
+@@ -671,9 +671,9 @@ psp_cmd_submit_buf(struct psp_context *psp,
+ 	if (psp->adev->no_hw_access)
+ 		return 0;
+ 
+-	memset(psp->cmd_buf_mem, 0, PSP_CMD_BUFFER_SIZE);
++	memset_io(psp->cmd_buf_mem, 0, PSP_CMD_BUFFER_SIZE);
+ 
+-	memcpy(psp->cmd_buf_mem, cmd, sizeof(struct psp_gfx_cmd_resp));
++	memcpy_toio(psp->cmd_buf_mem, cmd, sizeof(struct psp_gfx_cmd_resp));
+ 
+ 	index = atomic_inc_return(&psp->fence_value);
+ 	ret = psp_ring_cmd_submit(psp, psp->cmd_buf_mc_addr, fence_mc_addr, index);
+@@ -702,7 +702,7 @@ psp_cmd_submit_buf(struct psp_context *psp,
+ 	skip_unsupport = (psp->cmd_buf_mem->resp.status == TEE_ERROR_NOT_SUPPORTED ||
+ 		psp->cmd_buf_mem->resp.status == PSP_ERR_UNKNOWN_COMMAND) && amdgpu_sriov_vf(psp->adev);
+ 
+-	memcpy(&cmd->resp, &psp->cmd_buf_mem->resp, sizeof(struct psp_gfx_resp));
++	memcpy_fromio(&cmd->resp, &psp->cmd_buf_mem->resp, sizeof(struct psp_gfx_resp));
+ 
+ 	/* In some cases, psp response status is not 0 even there is no
+ 	 * problem while the command is submitted. Some version of PSP FW
+@@ -1026,8 +1026,8 @@ static int psp_rl_load(struct amdgpu_device *adev)
+ 
+ 	cmd = acquire_psp_cmd_buf(psp);
+ 
+-	memset(psp->fw_pri_buf, 0, PSP_1_MEG);
+-	memcpy(psp->fw_pri_buf, psp->rl.start_addr, psp->rl.size_bytes);
++	memset_io(psp->fw_pri_buf, 0, PSP_1_MEG);
++	memcpy_toio(psp->fw_pri_buf, psp->rl.start_addr, psp->rl.size_bytes);
+ 
+ 	cmd->cmd_id = GFX_CMD_ID_LOAD_IP_FW;
+ 	cmd->cmd.cmd_load_ip_fw.fw_phy_addr_lo = lower_32_bits(psp->fw_pri_mc_addr);
+@@ -2875,7 +2875,7 @@ static int psp_load_fw(struct amdgpu_device *adev)
+ 		/* should not destroy ring, only stop */
+ 		psp_ring_stop(psp, PSP_RING_TYPE__KM);
+ 	} else {
+-		memset(psp->fence_buf, 0, PSP_FENCE_BUFFER_SIZE);
++		memset_io(psp->fence_buf, 0, PSP_FENCE_BUFFER_SIZE);
+ 
+ 		ret = psp_ring_init(psp, PSP_RING_TYPE__KM);
+ 		if (ret) {
+@@ -3223,7 +3223,7 @@ int psp_ring_cmd_submit(struct psp_context *psp,
+ 	}
+ 
+ 	/* Initialize KM RB frame */
+-	memset(write_frame, 0, sizeof(struct psp_gfx_rb_frame));
++	memset_io(write_frame, 0, sizeof(struct psp_gfx_rb_frame));
+ 
+ 	/* Update KM RB frame */
+ 	write_frame->cmd_buf_addr_hi = upper_32_bits(cmd_buf_mc_addr);
+@@ -3835,8 +3835,8 @@ void psp_copy_fw(struct psp_context *psp, uint8_t *start_addr, uint32_t bin_size
+ 	if (!drm_dev_enter(adev_to_drm(psp->adev), &idx))
+ 		return;
+ 
+-	memset(psp->fw_pri_buf, 0, PSP_1_MEG);
+-	memcpy(psp->fw_pri_buf, start_addr, bin_size);
++	memset_io(psp->fw_pri_buf, 0, PSP_1_MEG);
++	memcpy_toio(psp->fw_pri_buf, start_addr, bin_size);
+ 
+ 	drm_dev_exit(idx);
+ }
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_sa.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_sa.c
+index 10df731998b22f..2627963b2c0d4a 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_sa.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_sa.c
+@@ -58,7 +58,7 @@ int amdgpu_sa_bo_manager_init(struct amdgpu_device *adev,
+ 		return r;
+ 	}
+ 
+-	memset(sa_manager->cpu_ptr, 0, size);
++	memset_io(sa_manager->cpu_ptr, 0, size);
+ 	drm_suballoc_manager_init(&sa_manager->base, size, suballoc_align);
+ 	return r;
+ }
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_seq64.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_seq64.c
+index dba8051b8c14b2..9eaa940a820f40 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_seq64.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_seq64.c
+@@ -240,7 +240,7 @@ int amdgpu_seq64_init(struct amdgpu_device *adev)
+ 		return r;
+ 	}
+ 
+-	memset(adev->seq64.cpu_base_addr, 0, AMDGPU_VA_RESERVED_SEQ64_SIZE);
++	memset_io(adev->seq64.cpu_base_addr, 0, AMDGPU_VA_RESERVED_SEQ64_SIZE);
+ 
+ 	adev->seq64.num_sem = AMDGPU_MAX_SEQ64_SLOTS;
+ 	memset(&adev->seq64.used, 0, sizeof(adev->seq64.used));
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ucode.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_ucode.c
+index eb83d7c1f784c1..9101917d9954fb 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ucode.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ucode.c
+@@ -1078,7 +1078,7 @@ static int amdgpu_ucode_init_single_fw(struct amdgpu_device *adev,
+ 			le32_to_cpu(header->ucode_array_offset_bytes);
+ 	}
+ 
+-	memcpy(ucode->kaddr, ucode_addr, ucode->ucode_size);
++	memcpy_toio(ucode->kaddr, ucode_addr, ucode->ucode_size);
+ 
+ 	return 0;
+ }
+@@ -1102,7 +1102,7 @@ static int amdgpu_ucode_patch_jt(struct amdgpu_firmware_info *ucode,
+ 	src_addr = (uint8_t *)ucode->fw->data +
+ 			   le32_to_cpu(comm_hdr->ucode_array_offset_bytes) +
+ 			   (le32_to_cpu(header->jt_offset) * 4);
+-	memcpy(dst_addr, src_addr, le32_to_cpu(header->jt_size) * 4);
++	memcpy_toio(dst_addr, src_addr, le32_to_cpu(header->jt_size) * 4);
+ 
+ 	return 0;
+ }
+@@ -1121,7 +1121,7 @@ int amdgpu_ucode_create_bo(struct amdgpu_device *adev)
+ 			dev_err(adev->dev, "failed to create kernel buffer for firmware.fw_buf\n");
+ 			return -ENOMEM;
+ 		} else if (amdgpu_sriov_vf(adev)) {
+-			memset(adev->firmware.fw_buf_ptr, 0, adev->firmware.fw_size);
++			memset_io(adev->firmware.fw_buf_ptr, 0, adev->firmware.fw_size);
+ 		}
+ 	}
+ 	return 0;
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c
+index 43f44cc201cb80..e0b64eecc8fba9 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c
+@@ -751,7 +751,7 @@ static int amdgpu_vcn_dec_sw_send_msg(struct amdgpu_ring *ring,
+ 	ib->ptr[ib->length_dw++] = cpu_to_le32(AMDGPU_VCN_IB_FLAG_DECODE_BUFFER);
+ 	decode_buffer = (struct amdgpu_vcn_decode_buffer *)&(ib->ptr[ib->length_dw]);
+ 	ib->length_dw += sizeof(struct amdgpu_vcn_decode_buffer) / 4;
+-	memset(decode_buffer, 0, sizeof(struct amdgpu_vcn_decode_buffer));
++	memset_io(decode_buffer, 0, sizeof(struct amdgpu_vcn_decode_buffer));
+ 
+ 	decode_buffer->valid_buf_flag |= cpu_to_le32(AMDGPU_VCN_CMD_FLAG_MSG_BUFFER);
+ 	decode_buffer->msg_buffer_address_hi = cpu_to_le32(addr >> 32);
+diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c
+index 24d711b0e6346c..1beb8db3c25151 100644
+--- a/drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c
+@@ -4375,7 +4375,7 @@ static int gfx_v10_0_mec_init(struct amdgpu_device *adev)
+ 			return r;
+ 		}
+ 
+-		memset(hpd, 0, mec_hpd_size);
++		memset_io(hpd, 0, mec_hpd_size);
+ 
+ 		amdgpu_bo_kunmap(adev->gfx.mec.hpd_eop_obj);
+ 		amdgpu_bo_unreserve(adev->gfx.mec.hpd_eop_obj);
+@@ -5577,10 +5577,10 @@ static void gfx_v10_0_rlc_backdoor_autoload_copy_ucode(struct amdgpu_device *ade
+ 	if (fw_size > toc_fw_size)
+ 		fw_size = toc_fw_size;
+ 
+-	memcpy(ptr + toc_offset, fw_data, fw_size);
++	memcpy_toio(ptr + toc_offset, fw_data, fw_size);
+ 
+ 	if (fw_size < toc_fw_size)
+-		memset(ptr + toc_offset + fw_size, 0, toc_fw_size - fw_size);
++		memset_io(ptr + toc_offset + fw_size, 0, toc_fw_size - fw_size);
+ }
+ 
+ static void gfx_v10_0_rlc_backdoor_autoload_copy_toc_ucode(struct amdgpu_device *adev)
+@@ -6699,7 +6699,7 @@ static int gfx_v10_0_kgq_init_queue(struct amdgpu_ring *ring, bool reset)
+ 	int mqd_idx = ring - &adev->gfx.gfx_ring[0];
+ 
+ 	if (!reset && !amdgpu_in_reset(adev) && !adev->in_suspend) {
+-		memset((void *)mqd, 0, sizeof(*mqd));
++		memset_io((void *)mqd, 0, sizeof(*mqd));
+ 		mutex_lock(&adev->srbm_mutex);
+ 		nv_grbm_select(adev, ring->me, ring->pipe, ring->queue, 0);
+ 		amdgpu_ring_init_mqd(ring);
+@@ -7013,7 +7013,7 @@ static int gfx_v10_0_kiq_init_queue(struct amdgpu_ring *ring)
+ 		nv_grbm_select(adev, 0, 0, 0, 0);
+ 		mutex_unlock(&adev->srbm_mutex);
+ 	} else {
+-		memset((void *)mqd, 0, sizeof(*mqd));
++		memset_io((void *)mqd, 0, sizeof(*mqd));
+ 		if (amdgpu_sriov_vf(adev) && adev->in_suspend)
+ 			amdgpu_ring_clear_ring(ring);
+ 		mutex_lock(&adev->srbm_mutex);
+@@ -7037,7 +7037,7 @@ static int gfx_v10_0_kcq_init_queue(struct amdgpu_ring *ring, bool restore)
+ 	int mqd_idx = ring - &adev->gfx.compute_ring[0];
+ 
+ 	if (!restore && !amdgpu_in_reset(adev) && !adev->in_suspend) {
+-		memset((void *)mqd, 0, sizeof(*mqd));
++		memset_io((void *)mqd, 0, sizeof(*mqd));
+ 		mutex_lock(&adev->srbm_mutex);
+ 		nv_grbm_select(adev, ring->me, ring->pipe, ring->queue, 0);
+ 		amdgpu_ring_init_mqd(ring);
+diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v11_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v11_0.c
+index 1f06b22dbe7c63..a430d824dcd368 100644
+--- a/drivers/gpu/drm/amd/amdgpu/gfx_v11_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/gfx_v11_0.c
+@@ -955,7 +955,7 @@ static int gfx_v11_0_mec_init(struct amdgpu_device *adev)
+ 			return r;
+ 		}
+ 
+-		memset(hpd, 0, mec_hpd_size);
++		memset_io(hpd, 0, mec_hpd_size);
+ 
+ 		amdgpu_bo_kunmap(adev->gfx.mec.hpd_eop_obj);
+ 		amdgpu_bo_unreserve(adev->gfx.mec.hpd_eop_obj);
+@@ -1257,10 +1257,10 @@ static void gfx_v11_0_rlc_backdoor_autoload_copy_ucode(struct amdgpu_device *ade
+ 	if (fw_size > toc_fw_size)
+ 		fw_size = toc_fw_size;
+ 
+-	memcpy(ptr + toc_offset, fw_data, fw_size);
++	memcpy_toio(ptr + toc_offset, fw_data, fw_size);
+ 
+ 	if (fw_size < toc_fw_size)
+-		memset(ptr + toc_offset + fw_size, 0, toc_fw_size - fw_size);
++		memset_io(ptr + toc_offset + fw_size, 0, toc_fw_size - fw_size);
+ 
+ 	if ((id != SOC21_FIRMWARE_ID_RS64_PFP) && (id != SOC21_FIRMWARE_ID_RS64_ME))
+ 		*(uint64_t *)fw_autoload_mask |= 1ULL << id;
+@@ -4008,7 +4008,7 @@ static int gfx_v11_0_kgq_init_queue(struct amdgpu_ring *ring, bool reset)
+ 	int mqd_idx = ring - &adev->gfx.gfx_ring[0];
+ 
+ 	if (!reset && !amdgpu_in_reset(adev) && !adev->in_suspend) {
+-		memset((void *)mqd, 0, sizeof(*mqd));
++		memset_io((void *)mqd, 0, sizeof(*mqd));
+ 		mutex_lock(&adev->srbm_mutex);
+ 		soc21_grbm_select(adev, ring->me, ring->pipe, ring->queue, 0);
+ 		amdgpu_ring_init_mqd(ring);
+@@ -4321,7 +4321,7 @@ static int gfx_v11_0_kiq_init_queue(struct amdgpu_ring *ring)
+ 		soc21_grbm_select(adev, 0, 0, 0, 0);
+ 		mutex_unlock(&adev->srbm_mutex);
+ 	} else {
+-		memset((void *)mqd, 0, sizeof(*mqd));
++		memset_io((void *)mqd, 0, sizeof(*mqd));
+ 		if (amdgpu_sriov_vf(adev) && adev->in_suspend)
+ 			amdgpu_ring_clear_ring(ring);
+ 		mutex_lock(&adev->srbm_mutex);
+@@ -4345,7 +4345,7 @@ static int gfx_v11_0_kcq_init_queue(struct amdgpu_ring *ring, bool reset)
+ 	int mqd_idx = ring - &adev->gfx.compute_ring[0];
+ 
+ 	if (!reset && !amdgpu_in_reset(adev) && !adev->in_suspend) {
+-		memset((void *)mqd, 0, sizeof(*mqd));
++		memset_io((void *)mqd, 0, sizeof(*mqd));
+ 		mutex_lock(&adev->srbm_mutex);
+ 		soc21_grbm_select(adev, ring->me, ring->pipe, ring->queue, 0);
+ 		amdgpu_ring_init_mqd(ring);
+diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
+index 9d741695ca07d6..454015af2e47e3 100644
+--- a/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
+@@ -1319,7 +1319,7 @@ static int gfx_v8_0_mec_init(struct amdgpu_device *adev)
+ 			return r;
+ 		}
+ 
+-		memset(hpd, 0, mec_hpd_size);
++		memset_io(hpd, 0, mec_hpd_size);
+ 
+ 		amdgpu_bo_kunmap(adev->gfx.mec.hpd_eop_obj);
+ 		amdgpu_bo_unreserve(adev->gfx.mec.hpd_eop_obj);
+@@ -4598,7 +4598,7 @@ static int gfx_v8_0_kiq_init_queue(struct amdgpu_ring *ring)
+ 	if (amdgpu_in_reset(adev)) { /* for GPU_RESET case */
+ 		/* reset MQD to a clean status */
+ 		if (adev->gfx.kiq[0].mqd_backup)
+-			memcpy(mqd, adev->gfx.kiq[0].mqd_backup, sizeof(struct vi_mqd_allocation));
++			memcpy_toio(mqd, adev->gfx.kiq[0].mqd_backup, sizeof(struct vi_mqd_allocation));
+ 
+ 		/* reset ring buffer */
+ 		ring->wptr = 0;
+@@ -4609,7 +4609,7 @@ static int gfx_v8_0_kiq_init_queue(struct amdgpu_ring *ring)
+ 		vi_srbm_select(adev, 0, 0, 0, 0);
+ 		mutex_unlock(&adev->srbm_mutex);
+ 	} else {
+-		memset((void *)mqd, 0, sizeof(struct vi_mqd_allocation));
++		memset_io((void *)mqd, 0, sizeof(struct vi_mqd_allocation));
+ 		((struct vi_mqd_allocation *)mqd)->dynamic_cu_mask = 0xFFFFFFFF;
+ 		((struct vi_mqd_allocation *)mqd)->dynamic_rb_mask = 0xFFFFFFFF;
+ 		if (amdgpu_sriov_vf(adev) && adev->in_suspend)
+@@ -4622,7 +4622,7 @@ static int gfx_v8_0_kiq_init_queue(struct amdgpu_ring *ring)
+ 		mutex_unlock(&adev->srbm_mutex);
+ 
+ 		if (adev->gfx.kiq[0].mqd_backup)
+-			memcpy(adev->gfx.kiq[0].mqd_backup, mqd, sizeof(struct vi_mqd_allocation));
++			memcpy_fromio(adev->gfx.kiq[0].mqd_backup, mqd, sizeof(struct vi_mqd_allocation));
+ 	}
+ 
+ 	return 0;
+@@ -4635,7 +4635,7 @@ static int gfx_v8_0_kcq_init_queue(struct amdgpu_ring *ring)
+ 	int mqd_idx = ring - &adev->gfx.compute_ring[0];
+ 
+ 	if (!amdgpu_in_reset(adev) && !adev->in_suspend) {
+-		memset((void *)mqd, 0, sizeof(struct vi_mqd_allocation));
++		memset_io((void *)mqd, 0, sizeof(struct vi_mqd_allocation));
+ 		((struct vi_mqd_allocation *)mqd)->dynamic_cu_mask = 0xFFFFFFFF;
+ 		((struct vi_mqd_allocation *)mqd)->dynamic_rb_mask = 0xFFFFFFFF;
+ 		mutex_lock(&adev->srbm_mutex);
+@@ -4645,11 +4645,11 @@ static int gfx_v8_0_kcq_init_queue(struct amdgpu_ring *ring)
+ 		mutex_unlock(&adev->srbm_mutex);
+ 
+ 		if (adev->gfx.mec.mqd_backup[mqd_idx])
+-			memcpy(adev->gfx.mec.mqd_backup[mqd_idx], mqd, sizeof(struct vi_mqd_allocation));
++			memcpy_fromio(adev->gfx.mec.mqd_backup[mqd_idx], mqd, sizeof(struct vi_mqd_allocation));
+ 	} else {
+ 		/* restore MQD to a clean status */
+ 		if (adev->gfx.mec.mqd_backup[mqd_idx])
+-			memcpy(mqd, adev->gfx.mec.mqd_backup[mqd_idx], sizeof(struct vi_mqd_allocation));
++			memcpy_toio(mqd, adev->gfx.mec.mqd_backup[mqd_idx], sizeof(struct vi_mqd_allocation));
+ 		/* reset ring buffer */
+ 		ring->wptr = 0;
+ 		amdgpu_ring_clear_ring(ring);
+diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
+index 114653a0b57013..8aec3fa4d91e65 100644
+--- a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
+@@ -1211,7 +1211,7 @@ static int gfx_v9_0_ring_test_ib(struct amdgpu_ring *ring, long timeout)
+ 
+ 	gpu_addr = adev->wb.gpu_addr + (index * 4);
+ 	adev->wb.wb[index] = cpu_to_le32(0xCAFEDEAD);
+-	memset(&ib, 0, sizeof(ib));
++	memset_io(&ib, 0, sizeof(ib));
+ 
+ 	r = amdgpu_ib_get(adev, NULL, 20, AMDGPU_IB_POOL_DIRECT, &ib);
+ 	if (r)
+@@ -1884,7 +1884,7 @@ static int gfx_v9_0_mec_init(struct amdgpu_device *adev)
+ 			return r;
+ 		}
+ 
+-		memset(hpd, 0, mec_hpd_size);
++		memset_io(hpd, 0, mec_hpd_size);
+ 
+ 		amdgpu_bo_kunmap(adev->gfx.mec.hpd_eop_obj);
+ 		amdgpu_bo_unreserve(adev->gfx.mec.hpd_eop_obj);
+@@ -1908,7 +1908,7 @@ static int gfx_v9_0_mec_init(struct amdgpu_device *adev)
+ 		return r;
+ 	}
+ 
+-	memcpy(fw, fw_data, fw_size);
++	memcpy_toio(fw, fw_data, fw_size);
+ 
+ 	amdgpu_bo_kunmap(adev->gfx.mec.mec_fw_obj);
+ 	amdgpu_bo_unreserve(adev->gfx.mec.mec_fw_obj);
+@@ -3786,7 +3786,7 @@ static int gfx_v9_0_kiq_init_queue(struct amdgpu_ring *ring)
+ 	if (amdgpu_in_reset(adev) && tmp_mqd->cp_hqd_pq_control){
+ 		/* for GPU_RESET case , reset MQD to a clean status */
+ 		if (adev->gfx.kiq[0].mqd_backup)
+-			memcpy(mqd, adev->gfx.kiq[0].mqd_backup, sizeof(struct v9_mqd_allocation));
++			memcpy_toio(mqd, adev->gfx.kiq[0].mqd_backup, sizeof(struct v9_mqd_allocation));
+ 
+ 		/* reset ring buffer */
+ 		ring->wptr = 0;
+@@ -3798,7 +3798,7 @@ static int gfx_v9_0_kiq_init_queue(struct amdgpu_ring *ring)
+ 		soc15_grbm_select(adev, 0, 0, 0, 0, 0);
+ 		mutex_unlock(&adev->srbm_mutex);
+ 	} else {
+-		memset((void *)mqd, 0, sizeof(struct v9_mqd_allocation));
++		memset_io((void *)mqd, 0, sizeof(struct v9_mqd_allocation));
+ 		((struct v9_mqd_allocation *)mqd)->dynamic_cu_mask = 0xFFFFFFFF;
+ 		((struct v9_mqd_allocation *)mqd)->dynamic_rb_mask = 0xFFFFFFFF;
+ 		if (amdgpu_sriov_vf(adev) && adev->in_suspend)
+@@ -3811,7 +3811,7 @@ static int gfx_v9_0_kiq_init_queue(struct amdgpu_ring *ring)
+ 		mutex_unlock(&adev->srbm_mutex);
+ 
+ 		if (adev->gfx.kiq[0].mqd_backup)
+-			memcpy(adev->gfx.kiq[0].mqd_backup, mqd, sizeof(struct v9_mqd_allocation));
++			memcpy_fromio(adev->gfx.kiq[0].mqd_backup, mqd, sizeof(struct v9_mqd_allocation));
+ 	}
+ 
+ 	return 0;
+@@ -3831,7 +3831,7 @@ static int gfx_v9_0_kcq_init_queue(struct amdgpu_ring *ring, bool restore)
+ 
+ 	if (!restore && (!tmp_mqd->cp_hqd_pq_control ||
+ 	    (!amdgpu_in_reset(adev) && !adev->in_suspend))) {
+-		memset((void *)mqd, 0, sizeof(struct v9_mqd_allocation));
++		memset_io((void *)mqd, 0, sizeof(struct v9_mqd_allocation));
+ 		((struct v9_mqd_allocation *)mqd)->dynamic_cu_mask = 0xFFFFFFFF;
+ 		((struct v9_mqd_allocation *)mqd)->dynamic_rb_mask = 0xFFFFFFFF;
+ 		mutex_lock(&adev->srbm_mutex);
+@@ -3841,11 +3841,11 @@ static int gfx_v9_0_kcq_init_queue(struct amdgpu_ring *ring, bool restore)
+ 		mutex_unlock(&adev->srbm_mutex);
+ 
+ 		if (adev->gfx.mec.mqd_backup[mqd_idx])
+-			memcpy(adev->gfx.mec.mqd_backup[mqd_idx], mqd, sizeof(struct v9_mqd_allocation));
++			memcpy_fromio(adev->gfx.mec.mqd_backup[mqd_idx], mqd, sizeof(struct v9_mqd_allocation));
+ 	} else {
+ 		/* restore MQD to a clean status */
+ 		if (adev->gfx.mec.mqd_backup[mqd_idx])
+-			memcpy(mqd, adev->gfx.mec.mqd_backup[mqd_idx], sizeof(struct v9_mqd_allocation));
++			memcpy_toio(mqd, adev->gfx.mec.mqd_backup[mqd_idx], sizeof(struct v9_mqd_allocation));
+ 		/* reset ring buffer */
+ 		ring->wptr = 0;
+ 		atomic64_set((atomic64_t *)ring->wptr_cpu_addr, 0);
+@@ -4637,7 +4637,7 @@ static int gfx_v9_0_do_edc_gpr_workarounds(struct amdgpu_device *adev)
+ 	total_size += sizeof(sgpr_init_compute_shader);
+ 
+ 	/* allocate an indirect buffer to put the commands in */
+-	memset(&ib, 0, sizeof(ib));
++	memset_io(&ib, 0, sizeof(ib));
+ 	r = amdgpu_ib_get(adev, NULL, total_size,
+ 					AMDGPU_IB_POOL_DIRECT, &ib);
+ 	if (r) {
+@@ -5456,12 +5456,12 @@ static void gfx_v9_0_ring_patch_ce_meta(struct amdgpu_ring *ring,
+ 	}
+ 
+ 	if (offset + (payload_size >> 2) <= ring->buf_mask + 1) {
+-		memcpy((void *)&ring->ring[offset], ce_payload_cpu_addr, payload_size);
++		memcpy_toio((void *)&ring->ring[offset], ce_payload_cpu_addr, payload_size);
+ 	} else {
+-		memcpy((void *)&ring->ring[offset], ce_payload_cpu_addr,
++		memcpy_toio((void *)&ring->ring[offset], ce_payload_cpu_addr,
+ 		       (ring->buf_mask + 1 - offset) << 2);
+ 		payload_size -= (ring->buf_mask + 1 - offset) << 2;
+-		memcpy((void *)&ring->ring[0],
++		memcpy_toio((void *)&ring->ring[0],
+ 		       ce_payload_cpu_addr + ((ring->buf_mask + 1 - offset) << 2),
+ 		       payload_size);
+ 	}
+@@ -5491,12 +5491,12 @@ static void gfx_v9_0_ring_patch_de_meta(struct amdgpu_ring *ring,
+ 		IB_COMPLETION_STATUS_PREEMPTED;
+ 
+ 	if (offset + (payload_size >> 2) <= ring->buf_mask + 1) {
+-		memcpy((void *)&ring->ring[offset], de_payload_cpu_addr, payload_size);
++		memcpy_toio((void *)&ring->ring[offset], de_payload_cpu_addr, payload_size);
+ 	} else {
+-		memcpy((void *)&ring->ring[offset], de_payload_cpu_addr,
++		memcpy_toio((void *)&ring->ring[offset], de_payload_cpu_addr,
+ 		       (ring->buf_mask + 1 - offset) << 2);
+ 		payload_size -= (ring->buf_mask + 1 - offset) << 2;
+-		memcpy((void *)&ring->ring[0],
++		memcpy_toio((void *)&ring->ring[0],
+ 		       de_payload_cpu_addr + ((ring->buf_mask + 1 - offset) << 2),
+ 		       payload_size);
+ 	}
+diff --git a/drivers/gpu/drm/amd/amdgpu/mes_v11_0.c b/drivers/gpu/drm/amd/amdgpu/mes_v11_0.c
+index 49113df8baefd9..3928ffcc5a5834 100644
+--- a/drivers/gpu/drm/amd/amdgpu/mes_v11_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/mes_v11_0.c
+@@ -794,7 +794,7 @@ static int mes_v11_0_allocate_ucode_buffer(struct amdgpu_device *adev,
+ 		return r;
+ 	}
+ 
+-	memcpy(adev->mes.ucode_fw_ptr[pipe], fw_data, fw_size);
++	memcpy_toio(adev->mes.ucode_fw_ptr[pipe], fw_data, fw_size);
+ 
+ 	amdgpu_bo_kunmap(adev->mes.ucode_fw_obj[pipe]);
+ 	amdgpu_bo_unreserve(adev->mes.ucode_fw_obj[pipe]);
+@@ -835,7 +835,7 @@ static int mes_v11_0_allocate_ucode_data_buffer(struct amdgpu_device *adev,
+ 		return r;
+ 	}
+ 
+-	memcpy(adev->mes.data_fw_ptr[pipe], fw_data, fw_size);
++	memcpy_toio(adev->mes.data_fw_ptr[pipe], fw_data, fw_size);
+ 
+ 	amdgpu_bo_kunmap(adev->mes.data_fw_obj[pipe]);
+ 	amdgpu_bo_unreserve(adev->mes.data_fw_obj[pipe]);
+@@ -1023,7 +1023,7 @@ static int mes_v11_0_allocate_eop_buf(struct amdgpu_device *adev,
+ 		return r;
+ 	}
+ 
+-	memset(eop, 0,
++	memset_io(eop, 0,
+ 	       adev->mes.eop_gpu_obj[pipe]->tbo.base.size);
+ 
+ 	amdgpu_bo_kunmap(adev->mes.eop_gpu_obj[pipe]);
+@@ -1038,7 +1038,7 @@ static int mes_v11_0_mqd_init(struct amdgpu_ring *ring)
+ 	uint64_t hqd_gpu_addr, wb_gpu_addr, eop_base_addr;
+ 	uint32_t tmp;
+ 
+-	memset(mqd, 0, sizeof(*mqd));
++	memset_io(mqd, 0, sizeof(*mqd));
+ 
+ 	mqd->header = 0xC0310800;
+ 	mqd->compute_pipelinestat_enable = 0x00000001;
+@@ -1326,7 +1326,7 @@ static int mes_v11_0_mqd_sw_init(struct amdgpu_device *adev,
+ 		return r;
+ 	}
+ 
+-	memset(ring->mqd_ptr, 0, mqd_size);
++	memset_io(ring->mqd_ptr, 0, mqd_size);
+ 
+ 	/* prepare MQD backup */
+ 	adev->mes.mqd_backup[pipe] = kmalloc(mqd_size, GFP_KERNEL);
+diff --git a/drivers/gpu/drm/amd/amdgpu/psp_v13_0.c b/drivers/gpu/drm/amd/amdgpu/psp_v13_0.c
+index bf00de763acb0e..e2043c6262c0a1 100644
+--- a/drivers/gpu/drm/amd/amdgpu/psp_v13_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/psp_v13_0.c
+@@ -236,10 +236,10 @@ static int psp_v13_0_bootloader_load_component(struct psp_context  	*psp,
+ 	if (ret)
+ 		return ret;
+ 
+-	memset(psp->fw_pri_buf, 0, PSP_1_MEG);
++	memset_io(psp->fw_pri_buf, 0, PSP_1_MEG);
+ 
+ 	/* Copy PSP KDB binary to memory */
+-	memcpy(psp->fw_pri_buf, bin_desc->start_addr, bin_desc->size_bytes);
++	memcpy_toio(psp->fw_pri_buf, bin_desc->start_addr, bin_desc->size_bytes);
+ 
+ 	/* Provide the PSP KDB to bootloader */
+ 	WREG32_SOC15(MP0, 0, regMP0_SMN_C2PMSG_36,
+@@ -313,10 +313,10 @@ static int psp_v13_0_bootloader_load_sos(struct psp_context *psp)
+ 	if (ret)
+ 		return ret;
+ 
+-	memset(psp->fw_pri_buf, 0, PSP_1_MEG);
++	memset_io(psp->fw_pri_buf, 0, PSP_1_MEG);
+ 
+ 	/* Copy Secure OS binary to PSP memory */
+-	memcpy(psp->fw_pri_buf, psp->sos.start_addr, psp->sos.size_bytes);
++	memcpy_toio(psp->fw_pri_buf, psp->sos.start_addr, psp->sos.size_bytes);
+ 
+ 	/* Provide the PSP secure OS to bootloader */
+ 	WREG32_SOC15(MP0, 0, regMP0_SMN_C2PMSG_36,
+diff --git a/drivers/gpu/drm/amd/amdgpu/psp_v13_0_4.c b/drivers/gpu/drm/amd/amdgpu/psp_v13_0_4.c
+index eaa5512a21dacd..45900865b7a51a 100644
+--- a/drivers/gpu/drm/amd/amdgpu/psp_v13_0_4.c
++++ b/drivers/gpu/drm/amd/amdgpu/psp_v13_0_4.c
+@@ -107,10 +107,10 @@ static int psp_v13_0_4_bootloader_load_component(struct psp_context  	*psp,
+ 	if (ret)
+ 		return ret;
+ 
+-	memset(psp->fw_pri_buf, 0, PSP_1_MEG);
++	memset_io(psp->fw_pri_buf, 0, PSP_1_MEG);
+ 
+ 	/* Copy PSP KDB binary to memory */
+-	memcpy(psp->fw_pri_buf, bin_desc->start_addr, bin_desc->size_bytes);
++	memcpy_toio(psp->fw_pri_buf, bin_desc->start_addr, bin_desc->size_bytes);
+ 
+ 	/* Provide the PSP KDB to bootloader */
+ 	WREG32_SOC15(MP0, 0, regMP0_SMN_C2PMSG_36,
+@@ -170,10 +170,10 @@ static int psp_v13_0_4_bootloader_load_sos(struct psp_context *psp)
+ 	if (ret)
+ 		return ret;
+ 
+-	memset(psp->fw_pri_buf, 0, PSP_1_MEG);
++	memset_io(psp->fw_pri_buf, 0, PSP_1_MEG);
+ 
+ 	/* Copy Secure OS binary to PSP memory */
+-	memcpy(psp->fw_pri_buf, psp->sos.start_addr, psp->sos.size_bytes);
++	memcpy_toio(psp->fw_pri_buf, psp->sos.start_addr, psp->sos.size_bytes);
+ 
+ 	/* Provide the PSP secure OS to bootloader */
+ 	WREG32_SOC15(MP0, 0, regMP0_SMN_C2PMSG_36,
+diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_kernel_queue.c b/drivers/gpu/drm/amd/amdkfd/kfd_kernel_queue.c
+index d6037577c53278..6831cbd2b3a2af 100644
+--- a/drivers/gpu/drm/amd/amdkfd/kfd_kernel_queue.c
++++ b/drivers/gpu/drm/amd/amdkfd/kfd_kernel_queue.c
+@@ -102,7 +102,7 @@ static bool kq_initialize(struct kernel_queue *kq, struct kfd_node *dev,
+ 		kq->eop_gpu_addr = kq->eop_mem->gpu_addr;
+ 		kq->eop_kernel_addr = kq->eop_mem->cpu_ptr;
+ 
+-		memset(kq->eop_kernel_addr, 0, PAGE_SIZE);
++		memset_io(kq->eop_kernel_addr, 0, PAGE_SIZE);
+ 	}
+ 
+ 	retval = kfd_gtt_sa_allocate(dev, sizeof(*kq->rptr_kernel),
+@@ -123,9 +123,9 @@ static bool kq_initialize(struct kernel_queue *kq, struct kfd_node *dev,
+ 	kq->wptr_kernel = kq->wptr_mem->cpu_ptr;
+ 	kq->wptr_gpu_addr = kq->wptr_mem->gpu_addr;
+ 
+-	memset(kq->pq_kernel_addr, 0, queue_size);
+-	memset(kq->rptr_kernel, 0, sizeof(*kq->rptr_kernel));
+-	memset(kq->wptr_kernel, 0, dev->kfd->device_info.doorbell_size);
++	memset_io(kq->pq_kernel_addr, 0, queue_size);
++	memset_io(kq->rptr_kernel, 0, sizeof(*kq->rptr_kernel));
++	memset_io(kq->wptr_kernel, 0, dev->kfd->device_info.doorbell_size);
+ 
+ 	prop.queue_size = queue_size;
+ 	prop.is_interop = false;
+diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager_v10.c b/drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager_v10.c
+index 1695dd78ede8e6..0b6a83c448780f 100644
+--- a/drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager_v10.c
++++ b/drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager_v10.c
+@@ -95,7 +95,7 @@ static void init_mqd(struct mqd_manager *mm, void **mqd,
+ 	m = (struct v10_compute_mqd *) mqd_mem_obj->cpu_ptr;
+ 	addr = mqd_mem_obj->gpu_addr;
+ 
+-	memset(m, 0, sizeof(struct v10_compute_mqd));
++	memset_io(m, 0, sizeof(struct v10_compute_mqd));
+ 
+ 	m->header = 0xC0310800;
+ 	m->compute_pipelinestat_enable = 1;
+@@ -277,7 +277,7 @@ static void checkpoint_mqd(struct mqd_manager *mm, void *mqd, void *mqd_dst, voi
+ 
+ 	m = get_mqd(mqd);
+ 
+-	memcpy(mqd_dst, m, sizeof(struct v10_compute_mqd));
++	memcpy_fromio(mqd_dst, m, sizeof(struct v10_compute_mqd));
+ }
+ 
+ static void restore_mqd(struct mqd_manager *mm, void **mqd,
+@@ -292,7 +292,7 @@ static void restore_mqd(struct mqd_manager *mm, void **mqd,
+ 	m = (struct v10_compute_mqd *) mqd_mem_obj->cpu_ptr;
+ 	addr = mqd_mem_obj->gpu_addr;
+ 
+-	memcpy(m, mqd_src, sizeof(*m));
++	memcpy_toio(m, mqd_src, sizeof(*m));
+ 
+ 	*mqd = m;
+ 	if (gart_addr)
+@@ -349,7 +349,7 @@ static void init_mqd_sdma(struct mqd_manager *mm, void **mqd,
+ 
+ 	m = (struct v10_sdma_mqd *) mqd_mem_obj->cpu_ptr;
+ 
+-	memset(m, 0, sizeof(struct v10_sdma_mqd));
++	memset_io(m, 0, sizeof(struct v10_sdma_mqd));
+ 
+ 	*mqd = m;
+ 	if (gart_addr)
+@@ -396,7 +396,7 @@ static void checkpoint_mqd_sdma(struct mqd_manager *mm,
+ 
+ 	m = get_sdma_mqd(mqd);
+ 
+-	memcpy(mqd_dst, m, sizeof(struct v10_sdma_mqd));
++	memcpy_fromio(mqd_dst, m, sizeof(struct v10_sdma_mqd));
+ }
+ 
+ static void restore_mqd_sdma(struct mqd_manager *mm, void **mqd,
+@@ -412,7 +412,7 @@ static void restore_mqd_sdma(struct mqd_manager *mm, void **mqd,
+ 	m = (struct v10_sdma_mqd *) mqd_mem_obj->cpu_ptr;
+ 	addr = mqd_mem_obj->gpu_addr;
+ 
+-	memcpy(m, mqd_src, sizeof(*m));
++	memcpy_toio(m, mqd_src, sizeof(*m));
+ 
+ 	m->sdmax_rlcx_doorbell_offset =
+ 		qp->doorbell_off << SDMA0_RLC0_DOORBELL_OFFSET__OFFSET__SHIFT;
+diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager_v11.c b/drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager_v11.c
+index 3c0ae28c5923b5..4c113a55013378 100644
+--- a/drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager_v11.c
++++ b/drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager_v11.c
+@@ -137,7 +137,7 @@ static void init_mqd(struct mqd_manager *mm, void **mqd,
+ 	else
+ 		size = sizeof(struct v11_compute_mqd);
+ 
+-	memset(m, 0, size);
++	memset_io(m, 0, size);
+ 
+ 	m->header = 0xC0310800;
+ 	m->compute_pipelinestat_enable = 1;
+@@ -329,7 +329,7 @@ static void checkpoint_mqd(struct mqd_manager *mm, void *mqd, void *mqd_dst, voi
+ 
+ 	m = get_mqd(mqd);
+ 
+-	memcpy(mqd_dst, m, sizeof(struct v11_compute_mqd));
++	memcpy_fromio(mqd_dst, m, sizeof(struct v11_compute_mqd));
+ }
+ 
+ static void restore_mqd(struct mqd_manager *mm, void **mqd,
+@@ -344,7 +344,7 @@ static void restore_mqd(struct mqd_manager *mm, void **mqd,
+ 	m = (struct v11_compute_mqd *) mqd_mem_obj->cpu_ptr;
+ 	addr = mqd_mem_obj->gpu_addr;
+ 
+-	memcpy(m, mqd_src, sizeof(*m));
++	memcpy_toio(m, mqd_src, sizeof(*m));
+ 
+ 	*mqd = m;
+ 	if (gart_addr)
+@@ -408,7 +408,7 @@ static void init_mqd_sdma(struct mqd_manager *mm, void **mqd,
+ 	else
+ 		size = sizeof(struct v11_sdma_mqd);
+ 
+-	memset(m, 0, size);
++	memset_io(m, 0, size);
+ 	*mqd = m;
+ 	if (gart_addr)
+ 		*gart_addr = mqd_mem_obj->gpu_addr;
+diff --git a/drivers/gpu/drm/amd/display/dc/clk_mgr/dcn30/dcn30_clk_mgr.c b/drivers/gpu/drm/amd/display/dc/clk_mgr/dcn30/dcn30_clk_mgr.c
+index 8083a553c60e88..d0724060083120 100644
+--- a/drivers/gpu/drm/amd/display/dc/clk_mgr/dcn30/dcn30_clk_mgr.c
++++ b/drivers/gpu/drm/amd/display/dc/clk_mgr/dcn30/dcn30_clk_mgr.c
+@@ -333,7 +333,7 @@ static void dcn3_notify_wm_ranges(struct clk_mgr *clk_mgr_base)
+ 		// should log failure
+ 		return;
+ 
+-	memset(table, 0, sizeof(*table));
++	memset_io(table, 0, sizeof(*table));
+ 
+ 	/* collect valid ranges, place in pmfw table */
+ 	for (i = 0; i < WM_SET_COUNT; i++)
+diff --git a/drivers/gpu/drm/amd/display/dc/clk_mgr/dcn301/vg_clk_mgr.c b/drivers/gpu/drm/amd/display/dc/clk_mgr/dcn301/vg_clk_mgr.c
+index 9e2ef0e724fcf6..1e8f19564ea745 100644
+--- a/drivers/gpu/drm/amd/display/dc/clk_mgr/dcn301/vg_clk_mgr.c
++++ b/drivers/gpu/drm/amd/display/dc/clk_mgr/dcn301/vg_clk_mgr.c
+@@ -451,7 +451,7 @@ static void vg_notify_wm_ranges(struct clk_mgr *clk_mgr_base)
+ 	if (!table || clk_mgr_vgh->smu_wm_set.mc_address.quad_part == 0)
+ 		return;
+ 
+-	memset(table, 0, sizeof(*table));
++	memset_io(table, 0, sizeof(*table));
+ 
+ 	vg_build_watermark_ranges(clk_mgr_base->bw_params, table);
+ 
+@@ -649,7 +649,7 @@ static void vg_get_dpm_table_from_smu(struct clk_mgr_internal *clk_mgr,
+ 	if (!table || smu_dpm_clks->mc_address.quad_part == 0)
+ 		return;
+ 
+-	memset(table, 0, sizeof(*table));
++	memset_io(table, 0, sizeof(*table));
+ 
+ 	dcn301_smu_set_dram_addr_high(clk_mgr,
+ 			smu_dpm_clks->mc_address.high_part);
+diff --git a/drivers/gpu/drm/amd/display/dc/clk_mgr/dcn31/dcn31_clk_mgr.c b/drivers/gpu/drm/amd/display/dc/clk_mgr/dcn31/dcn31_clk_mgr.c
+index bc123f1884da32..6fa8916791e6db 100644
+--- a/drivers/gpu/drm/amd/display/dc/clk_mgr/dcn31/dcn31_clk_mgr.c
++++ b/drivers/gpu/drm/amd/display/dc/clk_mgr/dcn31/dcn31_clk_mgr.c
+@@ -486,7 +486,7 @@ static void dcn31_notify_wm_ranges(struct clk_mgr *clk_mgr_base)
+ 	if (!table || clk_mgr_dcn31->smu_wm_set.mc_address.quad_part == 0)
+ 		return;
+ 
+-	memset(table, 0, sizeof(*table));
++	memset_io(table, 0, sizeof(*table));
+ 
+ 	dcn31_build_watermark_ranges(clk_mgr_base->bw_params, table);
+ 
+@@ -508,7 +508,7 @@ static void dcn31_get_dpm_table_from_smu(struct clk_mgr_internal *clk_mgr,
+ 	if (!table || smu_dpm_clks->mc_address.quad_part == 0)
+ 		return;
+ 
+-	memset(table, 0, sizeof(*table));
++	memset_io(table, 0, sizeof(*table));
+ 
+ 	dcn31_smu_set_dram_addr_high(clk_mgr,
+ 			smu_dpm_clks->mc_address.high_part);
+diff --git a/drivers/gpu/drm/amd/display/dc/clk_mgr/dcn314/dcn314_clk_mgr.c b/drivers/gpu/drm/amd/display/dc/clk_mgr/dcn314/dcn314_clk_mgr.c
+index 91d872d6d392b1..7d7f2f1070f112 100644
+--- a/drivers/gpu/drm/amd/display/dc/clk_mgr/dcn314/dcn314_clk_mgr.c
++++ b/drivers/gpu/drm/amd/display/dc/clk_mgr/dcn314/dcn314_clk_mgr.c
+@@ -550,7 +550,7 @@ static void dcn314_notify_wm_ranges(struct clk_mgr *clk_mgr_base)
+ 	if (!table || clk_mgr_dcn314->smu_wm_set.mc_address.quad_part == 0)
+ 		return;
+ 
+-	memset(table, 0, sizeof(*table));
++	memset_io(table, 0, sizeof(*table));
+ 
+ 	dcn314_build_watermark_ranges(clk_mgr_base->bw_params, table);
+ 
+@@ -572,7 +572,7 @@ static void dcn314_get_dpm_table_from_smu(struct clk_mgr_internal *clk_mgr,
+ 	if (!table || smu_dpm_clks->mc_address.quad_part == 0)
+ 		return;
+ 
+-	memset(table, 0, sizeof(*table));
++	memset_io(table, 0, sizeof(*table));
+ 
+ 	dcn314_smu_set_dram_addr_high(clk_mgr,
+ 			smu_dpm_clks->mc_address.high_part);
+diff --git a/drivers/gpu/drm/amd/display/dc/clk_mgr/dcn315/dcn315_clk_mgr.c b/drivers/gpu/drm/amd/display/dc/clk_mgr/dcn315/dcn315_clk_mgr.c
+index e4d22f74f98691..70d0fc9be088e8 100644
+--- a/drivers/gpu/drm/amd/display/dc/clk_mgr/dcn315/dcn315_clk_mgr.c
++++ b/drivers/gpu/drm/amd/display/dc/clk_mgr/dcn315/dcn315_clk_mgr.c
+@@ -447,7 +447,7 @@ static void dcn315_notify_wm_ranges(struct clk_mgr *clk_mgr_base)
+ 	if (!table || clk_mgr_dcn315->smu_wm_set.mc_address.quad_part == 0)
+ 		return;
+ 
+-	memset(table, 0, sizeof(*table));
++	memset_io(table, 0, sizeof(*table));
+ 
+ 	dcn315_build_watermark_ranges(clk_mgr_base->bw_params, table);
+ 
+@@ -469,7 +469,7 @@ static void dcn315_get_dpm_table_from_smu(struct clk_mgr_internal *clk_mgr,
+ 	if (!table || smu_dpm_clks->mc_address.quad_part == 0)
+ 		return;
+ 
+-	memset(table, 0, sizeof(*table));
++	memset_io(table, 0, sizeof(*table));
+ 
+ 	dcn315_smu_set_dram_addr_high(clk_mgr,
+ 			smu_dpm_clks->mc_address.high_part);
+diff --git a/drivers/gpu/drm/amd/display/dc/clk_mgr/dcn316/dcn316_clk_mgr.c b/drivers/gpu/drm/amd/display/dc/clk_mgr/dcn316/dcn316_clk_mgr.c
+index 49efea0c8fcffa..f14154f5c849ac 100644
+--- a/drivers/gpu/drm/amd/display/dc/clk_mgr/dcn316/dcn316_clk_mgr.c
++++ b/drivers/gpu/drm/amd/display/dc/clk_mgr/dcn316/dcn316_clk_mgr.c
+@@ -412,7 +412,7 @@ static void dcn316_notify_wm_ranges(struct clk_mgr *clk_mgr_base)
+ 	if (!table || clk_mgr_dcn316->smu_wm_set.mc_address.quad_part == 0)
+ 		return;
+ 
+-	memset(table, 0, sizeof(*table));
++	memset_io(table, 0, sizeof(*table));
+ 
+ 	dcn316_build_watermark_ranges(clk_mgr_base->bw_params, table);
+ 
+@@ -434,7 +434,7 @@ static void dcn316_get_dpm_table_from_smu(struct clk_mgr_internal *clk_mgr,
+ 	if (!table || smu_dpm_clks->mc_address.quad_part == 0)
+ 		return;
+ 
+-	memset(table, 0, sizeof(*table));
++	memset_io(table, 0, sizeof(*table));
+ 
+ 	dcn316_smu_set_dram_addr_high(clk_mgr,
+ 			smu_dpm_clks->mc_address.high_part);
+diff --git a/drivers/gpu/drm/amd/display/dc/clk_mgr/dcn32/dcn32_clk_mgr.c b/drivers/gpu/drm/amd/display/dc/clk_mgr/dcn32/dcn32_clk_mgr.c
+index 084994c650c4c9..1b90d785d4a912 100644
+--- a/drivers/gpu/drm/amd/display/dc/clk_mgr/dcn32/dcn32_clk_mgr.c
++++ b/drivers/gpu/drm/amd/display/dc/clk_mgr/dcn32/dcn32_clk_mgr.c
+@@ -977,7 +977,7 @@ static void dcn32_notify_wm_ranges(struct clk_mgr *clk_mgr_base)
+ 	if (!table)
+ 		return;
+ 
+-	memset(table, 0, sizeof(*table));
++	memset_io(table, 0, sizeof(*table));
+ 
+ 	/* collect valid ranges, place in pmfw table */
+ 	for (i = 0; i < WM_SET_COUNT; i++)
+
+From e7709360b1597a1fc1b02b1d3e3783e8d2055a85 Mon Sep 17 00:00:00 2001
+From: Pepijn de Vos <pepijndevos@gmail.com>
+Date: Tue, 8 Jul 2025 13:30:12 +0200
+Subject: [PATCH 2/4] amdgpu: use ttm_uncached
+
+---
+ drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
+index 1c8ac4cf08c5ac..85b9649da1ab6d 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
+@@ -1120,7 +1120,7 @@ static struct ttm_tt *amdgpu_ttm_tt_create(struct ttm_buffer_object *bo,
+ 	if (abo->flags & AMDGPU_GEM_CREATE_CPU_GTT_USWC)
+ 		caching = ttm_write_combined;
+ 	else
+-		caching = ttm_cached;
++		caching = ttm_uncached;
+ 
+ 	/* allocate space for the uninitialized page entries */
+ 	if (ttm_sg_tt_init(&gtt->ttm, bo, page_flags, caching)) {
+
+From 72af3949a52632b442d3d914ba0ba8e6044ee434 Mon Sep 17 00:00:00 2001
+From: Pepijn de Vos <pepijndevos@gmail.com>
+Date: Tue, 8 Jul 2025 13:32:19 +0200
+Subject: [PATCH 3/4] amdgpu: mark some variables volatile
+
+---
+ drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c       |  4 +--
+ drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c       |  4 +--
+ drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c        |  6 ++--
+ drivers/gpu/drm/amd/amdgpu/gfx_v11_0.c        |  4 +--
+ drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c         |  6 ++--
+ drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c         |  4 +--
+ drivers/gpu/drm/amd/amdgpu/mes_v11_0.c        |  2 +-
+ drivers/gpu/drm/amd/amdgpu/sdma_v6_0.c        |  2 +-
+ drivers/gpu/drm/amd/amdkfd/kfd_kernel_queue.c |  4 +--
+ .../gpu/drm/amd/amdkfd/kfd_mqd_manager_v10.c  | 32 +++++++++----------
+ .../gpu/drm/amd/amdkfd/kfd_mqd_manager_v11.c  | 18 +++++------
+ 11 files changed, 44 insertions(+), 42 deletions(-)
+
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c
+index 65bb26215e867a..248d821bfdb137 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c
+@@ -1202,7 +1202,7 @@ int amdgpu_uvd_get_create_msg(struct amdgpu_ring *ring, uint32_t handle,
+ {
+ 	struct amdgpu_device *adev = ring->adev;
+ 	struct amdgpu_bo *bo = adev->uvd.ib_bo;
+-	uint32_t *msg;
++	volatile uint32_t *msg;
+ 	int i;
+ 
+ 	msg = amdgpu_bo_kptr(bo);
+@@ -1230,7 +1230,7 @@ int amdgpu_uvd_get_destroy_msg(struct amdgpu_ring *ring, uint32_t handle,
+ {
+ 	struct amdgpu_device *adev = ring->adev;
+ 	struct amdgpu_bo *bo = NULL;
+-	uint32_t *msg;
++	volatile uint32_t *msg;
+ 	int r, i;
+ 
+ 	if (direct) {
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c
+index e0b64eecc8fba9..ac9f1e52361081 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c
+@@ -593,7 +593,7 @@ static int amdgpu_vcn_dec_get_create_msg(struct amdgpu_ring *ring, uint32_t hand
+ 		struct amdgpu_ib *ib)
+ {
+ 	struct amdgpu_device *adev = ring->adev;
+-	uint32_t *msg;
++	volatile uint32_t *msg;
+ 	int r, i;
+ 
+ 	memset(ib, 0, sizeof(*ib));
+@@ -628,7 +628,7 @@ static int amdgpu_vcn_dec_get_destroy_msg(struct amdgpu_ring *ring, uint32_t han
+ 					  struct amdgpu_ib *ib)
+ {
+ 	struct amdgpu_device *adev = ring->adev;
+-	uint32_t *msg;
++	volatile uint32_t *msg;
+ 	int r, i;
+ 
+ 	memset(ib, 0, sizeof(*ib));
+diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c
+index 1beb8db3c25151..551f4639033b82 100644
+--- a/drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c
+@@ -6592,7 +6592,7 @@ static void gfx_v10_0_kiq_setting(struct amdgpu_ring *ring)
+ }
+ 
+ static void gfx_v10_0_gfx_mqd_set_priority(struct amdgpu_device *adev,
+-					   struct v10_gfx_mqd *mqd,
++					   volatile struct v10_gfx_mqd *mqd,
+ 					   struct amdgpu_mqd_prop *prop)
+ {
+ 	bool priority = 0;
+@@ -6612,7 +6612,7 @@ static void gfx_v10_0_gfx_mqd_set_priority(struct amdgpu_device *adev,
+ static int gfx_v10_0_gfx_mqd_init(struct amdgpu_device *adev, void *m,
+ 				  struct amdgpu_mqd_prop *prop)
+ {
+-	struct v10_gfx_mqd *mqd = m;
++	volatile struct v10_gfx_mqd *mqd = m;
+ 	uint64_t hqd_gpu_addr, wb_gpu_addr;
+ 	uint32_t tmp;
+ 	uint32_t rb_bufsz;
+@@ -6769,7 +6769,7 @@ static int gfx_v10_0_cp_async_gfx_ring_resume(struct amdgpu_device *adev)
+ static int gfx_v10_0_compute_mqd_init(struct amdgpu_device *adev, void *m,
+ 				      struct amdgpu_mqd_prop *prop)
+ {
+-	struct v10_compute_mqd *mqd = m;
++	volatile struct v10_compute_mqd *mqd = m;
+ 	uint64_t hqd_gpu_addr, wb_gpu_addr, eop_base_addr;
+ 	uint32_t tmp;
+ 
+diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v11_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v11_0.c
+index a430d824dcd368..62b4fd5272b6a1 100644
+--- a/drivers/gpu/drm/amd/amdgpu/gfx_v11_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/gfx_v11_0.c
+@@ -3921,7 +3921,7 @@ static void gfx_v11_0_gfx_mqd_set_priority(struct amdgpu_device *adev,
+ static int gfx_v11_0_gfx_mqd_init(struct amdgpu_device *adev, void *m,
+ 				  struct amdgpu_mqd_prop *prop)
+ {
+-	struct v11_gfx_mqd *mqd = m;
++	volatile struct v11_gfx_mqd *mqd = m;
+ 	uint64_t hqd_gpu_addr, wb_gpu_addr;
+ 	uint32_t tmp;
+ 	uint32_t rb_bufsz;
+@@ -4062,7 +4062,7 @@ static int gfx_v11_0_cp_async_gfx_ring_resume(struct amdgpu_device *adev)
+ static int gfx_v11_0_compute_mqd_init(struct amdgpu_device *adev, void *m,
+ 				      struct amdgpu_mqd_prop *prop)
+ {
+-	struct v11_compute_mqd *mqd = m;
++	volatile struct v11_compute_mqd *mqd = m;
+ 	uint64_t hqd_gpu_addr, wb_gpu_addr, eop_base_addr;
+ 	uint32_t tmp;
+ 
+diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
+index 454015af2e47e3..721391dc959756 100644
+--- a/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
+@@ -4391,7 +4391,7 @@ static int gfx_v8_0_deactivate_hqd(struct amdgpu_device *adev, u32 req)
+ 	return r;
+ }
+ 
+-static void gfx_v8_0_mqd_set_priority(struct amdgpu_ring *ring, struct vi_mqd *mqd)
++static void gfx_v8_0_mqd_set_priority(struct amdgpu_ring *ring, volatile struct vi_mqd *mqd)
+ {
+ 	struct amdgpu_device *adev = ring->adev;
+ 
+@@ -4407,7 +4407,7 @@ static void gfx_v8_0_mqd_set_priority(struct amdgpu_ring *ring, struct vi_mqd *m
+ static int gfx_v8_0_mqd_init(struct amdgpu_ring *ring)
+ {
+ 	struct amdgpu_device *adev = ring->adev;
+-	struct vi_mqd *mqd = ring->mqd_ptr;
++	volatile struct vi_mqd *mqd = ring->mqd_ptr;
+ 	uint64_t hqd_gpu_addr, wb_gpu_addr, eop_base_addr;
+ 	uint32_t tmp;
+ 
+@@ -4418,11 +4418,13 @@ static int gfx_v8_0_mqd_init(struct amdgpu_ring *ring)
+ 	mqd->compute_static_thread_mgmt_se2 = 0xffffffff;
+ 	mqd->compute_static_thread_mgmt_se3 = 0xffffffff;
+ 	mqd->compute_misc_reserved = 0x00000003;
++
+ 	mqd->dynamic_cu_mask_addr_lo = lower_32_bits(ring->mqd_gpu_addr
+ 						     + offsetof(struct vi_mqd_allocation, dynamic_cu_mask));
+ 	mqd->dynamic_cu_mask_addr_hi = upper_32_bits(ring->mqd_gpu_addr
+ 						     + offsetof(struct vi_mqd_allocation, dynamic_cu_mask));
+ 	eop_base_addr = ring->eop_gpu_addr >> 8;
++
+ 	mqd->cp_hqd_eop_base_addr_lo = eop_base_addr;
+ 	mqd->cp_hqd_eop_base_addr_hi = upper_32_bits(eop_base_addr);
+ 
+diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
+index 8aec3fa4d91e65..6eb0b2e5192bc4 100644
+--- a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
+@@ -3471,7 +3471,7 @@ static void gfx_v9_0_kiq_setting(struct amdgpu_ring *ring)
+ 	WREG32_SOC15_RLC(GC, 0, mmRLC_CP_SCHEDULERS, tmp);
+ }
+ 
+-static void gfx_v9_0_mqd_set_priority(struct amdgpu_ring *ring, struct v9_mqd *mqd)
++static void gfx_v9_0_mqd_set_priority(struct amdgpu_ring *ring, volatile struct v9_mqd *mqd)
+ {
+ 	struct amdgpu_device *adev = ring->adev;
+ 
+@@ -3487,7 +3487,7 @@ static void gfx_v9_0_mqd_set_priority(struct amdgpu_ring *ring, struct v9_mqd *m
+ static int gfx_v9_0_mqd_init(struct amdgpu_ring *ring)
+ {
+ 	struct amdgpu_device *adev = ring->adev;
+-	struct v9_mqd *mqd = ring->mqd_ptr;
++	volatile struct v9_mqd *mqd = ring->mqd_ptr;
+ 	uint64_t hqd_gpu_addr, wb_gpu_addr, eop_base_addr;
+ 	uint32_t tmp;
+ 
+diff --git a/drivers/gpu/drm/amd/amdgpu/mes_v11_0.c b/drivers/gpu/drm/amd/amdgpu/mes_v11_0.c
+index 3928ffcc5a5834..ab6191faee5d84 100644
+--- a/drivers/gpu/drm/amd/amdgpu/mes_v11_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/mes_v11_0.c
+@@ -1034,7 +1034,7 @@ static int mes_v11_0_allocate_eop_buf(struct amdgpu_device *adev,
+ 
+ static int mes_v11_0_mqd_init(struct amdgpu_ring *ring)
+ {
+-	struct v11_compute_mqd *mqd = ring->mqd_ptr;
++	volatile struct v11_compute_mqd *mqd = ring->mqd_ptr;
+ 	uint64_t hqd_gpu_addr, wb_gpu_addr, eop_base_addr;
+ 	uint32_t tmp;
+ 
+diff --git a/drivers/gpu/drm/amd/amdgpu/sdma_v6_0.c b/drivers/gpu/drm/amd/amdgpu/sdma_v6_0.c
+index 208a1fa9d4e7f2..c902d8c7156c09 100644
+--- a/drivers/gpu/drm/amd/amdgpu/sdma_v6_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/sdma_v6_0.c
+@@ -833,7 +833,7 @@ static int sdma_v6_0_start(struct amdgpu_device *adev)
+ static int sdma_v6_0_mqd_init(struct amdgpu_device *adev, void *mqd,
+ 			      struct amdgpu_mqd_prop *prop)
+ {
+-	struct v11_sdma_mqd *m = mqd;
++	volatile struct v11_sdma_mqd *m = mqd;
+ 	uint64_t wb_gpu_addr;
+ 
+ 	m->sdmax_rlcx_rb_cntl =
+diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_kernel_queue.c b/drivers/gpu/drm/amd/amdkfd/kfd_kernel_queue.c
+index 6831cbd2b3a2af..0256706e47360e 100644
+--- a/drivers/gpu/drm/amd/amdkfd/kfd_kernel_queue.c
++++ b/drivers/gpu/drm/amd/amdkfd/kfd_kernel_queue.c
+@@ -234,8 +234,8 @@ int kq_acquire_packet_buffer(struct kernel_queue *kq,
+ {
+ 	size_t available_size;
+ 	size_t queue_size_dwords;
+-	uint32_t wptr, rptr;
+-	uint64_t wptr64;
++	volatile uint32_t wptr, rptr;
++	volatile uint64_t wptr64;
+ 	unsigned int *queue_address;
+ 
+ 	/* When rptr == wptr, the buffer is empty.
+diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager_v10.c b/drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager_v10.c
+index 0b6a83c448780f..4ea2ad969eaf44 100644
+--- a/drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager_v10.c
++++ b/drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager_v10.c
+@@ -32,20 +32,20 @@
+ #include "gc/gc_10_1_0_sh_mask.h"
+ #include "amdgpu_amdkfd.h"
+ 
+-static inline struct v10_compute_mqd *get_mqd(void *mqd)
++static inline volatile  struct v10_compute_mqd *get_mqd(void *mqd)
+ {
+-	return (struct v10_compute_mqd *)mqd;
++	return (volatile struct v10_compute_mqd *)mqd;
+ }
+ 
+-static inline struct v10_sdma_mqd *get_sdma_mqd(void *mqd)
++static inline volatile struct v10_sdma_mqd *get_sdma_mqd(void *mqd)
+ {
+-	return (struct v10_sdma_mqd *)mqd;
++	return (volatile struct v10_sdma_mqd *)mqd;
+ }
+ 
+ static void update_cu_mask(struct mqd_manager *mm, void *mqd,
+ 			struct mqd_update_info *minfo)
+ {
+-	struct v10_compute_mqd *m;
++	volatile struct v10_compute_mqd *m;
+ 	uint32_t se_mask[4] = {0}; /* 4 is the max # of SEs */
+ 
+ 	if (!minfo || !minfo->cu_mask.ptr)
+@@ -67,7 +67,7 @@ static void update_cu_mask(struct mqd_manager *mm, void *mqd,
+ 		m->compute_static_thread_mgmt_se3);
+ }
+ 
+-static void set_priority(struct v10_compute_mqd *m, struct queue_properties *q)
++static void set_priority(volatile struct v10_compute_mqd *m, struct queue_properties *q)
+ {
+ 	m->cp_hqd_pipe_priority = pipe_priority_map[q->priority];
+ 	m->cp_hqd_queue_priority = q->priority;
+@@ -90,7 +90,7 @@ static void init_mqd(struct mqd_manager *mm, void **mqd,
+ 			struct queue_properties *q)
+ {
+ 	uint64_t addr;
+-	struct v10_compute_mqd *m;
++	volatile struct v10_compute_mqd *m;
+ 
+ 	m = (struct v10_compute_mqd *) mqd_mem_obj->cpu_ptr;
+ 	addr = mqd_mem_obj->gpu_addr;
+@@ -165,7 +165,7 @@ static void update_mqd(struct mqd_manager *mm, void *mqd,
+ 			struct queue_properties *q,
+ 			struct mqd_update_info *minfo)
+ {
+-	struct v10_compute_mqd *m;
++	volatile struct v10_compute_mqd *m;
+ 
+ 	m = get_mqd(mqd);
+ 
+@@ -239,7 +239,7 @@ static int get_wave_state(struct mqd_manager *mm, void *mqd,
+ 			  u32 *ctl_stack_used_size,
+ 			  u32 *save_area_used_size)
+ {
+-	struct v10_compute_mqd *m;
++	volatile struct v10_compute_mqd *m;
+ 	struct kfd_context_save_area_header header;
+ 
+ 	m = get_mqd(mqd);
+@@ -273,7 +273,7 @@ static int get_wave_state(struct mqd_manager *mm, void *mqd,
+ 
+ static void checkpoint_mqd(struct mqd_manager *mm, void *mqd, void *mqd_dst, void *ctl_stack_dst)
+ {
+-	struct v10_compute_mqd *m;
++	volatile struct v10_compute_mqd *m;
+ 
+ 	m = get_mqd(mqd);
+ 
+@@ -287,7 +287,7 @@ static void restore_mqd(struct mqd_manager *mm, void **mqd,
+ 			const void *ctl_stack_src, const u32 ctl_stack_size)
+ {
+ 	uint64_t addr;
+-	struct v10_compute_mqd *m;
++	volatile struct v10_compute_mqd *m;
+ 
+ 	m = (struct v10_compute_mqd *) mqd_mem_obj->cpu_ptr;
+ 	addr = mqd_mem_obj->gpu_addr;
+@@ -311,7 +311,7 @@ static void init_mqd_hiq(struct mqd_manager *mm, void **mqd,
+ 			struct kfd_mem_obj *mqd_mem_obj, uint64_t *gart_addr,
+ 			struct queue_properties *q)
+ {
+-	struct v10_compute_mqd *m;
++	volatile struct v10_compute_mqd *m;
+ 
+ 	init_mqd(mm, mqd, mqd_mem_obj, gart_addr, q);
+ 
+@@ -345,7 +345,7 @@ static void init_mqd_sdma(struct mqd_manager *mm, void **mqd,
+ 		struct kfd_mem_obj *mqd_mem_obj, uint64_t *gart_addr,
+ 		struct queue_properties *q)
+ {
+-	struct v10_sdma_mqd *m;
++	volatile struct v10_sdma_mqd *m;
+ 
+ 	m = (struct v10_sdma_mqd *) mqd_mem_obj->cpu_ptr;
+ 
+@@ -364,7 +364,7 @@ static void update_mqd_sdma(struct mqd_manager *mm, void *mqd,
+ 			struct queue_properties *q,
+ 			struct mqd_update_info *minfo)
+ {
+-	struct v10_sdma_mqd *m;
++	volatile struct v10_sdma_mqd *m;
+ 
+ 	m = get_sdma_mqd(mqd);
+ 	m->sdmax_rlcx_rb_cntl = (ffs(q->queue_size / sizeof(unsigned int)) - 1)
+@@ -392,7 +392,7 @@ static void checkpoint_mqd_sdma(struct mqd_manager *mm,
+ 				void *mqd_dst,
+ 				void *ctl_stack_dst)
+ {
+-	struct v10_sdma_mqd *m;
++	volatile struct v10_sdma_mqd *m;
+ 
+ 	m = get_sdma_mqd(mqd);
+ 
+@@ -407,7 +407,7 @@ static void restore_mqd_sdma(struct mqd_manager *mm, void **mqd,
+ 			     const u32 ctl_stack_size)
+ {
+ 	uint64_t addr;
+-	struct v10_sdma_mqd *m;
++	volatile struct v10_sdma_mqd *m;
+ 
+ 	m = (struct v10_sdma_mqd *) mqd_mem_obj->cpu_ptr;
+ 	addr = mqd_mem_obj->gpu_addr;
+diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager_v11.c b/drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager_v11.c
+index 4c113a55013378..8abb0f2d027543 100644
+--- a/drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager_v11.c
++++ b/drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager_v11.c
+@@ -44,7 +44,7 @@ static inline struct v11_sdma_mqd *get_sdma_mqd(void *mqd)
+ static void update_cu_mask(struct mqd_manager *mm, void *mqd,
+ 			   struct mqd_update_info *minfo)
+ {
+-	struct v11_compute_mqd *m;
++	volatile struct v11_compute_mqd *m;
+ 	uint32_t se_mask[KFD_MAX_NUM_SE] = {0};
+ 	bool has_wa_flag = minfo && (minfo->update_flag & (UPDATE_FLAG_DBG_WA_ENABLE |
+ 			UPDATE_FLAG_DBG_WA_DISABLE));
+@@ -125,7 +125,7 @@ static void init_mqd(struct mqd_manager *mm, void **mqd,
+ 			struct queue_properties *q)
+ {
+ 	uint64_t addr;
+-	struct v11_compute_mqd *m;
++	volatile struct v11_compute_mqd *m;
+ 	int size;
+ 	uint32_t wa_mask = q->is_dbg_wa ? 0xffff : 0xffffffff;
+ 
+@@ -219,7 +219,7 @@ static void update_mqd(struct mqd_manager *mm, void *mqd,
+ 		       struct queue_properties *q,
+ 		       struct mqd_update_info *minfo)
+ {
+-	struct v11_compute_mqd *m;
++	volatile struct v11_compute_mqd *m;
+ 
+ 	m = get_mqd(mqd);
+ 
+@@ -281,7 +281,7 @@ static void update_mqd(struct mqd_manager *mm, void *mqd,
+ 
+ static bool check_preemption_failed(struct mqd_manager *mm, void *mqd)
+ {
+-	struct v11_compute_mqd *m = (struct v11_compute_mqd *)mqd;
++	volatile struct v11_compute_mqd *m = (struct v11_compute_mqd *)mqd;
+ 
+ 	return kfd_check_hiq_mqd_doorbell_id(mm->dev, m->queue_doorbell_id0, 0);
+ }
+@@ -292,7 +292,7 @@ static int get_wave_state(struct mqd_manager *mm, void *mqd,
+ 			  u32 *ctl_stack_used_size,
+ 			  u32 *save_area_used_size)
+ {
+-	struct v11_compute_mqd *m;
++	volatile struct v11_compute_mqd *m;
+ 	struct kfd_context_save_area_header header;
+ 
+ 	m = get_mqd(mqd);
+@@ -325,7 +325,7 @@ static int get_wave_state(struct mqd_manager *mm, void *mqd,
+ 
+ static void checkpoint_mqd(struct mqd_manager *mm, void *mqd, void *mqd_dst, void *ctl_stack_dst)
+ {
+-	struct v11_compute_mqd *m;
++	volatile struct v11_compute_mqd *m;
+ 
+ 	m = get_mqd(mqd);
+ 
+@@ -339,7 +339,7 @@ static void restore_mqd(struct mqd_manager *mm, void **mqd,
+ 			const void *ctl_stack_src, const u32 ctl_stack_size)
+ {
+ 	uint64_t addr;
+-	struct v11_compute_mqd *m;
++	volatile struct v11_compute_mqd *m;
+ 
+ 	m = (struct v11_compute_mqd *) mqd_mem_obj->cpu_ptr;
+ 	addr = mqd_mem_obj->gpu_addr;
+@@ -364,7 +364,7 @@ static void init_mqd_hiq(struct mqd_manager *mm, void **mqd,
+ 			struct kfd_mem_obj *mqd_mem_obj, uint64_t *gart_addr,
+ 			struct queue_properties *q)
+ {
+-	struct v11_compute_mqd *m;
++	volatile struct v11_compute_mqd *m;
+ 
+ 	init_mqd(mm, mqd, mqd_mem_obj, gart_addr, q);
+ 
+@@ -379,7 +379,7 @@ static int destroy_hiq_mqd(struct mqd_manager *mm, void *mqd,
+ 			uint32_t pipe_id, uint32_t queue_id)
+ {
+ 	int err;
+-	struct v11_compute_mqd *m;
++	volatile struct v11_compute_mqd *m;
+ 	u32 doorbell_off;
+ 
+ 	m = get_mqd(mqd);
+
+From 82e9e49b7df97c38d673faeb9ef8fabe35945753 Mon Sep 17 00:00:00 2001
+From: Pepijn de Vos <pepijndevos@gmail.com>
+Date: Sat, 12 Jul 2025 14:22:42 +0200
+Subject: [PATCH 4/4] amdgpu: add parameter to force write-combine memory
+
+---
+ drivers/gpu/drm/Kconfig | 10 ++++++++++
+ include/drm/drm_cache.h |  3 +++
+ 2 files changed, 13 insertions(+)
+
+diff --git a/drivers/gpu/drm/Kconfig b/drivers/gpu/drm/Kconfig
+index edda7f6607c48a..31dca5360edb57 100644
+--- a/drivers/gpu/drm/Kconfig
++++ b/drivers/gpu/drm/Kconfig
+@@ -31,6 +31,16 @@ menuconfig DRM
+ 
+ if DRM
+ 
++config DRM_ARCH_CAN_WC
++    bool "Force Architecture can write-combine memory"
++    depends on DRM
++    default n
++    help
++      Enables write-combining even if it is not enabled by default.
++      Only use if the target systems support write-combining on
++      the memory used by the graphics adapters.
++      If in doubt, say 'N'
++
+ config DRM_MIPI_DBI
+ 	tristate
+ 	depends on DRM
+diff --git a/include/drm/drm_cache.h b/include/drm/drm_cache.h
+index 08e0e3ffad1319..6deef42ba79f30 100644
+--- a/include/drm/drm_cache.h
++++ b/include/drm/drm_cache.h
+@@ -45,6 +45,9 @@ bool drm_need_swiotlb(int dma_bits);
+ 
+ static inline bool drm_arch_can_wc_memory(void)
+ {
++#if defined(CONFIG_DRM_ARCH_CAN_WC)
++	return true;
++#endif
+ #if defined(CONFIG_PPC) && !defined(CONFIG_NOT_COHERENT_CACHE)
+ 	return false;
+ #elif defined(CONFIG_MIPS) && defined(CONFIG_CPU_LOONGSON64)
