@@ -1,8 +1,6 @@
 {
     "storage-driver": "overlay2",
     "log-driver": "journald",
-    "experimental": true,
-    "ip6tables": true,
     "log-opts": {
         "tag": "{{.Name}}"
     },
