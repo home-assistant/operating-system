@@ -1,0 +1,88 @@
+From d93da906a2148429f21c201aeb20e8738c22f4a4 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Jan=20=C4=8Cerm=C3=A1k?= <sairon@sairon.cz>
+Date: Wed, 30 Jul 2025 19:18:13 +0200
+Subject: [PATCH] journal-gatewayd: fix busy loop when following way beyond
+ journal end
+
+Fix regression introduced in a7bfb9f76b96888d60b4f287f29dcbf758ba34c0,
+where busy loop can be started with a request for following logs with a
+range header set with num_skip value pointing beyond the end of the
+journal. In that case the reader callback returns 0 and is called
+immediately again, usually causing an endless loop that is not recovered
+even when new journal events are added.
+
+The bug does not occur if num_skip is not set - in that case if no
+journal entries matching the filters are added, the tight loop is
+avoided by the sd_journal_wait().
+
+To fix the issue, when no matching journal events are available, set a
+flag and reuse the backoff mechanism using the sd_journal_wait().
+
+Link: https://github.com/home-assistant/operating-system/issues/4190
+---
+(Backported for v256.x)
+Signed-off-by: Jan Čermák <sairon@sairon.cz>
+Upstream: https://github.com/systemd/systemd/pull/38422
+---
+ src/journal-remote/journal-gatewayd.c | 31 +++++++++++++++------------
+ 1 file changed, 17 insertions(+), 14 deletions(-)
+
+diff --git a/src/journal-remote/journal-gatewayd.c b/src/journal-remote/journal-gatewayd.c
+index 5bce48d485..f7ecc352cc 100644
+--- a/src/journal-remote/journal-gatewayd.c
++++ b/src/journal-remote/journal-gatewayd.c
+@@ -171,6 +171,7 @@ static ssize_t request_reader_entries(
+ 
+         while (pos >= m->size) {
+                 off_t sz;
++                bool wait_for_events = false;
+ 
+                 /* End of this entry, so let's serialize the next
+                  * one */
+@@ -191,9 +192,10 @@ static ssize_t request_reader_entries(
+                          * from it are not returned. */
+                         if (r < m->n_skip + 1) {
+                                 m->n_skip -= r;
+-                                if (m->follow)
+-                                        return 0;
+-                                return MHD_CONTENT_READER_END_OF_STREAM;
++
++                                if (!m->follow)
++                                        return MHD_CONTENT_READER_END_OF_STREAM;
++                                wait_for_events = true;
+                         }
+                 } else
+                         r = sd_journal_next(m->journal);
+@@ -202,20 +204,21 @@ static ssize_t request_reader_entries(
+                         log_error_errno(r, "Failed to advance journal pointer: %m");
+                         return MHD_CONTENT_READER_END_WITH_ERROR;
+                 } else if (r == 0) {
++                        if (!m->follow)
++                                return MHD_CONTENT_READER_END_OF_STREAM;
++                        wait_for_events = true;
++                }
+ 
+-                        if (m->follow) {
+-                                r = sd_journal_wait(m->journal, (uint64_t) JOURNAL_WAIT_TIMEOUT);
+-                                if (r < 0) {
+-                                        log_error_errno(r, "Couldn't wait for journal event: %m");
+-                                        return MHD_CONTENT_READER_END_WITH_ERROR;
+-                                }
+-                                if (r == SD_JOURNAL_NOP)
+-                                        break;
+-
+-                                continue;
++                if (wait_for_events) {
++                        r = sd_journal_wait(m->journal, (uint64_t) JOURNAL_WAIT_TIMEOUT);
++                        if (r < 0) {
++                                log_error_errno(r, "Couldn't wait for journal event: %m");
++                                return MHD_CONTENT_READER_END_WITH_ERROR;
+                         }
++                        if (r == SD_JOURNAL_NOP)
++                                break;
+ 
+-                        return MHD_CONTENT_READER_END_OF_STREAM;
++                        continue;
+                 }
+ 
+                 if (m->discrete) {
