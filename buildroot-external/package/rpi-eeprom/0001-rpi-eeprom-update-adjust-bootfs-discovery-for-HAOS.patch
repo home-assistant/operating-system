@@ -8,7 +8,7 @@ Content-Transfer-Encoding: 8bit
 
 When HAOS boots from SD card, we can rely on /mnt/boot being mounted and
 use it for storing the recovery image. If it's not on an SD card, we can
-only use to to store the image if flashrom is used, otherwise the
+only use it to store the image if flashrom is used, otherwise the
 bootloader doesn't pick it up - in that case show an error (e.g. on CM4
 booting from an NVMe).
 
