@@ -1,0 +1,53 @@
+From 5b3c41b3465a98025b6869c4ed14d210b68b7e24 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Jan=20=C4=8Cerm=C3=A1k?= <sairon@sairon.cz>
+Date: Tue, 13 May 2025 17:19:59 +0200
+Subject: [PATCH] rpi-eeprom-update: adjust bootfs discovery for HAOS
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+When HAOS boots from SD card, we can rely on /mnt/boot being mounted and
+use it for storing the recovery image. If it's not on an SD card, we can
+only use it to store the image if flashrom is used, otherwise the
+bootloader doesn't pick it up - in that case show an error (e.g. on CM4
+booting from an NVMe).
+
+Signed-off-by: Jan Čermák <sairon@sairon.cz>
+Upstream: not applicable
+---
+ rpi-eeprom-update | 22 ++++++++--------------
+ 1 file changed, 8 insertions(+), 14 deletions(-)
+
+diff --git a/rpi-eeprom-update b/rpi-eeprom-update
+index b970142..3e9d75f 100755
+--- a/rpi-eeprom-update
++++ b/rpi-eeprom-update
+@@ -725,20 +725,14 @@ findBootFS()
+    # If ${BOOTFS} is not writable OR is not on /dev/mmcblk0 then error because the ROM
+    # can only load recovery.bin from the on-board SD-CARD slot or the EEPROM.
+ 
+-   if blkid | grep -qE "/dev/mmcblk0p1.*LABEL_FATBOOT.*RECOVERY.*TYPE.*vfat"; then
+-      TMP_BOOTFS_MNT="$(mktemp -d)"
+-      mount /dev/mmcblk0p1 "${TMP_BOOTFS_MNT}"
+-      BOOTFS="${TMP_BOOTFS_MNT}"
+-   elif [ -z "$BOOTFS" ]; then
+-      if ! BOOTFS=$(/usr/lib/raspberrypi-sys-mods/get_fw_loc 2> /dev/null); then
+-         for BOOTFS in /boot/firmware /boot; do
+-            if [ -f "${BOOTFS}/config.txt" ]; then
+-               break
+-            elif findmnt --fstab "$BOOTFS" > /dev/null; then
+-               break
+-            fi
+-         done
+-      fi
++   if blkid | grep -qE "/dev/mmcblk0p1.*LABEL_FATBOOT.*hassos-boot.*TYPE.*vfat"; then
++      # use HAOS default bootfs location if booting from SD card
++      BOOTFS="/mnt/boot"
++   elif [ -z "$BOOTFS" ] && [ "${RPI_EEPROM_USE_FLASHROM}" = "1" ]; then
++      # image for flashrom will created in bootfs
++      BOOTFS="/mnt/boot"
++   elif [ -z "$BOOTFS" ]; then
++      die "rpi-eeprom-update is only available when booting from an SD card or if flashrom can be used."
+    fi
+ 
+    # If BOOTFS is not a directory or doesn't contain any .elf files then
