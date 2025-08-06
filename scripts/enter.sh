@@ -7,6 +7,11 @@ CACHE_DIR="${CACHE_DIR:-$HOME/hassos-cache}"
 ARGS="$*"
 COMMAND="${ARGS:-bash}"
 
+if [ "$BUILDER_UID" -eq "0" ] || [ "$BUILDER_GID" == "0" ]; then
+  echo "ERROR: Please run this script as a regular (non-root) user with sudo privileges."
+  exit 1
+fi
+
 sudo mkdir -p "${CACHE_DIR}"
 sudo chown -R "${BUILDER_UID}:${BUILDER_GID}" "${CACHE_DIR}"
 sudo docker build -t hassos:local .
