@@ -8,7 +8,7 @@ ARGS="$*"
 COMMAND="${ARGS:-bash}"
 
 if [ "$BUILDER_UID" -eq "0" ] || [ "$BUILDER_GID" == "0" ]; then
-  echo "ERROR: Please use a non-root with sudo rights for running this script."
+  echo "ERROR: Please run this script as a regular (non-root) user with sudo privileges."
   exit 1
 fi
 
