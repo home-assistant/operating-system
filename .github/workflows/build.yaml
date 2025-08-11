@@ -50,7 +50,7 @@ jobs:
       self_signed_cert: ${{ steps.generate_signing_key.outputs.self_signed_cert }}
     steps:
       - name: Checkout source
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           persist-credentials: false
 
@@ -213,7 +213,7 @@ jobs:
 
     steps:
       - name: Checkout source
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           submodules: true
           persist-credentials: false
@@ -439,7 +439,7 @@ jobs:
 
     steps:
     - name: Checkout source
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
       with:
         persist-credentials: false
 
