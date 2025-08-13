@@ -1,0 +1,918 @@
+From 2ae8aa6b338f98974581ef239c55fc34f6873b6e Mon Sep 17 00:00:00 2001
+From: Valentin David <valentin.david@canonical.com>
+Date: Mon, 10 Mar 2025 10:53:41 +0100
+Subject: [PATCH] Use paths specified from environment variables for /etc
+ configuration files
+
+Some configuration files that need updates are directly under in /etc. To
+update them atomically, we need write access to /etc. For Ubuntu Core this is
+an issue as /etc is not writable. Only a selection of subdirectories can be
+writable. The general solution is symlinks or bind mounts to writable places.
+But for atomic writes in /etc, that does not work. So Ubuntu has had a patch
+for that that did not age well.
+
+Instead we would like to introduce some environment variables for alternate
+paths.
+
+ * SYSTEMD_ETC_HOSTNAME: /etc/hostname
+ * SYSTEMD_ETC_MACHINE_INFO: /etc/machine-info
+ * SYSTEMD_ETC_LOCALTIME: /etc/localtime
+ * SYSTEMD_ETC_LOCALE_CONF: /etc/locale.conf
+ * SYSTEMD_ETC_VCONSOLE_CONF: /etc/vconsole.conf
+ * SYSTEMD_ETC_ADJTIME: /etc/adjtime
+
+While it is for now expected that there is a symlink from the standard, we
+still try to read them from that alternate path. This is important for
+`/etc/localtime`, which is a symlink, so we cannot have an indirect symlink or
+bind mount for it.
+
+Since machine-id is typically written only once and not updated. This commit
+does not cover it. An initrd can properly create it and bind mount it.
+---
+(Backported for v256.x)
+Upstream: https://github.com/systemd/systemd/pull/36656
+Signed-off-by: Jan Čermák <sairon@sairon.cz>
+---
+ docs/ENVIRONMENT.md                       | 25 ++++++++++++
+ src/basic/hostname-util.c                 | 20 +++++++++-
+ src/basic/hostname-util.h                 |  3 ++
+ src/basic/time-util.c                     | 11 +++++-
+ src/basic/time-util.h                     |  1 +
+ src/core/manager.c                        | 14 +++++--
+ src/firstboot/firstboot.c                 | 32 ++++++++-------
+ src/hostname/hostnamed.c                  | 20 +++++-----
+ src/locale/localed-util.c                 | 10 ++---
+ src/shared/env-file-label.c               |  7 ++--
+ src/shared/hostname-setup.c               |  2 +-
+ src/shared/locale-setup.c                 | 28 +++++++++++---
+ src/shared/locale-setup.h                 |  3 ++
+ src/timedate/timedated.c                  | 24 ++++++++----
+ test/units/TEST-30-ONCLOCKCHANGE.sh       | 28 ++++++++++++++
+ test/units/TEST-45-TIMEDATE.sh            | 44 +++++++++++++++++++++
+ test/units/TEST-71-HOSTNAME.sh            | 39 +++++++++++++++++++
+ test/units/TEST-73-LOCALE.sh              | 47 +++++++++++++++++++++++
+ test/units/TEST-74-AUX-UTILS.firstboot.sh | 37 ++++++++++++++++++
+ 19 files changed, 344 insertions(+), 51 deletions(-)
+
+diff --git a/docs/ENVIRONMENT.md b/docs/ENVIRONMENT.md
+index 6081351580..c7b62e0348 100644
+--- a/docs/ENVIRONMENT.md
++++ b/docs/ENVIRONMENT.md
+@@ -295,6 +295,9 @@ All tools:
+   first existing unit listed in the environment variable, and
+   `timedatectl set-ntp off` disables and stops all listed units.
+ 
++* `$SYSTEMD_ETC_ADJTIME` - override the path to the hardware clock settings
++  file. The default is `/etc/adjtime`.
++
+ `systemd-sulogin-shell`:
+ 
+ * `$SYSTEMD_SULOGIN_FORCE=1` — This skips asking for the root password if the
+@@ -721,3 +724,25 @@ Tools using the Varlink protocol (such as `varlinkctl`) or sd-bus (such as
+ * `$SYSTEMD_ADJUST_TERMINAL_TITLE` – Takes a boolean. When false the terminal
+   window title will not be updated for interactive invocation of the mentioned
+   tools.
++
++`systemd-timedated`, `systemd-firstboot`, `systemd`:
++
++* `$SYSTEMD_ETC_LOCALTIME` - override the path to the timezone symlink. The
++  default is `/etc/localtime`. The directory of the path should exist and not
++  be removed.
++
++`systemd-hostnamed`, `systemd-firstboot`:
++
++* `$SYSTEMD_ETC_HOSTNAME` - override the path to local system name
++  configuration file. The default is `/etc/hostname`.
++
++* `$SYSTEMD_ETC_MACHINE_INFO` - override the path to the machine metadata file. The
++  default is `/etc/machine-info`.
++
++`systemd-localed`, `systemd-firstboot`:
++
++* `$SYSTEMD_ETC_LOCALE_CONF` - override the path to the system-wide locale
++  configuration file. The default is `/etc/locale.conf`.
++
++* `$SYSTEMD_ETC_VCONSOLE_CONF` - override the path to the virtual console
++  configuration file. The default is `/etc/vconsole.conf`.
+diff --git a/src/basic/hostname-util.c b/src/basic/hostname-util.c
+index e743033b1e..d31897914f 100644
+--- a/src/basic/hostname-util.c
++++ b/src/basic/hostname-util.c
+@@ -191,13 +191,31 @@ bool is_localhost(const char *hostname) {
+                 endswith_no_case(hostname, ".localhost.localdomain.");
+ }
+ 
++const char* etc_hostname(void) {
++        static const char *cached = NULL;
++
++        if (!cached)
++                cached = secure_getenv("SYSTEMD_ETC_HOSTNAME") ?: "/etc/hostname";
++
++        return cached;
++}
++
++const char* etc_machine_info(void) {
++        static const char *cached = NULL;
++
++        if (!cached)
++                cached = secure_getenv("SYSTEMD_ETC_MACHINE_INFO") ?: "/etc/machine-info";
++
++        return cached;
++}
++
+ int get_pretty_hostname(char **ret) {
+         _cleanup_free_ char *n = NULL;
+         int r;
+ 
+         assert(ret);
+ 
+-        r = parse_env_file(NULL, "/etc/machine-info", "PRETTY_HOSTNAME", &n);
++        r = parse_env_file(NULL, etc_machine_info(), "PRETTY_HOSTNAME", &n);
+         if (r < 0)
+                 return r;
+ 
+diff --git a/src/basic/hostname-util.h b/src/basic/hostname-util.h
+index bcac3d9fb0..d592de376d 100644
+--- a/src/basic/hostname-util.h
++++ b/src/basic/hostname-util.h
+@@ -68,4 +68,7 @@ static inline bool is_dns_proxy_stub_hostname(const char *hostname) {
+         return STRCASE_IN_SET(hostname, "_localdnsproxy", "_localdnsproxy.");
+ }
+ 
++const char* etc_hostname(void);
++const char* etc_machine_info(void);
++
+ int get_pretty_hostname(char **ret);
+diff --git a/src/basic/time-util.c b/src/basic/time-util.c
+index b94f37c31c..35153db563 100644
+--- a/src/basic/time-util.c
++++ b/src/basic/time-util.c
+@@ -1610,7 +1610,7 @@ int get_timezone(char **ret) {
+ 
+         assert(ret);
+ 
+-        r = readlink_malloc("/etc/localtime", &t);
++        r = readlink_malloc(etc_localtime(), &t);
+         if (r == -ENOENT)
+                 /* If the symlink does not exist, assume "UTC", like glibc does */
+                 return strdup_to(ret, "UTC");
+@@ -1626,6 +1626,15 @@ int get_timezone(char **ret) {
+         return strdup_to(ret, e);
+ }
+ 
++const char* etc_localtime(void) {
++        static const char *cached = NULL;
++
++        if (!cached)
++                cached = secure_getenv("SYSTEMD_ETC_LOCALTIME") ?: "/etc/localtime";
++
++        return cached;
++}
++
+ time_t mktime_or_timegm(struct tm *tm, bool utc) {
+         assert(tm);
+ 
+diff --git a/src/basic/time-util.h b/src/basic/time-util.h
+index f273770233..e6fe563603 100644
+--- a/src/basic/time-util.h
++++ b/src/basic/time-util.h
+@@ -176,6 +176,7 @@ bool clock_supported(clockid_t clock);
+ usec_t usec_shift_clock(usec_t, clockid_t from, clockid_t to);
+ 
+ int get_timezone(char **ret);
++const char* etc_localtime(void);
+ 
+ time_t mktime_or_timegm(struct tm *tm, bool utc);
+ struct tm *localtime_or_gmtime_r(const time_t *t, struct tm *tm, bool utc);
+diff --git a/src/core/manager.c b/src/core/manager.c
+index 8313a9edab..6b59dd1f33 100644
+--- a/src/core/manager.c
++++ b/src/core/manager.c
+@@ -416,7 +416,7 @@ static int manager_read_timezone_stat(Manager *m) {
+         assert(m);
+ 
+         /* Read the current stat() data of /etc/localtime so that we detect changes */
+-        if (lstat("/etc/localtime", &st) < 0) {
++        if (lstat(etc_localtime(), &st) < 0) {
+                 log_debug_errno(errno, "Failed to stat /etc/localtime, ignoring: %m");
+                 changed = m->etc_localtime_accessible;
+                 m->etc_localtime_accessible = false;
+@@ -453,14 +453,20 @@ static int manager_setup_timezone_change(Manager *m) {
+          * Note that we create the new event source first here, before releasing the old one. This should optimize
+          * behaviour as this way sd-event can reuse the old watch in case the inode didn't change. */
+ 
+-        r = sd_event_add_inotify(m->event, &new_event, "/etc/localtime",
++        r = sd_event_add_inotify(m->event, &new_event, etc_localtime(),
+                                  IN_ATTRIB|IN_MOVE_SELF|IN_CLOSE_WRITE|IN_DONT_FOLLOW, manager_dispatch_timezone_change, m);
+         if (r == -ENOENT) {
+                 /* If the file doesn't exist yet, subscribe to /etc instead, and wait until it is created either by
+                  * O_CREATE or by rename() */
++                _cleanup_free_ char *localtime_dir = NULL;
+ 
+-                log_debug_errno(r, "/etc/localtime doesn't exist yet, watching /etc instead.");
+-                r = sd_event_add_inotify(m->event, &new_event, "/etc",
++                int dir_r = path_extract_directory(etc_localtime(), &localtime_dir);
++                if (dir_r < 0)
++                        return log_error_errno(dir_r, "Failed to extract directory from path '%s': %m", etc_localtime());
++
++                log_debug_errno(r, "%s doesn't exist yet, watching %s instead.", etc_localtime(), localtime_dir);
++
++                r = sd_event_add_inotify(m->event, &new_event, localtime_dir,
+                                          IN_CREATE|IN_MOVED_TO|IN_ONLYDIR, manager_dispatch_timezone_change, m);
+         }
+         if (r < 0)
+diff --git a/src/firstboot/firstboot.c b/src/firstboot/firstboot.c
+index 0dbdfc6638..80a7a74825 100644
+--- a/src/firstboot/firstboot.c
++++ b/src/firstboot/firstboot.c
+@@ -28,6 +28,7 @@
+ #include "hostname-util.h"
+ #include "kbd-util.h"
+ #include "libcrypt-util.h"
++#include "locale-setup.h"
+ #include "locale-util.h"
+ #include "lock-util.h"
+ #include "main-func.h"
+@@ -409,7 +410,7 @@ static int process_locale(int rfd) {
+ 
+         assert(rfd >= 0);
+ 
+-        pfd = chase_and_open_parent_at(rfd, "/etc/locale.conf",
++        pfd = chase_and_open_parent_at(rfd, etc_locale_conf(),
+                                        CHASE_AT_RESOLVE_IN_ROOT|CHASE_MKDIR_0755|CHASE_WARN|CHASE_NOFOLLOW,
+                                        &f);
+         if (pfd < 0)
+@@ -426,7 +427,7 @@ static int process_locale(int rfd) {
+                 return log_error_errno(r, "Failed to check if directory file descriptor is root: %m");
+ 
+         if (arg_copy_locale && r == 0) {
+-                r = copy_file_atomic_at(AT_FDCWD, "/etc/locale.conf", pfd, f, 0644, COPY_REFLINK);
++                r = copy_file_atomic_at(AT_FDCWD, etc_locale_conf(), pfd, f, 0644, COPY_REFLINK);
+                 if (r != -ENOENT) {
+                         if (r < 0)
+                                 return log_error_errno(r, "Failed to copy host's /etc/locale.conf: %m");
+@@ -514,7 +515,7 @@ static int process_keymap(int rfd) {
+ 
+         assert(rfd >= 0);
+ 
+-        pfd = chase_and_open_parent_at(rfd, "/etc/vconsole.conf",
++        pfd = chase_and_open_parent_at(rfd, etc_vconsole_conf(),
+                                        CHASE_AT_RESOLVE_IN_ROOT|CHASE_MKDIR_0755|CHASE_WARN|CHASE_NOFOLLOW,
+                                        &f);
+         if (pfd < 0)
+@@ -531,7 +532,7 @@ static int process_keymap(int rfd) {
+                 return log_error_errno(r, "Failed to check if directory file descriptor is root: %m");
+ 
+         if (arg_copy_keymap && r == 0) {
+-                r = copy_file_atomic_at(AT_FDCWD, "/etc/vconsole.conf", pfd, f, 0644, COPY_REFLINK);
++                r = copy_file_atomic_at(AT_FDCWD, etc_vconsole_conf(), pfd, f, 0644, COPY_REFLINK);
+                 if (r != -ENOENT) {
+                         if (r < 0)
+                                 return log_error_errno(r, "Failed to copy host's /etc/vconsole.conf: %m");
+@@ -602,13 +603,13 @@ static int prompt_timezone(int rfd) {
+ 
+ static int process_timezone(int rfd) {
+         _cleanup_close_ int pfd = -EBADF;
+-        _cleanup_free_ char *f = NULL;
++        _cleanup_free_ char *f = NULL, *relpath = NULL;
+         const char *e;
+         int r;
+ 
+         assert(rfd >= 0);
+ 
+-        pfd = chase_and_open_parent_at(rfd, "/etc/localtime",
++        pfd = chase_and_open_parent_at(rfd, etc_localtime(),
+                                        CHASE_AT_RESOLVE_IN_ROOT|CHASE_MKDIR_0755|CHASE_WARN|CHASE_NOFOLLOW,
+                                        &f);
+         if (pfd < 0)
+@@ -627,7 +628,7 @@ static int process_timezone(int rfd) {
+         if (arg_copy_timezone && r == 0) {
+                 _cleanup_free_ char *s = NULL;
+ 
+-                r = readlink_malloc("/etc/localtime", &s);
++                r = readlink_malloc(etc_localtime(), &s);
+                 if (r != -ENOENT) {
+                         if (r < 0)
+                                 return log_error_errno(r, "Failed to read host's /etc/localtime: %m");
+@@ -648,9 +649,12 @@ static int process_timezone(int rfd) {
+         if (isempty(arg_timezone))
+                 return 0;
+ 
+-        e = strjoina("../usr/share/zoneinfo/", arg_timezone);
++        e = strjoina("/usr/share/zoneinfo/", arg_timezone);
++        r = path_make_relative_parent(etc_localtime(), e, &relpath);
++        if (r < 0)
++                return r;
+ 
+-        r = symlinkat_atomic_full(e, pfd, f, /* make_relative= */ false);
++        r = symlinkat_atomic_full(relpath, pfd, f, /* make_relative= */ false);
+         if (r < 0)
+                 return log_error_errno(r, "Failed to create /etc/localtime symlink: %m");
+ 
+@@ -707,7 +711,7 @@ static int process_hostname(int rfd) {
+ 
+         assert(rfd >= 0);
+ 
+-        pfd = chase_and_open_parent_at(rfd, "/etc/hostname",
++        pfd = chase_and_open_parent_at(rfd, etc_hostname(),
+                                        CHASE_AT_RESOLVE_IN_ROOT|CHASE_MKDIR_0755|CHASE_WARN,
+                                        &f);
+         if (pfd < 0)
+@@ -1235,12 +1239,12 @@ static int process_reset(int rfd) {
+                 return 0;
+ 
+         FOREACH_STRING(p,
+-                       "/etc/locale.conf",
+-                       "/etc/vconsole.conf",
+-                       "/etc/hostname",
++                       etc_locale_conf(),
++                       etc_vconsole_conf(),
++                       etc_hostname(),
+                        "/etc/machine-id",
+                        "/etc/kernel/cmdline",
+-                       "/etc/localtime") {
++                       etc_localtime()) {
+                 r = reset_one(rfd, p);
+                 if (r < 0)
+                         return r;
+diff --git a/src/hostname/hostnamed.c b/src/hostname/hostnamed.c
+index af66b48a3d..f13af53f6f 100644
+--- a/src/hostname/hostnamed.c
++++ b/src/hostname/hostnamed.c
+@@ -112,7 +112,7 @@ static void context_read_etc_hostname(Context *c) {
+ 
+         assert(c);
+ 
+-        if (stat("/etc/hostname", &current_stat) >= 0 &&
++        if (stat(etc_hostname(), &current_stat) >= 0 &&
+             stat_inode_unmodified(&c->etc_hostname_stat, &current_stat))
+                 return;
+ 
+@@ -131,7 +131,7 @@ static void context_read_machine_info(Context *c) {
+ 
+         assert(c);
+ 
+-        if (stat("/etc/machine-info", &current_stat) >= 0 &&
++        if (stat(etc_machine_info(), &current_stat) >= 0 &&
+             stat_inode_unmodified(&c->etc_machine_info_stat, &current_stat))
+                 return;
+ 
+@@ -144,7 +144,7 @@ static void context_read_machine_info(Context *c) {
+                       (UINT64_C(1) << PROP_HARDWARE_VENDOR) |
+                       (UINT64_C(1) << PROP_HARDWARE_MODEL));
+ 
+-        r = parse_env_file(NULL, "/etc/machine-info",
++        r = parse_env_file(NULL, etc_machine_info(),
+                            "PRETTY_HOSTNAME", &c->data[PROP_PRETTY_HOSTNAME],
+                            "ICON_NAME", &c->data[PROP_ICON_NAME],
+                            "CHASSIS", &c->data[PROP_CHASSIS],
+@@ -615,20 +615,20 @@ static int context_write_data_static_hostname(Context *c) {
+         s = &c->etc_hostname_stat;
+ 
+         if (isempty(c->data[PROP_STATIC_HOSTNAME])) {
+-                if (unlink("/etc/hostname") < 0 && errno != ENOENT)
++                if (unlink(etc_hostname()) < 0 && errno != ENOENT)
+                         return -errno;
+ 
+                 TAKE_PTR(s);
+                 return 0;
+         }
+ 
+-        r = write_string_file("/etc/hostname", c->data[PROP_STATIC_HOSTNAME],
++        r = write_string_file(etc_hostname(), c->data[PROP_STATIC_HOSTNAME],
+                               WRITE_STRING_FILE_CREATE | WRITE_STRING_FILE_TRUNCATE);
+         if (r < 0)
+                 return r;
+ 
+         /* Cannot use WRITE_STRING_FILE_SYNC as it tries to sync parent dir */
+-        fd = open("/etc/hostname", O_RDONLY|O_CLOEXEC);
++        fd = open(etc_hostname(), O_RDONLY|O_CLOEXEC);
+         if (fsync(fd) < 0)
+                 return -errno;
+ 
+@@ -654,7 +654,7 @@ static int context_write_data_machine_info(Context *c) {
+          * already, even if we can't make it hit the disk. */
+         s = &c->etc_machine_info_stat;
+ 
+-        r = load_env_file(NULL, "/etc/machine-info", &l);
++        r = load_env_file(NULL, etc_machine_info(), &l);
+         if (r < 0 && r != -ENOENT)
+                 return r;
+ 
+@@ -667,14 +667,14 @@ static int context_write_data_machine_info(Context *c) {
+         }
+ 
+         if (strv_isempty(l)) {
+-                if (unlink("/etc/machine-info") < 0 && errno != ENOENT)
++                if (unlink(etc_machine_info()) < 0 && errno != ENOENT)
+                         return -errno;
+ 
+                 TAKE_PTR(s);
+                 return 0;
+         }
+ 
+-        r = write_env_file_label(AT_FDCWD, "/etc/machine-info", NULL, l);
++        r = write_env_file_label(AT_FDCWD, etc_machine_info(), NULL, l);
+         if (r < 0)
+                 return r;
+ 
+@@ -1420,7 +1420,7 @@ static int build_describe_response(Context *c, bool privileged, JsonVariant **re
+         (void) vsock_get_local_cid(&local_cid);
+ 
+         (void) load_os_release_pairs(/* root= */ NULL, &os_release_pairs);
+-        (void) load_env_file_pairs(/* f=*/ NULL, "/etc/machine-info", &machine_info_pairs);
++        (void) load_env_file_pairs(/* f=*/ NULL, etc_machine_info(), &machine_info_pairs);
+ 
+         r = json_build(&v, JSON_BUILD_OBJECT(
+                                        JSON_BUILD_PAIR("Hostname", JSON_BUILD_STRING(hn)),
+diff --git a/src/locale/localed-util.c b/src/locale/localed-util.c
+index 56996596fe..6e2a43aa56 100644
+--- a/src/locale/localed-util.c
++++ b/src/locale/localed-util.c
+@@ -350,7 +350,7 @@ int vconsole_read_data(Context *c, sd_bus_message *m) {
+                 c->vc_cache = sd_bus_message_ref(m);
+         }
+ 
+-        fd = RET_NERRNO(open("/etc/vconsole.conf", O_CLOEXEC | O_PATH));
++        fd = RET_NERRNO(open(etc_vconsole_conf(), O_CLOEXEC | O_PATH));
+         if (fd == -ENOENT) {
+                 c->vc_stat = (struct stat) {};
+                 vc_context_clear(&c->vc);
+@@ -372,7 +372,7 @@ int vconsole_read_data(Context *c, sd_bus_message *m) {
+         x11_context_clear(&c->x11_from_vc);
+ 
+         r = parse_env_file_fd(
+-                        fd, "/etc/vconsole.conf",
++                        fd, etc_vconsole_conf(),
+                         "KEYMAP",        &c->vc.keymap,
+                         "KEYMAP_TOGGLE", &c->vc.toggle,
+                         "XKBLAYOUT",     &c->x11_from_vc.layout,
+@@ -496,7 +496,7 @@ int vconsole_write_data(Context *c) {
+ 
+         xc = context_get_x11_context(c);
+ 
+-        r = load_env_file(NULL, "/etc/vconsole.conf", &l);
++        r = load_env_file(NULL, etc_vconsole_conf(), &l);
+         if (r < 0 && r != -ENOENT)
+                 return r;
+ 
+@@ -525,7 +525,7 @@ int vconsole_write_data(Context *c) {
+                 return r;
+ 
+         if (strv_isempty(l)) {
+-                if (unlink("/etc/vconsole.conf") < 0)
++                if (unlink(etc_vconsole_conf()) < 0)
+                         return errno == ENOENT ? 0 : -errno;
+ 
+                 c->vc_stat = (struct stat) {};
+@@ -536,7 +536,7 @@ int vconsole_write_data(Context *c) {
+         if (r < 0)
+                 return r;
+ 
+-        if (stat("/etc/vconsole.conf", &c->vc_stat) < 0)
++        if (stat(etc_vconsole_conf(), &c->vc_stat) < 0)
+                 return -errno;
+ 
+         return 0;
+diff --git a/src/shared/env-file-label.c b/src/shared/env-file-label.c
+index 5917b6377f..c0c9668e9f 100644
+--- a/src/shared/env-file-label.c
++++ b/src/shared/env-file-label.c
+@@ -2,8 +2,9 @@
+ 
+ #include <sys/stat.h>
+ 
+-#include "env-file-label.h"
+ #include "env-file.h"
++#include "env-file-label.h"
++#include "locale-setup.h"
+ #include "selinux-util.h"
+ 
+ int write_env_file_label(int dir_fd, const char *fname, char **headers, char **l) {
+@@ -23,11 +24,11 @@ int write_env_file_label(int dir_fd, const char *fname, char **headers, char **l
+ int write_vconsole_conf_label(char **l) {
+         int r;
+ 
+-        r = mac_selinux_create_file_prepare("/etc/vconsole.conf", S_IFREG);
++        r = mac_selinux_create_file_prepare(etc_vconsole_conf(), S_IFREG);
+         if (r < 0)
+                 return r;
+ 
+-        r = write_vconsole_conf(AT_FDCWD, "/etc/vconsole.conf", l);
++        r = write_vconsole_conf(AT_FDCWD, etc_vconsole_conf(), l);
+ 
+         mac_selinux_create_file_clear();
+ 
+diff --git a/src/shared/hostname-setup.c b/src/shared/hostname-setup.c
+index 6cfd4b54bf..88455f5c1e 100644
+--- a/src/shared/hostname-setup.c
++++ b/src/shared/hostname-setup.c
+@@ -130,7 +130,7 @@ int read_etc_hostname(const char *path, char **ret) {
+         assert(ret);
+ 
+         if (!path)
+-                path = "/etc/hostname";
++                path = etc_hostname();
+ 
+         f = fopen(path, "re");
+         if (!f)
+diff --git a/src/shared/locale-setup.c b/src/shared/locale-setup.c
+index 4e7f486a23..a4351003a9 100644
+--- a/src/shared/locale-setup.c
++++ b/src/shared/locale-setup.c
+@@ -64,7 +64,7 @@ static int locale_context_load_conf(LocaleContext *c, LocaleLoadFlag flag) {
+         if (!FLAGS_SET(flag, LOCALE_LOAD_LOCALE_CONF))
+                 return 0;
+ 
+-        fd = RET_NERRNO(open("/etc/locale.conf", O_CLOEXEC | O_PATH));
++        fd = RET_NERRNO(open(etc_locale_conf(), O_CLOEXEC | O_PATH));
+         if (fd == -ENOENT)
+                 return 0;
+         if (fd < 0)
+@@ -80,7 +80,7 @@ static int locale_context_load_conf(LocaleContext *c, LocaleLoadFlag flag) {
+         c->st = st;
+         locale_context_clear(c);
+ 
+-        r = parse_env_file_fd(fd, "/etc/locale.conf",
++        r = parse_env_file_fd(fd, etc_locale_conf(),
+                               "LANG",              &c->locale[VARIABLE_LANG],
+                               "LANGUAGE",          &c->locale[VARIABLE_LANGUAGE],
+                               "LC_CTYPE",          &c->locale[VARIABLE_LC_CTYPE],
+@@ -196,7 +196,7 @@ int locale_context_save(LocaleContext *c, char ***ret_set, char ***ret_unset) {
+                 return r;
+ 
+         if (strv_isempty(set)) {
+-                if (unlink("/etc/locale.conf") < 0)
++                if (unlink(etc_locale_conf()) < 0)
+                         return errno == ENOENT ? 0 : -errno;
+ 
+                 c->st = (struct stat) {};
+@@ -208,11 +208,11 @@ int locale_context_save(LocaleContext *c, char ***ret_set, char ***ret_unset) {
+                 return 0;
+         }
+ 
+-        r = write_env_file_label(AT_FDCWD, "/etc/locale.conf", NULL, set);
++        r = write_env_file_label(AT_FDCWD, etc_locale_conf(), NULL, set);
+         if (r < 0)
+                 return r;
+ 
+-        if (stat("/etc/locale.conf", &c->st) < 0)
++        if (stat(etc_locale_conf(), &c->st) < 0)
+                 return -errno;
+ 
+         if (ret_set)
+@@ -292,3 +292,21 @@ int locale_setup(char ***environment) {
+ 
+         return 0;
+ }
++
++const char* etc_locale_conf(void) {
++        static const char *cached = NULL;
++
++        if (!cached)
++                cached = secure_getenv("SYSTEMD_ETC_LOCALE_CONF") ?: "/etc/locale.conf";
++
++        return cached;
++}
++
++const char* etc_vconsole_conf(void) {
++        static const char *cached = NULL;
++
++        if (!cached)
++                cached = secure_getenv("SYSTEMD_ETC_VCONSOLE_CONF") ?: "/etc/vconsole.conf";
++
++        return cached;
++}
+diff --git a/src/shared/locale-setup.h b/src/shared/locale-setup.h
+index 537acc72df..3f1cd6b88c 100644
+--- a/src/shared/locale-setup.h
++++ b/src/shared/locale-setup.h
+@@ -27,3 +27,6 @@ void locale_context_take(LocaleContext *c, char *l[_VARIABLE_LC_MAX]);
+ bool locale_context_equal(const LocaleContext *c, char *l[_VARIABLE_LC_MAX]);
+ 
+ int locale_setup(char ***environment);
++
++const char* etc_locale_conf(void);
++const char* etc_vconsole_conf(void);
+diff --git a/src/timedate/timedated.c b/src/timedate/timedated.c
+index e3b4367ec0..e0d38d3ad2 100644
+--- a/src/timedate/timedated.c
++++ b/src/timedate/timedated.c
+@@ -306,22 +306,32 @@ static int context_write_data_timezone(Context *c) {
+ 
+                 if (access("/usr/share/zoneinfo/UTC", F_OK) < 0) {
+ 
+-                        if (unlink("/etc/localtime") < 0 && errno != ENOENT)
++                        if (unlink(etc_localtime()) < 0 && errno != ENOENT)
+                                 return -errno;
+ 
+                         return 0;
+                 }
+ 
+-                source = "../usr/share/zoneinfo/UTC";
++                source = "/usr/share/zoneinfo/UTC";
+         } else {
+-                p = path_join("../usr/share/zoneinfo", c->zone);
++                p = path_join("/usr/share/zoneinfo", c->zone);
+                 if (!p)
+                         return -ENOMEM;
+ 
+                 source = p;
+         }
+ 
+-        return symlink_atomic(source, "/etc/localtime");
++        return symlinkat_atomic_full(source, AT_FDCWD, etc_localtime(),
++                                     !secure_getenv("SYSTEMD_ETC_LOCALTIME"));
++}
++
++static const char* etc_adjtime(void) {
++        static const char *cached = NULL;
++
++        if (!cached)
++                cached = secure_getenv("SYSTEMD_ETC_ADJTIME") ?: "/etc/adjtime";
++
++        return cached;
+ }
+ 
+ static int context_write_data_local_rtc(Context *c) {
+@@ -330,7 +340,7 @@ static int context_write_data_local_rtc(Context *c) {
+ 
+         assert(c);
+ 
+-        r = read_full_file("/etc/adjtime", &s, NULL);
++        r = read_full_file(etc_adjtime(), &s, NULL);
+         if (r < 0) {
+                 if (r != -ENOENT)
+                         return r;
+@@ -382,7 +392,7 @@ static int context_write_data_local_rtc(Context *c) {
+                 *(char*) mempcpy(stpcpy(stpcpy(mempcpy(w, s, a), prepend), c->local_rtc ? "LOCAL" : "UTC"), e, b) = 0;
+ 
+                 if (streq(w, NULL_ADJTIME_UTC)) {
+-                        if (unlink("/etc/adjtime") < 0)
++                        if (unlink(etc_adjtime()) < 0)
+                                 if (errno != ENOENT)
+                                         return -errno;
+ 
+@@ -394,7 +404,7 @@ static int context_write_data_local_rtc(Context *c) {
+         if (r < 0)
+                 return r;
+ 
+-        return write_string_file_atomic_label("/etc/adjtime", w);
++        return write_string_file_atomic_label(etc_adjtime(), w);
+ }
+ 
+ static int context_update_ntp_status(Context *c, sd_bus *bus, sd_bus_message *m) {
+diff --git a/test/units/TEST-30-ONCLOCKCHANGE.sh b/test/units/TEST-30-ONCLOCKCHANGE.sh
+index 83698b8da6..11f30b75d3 100755
+--- a/test/units/TEST-30-ONCLOCKCHANGE.sh
++++ b/test/units/TEST-30-ONCLOCKCHANGE.sh
+@@ -24,6 +24,34 @@ timedatectl set-time 2018-1-1
+ 
+ while test ! -f /tmp/clock-changed ; do sleep .5 ; done
+ 
++mkdir -p /etc/alternate-path
++rm -f /etc/alternate-path/localtime
++
++cat <<EOF >/run/systemd/system.conf
++[Manager]
++ManagerEnvironment=SYSTEMD_ETC_LOCALTIME=/etc/alternate-path/localtime
++EOF
++mkdir -p /run/systemd/system/systemd-timedated.service.d
++cat >/run/systemd/system/systemd-timedated.service.d/override.conf <<EOF
++[Service]
++Environment=SYSTEMD_ETC_LOCALTIME=/run/alternate-path/mylocaltime
++Environment=SYSTEMD_ETC_ADJTIME=/run/alternate-path/myadjtime
++EOF
++systemctl daemon-reload
++
++systemd-run --on-timezone-change touch /tmp/timezone-changed-alternate-path-1
++timedatectl set-timezone Europe/Berlin
++
++while test ! -f /tmp/timezone-changed-alternate-path-1 ; do sleep .5 ; done
++
++systemd-run --on-timezone-change touch /tmp/timezone-changed-alternate-path-2
++timedatectl set-timezone Europe/Kyiv
++
++while test ! -f /tmp/timezone-changed-alternate-path-2 ; do sleep .5 ; done
++
++rm /run/systemd/system.conf /run/systemd/system/systemd-timedated.service.d/override.conf
++systemctl daemon-reload
++
+ systemd-analyze log-level info
+ 
+ touch /testok
+diff --git a/test/units/TEST-45-TIMEDATE.sh b/test/units/TEST-45-TIMEDATE.sh
+index 420ebefd01..c1fa30e206 100755
+--- a/test/units/TEST-45-TIMEDATE.sh
++++ b/test/units/TEST-45-TIMEDATE.sh
+@@ -403,6 +403,50 @@ EOF
+     rm -f /run/systemd/network/ntp99.*
+ }
+ 
++teardown_timedated_alternate_paths() {
++    set +eu
++
++    rm -rf /run/systemd/system/systemd-timedated.service.d
++    systemctl daemon-reload
++    systemctl restart systemd-timedated
++}
++
++testcase_timedated_alternate_paths() {
++    trap teardown_timedated_alternate_paths RETURN
++
++    mkdir -p /run/alternate-path
++    mkdir -p /run/systemd/system/systemd-timedated.service.d
++    cat >/run/systemd/system/systemd-timedated.service.d/override.conf <<EOF
++[Service]
++Environment=SYSTEMD_ETC_LOCALTIME=/run/alternate-path/mylocaltime
++Environment=SYSTEMD_ETC_ADJTIME=/run/alternate-path/myadjtime
++EOF
++    systemctl daemon-reload
++    systemctl restart systemd-timedated
++
++    assert_in "Local time:" "$(timedatectl --no-pager)"
++
++    assert_eq "$(timedatectl --no-pager set-timezone Europe/Kyiv 2>&1)" ""
++    assert_eq "$(readlink /run/alternate-path/mylocaltime | sed 's#^.*zoneinfo/##')" "Europe/Kyiv"
++    assert_in "Time zone: Europe/Kyiv \(EES*T, \+0[0-9]00\)" "$(timedatectl)"
++
++    # Restart to force using get_timezine
++    systemctl restart systemd-timedated
++    assert_in "Time zone: Europe/Kyiv \(EES*T, \+0[0-9]00\)" "$(timedatectl)"
++
++    assert_in "RTC in local TZ: no" "$(timedatectl --no-pager)"
++    assert_rc 0 timedatectl set-local-rtc 1
++    assert_in "RTC in local TZ: yes" "$(timedatectl --no-pager)"
++    assert_eq "$(cat /run/alternate-path/myadjtime)" "0.0 0 0
++0
++LOCAL"
++    assert_rc 0 timedatectl set-local-rtc 0
++    if [[ -e /run/alternate-path/myadjtime ]]; then
++        echo "/run/alternate-path/myadjtime still exists" >&2
++        exit 1
++    fi
++}
++
+ run_testcases
+ 
+ touch /testok
+diff --git a/test/units/TEST-71-HOSTNAME.sh b/test/units/TEST-71-HOSTNAME.sh
+index dc3f587ea3..add24c6804 100755
+--- a/test/units/TEST-71-HOSTNAME.sh
++++ b/test/units/TEST-71-HOSTNAME.sh
+@@ -237,6 +237,45 @@ test_varlink() {
+     cmp "$A" "$B"
+ }
+ 
++teardown_hostnamed_alternate_paths() {
++    set +eu
++
++    rm -rf /run/systemd/system/systemd-hostnamed.service.d
++    systemctl daemon-reload
++    systemctl restart systemd-hostnamed
++    if [[ -f /etc/hostname ]]; then
++        orig=$(cat /etc/hostname)
++        if [[ -n "${orig}" ]]; then
++            hostnamectl hostname "${orig}"
++        fi
++    fi
++}
++
++testcase_hostnamed_alternate_paths() {
++    trap teardown_hostnamed_alternate_paths RETURN
++
++    mkdir -p /run/alternate-path
++
++    mkdir -p /run/systemd/system/systemd-hostnamed.service.d
++    cat >/run/systemd/system/systemd-hostnamed.service.d/override.conf <<EOF
++[Service]
++Environment=SYSTEMD_ETC_HOSTNAME=/run/alternate-path/myhostname
++Environment=SYSTEMD_ETC_MACHINE_INFO=/run/alternate-path/mymachine-info
++EOF
++    systemctl daemon-reload
++    systemctl restart systemd-hostnamed
++
++    assert_rc 0 hostnamectl set-hostname heisenberg
++    assert_rc 0 hostnamectl chassis watch
++
++    output=$(hostnamectl)
++    assert_in "Static hostname: heisenberg" "$output"
++    assert_in "Chassis: watch" "$output"
++    assert_in "heisenberg" "$(cat /run/alternate-path/myhostname)"
++    assert_in "CHASSIS=watch" "$(cat /run/alternate-path/mymachine-info)"
++}
++
++
+ run_testcases
+ 
+ touch /testok
+diff --git a/test/units/TEST-73-LOCALE.sh b/test/units/TEST-73-LOCALE.sh
+index 0617bd0d51..fbc6f7dad4 100755
+--- a/test/units/TEST-73-LOCALE.sh
++++ b/test/units/TEST-73-LOCALE.sh
+@@ -652,6 +652,53 @@ testcase_locale_gen_leading_space() {
+     localectl set-locale en_US.UTF-8
+ }
+ 
++teardown_localed_alternate_paths() {
++    set +eu
++
++    rm -rf /run/systemd/system/systemd-localed.service.d
++    systemctl daemon-reload
++    systemctl restart systemd-localed
++}
++
++testcase_localed_alternate_paths() {
++    trap teardown_localed_alternate_paths RETURN
++
++    mkdir -p /run/alternate-path
++
++    mkdir -p /run/systemd/system/systemd-localed.service.d
++    cat >/run/systemd/system/systemd-localed.service.d/override.conf <<EOF
++[Service]
++Environment=SYSTEMD_ETC_LOCALE_CONF=/run/alternate-path/mylocale.conf
++Environment=SYSTEMD_ETC_VCONSOLE_CONF=/run/alternate-path/myvconsole.conf
++EOF
++    systemctl daemon-reload
++    systemctl restart systemd-localed
++
++    if localectl list-locales | grep "^de_DE.UTF-8$"; then
++        assert_rc 0 localectl set-locale "LANG=de_DE.UTF-8" "LC_CTYPE=C"
++    else
++        skip_locale=1
++    fi
++
++    if localectl list-keymaps | grep -F "^no$"; then
++        assert_rc 0 localectl set-keymap "no"
++    else
++        skip_keymap=1
++    fi
++
++    output=$(localectl)
++
++    if [[ -z "${skip_locale-}" ]]; then
++        assert_in "System Locale: LANG=de_DE.UTF-8" "$output"
++        assert_in "LANG=de_DE.UTF-8" "$(cat /run/alternate-path/mylocale.conf)"
++    fi
++
++    if [[ -z "${skip_keymap-}" ]]; then
++        assert_in "VC Keymap: no" "$output"
++        assert_in "KEYMAP=no" "$(cat /run/alternate-path/myvconsole.conf)"
++    fi
++}
++
+ # Make sure the content of kbd-model-map is the one that the tests expect
+ # regardless of the version installed on the distro where the testsuite is
+ # running on.
+diff --git a/test/units/TEST-74-AUX-UTILS.firstboot.sh b/test/units/TEST-74-AUX-UTILS.firstboot.sh
+index d9e5f59426..bb15e52896 100755
+--- a/test/units/TEST-74-AUX-UTILS.firstboot.sh
++++ b/test/units/TEST-74-AUX-UTILS.firstboot.sh
+@@ -18,6 +18,10 @@ at_exit() {
+         rm -fr "$ROOT"
+     fi
+ 
++    if [[ -d /etc/otherpath ]]; then
++        rm -rf /etc/otherpath
++    fi
++
+     restore_locale
+ }
+ 
+@@ -282,3 +286,36 @@ rm -fv "$ROOT/etc/passwd" "$ROOT/etc/shadow"
+ (! systemd-firstboot --root="$ROOT" --root-shell=/bin/nonexistentshell)
+ (! systemd-firstboot --root="$ROOT" --machine-id=invalidmachineid)
+ (! systemd-firstboot --root="$ROOT" --timezone=Foo/Bar)
++
++mkdir -p "${ROOT}/etc/otherpath"
++mkdir -p /etc/otherpath
++echo "KEYMAP=us" >/etc/otherpath/vconsole.conf
++echo "LANG=en_US.UTF-8" >/etc/otherpath/locale.conf
++ln -s "../$(readlink /etc/localtime)" /etc/otherpath/localtime
++
++SYSTEMD_ETC_LOCALE_CONF=/etc/otherpath/locale.conf \
++SYSTEMD_ETC_VCONSOLE_CONF=/etc/otherpath/vconsole.conf \
++SYSTEMD_ETC_LOCALTIME=/etc/otherpath/localtime \
++SYSTEMD_ETC_HOSTNAME=/etc/otherpath/hostname \
++systemd-firstboot --root="$ROOT" --copy-locale --copy-keymap --copy-timezone --hostname="weirdpaths"
++
++diff "${ROOT}/etc/otherpath/locale.conf" "/etc/otherpath/locale.conf"
++diff "${ROOT}/etc/otherpath/vconsole.conf" "/etc/otherpath/vconsole.conf"
++grep -q "weirdpaths" "${ROOT}/etc/otherpath/hostname"
++
++[[ "$(readlink /etc/otherpath/localtime)" = "$(readlink "${ROOT}/etc/otherpath/localtime")" ]]
++
++SYSTEMD_ETC_LOCALE_CONF=/etc/otherpath/locale.conf \
++SYSTEMD_ETC_VCONSOLE_CONF=/etc/otherpath/vconsole.conf \
++SYSTEMD_ETC_LOCALTIME=/etc/otherpath/localtime \
++SYSTEMD_ETC_HOSTNAME=/etc/otherpath/hostname \
++systemd-firstboot --root="$ROOT" --force \
++                  --hostname="weirdpaths2" \
++                  --locale=no_NO.UTF-8 \
++                  --keymap=no \
++                  --timezone=Europe/Oslo
++
++grep -q "LANG=no_NO.UTF-8" "${ROOT}/etc/otherpath/locale.conf"
++grep -q "KEYMAP=no" "${ROOT}/etc/otherpath/vconsole.conf"
++grep -q "weirdpaths2" "${ROOT}/etc/otherpath/hostname"
++[[ "$(readlink "${ROOT}/etc/otherpath/localtime")" = "../../usr/share/zoneinfo/Europe/Oslo" ]]

@@ -45,3 +45,8 @@ function fix_rootfs() {
 function install_tini_docker() {
     ln -fs /usr/bin/tini "${TARGET_DIR}/usr/bin/docker-init"
 }
+
+function setup_localtime() {
+    # localtime is writable through SYSTEMD_ETC_LOCALTIME
+    ln -fs /mnt/overlay/etc/localtime "${TARGET_DIR}/etc/localtime"
+}
