@@ -1,0 +1,33 @@
+From 31aede5422f40ed2f42b7238016c140f7dc1a3fe Mon Sep 17 00:00:00 2001
+From: Jonathan Bell <jonathan@raspberrypi.com>
+Date: Fri, 4 Jul 2025 14:15:19 +0100
+Subject: [PATCH] Fixup! usb: dwc2: limit "maximum packet size" for split-IN
+ transfers
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Control Setup phase transfers needs an 8 byte maxpacket override, or
+drivers doing a GET with a small buffer as a split transaction would
+cause broken transfers.
+
+Signed-off-by: Jonathan Bell <jonathan@raspberrypi.com>
+(cherry picked from commit 3829e1b98f3d2750b8b38abfdb4a142a0d8e4590)
+Upstream: https://github.com/raspberrypi/linux/pull/6936
+Signed-off-by: Jan Čermák <sairon@sairon.cz>
+---
+ drivers/usb/dwc2/hcd.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/usb/dwc2/hcd.c b/drivers/usb/dwc2/hcd.c
+index 23b1dde7a07dd..12242649f5650 100644
+--- a/drivers/usb/dwc2/hcd.c
++++ b/drivers/usb/dwc2/hcd.c
+@@ -2350,6 +2350,7 @@ static void dwc2_hc_init_xfer(struct dwc2_hsotg *hsotg,
+ 			else
+ 				chan->xfer_buf = urb->setup_packet;
+ 			chan->xfer_len = 8;
++			chan->max_packet = 8;
+ 			break;
+ 
+ 		case DWC2_CONTROL_DATA:
