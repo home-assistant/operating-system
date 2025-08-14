@@ -432,7 +432,7 @@ jobs:
 
   bump_version:
     name: Bump ${{ needs.prepare.outputs.channel }} channel version
-    if: ${{ github.repository == 'home-assistant/operating-system' && needs.prepare.outputs.publish_build == 'true' }}
+    if: ${{ github.repository == 'home-assistant/operating-system' && needs.prepare.outputs.publish_build == 'true' && (needs.prepare.outputs.channel != 'dev' || github.ref == 'refs/heads/dev') }}
     environment: ${{ needs.prepare.outputs.channel }}
     needs: [ build, prepare ]
     runs-on: ubuntu-22.04
