@@ -77,7 +77,7 @@ jobs:
           PUBLISH_BUILD: ${{ steps.check_publish.outputs.publish_build }}
         run: |
           version_dev="dev$(date --utc +'%Y%m%d')"
-          if [ "${{ env.PUBLISH_BUILD }}" != "true" ]; then
+          if [ "${{ env.PUBLISH_BUILD }}" != "true" ] || [ "${{ github.ref }}" != "refs/heads/dev" ]; then
             version_dev="dev$(date +%s)"
           fi
           echo "Development version \"${version_dev}\""
