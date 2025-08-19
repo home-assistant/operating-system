@@ -18,7 +18,7 @@ if [ ! -f buildroot/Makefile ]; then
   git submodule update --init
 fi
 
-if command -v losetup && [ ! -e /dev/loop0 ]; then
+if command -v losetup >/dev/null && [ ! -e /dev/loop0 ]; then
   # Make sure loop devices are present before starting the container
   sudo losetup -f > /dev/null
 fi
