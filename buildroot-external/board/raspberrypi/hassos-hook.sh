@@ -19,7 +19,10 @@ function hassos_pre_image() {
     else
         cp "${BOARD_DIR}/../cmdline.txt" "${BOOT_DATA}/cmdline.txt"
     fi
-    cp "${BINARIES_DIR}"/*.dtbo "${BOOT_DATA}/overlays/" 2>/dev/null || true
+    if ls "${BINARIES_DIR}"/*.dtbo >/dev/null 2>&1; then
+        mkdir -p "${BOOT_DATA}/overlays"
+        cp "${BINARIES_DIR}"/*.dtbo "${BOOT_DATA}/overlays/"
+    fi
 
     # Enable 64bit support
     if [[ "${BOARD_ID}" =~ "64" ]]; then
