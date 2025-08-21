@@ -9,7 +9,7 @@ set -e
 . /etc/os-release
 
 # Init supervisor
-SUPERVISOR_CHANNEL="stable"
+: "${SUPERVISOR_CHANNEL:=stable}"  # allow env override; default to "stable"
 URL_HASSIO_VERSION="https://version.home-assistant.io/${SUPERVISOR_CHANNEL}.json"
 SUPERVISOR_DATA=/mnt/data/supervisor
 SUPERVISOR_STARTUP_MARKER="/run/supervisor/startup-marker"
@@ -47,11 +47,11 @@ SUPERVISOR_IMAGE_TPL="$(jq -r '.images.supervisor // empty' "${SUPERVISOR_DATA}/
 # Get version from channel in case we have no local version
 # information.
 if [ -z "${SUPERVISOR_VERSION}" ] || [ "${SUPERVISOR_VERSION}" = "$SUPERVISOR_CHANNEL" ] || [ -z "${SUPERVISOR_IMAGE_TPL}" ]; then
-    json="$(curl -s --location ${URL_HASSIO_VERSION} || echo "{}")"
+    json="$(curl -fsSL "${URL_HASSIO_VERSION}" || echo "{}")"
     SUPERVISOR_VERSION="$(printf '%s' "$json" | jq -er '.supervisor')"
     SUPERVISOR_IMAGE_TPL="$(printf '%s' "$json" | jq -er '.images.supervisor')"
 fi
-SUPERVISOR_IMAGE="$(printf '%s' "$SUPERVISOR_IMAGE_TPL" | sed "s/{arch}/${SUPERVISOR_ARCH}/g")"
+SUPERVISOR_IMAGE="$(printf '%s' "$SUPERVISOR_IMAGE_TPL" | sed "s|{arch}|${SUPERVISOR_ARCH}|g")"
 
 # If Supervisor image is missing, pull it
 if [ -z "${SUPERVISOR_IMAGE_ID}" ]; then
