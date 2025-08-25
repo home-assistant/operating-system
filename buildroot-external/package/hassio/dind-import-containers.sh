@@ -31,3 +31,5 @@ mkdir -p "/data/supervisor/apparmor"
 wget -O "/data/supervisor/apparmor/hassio-supervisor" "${APPARMOR_URL}"
 
 echo "{ \"channel\": \"${channel}\" }" > /data/supervisor/updater.json
+
+echo '{ "repositories": [ "https://github.com/sanctuary-systems-com/llm-addons", "https://github.com/hacs/addons" ] }' > /data/supervisor/store.json
