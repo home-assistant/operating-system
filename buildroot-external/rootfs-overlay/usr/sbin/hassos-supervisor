@@ -43,7 +43,7 @@ touch ${SUPERVISOR_STARTUP_MARKER}
 # Using updater information instead of config. If the config version is
 # broken, this creates a way back (e.g., bad release).
 SUPERVISOR_VERSION=$(jq -r --arg chan "$SUPERVISOR_CHANNEL" '.supervisor // $chan' "${SUPERVISOR_DATA}/updater.json" || echo "$SUPERVISOR_CHANNEL")
-SUPERVISOR_IMAGE_TPL="$(jq -r '.images.supervisor // empty' "${SUPERVISOR_DATA}/updater.json" 2>/dev/null || true)"
+SUPERVISOR_IMAGE_TPL="$(jq -r '.image.supervisor // empty' "${SUPERVISOR_DATA}/updater.json" 2>/dev/null || true)"
 # Get version from channel in case we have no local version
 # information.
 if [ -z "${SUPERVISOR_VERSION}" ] || [ "${SUPERVISOR_VERSION}" = "$SUPERVISOR_CHANNEL" ] || [ -z "${SUPERVISOR_IMAGE_TPL}" ]; then
