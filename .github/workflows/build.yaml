@@ -16,6 +16,11 @@ on:
         required: true
         type: boolean
         default: true
+      run_tests:
+        description: 'Run tests after build'
+        required: true
+        type: boolean
+        default: true
       hassio_channel:
         description: 'Release channel to use (default: stable for GH releases, dev otherwise)'
         type: choice
@@ -152,12 +157,21 @@ jobs:
             }
 
             const boardFilter = "${{ github.event.inputs.boards }}"
+            const runTests = "${{ github.event.inputs.run_tests }}" === "true"
+
             if (boardFilter == "") {
               console.log("Run full build for all boards")
               return { "board": boards }
             } else {
               console.log("Run partial build")
               const boardSet = new Set(boardFilter.split(","))
+
+              // if tests are enabled, we need to ensure the OVA board is included
+              if (runTests && !boardSet.has("ova")) {
+                console.log("Adding OVA board for integration tests")
+                boardSet.add("ova")
+              }
+
               const buildBoards = boards.filter(b => boardSet.has(b.id))
               return { "board": buildBoards }
             }
@@ -338,6 +352,18 @@ jobs:
       - name: Generate build summary
         run: |
           echo "# ${{ matrix.board.id }} build summary" >> $GITHUB_STEP_SUMMARY
+          echo "## Built-in OS components" >> $GITHUB_STEP_SUMMARY
+          echo "Release channel: ${{ inputs.hassio_channel }} (${{ needs.prepare.outputs.hassio_channel_option }})" >> $GITHUB_STEP_SUMMARY
+          echo "| Container | Version |" >> $GITHUB_STEP_SUMMARY
+          echo "|:-|:-|" >> $GITHUB_STEP_SUMMARY
+          supervisor_version=$(jq -r ".supervisor" output/build/hassio-*/version.json)
+          landingpage_version=$(curl -fsSL https://api.github.com/repos/home-assistant/landingpage/releases/latest | jq -r '.tag_name')
+          echo "| supervisor | [${supervisor_version}](https://github.com/home-assistant/supervisor/releases/tag/${supervisor_version}) |" >> $GITHUB_STEP_SUMMARY
+          echo "| landingpage | [${landingpage_version}](https://github.com/home-assistant/landingpage/releases/tag/${landingpage_version}) |" >> $GITHUB_STEP_SUMMARY
+          for plugin in dns audio cli multicast observer; do
+            version=$(jq -r ".${plugin}" output/build/hassio-*/version.json)
+            echo "| plugin-${plugin} | [${version}](https://github.com/home-assistant/plugin-${plugin}/releases/tag/${version}) |" >> $GITHUB_STEP_SUMMARY
+          done
           echo "## Artifacts" >> $GITHUB_STEP_SUMMARY
           echo "| File | Size (bytes) | Size (formatted) |" >> $GITHUB_STEP_SUMMARY
           echo "|:-|:-|:-|" >> $GITHUB_STEP_SUMMARY
@@ -410,6 +436,7 @@ jobs:
 
   test:
     name: Test OS image
+    if: ${{ github.event_name == 'release' || inputs.run_tests == true }}
     needs: [ build, prepare ]
     uses: ./.github/workflows/test.yaml
     with:
