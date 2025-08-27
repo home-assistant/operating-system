@@ -9,14 +9,12 @@ set -e
 . /etc/os-release
 
 # Init supervisor
-: "${SUPERVISOR_CHANNEL:=stable}"  # allow env override; default to "stable"
-URL_HASSIO_VERSION="https://version.home-assistant.io/${SUPERVISOR_CHANNEL}.json"
 SUPERVISOR_DATA=/mnt/data/supervisor
 SUPERVISOR_STARTUP_MARKER="/run/supervisor/startup-marker"
 SUPERVISOR_STARTSCRIPT_VERSION="/mnt/data/.hassos-supervisor-version"
-SUPERVISOR_IMAGE_BASE="${SUPERVISOR_ARCH}-hassio-supervisor"
+SUPERVISOR_IMAGE="ghcr.io/home-assistant/${SUPERVISOR_ARCH}-hassio-supervisor"
 
-SUPERVISOR_IMAGE_ID="$(docker images --no-trunc --format '{{.Repository}} {{.Tag}} {{.ID}}' | awk -v s="$SUPERVISOR_IMAGE_BASE" '($1==s || $1 ~ ("/" s "$")) && $2=="latest"{print $3; exit}'  || echo "")"
+SUPERVISOR_IMAGE_ID=$(docker images --no-trunc --filter "reference=${SUPERVISOR_IMAGE}:latest" --format "{{.ID}}" || echo "")
 SUPERVISOR_CONTAINER_ID=$(docker inspect --format='{{.Image}}' hassio_supervisor || echo "")
 
 # Check if previous run left the startup-marker in place. If so, we assume the
@@ -28,7 +26,7 @@ if [ -f "${SUPERVISOR_STARTUP_MARKER}" ]; then
     SUPERVISOR_CONTAINER_ID=""
 
     # Make sure we delete all supervisor images
-    SUPERVISOR_IMAGE_IDS="$(docker images --no-trunc --format '{{.Repository}} {{.ID}}' | awk -v s="$SUPERVISOR_IMAGE_BASE" '($1==s || $1 ~ ("/" s "$")){print $2}' | sort -u || echo "")"
+    SUPERVISOR_IMAGE_IDS=$(docker images --no-trunc --filter "reference=${SUPERVISOR_IMAGE}" --format "{{.ID}}" | sort | uniq || echo "")
     # Intended splitting of SUPERVISOR_IMAGE_IDS
     # Busybox sh doesn't support arrays
     # shellcheck disable=SC2086
@@ -39,32 +37,29 @@ fi
 mkdir -p "$(dirname ${SUPERVISOR_STARTUP_MARKER})"
 touch ${SUPERVISOR_STARTUP_MARKER}
 
-# Get the latest from update information
-# Using updater information instead of config. If the config version is
-# broken, this creates a way back (e.g., bad release).
-SUPERVISOR_VERSION=$(jq -r --arg chan "$SUPERVISOR_CHANNEL" '.supervisor // $chan' "${SUPERVISOR_DATA}/updater.json" || echo "$SUPERVISOR_CHANNEL")
-SUPERVISOR_IMAGE_TPL="$(jq -r '.image.supervisor // empty' "${SUPERVISOR_DATA}/updater.json" 2>/dev/null || true)"
-# Get version from channel in case we have no local version
-# information.
-if [ -z "${SUPERVISOR_VERSION}" ] || [ "${SUPERVISOR_VERSION}" = "$SUPERVISOR_CHANNEL" ] || [ -z "${SUPERVISOR_IMAGE_TPL}" ]; then
-    json="$(curl -fsSL "${URL_HASSIO_VERSION}" || echo "{}")"
-    SUPERVISOR_VERSION="$(printf '%s' "$json" | jq -er '.supervisor')"
-    SUPERVISOR_IMAGE_TPL="$(printf '%s' "$json" | jq -er '.images.supervisor')"
-fi
-SUPERVISOR_IMAGE="$(printf '%s' "$SUPERVISOR_IMAGE_TPL" | sed "s|{arch}|${SUPERVISOR_ARCH}|g")"
-
 # If Supervisor image is missing, pull it
 if [ -z "${SUPERVISOR_IMAGE_ID}" ]; then
+    # Get the latest from update information
+    # Using updater information instead of config. If the config version is
+    # broken, this creates a way back (e.g., bad release).
+    SUPERVISOR_VERSION=$(jq -r '.supervisor // "stable"' "${SUPERVISOR_DATA}/updater.json" || echo "stable")
+
+    # Get version from stable channel in case we have no local version
+    # information.
+    if [ "${SUPERVISOR_VERSION}" = "stable" ]; then
+        SUPERVISOR_VERSION="$(curl -s --location https://version.home-assistant.io/stable.json | jq -e -r '.supervisor')"
+    fi
 
     echo "[WARNING] Supervisor image missing, downloading a fresh one: ${SUPERVISOR_VERSION}"
+
     # Pull in the Supervisor
     if docker pull "${SUPERVISOR_IMAGE}:${SUPERVISOR_VERSION}"; then
         # Tag as latest
         docker tag "${SUPERVISOR_IMAGE}:${SUPERVISOR_VERSION}" "${SUPERVISOR_IMAGE}:latest"
     else
         # Pull failed, updater info might be corrupted or the release might have
-        # been removed from the container registry, delete the updater info
-        # to start from scratch on next try.
+	# been removed from the container registry, delete the updater info
+	# to start from scratch on next try.
         echo "[ERROR] Supervisor download failed."
         rm -f "${SUPERVISOR_DATA}/updater.json"
         exit 1
