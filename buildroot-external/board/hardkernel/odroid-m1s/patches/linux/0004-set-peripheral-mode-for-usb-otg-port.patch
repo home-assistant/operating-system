@@ -1,0 +1,25 @@
+From 6e5ac47bd70658098b9e31b63484e6bf061c6183 Mon Sep 17 00:00:00 2001
+From: Tim Lunn <tim@feathertop.org>
+Date: Mon, 29 Jan 2024 15:04:59 +1100
+Subject: [PATCH] set peripheral mode for usb otg port
+
+---
+ arch/arm64/boot/dts/rockchip/rk3566-odroid-m1s.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm64/boot/dts/rockchip/rk3566-odroid-m1s.dts b/arch/arm64/boot/dts/rockchip/rk3566-odroid-m1s.dts
+index a5d9216b544b..2dda6038930e 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3566-odroid-m1s.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3566-odroid-m1s.dts
+@@ -642,7 +642,7 @@ &usb_host0_ohci {
+ };
+ 
+ &usb_host0_xhci {
+-	dr_mode = "otg";
++	dr_mode = "peripheral";
+ 	status = "okay";
+ };
+ 
+-- 
+2.40.1
+
