@@ -11,6 +11,7 @@ set -e
 # Init supervisor
 SUPERVISOR_DATA=/mnt/data/supervisor
 SUPERVISOR_STARTUP_MARKER="/run/supervisor/startup-marker"
+SUPERVISOR_CIDFILE="${SUPERVISOR_DATA}/hassio_supervisor.cid"
 SUPERVISOR_STARTSCRIPT_VERSION="/mnt/data/.hassos-supervisor-version"
 SUPERVISOR_IMAGE="ghcr.io/home-assistant/${SUPERVISOR_ARCH}-hassio-supervisor"
 
@@ -58,8 +59,8 @@ if [ -z "${SUPERVISOR_IMAGE_ID}" ]; then
         docker tag "${SUPERVISOR_IMAGE}:${SUPERVISOR_VERSION}" "${SUPERVISOR_IMAGE}:latest"
     else
         # Pull failed, updater info might be corrupted or the release might have
-	# been removed from the container registry, delete the updater info
-	# to start from scratch on next try.
+        # been removed from the container registry, delete the updater info
+        # to start from scratch on next try.
         echo "[ERROR] Supervisor download failed."
         rm -f "${SUPERVISOR_DATA}/updater.json"
         exit 1
@@ -87,12 +88,18 @@ fi
 
 # If Supervisor container is missing, create it
 if [ -z "${SUPERVISOR_CONTAINER_ID}" ]; then
+    # We need to remove the CID file here, Docker will refuse to start if the
+    # file is present. Single instance is ensured by other code paths.
+    [ -f "${SUPERVISOR_CIDFILE}" ] && rm -f "${SUPERVISOR_CIDFILE}"
+
     echo "[INFO] Creating a new Supervisor container..."
     # shellcheck disable=SC2086
     docker container create \
         --name hassio_supervisor \
         --privileged --security-opt apparmor="hassio-supervisor" \
         --oom-score-adj=-300 \
+        --cidfile "${SUPERVISOR_CIDFILE}" \
+        --mount type=bind,src="${SUPERVISOR_CIDFILE}",dst=/run/cid,readonly \
         -v /run/docker.sock:/run/docker.sock:rw \
         -v /run/containerd/containerd.sock:/run/containerd/containerd.sock:rw \
         -v /run/systemd/journal/socket:/run/systemd/journal/socket:rw \
