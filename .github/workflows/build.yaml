@@ -147,7 +147,7 @@ jobs:
           fi
 
       - name: Create build matrix
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         id: generate_matrix
         with:
           script: |
