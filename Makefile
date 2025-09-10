@@ -16,6 +16,12 @@ endif
 
 ################################################################################
 
+SILENT := $(findstring s,$(word 1, $(MAKEFLAGS)))
+
+define print
+	$(if $(SILENT),,$(info $1))
+endef
+
 COLOR_STEP := $(shell tput smso 2>/dev/null)
 COLOR_WARN := $(shell (tput setab 3; tput setaf 0) 2>/dev/null)
 TERM_RESET := $(shell tput sgr0 2>/dev/null)
@@ -28,7 +34,7 @@ TERM_RESET := $(shell tput sgr0 2>/dev/null)
 
 # fallback target when target undefined here is given
 .DEFAULT:
-	@echo "$(COLOR_STEP)=== Falling back to Buildroot target '$@' ===$(TERM_RESET)"
+	$(call print,$(COLOR_STEP)=== Falling back to Buildroot target '$@' ===$(TERM_RESET))
 	$(MAKE) -C $(BUILDROOT) O=$(O) BR2_EXTERNAL=$(BUILDROOT_EXTERNAL) "$@"
 
 # default target when no target is given - must be first in Makefile
@@ -42,11 +48,11 @@ $(TARGETS_CONFIG): %-config:
 		echo ""; \
 		bash -c 'read -t 10 -p "Waiting 10s, press enter to continue or Ctrl-C to abort..."' || true; \
 	fi
-	@echo "$(COLOR_STEP)=== Using $*_defconfig ===$(TERM_RESET)"
+	$(call print,$(COLOR_STEP)=== Using $*_defconfig ===$(TERM_RESET))
 	$(MAKE) -C $(BUILDROOT) O=$(O) BR2_EXTERNAL=$(BUILDROOT_EXTERNAL) "$*_defconfig"
 
 $(TARGETS): %: %-config
-	@echo "$(COLOR_STEP)=== Building $@ ===$(TERM_RESET)"
+	$(call print,$(COLOR_STEP)=== Building $@ ===$(TERM_RESET))
 	$(MAKE) -C $(BUILDROOT) O=$(O) BR2_EXTERNAL=$(BUILDROOT_EXTERNAL)
 
 buildroot-help:
