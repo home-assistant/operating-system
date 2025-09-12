@@ -27,7 +27,7 @@ setup_localtime
     echo "VERSION_ID=$(hassos_version)"
     echo "PRETTY_NAME=\"${HASSOS_NAME} $(hassos_version)\""
     echo "CPE_NAME=cpe:2.3:o:home-assistant:${HASSOS_ID}:$(hassos_version):*:${DEPLOYMENT}:*:*:*:${BOARD_ID}:*"
-    echo "HOME_URL=https://hass.io/"
+    echo "HOME_URL=https://www.home-assistant.io/"
     echo "VARIANT=\"${HASSOS_NAME} ${BOARD_NAME}\""
     echo "VARIANT_ID=${BOARD_ID}"
     echo "SUPERVISOR_MACHINE=${SUPERVISOR_MACHINE}"
