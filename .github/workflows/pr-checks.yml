@@ -15,17 +15,17 @@ jobs:
           python3-flake8
 
     - name: Check out code
-      uses: actions/checkout@v5
+      uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
       with:
         submodules: true
 
     - name: Check Dockerfile
-      uses: brpaz/hadolint-action@v1.5.0
+      uses: brpaz/hadolint-action@c27bd9edc1e95eed30474db8f295ff5807ebca14 # v1.5.0
       with:
         dockerfile: Dockerfile
 
     - name: Check shell scripts
-      uses: ludeeus/action-shellcheck@2.0.0
+      uses: ludeeus/action-shellcheck@00cae500b08a931fb5698e11e79bfbd38e612a38 # 2.0.0
       with:
         ignore_paths: buildroot
 
