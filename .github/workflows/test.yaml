@@ -32,7 +32,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout source
-        uses: actions/checkout@v5
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
           persist-credentials: false
 
@@ -42,7 +42,7 @@ jobs:
           sudo apt install -y qemu-system-x86 ovmf
 
       - name: Setup Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c # v6.0.0
         with:
           python-version: 3.12
 
@@ -57,7 +57,7 @@ jobs:
 
       - name: Get OS image artifact
         if: ${{ inputs.use-artifact }}
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5.0.0
         with:
           name: haos_ova-${{ inputs.version }}.qcow2.xz
 
@@ -77,7 +77,7 @@ jobs:
           ./tests/run_tests.sh --durations=0 --durations-min=5.0
 
       - name: Archive logs
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         if: always()
         with:
           name: logs
@@ -85,7 +85,7 @@ jobs:
             tests/lg_logs/**
 
       - name: Archive JUnit reports
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         if: always()
         with:
           name: junit_reports
@@ -93,7 +93,7 @@ jobs:
             tests/junit_reports/*.xml
 
       - name: Publish test report
-        uses: mikepenz/action-junit-report@v5
+        uses: mikepenz/action-junit-report@3585e9575db828022551b4231f165eb59a0e74e3 # v5.6.2
         if: always()
         with:
           report_paths: 'tests/junit_reports/*.xml'
