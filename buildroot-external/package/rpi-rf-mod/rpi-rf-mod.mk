@@ -10,12 +10,12 @@
 # https://codeload.github.com/jens-maus/RaspberryMatic/tar.gz/COMMIT
 #
 # Copyright (c) 2018-2023 Jens Maus <mail@jens-maus.de>
-# https://github.com/jens-maus/RaspberryMatic/tree/master/buildroot-external/package/rpi-rf-mod
+# https://github.com/OpenCCU/OpenCCU/tree/master/buildroot-external/package/rpi-rf-mod
 #
 ################################################################################
 
 RPI_RF_MOD_VERSION = 0ee62f7a87d26e990fb0e03b00befb505a7e44fd
-RPI_RF_MOD_SITE = $(call github,jens-maus,RaspberryMatic,$(RPI_RF_MOD_VERSION))
+RPI_RF_MOD_SITE = $(call github,OpenCCU,OpenCCU,$(RPI_RF_MOD_VERSION))
 RPI_RF_MOD_LICENSE = Apache-2.0
 RPI_RF_MOD_LICENSE_FILES = LICENSE
 RPI_RF_MOD_DEPENDENCIES = host-dtc
