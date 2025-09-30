@@ -16,14 +16,10 @@ Home Assistant Operating System uses Docker as its container engine. By default 
 
 ## Supported hardware
 
-- Nabu Casa
-- Raspberry Pi
-- Hardkernel ODROID
-- Asus Tinker Board
-- Generic x86-64 (e.g. Intel NUC)
-- Virtual appliances
+The list of supported hardware is defined by [ADR-0015](https://github.com/home-assistant/architecture/blob/master/adr/0015-home-assistant-os.md).
+Every new hardware addition must meet at least requirements defined in [ADR-0017](https://github.com/home-assistant/architecture/blob/master/adr/0017-hardware-screening-os.md) and pass through an architecture design proposal.
 
-See the full list and specific models [here](./Documentation/boards/README.md)
+For documentation explaining details of the individual supported boards, see [Board support](https://developers.home-assistant.io/docs/operating-system/boards/overview) section of the Home Assistant Developer Docs.
 
 ## Getting Started
 
