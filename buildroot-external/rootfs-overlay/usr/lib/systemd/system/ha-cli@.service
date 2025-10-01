@@ -15,6 +15,9 @@ Before=getty.target
 Conflicts=rescue.service
 Before=rescue.service
 
+# Same value as RestartMaxDelaySec to avoid marking the service as failed
+StartLimitIntervalSec=3s
+
 [Service]
 # the VT is cleared by TTYVTDisallocate
 # The '-o' option value tells agetty to replace 'login' arguments with an
@@ -23,7 +26,9 @@ Before=rescue.service
 ExecStart=/usr/sbin/hassos-cli
 Type=idle
 Restart=always
-RestartSec=0
+RestartSec=100ms
+RestartMaxDelaySec=3s
+RestartSteps=3
 UtmpIdentifier=%I
 TTYPath=/dev/%I
 TTYReset=yes
