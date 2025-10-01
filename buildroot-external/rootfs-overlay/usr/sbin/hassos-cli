@@ -3,15 +3,40 @@
 # Run logging cli
 # ==============================================================================
 
-echo "Waiting for the Home Assistant CLI to be ready..."
+run_shell() { exec /bin/ash -l; }
+interrupt() { echo " cancelled"; systemctl reset-failed "ha-cli@*"; run_shell; }
+emergency_shell() {
+    printf "\n\n[WARNING] Home Assistant CLI is not starting or was interrupted.\n"
+    echo ""
+    echo "This happens when start of all services takes longer than expected, or because"
+    echo "of slow internet connection. Emergency console has been started, you can use"
+    echo "for example the following commands for troubleshooting:"
+    echo ""
+    echo " * 'docker ps -a' - e.g. to check if 'hassio_supervisor' container is running"
+    echo " * 'journalctl -e' - to investigate latest system logs"
+    echo " * 'exit' or Ctrl+D - to exit the emergency console and retry HA CLI startup"
+    echo ""
+    run_shell
+}
+
+trap interrupt INT
+
+printf "Waiting for the Home Assistant CLI to be ready..."
 
 i=0
 while [ ! "$(docker ps -q -f name=hassio_cli)" ]; do
     sleep 1
+
+    if [ $((i % 4)) = 0 ]; then
+        printf "\010\010\010   \010\010\010"
+    else
+        printf "."
+    fi
+
     i=$((i+1))
-    if [ $i = 60 ]; then
-        echo "[WARN] Home Assistant CLI not starting! Jumping into emergency console..."
-        exec /bin/ash -l
+
+    if [ $i = 180 ]; then
+        emergency_shell
     fi
 done
 
@@ -22,16 +47,20 @@ docker container exec \
 case $? in
   10)
     # Jump to root login shell (login command)
-    exec /bin/ash -l
+    run_shell
+    ;;
+  130)
+    # 130 is CLI termination with Ctrl+C (SIGINT)
+    printf "\nHome Assistant CLI has been interrupted.\n"
+    systemctl reset-failed "ha-cli@*"
     ;;
   143)
     # 143 graceful termination (SIGTERM). Most likely a proper shutdown.
     # Just sleep for a while until actual systemd shutdown gets invoked.
-    echo ""
-    echo "Home Assistant CLI has been terminated."
+    printf "\nHome Assistant CLI has been terminated.\n"
     sleep 30
     ;;
   *)
-    echo "HA CLI failed with error code: $?"
+    printf "\nHA CLI failed with error code: %s\n" "$?"
     ;;
 esac
