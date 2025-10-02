@@ -20,7 +20,7 @@ jobs:
         submodules: true
 
     - name: Check Dockerfile
-      uses: brpaz/hadolint-action@c27bd9edc1e95eed30474db8f295ff5807ebca14 # v1.5.0
+      uses: hadolint/hadolint-action@2332a7b74a6de0dda2e2221d575162eba76ba5e5 # v3.3.0
       with:
         dockerfile: Dockerfile
 
