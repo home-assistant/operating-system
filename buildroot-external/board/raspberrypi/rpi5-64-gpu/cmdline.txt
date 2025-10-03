@@ -1,0 +1,1 @@
+zram.enabled=1 zram.num_devices=3 rootwait cgroup_enable=memory fsck.repair=yes console=tty0 root=PARTUUID=8d3d53e3-6d49-4c38-8349-aff6859e82fd ro rauc.slot=A
