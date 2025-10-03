@@ -7,6 +7,11 @@
 #dtparam=i2s=on
 #dtparam=spi=on
 
+# use external antenna
+dtparam=ant2
+# use PCIe gen 3
+#dtparam=pciex1_gen=3
+
 # Enable audio (loads snd_bcm2835)
 dtparam=audio=on
 

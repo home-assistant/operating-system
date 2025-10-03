@@ -1,0 +1,63 @@
+From c1d421d7c501c77e8c04bdfa141a55e639822c03 Mon Sep 17 00:00:00 2001
+From: Yang Bo <bo.yang@smail.nju.edu.cn>
+Date: Wed, 28 May 2025 11:18:19 +0800
+Subject: [PATCH] Add amdgpu support for arm SoC
+
+Change-Id: Ic95c8514271d246dd668631810e8dee210f7f1b4
+Signed-off-by: Yanghaku <bo.yang@smail.nju.edu.cn>
+---
+ drivers/gpu/drm/ttm/ttm_bo_util.c | 14 +-------------
+ drivers/gpu/drm/ttm/ttm_module.c  |  5 +++++
+ 2 files changed, 6 insertions(+), 13 deletions(-)
+
+diff --git a/drivers/gpu/drm/ttm/ttm_bo_util.c b/drivers/gpu/drm/ttm/ttm_bo_util.c
+index 0b3f4267130c..e0e55cb9edd2 100644
+--- a/drivers/gpu/drm/ttm/ttm_bo_util.c
++++ b/drivers/gpu/drm/ttm/ttm_bo_util.c
+@@ -343,8 +343,6 @@ static int ttm_bo_kmap_ttm(struct ttm_buffer_object *bo,
+ 		.no_wait_gpu = false
+ 	};
+ 	struct ttm_tt *ttm = bo->ttm;
+-	struct ttm_resource_manager *man =
+-			ttm_manager_type(bo->bdev, bo->resource->mem_type);
+ 	pgprot_t prot;
+ 	int ret;
+ 
+@@ -354,17 +352,7 @@ static int ttm_bo_kmap_ttm(struct ttm_buffer_object *bo,
+ 	if (ret)
+ 		return ret;
+ 
+-	if (num_pages == 1 && ttm->caching == ttm_cached &&
+-	    !(man->use_tt && (ttm->page_flags & TTM_TT_FLAG_DECRYPTED))) {
+-		/*
+-		 * We're mapping a single page, and the desired
+-		 * page protection is consistent with the bo.
+-		 */
+-
+-		map->bo_kmap_type = ttm_bo_map_kmap;
+-		map->page = ttm->pages[start_page];
+-		map->virtual = kmap(map->page);
+-	} else {
++	{
+ 		/*
+ 		 * We need to use vmap to get the desired page protection
+ 		 * or to make the buffer object look contiguous.
+diff --git a/drivers/gpu/drm/ttm/ttm_module.c b/drivers/gpu/drm/ttm/ttm_module.c
+index b3fffe7b5062..9f3e425626b5 100644
+--- a/drivers/gpu/drm/ttm/ttm_module.c
++++ b/drivers/gpu/drm/ttm/ttm_module.c
+@@ -63,7 +63,12 @@ pgprot_t ttm_prot_from_caching(enum ttm_caching caching, pgprot_t tmp)
+ {
+ 	/* Cached mappings need no adjustment */
+ 	if (caching == ttm_cached)
++	{
++#ifdef CONFIG_ARM64
++		return pgprot_dmacoherent(tmp);
++#endif
+ 		return tmp;
++	}
+ 
+ #if defined(__i386__) || defined(__x86_64__)
+ 	if (caching == ttm_write_combined)
+-- 
+2.49.0
