@@ -37,7 +37,7 @@ endef
 HASSIO_INSTALL_IMAGES = YES
 
 define HASSIO_INSTALL_IMAGES_CMDS
-	$(BR2_EXTERNAL_HASSOS_PATH)/package/hassio/create-data-partition.sh "$(@D)" "$(BINARIES_DIR)" "$(HASSIO_VERSION_CHANNEL)"
+	$(BR2_EXTERNAL_HASSOS_PATH)/package/hassio/create-data-partition.sh "$(@D)" "$(BINARIES_DIR)" "$(HASSIO_VERSION_CHANNEL)" "$(DOCKER_ENGINE_VERSION)"
 endef
 
 $(eval $(generic-package))
