@@ -39,6 +39,10 @@ function fix_rootfs() {
         find "${TARGET_DIR}/share/locale" -name "grub.mo" -delete
         find "${TARGET_DIR}/share/locale" -type d -empty -delete
     fi
+
+    # Remove unnecessary microcodes in /lib/firmware
+    rm -rf "${TARGET_DIR}/lib/firmware/intel-ucode"
+    rm -rf "${TARGET_DIR}/lib/firmware/amd-ucode"
 }
 
 
