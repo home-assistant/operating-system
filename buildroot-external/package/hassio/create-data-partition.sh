@@ -4,6 +4,7 @@ set -e
 build_dir=$1
 dst_dir=$2
 channel=$3
+docker_version=$4
 
 data_img="${dst_dir}/data.ext4"
 
@@ -17,13 +18,12 @@ mkdir -p "${build_dir}/data/"
 sudo mount -o loop,discard "${data_img}" "${build_dir}/data/"
 
 # Use official Docker in Docker images
-# Ideally we use the same version as Buildroot is using in case the
-# overlayfs2 storage format changes
+# We use the same version as Buildroot is using to ensure best compatibility
 container=$(docker run --privileged -e DOCKER_TLS_CERTDIR="" \
 	-v "${build_dir}/data/":/data \
 	-v "${build_dir}/data/docker/":/var/lib/docker \
 	-v "${build_dir}":/build \
-	-d docker:28.0-dind --storage-driver overlay2)
+	-d "docker:${docker_version}-dind" --storage-driver overlay2)
 
 docker exec "${container}" sh /build/dind-import-containers.sh "${channel}"
 
