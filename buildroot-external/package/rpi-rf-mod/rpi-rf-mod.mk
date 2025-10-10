@@ -14,7 +14,7 @@
 #
 ################################################################################
 
-RPI_RF_MOD_VERSION = 0ee62f7a87d26e990fb0e03b00befb505a7e44fd
+RPI_RF_MOD_VERSION = e1404d6b2400589a1956d7429ad16227c8db6771
 RPI_RF_MOD_SITE = $(call github,OpenCCU,OpenCCU,$(RPI_RF_MOD_VERSION))
 RPI_RF_MOD_LICENSE = Apache-2.0
 RPI_RF_MOD_LICENSE_FILES = LICENSE
