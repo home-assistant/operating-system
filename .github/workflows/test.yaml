@@ -93,7 +93,7 @@ jobs:
             tests/junit_reports/*.xml
 
       - name: Publish test report
-        uses: mikepenz/action-junit-report@3585e9575db828022551b4231f165eb59a0e74e3 # v5.6.2
+        uses: mikepenz/action-junit-report@5b7ee5a21e8674b695313d769f3cbdfd5d4d53a4 # v6.0.0
         if: always()
         with:
           report_paths: 'tests/junit_reports/*.xml'
