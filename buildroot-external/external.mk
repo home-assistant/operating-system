@@ -13,6 +13,7 @@ linux-check-dotconfig: linux-check-configuration-done
 
 # if cpu microcode is required we embed it into the kernel build
 ifeq ($(or $(BR2_PACKAGE_INTEL_MICROCODE),$(BR2_PACKAGE_LINUX_FIRMWARE_AMD_UCODE)),y)
+ifneq ($(BR2_PACKAGE_INTEL_MICROCODE)$(BR2_PACKAGE_LINUX_FIRMWARE_AMD_UCODE),)
 
 UCODE_FRAG := $(BINARIES_DIR)/linux-ucode.fragment
 
