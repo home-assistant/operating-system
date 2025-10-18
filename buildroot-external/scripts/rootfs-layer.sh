@@ -40,7 +40,7 @@ function fix_rootfs() {
         find "${TARGET_DIR}/share/locale" -type d -empty -delete
     fi
 
-    # Remove unnecessary microcodes in /lib/firmware
+    # Remove cpu microcodes from /lib/firmware because they are embedded in the kernel
     rm -rf "${TARGET_DIR}/lib/firmware/intel-ucode"
     rm -rf "${TARGET_DIR}/lib/firmware/amd-ucode"
 }
