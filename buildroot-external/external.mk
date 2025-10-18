@@ -12,7 +12,6 @@ linux-check-dotconfig: linux-check-configuration-done
 		$(shell echo $(BR2_LINUX_KERNEL_CUSTOM_CONFIG_FILE) $(BR2_LINUX_KERNEL_CONFIG_FRAGMENT_FILES))
 
 # if cpu microcode is required we embed it into the kernel build
-ifeq ($(or $(BR2_PACKAGE_INTEL_MICROCODE),$(BR2_PACKAGE_LINUX_FIRMWARE_AMD_UCODE)),y)
 ifneq ($(BR2_PACKAGE_INTEL_MICROCODE)$(BR2_PACKAGE_LINUX_FIRMWARE_AMD_UCODE),)
 
 UCODE_FRAG := $(BINARIES_DIR)/linux-ucode.fragment
@@ -31,6 +30,5 @@ define GEN_UCODE_FRAGMENT
 endef
 
 LINUX_PRE_PATCH_HOOKS += GEN_UCODE_FRAGMENT
-LINUX_KCONFIG_FRAGMENT_FILES += $(UCODE_FRAG)
 LINUX_KCONFIG_FRAGMENT_FILES += $(UCODE_FRAG)
 endif
