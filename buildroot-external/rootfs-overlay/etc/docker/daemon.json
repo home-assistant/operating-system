@@ -1,5 +1,4 @@
 {
-    "storage-driver": "overlay2",
     "log-driver": "journald",
     "log-opts": {
         "tag": "{{.Name}}"
