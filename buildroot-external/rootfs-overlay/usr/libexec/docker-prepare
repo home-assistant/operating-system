@@ -1,0 +1,23 @@
+#!/bin/sh
+
+set -e
+
+if [ ! -d /mnt/data/docker ] || [ -z "$(ls -A /mnt/data/docker)" ]; then
+    echo "[INFO] Docker data is wiped, creating containerd snapshotter flag"
+    touch /mnt/data/.docker-use-containerd-snapshotter
+fi
+
+DOCKERD_FLAGS=""
+
+if [ -f /mnt/data/.docker-use-containerd-snapshotter ]; then
+    echo "[INFO] Using Docker containerd snapshotter"
+    DOCKERD_FLAGS="${DOCKERD_FLAGS} --feature containerd-snapshotter"
+
+    if [ -d /mnt/data/docker/overlay2 ]; then
+        echo "[INFO] Removing no longer used overlay2 directory"
+        # Allow the removal to fail without failing the service
+        rm -rf /mnt/data/docker/overlay2 || true
+    fi
+fi
+
+echo "DOCKERD_FLAGS=\"${DOCKERD_FLAGS}\"" > /run/dockerd.env

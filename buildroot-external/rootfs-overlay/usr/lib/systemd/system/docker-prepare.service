@@ -1,0 +1,11 @@
+[Unit]
+Description=Docker environment and config initialization
+Before=docker.service
+RequiresMountsFor=/mnt/data
+
+[Service]
+Type=oneshot
+ExecStart=/usr/libexec/docker-prepare
+
+[Install]
+WantedBy=multi-user.target

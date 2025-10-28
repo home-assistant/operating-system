@@ -23,11 +23,14 @@ container=$(docker run --privileged -e DOCKER_TLS_CERTDIR="" \
 	-v "${build_dir}/data/":/data \
 	-v "${build_dir}/data/docker/":/var/lib/docker \
 	-v "${build_dir}":/build \
-	-d "docker:${docker_version}-dind" --storage-driver overlay2)
+	-d "docker:${docker_version}-dind" --feature containerd-snapshotter)
 
 docker exec "${container}" sh /build/dind-import-containers.sh "${channel}"
 
 docker stop "${container}"
+
+# Indicator for docker-prepare.service to use the containerd snapshotter
+sudo touch "${build_dir}/data/.docker-use-containerd-snapshotter"
 
 # Unmount data image
 sudo umount "${build_dir}/data/"
