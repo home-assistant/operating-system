@@ -39,8 +39,14 @@ def test_init(shell, shell_json):
 
 
 @pytest.mark.dependency(depends=["test_init"])
-@pytest.mark.timeout(300)
+@pytest.mark.timeout(600)  # TODO: reduce to 300 after 17.0 release
 def test_os_update(shell, shell_json, target):
+    def check_container_running(container_name):
+        out = shell.run_check(
+            f"docker container inspect -f '{{{{.State.Status}}}}' {container_name} || true"
+        )
+        return "running" in out
+
     # fetch version info and OTA URL
     shell.run_check("ha su reload --no-progress")
 
@@ -62,6 +68,13 @@ def test_os_update(shell, shell_json, target):
     # reactivate ShellDriver to handle login again
     target.deactivate(shell)
     target.activate(shell)
+
+    # temporary needed for OS 17.0 -> 16.x path, where all containers must be re-downloaded
+    while True:
+        if check_container_running("hassio_supervisor") and check_container_running("hassio_cli"):
+            break
+
+        sleep(1)
 
     # wait for the system to be ready after update
     while True:
