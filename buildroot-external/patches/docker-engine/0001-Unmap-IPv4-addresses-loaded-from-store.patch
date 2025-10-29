@@ -1,0 +1,33 @@
+From 050f3d1930d9bf4fea986ed21feaaa6474822191 Mon Sep 17 00:00:00 2001
+From: Rob Murray <rob.murray@docker.com>
+Date: Wed, 27 Aug 2025 16:37:00 +0100
+Subject: [PATCH] Unmap IPv4 addresses loaded from store
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+When a endpoint's net.IPNet is loaded from store and converted
+to a netip.Addr, unmap it so that iptables rules don't contain
+IPv4-mapped IPv6 addresses.
+
+Signed-off-by: Rob Murray <rob.murray@docker.com>
+(cherry picked from commit 071e6472db32a34ed0f73f7166e0c2b405ae23a5)
+Signed-off-by: Rob Murray <rob.murray@docker.com>
+(backported for 28.3.3 from 31f405932a349e99f45388afe764ec5433b30de2)
+Signed-off-by: Jan Čermák <sairon@sairon.cz>
+---
+ libnetwork/drivers/bridge/bridge_linux.go | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/libnetwork/drivers/bridge/bridge_linux.go b/libnetwork/drivers/bridge/bridge_linux.go
+index 19fcf43..15002f2 100644
+--- a/libnetwork/drivers/bridge/bridge_linux.go
++++ b/libnetwork/drivers/bridge/bridge_linux.go
+@@ -1218,6 +1218,7 @@ func (d *driver) CreateEndpoint(ctx context.Context, nid, eid string, ifInfo dri
+ func (ep *bridgeEndpoint) netipAddrs() (v4, v6 netip.Addr) {
+ 	if ep.addr != nil {
+ 		v4, _ = netip.AddrFromSlice(ep.addr.IP)
++		v4 = v4.Unmap()
+ 	}
+ 	if ep.addrv6 != nil {
+ 		v6, _ = netip.AddrFromSlice(ep.addrv6.IP)
