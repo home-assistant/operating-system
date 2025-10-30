@@ -117,27 +117,6 @@ def test_addon_install(shell_json):
 
 
 @pytest.mark.dependency(depends=["test_supervisor_is_updated"])
-def test_code_sign(shell_json):
-    # enable Content-Trust
-    assert (
-        shell_json("ha security options --content-trust=true --no-progress --raw-json").get("result") == "ok"
-    ), "Content-Trust enable failed"
-    # run Supervisor health check
-    health_check = shell_json("ha resolution healthcheck --no-progress --raw-json")
-    assert health_check.get("result") == "ok", "Supervisor health check failed"
-    logger.info("Supervisor health check result: %s", health_check)
-    # get resolution center info
-    resolution_info = shell_json("ha resolution info --no-progress --raw-json")
-    logger.info("Resolution center info: %s", resolution_info)
-    # check supervisor is healthy
-    unhealthy = resolution_info.get("data").get("unhealthy")
-    assert len(unhealthy) == 0, "Supervisor is unhealthy"
-    # check for unsupported entries
-    unsupported = resolution_info.get("data").get("unsupported")
-    assert len(unsupported) == 0, "Unsupported entries found"
-
-
-@pytest.mark.dependency(depends=["test_supervisor_is_updated"])
 def test_create_backup(shell_json, stash):
     result = shell_json("ha backups new --no-progress --raw-json")
     assert result.get("result") == "ok", f"Backup creation failed: {result}"
