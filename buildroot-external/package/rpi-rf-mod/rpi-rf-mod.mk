@@ -24,9 +24,6 @@ ifeq ($(BR2_PACKAGE_RPI_RF_MOD_DTS_RPI),y)
   # RaspberryPi DTS file
   RPI_RF_MOD_DTS_FILE = rpi-rf-mod
   RPI_RF_MOD_DTS_FILE_ALT = rpi-rf-mod-rpi1
-else ifeq ($(BR2_PACKAGE_RPI_RF_MOD_DTS_TINKER),y)
-  # ASUS Tinkerboard DTS file
-  RPI_RF_MOD_DTS_FILE = rpi-rf-mod-tinker
 else ifeq ($(BR2_PACKAGE_RPI_RF_MOD_DTS_ODROID_C4),y)
   # ODROID-C4 DTS file
   RPI_RF_MOD_DTS_FILE = rpi-rf-mod-odroid-c4

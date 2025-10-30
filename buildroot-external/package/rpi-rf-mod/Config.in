@@ -19,11 +19,6 @@ config BR2_PACKAGE_RPI_RF_MOD_DTS_RPI
 	help
 	  For the RaspberryPi
 
-config BR2_PACKAGE_RPI_RF_MOD_DTS_TINKER
-	bool "ASUS Tinkerboard"
-	help
-	  For the ASUS Tinkerboard
-
 config BR2_PACKAGE_RPI_RF_MOD_DTS_ODROID_C4
 	bool "ODROID-C4"
 	help
