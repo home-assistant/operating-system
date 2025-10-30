@@ -117,11 +117,7 @@ def test_addon_install(shell_json):
 
 
 @pytest.mark.dependency(depends=["test_supervisor_is_updated"])
-def test_code_sign(shell_json):
-    # enable Content-Trust
-    assert (
-        shell_json("ha security options --content-trust=true --no-progress --raw-json").get("result") == "ok"
-    ), "Content-Trust enable failed"
+def test_supervisor_errors(shell_json):
     # run Supervisor health check
     health_check = shell_json("ha resolution healthcheck --no-progress --raw-json")
     assert health_check.get("result") == "ok", "Supervisor health check failed"
