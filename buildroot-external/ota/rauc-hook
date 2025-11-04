@@ -61,14 +61,6 @@ install_spl() {
         dd if="${RAUC_IMAGE_NAME}" of="${DEVICE_ROOT}" conv=notrunc ${FLAGS} bs=1 count=440
         dd if="${RAUC_IMAGE_NAME}" of="${DEVICE_ROOT}" conv=notrunc ${FLAGS} bs=512 seek=1 skip=1
     fi
-
-    # Flash to eMMC boot partition if necessary
-    if [ "$RAUC_SYSTEM_COMPATIBLE" = "haos-odroid-xu4" ] && [ -b "${DEVICE_ROOT}boot0" ]; then
-        echo "Updating eMMC boot partition"
-        echo 0 > /sys/block/"$(basename "${DEVICE_ROOT}boot0")"/force_ro
-        dd if="${RAUC_IMAGE_NAME}" of="${DEVICE_ROOT}boot0" conv=notrunc ${FLAGS} bs=512 skip=1 count=2047
-        echo 1 > /sys/block/"$(basename "${DEVICE_ROOT}boot0")"/force_ro
-    fi
 }
 
 check_grubenv() {

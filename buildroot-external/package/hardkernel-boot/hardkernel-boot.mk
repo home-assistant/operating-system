@@ -86,16 +86,6 @@ define HARDKERNEL_BOOT_BUILD_CMDS
 	cp $(@D)/fip/u-boot.bin $(@D)/u-boot.sm1
 endef
 
-else ifeq ($(BR2_PACKAGE_HARDKERNEL_BOOT_ODROID_XU4),y)
-HARDKERNEL_BOOT_VERSION = 88af53fbcef8386cb4d5f04c19f4b2bcb69e90ca
-
-HARDKERNEL_BOOT_BINS += sd_fuse/bl1.bin.hardkernel
-HARDKERNEL_BOOT_BINS += sd_fuse/bl2.bin.hardkernel.720k_uboot
-HARDKERNEL_BOOT_BINS += sd_fuse/tzsw.bin.hardkernel
-
-define HARDKERNEL_BOOT_BUILD_CMDS
-endef
-
 else ifeq ($(BR2_PACKAGE_HARDKERNEL_BOOT_ODROID_N2),y)
 HARDKERNEL_BOOT_VERSION = ca5bdd0f1c291d1ec135cd134e01aa2619203d4c
 
