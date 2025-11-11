@@ -20,15 +20,14 @@ mkfs.ext4 -L "hassos-data" -E lazy_itable_init=0,lazy_journal_init=0 "${data_img
 mkdir -p "${data_dir}"
 sudo mount -o loop,discard "${data_img}" "${data_dir}"
 
+trap 'docker rm -f ${container} > /dev/null; sudo umount ${data_dir} || true' ERR EXIT
+
 # Use official Docker in Docker images
 # We use the same version as Buildroot is using to ensure best compatibility
 container=$(docker run --privileged -e DOCKER_TLS_CERTDIR="" \
     -v "${data_dir}":/mnt/data \
     -v "${build_dir}":/build \
     -d "docker:${docker_version}-dind" --feature containerd-snapshotter --data-root /mnt/data/docker)
-
-# shellcheck disable=SC2064
-trap "docker rm -f ${container}; sudo umount '${data_dir}'" ERR EXIT
 
 docker exec "${container}" sh /build/dind-import-containers.sh "${channel}"
 
