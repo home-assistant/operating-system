@@ -29,7 +29,7 @@ container=$(docker run --privileged -e DOCKER_TLS_CERTDIR="" \
     -v "${build_dir}":/build \
     -d "docker:${docker_version}-dind" --feature containerd-snapshotter --data-root /mnt/data/docker)
 
-docker exec "${container}" sh /build/dind-import-containers.sh "${channel}"
+docker exec "${container}" sh /build/dind-import-containers.sh
 
 sudo bash -ex <<EOF
 # Indicator for docker-prepare.service to use the containerd snapshotter
@@ -37,7 +37,7 @@ touch "${data_dir}/.docker-use-containerd-snapshotter"
 
 # Setup AppArmor
 mkdir -p "${data_dir}/supervisor/apparmor"
-wget -O "${data_dir}/supervisor/apparmor/hassio-supervisor" "${APPARMOR_URL}"
+curl -fsL -o "${data_dir}/supervisor/apparmor/hassio-supervisor" "${APPARMOR_URL}"
 
 # Persist build-time updater channel
 jq -n --arg channel "${channel}" '{"channel": \$channel}' > "${data_dir}/supervisor/updater.json"
