@@ -1,8 +1,6 @@
 #!/bin/sh
 set -e
 
-channel=$1
-
 # Make sure we can talk to the Docker daemon
 echo "Waiting for Docker daemon..."
 while ! docker version 2> /dev/null > /dev/null; do
