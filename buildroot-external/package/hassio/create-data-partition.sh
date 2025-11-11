@@ -9,7 +9,7 @@ docker_version=$4
 data_img="${dst_dir}/data.ext4"
 data_dir="${build_dir}/data"
 
-APPARMOR_URL="https://version.home-assistant.io/apparmor.txt"
+APPARMOR_URL="https://version.home-assistant.io/apparmor_${channel}.txt"
 
 # Make image
 rm -f "${data_img}"
