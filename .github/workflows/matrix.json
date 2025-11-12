@@ -54,33 +54,9 @@
     "label": "board/odroid"
   },
   {
-    "id": "odroid-xu4",
-    "defconfig": "odroid_xu4",
-    "architecture": "aarch64",
-    "label": "board/odroid"
-  },
-  {
-    "id": "rpi2",
-    "defconfig": "rpi2",
-    "architecture": "arm",
-    "label": "board/raspberrypi"
-  },
-  {
-    "id": "rpi3",
-    "defconfig": "rpi3",
-    "architecture": "arm",
-    "label": "board/raspberrypi"
-  },
-  {
     "id": "rpi3-64",
     "defconfig": "rpi3_64",
     "architecture": "aarch64",
-    "label": "board/raspberrypi"
-  },
-  {
-    "id": "rpi4",
-    "defconfig": "rpi4",
-    "architecture": "arm",
     "label": "board/raspberrypi"
   },
   {
@@ -106,11 +82,5 @@
     "defconfig": "green",
     "architecture": "aarch64",
     "label": "board/green"
-  },
-  {
-    "id": "tinker",
-    "defconfig": "tinker",
-    "architecture": "arm",
-    "label": "board/tinker"
   }
 ]

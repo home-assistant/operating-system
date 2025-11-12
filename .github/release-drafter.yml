@@ -16,8 +16,6 @@ categories:
     label: 'board/generic-x86-64'
   - title: 'Hardkernel ODROID'
     label: 'board/odroid'
-  - title: 'ASUS Tinker'
-    label: 'board/tinker'
   - title: 'Khadas VIM Series'
     label: 'board/khadas'
   - title: 'Generic aarch64'
