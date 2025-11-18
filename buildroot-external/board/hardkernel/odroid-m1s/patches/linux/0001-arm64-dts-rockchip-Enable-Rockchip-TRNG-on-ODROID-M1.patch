@@ -6,7 +6,7 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-HAOS with 6.6 kernel had the RNG disbled because of a downstream patch. Now the
+HAOS with 6.6 kernel had the RNG disabled because of a downstream patch. Now the
 rk356x.dtsi has it's enabled only in rk3568.dtsi. We want it enabled also for
 RK3566 on ODROID-M1S.
 
