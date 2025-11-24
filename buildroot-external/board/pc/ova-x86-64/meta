@@ -1,5 +1,5 @@
-BOARD_ID=ova
-BOARD_NAME="Open Virtual Appliance"
+BOARD_ID=ova-x86-64
+BOARD_NAME="Open Virtual Appliance (x86-64)"
 CHASSIS=vm
 BOOTLOADER=grub
 KERNEL_FILE=bzImage

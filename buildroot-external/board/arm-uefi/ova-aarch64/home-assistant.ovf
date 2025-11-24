@@ -1,0 +1,147 @@
+<?xml version="1.0"?>
+<Envelope ovf:version="1.0" xml:lang="en-US" xmlns="http://schemas.dmtf.org/ovf/envelope/1" xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1" xmlns:rasd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" xmlns:vssd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:vbox="http://www.virtualbox.org/ovf/machine" xmlns:vmw="http://www.vmware.com/schema/ovf">
+  <References>
+    <File ovf:id="file1" ovf:href="home-assistant.vmdk"/>
+  </References>
+  <DiskSection>
+    <Info>List of the virtual disks used in the package</Info>
+    <Disk ovf:capacity="34359738368" ovf:diskId="vmdisk1" ovf:fileRef="file1" ovf:format="http://www.vmware.com/interfaces/specifications/vmdk.html#streamOptimized" ovf:boot="True" vbox:uuid="5f042839-c478-43d9-9eb0-fd8a902146ed"/>
+  </DiskSection>
+  <NetworkSection>
+    <Info>Logical networks used in the package</Info>
+    <Network ovf:name="Bridged">
+      <Description>Logical network used by this appliance.</Description>
+    </Network>
+  </NetworkSection>
+  <VirtualSystem ovf:id="HomeAssistant">
+    <Info>A virtual machine</Info>
+    <Name>Home Assistant</Name>
+    <ProductSection>
+      <Info>Meta-information about the installed software</Info>
+      <Product>Home Assistant Operating System</Product>
+      <ProductUrl>https://www.home-assistant.io</ProductUrl>
+    </ProductSection>
+    <OperatingSystemSection ovf:id="102" vmw:osType="otherGuest64">
+      <Info>The kind of installed guest operating system</Info>
+      <Description>Linux</Description>
+    </OperatingSystemSection>
+    <VirtualHardwareSection>
+      <Info>Virtual hardware requirements for a virtual machine</Info>
+      <System>
+        <vssd:ElementName>Virtual Hardware Family</vssd:ElementName>
+        <vssd:InstanceID>0</vssd:InstanceID>
+        <vssd:VirtualSystemIdentifier>Home Assistant</vssd:VirtualSystemIdentifier>
+        <vssd:VirtualSystemType>vmx-10</vssd:VirtualSystemType>
+      </System>
+      <Item>
+        <rasd:Caption>2 virtual CPU</rasd:Caption>
+        <rasd:Description>Number of virtual CPUs</rasd:Description>
+        <rasd:ElementName>2 virtual CPU</rasd:ElementName>
+        <rasd:InstanceID>1</rasd:InstanceID>
+        <rasd:ResourceType>3</rasd:ResourceType>
+        <rasd:VirtualQuantity>2</rasd:VirtualQuantity>
+        <vmw:CoresPerSocket ovf:required="false">2</vmw:CoresPerSocket>
+      </Item>
+      <Item>
+        <rasd:AllocationUnits>MegaBytes</rasd:AllocationUnits>
+        <rasd:Caption>2048 MB of memory</rasd:Caption>
+        <rasd:Description>Memory Size</rasd:Description>
+        <rasd:ElementName>2048 MB of memory</rasd:ElementName>
+        <rasd:InstanceID>2</rasd:InstanceID>
+        <rasd:ResourceType>4</rasd:ResourceType>
+        <rasd:VirtualQuantity>2048</rasd:VirtualQuantity>
+      </Item>
+      <Item>
+        <rasd:Address>0</rasd:Address>
+        <rasd:Caption>SCSIController</rasd:Caption>
+        <rasd:Description>SCSI Controller</rasd:Description>
+        <rasd:ElementName>SCSIController</rasd:ElementName>
+        <rasd:InstanceID>3</rasd:InstanceID>
+        <rasd:ResourceSubType>lsilogic</rasd:ResourceSubType>
+        <rasd:ResourceType>6</rasd:ResourceType>
+      </Item>
+      <Item ovf:required="false">
+        <rasd:Address>0</rasd:Address>
+        <rasd:Caption>usb</rasd:Caption>
+        <rasd:Description>USB Controller (EHCI)</rasd:Description>
+        <rasd:ElementName>usb</rasd:ElementName>
+        <rasd:InstanceID>4</rasd:InstanceID>
+        <rasd:ResourceType>23</rasd:ResourceType>
+      </Item>
+      <Item>
+        <rasd:AddressOnParent>0</rasd:AddressOnParent>
+        <rasd:Caption>disk1</rasd:Caption>
+        <rasd:Description>Disk Image</rasd:Description>
+        <rasd:ElementName>disk1</rasd:ElementName>
+        <rasd:HostResource>/disk/vmdisk1</rasd:HostResource>
+        <rasd:InstanceID>5</rasd:InstanceID>
+        <rasd:Parent>3</rasd:Parent>
+        <rasd:ResourceType>17</rasd:ResourceType>
+        <vmw:Config ovf:required="false" vmw:key="backing.writeThrough" vmw:value="false"/>
+      </Item>
+      <Item>
+        <rasd:AutomaticAllocation>true</rasd:AutomaticAllocation>
+        <rasd:Caption>eth0</rasd:Caption>
+        <rasd:Connection>Bridged</rasd:Connection>
+        <rasd:Description>Ethernet adapter</rasd:Description>
+        <rasd:ElementName>eth0</rasd:ElementName>
+        <rasd:InstanceID>6</rasd:InstanceID>
+        <rasd:ResourceSubType>E1000</rasd:ResourceSubType>
+        <rasd:ResourceType>10</rasd:ResourceType>
+      </Item>
+      <Item ovf:required="false">
+        <rasd:AutomaticAllocation>true</rasd:AutomaticAllocation>
+        <rasd:ElementName>Audio</rasd:ElementName>
+        <rasd:InstanceID>11</rasd:InstanceID>
+        <rasd:ResourceSubType>vmware.soundcard.hdaudio</rasd:ResourceSubType>
+        <rasd:ResourceType>1</rasd:ResourceType>
+      </Item>
+      <vmw:Config ovf:required="false" vmw:key="firmware" vmw:value="efi"/>
+      <vmw:ExtraConfig ovf:required="false" vmw:key="cpuid.coresPerSocket" vmw:value="2"/>
+      <vmw:ExtraConfig ovf:required="false" vmw:key="svga.present" vmw:value="TRUE"/>
+      <vmw:ExtraConfig ovf:required="false" vmw:key="usb:1.speed" vmw:value="2"/>
+      <vmw:ExtraConfig ovf:required="false" vmw:key="usb:1.present" vmw:value="TRUE"/>
+      <vmw:ExtraConfig ovf:required="false" vmw:key="usb:1.deviceType" vmw:value="hub"/>
+      <vmw:ExtraConfig ovf:required="false" vmw:key="usb:1.port" vmw:value="1"/>
+      <vmw:ExtraConfig ovf:required="false" vmw:key="usb:1.parent" vmw:value="-1"/>
+      <vmw:ExtraConfig ovf:required="false" vmw:key="ctkEnabled" vmw:value="TRUE"/>
+      <vmw:ExtraConfig ovf:required="false" vmw:key="sata0:0.ctkEnabled" vmw:value="TRUE"/>
+      <vmw:ExtraConfig ovf:required="false" vmw:key="usb:0.present" vmw:value="TRUE"/>
+      <vmw:ExtraConfig ovf:required="false" vmw:key="usb:0.deviceType" vmw:value="hid"/>
+      <vmw:ExtraConfig ovf:required="false" vmw:key="usb:0.port" vmw:value="0"/>
+      <vmw:ExtraConfig ovf:required="false" vmw:key="usb:0.parent" vmw:value="-1"/>
+    </VirtualHardwareSection>
+    <vbox:Machine ovf:required="false" version="1.16-windows" uuid="{cab1600e-df75-47c2-a237-cfb10215b42c}" name="Home Assistant" OSType="Linux_Arm64">
+      <ovf:Info>Complete VirtualBox machine configuration in VirtualBox format</ovf:Info>
+      <Hardware>
+        <CPU count="2"/>
+        <Memory RAMSize="2048"/>
+        <Firmware type="EFI"/>
+        <Display VRAMSize="16"/>
+        <BIOS>
+          <IOAPIC enabled="true"/>
+        </BIOS>
+        <USB>
+          <Controllers>
+            <Controller name="OHCI" type="OHCI"/>
+            <Controller name="EHCI" type="EHCI"/>
+          </Controllers>
+        </USB>
+        <Network>
+          <Adapter slot="0" enabled="true" type="virtio">
+            <BridgedInterface />
+          </Adapter>
+        </Network>
+        <AudioAdapter controller="HDA" enabled="true"/>
+        <RTC localOrUTC="UTC"/>
+      </Hardware>
+      <StorageControllers>
+        <StorageController name="LsiLogic" type="LsiLogic" PortCount="16" useHostIOCache="true" Bootable="true">
+          <AttachedDevice type="HardDisk" hotpluggable="false" port="0" device="0">
+            <Image uuid="{5f042839-c478-43d9-9eb0-fd8a902146ed}"/>
+          </AttachedDevice>
+        </StorageController>
+      </StorageControllers>
+    </vbox:Machine>
+  </VirtualSystem>
+</Envelope>
