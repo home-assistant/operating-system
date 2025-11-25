@@ -1,8 +1,14 @@
 [
   {
-    "id": "ova",
-    "defconfig": "ova",
+    "id": "ova-x86-64",
+    "defconfig": "ova_x86_64",
     "architecture": "x86-64",
+    "label": "board/ova"
+  },
+  {
+    "id": "ova-aarch64",
+    "defconfig": "ova_aarch64",
+    "architecture": "aarch64",
     "label": "board/ova"
   },
   {

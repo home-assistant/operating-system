@@ -53,13 +53,13 @@ jobs:
       - name: Download HAOS image
         if: ${{ !inputs.use-artifact }}
         run: |
-          curl -sfL -o haos.qcow2.xz  https://os-artifacts.home-assistant.io/${{github.event.inputs.version}}/haos_ova-${{github.event.inputs.version}}.qcow2.xz
+          curl -sfL -o haos.qcow2.xz  https://os-artifacts.home-assistant.io/${{github.event.inputs.version}}/haos_ova-x86-64-${{github.event.inputs.version}}.qcow2.xz
 
       - name: Get OS image artifact
         if: ${{ inputs.use-artifact }}
         uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6.0.0
         with:
-          name: haos_ova-${{ inputs.version }}.qcow2.xz
+          name: haos_ova-x86-64-${{ inputs.version }}.qcow2.xz
 
       - name: Extract OS image
         run: |
