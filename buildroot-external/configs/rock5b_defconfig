@@ -1,5 +1,3 @@
-
-...
 BR2_aarch64=y
 BR2_cortex_a76_a55=y
 BR2_PACKAGE_HOST_LINUX_HEADERS_CUSTOM_6_12=y
