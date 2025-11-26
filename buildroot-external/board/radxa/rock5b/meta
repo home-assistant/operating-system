@@ -1,10 +1,5 @@
-
-...
 BOARD_ID="rock5b"
 BOARD_NAME="Rock5b"
-HASSOS_ID="hassos"
-HASSOS_NAME="Home Assistant OS"
-DEPLOYMENT="production"
 CHASSIS=embedded
 BOOTLOADER=uboot
 KERNEL_FILE=Image
@@ -15,6 +10,10 @@ BOOT_SPL_SIZE=8M
 BOOT_ENV_SIZE=0x8000
 SUPERVISOR_MACHINE=qemuarm-64
 SUPERVISOR_ARCH=aarch64
+
+HASSOS_ID="hassos"
+HASSOS_NAME="Home Assistant OS"
+DEPLOYMENT="production"
 DISK_SIZE=2G
 
 # ----------------------------
@@ -24,7 +23,7 @@ DISK_SIZE=2G
 ROCKCHIP_KERNEL_TARBALL="https://github.com/rockchip-linux/kernel/archive/refs/heads/develop-6.1.tar.gz"
 ROCKCHIP_UBOOT_TARBALL="https://github.com/rockchip-linux/u-boot/archive/refs/heads/next-dev.tar.gz"
 # Example dtb name expected from kernel build (verify in the kernel arch/arm64/boot/dts/rockchip/)
-ROCKCHIP_DTB_NAME="rk3588-orangepi4.dtb"
+ROCKCHIP_DTB_NAME="rk3588-rock-5b.dtb"
 
 # ----------------------------
 # ARMBIAN (alternative — often well-patched/solid)
@@ -34,20 +33,20 @@ ROCKCHIP_DTB_NAME="rk3588-orangepi4.dtb"
 ARMBIAN_KERNEL_TARBALL="https://github.com/armbian/linux-rockchip/archive/refs/heads/rk-6.1-rkr5.1.tar.gz"
 ARMBIAN_UBOOT_TARBALL="https://github.com/armbian/u-boot/archive/refs/heads/master.tar.gz"
 # Armbian-derived dtb name (verify after build/patching)
-ARMBIAN_DTB_NAME="rk3588-rock5b.dtb"
+ARMBIAN_DTB_NAME="rk3588-rock-5b.dtb"
 
 # ----------------------------
 # Default selection (change to ARMBIAN_* if you want Armbian)
 # ----------------------------
 # Set KERNEL_TARBALL_URL and UBOOT_TARBALL_URL to the desired sources.
-KERNEL_TARBALL_URL="${ROCKCHIP_KERNEL_TARBALL}"
-UBOOT_TARBALL_URL="${ROCKCHIP_UBOOT_TARBALL}"
-DTB_NAME="${ROCKCHIP_DTB_NAME}"
+#KERNEL_TARBALL_URL="${ROCKCHIP_KERNEL_TARBALL}"
+#UBOOT_TARBALL_URL="${ROCKCHIP_UBOOT_TARBALL}"
+#DTB_NAME="${ROCKCHIP_DTB_NAME}"
 
 # If you prefer Armbian, uncomment these lines:
-#KERNEL_TARBALL_URL="${ARMBIAN_KERNEL_TARBALL}"
-#UBOOT_TARBALL_URL="${ARMBIAN_UBOOT_TARBALL}"
-#DTB_NAME="${ARMBIAN_DTB_NAME}"
+KERNEL_TARBALL_URL="${ARMBIAN_KERNEL_TARBALL}"
+UBOOT_TARBALL_URL="${ARMBIAN_UBOOT_TARBALL}"
+DTB_NAME="${ARMBIAN_DTB_NAME}"
 
 # Kernel version hint (for docs / scripts)
 KERNEL_VERSION_HINT="6.x"
