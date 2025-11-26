@@ -1,0 +1,14 @@
+# Modify this to enable dt overlays (see README for further information)
+# Available overlays:
+# - rk3399-pcie-gen2: Enable PCIe Gen2 speed for SSD
+# - rk3399-rock-pi-4-disable-heartbeat: Disable heartbeat led (blue)
+# - rk3399-pwm-gpio: Enable the PWM pins (11 and 13)
+# - rk3399-disable-wifi-interrupts: Fix initialization of wifi chipset (enabled by default)
+# Multiple overlays must be separated by a space. For example:
+# overlays=rk3399-pcie-gen2 rk3399-rock-pi-4-disable-heartbeat
+
+#overlays=rk3399-disable-wifi-interrupts
+
+# Select device tree (DO NOT MODIFY)
+#fdtfile=rockchip/rk3588-rock-5b.dtb
+#fdtfile=rk3588-rock-5b.dtb
