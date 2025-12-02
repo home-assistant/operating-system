@@ -50,3 +50,8 @@ function setup_localtime() {
     # localtime is writable through SYSTEMD_ETC_LOCALTIME
     ln -fs /mnt/overlay/etc/localtime "${TARGET_DIR}/etc/localtime"
 }
+
+function setup_vconsole() {
+    # vconsole.conf is writable through SYSTEMD_ETC_VCONSOLE_CONF
+    ln -fs /mnt/overlay/etc/vconsole.conf "${TARGET_DIR}/etc/vconsole.conf"
+}
