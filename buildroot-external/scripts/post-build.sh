@@ -17,6 +17,7 @@ BOARD_DIR=${2}
 fix_rootfs
 install_tini_docker
 setup_localtime
+setup_vconsole
 
 # Write os-release
 # shellcheck disable=SC2153
