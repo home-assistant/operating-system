@@ -50,7 +50,7 @@ COLLABORA_DTB_NAME="rk3588-rock-5b.dtb"
 # ----------------------------
 # Set KERNEL_TARBALL_URL and UBOOT_TARBALL_URL to the desired sources.
 KERNEL_TARBALL_URL="${COLLABORA_KERNEL_TARBALL}"
-UBOOT_TARBALL_URL="${COLLABORA_UBOOT_TARBALL}"
+#UBOOT_TARBALL_URL="${COLLABORA_UBOOT_TARBALL}"
 DTB_NAME="${COLLABORA_DTB_NAME}"
 
 # Kernel version hint (for docs / scripts)
