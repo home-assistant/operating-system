@@ -1,33 +1,31 @@
 #!/bin/bash
-#
-# Hook executed by hassos build scripts (post/pre image) to install boot files.
-# Place tested boot artifacts in board/orangepi4/boot/:
-#  - idbloader.img (Rockchip SPL)
-#  - u-boot.itb or u-boot.img
-#  - Image or Image.gz
-#  - ${DTB_NAME}
-#
-# If you prefer automatic download in CI, implement fetch logic here (curl/wget)
-# using KERNEL_TARBALL_URL and UBOOT_TARBALL_URL variables from meta.
+# shellcheck disable=SC2155
 
 function hassos_pre_image() {
-    echo "rock5b: installing boot files"
-    BOOTDIR="$(path_boot_dir)"
-    mkdir -p "${BOOTDIR}"
+    local BOOT_DATA="$(path_boot_dir)"
+    local EFIPART_DATA="${BINARIES_DIR}/efi-part"
 
-    # Copy any prepared boot files from board dir
-    if [ -d "${BOARD_DIR}/boot" ]; then
-        cp -a "${BOARD_DIR}/boot/." "${BOOTDIR}/" || true
-    fi
+    mkdir -p "${BOOT_DATA}/EFI/BOOT"
 
-    # If DTB_NAME variable exists in meta, try copying named dtb if present
-    if [ -n "${DTB_NAME}" ] && [ -f "${BOARD_DIR}/boot/${DTB_NAME}" ]; then
-        cp "${BOARD_DIR}/boot/${DTB_NAME}" "${BOOTDIR}/"
-    fi
+    cp "${BOARD_DIR}/grub.cfg" "${EFIPART_DATA}/EFI/BOOT/grub.cfg"
+    cp "${BOARD_DIR}/cmdline.txt" "${EFIPART_DATA}/cmdline.txt"
+    grub-editenv "${EFIPART_DATA}/EFI/BOOT/grubenv" create
+    grub-editenv "${EFIPART_DATA}/EFI/BOOT/grubenv" set ORDER="A B"
+    grub-editenv "${EFIPART_DATA}/EFI/BOOT/grubenv" set A_OK=1
+    grub-editenv "${EFIPART_DATA}/EFI/BOOT/grubenv" set A_TRY=0
 
-    echo "rock5b: boot files installed to ${BOOTDIR}"
+    cp -r "${EFIPART_DATA}/"* "${BOOT_DATA}/"
 }
 
+
 function hassos_post_image() {
-    true
+    convert_disk_image_virtual vmdk
+    convert_disk_image_virtual vdi
+    convert_disk_image_virtual qcow2
+
+    convert_disk_image_zip vmdk
+    convert_disk_image_zip vdi
+    convert_disk_image_xz qcow2
+
+    convert_disk_image_xz
 }
