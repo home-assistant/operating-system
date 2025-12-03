@@ -22,3 +22,8 @@ fi
 if [ ! -L /mnt/overlay/etc/localtime ]; then
     ln -sf /usr/share/zoneinfo/Etc/UTC /mnt/overlay/etc/localtime
 fi
+
+# Console
+if [ ! -f /mnt/overlay/etc/vconsole.conf ]; then
+    echo "KEYMAP=us" > /mnt/overlay/etc/vconsole.conf
+fi
