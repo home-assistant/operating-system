@@ -26,7 +26,7 @@ ROCKCHIP_UBOOT_TARBALL="https://github.com/rockchip-linux/u-boot/archive/refs/he
 ROCKCHIP_DTB_NAME="rk3588-rock-5b.dtb"
 
 # ----------------------------
-# ARMBIAN (alternative — often well-patched/solid)
+# ARMBIAN vendor
 # ----------------------------
 # Armbian keeps kernel sources and patches in their repos. You can use Armbian's kernel
 # tree as a tarball; below are example tarballs (branch names may change).
@@ -36,14 +36,18 @@ ARMBIAN_UBOOT_TARBALL="https://github.com/armbian/u-boot/archive/refs/heads/mast
 ARMBIAN_DTB_NAME="rk3588-rock-5b.dtb"
 
 # ----------------------------
+# Collabora - devellop branch
+# ----------------------------
+# tree as a tarball; below are example tarballs (branch names may change).
+COLLABORA_KERNEL_TARBALL="https://gitlab.collabora.com/hardware-enablement/rockchip-3588/linux/-/archive/rockchip-v6.18/linux-rockchip-v6.18.tar.gz"
+COLLABORA_UBOOT_TARBALL="https://gitlab.collabora.com/hardware-enablement/rockchip-3588/u-boot/-/archive/2025.10-rk3588/u-boot-2025.10-rk3588.tar.gz"
+# Collabora-derived dtb name (verify after build/patching)
+COLLABORA_DTB_NAME="rk3588-rock-5b.dtb"
+
+# ----------------------------
 # Default selection (change to ARMBIAN_* if you want Armbian)
 # ----------------------------
 # Set KERNEL_TARBALL_URL and UBOOT_TARBALL_URL to the desired sources.
-#KERNEL_TARBALL_URL="${ROCKCHIP_KERNEL_TARBALL}"
-#UBOOT_TARBALL_URL="${ROCKCHIP_UBOOT_TARBALL}"
-#DTB_NAME="${ROCKCHIP_DTB_NAME}"
-
-# If you prefer Armbian, uncomment these lines:
 KERNEL_TARBALL_URL="${ARMBIAN_KERNEL_TARBALL}"
 UBOOT_TARBALL_URL="${ARMBIAN_UBOOT_TARBALL}"
 DTB_NAME="${ARMBIAN_DTB_NAME}"
