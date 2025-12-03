@@ -29,7 +29,7 @@ def test_start_supervisor(shell, shell_json):
         sleep(1)
 
     supervisor_ip = "\n".join(
-        shell.run_check("docker inspect --format='{{.NetworkSettings.IPAddress}}' hassio_supervisor")
+        shell.run_check("docker inspect --format='{{.NetworkSettings.Networks.bridge.IPAddress}}' hassio_supervisor")
     )
 
     while True:
@@ -157,7 +157,7 @@ def test_restart_supervisor(shell, shell_json):
     assert result.get("result") == "ok", f"Supervisor restart failed: {result}"
 
     supervisor_ip = "\n".join(
-        shell.run_check("docker inspect --format='{{.NetworkSettings.IPAddress}}' hassio_supervisor")
+        shell.run_check("docker inspect --format='{{.NetworkSettings.Networks.bridge.IPAddress}}' hassio_supervisor")
     )
 
     while True:
