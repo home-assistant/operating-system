@@ -1,0 +1,1 @@
+console=ttyS0 console=tty0
