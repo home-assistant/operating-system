@@ -1,0 +1,7 @@
+# Boot environment template for rock5b (used by hassos/rauc scripts)
+# This is a minimal placeholder — edit if your board requires special env or SPL handling.
+
+# Device / partition layout
+# Example: set boot partition label used by create_disk_image
+# (hassos scripts expect hassos-boot / hassos-rootfs etc.)
+# Nothing mandatory here; keep for documentation.
