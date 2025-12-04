@@ -1,0 +1,5 @@
+config BR2_PACKAGE_BOARD_ORANGEPI4
+	bool "Orange Pi 4 (RK3399) support for hassos"
+	help
+	  Enable Orange Pi 4 board files (BR2_EXTERNAL). This option
+	  is used by hassos build scripts to pick up board-specific files. 
