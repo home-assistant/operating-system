@@ -1,0 +1,12 @@
+RTL_SDR_VERSION = master
+RTL_SDR_SITE = https://github.com/osmocom/rtl-sdr.git
+RTL_SDR_SITE_METHOD = git
+RTL_SDR_LICENSE = GPL-2.0
+RTL_SDR_LICENSE_FILES = COPYING
+RTL_SDR_DEPENDENCIES = libusb
+
+RTL_SDR_CONF_OPTS = \
+	-DINSTALL_UDEV_RULES=ON \
+	-DCMAKE_BUILD_TYPE=Release
+
+$(eval $(cmake-package))

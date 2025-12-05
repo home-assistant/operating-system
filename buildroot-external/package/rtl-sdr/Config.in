@@ -1,0 +1,6 @@
+config BR2_PACKAGE_RTL_SDR
+	bool "RTL-SDR (Osmocom rtl-sdr)"
+	depends on BR2_LINUX_KERNEL
+	help
+	  Open source driver for RTL2832 based DVB-T receivers including RTL-SDR v4.
+	  Installs the library and utilities for SDR applications.
