@@ -329,7 +329,7 @@ jobs:
 
       - name: Upload release assets
         if: ${{ github.event_name == 'release' }}
-        uses: shogo82148/actions-upload-release-asset@59cbc563d11314e48122193f8fe5cdda62ea6cf9 # v1.9.1
+        uses: shogo82148/actions-upload-release-asset@8f6863c6c894ba46f9e676ef5cccec4752723c1e # v1.9.2
         with:
           upload_url: ${{ github.event.release.upload_url }}
           asset_path: output/images/haos_*
