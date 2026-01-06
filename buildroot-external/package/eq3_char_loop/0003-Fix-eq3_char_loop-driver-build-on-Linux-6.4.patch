@@ -6,6 +6,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
+Upstream: Not applicable
+
 Signed-off-by: Jan Čermák <sairon@sairon.cz>
 ---
  KernelDrivers/eq3_char_loop.c | 7 +++++++
