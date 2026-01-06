@@ -1,4 +1,4 @@
-RTL_SDR_VERSION = master
+RTL_SDR_VERSION = v2.0.2
 RTL_SDR_SITE = https://github.com/osmocom/rtl-sdr.git
 RTL_SDR_SITE_METHOD = git
 RTL_SDR_LICENSE = GPL-2.0
