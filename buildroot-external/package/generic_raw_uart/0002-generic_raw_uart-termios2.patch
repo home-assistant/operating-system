@@ -1,0 +1,188 @@
+kernel/generic_raw_uart.c: added termios2/glibc 2.42+ compatibility
+
+Upstream: Not applicable
+
+Signed-off-by: Jens Maus <mail@jens-maus.de>
+
+diff --git a/kernel/generic_raw_uart.c b/kernel/generic_raw_uart.c
+index 0c3e3de..fac1ff6 100644
+--- a/kernel/generic_raw_uart.c
++++ b/kernel/generic_raw_uart.c
+@@ -36,6 +36,10 @@
+ #include <linux/version.h>
+ #include <asm/ioctls.h>
+ #include <asm/termios.h>
++#include <linux/serial.h>
++#ifdef TCGETS2
++#include <asm/termbits.h>
++#endif
+ #include <linux/gpio.h>
+ #include <linux/gpio/consumer.h>
+ #include <linux/delay.h>
+@@ -489,7 +493,7 @@ static long generic_raw_uart_ioctl(struct file *filep, unsigned int cmd, unsigne
+ 
+   /* Set connection priority */
+   case IOCTL_IOCSPRIORITY: /* Set: arg points to the value */
+-    if (_access_ok(VERIFY_WRITE, (void __user *)arg, sizeof(unsigned long)))
++    if (_access_ok(VERIFY_READ, (void __user *)arg, sizeof(unsigned long)))
+     {
+       ret = __get_user(temp, (unsigned long __user *)arg);
+       if (!ret)
+@@ -503,7 +507,7 @@ static long generic_raw_uart_ioctl(struct file *filep, unsigned int cmd, unsigne
+ 
+     /* Get connection priority */
+   case IOCTL_IOCGPRIORITY: /* Get: arg is pointer to result */
+-    if (_access_ok(VERIFY_READ, (void __user *)arg, sizeof(unsigned long)))
++    if (_access_ok(VERIFY_WRITE, (void __user *)arg, sizeof(unsigned long)))
+     {
+       ret = __put_user(conn->priority, (unsigned long __user *)arg);
+     }
+@@ -518,7 +522,7 @@ static long generic_raw_uart_ioctl(struct file *filep, unsigned int cmd, unsigne
+     break;
+ 
+   case IOCTL_IOCGDEVINFO:
+-    if (_access_ok(VERIFY_READ, (void __user *)arg, MAX_DEVICE_TYPE_LEN))
++    if (_access_ok(VERIFY_WRITE, (void __user *)arg, MAX_DEVICE_TYPE_LEN))
+     {
+       buf = kmalloc(MAX_DEVICE_TYPE_LEN, GFP_KERNEL);
+       if (buf)
+@@ -543,7 +547,7 @@ static long generic_raw_uart_ioctl(struct file *filep, unsigned int cmd, unsigne
+ 
+     /* Emulated TTY ioctl: Get termios struct */
+   case TCGETS:
+-    if (_access_ok(VERIFY_READ, (void __user *)arg, sizeof(struct termios)))
++    if (_access_ok(VERIFY_WRITE, (void __user *)arg, sizeof(struct termios)))
+     {
+       if (down_interruptible(&instance->sem))
+       {
+@@ -561,9 +565,86 @@ static long generic_raw_uart_ioctl(struct file *filep, unsigned int cmd, unsigne
+     }
+     break;
+ 
++#ifdef TCGETS2
++    /* Emulated TTY ioctl: Get termios2 struct */
++  case TCGETS2:
++    if (_access_ok(VERIFY_WRITE, (void __user *)arg, sizeof(struct termios2)))
++    {
++      struct termios2 t2;
++
++      if (down_interruptible(&instance->sem))
++      {
++        ret = -ERESTARTSYS;
++      }
++      else
++      {
++        memset(&t2, 0, sizeof(t2));
++        t2.c_iflag = instance->termios.c_iflag;
++        t2.c_oflag = instance->termios.c_oflag;
++        t2.c_cflag = instance->termios.c_cflag;
++        t2.c_lflag = instance->termios.c_lflag;
++        t2.c_line  = instance->termios.c_line;
++        memcpy(t2.c_cc, instance->termios.c_cc, NCCS);
++
++        /* No dedicated speed storage in this driver; provide neutral values. */
++        t2.c_ispeed = 0;
++        t2.c_ospeed = 0;
++
++        ret = copy_to_user((void __user *)arg, &t2, sizeof(struct termios2));
++        up(&instance->sem);
++      }
++    }
++    else
++    {
++      ret = -EFAULT;
++    }
++    break;
++#endif
++
++#ifdef TCSETS2
++    /* Emulated TTY ioctl: Set termios2 struct */
++  case TCSETS2:
++#ifdef TCSETSW2
++  case TCSETSW2:
++#endif
++#ifdef TCSETSF2
++  case TCSETSF2:
++#endif
++    if (_access_ok(VERIFY_READ, (void __user *)arg, sizeof(struct termios2)))
++    {
++      struct termios2 t2;
++
++      if (down_interruptible(&instance->sem))
++      {
++        ret = -ERESTARTSYS;
++      }
++      else
++      {
++        ret = copy_from_user(&t2, (void __user *)arg, sizeof(struct termios2));
++        if (!ret)
++        {
++          instance->termios.c_iflag = t2.c_iflag;
++          instance->termios.c_oflag = t2.c_oflag;
++          instance->termios.c_cflag = t2.c_cflag;
++          instance->termios.c_lflag = t2.c_lflag;
++          instance->termios.c_line  = t2.c_line;
++          memcpy(instance->termios.c_cc, t2.c_cc, NCCS);
++        }
++        up(&instance->sem);
++      }
++    }
++    else
++    {
++      ret = -EFAULT;
++    }
++    break;
++#endif
++
+     /* Emulated TTY ioctl: Set termios struct */
+   case TCSETS:
+-    if (_access_ok(VERIFY_WRITE, (void __user *)arg, sizeof(struct termios)))
++  case TCSETSW:
++  case TCSETSF:
++    if (_access_ok(VERIFY_READ, (void __user *)arg, sizeof(struct termios)))
+     {
+       if (down_interruptible(&instance->sem))
+       {
+@@ -640,6 +721,33 @@ static long generic_raw_uart_ioctl(struct file *filep, unsigned int cmd, unsigne
+   case TIOCMSET:
+     break;
+ 
++    /* Serial meta ioctls probed by some userspace stacks: stub safely */
++  case TIOCSERGETLSR:
++    if (_access_ok(VERIFY_WRITE, (void __user *)arg, sizeof(temp)))
++    {
++      temp = TIOCSER_TEMT; /* transmitter empty */
++      ret = __put_user(temp, (int __user *)arg);
++    }
++    else
++    {
++      ret = -EFAULT;
++    }
++    break;
++
++  case TIOCGICOUNT:
++    if (_access_ok(VERIFY_WRITE, (void __user *)arg, sizeof(struct serial_icounter_struct)))
++    {
++      struct serial_icounter_struct icount;
++      memset(&icount, 0, sizeof(icount));
++      ret = copy_to_user((void __user *)arg, &icount, sizeof(icount));
++    }
++    else
++    {
++      ret = -EFAULT;
++    }
++    break;
++
++
+   default:
+     ret = -ENOTTY;
+   }
+@@ -1355,7 +1463,7 @@ EXPORT_SYMBOL(generic_raw_uart_verify_dkey);
+ 
+ MODULE_ALIAS("platform:generic-raw-uart");
+ MODULE_LICENSE("GPL");
+-MODULE_VERSION("1.31");
++MODULE_VERSION("1.32");
+ MODULE_DESCRIPTION("generic raw uart driver for communication of debmatic and piVCCU with the HM-MOD-RPI-PCB and RPI-RF-MOD radio modules");
+ MODULE_AUTHOR("Alexander Reinert <alex@areinert.de>");
+ 
