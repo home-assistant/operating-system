@@ -1,0 +1,97 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Axel Karjalainen <axel@axka.fi>
+Date: Thu, 10 Apr 2025 21:16:00 +0300
+Subject: [PATCH] gmessages: add `SYSLOG_IDENTIFIER` to structured logs using
+ select functions
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Fixes #3656
+
+(cherry picked from commit 8153cd8551a31f375d7afe2d642771438a179912)
+Upstream: https://gitlab.gnome.org/GNOME/glib/-/commit/8153cd8551a31f375d7afe2d642771438a179912?merge_request_iid=4589
+Signed-off-by: Jan Čermák <sairon@sairon.cz>
+---
+ glib/gmessages.c | 41 +++++++++++++++++++++++++++++++++--------
+ 1 file changed, 33 insertions(+), 8 deletions(-)
+
+diff --git a/glib/gmessages.c b/glib/gmessages.c
+index fba55b619..f19a6a395 100644
+--- a/glib/gmessages.c
++++ b/glib/gmessages.c
+@@ -1886,14 +1886,30 @@ g_log_structured_standard (const gchar    *log_domain,
+       { "CODE_FUNC", func, -1 },
+       /* Filled in later: */
+       { "MESSAGE", NULL, -1 },
+-      /* If @log_domain is %NULL, we will not pass this field: */
+-      { "GLIB_DOMAIN", log_domain, -1 },
++      /* Optionally GLIB_DOMAIN and/or SYSLOG_IDENTIFIER */
++      { NULL, NULL, -1 },
++      { NULL, NULL, -1 },
+     };
+-  gsize n_fields;
++  gsize n_fields = 5;
++  const gchar *prgname = g_get_prgname ();
+   gchar *message_allocated = NULL;
+   gchar buffer[1025];
+   va_list args;
+ 
++  if (log_domain)
++    {
++      fields[n_fields].key = "GLIB_DOMAIN";
++      fields[n_fields].value = log_domain;
++      n_fields++;
++    }
++
++  if (prgname)
++    {
++      fields[n_fields].key = "SYSLOG_IDENTIFIER";
++      fields[n_fields].value = prgname;
++      n_fields++;
++    }
++
+   va_start (args, message_format);
+ 
+   if (log_level & G_LOG_FLAG_RECURSION)
+@@ -1913,7 +1929,6 @@ g_log_structured_standard (const gchar    *log_domain,
+ 
+   va_end (args);
+ 
+-  n_fields = G_N_ELEMENTS (fields) - ((log_domain == NULL) ? 1 : 0);
+   g_log_structured_array (log_level, fields, n_fields);
+ 
+   g_free (message_allocated);
+@@ -3371,8 +3386,9 @@ g_log_default_handler (const gchar   *log_domain,
+ 		       const gchar   *message,
+ 		       gpointer	      unused_data)
+ {
+-  GLogField fields[4];
++  GLogField fields[5];
+   int n_fields = 0;
++  const gchar *prgname;
+ 
+   /* we can be called externally with recursion for whatever reason */
+   if (log_level & G_LOG_FLAG_RECURSION)
+@@ -3398,9 +3414,18 @@ g_log_default_handler (const gchar   *log_domain,
+ 
+   if (log_domain)
+     {
+-      fields[3].key = "GLIB_DOMAIN";
+-      fields[3].value = log_domain;
+-      fields[3].length = -1;
++      fields[n_fields].key = "GLIB_DOMAIN";
++      fields[n_fields].value = log_domain;
++      fields[n_fields].length = -1;
++      n_fields++;
++    }
++
++  prgname = g_get_prgname ();
++  if (prgname)
++    {
++      fields[n_fields].key = "SYSLOG_IDENTIFIER";
++      fields[n_fields].value = prgname;
++      fields[n_fields].length = -1;
+       n_fields++;
+     }
+ 
