@@ -1,0 +1,48 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Jan=20=C4=8Cerm=C3=A1k?= <sairon@sairon.cz>
+Date: Tue, 27 Jan 2026 11:44:28 +0100
+Subject: [PATCH] src/event_log: add SYSLOG_IDENTIFIER to structured log
+ messages
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+GLib's g_log_structured() doesn't automatically include SYSLOG_IDENTIFIER,
+unlike the convenience functions (g_message, etc.) which go through
+g_log_structured_standard(). This causes messages logged via
+g_log_structured() to be missing from `journalctl -t rauc` output.
+
+Add SYSLOG_IDENTIFIER to all log messages by extending the fields array
+in r_event_log_writer() before passing to g_log_writer_default(). Use
+g_get_prgname() with a fallback to "rauc" for cases where the program
+name hasn't been set yet.
+
+Fixes #1860
+
+Signed-off-by: Jan Čermák <sairon@sairon.cz>
+
+[cherry-picked for v1.13]
+Upstream: https://github.com/rauc/rauc/pull/1865
+Signed-off-by: Jan Čermák <sairon@sairon.cz>
+---
+ src/event_log.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/src/event_log.c b/src/event_log.c
+index 44428972..515fd35a 100644
+--- a/src/event_log.c
++++ b/src/event_log.c
+@@ -362,8 +362,11 @@ GLogWriterOutput r_event_log_writer(GLogLevelFlags log_level, const GLogField *f
+ 	const gchar *log_domain = NULL;
+ 	const gchar *event_type = NULL;
+ 
+-	/* Always log to default location, too */
+-	g_log_writer_default(log_level, fields, n_fields, user_data);
++	/* Add SYSLOG_IDENTIFIER and pass also to default writer */
++	GLogField extended_fields[n_fields + 1];
++	memcpy(extended_fields, fields, sizeof(GLogField) * n_fields);
++	extended_fields[n_fields] = (GLogField){"SYSLOG_IDENTIFIER", g_get_prgname() ?: "rauc", -1};
++	g_log_writer_default(log_level, extended_fields, n_fields + 1, user_data);
+ 
+ 	/* get log domain */
+ 	for (gsize i = 0; i < n_fields; i++) {
