@@ -97,23 +97,23 @@ def test_supervisor_is_updated(shell_json):
 
 
 @pytest.mark.dependency(depends=["test_supervisor_is_updated"])
-def test_addon_install(shell_json):
-    # install Core SSH add-on
+def test_app_install(shell_json):
+    # install Core SSH app
     assert (
-        shell_json("ha addons install core_ssh --no-progress --raw-json").get("result") == "ok"
-    ), "Core SSH add-on install failed"
-    # check Core SSH add-on is installed
+        shell_json("ha apps install core_ssh --no-progress --raw-json").get("result") == "ok"
+    ), "Core SSH app install failed"
+    # check Core SSH app is installed
     assert (
-        shell_json("ha addons info core_ssh --no-progress --raw-json").get("data", {}).get("version") is not None
-    ), "Core SSH add-on not installed"
-    # start Core SSH add-on
+        shell_json("ha apps info core_ssh --no-progress --raw-json").get("data", {}).get("version") is not None
+    ), "Core SSH app not installed"
+    # start Core SSH app
     assert (
-        shell_json("ha addons start core_ssh --no-progress --raw-json").get("result") == "ok"
-    ), "Core SSH add-on start failed"
-    # check Core SSH add-on is running
-    ssh_info = shell_json("ha addons info core_ssh --no-progress --raw-json")
-    assert ssh_info.get("data", {}).get("state") == "started", "Core SSH add-on not running"
-    logger.info("Core SSH add-on info: %s", ssh_info)
+        shell_json("ha apps start core_ssh --no-progress --raw-json").get("result") == "ok"
+    ), "Core SSH app start failed"
+    # check Core SSH app is running
+    ssh_info = shell_json("ha apps info core_ssh --no-progress --raw-json")
+    assert ssh_info.get("data", {}).get("state") == "started", "Core SSH app not running"
+    logger.info("Core SSH app info: %s", ssh_info)
 
 
 @pytest.mark.dependency(depends=["test_supervisor_is_updated"])
@@ -143,11 +143,11 @@ def test_create_backup(shell_json, stash):
     logger.info("Backup creation result: %s", result)
 
 
-@pytest.mark.dependency(depends=["test_addon_install"])
-def test_addon_uninstall(shell_json):
-    result = shell_json("ha addons uninstall core_ssh --no-progress --raw-json")
-    assert result.get("result") == "ok", f"Core SSH add-on uninstall failed: {result}"
-    logger.info("Core SSH add-on uninstall result: %s", result)
+@pytest.mark.dependency(depends=["test_app_install"])
+def test_app_uninstall(shell_json):
+    result = shell_json("ha apps uninstall core_ssh --no-progress --raw-json")
+    assert result.get("result") == "ok", f"Core SSH app uninstall failed: {result}"
+    logger.info("Core SSH app uninstall result: %s", result)
 
 
 @pytest.mark.dependency(depends=["test_supervisor_is_updated"])
@@ -173,14 +173,14 @@ def test_restart_supervisor(shell, shell_json):
 
 @pytest.mark.dependency(depends=["test_create_backup"])
 def test_restore_backup(shell_json, stash):
-    result = shell_json(f"ha backups restore {stash.get('slug')} --addons core_ssh --no-progress --raw-json")
+    result = shell_json(f"ha backups restore {stash.get('slug')} --app core_ssh --no-progress --raw-json")
     assert result.get("result") == "ok", f"Backup restore failed: {result}"
     logger.info("Backup restore result: %s", result)
 
-    addon_info = shell_json("ha addons info core_ssh --no-progress --raw-json")
-    assert addon_info.get("data", {}).get("version") is not None, "Core SSH add-on not installed"
-    assert addon_info.get("data", {}).get("state") == "started", "Core SSH add-on not running"
-    logger.info("Core SSH add-on info: %s", addon_info)
+    app_info = shell_json("ha apps info core_ssh --no-progress --raw-json")
+    assert app_info.get("data", {}).get("version") is not None, "Core SSH app not installed"
+    assert app_info.get("data", {}).get("state") == "started", "Core SSH app not running"
+    logger.info("Core SSH app info: %s", app_info)
 
 
 @pytest.mark.dependency(depends=["test_create_backup"])
