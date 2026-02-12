@@ -1,0 +1,28 @@
+config BR2_PACKAGE_LINUX_GADGET
+	bool "Activate CDC UMS gadget"
+	depends on BR2_LINUX_KERNEL
+	help
+	  Activate linux gadgets for CDC console and UMS
+
+if BR2_PACKAGE_LINUX_GADGET
+
+config BR2_PACKAGE_LINUX_GADGET_GETTY
+	bool "CDC-ACM Getty"
+	help
+	  Activate getty console on OTG port
+
+config BR2_PACKAGE_LINUX_GADGET_UMS
+	bool "UMS Gadget"
+	help
+	  Activate UMS gadget on OTG port
+if BR2_PACKAGE_LINUX_GADGET_UMS
+
+config BR2_PACKAGE_LINUX_GADGET_UMS_LUN
+	string "UMS LUN"
+	default "/dev/mmcblk0"
+	help
+	  LUN backing file for UMS gadget
+
+endif
+
+endif
