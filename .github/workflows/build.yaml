@@ -36,7 +36,6 @@ jobs:
     permissions:
       contents: read
       pull-requests: read
-      packages: write
     outputs:
       version_dev: ${{ steps.version_dev.outputs.version_dev }}
       version_main: ${{ steps.version.outputs.version_main }}
@@ -44,7 +43,6 @@ jobs:
       channel: ${{ steps.channel.outputs.channel }}
       hassio_channel_option: ${{ steps.channel.outputs.hassio_channel_option }}
       matrix: ${{ steps.generate_matrix.outputs.result }}
-      build_container_image: ghcr.io/${{ github.repository_owner }}/haos-builder@${{ steps.build_haos_builder.outputs.digest }}
       self_signed_cert: ${{ steps.generate_signing_key.outputs.self_signed_cert }}
     steps:
       - name: Checkout source
@@ -133,25 +131,6 @@ jobs:
               return { "board": buildBoards }
             }
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3.12.0
-      - name: Log in to the GitHub container registry
-        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
-        with:
-            registry: ghcr.io
-            username: ${{ github.repository_owner }}
-            password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Build and Push
-        uses: docker/build-push-action@263435318d21b8e681c14492fe198d362a7d2c83 # v6.18.0
-        id: build_haos_builder
-        with:
-          context: .
-          file: Dockerfile
-          tags: ghcr.io/${{ github.repository_owner }}/haos-builder
-          cache-from: ghcr.io/${{ github.repository_owner }}/haos-builder:cache-${{ steps.version.outputs.version_main }}
-          cache-to: ghcr.io/${{ github.repository_owner }}/haos-builder:cache-${{ steps.version.outputs.version_main }}
-          push: true
-
       - name: Generate self-signed certificate
         id: generate_signing_key
         env:
@@ -175,7 +154,7 @@ jobs:
   build:
     name: Build for ${{ matrix.board.id }}
     permissions:
-      contents: write
+      contents: read
     needs: prepare
     strategy:
       fail-fast: false
@@ -234,30 +213,34 @@ jobs:
           path: /mnt/cache/cc
           key: haos-cc-${{ matrix.board.id }}
 
+      - name: Build builder container image
+        run: |
+          docker build -t haos-builder:local -f Dockerfile .
+
       - name: Generate build config
         uses: "./.github/actions/haos-builder-command"
         with:
-          image: ${{ needs.prepare.outputs.build_container_image }}
+          image: haos-builder:local
           command: make ${{ matrix.board.defconfig }}_defconfig
 
       - name: Override release channel
         if: ${{ needs.prepare.outputs.hassio_channel_option != 'BR2_PACKAGE_HASSIO_CHANNEL_STABLE' }}
         uses: "./.github/actions/haos-builder-command"
         with:
-          image: ${{ needs.prepare.outputs.build_container_image }}
+          image: haos-builder:local
           command: |
             bash -c 'echo "${{ needs.prepare.outputs.hassio_channel_option }}=y" >> /build/output/.config && make olddefconfig'
 
       - name: Build
         uses: "./.github/actions/haos-builder-command"
         with:
-          image: ${{ needs.prepare.outputs.build_container_image }}
+          image: haos-builder:local
           command: make
 
       - name: Check Linux config
         uses: "./.github/actions/haos-builder-command"
         with:
-          image: ${{ needs.prepare.outputs.build_container_image }}
+          image: haos-builder:local
           command: |
             make BR2_CHECK_DOTCONFIG_OPTS="--github-format --strip-path-prefix=/build/" linux-check-dotconfig
 
@@ -310,10 +293,3 @@ jobs:
           name: haos_${{ matrix.board.id }}-${{ needs.prepare.outputs.version_full }}.img.xz
           path: |
             output/images/haos_${{ matrix.board.id }}-${{ needs.prepare.outputs.version_full }}.img.xz
-
-      - name: Upload RAUC bundle artifact
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
-        with:
-          name: haos_${{ matrix.board.id }}-${{ needs.prepare.outputs.version_full }}.raucb
-          path: |
-            output/images/haos_${{ matrix.board.id }}-${{ needs.prepare.outputs.version_full }}.raucb
