@@ -16,7 +16,7 @@ def stash() -> dict:
 
 
 @pytest.mark.dependency()
-@pytest.mark.timeout(120)
+@pytest.mark.timeout(360)
 def test_start_supervisor(shell, shell_json):
     def check_container_running(container_name):
         out = shell.run_check(f"docker container inspect -f '{{{{.State.Status}}}}' {container_name} || true")
@@ -40,6 +40,34 @@ def test_start_supervisor(shell, shell_json):
             pass  # avoid failure when the container is restarting
 
         sleep(1)
+
+
+    logger.info("Waiting for Home Assistant Core to be installed and started...")
+    core_install_started = False
+    while True:
+        try:
+            jobs_info = shell_json("ha jobs info --no-progress --raw-json")
+            if jobs_info.get("result") != "ok":
+                sleep(5)
+                continue
+            jobs = jobs_info.get("data", {}).get("jobs", [])
+            core_installing = any(
+                j.get("name") == "home_assistant_core_install" and not j.get("done")
+                for j in jobs
+            )
+            if core_installing:
+                # install is in progress
+                if not core_install_started:
+                    logger.info("Home Assistant Core install job detected, waiting for completion...")
+                    core_install_started = True
+            elif core_install_started:
+                # started and not installing anymore means finished
+                logger.info("Home Assistant Core install/start complete")
+                break
+        except ExecutionError:
+            pass  # avoid failure when the supervisor/CLI is restarting
+
+        sleep(5)
 
 
 @pytest.mark.dependency(depends=["test_start_supervisor"])
