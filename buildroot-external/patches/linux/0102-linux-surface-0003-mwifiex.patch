@@ -51,9 +51,19 @@ index 5f997becd..9a9929424 100644
 +	 * We need to do it here because it must happen after firmware
 +	 * initialization and this function is called after that is done.
 +	 */
-+	if (card->quirks & QUIRK_DO_FLR_ON_BRIDGE)
-+		pci_reset_function(parent_pdev);
-+
++	struct pci_dev *parent_pdev = pci_upstream_bridge(pdev);
+ 	const struct mwifiex_pcie_card_reg *reg = card->pcie.reg;
+ 	int tx_wrap = card->txbd_wrptr & reg->tx_wrap_mask;
+ 
++	if ((card->quirks & QUIRK_DO_FLR_ON_BRIDGE) && parent_pdev) {
++		int ret = pci_reset_function(parent_pdev);
++		if (ret)
++			dev_warn(&pdev->dev,
++				 "FLR of PCI bridge failed: %d\n", ret);
++	}
+-	if (card->quirks & QUIRK_DO_FLR_ON_BRIDGE)
+-		pci_reset_function(parent_pdev);
+
  	/* Write the RX ring read pointer in to reg->rx_rdptr */
  	mwifiex_write_reg(adapter, reg->rx_rdptr, card->rxbd_rdptr | tx_wrap);
  }
@@ -205,7 +215,9 @@ index 9a9929424..2273e3029 100644
 +	/* disable bridge_d3 for Surface gen4+ devices to fix fw crashing
 +	 * after suspend
 +	 */
-+	if (card->quirks & QUIRK_NO_BRIDGE_D3)
+-	if (card->quirks & QUIRK_NO_BRIDGE_D3)
+-		parent_pdev->bridge_d3 = false;
++	if ((card->quirks & QUIRK_NO_BRIDGE_D3) && parent_pdev)
 +		parent_pdev->bridge_d3 = false;
 +
  	return 0;
@@ -300,8 +312,9 @@ index f46b06f8d..99b024ecb 100644
  	if (card->quirks & QUIRK_DO_FLR_ON_BRIDGE)
  		dev_info(&pdev->dev, "quirk do_flr_on_bridge enabled\n");
 +	if (card->quirks & QUIRK_NO_BRIDGE_D3)
-+		dev_info(&pdev->dev,
-+			 "quirk no_brigde_d3 enabled\n");
+-		dev_info(&pdev->dev,
+-			 "quirk no_brigde_d3 enabled\n");
++		dev_info(&pdev->dev, "quirk no_bridge_d3 enabled\n");
  }
  
  static void mwifiex_pcie_set_power_d3cold(struct pci_dev *pdev)

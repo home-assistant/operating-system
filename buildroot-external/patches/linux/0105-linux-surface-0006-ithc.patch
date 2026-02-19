@@ -1250,7 +1250,7 @@ index 000000000..ac56c2536
 +
 +static unsigned int ithc_idle_delay_ms = 1000;
 +module_param_named(idledelay, ithc_idle_delay_ms, uint, 0);
-+MODULE_PARM_DESC(idleltr, "Minimum idle time before applying idle LTR value (in milliseconds)");
++MODULE_PARM_DESC(idldelay, "Minimum idle time before applying idle LTR value (in milliseconds)");
 +
 +static bool ithc_log_regs_enabled = false;
 +module_param_named(logregs, ithc_log_regs_enabled, bool, 0);

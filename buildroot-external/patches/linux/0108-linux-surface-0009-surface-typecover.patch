@@ -402,6 +402,7 @@ index 26b551523..37a3e6489 100644
  		return mt_touch_event(hid, field, usage, value);
  
 +	if (field->application == MS_TYPE_COVER_APPLICATION &&
++	    rdata &&
 +	    rdata->application->quirks & MT_QUIRK_HAS_TYPE_COVER_TABLET_MODE_SWITCH &&
 +	    usage->hid == MS_TYPE_COVER_TABLET_MODE_SWITCH_USAGE) {
 +		input = field->hidinput->input;
