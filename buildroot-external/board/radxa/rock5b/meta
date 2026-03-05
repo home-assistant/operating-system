@@ -36,10 +36,10 @@ ARMBIAN_UBOOT_TARBALL="https://github.com/armbian/u-boot/archive/refs/heads/mast
 ARMBIAN_DTB_NAME="rk3588-rock-5b.dtb"
 
 # ----------------------------
-# Collabora - devellop branch
+# Collabora - Release branch
 # ----------------------------
 # tree as a tarball; below are example tarballs (branch names may change).
-COLLABORA_KERNEL_TARBALL="https://gitlab.collabora.com/hardware-enablement/rockchip-3588/linux/-/archive/rockchip-v6.18/linux-rockchip-v6.18.tar.gz"
+COLLABORA_KERNEL_TARBALL="https://gitlab.collabora.com/hardware-enablement/rockchip-3588/linux/-/archive/rockchip-v6.19/linux-rockchip-v6.19.tar.gz"
 #COLLABORA_UBOOT_TARBALL="https://gitlab.collabora.com/hardware-enablement/rockchip-3588/u-boot/-/archive/2025.10-rk3588/u-boot-2025.10-rk3588.tar.gz"
 COLLABORA_UBOOT_TARBALL="https://gitlab.collabora.com/hardware-enablement/rockchip-3588/u-boot/-/archive/feature/rk3588-overlays/u-boot-feature-rk3588-overlays.tar.gz"
 # Collabora-derived dtb name (verify after build/patching)
