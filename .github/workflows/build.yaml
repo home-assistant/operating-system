@@ -381,6 +381,7 @@ jobs:
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         if: ${{ github.event_name != 'release' && needs.prepare.outputs.publish_build != 'true' && matrix.board.id != 'ova' }}
         with:
+          archive: false
           name: haos_${{ matrix.board.id }}-${{ needs.prepare.outputs.version_full }}.img.xz
           path: |
             output/images/haos_${{ matrix.board.id }}-${{ needs.prepare.outputs.version_full }}.img.xz
@@ -389,6 +390,7 @@ jobs:
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         if: ${{ github.event_name != 'release' && needs.prepare.outputs.publish_build != 'true' }}
         with:
+          archive: false
           name: haos_${{ matrix.board.id }}-${{ needs.prepare.outputs.version_full }}.raucb
           path: |
             output/images/haos_${{ matrix.board.id }}-${{ needs.prepare.outputs.version_full }}.raucb
@@ -397,6 +399,7 @@ jobs:
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         if: ${{ github.event_name != 'release' && needs.prepare.outputs.publish_build != 'true' && matrix.board.id == 'ova' }}
         with:
+          archive: false
           name: haos_${{ matrix.board.id }}-${{ needs.prepare.outputs.version_full }}.ova
           path: |
             output/images/haos_${{ matrix.board.id }}-${{ needs.prepare.outputs.version_full }}.ova
@@ -406,6 +409,7 @@ jobs:
         # Create artifact for ova every time - it's used by the called tests workflow
         if: ${{ matrix.board.id == 'ova' || (github.event_name != 'release' && needs.prepare.outputs.publish_build != 'true' && matrix.board.id == 'generic-aarch64') }}
         with:
+          archive: false
           name: haos_${{ matrix.board.id }}-${{ needs.prepare.outputs.version_full }}.qcow2.xz
           path: |
             output/images/haos_${{ matrix.board.id }}-${{ needs.prepare.outputs.version_full }}.qcow2.xz
@@ -414,6 +418,7 @@ jobs:
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         if: ${{ github.event_name != 'release' && needs.prepare.outputs.publish_build != 'true' && (matrix.board.id == 'generic-aarch64' || matrix.board.id == 'ova') }}
         with:
+          archive: false
           name: haos_${{ matrix.board.id }}-${{ needs.prepare.outputs.version_full }}.vmdk.zip
           path: |
             output/images/haos_${{ matrix.board.id }}-${{ needs.prepare.outputs.version_full }}.vmdk.zip
@@ -422,6 +427,7 @@ jobs:
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         if: ${{ github.event_name != 'release' && needs.prepare.outputs.publish_build != 'true' && matrix.board.id == 'ova' }}
         with:
+          archive: false
           name: haos_${{ matrix.board.id }}-${{ needs.prepare.outputs.version_full }}.vdi.zip
           path: |
             output/images/haos_${{ matrix.board.id }}-${{ needs.prepare.outputs.version_full }}.vdi.zip
@@ -430,6 +436,7 @@ jobs:
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         if: ${{ github.event_name != 'release' && needs.prepare.outputs.publish_build != 'true' && matrix.board.id == 'ova' }}
         with:
+          archive: false
           name: haos_${{ matrix.board.id }}-${{ needs.prepare.outputs.version_full }}.vhdx.zip
           path: |
             output/images/haos_${{ matrix.board.id }}-${{ needs.prepare.outputs.version_full }}.vhdx.zip
