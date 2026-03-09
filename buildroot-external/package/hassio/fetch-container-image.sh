@@ -14,21 +14,24 @@ dst_dir=$6
 retry() {
 	local retries="$1"
 	local cmd=$2
+	local delay=5
 
 	local output
-	output=$(eval "$cmd")
-	local rc=$?
+	local rc
+	output=$(eval "$cmd") && rc=$? || rc=$?
 
-	# shellcheck disable=SC2086
-	if [ $rc -ne 0 ] && [ $retries -gt 0 ]; then
-		echo "Retrying \"$cmd\" $retries more times..." >&2
-		sleep 3s
+	while [ "$rc" -ne 0 ] && [ "$retries" -gt 0 ]; do
+		echo "Retrying \"$cmd\" in ${delay}s ($retries retries left)..." >&2
+		sleep "${delay}s"
 		# shellcheck disable=SC2004
-		retry $(($retries - 1)) "$cmd"
-	else
-		echo "$output"
-		return $rc
-	fi
+		delay=$(($delay * 3))
+		# shellcheck disable=SC2004
+		retries=$(($retries - 1))
+		output=$(eval "$cmd") && rc=$? || rc=$?
+	done
+
+	echo "$output"
+	return $rc
 }
 
 image_name=$(jq -e -r --arg image_json_name "${image_json_name}" \
