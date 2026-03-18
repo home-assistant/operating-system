@@ -1,4 +1,4 @@
-From bea845559542e556dfaffcec7334695a6387e0d9 Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Jan=20=C4=8Cerm=C3=A1k?= <sairon@sairon.cz>
 Date: Tue, 13 May 2025 18:07:13 +0200
 Subject: [PATCH] rpi-eeprom-update: remove raspi-config mentions and
@@ -18,7 +18,7 @@ Upstream: not applicable
  1 file changed, 3 insertions(+), 7 deletions(-)
 
 diff --git a/rpi-eeprom-update b/rpi-eeprom-update
-index 720efb7..eb19872 100755
+index 66ca8b4..095cd30 100755
 --- a/rpi-eeprom-update
 +++ b/rpi-eeprom-update
 @@ -30,7 +30,6 @@ FIRMWARE_RELEASE_STATUS=${FIRMWARE_RELEASE_STATUS:-default}
@@ -55,7 +55,7 @@ index 720efb7..eb19872 100755
  
     if [ "${BCM_CHIP}" = 2711 ]; then
        echo ""
-@@ -905,9 +903,7 @@ checkVersion()
+@@ -899,9 +897,7 @@ checkVersion()
     if [ "${ACTION_UPDATE_BOOTLOADER}" = 1 ] || [ "${ACTION_UPDATE_VL805}" = 1 ]; then
        echo "*** UPDATE AVAILABLE ***"
        echo ""
