@@ -4,10 +4,10 @@
 | Board | Version |
 |-------|---------|
 | Open Virtual Appliance | 6.12.77 |
-| Raspberry Pi 3 | 6.12.47 |
-| Raspberry Pi 4 | 6.12.47 |
-| Raspberry Pi 5 | 6.12.47 |
-| Home Assistant Yellow | 6.12.47 |
+| Raspberry Pi 3 | 6.12.75 |
+| Raspberry Pi 4 | 6.12.75 |
+| Raspberry Pi 5 | 6.12.75 |
+| Home Assistant Yellow | 6.12.75 |
 | Home Assistant Green | 6.12.77 |
 | ODROID-C2 | 6.12.77 |
 | ODROID-C4 | 6.12.77 |
