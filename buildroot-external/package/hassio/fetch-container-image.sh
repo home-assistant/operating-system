@@ -42,7 +42,13 @@ image_tag=$(jq -e -r --arg image_json_name "${image_json_name}" \
 	'.[$image_json_name]' < "${version_json}")
 full_image_name="${image_name}:${image_tag}"
 
-image_digest=$(retry 3 "skopeo inspect 'docker://${full_image_name}' | jq -r '.Digest'")
+# Map HAOS arch to OCI platform arch for skopeo
+case "${arch}" in
+	aarch64) oci_arch="arm64" ;;
+	*) oci_arch="${arch}" ;;
+esac
+
+image_digest=$(retry 3 "skopeo inspect --override-arch '${oci_arch}' 'docker://${full_image_name}' | jq -r '.Digest'")
 
 # Cleanup image name file name use
 image_file_name="${full_image_name//[:\/]/_}@${image_digest//[:\/]/_}"
@@ -55,7 +61,7 @@ dst_image_file_path="${dst_dir}/${image_file_name}.tar"
 	if [ ! -f "${image_file_path}" ]
 	then
 		echo "Fetching image: ${full_image_name} (digest ${image_digest})"
-		retry 3 "skopeo copy 'docker://${image_name}@${image_digest}' 'oci-archive:${image_file_path}:${full_image_name}'"
+		retry 3 "skopeo copy --override-arch '${oci_arch}' 'docker://${image_name}@${image_digest}' 'oci-archive:${image_file_path}:${full_image_name}'"
 	else
 		echo "Skipping download of existing image: ${full_image_name} (digest ${image_digest})"
 	fi
