@@ -18,6 +18,14 @@ def stash() -> dict:
 @pytest.mark.dependency()
 @pytest.mark.timeout(360)
 def test_start_supervisor(shell, shell_json):
+    # Disable auto-updates to avoid interference with other tests,
+    # do it directly on config level and restart Supervisor via systemd.
+    shell.run_check(
+        "jq '.auto_update = false' /mnt/data/supervisor/updater.json > /tmp/updater.json"
+        " && mv /tmp/updater.json /mnt/data/supervisor/updater.json"
+        " && systemctl restart hassos-supervisor.service"
+    )
+
     def check_container_running(container_name):
         out = shell.run_check(f"docker container inspect -f '{{{{.State.Status}}}}' {container_name} || true")
         return "running" in out
@@ -84,31 +92,33 @@ def test_check_supervisor(shell_json):
 
 @pytest.mark.dependency(depends=["test_check_supervisor"])
 @pytest.mark.timeout(120)
-def test_update_supervisor(shell_json):
-    supervisor_info = shell_json("ha supervisor info --no-progress --raw-json")
-    supervisor_version = supervisor_info.get("data").get("version")
-    supervisor_version_latest = supervisor_info.get("data").get("version_latest")
-    assert supervisor_version_latest, "Missing latest supervisor version info"
-    if supervisor_version == supervisor_version_latest:
-        logger.info("Supervisor is already up to date")
-        pytest.skip("Supervisor is already up to date")
+@pytest.mark.parametrize("component", ["supervisor", "audio", "cli", "dns", "observer", "multicast"])
+def test_update_components(shell_json, component):
+    info = shell_json(f"ha {component} info --no-progress --raw-json")
+    version = info.get("data").get("version")
+    version_latest = info.get("data").get("version_latest")
+    assert version_latest, f"Missing latest {component} version info"
+    if version == version_latest:
+        logger.info("%s is already up to date", component)
+        pytest.skip(f"{component} is already up to date")
     else:
-        result = shell_json("ha supervisor update --no-progress --raw-json")
+        result = shell_json(f"ha {component} update --no-progress --raw-json")
         if result.get("result") == "error" and "Another job is running" in result.get("message"):
             pass
         else:
-            assert result.get("result") == "ok", f"Supervisor update failed: {result}"
+            assert result.get("result") == "ok", f"{component} update failed: {result}"
 
         while True:
             try:
-                supervisor_info = shell_json("ha supervisor info --no-progress --raw-json")
-                data = supervisor_info.get("data")
+                info = shell_json(f"ha {component} info --no-progress --raw-json")
+                data = info.get("data")
                 if data and data.get("version") == data.get("version_latest"):
                     logger.info(
-                        "Supervisor updated from %s to %s: %s",
-                        supervisor_version,
+                        "%s updated from %s to %s: %s",
+                        component,
+                        version,
                         data.get("version"),
-                        supervisor_info,
+                        info,
                     )
                     break
             except ExecutionError:

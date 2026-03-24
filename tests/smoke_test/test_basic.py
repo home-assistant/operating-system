@@ -10,6 +10,14 @@ _LOGGER = logging.getLogger(__name__)
 @pytest.mark.dependency()
 @pytest.mark.timeout(120)
 def test_init(shell):
+    # Disable auto-updates to avoid interference with other tests,
+    # do it directly on config level and restart Supervisor via systemd.
+    shell.run_check(
+        "jq '.auto_update = false' /mnt/data/supervisor/updater.json > /tmp/updater.json"
+        " && mv /tmp/updater.json /mnt/data/supervisor/updater.json"
+        " && systemctl restart hassos-supervisor.service"
+    )
+
     def check_container_running(container_name):
         out = shell.run_check(
             f"docker container inspect -f '{{{{.State.Status}}}}' {container_name} || true"
@@ -26,7 +34,7 @@ def test_init(shell):
     # wait for system ready
     while True:
         output = "\n".join(shell.run_check("ha os info || true"))
-        if "System is not ready" not in output:
+        if "System is not ready" not in output and "connection refused" not in output:
             break
 
         sleep(1)
