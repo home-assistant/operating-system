@@ -1,4 +1,4 @@
-From 3a369be3f99ff577e09f8fc02703c7c9e4e74f3d Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Stefan Agner <stefan@agner.ch>
 Date: Tue, 28 Mar 2023 12:02:10 +0200
 Subject: [PATCH] ipv6: add option to explicitly enable reachability test
@@ -17,7 +17,7 @@ Signed-off-by: Stefan Agner <stefan@agner.ch>
  2 files changed, 11 insertions(+), 1 deletion(-)
 
 diff --git a/net/ipv6/Kconfig b/net/ipv6/Kconfig
-index 1c9c686d9522f..ee4d9ca9d2e24 100644
+index b8f9a8c0302ee..63cc3590aff9e 100644
 --- a/net/ipv6/Kconfig
 +++ b/net/ipv6/Kconfig
 @@ -48,6 +48,15 @@ config IPV6_OPTIMISTIC_DAD
@@ -37,10 +37,10 @@ index 1c9c686d9522f..ee4d9ca9d2e24 100644
  	tristate "IPv6: AH transformation"
  	select XFRM_AH
 diff --git a/net/ipv6/route.c b/net/ipv6/route.c
-index 8ebfed5d63232..f1a61af0f5199 100644
+index 446f4de7d6a22..ab61c47c945e0 100644
 --- a/net/ipv6/route.c
 +++ b/net/ipv6/route.c
-@@ -2223,7 +2223,8 @@ struct rt6_info *ip6_pol_route(struct net *net, struct fib6_table *table,
+@@ -2273,7 +2273,8 @@ struct rt6_info *ip6_pol_route(struct net *net, struct fib6_table *table,
  
  	strict |= flags & RT6_LOOKUP_F_IFACE;
  	strict |= flags & RT6_LOOKUP_F_IGNORE_LINKSTATE;
