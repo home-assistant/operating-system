@@ -845,6 +845,7 @@ class Kconfig(object):
         "warn_assign_undef",
         "warn_to_stderr",
         "warnings",
+        "_is_transitional_context",
         "y",
 
         # Parsing-related
@@ -975,6 +976,7 @@ class Kconfig(object):
         self._warn_assign_no_prompt = True
 
         self.warnings = []
+        self._is_transitional_context = False
 
         self.config_prefix = os.getenv("CONFIG_", "CONFIG_")
         # Regular expressions for parsing .config files
@@ -2938,6 +2940,11 @@ class Kconfig(object):
 
                 sym.nodes.append(node)
 
+                # Check if we are in a transitional context
+                if self._is_transitional_context:
+                    sym.is_transitional = True
+                    self._is_transitional_context = False
+
                 self._parse_props(node)
 
                 if node.is_menuconfig and not node.prompt:
@@ -3134,12 +3141,23 @@ class Kconfig(object):
         # node:
         #   The menu node we're parsing properties on
 
-        # Dependencies from 'depends on'. Will get propagated to the properties
+        # Dependencies from 'depends on'. Will get propagated by the properties
         # below.
-        node.dep = self.y
+        node.dep = self.y # Initialize node.dep
 
         while self._next_line():
             t0 = self._tokens[0]
+
+            if node.item.__class__ is Symbol and node.item.is_transitional:
+                if t0 is _T_DEFAULT or \
+                   t0 is _T_SELECT or \
+                   t0 is _T_IMPLY or \
+                   t0 is _T_RANGE or \
+                   t0 is _T_PROMPT or \
+                   t0 in _TYPE_TOKENS: # Transitional symbols can have a type, but not re-define it
+                    if t0 is not _T_HELP: # Help is allowed
+                        self._parse_error("transitional symbols can only have 'help' sections")
+
 
             if t0 in _TYPE_TOKENS:
                 # Relies on '_T_BOOL is BOOL', etc., to save a conversion
@@ -3197,6 +3215,13 @@ class Kconfig(object):
 
                 node.visibility = self._make_and(node.visibility,
                                                  self._expect_expr_and_eol())
+
+            elif t0 is _T_TRANSITIONAL:
+                if node.item.__class__ is not Symbol:
+                    self._parse_error("'transitional' is only valid for symbols")
+                node.item.is_transitional = True
+                if self._tokens[1] is not None:
+                    self._trailing_tokens_error()
 
             elif t0 is _T_OPTION:
                 if self._check_token(_T_ENV):
@@ -4269,6 +4294,7 @@ class Symbol(object):
         "implies",
         "is_allnoconfig_y",
         "is_constant",
+        "is_transitional",
         "kconfig",
         "name",
         "nodes",
@@ -4544,7 +4570,7 @@ class Symbol(object):
         # _write_to_conf is determined when the value is calculated. This is a
         # hidden function call due to property magic.
         val = self.str_value
-        if not self._write_to_conf:
+        if not self._write_to_conf or self.is_transitional: # Omit transitional symbols
             return ""
 
         if self.orig_type in _BOOL_TRISTATE:
@@ -4818,6 +4844,7 @@ class Symbol(object):
         # Symbol gets a .config entry.
 
         self.is_allnoconfig_y = \
+        self.is_transitional = \
         self._was_set = \
         self._write_to_conf = False
 
@@ -6913,7 +6940,8 @@ except AttributeError:
     _T_TRISTATE,
     _T_UNEQUAL,
     _T_VISIBLE,
-) = range(1, 51)
+    _T_TRANSITIONAL,
+) = range(1, 52)
 
 # Keyword to token map, with the get() method assigned directly as a small
 # optimization
@@ -6960,6 +6988,7 @@ _get_keyword = {
     "source":         _T_SOURCE,
     "string":         _T_STRING,
     "tristate":       _T_TRISTATE,
+    "transitional":   _T_TRANSITIONAL,
     "visible":        _T_VISIBLE,
 }.get
 
