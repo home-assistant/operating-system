@@ -1,0 +1,36 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Chris Bradbury <chris@binaryspanner.com>
+Date: Fri, 24 Jan 2025 14:34:56 +0000
+Subject: [PATCH] Change `MODULE_IMPORT_NS()` parameter to string literal for
+ kernels >= 6.13
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+In kernel 6.13 the `MODULE_IMPORT_NS()` function has been changed to accept string literals instead of macro expansions.
+
+See https://github.com/torvalds/linux/commit/cdd30ebb1b9f36159d66f088b61aee264e649d7a
+Upstream: https://github.com/google/gasket-driver/pull/50
+
+Signed-off-by: Jan Čermák <sairon@sairon.cz>
+---
+ src/gasket_page_table.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/src/gasket_page_table.c b/src/gasket_page_table.c
+index c9067cb..41dd598 100644
+--- a/src/gasket_page_table.c
++++ b/src/gasket_page_table.c
+@@ -54,7 +54,11 @@
+ #include <linux/vmalloc.h>
+ 
+ #if __has_include(<linux/dma-buf.h>)
+-MODULE_IMPORT_NS(DMA_BUF);
++	#if LINUX_VERSION_CODE < KERNEL_VERSION(6, 13, 0)
++	MODULE_IMPORT_NS(DMA_BUF);
++	#else
++	MODULE_IMPORT_NS("DMA_BUF");
++	#endif
+ #endif
+ 
+ #include "gasket_constants.h"
