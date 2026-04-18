@@ -1,7 +1,7 @@
 config BR2_PACKAGE_OS_AGENT
-	bool "Home Assistant OS Agent"
+	bool "JERJER MACHINE OS Agent"
 	help
-	  Install the Home Assistant OS Agent
+	  Install the JERJER MACHINE OS Agent
 
 if BR2_PACKAGE_OS_AGENT
 

@@ -35,7 +35,7 @@ env:
 
 jobs:
   build-index:
-    name: Build Home Assistant OS artifacts index
+    name: Build JERJER MACHINE OS artifacts index
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout source

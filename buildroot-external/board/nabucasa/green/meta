@@ -1,5 +1,5 @@
 BOARD_ID=green
-BOARD_NAME="Home Assistant Green"
+BOARD_NAME="JERJER MACHINE Green"
 CHASSIS=embedded
 BOOTLOADER=uboot
 KERNEL_FILE=Image

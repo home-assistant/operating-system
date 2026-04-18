@@ -1,5 +1,5 @@
 [Unit]
-Description=Home Assistant CLI
+Description=JERJER MACHINE CLI
 Wants=hassos-supervisor.service
 After=systemd-user-sessions.service plymouth-quit-wait.service getty-pre.target hassos-supervisor.service
 Conflicts=getty@%i.service

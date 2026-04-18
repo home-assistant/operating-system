@@ -1,5 +1,5 @@
 [Unit]
-Description=Home Assistant OS Device Wipe Service
+Description=JERJER MACHINE OS Device Wipe Service
 DefaultDependencies=no
 RefuseManualStart=true
 RefuseManualStop=true

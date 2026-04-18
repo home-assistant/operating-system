@@ -1,14 +1,14 @@
-name-template: Home Assistant OS $RESOLVED_VERSION
+name-template: JERJER MACHINE OS $RESOLVED_VERSION
 tag-template: $RESOLVED_VERSION
 version-template: "$MAJOR.$MINOR"
 categories:
-  - title: 'Home Assistant Operating System'
+  - title: 'JERJER MACHINE Operating System'
     label: 'os'
   - title: 'Raspberry Pi'
     label: 'board/raspberrypi'
-  - title: 'Home Assistant Yellow'
+  - title: 'JERJER MACHINE Yellow'
     label: 'board/yellow'
-  - title: 'Home Assistant Green'
+  - title: 'JERJER MACHINE Green'
     label: 'board/green'
   - title: 'Open Virtual Appliance'
     label: 'board/ova'

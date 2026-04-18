@@ -16,7 +16,7 @@ index f92936d7cf16b..fa93ab5ca639b 100644
 +++ b/arch/arm/boot/dts/broadcom/bcm2711-rpi-cm4-ha-yellow.dts
 @@ -15,6 +15,10 @@ / {
  	compatible = "raspberrypi,4-compute-module-ha-yellow", "raspberrypi,4-compute-module", "brcm,bcm2711";
- 	model = "Raspberry Pi Compute Module 4 on Home Assistant Yellow";
+ 	model = "Raspberry Pi Compute Module 4 on JERJER MACHINE Yellow";
  
 +	aliases {
 +		serial4 = &uart4;

@@ -48,7 +48,7 @@ index 0000000000000..d6a86cc57b65e
 +#include "rk3566.dtsi"
 +
 +/ {
-+	model = "Home Assistant Green";
++	model = "JERJER MACHINE Green";
 +	compatible = "rockchip,rk3566-ha-green", "rockchip,rk3566";
 +
 +	aliases {

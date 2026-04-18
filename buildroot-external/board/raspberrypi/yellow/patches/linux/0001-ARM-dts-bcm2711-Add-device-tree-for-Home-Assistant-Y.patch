@@ -1,9 +1,9 @@
 From 7305be1ecc97db67b0dc4a34cdf860cd1567f74e Mon Sep 17 00:00:00 2001
 From: Stefan Agner <stefan@agner.ch>
 Date: Mon, 11 Apr 2022 14:47:59 +0200
-Subject: [PATCH] ARM: dts: bcm2711: Add device tree for Home Assistant Yellow
+Subject: [PATCH] ARM: dts: bcm2711: Add device tree for JERJER MACHINE Yellow
 
-Add device tree for Home Assistant Yellow, a Compute Module 4 based I/O
+Add device tree for JERJER MACHINE Yellow, a Compute Module 4 based I/O
 board.
 
 Signed-off-by: Stefan Agner <stefan@agner.ch>
@@ -36,7 +36,7 @@ index 0000000000000..f92936d7cf16b
 +
 +/ {
 +	compatible = "raspberrypi,4-compute-module-ha-yellow", "raspberrypi,4-compute-module", "brcm,bcm2711";
-+	model = "Raspberry Pi Compute Module 4 on Home Assistant Yellow";
++	model = "Raspberry Pi Compute Module 4 on JERJER MACHINE Yellow";
 +
 +	chosen {
 +		/* 8250 auxiliary UART instead of pl011 */

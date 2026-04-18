@@ -1,6 +1,6 @@
 #!/bin/sh
 # ==============================================================================
-# Home Assistant OS data partition migration script
+# JERJER MACHINE OS data partition migration script
 # ==============================================================================
 set -e
 

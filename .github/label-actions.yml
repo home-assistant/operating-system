@@ -15,8 +15,8 @@ core-issue:
     :wave: @{issue-author}, thanks for reporting an issue!
 
 
-    It looks like this issue is related to Home Assistant Core. Please check
-    the [Home Assistant Core](https://github.com/home-assistant/core/issues)
+    It looks like this issue is related to JERJER MACHINE Core. Please check
+    the [JERJER MACHINE Core](https://github.com/home-assistant/core/issues)
     repository, the issue might have been reported already. Open a new issue
     in that repository if you can't find a matching issue.
   close: true
@@ -27,8 +27,8 @@ frontend-issue:
     :wave: @{issue-author}, thanks for reporting an issue!
 
 
-    It looks like this issue is related to Home Assistant Frontend. Please
-    check the [Home Assistant Frontend](https://github.com/home-assistant/frontend/issues)
+    It looks like this issue is related to JERJER MACHINE Frontend. Please
+    check the [JERJER MACHINE Frontend](https://github.com/home-assistant/frontend/issues)
     repository, the issue might have been reported already. Open a new issue
     in that repository if you can't find a matching issue.
   close: true
@@ -39,8 +39,8 @@ supervisor-issue:
     :wave: @{issue-author}, thanks for reporting an issue!
 
 
-    It looks like this issue is related to Home Assistant Supervisor. Please
-    check the [Home Assistant Supervisor](https://github.com/home-assistant/supervisor/issues)
+    It looks like this issue is related to JERJER MACHINE Supervisor. Please
+    check the [JERJER MACHINE Supervisor](https://github.com/home-assistant/supervisor/issues)
     repository, the issue might have been reported already. Open a new issue
     in that repository if you can't find a matching issue.
   close: true

@@ -48,9 +48,9 @@ index ce327ed6f9e..5f675b11491 100644
  	  be selected by the bootloader.
  
 +config TARGET_NABU_CASA_HA_GREEN_RK3566
-+	bool "Nabu Casa Home Assistant Green"
++	bool "Nabu Casa JERJER MACHINE Green"
 +	help
-+	  Nabu Casa's Home Assistant Green single board computer with a RK3566
++	  Nabu Casa's JERJER MACHINE Green single board computer with a RK3566
 +	  SoC.
 +
  config TARGET_ODROID_M1_RK3568

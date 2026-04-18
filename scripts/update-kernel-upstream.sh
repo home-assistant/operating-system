@@ -16,7 +16,7 @@ IFS='.' read -r -a new_version_parts <<< "$1"
 
 defconfigs=(buildroot-external/configs/{generic_aarch64,generic_x86_64,ova,odroid_*,khadas_vim3,green}_defconfig)
 sed -i "s/BR2_LINUX_KERNEL_CUSTOM_VERSION_VALUE=\".*\"/BR2_LINUX_KERNEL_CUSTOM_VERSION_VALUE=\"$1\"/g" "${defconfigs[@]}"
-sed -i "s/| \(Open Virtual Appliance\|Generic aarch64\|Generic x86-64\|ODROID-.*\|Khadas VIM3\|Home Assistant Green\) | .* |/| \1 | $1 |/g" Documentation/kernel.md
+sed -i "s/| \(Open Virtual Appliance\|Generic aarch64\|Generic x86-64\|ODROID-.*\|Khadas VIM3\|JERJER MACHINE Green\) | .* |/| \1 | $1 |/g" Documentation/kernel.md
 
 commit_message="Linux: Update kernel to $1"
 

@@ -18,7 +18,7 @@ def test_init(shell, shell_json):
 
     # wait for important containers first
     while True:
-        if check_container_running("homeassistant") and check_container_running("hassio_supervisor"):
+        if check_container_running("jerjermachine") and check_container_running("hassio_supervisor"):
             break
 
         sleep(1)

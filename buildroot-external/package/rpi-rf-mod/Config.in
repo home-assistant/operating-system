@@ -35,9 +35,9 @@ config BR2_PACKAGE_RPI_RF_MOD_DTS_ODROID_C2
 	  For the ODROID-C2
 
 config BR2_PACKAGE_RPI_RF_MOD_DTS_YELLOW
-	bool "HomeAssistant Yellow"
+	bool "jerjermachine Yellow"
 	help
-	  For the HomeAssistant Yellow
+	  For the jerjermachine Yellow
 
 config BR2_PACKAGE_RPI_RF_MOD_DTS_TINKER
 	bool "ASUS Tinkerboard/S"

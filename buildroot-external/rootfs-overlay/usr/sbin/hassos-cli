@@ -6,7 +6,7 @@
 run_shell() { exec /bin/ash -l; }
 interrupt() { echo " cancelled"; systemctl reset-failed "ha-cli@*"; run_shell; }
 emergency_shell() {
-    printf "\n\n[WARNING] Home Assistant CLI is not starting or was interrupted.\n"
+    printf "\n\n[WARNING] JERJER MACHINE CLI is not starting or was interrupted.\n"
     echo ""
     echo "This happens when start of all services takes longer than expected, or because"
     echo "of slow internet connection. Emergency console has been started, you can use"
@@ -21,7 +21,7 @@ emergency_shell() {
 
 trap interrupt INT
 
-printf "Waiting for the Home Assistant CLI to be ready..."
+printf "Waiting for the JERJER MACHINE CLI to be ready..."
 
 i=0
 while [ ! "$(docker ps -q -f name=hassio_cli)" ]; do
@@ -51,13 +51,13 @@ case $? in
     ;;
   130)
     # 130 is CLI termination with Ctrl+C (SIGINT)
-    printf "\nHome Assistant CLI has been interrupted.\n"
+    printf "\nJERJER MACHINE CLI has been interrupted.\n"
     systemctl reset-failed "ha-cli@*"
     ;;
   143)
     # 143 graceful termination (SIGTERM). Most likely a proper shutdown.
     # Just sleep for a while until actual systemd shutdown gets invoked.
-    printf "\nHome Assistant CLI has been terminated.\n"
+    printf "\nJERJER MACHINE CLI has been terminated.\n"
     sleep 30
     ;;
   *)

@@ -13,12 +13,12 @@
       <Description>Logical network used by this appliance.</Description>
     </Network>
   </NetworkSection>
-  <VirtualSystem ovf:id="HomeAssistant">
+  <VirtualSystem ovf:id="jerjermachine">
     <Info>A virtual machine</Info>
-    <Name>Home Assistant</Name>
+    <Name>JERJER MACHINE</Name>
     <ProductSection>
       <Info>Meta-information about the installed software</Info>
-      <Product>Home Assistant Operating System</Product>
+      <Product>JERJER MACHINE Operating System</Product>
       <ProductUrl>https://www.home-assistant.io</ProductUrl>
     </ProductSection>
     <OperatingSystemSection ovf:id="102" vmw:osType="otherGuest64">
@@ -30,7 +30,7 @@
       <System>
         <vssd:ElementName>Virtual Hardware Family</vssd:ElementName>
         <vssd:InstanceID>0</vssd:InstanceID>
-        <vssd:VirtualSystemIdentifier>Home Assistant</vssd:VirtualSystemIdentifier>
+        <vssd:VirtualSystemIdentifier>JERJER MACHINE</vssd:VirtualSystemIdentifier>
         <vssd:VirtualSystemType>vmx-10</vssd:VirtualSystemType>
       </System>
       <Item>
@@ -111,7 +111,7 @@
       <vmw:ExtraConfig ovf:required="false" vmw:key="usb:0.port" vmw:value="0"/>
       <vmw:ExtraConfig ovf:required="false" vmw:key="usb:0.parent" vmw:value="-1"/>
     </VirtualHardwareSection>
-    <vbox:Machine ovf:required="false" version="1.16-windows" uuid="{cab1600e-df75-47c2-a237-cfb10215b42b}" name="Home Assistant" OSType="Linux_64">
+    <vbox:Machine ovf:required="false" version="1.16-windows" uuid="{cab1600e-df75-47c2-a237-cfb10215b42b}" name="JERJER MACHINE" OSType="Linux_64">
       <ovf:Info>Complete VirtualBox machine configuration in VirtualBox format</ovf:Info>
       <Hardware>
         <CPU count="2"/>

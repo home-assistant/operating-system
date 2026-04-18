@@ -13,7 +13,7 @@ targets:
           disk: disk-image
           bios: bios
       - CustomTimeoutShellDriver:
-          login_prompt: 'homeassistant login: '
+          login_prompt: 'jerjermachine login: '
           username: 'root'
           prompt: '# '
           login_timeout: 300

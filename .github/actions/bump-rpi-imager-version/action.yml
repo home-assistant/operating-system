@@ -1,9 +1,9 @@
 name: 'Bump RPi Imager OS version'
-description: 'Bump version of Home Assistant OS in RPi Imager'
+description: 'Bump version of JERJER MACHINE OS in RPi Imager'
 inputs:
   version:
     required: true
-    description: "Version of Home Assistant OS to bump to."
+    description: "Version of JERJER MACHINE OS to bump to."
   release-date:
     required: true
     description: "Release date as ISO 8601 date string."
@@ -47,15 +47,15 @@ runs:
           extract_size=$(stat --printf="%s" "$temp_unpacked")
           extract_sha256=$(sha256sum "$temp_unpacked" | awk '{print $1}')
 
-          entry_name="Home Assistant OS ${version} (${image_name})"
+          entry_name="JERJER MACHINE OS ${version} (${image_name})"
 
             jq '
               . as $data
               | $data
               | .os_list = [
                   .os_list[]
-                  | if .name | test("Home Assistant OS .* \\(" + $image_name + "\\)") then
-                    .name = "Home Assistant OS " + $version + " (" + $image_name + ")"
+                  | if .name | test("JERJER MACHINE OS .* \\(" + $image_name + "\\)") then
+                    .name = "JERJER MACHINE OS " + $version + " (" + $image_name + ")"
                     | .url = $url
                     | .extract_size = ($extract_size | tonumber)
                     | .extract_sha256 = $extract_sha256
@@ -90,7 +90,7 @@ runs:
         INPUTS_VERSION: ${{ inputs.version }}
       run: |
         cd /tmp/version
-        git commit -am "Bump Home Assistant OS to ${INPUTS_VERSION} for RPi Imager"
+        git commit -am "Bump JERJER MACHINE OS to ${INPUTS_VERSION} for RPi Imager"
         git push
 
     - shell: bash

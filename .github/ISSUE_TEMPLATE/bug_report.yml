@@ -1,5 +1,5 @@
-name: Report an issue with Home Assistant Operating System
-description: Report an issue related to the Home Assistant Operating System.
+name: Report an issue with JERJER MACHINE Operating System
+description: Report an issue related to the JERJER MACHINE Operating System.
 body:
   - type: markdown
     attributes:
@@ -36,17 +36,17 @@ body:
         - rpi3-64 (Raspberry Pi 3 64-bit OS)
         - rpi4-64  (Raspberry Pi 4/400 64-bit OS)
         - rpi5-64  (Raspberry Pi 5 64-bit OS)
-        - yellow (Home Assistant Yellow)
-        - green (Home Assistant Green)
+        - yellow (JERJER MACHINE Yellow)
+        - green (JERJER MACHINE Green)
       description: >
         Can be found in [Settings -> System -> Repairs -> System Information](https://my.home-assistant.io/redirect/system_health/). It is listed as the `Board` value.
 
-        [![Open your Home Assistant instance and show health information about your system.](https://my.home-assistant.io/badges/system_health.svg)](https://my.home-assistant.io/redirect/system_health/)
+        [![Open your JERJER MACHINE instance and show health information about your system.](https://my.home-assistant.io/badges/system_health.svg)](https://my.home-assistant.io/redirect/system_health/)
   - type: input
     validations:
       required: true
     attributes:
-      label: What version of Home Assistant Operating System is installed?
+      label: What version of JERJER MACHINE Operating System is installed?
       placeholder: "6.6"
       description: >
         Can be found in [Settings -> System -> Repairs -> System Information (top right menu)](https://my.home-assistant.io/redirect/system_health/). It is listed as the `Host Operating System` value.
@@ -89,9 +89,9 @@ body:
       label: Anything in the Supervisor logs that might be useful for us?
       description: >
         Supervisor Logs can be found in [Settings -> System -> Logs](https://my.home-assistant.io/redirect/logs/?provider=supervisor)
-        then choose `Supervisor` in the top right. Alternatively enter `ha supervisor logs` in the Home Assistant CLI.
+        then choose `Supervisor` in the top right. Alternatively enter `ha supervisor logs` in the JERJER MACHINE CLI.
 
-        [![Open your Home Assistant instance and show your Supervisor system logs.](https://my.home-assistant.io/badges/supervisor_logs.svg)](https://my.home-assistant.io/redirect/logs/?provider=supervisor)
+        [![Open your JERJER MACHINE instance and show your Supervisor system logs.](https://my.home-assistant.io/badges/supervisor_logs.svg)](https://my.home-assistant.io/redirect/logs/?provider=supervisor)
       render: txt
   - type: textarea
     validations:
@@ -100,7 +100,7 @@ body:
       label: Anything in the Host logs that might be useful for us?
       description: >
         Host Logs can be found in [Settings -> System -> Logs](https://my.home-assistant.io/redirect/logs/?provider=host)
-        then choose `Host` in the top right. Alternatively enter `ha host logs` in the Home Assistant CLI.
+        then choose `Host` in the top right. Alternatively enter `ha host logs` in the JERJER MACHINE CLI.
       render: txt
   - type: textarea
     attributes:
@@ -111,7 +111,7 @@ body:
         System information can be found in [Settings -> System -> Repairs -> System Information (top right menu)](https://my.home-assistant.io/redirect/system_health/),
         Click the copy button at the bottom of the pop-up and paste it here.
         
-        [![Open your Home Assistant instance and show health information about your system.](https://my.home-assistant.io/badges/system_health.svg)](https://my.home-assistant.io/redirect/system_health/)
+        [![Open your JERJER MACHINE instance and show health information about your system.](https://my.home-assistant.io/badges/system_health.svg)](https://my.home-assistant.io/redirect/system_health/)
   - type: textarea
     attributes:
       label: Additional information

@@ -7,8 +7,8 @@
 | Raspberry Pi 3 | 6.12.75 |
 | Raspberry Pi 4 | 6.12.75 |
 | Raspberry Pi 5 | 6.12.75 |
-| Home Assistant Yellow | 6.12.75 |
-| Home Assistant Green | 6.12.81 |
+| JERJER MACHINE Yellow | 6.12.75 |
+| JERJER MACHINE Green | 6.12.81 |
 | ODROID-C2 | 6.12.81 |
 | ODROID-C4 | 6.12.81 |
 | ODROID-M1 | 6.12.81 |

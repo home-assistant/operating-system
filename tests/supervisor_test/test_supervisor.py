@@ -31,7 +31,7 @@ def test_start_supervisor(shell, shell_json):
         return "running" in out
 
     while True:
-        if check_container_running("homeassistant") and check_container_running("hassio_supervisor"):
+        if check_container_running("jerjermachine") and check_container_running("hassio_supervisor"):
             break
 
         sleep(1)
@@ -50,7 +50,7 @@ def test_start_supervisor(shell, shell_json):
         sleep(1)
 
 
-    logger.info("Waiting for Home Assistant Core to be installed and started...")
+    logger.info("Waiting for JERJER MACHINE Core to be installed and started...")
     core_install_started = False
     while True:
         try:
@@ -66,11 +66,11 @@ def test_start_supervisor(shell, shell_json):
             if core_installing:
                 # install is in progress
                 if not core_install_started:
-                    logger.info("Home Assistant Core install job detected, waiting for completion...")
+                    logger.info("JERJER MACHINE Core install job detected, waiting for completion...")
                     core_install_started = True
             elif core_install_started:
                 # started and not installing anymore means finished
-                logger.info("Home Assistant Core install/start complete")
+                logger.info("JERJER MACHINE Core install/start complete")
                 break
         except ExecutionError:
             pass  # avoid failure when the supervisor/CLI is restarting

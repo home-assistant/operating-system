@@ -1,4 +1,4 @@
-# Home Assistant Operating System build workflow
+# JERJER MACHINE Operating System build workflow
 
 name: OS build
 
@@ -484,24 +484,24 @@ jobs:
         email: ${{ secrets.GIT_EMAIL }}
         token: ${{ secrets.GIT_TOKEN }}
 
-    - name: Bump Home Assistant OS ${{ needs.prepare.outputs.channel }} channel version
+    - name: Bump JERJER MACHINE OS ${{ needs.prepare.outputs.channel }} channel version
       uses: home-assistant/actions/helpers/version-push@master
       with:
         key: "hassos[]"
-        key-description: "Home Assistant OS"
+        key-description: "JERJER MACHINE OS"
         version: ${{ needs.prepare.outputs.version_full }}
         channel: ${{ needs.prepare.outputs.channel }}
 
-    - name: Bump Home Assistant OS beta channel version on stable release
+    - name: Bump JERJER MACHINE OS beta channel version on stable release
       if: ${{ needs.prepare.outputs.channel == 'stable' }}
       uses: home-assistant/actions/helpers/version-push@master
       with:
         key: "hassos[]"
-        key-description: "Home Assistant OS"
+        key-description: "JERJER MACHINE OS"
         version: ${{ needs.prepare.outputs.version_full }}
         channel: beta
 
-    - name: Bump stable Home Assistant version for RPi Imager
+    - name: Bump stable JERJER MACHINE version for RPi Imager
       if: ${{ github.event_name == 'release' && needs.prepare.outputs.channel == 'stable' }}
       uses: "./.github/actions/bump-rpi-imager-version"
       with:

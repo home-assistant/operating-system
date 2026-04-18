@@ -80,7 +80,7 @@ index 0000000000000..4b130f42b2358
 +
 +/ {
 +	compatible = "raspberrypi,5-compute-module-ha-yellow", "raspberrypi,5-compute-module", "brcm,bcm2712";
-+	model = "Raspberry Pi Compute Module 5 on Home Assistant Yellow";
++	model = "Raspberry Pi Compute Module 5 on JERJER MACHINE Yellow";
 +
 +	/* Will be filled by the bootloader */
 +	memory@0 {
