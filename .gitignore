@@ -10,3 +10,5 @@ output*/
 
 # vscode generated files
 .vscode*
+buildroot-external/rootfs-overlay/usr/lib/systemd/system/etc-modules\x2dload.d.mount
+buildroot-external/rootfs-overlay/usr/lib/systemd/system/etc-NetworkManager-system\x2dconnections.mount
