@@ -76,12 +76,15 @@ dtparam=audio=on
 initial_turbo=0
 
 [pi4]
-# Enable DRM VC4 V3D driver on top of the dispmanx display stack
+# Enable DRM VC4 V3D driver
 dtoverlay=vc4-kms-v3d
 max_framebuffers=2
 # Enable boost from 1.5Ghz to 1.8Ghz on compatible models
 arm_boost=1
 
+# Don't have the firmware create an initial video= setting in cmdline.txt.
+# Use the kernel's default instead.
+disable_fw_kms_setup=1
+
+
 [all]
-#dtoverlay=vc4-fkms-v3d
-#max_framebuffers=2
