@@ -12,5 +12,5 @@ jobs:
       - uses: runsascoded/update-submodules@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          branch: main          # branche à mettre à jour
-          refs: submodule1=main submodule2=tags/v1.0.0
+          branch: dev          # branche à mettre à jour
+          refs: submodule1=buildroot
