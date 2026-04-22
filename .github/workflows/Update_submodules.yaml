@@ -1,0 +1,16 @@
+name: Update submodules
+
+on:
+  schedule:
+    - cron: '8 20 * * *'   
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: runsascoded/update-submodules@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: main          # branche à mettre à jour
+          refs: submodule1=main submodule2=tags/v1.0.0
