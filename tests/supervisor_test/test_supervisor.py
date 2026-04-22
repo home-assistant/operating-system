@@ -16,8 +16,16 @@ def stash() -> dict:
 
 
 @pytest.mark.dependency()
-@pytest.mark.timeout(120)
+@pytest.mark.timeout(360)
 def test_start_supervisor(shell, shell_json):
+    # Disable auto-updates to avoid interference with other tests,
+    # do it directly on config level and restart Supervisor via systemd.
+    shell.run_check(
+        "jq '.auto_update = false' /mnt/data/supervisor/updater.json > /tmp/updater.json"
+        " && mv /tmp/updater.json /mnt/data/supervisor/updater.json"
+        " && systemctl restart hassos-supervisor.service"
+    )
+
     def check_container_running(container_name):
         out = shell.run_check(f"docker container inspect -f '{{{{.State.Status}}}}' {container_name} || true")
         return "running" in out
@@ -29,7 +37,7 @@ def test_start_supervisor(shell, shell_json):
         sleep(1)
 
     supervisor_ip = "\n".join(
-        shell.run_check("docker inspect --format='{{.NetworkSettings.IPAddress}}' hassio_supervisor")
+        shell.run_check("docker inspect --format='{{.NetworkSettings.Networks.bridge.IPAddress}}' hassio_supervisor")
     )
 
     while True:
@@ -40,6 +48,34 @@ def test_start_supervisor(shell, shell_json):
             pass  # avoid failure when the container is restarting
 
         sleep(1)
+
+
+    logger.info("Waiting for Home Assistant Core to be installed and started...")
+    core_install_started = False
+    while True:
+        try:
+            jobs_info = shell_json("ha jobs info --no-progress --raw-json")
+            if jobs_info.get("result") != "ok":
+                sleep(5)
+                continue
+            jobs = jobs_info.get("data", {}).get("jobs", [])
+            core_installing = any(
+                j.get("name") == "home_assistant_core_install" and not j.get("done")
+                for j in jobs
+            )
+            if core_installing:
+                # install is in progress
+                if not core_install_started:
+                    logger.info("Home Assistant Core install job detected, waiting for completion...")
+                    core_install_started = True
+            elif core_install_started:
+                # started and not installing anymore means finished
+                logger.info("Home Assistant Core install/start complete")
+                break
+        except ExecutionError:
+            pass  # avoid failure when the supervisor/CLI is restarting
+
+        sleep(5)
 
 
 @pytest.mark.dependency(depends=["test_start_supervisor"])
@@ -56,31 +92,33 @@ def test_check_supervisor(shell_json):
 
 @pytest.mark.dependency(depends=["test_check_supervisor"])
 @pytest.mark.timeout(120)
-def test_update_supervisor(shell_json):
-    supervisor_info = shell_json("ha supervisor info --no-progress --raw-json")
-    supervisor_version = supervisor_info.get("data").get("version")
-    supervisor_version_latest = supervisor_info.get("data").get("version_latest")
-    assert supervisor_version_latest, "Missing latest supervisor version info"
-    if supervisor_version == supervisor_version_latest:
-        logger.info("Supervisor is already up to date")
-        pytest.skip("Supervisor is already up to date")
+@pytest.mark.parametrize("component", ["supervisor", "audio", "cli", "dns", "observer", "multicast"])
+def test_update_components(shell_json, component):
+    info = shell_json(f"ha {component} info --no-progress --raw-json")
+    version = info.get("data").get("version")
+    version_latest = info.get("data").get("version_latest")
+    assert version_latest, f"Missing latest {component} version info"
+    if version == version_latest:
+        logger.info("%s is already up to date", component)
+        pytest.skip(f"{component} is already up to date")
     else:
-        result = shell_json("ha supervisor update --no-progress --raw-json")
+        result = shell_json(f"ha {component} update --no-progress --raw-json")
         if result.get("result") == "error" and "Another job is running" in result.get("message"):
             pass
         else:
-            assert result.get("result") == "ok", f"Supervisor update failed: {result}"
+            assert result.get("result") == "ok", f"{component} update failed: {result}"
 
         while True:
             try:
-                supervisor_info = shell_json("ha supervisor info --no-progress --raw-json")
-                data = supervisor_info.get("data")
+                info = shell_json(f"ha {component} info --no-progress --raw-json")
+                data = info.get("data")
                 if data and data.get("version") == data.get("version_latest"):
                     logger.info(
-                        "Supervisor updated from %s to %s: %s",
-                        supervisor_version,
+                        "%s updated from %s to %s: %s",
+                        component,
+                        version,
                         data.get("version"),
-                        supervisor_info,
+                        info,
                     )
                     break
             except ExecutionError:
@@ -97,23 +135,23 @@ def test_supervisor_is_updated(shell_json):
 
 
 @pytest.mark.dependency(depends=["test_supervisor_is_updated"])
-def test_addon_install(shell_json):
-    # install Core SSH add-on
+def test_app_install(shell_json):
+    # install Core SSH app
     assert (
-        shell_json("ha addons install core_ssh --no-progress --raw-json").get("result") == "ok"
-    ), "Core SSH add-on install failed"
-    # check Core SSH add-on is installed
+        shell_json("ha apps install core_ssh --no-progress --raw-json").get("result") == "ok"
+    ), "Core SSH app install failed"
+    # check Core SSH app is installed
     assert (
-        shell_json("ha addons info core_ssh --no-progress --raw-json").get("data", {}).get("version") is not None
-    ), "Core SSH add-on not installed"
-    # start Core SSH add-on
+        shell_json("ha apps info core_ssh --no-progress --raw-json").get("data", {}).get("version") is not None
+    ), "Core SSH app not installed"
+    # start Core SSH app
     assert (
-        shell_json("ha addons start core_ssh --no-progress --raw-json").get("result") == "ok"
-    ), "Core SSH add-on start failed"
-    # check Core SSH add-on is running
-    ssh_info = shell_json("ha addons info core_ssh --no-progress --raw-json")
-    assert ssh_info.get("data", {}).get("state") == "started", "Core SSH add-on not running"
-    logger.info("Core SSH add-on info: %s", ssh_info)
+        shell_json("ha apps start core_ssh --no-progress --raw-json").get("result") == "ok"
+    ), "Core SSH app start failed"
+    # check Core SSH app is running
+    ssh_info = shell_json("ha apps info core_ssh --no-progress --raw-json")
+    assert ssh_info.get("data", {}).get("state") == "started", "Core SSH app not running"
+    logger.info("Core SSH app info: %s", ssh_info)
 
 
 @pytest.mark.dependency(depends=["test_supervisor_is_updated"])
@@ -143,11 +181,11 @@ def test_create_backup(shell_json, stash):
     logger.info("Backup creation result: %s", result)
 
 
-@pytest.mark.dependency(depends=["test_addon_install"])
-def test_addon_uninstall(shell_json):
-    result = shell_json("ha addons uninstall core_ssh --no-progress --raw-json")
-    assert result.get("result") == "ok", f"Core SSH add-on uninstall failed: {result}"
-    logger.info("Core SSH add-on uninstall result: %s", result)
+@pytest.mark.dependency(depends=["test_app_install"])
+def test_app_uninstall(shell_json):
+    result = shell_json("ha apps uninstall core_ssh --no-progress --raw-json")
+    assert result.get("result") == "ok", f"Core SSH app uninstall failed: {result}"
+    logger.info("Core SSH app uninstall result: %s", result)
 
 
 @pytest.mark.dependency(depends=["test_supervisor_is_updated"])
@@ -157,7 +195,7 @@ def test_restart_supervisor(shell, shell_json):
     assert result.get("result") == "ok", f"Supervisor restart failed: {result}"
 
     supervisor_ip = "\n".join(
-        shell.run_check("docker inspect --format='{{.NetworkSettings.IPAddress}}' hassio_supervisor")
+        shell.run_check("docker inspect --format='{{.NetworkSettings.Networks.bridge.IPAddress}}' hassio_supervisor")
     )
 
     while True:
@@ -173,14 +211,14 @@ def test_restart_supervisor(shell, shell_json):
 
 @pytest.mark.dependency(depends=["test_create_backup"])
 def test_restore_backup(shell_json, stash):
-    result = shell_json(f"ha backups restore {stash.get('slug')} --addons core_ssh --no-progress --raw-json")
+    result = shell_json(f"ha backups restore {stash.get('slug')} --app core_ssh --no-progress --raw-json")
     assert result.get("result") == "ok", f"Backup restore failed: {result}"
     logger.info("Backup restore result: %s", result)
 
-    addon_info = shell_json("ha addons info core_ssh --no-progress --raw-json")
-    assert addon_info.get("data", {}).get("version") is not None, "Core SSH add-on not installed"
-    assert addon_info.get("data", {}).get("state") == "started", "Core SSH add-on not running"
-    logger.info("Core SSH add-on info: %s", addon_info)
+    app_info = shell_json("ha apps info core_ssh --no-progress --raw-json")
+    assert app_info.get("data", {}).get("version") is not None, "Core SSH app not installed"
+    assert app_info.get("data", {}).get("state") == "started", "Core SSH app not running"
+    logger.info("Core SSH app info: %s", app_info)
 
 
 @pytest.mark.dependency(depends=["test_create_backup"])

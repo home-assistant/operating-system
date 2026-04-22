@@ -1,0 +1,64 @@
+From 95063179445feb04e310d2b2af547c43b505f9ea Mon Sep 17 00:00:00 2001
+From: Stefan Agner <stefan@agner.ch>
+Date: Wed, 25 Mar 2026 10:47:05 +0100
+Subject: [PATCH] daemon: respect explicit AppArmor profile on privileged
+ containers
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+In saveAppArmorConfig, the privileged check unconditionally overwrites
+the AppArmor profile to "unconfined", even when the user explicitly set
+a custom profile via --security-opt apparmor=<profile>. This causes
+the persisted container.AppArmorProfile to be "unconfined" regardless
+of user intent.
+
+On first container start this is masked because createSpec/WithApparmor
+runs before saveAppArmorConfig and builds the OCI spec from the
+in-memory value (which still has the correct profile from creation).
+But saveAppArmorConfig then overwrites it to "unconfined" and
+CheckpointTo persists that to disk. On subsequent starts (restart,
+stop+start, host reboot), the container loads with AppArmorProfile
+"unconfined", and WithApparmor picks up that stale value — resulting
+in the container running without its intended AppArmor policy.
+
+Fix the condition nesting so that "unconfined" and "docker-default" are
+only applied as defaults when no explicit profile was set via
+SecurityOpt. This makes saveAppArmorConfig consistent with the existing
+behavior in both WithApparmor (oci_linux.go) and execSetPlatformOpt
+(exec_linux.go), which already give explicit profiles precedence over
+the privileged default.
+
+The bug was introduced in d97a00df (Docker 17.04, #27083) and survived
+a refactor in 483aa629 (#43130).
+
+Co-Authored-By: Claude Opus 4.6 (1M context) <noreply@anthropic.com>
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+---
+ daemon/container_linux.go | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/daemon/container_linux.go b/daemon/container_linux.go
+index 11d258f462..5348ac9377 100644
+--- a/daemon/container_linux.go
++++ b/daemon/container_linux.go
+@@ -18,10 +18,12 @@ func (daemon *Daemon) saveAppArmorConfig(container *container.Container) error {
+ 		return errdefs.InvalidParameter(err)
+ 	}
+ 
+-	if container.HostConfig.Privileged {
+-		container.AppArmorProfile = unconfinedAppArmorProfile
+-	} else if container.AppArmorProfile == "" {
+-		container.AppArmorProfile = defaultAppArmorProfile
++	if container.AppArmorProfile == "" {
++		if container.HostConfig.Privileged {
++			container.AppArmorProfile = unconfinedAppArmorProfile
++		} else {
++			container.AppArmorProfile = defaultAppArmorProfile
++		}
+ 	}
+ 	return nil
+ }
+-- 
+2.53.0
+

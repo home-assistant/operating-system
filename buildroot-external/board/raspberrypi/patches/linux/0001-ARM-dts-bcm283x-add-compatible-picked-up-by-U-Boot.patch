@@ -1,4 +1,4 @@
-From cc54354a5cd983d27ba3e800cfdf2d8cf70b812f Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Pascal Vizeli <pvizeli@syshack.ch>
 Date: Tue, 2 Jun 2020 21:20:08 +0000
 Subject: [PATCH] ARM: dts: bcm283x: add compatible picked up by U-Boot

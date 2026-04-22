@@ -1,5 +1,7 @@
 KernelDrivers/Makefile: add Makefile to get compiled as Linux kernel module
 
+Upstream: Not applicable
+
 Signed-off-by: Jens Maus <mail@jens-maus.de>
 
 --- ./KernelDrivers/Makefile.orig	2021-04-02 17:01:07.029932165 +0200

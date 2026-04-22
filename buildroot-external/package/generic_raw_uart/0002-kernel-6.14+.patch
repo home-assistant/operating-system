@@ -1,0 +1,265 @@
+From 95ea4dba55643ae71ce192d2582b07bcd5922d18 Mon Sep 17 00:00:00 2001
+From: Jens Maus <mail@jens-maus.de>
+Date: Sun, 1 Feb 2026 22:07:44 +0100
+Subject: [PATCH] add kernel 6.17.x compatibility
+
+This changes the function prototypes of the xxx_gpio_set()
+and xxx_gpio_set_multiple() functions in hb_rf_eth.c, hb_rf_usb.c
+and hb_rf_usb_2.c and introduced kernel 6.17.x+ compatibility to
+get these sources compiled for newer kernel versions.
+---
+ kernel/hb_rf_eth.c   | 18 +++++++++++++++++-
+ kernel/hb_rf_usb.c   | 18 +++++++++++++++++-
+ kernel/hb_rf_usb_2.c | 18 +++++++++++++++++-
+ 3 files changed, 51 insertions(+), 3 deletions(-)
+
+Upstream: Not applicable
+
+Signed-off-by: Jens Maus <mail@jens-maus.de>
+
+diff --git a/kernel/hb_rf_eth.c b/kernel/hb_rf_eth.c
+index 37657e5..6be599e 100644
+--- a/kernel/hb_rf_eth.c
++++ b/kernel/hb_rf_eth.c
+@@ -558,7 +558,11 @@ static int hb_rf_eth_gpio_get(struct gpio_chip *gc, unsigned int gpio)
+   return gpio_value & BIT(gpio);
+ }
+ 
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(6,17,0)
++static int hb_rf_eth_gpio_set(struct gpio_chip *gc, unsigned int gpio, int value)
++#else
+ static void hb_rf_eth_gpio_set(struct gpio_chip *gc, unsigned int gpio, int value)
++#endif
+ {
+   unsigned long lock_flags;
+ 
+@@ -572,6 +576,10 @@ static void hb_rf_eth_gpio_set(struct gpio_chip *gc, unsigned int gpio, int valu
+   hb_rf_eth_send_gpio();
+ 
+   spin_unlock_irqrestore(&gpio_lock, lock_flags);
++
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(6,17,0)
++  return 0;
++#endif
+ }
+ 
+ #if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 15, 0)
+@@ -583,7 +591,11 @@ static int hb_rf_eth_gpio_get_multiple(struct gpio_chip *gc, unsigned long *mask
+ }
+ #endif
+ 
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(6,17,0)
++static int hb_rf_eth_gpio_set_multiple(struct gpio_chip *gc, unsigned long *mask, unsigned long *bits)
++#else
+ static void hb_rf_eth_gpio_set_multiple(struct gpio_chip *gc, unsigned long *mask, unsigned long *bits)
++#endif
+ {
+   unsigned long lock_flags;
+ 
+@@ -595,6 +607,10 @@ static void hb_rf_eth_gpio_set_multiple(struct gpio_chip *gc, unsigned long *mas
+   hb_rf_eth_send_gpio();
+ 
+   spin_unlock_irqrestore(&gpio_lock, lock_flags);
++
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(6,17,0)
++  return 0;
++#endif
+ }
+ 
+ static int hb_rf_eth_get_led_gpio_index(struct generic_raw_uart *raw_uart, enum generic_raw_uart_led led)
+@@ -841,5 +857,5 @@ module_exit(hb_rf_eth_exit);
+ 
+ MODULE_AUTHOR("Alexander Reinert <alex@areinert.de>");
+ MODULE_DESCRIPTION("HB-RF-ETH raw uart driver");
+-MODULE_VERSION("1.23");
++MODULE_VERSION("1.24");
+ MODULE_LICENSE("GPL");
+diff --git a/kernel/hb_rf_usb.c b/kernel/hb_rf_usb.c
+index 626659a..e200b17 100644
+--- a/kernel/hb_rf_usb.c
++++ b/kernel/hb_rf_usb.c
+@@ -183,7 +183,11 @@ static int hb_rf_usb_gpio_get(struct gpio_chip *gc, unsigned int gpio)
+   return port->gpio_value & BIT(gpio);
+ }
+ 
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(6,17,0)
++static int hb_rf_usb_gpio_set(struct gpio_chip *gc, unsigned int gpio, int value)
++#else
+ static void hb_rf_usb_gpio_set(struct gpio_chip *gc, unsigned int gpio, int value)
++#endif
+ {
+   struct hb_rf_usb_port_s *port = container_of(gc, struct hb_rf_usb_port_s, gc);
+   unsigned long lock_flags;
+@@ -198,6 +202,10 @@ static void hb_rf_usb_gpio_set(struct gpio_chip *gc, unsigned int gpio, int valu
+   hb_rf_usb_set_gpio_on_device(port);
+ 
+   spin_unlock_irqrestore(&port->gpio_lock, lock_flags);
++
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(6,17,0)
++  return 0;
++#endif
+ }
+ 
+ #if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 15, 0)
+@@ -211,7 +219,11 @@ static int hb_rf_usb_gpio_get_multiple(struct gpio_chip *gc, unsigned long *mask
+ }
+ #endif
+ 
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(6,17,0)
++static int hb_rf_usb_gpio_set_multiple(struct gpio_chip *gc, unsigned long *mask, unsigned long *bits)
++#else
+ static void hb_rf_usb_gpio_set_multiple(struct gpio_chip *gc, unsigned long *mask, unsigned long *bits)
++#endif
+ {
+   struct hb_rf_usb_port_s *port = container_of(gc, struct hb_rf_usb_port_s, gc);
+   unsigned long lock_flags;
+@@ -224,6 +236,10 @@ static void hb_rf_usb_gpio_set_multiple(struct gpio_chip *gc, unsigned long *mas
+   hb_rf_usb_set_gpio_on_device(port);
+ 
+   spin_unlock_irqrestore(&port->gpio_lock, lock_flags);
++
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(6,17,0)
++  return 0;
++#endif
+ }
+ 
+ static int hb_rf_usb_start_connection(struct generic_raw_uart *raw_uart);
+@@ -641,6 +657,6 @@ module_init(hb_rf_usb_init);
+ module_exit(hb_rf_usb_exit);
+ 
+ MODULE_LICENSE("GPL");
+-MODULE_VERSION("1.16");
++MODULE_VERSION("1.17");
+ MODULE_DESCRIPTION("HB-RF-USB raw uart driver for communication of debmatic and piVCCU with the HM-MOD-RPI-PCB and RPI-RF-MOD radio modules");
+ MODULE_AUTHOR("Alexander Reinert <alex@areinert.de>");
+diff --git a/kernel/hb_rf_usb_2.c b/kernel/hb_rf_usb_2.c
+index a4a966b..f0e3705 100644
+--- a/kernel/hb_rf_usb_2.c
++++ b/kernel/hb_rf_usb_2.c
+@@ -166,7 +166,11 @@ static int hb_rf_usb_2_gpio_get(struct gpio_chip *gc, unsigned int gpio)
+   return port->gpio_value & BIT(gpio);
+ }
+ 
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(6,17,0)
++static int hb_rf_usb_2_gpio_set(struct gpio_chip *gc, unsigned int gpio, int value)
++#else
+ static void hb_rf_usb_2_gpio_set(struct gpio_chip *gc, unsigned int gpio, int value)
++#endif
+ {
+   struct hb_rf_usb_2_port_s *port = container_of(gc, struct hb_rf_usb_2_port_s, gc);
+   unsigned long lock_flags;
+@@ -181,6 +185,10 @@ static void hb_rf_usb_2_gpio_set(struct gpio_chip *gc, unsigned int gpio, int va
+   hb_rf_usb_2_set_gpio_on_device(port, LED_GPIO_MASK, port->gpio_value << 1);
+ 
+   spin_unlock_irqrestore(&port->gpio_lock, lock_flags);
++
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(6,17,0)
++  return 0;
++#endif
+ }
+ 
+ #if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 15, 0)
+@@ -194,7 +202,11 @@ static int hb_rf_usb_2_gpio_get_multiple(struct gpio_chip *gc, unsigned long *ma
+ }
+ #endif
+ 
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(6,17,0)
++static int hb_rf_usb_2_gpio_set_multiple(struct gpio_chip *gc, unsigned long *mask, unsigned long *bits)
++#else
+ static void hb_rf_usb_2_gpio_set_multiple(struct gpio_chip *gc, unsigned long *mask, unsigned long *bits)
++#endif
+ {
+   struct hb_rf_usb_2_port_s *port = container_of(gc, struct hb_rf_usb_2_port_s, gc);
+   unsigned long lock_flags;
+@@ -207,6 +219,10 @@ static void hb_rf_usb_2_gpio_set_multiple(struct gpio_chip *gc, unsigned long *m
+   hb_rf_usb_2_set_gpio_on_device(port, LED_GPIO_MASK, port->gpio_value << 1);
+ 
+   spin_unlock_irqrestore(&port->gpio_lock, lock_flags);
++
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(6,17,0)
++  return 0;
++#endif
+ }
+ 
+ static int hb_rf_usb_2_start_connection(struct generic_raw_uart *raw_uart);
+@@ -665,7 +681,7 @@ module_init(hb_rf_usb_2_init);
+ module_exit(hb_rf_usb_2_exit);
+ 
+ MODULE_LICENSE("GPL");
+-MODULE_VERSION("1.17");
++MODULE_VERSION("1.18");
+ MODULE_DESCRIPTION("HB-RF-USB-2 raw uart driver for communication of debmatic and piVCCU with the HM-MOD-RPI-PCB and RPI-RF-MOD radio modules");
+ MODULE_AUTHOR("Alexander Reinert <alex@areinert.de>");
+ MODULE_ALIAS("hb_rf_usb-2");
+-- 
+2.43.0
+
+
+From 388ddd92758292d3e3006cd20f226ba85fb03ae4 Mon Sep 17 00:00:00 2001
+From: Jens Maus <mail@jens-maus.de>
+Date: Mon, 2 Feb 2026 08:31:24 +0100
+Subject: [PATCH] add change to also provide kernel 6.19.x compatibility.
+
+---
+ kernel/hb_rf_eth.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/kernel/hb_rf_eth.c b/kernel/hb_rf_eth.c
+index 6be599e..9c7e51d 100644
+--- a/kernel/hb_rf_eth.c
++++ b/kernel/hb_rf_eth.c
+@@ -251,7 +251,12 @@ static int hb_rf_eth_try_connect(char endpointIdentifier)
+ 
+   hb_rf_eth_set_timeout(sock);
+ 
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(6,19,0)
++  err = sock->ops->connect(sock, (struct sockaddr_unsized *)&remote, sizeof(remote), 0);
++#else
+   err = sock->ops->connect(sock, (struct sockaddr *)&remote, sizeof(remote), 0);
++#endif
++
+   if (err < 0)
+   {
+     dev_err(dev, "Error %d while connecting to %pI4\n", err, &remote.sin_addr);
+-- 
+2.43.0
+
+
+From 7b93ff4d1f51a3ac51432c52d52550a158fab27e Mon Sep 17 00:00:00 2001
+From: Jens Maus <mail@jens-maus.de>
+Date: Thu, 5 Feb 2026 18:35:46 +0100
+Subject: [PATCH] fix prototype of __match_i2c_client_by_address to respect
+ constified prototype change of device_find_child() in kernel 6.14+
+
+---
+ kernel/generic_raw_uart.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/kernel/generic_raw_uart.c b/kernel/generic_raw_uart.c
+index fac1ff6..2d48e0a 100644
+--- a/kernel/generic_raw_uart.c
++++ b/kernel/generic_raw_uart.c
+@@ -1051,7 +1051,11 @@ static spinlock_t active_devices_lock;
+ static bool active_devices[MAX_DEVICES] = {false};
+ 
+ #if defined(CONFIG_OF) && (LINUX_VERSION_CODE >= KERNEL_VERSION(4, 18, 0))
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(6, 14, 0))
++static int __match_i2c_client_by_address(struct device *dev, const void *addrp)
++#else
+ static int __match_i2c_client_by_address(struct device *dev, void *addrp)
++#endif
+ {
+   struct i2c_client *client = i2c_verify_client(dev);
+   int addr = *(int *)addrp;
+@@ -1463,7 +1467,7 @@ EXPORT_SYMBOL(generic_raw_uart_verify_dkey);
+ 
+ MODULE_ALIAS("platform:generic-raw-uart");
+ MODULE_LICENSE("GPL");
+-MODULE_VERSION("1.32");
++MODULE_VERSION("1.33");
+ MODULE_DESCRIPTION("generic raw uart driver for communication of debmatic and piVCCU with the HM-MOD-RPI-PCB and RPI-RF-MOD radio modules");
+ MODULE_AUTHOR("Alexander Reinert <alex@areinert.de>");
+ 
+-- 
+2.43.0
+

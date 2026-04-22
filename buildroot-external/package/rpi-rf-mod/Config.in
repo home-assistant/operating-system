@@ -39,6 +39,16 @@ config BR2_PACKAGE_RPI_RF_MOD_DTS_YELLOW
 	help
 	  For the HomeAssistant Yellow
 
+config BR2_PACKAGE_RPI_RF_MOD_DTS_TINKER
+	bool "ASUS Tinkerboard/S"
+	help
+	  For the ASUS Tinkerboard/S
+
+config BR2_PACKAGE_RPI_RF_MOD_DTS_TINKER2
+	bool "ASUS Tinkerboard2/2S"
+	help
+	  For the ASUS Tinkerboard2/2S
+
 endchoice
 
 endif

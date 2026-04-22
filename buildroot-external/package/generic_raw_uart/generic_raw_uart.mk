@@ -9,11 +9,11 @@
 # Uses parts of bcm2835_raw_uart.c
 # Copyright (c) 2015 eQ-3 Entwicklung GmbH
 # https://github.com/eq-3/occu/tree/master/KernelDrivers
-# https://github.com/jens-maus/RaspberryMatic/tree/master/buildroot-external/package/bcm2835_raw_uart
+# https://github.com/openccu/openccu/tree/master/buildroot-external/package/bcm2835_raw_uart
 #
 ################################################################################
 
-GENERIC_RAW_UART_VERSION = b80aacfb75e9689d14d4e2c94380728816c6313e
+GENERIC_RAW_UART_VERSION = 803a94746f4528e276743502edcd45671b4980a9
 GENERIC_RAW_UART_SITE = $(call github,alexreinert,piVCCU,$(GENERIC_RAW_UART_VERSION))
 GENERIC_RAW_UART_LICENSE = GPL2
 GENERIC_RAW_UART_LICENSE_FILES = LICENSE

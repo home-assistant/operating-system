@@ -1,0 +1,328 @@
+From f6f8b309322869c1e2cb7d7c847b1eb8fb67ed80 Mon Sep 17 00:00:00 2001
+From: Stefan Agner <stefan@agner.ch>
+Date: Tue, 10 Mar 2026 23:29:13 +0100
+Subject: [PATCH] bridge: protect bridge subnet from direct external access in
+ raw PREROUTING
+
+Add a per-network rule to the raw PREROUTING chain dropping packets
+destined to any address in the bridge subnet from interfaces other than
+the bridge itself, loopback, or configured trusted host interfaces.
+
+This covers both containers on unpublished ports and the bridge's own
+gateway address (the host-side bridge IP, e.g. 172.30.32.1), which is
+otherwise reachable from external hosts that have a route to the bridge
+subnet. A single network-level subnet rule is simpler than per-container
+rules and ensures the gateway address is covered by the same policy.
+
+For iptables, the following rules are added per bridge (plus one ACCEPT
+per trusted interface):
+  -t raw -A PREROUTING -d <subnet> -i lo -j ACCEPT
+  -t raw -A PREROUTING -d <subnet> ! -i <bridge> -j DROP
+
+For nftables, a single compound rule is used:
+  <family> daddr <subnet> iifname != { <bridge>, lo, ... } drop
+
+Loopback is always permitted: the gateway IP is a valid host address
+reachable from local processes via lo. The rules are not added for
+gateway modes "routed" or "nat-unprotected", nor when
+--allow-direct-routing is set, consistent with the intent of those
+options. DOCKER_INSECURE_NO_IPTABLES_RAW=1 disables the iptables rules.
+
+Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+---
+ .../bridge/internal/iptabler/cleaner.go       | 14 +---
+ .../bridge/internal/iptabler/endpoint.go      | 68 +------------------
+ .../bridge/internal/iptabler/network.go       | 48 +++++++++++++
+ .../bridge/internal/nftabler/endpoint.go      | 64 +----------------
+ .../bridge/internal/nftabler/network.go       | 18 +++++
+ 5 files changed, 74 insertions(+), 138 deletions(-)
+
+diff --git a/daemon/libnetwork/drivers/bridge/internal/iptabler/cleaner.go b/daemon/libnetwork/drivers/bridge/internal/iptabler/cleaner.go
+index 1de527b08b..9f702a5ec7 100644
+--- a/daemon/libnetwork/drivers/bridge/internal/iptabler/cleaner.go
++++ b/daemon/libnetwork/drivers/bridge/internal/iptabler/cleaner.go
+@@ -81,17 +81,9 @@ func (ic iptablesCleaner) DelNetwork(ctx context.Context, nc firewaller.NetworkC
+ 	}
+ }
+ 
+-func (ic iptablesCleaner) DelEndpoint(ctx context.Context, nc firewaller.NetworkConfig, epIPv4, epIPv6 netip.Addr) {
+-	n := network{
+-		config: nc,
+-		ipt:    &Iptabler{config: ic.config},
+-	}
+-	if n.ipt.config.IPv4 && epIPv4.IsValid() {
+-		_ = n.filterDirectAccess(ctx, iptables.IPv4, n.config.Config4, epIPv4, false)
+-	}
+-	if n.ipt.config.IPv6 && epIPv6.IsValid() {
+-		_ = n.filterDirectAccess(ctx, iptables.IPv6, n.config.Config6, epIPv6, false)
+-	}
++func (ic iptablesCleaner) DelEndpoint(_ context.Context, _ firewaller.NetworkConfig, _, _ netip.Addr) {
++	// Direct access filtering is now done at the network (subnet) level, not
++	// per-endpoint. There are no per-endpoint raw PREROUTING rules to clean up.
+ }
+ 
+ func (ic iptablesCleaner) DelPorts(ctx context.Context, nc firewaller.NetworkConfig, pbs []types.PortBinding) {
+diff --git a/daemon/libnetwork/drivers/bridge/internal/iptabler/endpoint.go b/daemon/libnetwork/drivers/bridge/internal/iptabler/endpoint.go
+index 69a5bbc4d2..af8ff3c83c 100644
+--- a/daemon/libnetwork/drivers/bridge/internal/iptabler/endpoint.go
++++ b/daemon/libnetwork/drivers/bridge/internal/iptabler/endpoint.go
+@@ -5,74 +5,12 @@ package iptabler
+ import (
+ 	"context"
+ 	"net/netip"
+-
+-	"github.com/moby/moby/v2/daemon/libnetwork/drivers/bridge/internal/firewaller"
+-	"github.com/moby/moby/v2/daemon/libnetwork/iptables"
+ )
+ 
+-func (n *network) AddEndpoint(ctx context.Context, epIPv4, epIPv6 netip.Addr) error {
+-	return n.modEndpoint(ctx, epIPv4, epIPv6, true)
+-}
+-
+-func (n *network) DelEndpoint(ctx context.Context, epIPv4, epIPv6 netip.Addr) error {
+-	return n.modEndpoint(ctx, epIPv4, epIPv6, false)
+-}
+-
+-func (n *network) modEndpoint(ctx context.Context, epIPv4, epIPv6 netip.Addr, enable bool) error {
+-	if n.ipt.config.IPv4 && epIPv4.IsValid() {
+-		if err := n.filterDirectAccess(ctx, iptables.IPv4, n.config.Config4, epIPv4, enable); err != nil {
+-			return err
+-		}
+-	}
+-	if n.ipt.config.IPv6 && epIPv6.IsValid() {
+-		if err := n.filterDirectAccess(ctx, iptables.IPv6, n.config.Config6, epIPv6, enable); err != nil {
+-			return err
+-		}
+-	}
++func (n *network) AddEndpoint(_ context.Context, _, _ netip.Addr) error {
+ 	return nil
+ }
+ 
+-// filterDirectAccess drops packets addressed directly to the container's IP address,
+-// when direct routing is not permitted by network configuration.
+-//
+-// It is a no-op if:
+-//   - the network is internal
+-//   - gateway mode is "nat-unprotected" or "routed".
+-//   - direct routing is enabled at the daemon level.
+-//   - "raw" rules are disabled (possibly because the host doesn't have the necessary
+-//     kernel support).
+-//
+-// Packets originating on the bridge's own interface and addressed directly to the
+-// container are allowed - the host always has direct access to its own containers
+-// (it doesn't need to use the port mapped to its own addresses, although it can).
+-//
+-// "Trusted interfaces" are treated in the same way as the bridge itself.
+-func (n *network) filterDirectAccess(ctx context.Context, ipv iptables.IPVersion, config firewaller.NetworkConfigFam, epIP netip.Addr, enable bool) error {
+-	if n.config.Internal || config.Unprotected || config.Routed {
+-		return nil
+-	}
+-	// For config that may change between daemon restarts, make sure rules are
+-	// removed - if the container was left running when the daemon stopped, and
+-	// direct routing has since been disabled, the rules need to be deleted when
+-	// cleanup happens on restart. This also means a change in config over a
+-	// live-restore restart will take effect.
+-	if n.ipt.config.AllowDirectRouting || rawRulesDisabled(ctx) {
+-		enable = false
+-	}
+-	for _, ifName := range n.config.TrustedHostInterfaces {
+-		accept := iptables.Rule{IPVer: ipv, Table: iptables.Raw, Chain: "PREROUTING", Args: []string{
+-			"-d", epIP.String(),
+-			"-i", ifName,
+-			"-j", "ACCEPT",
+-		}}
+-		if err := appendOrDelChainRule(accept, "DIRECT ACCESS FILTERING - ACCEPT", enable); err != nil {
+-			return err
+-		}
+-	}
+-	accept := iptables.Rule{IPVer: ipv, Table: iptables.Raw, Chain: "PREROUTING", Args: []string{
+-		"-d", epIP.String(),
+-		"!", "-i", n.config.IfName,
+-		"-j", "DROP",
+-	}}
+-	return appendOrDelChainRule(accept, "DIRECT ACCESS FILTERING - DROP", enable)
++func (n *network) DelEndpoint(_ context.Context, _, _ netip.Addr) error {
++	return nil
+ }
+diff --git a/daemon/libnetwork/drivers/bridge/internal/iptabler/network.go b/daemon/libnetwork/drivers/bridge/internal/iptabler/network.go
+index 5eef4d6690..7ff03f4249 100644
+--- a/daemon/libnetwork/drivers/bridge/internal/iptabler/network.go
++++ b/daemon/libnetwork/drivers/bridge/internal/iptabler/network.go
+@@ -97,6 +97,13 @@ func (n *network) setupIPTables(ctx context.Context, ipVersion iptables.IPVersio
+ 			return n.setupNonInternalNetworkRules(ctx, ipVersion, config, false)
+ 		})
+ 
++		if err := n.setSubnetProtection(ctx, ipVersion, config, true); err != nil {
++			return fmt.Errorf("Failed to setup subnet protection: %w", err)
++		}
++		n.registerCleanFunc(func() error {
++			return n.setSubnetProtection(ctx, ipVersion, config, false)
++		})
++
+ 		if err := deleteLegacyFilterRules(ipVersion, n.config.IfName); err != nil {
+ 			return fmt.Errorf("failed to delete legacy rules in filter-FORWARD: %w", err)
+ 		}
+@@ -360,6 +367,47 @@ func (n *network) setupNonInternalNetworkRules(ctx context.Context, ipVer iptabl
+ 	return nil
+ }
+ 
++// setSubnetProtection drops packets addressed directly to any IP in the bridge
++// subnet from interfaces other than the bridge or loopback. This prevents external
++// hosts that have a route to the bridge subnet from accessing containers on
++// unpublished ports, or services on the host bound to the gateway address.
++//
++// It is a no-op if:
++//   - gateway mode is "nat-unprotected" or "routed" (direct access is intentional).
++//   - direct routing is enabled at the daemon level.
++//   - "raw" rules are disabled.
++func (n *network) setSubnetProtection(ctx context.Context, ipv iptables.IPVersion, config firewaller.NetworkConfigFam, enable bool) error {
++	if config.Unprotected || config.Routed || !config.Prefix.IsValid() {
++		return nil
++	}
++	if n.ipt.config.AllowDirectRouting || rawRulesDisabled(ctx) {
++		enable = false
++	}
++	subnet := config.Prefix.String()
++	// Accept loopback traffic to the subnet. This is needed for host-local access
++	// to the gateway IP, which is assigned to the bridge and reachable via lo.
++	loAccept := iptables.Rule{IPVer: ipv, Table: iptables.Raw, Chain: "PREROUTING", Args: []string{
++		"-d", subnet, "-i", "lo", "-j", "ACCEPT",
++	}}
++	if err := appendOrDelChainRule(loAccept, "SUBNET PROTECTION - ACCEPT LO", enable); err != nil {
++		return err
++	}
++	// Accept traffic from trusted interfaces (e.g. flannel.1 in VXLAN setups).
++	for _, ifName := range n.config.TrustedHostInterfaces {
++		accept := iptables.Rule{IPVer: ipv, Table: iptables.Raw, Chain: "PREROUTING", Args: []string{
++			"-d", subnet, "-i", ifName, "-j", "ACCEPT",
++		}}
++		if err := appendOrDelChainRule(accept, "SUBNET PROTECTION - ACCEPT TRUSTED", enable); err != nil {
++			return err
++		}
++	}
++	// Drop traffic from any other non-bridge interface to the subnet.
++	extDrop := iptables.Rule{IPVer: ipv, Table: iptables.Raw, Chain: "PREROUTING", Args: []string{
++		"-d", subnet, "!", "-i", n.config.IfName, "-j", "DROP",
++	}}
++	return appendOrDelChainRule(extDrop, "SUBNET PROTECTION - DROP", enable)
++}
++
+ func setIcc(ctx context.Context, version iptables.IPVersion, bridgeIface string, iccEnable, internal, insert bool) error {
+ 	args := []string{"-i", bridgeIface, "-o", bridgeIface, "-j"}
+ 	acceptRule := iptables.Rule{IPVer: version, Table: iptables.Filter, Chain: DockerForwardChain, Args: append(args, "ACCEPT")}
+diff --git a/daemon/libnetwork/drivers/bridge/internal/nftabler/endpoint.go b/daemon/libnetwork/drivers/bridge/internal/nftabler/endpoint.go
+index cfb45186d2..02b8dbcda1 100644
+--- a/daemon/libnetwork/drivers/bridge/internal/nftabler/endpoint.go
++++ b/daemon/libnetwork/drivers/bridge/internal/nftabler/endpoint.go
+@@ -4,76 +4,16 @@ package nftabler
+ 
+ import (
+ 	"context"
+-	"fmt"
+ 	"net/netip"
+-	"strings"
+-
+-	"github.com/moby/moby/v2/daemon/libnetwork/drivers/bridge/internal/firewaller"
+-	"github.com/moby/moby/v2/daemon/libnetwork/internal/nftables"
+ )
+ 
+ func (n *network) AddEndpoint(ctx context.Context, epIPv4, epIPv6 netip.Addr) error {
+ 	if n.fw.cleaner != nil {
+ 		n.fw.cleaner.DelEndpoint(ctx, n.config, epIPv4, epIPv6)
+ 	}
+-	return n.modEndpoint(ctx, epIPv4, epIPv6, true)
+-}
+-
+-func (n *network) DelEndpoint(ctx context.Context, epIPv4, epIPv6 netip.Addr) error {
+-	return n.modEndpoint(ctx, epIPv4, epIPv6, false)
+-}
+-
+-func (n *network) modEndpoint(ctx context.Context, epIPv4, epIPv6 netip.Addr, enable bool) error {
+-	if n.fw.config.IPv4 && epIPv4.IsValid() {
+-		tm := nftables.Modifier{}
+-		updater := tm.Create
+-		if !enable {
+-			updater = tm.Delete
+-		}
+-		n.filterDirectAccess(updater, nftables.IPv4, n.config.Config4, epIPv4)
+-		if err := n.fw.table4.Apply(ctx, tm); err != nil {
+-			return fmt.Errorf("adding rules for bridge %s: %w", n.config.IfName, err)
+-		}
+-	}
+-	if n.fw.config.IPv6 && epIPv6.IsValid() {
+-		tm := nftables.Modifier{}
+-		updater := tm.Create
+-		if !enable {
+-			updater = tm.Delete
+-		}
+-		n.filterDirectAccess(updater, nftables.IPv6, n.config.Config6, epIPv6)
+-		if err := n.fw.table6.Apply(ctx, tm); err != nil {
+-			return fmt.Errorf("adding rules for bridge %s: %w", n.config.IfName, err)
+-		}
+-	}
+ 	return nil
+ }
+ 
+-// filterDirectAccess drops packets addressed directly to the container's IP address,
+-// when direct routing is not permitted by network configuration.
+-//
+-// It is a no-op if:
+-//   - gateway mode is "nat-unprotected" or "routed".
+-//   - direct routing is enabled at the daemon level.
+-//   - "raw" rules are disabled (possibly because the host doesn't have the necessary
+-//     kernel support).
+-//
+-// Packets originating on the bridge's own interface and addressed directly to the
+-// container are allowed - the host always has direct access to its own containers.
+-// (It doesn't need to use the port mapped to its own addresses, although it can.)
+-//
+-// "Trusted interfaces" are treated in the same way as the bridge itself.
+-func (n *network) filterDirectAccess(updater func(nftables.Obj), fam nftables.Family, conf firewaller.NetworkConfigFam, epIP netip.Addr) {
+-	if n.config.Internal || conf.Unprotected || conf.Routed || n.fw.config.AllowDirectRouting {
+-		return
+-	}
+-	ifNames := strings.Join(n.config.TrustedHostInterfaces, ", ")
+-	updater(nftables.Rule{
+-		Chain: rawPreroutingChain,
+-		Group: rawPreroutingPortsRuleGroup,
+-		Rule: []string{
+-			string(fam), "daddr", epIP.String(),
+-			"iifname != {", n.config.IfName, ",", ifNames, `} counter drop comment "DROP DIRECT ACCESS"`,
+-		},
+-	})
++func (n *network) DelEndpoint(_ context.Context, _, _ netip.Addr) error {
++	return nil
+ }
+diff --git a/daemon/libnetwork/drivers/bridge/internal/nftabler/network.go b/daemon/libnetwork/drivers/bridge/internal/nftabler/network.go
+index dc77c33c1a..9a10d491c2 100644
+--- a/daemon/libnetwork/drivers/bridge/internal/nftabler/network.go
++++ b/daemon/libnetwork/drivers/bridge/internal/nftabler/network.go
+@@ -174,6 +174,24 @@ func (n *network) configure(ctx context.Context, table nftables.Table, conf fire
+ 			})
+ 		}
+ 
++		// Drop packets destined to any IP in the bridge subnet from interfaces
++		// other than the bridge, loopback, or any trusted host interfaces. This
++		// protects containers on unpublished ports and the host's gateway address
++		// from external hosts that have a direct route to the bridge subnet.
++		if conf.Prefix.IsValid() && !n.fw.config.AllowDirectRouting {
++			family := string(table.Family())
++			ifNames := strings.Join(append([]string{n.config.IfName, "lo"}, n.config.TrustedHostInterfaces...), ", ")
++			tm.Create(nftables.Rule{
++				Chain: rawPreroutingChain,
++				Group: initialRuleGroup,
++				Rule: []string{
++					family, "daddr", conf.Prefix.String(),
++					"iifname != {", ifNames, `}`,
++					`counter drop comment "SUBNET DROP EXTERNAL"`,
++				},
++			})
++		}
++
+ 		// ICMP
+ 		if conf.Routed {
+ 			rule := "ip protocol icmp"
+-- 
+2.53.0
+
