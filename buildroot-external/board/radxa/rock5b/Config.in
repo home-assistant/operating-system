@@ -1,5 +1,0 @@
-config BR2_PACKAGE_BOARD_ROCK5b
-	bool "Rock 5B (RK3588) support for hassos"
-	help
-	  Enable Rock 5B board files (BR2_EXTERNAL). This option
-	  is used by hassos build scripts to pick up board-specific files. 
