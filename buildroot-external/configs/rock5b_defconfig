@@ -1,4 +1,4 @@
-###### UEFI Rock5b #######
+###### Rock5b #######
 BR2_aarch64=y
 BR2_cortex_a76_a55=y
 BR2_TOOLCHAIN_BUILDROOT_CXX=y
