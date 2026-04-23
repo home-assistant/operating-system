@@ -1,4 +1,4 @@
-From 3d75827d0318c792d4d7a68d7d7076deee3e7ad3 Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: zhangcy <chengyu.zhang@seeed.cc>
 Date: Mon, 14 Aug 2023 01:27:34 +0000
 Subject: [PATCH] green: emmc use HS200 mode

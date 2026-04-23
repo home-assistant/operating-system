@@ -1,4 +1,4 @@
-From 6219da5138cdcdd0186187e8591010bbda5dc8a9 Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Stefan Agner <stefan@agner.ch>
 Date: Mon, 4 Sep 2023 22:36:10 +0200
 Subject: [PATCH] arch: arm64: dts: green: Improve LED representation

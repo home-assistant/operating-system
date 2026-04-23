@@ -1,4 +1,4 @@
-From c3f803f835db301e586127b061bd473fb61ec13a Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Stefan Agner <stefan@agner.ch>
 Date: Wed, 19 Jul 2023 10:08:06 +0200
 Subject: [PATCH] Input: rk805-pwrkey: reverse polarity of pwrkey
