@@ -1,4 +1,4 @@
-From 60b24f8c30181ef60964ce186c2a6d05b85f3be1 Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Jan=20=C4=8Cerm=C3=A1k?= <sairon@sairon.cz>
 Date: Fri, 31 Jan 2025 16:13:48 +0100
 Subject: [PATCH] arm64: dts: rockchip: Enable Rockchip TRNG on ODROID-M1S

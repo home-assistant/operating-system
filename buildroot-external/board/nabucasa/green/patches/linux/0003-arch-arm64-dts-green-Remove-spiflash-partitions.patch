@@ -1,4 +1,4 @@
-From c0430945cd4a6a5b4072662b44cb6a44d3f7ecc2 Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Zhangqun Ming <north_sea@qq.com>
 Date: Sat, 15 Jul 2023 08:28:16 +0000
 Subject: [PATCH] arch: arm64: dts: green: Remove spiflash partitions

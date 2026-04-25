@@ -1,4 +1,4 @@
-From 8bd12039ef70b3b78a588da61f6680cee40b65cf Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Zhangqun Ming <north_sea@qq.com>
 Date: Wed, 12 Jul 2023 02:33:03 +0000
 Subject: [PATCH] drivers: mfd: rk808: set PWRON_LP_OFF_TIME 12s
@@ -9,10 +9,10 @@ Subject: [PATCH] drivers: mfd: rk808: set PWRON_LP_OFF_TIME 12s
  2 files changed, 6 insertions(+)
 
 diff --git a/drivers/mfd/rk8xx-core.c b/drivers/mfd/rk8xx-core.c
-index 39ab114ea669d..c7a639b25231f 100644
+index def4587fdfb8b..dc59165f0da0f 100644
 --- a/drivers/mfd/rk8xx-core.c
 +++ b/drivers/mfd/rk8xx-core.c
-@@ -263,6 +263,7 @@ static const struct rk808_reg_data rk817_pre_init_reg[] = {
+@@ -264,6 +264,7 @@ static const struct rk808_reg_data rk817_pre_init_reg[] = {
  	{RK817_GPIO_INT_CFG, RK817_INT_POL_MSK, RK817_INT_POL_L},
  	{RK817_SYS_CFG(1), RK817_HOTDIE_TEMP_MSK | RK817_TSD_TEMP_MSK,
  					   RK817_HOTDIE_105 | RK817_TSD_140},
@@ -21,10 +21,10 @@ index 39ab114ea669d..c7a639b25231f 100644
  
  static const struct rk808_reg_data rk818_pre_init_reg[] = {
 diff --git a/include/linux/mfd/rk808.h b/include/linux/mfd/rk808.h
-index 69cbea78b430b..2a9563caa3e24 100644
+index 28170ee08898c..34df07b1212d8 100644
 --- a/include/linux/mfd/rk808.h
 +++ b/include/linux/mfd/rk808.h
-@@ -1195,6 +1195,11 @@ enum rk809_reg_id {
+@@ -1197,6 +1197,11 @@ enum rk809_reg_id {
  #define RK817_ON_SOURCE_REG		0xf5
  #define RK817_OFF_SOURCE_REG		0xf6
  

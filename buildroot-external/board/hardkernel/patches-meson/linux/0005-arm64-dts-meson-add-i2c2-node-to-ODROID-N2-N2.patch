@@ -1,4 +1,4 @@
-From bb0da00e7b89510fb66c7a8a1acf16d9f58a45fe Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Stefan Agner <stefan@agner.ch>
 Date: Thu, 29 Apr 2021 21:32:43 +0200
 Subject: [PATCH] arm64: dts: meson: add i2c2 node to ODROID N2/N2+
