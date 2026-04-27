@@ -5,3 +5,4 @@
 # Example: set boot partition label used by create_disk_image
 # (hassos scripts expect hassos-boot / hassos-rootfs etc.)
 # Nothing mandatory here; keep for documentation.
+fdtfile=rockchip/rk3588-rock-5b.dtb
