@@ -13,7 +13,7 @@ config BR2_PACKAGE_FFMPEG_ARCH_SUPPORTS
 	# assertion fail in binutils
 	depends on !(BR2_or1k && !BR2_TOOLCHAIN_GCC_AT_LEAST_9)
 
-menuconfig BR2_PACKAGE_FFMPEG
+menuconfig BR2_PACKAGE_FFMPEG_CUSTOM
 	bool "ffmpeg"
 	depends on BR2_PACKAGE_FFMPEG_ARCH_SUPPORTS
 	depends on BR2_TOOLCHAIN_HAS_THREADS
@@ -23,7 +23,19 @@ menuconfig BR2_PACKAGE_FFMPEG
 
 	  https://www.ffmpeg.org
 
-if BR2_PACKAGE_FFMPEG
+if BR2_PACKAGE_FFMPEG_CUSTOM
+
+config BR2_PACKAGE_FFMPEG_CUSTOM_GIT_REPO
+	string "GIT Custom Repo URL"
+	default "https://code.ffmpeg.org/Kwiboo/FFmpeg.git"
+	help
+	  URL of the custom git repo for FFMPEG
+
+BR2_PACKAGE_FFMPEG_CUSTOM_GIT_REPO_VERSION
+	string "GIT Custom Repo URL"
+	default "v4l2-request-n8.1"
+	help
+	  Tag or branche of this custom Git repo to use
 
 config BR2_PACKAGE_FFMPEG_GPL
 	bool "Enable GPL code"
