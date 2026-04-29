@@ -33,9 +33,9 @@ config BR2_PACKAGE_FFMPEG_CUSTOM_GIT_REPO
 
 BR2_PACKAGE_FFMPEG_CUSTOM_GIT_REPO_VERSION
 	string "GIT Custom Repo URL"
-	default "v4l2-request-n8.1"
+	default "b57fbbe50c9b2656fad86a1a7eeabfd2b2a50935"
 	help
-	  Some commit id or tag or branch name
+	  Some commit id HASH or tag
 
 config BR2_PACKAGE_FFMPEG_GPL
 	bool "Enable GPL code"
