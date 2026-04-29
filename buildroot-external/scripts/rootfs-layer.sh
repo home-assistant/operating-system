@@ -23,10 +23,10 @@ function fix_rootfs() {
     rm -f "${TARGET_DIR}/usr/lib/systemd/system/sysinit.target.wants/systemd-update-done.service"
 
     # Fix: tempfs with /srv
-    sed -i "/srv/d" "${TARGET_DIR}/usr/lib/tmpfiles.d/home.conf"
+    #sed -i "/srv/d" "${TARGET_DIR}/usr/lib/tmpfiles.d/home.conf"
 
     # Fix: Could not generate persistent MAC address
-    sed -i "s/MACAddressPolicy=persistent/MACAddressPolicy=none/g" "${TARGET_DIR}/usr/lib/systemd/network/99-default.link"
+  #  sed -i "s/MACAddressPolicy=persistent/MACAddressPolicy=none/g" "${TARGET_DIR}/usr/lib/systemd/network/99-default.link"
 
     # Use systemd-resolved for Host OS resolve
     sed -i '/^hosts:/ {/resolve/! s/files/resolve [!UNAVAIL=return] files/}' "${TARGET_DIR}/etc/nsswitch.conf"
