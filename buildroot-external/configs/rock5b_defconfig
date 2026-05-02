@@ -1,3 +1,8 @@
+BR2_DEBUG=1
+BR2_VERBOSE=1
+BR2_PACKAGE_SYSTEMD_DEBUG=1
+BR2_DEBUGGER=1
+
 ###### Rock5b #######
 BR2_aarch64=y
 BR2_cortex_a76_a55=y
