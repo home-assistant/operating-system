@@ -4,5 +4,6 @@
         "tag": "{{.Name}}"
     },
     "data-root": "/mnt/data/docker",
-    "bip": "172.30.232.1/23"
+    "bip": "172.30.232.1/23",
+    "ipv6": true
 }
