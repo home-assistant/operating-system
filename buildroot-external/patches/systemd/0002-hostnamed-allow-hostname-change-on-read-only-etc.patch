@@ -1,59 +1,26 @@
-From e38f7d9c364f91bba09979c841b9e33dbeae686d Mon Sep 17 00:00:00 2001
-Message-Id: <e38f7d9c364f91bba09979c841b9e33dbeae686d.1635377266.git.stefan@agner.ch>
-In-Reply-To: <2214c1f039143caaf4ed99eb0f3fc4551b322148.1635377266.git.stefan@agner.ch>
-References: <2214c1f039143caaf4ed99eb0f3fc4551b322148.1635377266.git.stefan@agner.ch>
-From: Stefan Agner <stefan@agner.ch>
-Date: Wed, 27 Oct 2021 22:24:47 +0200
-Subject: [PATCH 2/2] hostnamed: allow hostname change on read-only /etc
+From 2214c1f039143caaf4ed99eb0f3fc4551b322148 Mon Sep 17 00:00:00 2001
+Message-Id: <2214c1f039143caaf4ed99eb0f3fc4551b322148.1635377266.git.stefan@agner.ch>
+From: Aman Gupta Karmani <aman@tmm1.net>
+Date: Mon, 12 Oct 2020 13:39:26 -0700
+Subject: [PATCH 1/2] time-wait-sync: log errors trying to watch
+ /run/systemd/timesync
 
-The implementation of write_string_file_atomic_label() uses atomic write
-operation, which tries to create a file in /etc. Use regular file
-operation with sync flag to make sure the hostname is written to disk
-immediately.
-
-Signed-off-by: Stefan Agner <stefan@agner.ch>
 ---
- src/hostname/hostnamed.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ src/timesync/wait-sync.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/src/hostname/hostnamed.c b/src/hostname/hostnamed.c
-index bd535ddc4d..0ec57eb2a7 100644
---- a/src/hostname/hostnamed.c
-+++ b/src/hostname/hostnamed.c
-@@ -15,6 +15,7 @@
- #include "device-private.h"
- #include "env-file.h"
- #include "env-util.h"
-+#include "fd-util.h"
- #include "fileio.h"
- #include "hashmap.h"
- #include "hostname-setup.h"
-@@ -379,6 +380,7 @@ static void unset_statp(struct stat **p) {
+diff --git a/src/timesync/wait-sync.c b/src/timesync/wait-sync.c
+index 2a9b113ff4..62fa13c509 100644
+--- a/src/timesync/wait-sync.c
++++ b/src/timesync/wait-sync.c
+@@ -44,7 +44,7 @@ static void clock_state_release(ClockState *sp) {
+ static int clock_state_update(ClockState *sp, sd_event *event);
  
- static int context_write_data_static_hostname(Context *c) {
-         _cleanup_(unset_statp) struct stat *s = NULL;
-+        _cleanup_close_ int fd = -1;
-         int r;
- 
-         assert(c);
-@@ -395,10 +397,16 @@ static int context_write_data_static_hostname(Context *c) {
-                 return 0;
-         }
- 
--        r = write_string_file_atomic_label("/etc/hostname", c->data[PROP_STATIC_HOSTNAME]);
-+        r = write_string_file("/etc/hostname", c->data[PROP_STATIC_HOSTNAME],
-+                              WRITE_STRING_FILE_CREATE | WRITE_STRING_FILE_TRUNCATE);
-         if (r < 0)
-                 return r;
- 
-+        /* Cannot use WRITE_STRING_FILE_SYNC as it tries to sync parent dir */
-+        fd = open("/etc/hostname", O_RDONLY|O_CLOEXEC);
-+        if (fsync(fd) < 0)
-+                return -errno;
-+
-         TAKE_PTR(s);
-         return 0;
+ static int update_notify_run_systemd_timesync(ClockState *sp) {
+-        sp->run_systemd_timesync_wd = inotify_add_watch(sp->inotify_fd, "/run/systemd/timesync", IN_CREATE|IN_DELETE_SELF);
++        sp->run_systemd_timesync_wd = inotify_add_watch_and_warn(sp->inotify_fd, "/run/systemd/timesync", IN_CREATE|IN_DELETE_SELF);
+         return sp->run_systemd_timesync_wd;
  }
+ 
 -- 
 2.33.1
-
