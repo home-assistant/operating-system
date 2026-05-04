@@ -1,0 +1,6 @@
+config BR2_PACKAGE_HAILO10H_FIRMWARE
+	bool "Hailo-10H Firmware"
+	help
+	  Firmware for Hailo-10H PCIe device. Contains multi-stage boot
+	  firmware (SCU, U-Boot, fitImage, image-fs) required for the
+	  hailo1x_pci kernel module.
