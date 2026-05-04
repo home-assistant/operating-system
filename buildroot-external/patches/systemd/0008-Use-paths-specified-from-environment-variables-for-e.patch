@@ -366,30 +366,7 @@ index af66b48a3d..f13af53f6f 100644
                             "PRETTY_HOSTNAME", &c->data[PROP_PRETTY_HOSTNAME],
                             "ICON_NAME", &c->data[PROP_ICON_NAME],
                             "CHASSIS", &c->data[PROP_CHASSIS],
-@@ -615,20 +615,20 @@ static int context_write_data_static_hostname(Context *c) {
-         s = &c->etc_hostname_stat;
- 
-         if (isempty(c->data[PROP_STATIC_HOSTNAME])) {
--                if (unlink("/etc/hostname") < 0 && errno != ENOENT)
-+                if (unlink(etc_hostname()) < 0 && errno != ENOENT)
-                         return -errno;
- 
-                 TAKE_PTR(s);
-                 return 0;
-         }
- 
--        r = write_string_file("/etc/hostname", c->data[PROP_STATIC_HOSTNAME],
-+        r = write_string_file(etc_hostname(), c->data[PROP_STATIC_HOSTNAME],
-                               WRITE_STRING_FILE_CREATE | WRITE_STRING_FILE_TRUNCATE);
-         if (r < 0)
-                 return r;
- 
-         /* Cannot use WRITE_STRING_FILE_SYNC as it tries to sync parent dir */
--        fd = open("/etc/hostname", O_RDONLY|O_CLOEXEC);
-+        fd = open(etc_hostname(), O_RDONLY|O_CLOEXEC);
-         if (fsync(fd) < 0)
-                 return -errno;
- 
+
 @@ -654,7 +654,7 @@ static int context_write_data_machine_info(Context *c) {
           * already, even if we can't make it hit the disk. */
          s = &c->etc_machine_info_stat;
