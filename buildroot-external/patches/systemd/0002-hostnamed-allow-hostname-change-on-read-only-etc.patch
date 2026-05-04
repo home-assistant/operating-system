@@ -21,12 +21,12 @@ index bd535ddc4d..0ec57eb2a7 100644
 --- a/src/hostname/hostnamed.c
 +++ b/src/hostname/hostnamed.c
 @@ -15,6 +15,7 @@
- #include "env-file-label.h"
+ #include "device-private.h"
  #include "env-file.h"
  #include "env-util.h"
 +#include "fd-util.h"
- #include "fileio-label.h"
  #include "fileio.h"
+ #include "hashmap.h"
  #include "hostname-setup.h"
 @@ -379,6 +380,7 @@ static void unset_statp(struct stat **p) {
  
