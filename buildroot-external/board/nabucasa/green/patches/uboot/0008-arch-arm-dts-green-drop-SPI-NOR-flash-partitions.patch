@@ -1,4 +1,4 @@
-From 71ad7d9b73ff14283e61fbb1d3d214982f8c9967 Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Stefan Agner <stefan@agner.ch>
 Date: Fri, 18 Aug 2023 10:06:24 +0200
 Subject: [PATCH] arch: arm: dts: green: drop SPI NOR flash partitions

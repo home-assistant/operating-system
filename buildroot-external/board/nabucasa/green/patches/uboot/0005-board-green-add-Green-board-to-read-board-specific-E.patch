@@ -1,4 +1,4 @@
-From c1b3736623b9a6e5d027ca202dbc53b7eb7e4662 Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Stefan Agner <stefan@agner.ch>
 Date: Thu, 17 Aug 2023 17:38:13 +0200
 Subject: [PATCH] board: green: add Green board to read board specific EEPROM
@@ -40,10 +40,10 @@ index ea9d358099b..91afadf0e65 100644
  
  &i2s0_8ch {
 diff --git a/arch/arm/mach-rockchip/rk3568/Kconfig b/arch/arm/mach-rockchip/rk3568/Kconfig
-index ce327ed6f9e..5f675b11491 100644
+index 2730220a18e..66ec23722ea 100644
 --- a/arch/arm/mach-rockchip/rk3568/Kconfig
 +++ b/arch/arm/mach-rockchip/rk3568/Kconfig
-@@ -17,6 +17,12 @@ config TARGET_ANBERNIC_RGXX3_RK3566
+@@ -16,6 +16,12 @@ config TARGET_ANBERNIC_RGXX3_RK3566
  	  and RG503. The correct device tree name will automatically
  	  be selected by the bootloader.
  
@@ -56,7 +56,7 @@ index ce327ed6f9e..5f675b11491 100644
  config TARGET_ODROID_M1_RK3568
  	bool "ODROID-M1"
  	help
-@@ -81,6 +87,7 @@ source "board/rockchip/evb_rk3568/Kconfig"
+@@ -74,6 +80,7 @@ source "board/rockchip/evb_rk3568/Kconfig"
  source "board/anbernic/rgxx3_rk3566/Kconfig"
  source "board/hardkernel/odroid_m1/Kconfig"
  source "board/hardkernel/odroid_m1s/Kconfig"

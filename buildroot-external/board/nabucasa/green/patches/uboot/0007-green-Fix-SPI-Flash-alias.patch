@@ -1,4 +1,4 @@
-From b6c7fc08198300d8620f9896db468e0e50e8838a Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Stefan Agner <stefan@agner.ch>
 Date: Thu, 17 Aug 2023 17:51:07 +0200
 Subject: [PATCH] green: Fix SPI Flash alias

@@ -1,4 +1,4 @@
-From a05b87fa8cd6716a07514c64d8816272418d74e8 Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Jan=20=C4=8Cerm=C3=A1k?= <sairon@sairon.cz>
 Date: Fri, 14 Feb 2025 18:09:29 +0100
 Subject: [PATCH] configs: green: fix bss and stack address and disable

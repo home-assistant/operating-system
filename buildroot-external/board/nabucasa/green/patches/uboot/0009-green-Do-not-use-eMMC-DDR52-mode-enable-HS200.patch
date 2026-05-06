@@ -1,4 +1,4 @@
-From bda29ba9030c8ad9aa245d68033a83106de4f633 Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Jan=20=C4=8Cerm=C3=A1k?= <sairon@sairon.cz>
 Date: Wed, 12 Jun 2024 15:20:46 +0200
 Subject: [PATCH] green: Do not use eMMC DDR52 mode, enable HS200

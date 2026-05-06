@@ -1,4 +1,4 @@
-From 2bdc5718a00ce5cb9c1fa27c8a1ff6893b016455 Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Jan=20=C4=8Cerm=C3=A1k?= <sairon@sairon.cz>
 Date: Tue, 13 Aug 2024 17:51:29 +0200
 Subject: [PATCH] arch: arm64: dts: green: Improve LED representation

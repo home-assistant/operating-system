@@ -1,4 +1,4 @@
-From 107a4b9bf7d335de4a6dc7e6097a1f38fdab38c7 Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Zhangqun Ming <north_sea@qq.com>
 Date: Sat, 15 Jul 2023 08:46:09 +0000
 Subject: [PATCH] arch: arm: dts: green: spi nor uboot

@@ -1,4 +1,4 @@
-From 99fdcac59b4c993dcac1869e8372dc895ffa0ae5 Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Zhangqun Ming <north_sea@qq.com>
 Date: Thu, 6 Jul 2023 10:06:35 +0000
 Subject: [PATCH] arch: arm: dts: Add NabuCasa Green board
@@ -14,10 +14,10 @@ Subject: [PATCH] arch: arm: dts: Add NabuCasa Green board
  create mode 100644 configs/green_defconfig
 
 diff --git a/arch/arm/dts/Makefile b/arch/arm/dts/Makefile
-index 6ad59aeed5f..92c6fa54caa 100644
+index 82ad3035308..1224b12a5f5 100644
 --- a/arch/arm/dts/Makefile
 +++ b/arch/arm/dts/Makefile
-@@ -87,6 +87,9 @@ dtb-$(CONFIG_ROCKCHIP_RK3368) += \
+@@ -74,6 +74,9 @@ dtb-$(CONFIG_ROCKCHIP_RK3368) += \
  	rk3368-geekbox.dtb \
  	rk3368-px5-evb.dtb \
  

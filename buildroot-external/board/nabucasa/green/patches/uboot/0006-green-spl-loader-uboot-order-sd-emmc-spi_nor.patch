@@ -1,4 +1,4 @@
-From 6ae9e30259812a3cbc8d4990a5acfe459053a225 Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: syan <syan.cham@gmail.com>
 Date: Mon, 31 Jul 2023 09:39:55 +0000
 Subject: [PATCH] green: spl loader uboot order: sd-emmc-spi_nor

@@ -1,4 +1,4 @@
-From 80fc442a51ecab7b822145561421e3adff899bc9 Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Zhangqun Ming <north_sea@qq.com>
 Date: Fri, 14 Jul 2023 14:14:10 +0000
 Subject: [PATCH] arch: arm: dts: rk3566: green: boot order

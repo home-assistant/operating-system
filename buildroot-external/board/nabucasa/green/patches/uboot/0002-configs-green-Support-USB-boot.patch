@@ -1,4 +1,4 @@
-From 634b3b17d96b6def645b15b379fbe617620e6665 Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Zhangqun Ming <north_sea@qq.com>
 Date: Fri, 14 Jul 2023 14:13:39 +0000
 Subject: [PATCH] configs: green: Support USB boot
