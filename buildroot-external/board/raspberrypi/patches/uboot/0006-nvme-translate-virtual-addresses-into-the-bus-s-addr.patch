@@ -1,4 +1,4 @@
-From 9d2676a8fad6d92e5c761c125b069c90a9ef6587 Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Stefan Agner <stefan@agner.ch>
 Date: Fri, 24 Sep 2021 00:27:39 +0200
 Subject: [PATCH] nvme: translate virtual addresses into the bus's address
@@ -26,7 +26,7 @@ Signed-off-by: Stefan Agner <stefan@agner.ch>
  2 files changed, 25 insertions(+), 14 deletions(-)
 
 diff --git a/drivers/nvme/nvme.c b/drivers/nvme/nvme.c
-index f626a472ffa..70ce63f2053 100644
+index 292aa3bcb1d..e3f447a0659 100644
 --- a/drivers/nvme/nvme.c
 +++ b/drivers/nvme/nvme.c
 @@ -66,7 +66,7 @@ static int nvme_setup_prps(struct nvme_dev *dev, u64 *prp2,

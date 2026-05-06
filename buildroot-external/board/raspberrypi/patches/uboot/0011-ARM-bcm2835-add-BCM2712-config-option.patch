@@ -1,4 +1,4 @@
-From 4302f18da75c7138ce8abc2c67eb6aaf0205e109 Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Jan=20=C4=8Cerm=C3=A1k?= <sairon@sairon.cz>
 Date: Thu, 3 Oct 2024 11:09:53 +0200
 Subject: [PATCH] ARM: bcm2835: add BCM2712 config option
@@ -33,10 +33,10 @@ index d9303e8c281..0adc881d238 100644
  	depends on ARCH_BCM283X
  choice
 diff --git a/drivers/pci/Kconfig b/drivers/pci/Kconfig
-index 41901433e8c..89bc332b626 100644
+index 8fc57895a78..1dc8fa0aae3 100644
 --- a/drivers/pci/Kconfig
 +++ b/drivers/pci/Kconfig
-@@ -392,6 +392,8 @@ config PCIE_DW_ROCKCHIP
+@@ -422,6 +422,8 @@ config PCIE_DW_ROCKCHIP
  config PCI_BRCMSTB
  	bool "Broadcom STB PCIe controller"
  	depends on ARCH_BCM283X

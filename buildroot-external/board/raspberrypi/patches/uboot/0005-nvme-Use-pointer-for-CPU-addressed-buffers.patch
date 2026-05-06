@@ -1,4 +1,4 @@
-From 76cde18c3c80d4f7c2d53e4731e1c5d9689a6f49 Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Stefan Agner <stefan@agner.ch>
 Date: Thu, 23 Sep 2021 23:58:35 +0200
 Subject: [PATCH] nvme: Use pointer for CPU addressed buffers
@@ -15,7 +15,7 @@ Signed-off-by: Stefan Agner <stefan@agner.ch>
  3 files changed, 33 insertions(+), 33 deletions(-)
 
 diff --git a/drivers/nvme/nvme.c b/drivers/nvme/nvme.c
-index b1d8eecdcaf..f626a472ffa 100644
+index 5741abf5402..292aa3bcb1d 100644
 --- a/drivers/nvme/nvme.c
 +++ b/drivers/nvme/nvme.c
 @@ -45,11 +45,11 @@ static int nvme_wait_csts(struct nvme_dev *dev, u32 mask, u32 val)

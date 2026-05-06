@@ -1,4 +1,4 @@
-From 62d5ad02aa91d4f8e5343869439c0e2302b59301 Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Jan=20=C4=8Cerm=C3=A1k?= <sairon@sairon.cz>
 Date: Mon, 30 Sep 2024 18:13:09 +0200
 Subject: [PATCH] pci: pcie-brcmstb: Add basic support for BCM2712 PCIe

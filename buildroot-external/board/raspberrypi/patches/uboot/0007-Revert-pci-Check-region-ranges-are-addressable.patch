@@ -1,4 +1,4 @@
-From c77c55c6975af3ff5210559b1c5a89e76de0cceb Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Stefan Agner <stefan@agner.ch>
 Date: Mon, 24 Apr 2023 15:44:15 +0200
 Subject: [PATCH] Revert "pci: Check region ranges are addressable"
@@ -15,10 +15,10 @@ Signed-off-by: Stefan Agner <stefan@agner.ch>
  1 file changed, 1 insertion(+), 16 deletions(-)
 
 diff --git a/drivers/pci/pci-uclass.c b/drivers/pci/pci-uclass.c
-index 59894d2430b..f1f7e525efe 100644
+index 83b76d01f24..52d63aefc37 100644
 --- a/drivers/pci/pci-uclass.c
 +++ b/drivers/pci/pci-uclass.c
-@@ -1038,22 +1038,7 @@ static int decode_regions(struct pci_controller *hose, ofnode parent_node,
+@@ -1087,22 +1087,7 @@ static int decode_regions(struct pci_controller *hose, ofnode parent_node,
  
  		if (!IS_ENABLED(CONFIG_SYS_PCI_64BIT) &&
  		    type == PCI_REGION_MEM && upper_32_bits(pci_addr)) {

@@ -1,4 +1,4 @@
-From ad9ce9d8ba273fffeff3d98ae1fc978dd217ab1d Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Jan=20=C4=8Cerm=C3=A1k?= <sairon@sairon.cz>
 Date: Mon, 30 Sep 2024 17:56:45 +0200
 Subject: [PATCH] reset: reset-brcmstb: Add Broadcom STB reset controller
@@ -20,10 +20,10 @@ Signed-off-by: Jan Čermák <sairon@sairon.cz>
  create mode 100644 drivers/reset/reset-brcmstb.c
 
 diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-index fe5c1214f57..186dd963bc4 100644
+index 2fd91d6299c..7216d872563 100644
 --- a/drivers/reset/Kconfig
 +++ b/drivers/reset/Kconfig
-@@ -63,6 +63,12 @@ config RESET_BCM6345
+@@ -64,6 +64,12 @@ config RESET_BCM6345
  	help
  	  Support reset controller on BCM6345.
  
@@ -37,10 +37,10 @@ index fe5c1214f57..186dd963bc4 100644
  	bool "Reset controller driver for UniPhier SoCs"
  	depends on ARCH_UNIPHIER
 diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
-index d99a78c9828..8d9181e8af7 100644
+index ee5b009d134..ebf3d7425a4 100644
 --- a/drivers/reset/Makefile
 +++ b/drivers/reset/Makefile
-@@ -13,6 +13,7 @@ obj-$(CONFIG_TEGRA186_RESET) += tegra186-reset.o
+@@ -13,6 +13,7 @@ obj-$(CONFIG_RESET_AIROHA) += reset-airoha.o
  obj-$(CONFIG_RESET_TI_SCI) += reset-ti-sci.o
  obj-$(CONFIG_RESET_HSDK) += reset-hsdk.o
  obj-$(CONFIG_RESET_BCM6345) += reset-bcm6345.o

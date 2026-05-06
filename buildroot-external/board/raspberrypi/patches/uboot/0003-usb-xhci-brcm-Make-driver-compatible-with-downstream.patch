@@ -1,4 +1,4 @@
-From 725fef2ebd8a23f68c2574ca799593596d1ef6fd Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Stefan Agner <stefan@agner.ch>
 Date: Thu, 7 Oct 2021 12:02:39 +0200
 Subject: [PATCH] usb: xhci-brcm: Make driver compatible with downstream device
@@ -13,7 +13,7 @@ Signed-off-by: Stefan Agner <stefan@agner.ch>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/usb/host/xhci-brcm.c b/drivers/usb/host/xhci-brcm.c
-index 2ffad148dea..2a063ccc9eb 100644
+index 595839fac3c..63e7e5b1a25 100644
 --- a/drivers/usb/host/xhci-brcm.c
 +++ b/drivers/usb/host/xhci-brcm.c
 @@ -81,7 +81,7 @@ static int xhci_brcm_deregister(struct udevice *dev)

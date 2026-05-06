@@ -1,4 +1,4 @@
-From 57a416a55ebd7ab43fbebd972f984470f7f71973 Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Jan=20=C4=8Cerm=C3=A1k?= <sairon@sairon.cz>
 Date: Mon, 7 Oct 2024 15:13:40 +0200
 Subject: [PATCH] pci: pcie-brcmstb: HACK - add DT property for skipping device
