@@ -23,7 +23,14 @@ if command -v losetup >/dev/null && [ ! -e /dev/loop0 ]; then
   sudo losetup -f > /dev/null
 fi
 
-docker run -it --rm --privileged \
+TTY_OPTS=""
+
+if [ -t 0 ]; then
+  TTY_OPTS="-it"
+fi
+
+docker run --rm --privileged \
+  ${TTY_OPTS} \
   -v "$(pwd):/build" -v "${CACHE_DIR}:/cache" \
   -e BUILDER_UID="${BUILDER_UID}" -e BUILDER_GID="${BUILDER_GID}" \
   hassos:local "${@:-bash}"
