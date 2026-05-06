@@ -1,4 +1,4 @@
-From c3b3682d6314eee9b7d42926f96e1559b8bb91dd Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Stefan Agner <stefan@agner.ch>
 Date: Thu, 14 Apr 2022 12:15:26 +0200
 Subject: [PATCH] drivers: bcm283x: don't explicitly disable init

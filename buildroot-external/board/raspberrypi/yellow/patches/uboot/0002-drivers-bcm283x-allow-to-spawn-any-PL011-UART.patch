@@ -1,4 +1,4 @@
-From a13e5a0ea3fcb66663d5aa641aaaa59de5b7c6a5 Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Stefan Agner <stefan@agner.ch>
 Date: Thu, 14 Apr 2022 12:18:41 +0200
 Subject: [PATCH] drivers: bcm283x: allow to spawn any PL011 UART
