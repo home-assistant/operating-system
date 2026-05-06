@@ -1,4 +1,4 @@
-From 4af7bcd52d0b6c8df3129a2f35035c6a1b62848d Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Pascal Vizeli <pvizeli@syshack.ch>
 Date: Sun, 5 Aug 2018 20:43:03 +0000
 Subject: [PATCH] CMD: read string from fileinto env
@@ -7,15 +7,15 @@ Signed-off-by: Pascal Vizeli <pvizeli@syshack.ch>
 ---
  cmd/Kconfig   |  5 +++++
  cmd/Makefile  |  1 +
- cmd/fileenv.c | 45 +++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 51 insertions(+)
+ cmd/fileenv.c | 47 +++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 53 insertions(+)
  create mode 100644 cmd/fileenv.c
 
 diff --git a/cmd/Kconfig b/cmd/Kconfig
-index 1d7ddb4ed36..0c0ce749000 100644
+index 322ebe600c5..1908e0e9601 100644
 --- a/cmd/Kconfig
 +++ b/cmd/Kconfig
-@@ -1792,6 +1792,11 @@ config CMD_XXD
+@@ -1927,6 +1927,11 @@ config CMD_XXD
  	help
  	  Print file as hexdump to standard output
  
@@ -28,26 +28,28 @@ index 1d7ddb4ed36..0c0ce749000 100644
  
  if NET || NET_LWIP
 diff --git a/cmd/Makefile b/cmd/Makefile
-index d1f369deec0..7ad9d3720c0 100644
+index 4cd13d4fa6e..95b9a883997 100644
 --- a/cmd/Makefile
 +++ b/cmd/Makefile
-@@ -170,6 +170,7 @@ obj-$(CONFIG_CMD_SHA1SUM) += sha1sum.o
+@@ -176,6 +176,7 @@ obj-$(CONFIG_CMD_SHA1SUM) += sha1sum.o
  obj-$(CONFIG_CMD_SEAMA) += seama.o
  obj-$(CONFIG_CMD_SETEXPR) += setexpr.o
  obj-$(CONFIG_CMD_SETEXPR_FMT) += printf.o
 +obj-$(CONFIG_CMD_FILEENV) += fileenv.o
  obj-$(CONFIG_CMD_SPI) += spi.o
  obj-$(CONFIG_CMD_STRINGS) += strings.o
- obj-$(CONFIG_CMD_SMBIOS) += smbios.o
+ obj-$(CONFIG_CMD_SM3SUM) += sm3sum.o
 diff --git a/cmd/fileenv.c b/cmd/fileenv.c
 new file mode 100644
-index 00000000000..4154c8df0f0
+index 00000000000..7a259e21352
 --- /dev/null
 +++ b/cmd/fileenv.c
-@@ -0,0 +1,45 @@
+@@ -0,0 +1,47 @@
 +#include <config.h>
 +#include <command.h>
++#include <env.h>
 +#include <fs.h>
++#include <vsprintf.h>
 +#include <linux/ctype.h>
 +
 +static char *fs_argv[5];
