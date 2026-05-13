@@ -1,0 +1,272 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Jan=20=C4=8Cerm=C3=A1k?= <sairon@sairon.cz>
+Date: Thu, 3 Oct 2024 13:40:53 +0200
+Subject: [PATCH] ARM: dts: bcm2712: Add device tree for CM5 on HA Yellow
+
+---
+ arch/arm64/boot/dts/broadcom/Makefile         |   1 +
+ .../broadcom/bcm2712-rpi-cm5-ha-yellow.dts    | 243 ++++++++++++++++++
+ 2 files changed, 244 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/broadcom/bcm2712-rpi-cm5-ha-yellow.dts
+
+diff --git a/arch/arm64/boot/dts/broadcom/Makefile b/arch/arm64/boot/dts/broadcom/Makefile
+index 1388cc1164f9..058cf8aea931 100644
+--- a/arch/arm64/boot/dts/broadcom/Makefile
++++ b/arch/arm64/boot/dts/broadcom/Makefile
+@@ -23,6 +23,7 @@ dtb-$(CONFIG_ARCH_BCM2835) += bcm2710-rpi-cm0.dtb
+ dtb-$(CONFIG_ARCH_BCM2835) += bcm2710-rpi-cm3.dtb
+ dtb-$(CONFIG_ARCH_BCM2835) += bcm2711-rpi-cm4.dtb
+ dtb-$(CONFIG_ARCH_BCM2835) += bcm2711-rpi-cm4-ha-yellow.dtb
++dtb-$(CONFIG_ARCH_BCM2835) += bcm2712-rpi-cm5-ha-yellow.dtb
+ dtb-$(CONFIG_ARCH_BCM2835) += bcm2711-rpi-cm4s.dtb
+ dtb-$(CONFIG_ARCH_BCM2835) += bcm2712-rpi-5-b.dtb
+ dtb-$(CONFIG_ARCH_BCM2835) += bcm2712d0-rpi-5-b.dtb
+diff --git a/arch/arm64/boot/dts/broadcom/bcm2712-rpi-cm5-ha-yellow.dts b/arch/arm64/boot/dts/broadcom/bcm2712-rpi-cm5-ha-yellow.dts
+new file mode 100644
+index 000000000000..0dbb19898636
+--- /dev/null
++++ b/arch/arm64/boot/dts/broadcom/bcm2712-rpi-cm5-ha-yellow.dts
+@@ -0,0 +1,243 @@
++// SPDX-License-Identifier: GPL-2.0
++/dts-v1/;
++
++#include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/input/input.h>
++
++#include "bcm2712-rpi-cm5.dtsi"
++
++// =============================================
++// BCM2712D0 overrides
++
++&gio_aon {
++	brcm,gpio-bank-widths = <15 6>;
++};
++
++&pinctrl {
++	compatible = "brcm,bcm2712d0-pinctrl";
++	reg = <0x7d504100 0x20>;
++};
++
++&pinctrl_aon {
++	compatible = "brcm,bcm2712d0-aon-pinctrl";
++	reg = <0x7d510700 0x1c>;
++};
++
++&vc4 {
++	compatible = "brcm,bcm2712d0-vc6";
++};
++
++&uart10 {
++	interrupts = <GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>;
++};
++
++&spi10 {
++	dmas = <&dma40 3>, <&dma40 4>;
++};
++
++&hdmi0 {
++	dmas = <&dma40 (12|(1<<30)|(1<<24)|(10<<16)|(15<<20))>;
++};
++
++&hdmi1 {
++	dmas = <&dma40 (13|(1<<30)|(1<<24)|(10<<16)|(15<<20))>;
++};
++
++// =============================================
++// HA Yellow Board-specific stuff
++
++/ {
++	compatible = "raspberrypi,5-compute-module-ha-yellow", "raspberrypi,5-compute-module", "brcm,bcm2712";
++	model = "Raspberry Pi Compute Module 5 on Home Assistant Yellow";
++
++	chosen: chosen {
++		bootargs = "coherent_pool=1M 8250.nr_uarts=1 snd_bcm2835.enable_headphones=0";
++		stdout-path = "serial2:115200n8";
++	};
++
++	keys: gpio-keys {
++		compatible = "gpio-keys";
++
++		pinctrl-names = "default";
++		pinctrl-0 = <&gpio_button_pins>;
++
++		status = "okay";
++
++		power {
++			label = "Blue Button";
++			linux,code = <KEY_POWER>;
++			gpios = <&rp1_gpio 26 GPIO_ACTIVE_LOW>;
++			debounce-interval = <100>; // ms
++		};
++
++		user {
++			label = "Red Button";
++			linux,code = <BTN_1>;
++			gpios = <&rp1_gpio 27 GPIO_ACTIVE_LOW>;
++			debounce-interval = <100>; // ms
++		};
++	};
++};
++
++/* Always enable the NVMe slot. */
++&pcie1 {
++	status = "okay";
++};
++
++/* Avoid probing pcie2 in U-Boot for now, it breaks RP1. */
++&rp1_target {
++	u-boot,no-probe;
++};
++
++/* 
++ * Skip init of debug UART to fix garbled U-Boot output, it's not explicitly
++ * skipped in BCM2712 device tree like in BCM2711's ones.
++ */
++&uart10 {
++	skip-init;
++};
++
++/* RP1 USB ports are not connected on Yellow. */
++&rp1_usb0 {
++	status = "disabled";
++};
++
++&rp1_usb1 {
++	status = "disabled";
++};
++
++&leds {
++	led_act: led-act {
++		label = "act";
++		default-state = "off";
++		linux,default-trigger = "activity";
++		gpios = <&gio_aon 9 GPIO_ACTIVE_HIGH>;
++	};
++
++	led_pwr: led-pwr {
++		label = "pwr";
++		default-state = "off";
++		linux,default-trigger = "default-on";
++		gpios = <&rp1_gpio 44 GPIO_ACTIVE_LOW>;
++	};
++
++	led_usr: led-usr {
++		label = "usr";
++		linux,default-trigger = "heartbeat";
++		default-state = "off";
++		panic-indicator;
++		gpios = <&rp1_gpio 38 GPIO_ACTIVE_LOW>;
++	};
++};
++
++&gpio {
++	gpio_button_pins: gpio_button_pins {
++		function = "gpio";
++		pins = "gpio26", "gpio27";
++		bias-pull-up;
++	};
++};
++
++/* UART on pin header */
++&uart0 {
++	status = "okay";
++	pinctrl-0 = <&rp1_uart0_14_15>;
++};
++
++/* UART for Zigbee */
++&uart3 {
++	status = "okay";
++	pinctrl-0 = <&rp1_uart3_8_9 &rp1_uart3_ctsrts_10_11>;
++	uart-has-rtscts;
++};
++
++/* UART for USB console */
++&uart4 {
++	status = "okay";
++	pinctrl-0 = <&rp1_uart4_12_13>;
++};
++
++&usb {
++	compatible = "brcm,bcm2835-usb";
++	dr_mode = "host";
++	g-np-tx-fifo-size = <32>;
++	g-rx-fifo-size = <558>;
++	g-tx-fifo-size = <512 512 512 512 512 256 256>;
++	status = "okay";
++};
++
++/* I2C pins on pin header */
++&i2c1 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&rp1_i2c1_2_3>;
++	clock-frequency = <100000>;
++};
++
++/* No way to power CM5's VBAT pin on Yellow, disable its RTC. */
++&rpi_rtc {
++	status = "disabled";
++};
++
++/* Board-level I2C (RTC and I2S audio) */
++&rp1_i2c3 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&rp1_i2c3_22_23>;
++	status = "okay";
++	#address-cells = <1>;
++	#size-cells = <0>;
++
++	card_codec: pcm5121@4c {
++		#sound-dai-cells = <0>;
++		compatible = "ti,pcm5121";
++		reg = <0x4c>;
++		AVDD-supply = <&vdd_3v3_reg>;
++		DVDD-supply = <&vdd_3v3_reg>;
++		CPVDD-supply = <&vdd_3v3_reg>;
++		status = "okay";
++	};
++
++	pcf85063a: rtc@51 {
++		compatible = "nxp,pcf85063a";
++		reg = <0x51>;
++	};
++};
++
++&rp1_i2s0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&rp1_i2s0_18_21>;
++	status = "okay";
++};
++
++&sound {
++	compatible = "simple-audio-card";
++	simple-audio-card,format = "i2s";
++	simple-audio-card,name = "pcm5121-sound";
++	status = "okay";
++
++	simple-audio-card,cpu {
++		sound-dai = <&rp1_i2s0>;
++	};
++
++	dailink0_slave: simple-audio-card,codec {
++		sound-dai = <&card_codec>;
++	};
++};
++
++/ {
++	aliases: aliases {
++		serial0 = &uart0;
++		serial1 = &uart3;
++		serial2 = &uart4;
++		serial10 = &uart10;
++		/delete-property/ i2c10;
++		/delete-property/ i2c11;
++	};
++
++	__overrides__ {
++		/delete-property/ i2c_csi_dsi;
++		/delete-property/ i2c_csi_dsi0;
++		/delete-property/ i2c_csi_dsi1;
++		/delete-property/ sd_cqe;
++		usr_led_trigger = <&led_usr>, "linux,default-trigger";
++	};
++};

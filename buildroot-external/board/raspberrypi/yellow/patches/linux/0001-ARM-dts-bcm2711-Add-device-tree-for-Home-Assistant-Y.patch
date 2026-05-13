@@ -1,4 +1,4 @@
-From 7305be1ecc97db67b0dc4a34cdf860cd1567f74e Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Stefan Agner <stefan@agner.ch>
 Date: Mon, 11 Apr 2022 14:47:59 +0200
 Subject: [PATCH] ARM: dts: bcm2711: Add device tree for Home Assistant Yellow
@@ -8,31 +8,34 @@ board.
 
 Signed-off-by: Stefan Agner <stefan@agner.ch>
 ---
- .../broadcom/bcm2711-rpi-cm4-ha-yellow.dts    | 587 ++++++++++++++++++
+ .../broadcom/bcm2711-rpi-cm4-ha-yellow.dts    | 713 ++++++++++++++++++
  arch/arm64/boot/dts/broadcom/Makefile         |   1 +
  .../broadcom/bcm2711-rpi-cm4-ha-yellow.dts    |   1 +
- 3 files changed, 589 insertions(+)
+ 3 files changed, 715 insertions(+)
  create mode 100644 arch/arm/boot/dts/broadcom/bcm2711-rpi-cm4-ha-yellow.dts
  create mode 100644 arch/arm64/boot/dts/broadcom/bcm2711-rpi-cm4-ha-yellow.dts
 
 diff --git a/arch/arm/boot/dts/broadcom/bcm2711-rpi-cm4-ha-yellow.dts b/arch/arm/boot/dts/broadcom/bcm2711-rpi-cm4-ha-yellow.dts
 new file mode 100644
-index 0000000000000..f92936d7cf16b
+index 000000000000..1aaadaa8e1bf
 --- /dev/null
 +++ b/arch/arm/boot/dts/broadcom/bcm2711-rpi-cm4-ha-yellow.dts
-@@ -0,0 +1,587 @@
+@@ -0,0 +1,713 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/dts-v1/;
 +#define BCM2711
 +#define i2c0 i2c0if
 +#include "bcm2711.dtsi"
++#include "bcm2711-rpi.dtsi"
++/delete-node/&i2c0mux;
++#include "bcm283x-rpi-led-deprecated.dtsi"
 +#include "bcm283x-rpi-wifi-bt.dtsi"
 +#undef i2c0
 +#include "bcm270x.dtsi"
 +#define i2c0 i2c0mux
-+#include "bcm2711-rpi.dtsi"
 +#undef i2c0
-+//#include "bcm283x-rpi-usb-peripheral.dtsi"
++
++#include <dt-bindings/input/input.h>
 +
 +/ {
 +	compatible = "raspberrypi,4-compute-module-ha-yellow", "raspberrypi,4-compute-module", "brcm,bcm2711";
@@ -43,9 +46,37 @@ index 0000000000000..f92936d7cf16b
 +		stdout-path = "serial1:115200n8";
 +	};
 +
-+	leds {
++	keys: gpio-keys {
++		compatible = "gpio-keys";
++
++		pinctrl-names = "default";
++		pinctrl-0 = <&gpio_button_pins>;
++
++		status = "okay";
++
++		power {
++			label = "Blue Button";
++			linux,code = <KEY_POWER>;
++			gpios = <&gpio 26 GPIO_ACTIVE_LOW>;
++			debounce-interval = <100>; // ms
++		};
++
++		user {
++			label = "Red Button";
++			linux,code = <BTN_1>;
++			gpios = <&gpio 27 GPIO_ACTIVE_LOW>;
++			debounce-interval = <100>; // ms
++		};
++	};
++
++	leds: leds {
++		compatible = "gpio-leds";
++
 +		led-act {
++			label = "ACT";
 +			gpios = <&gpio 42 GPIO_ACTIVE_HIGH>;
++			default-state = "keep";
++			linux,default-trigger = "heartbeat";
 +		};
 +
 +		led-pwr {
@@ -266,6 +297,21 @@ index 0000000000000..f92936d7cf16b
 +	status = "okay";
 +};
 +
++/* uart4 for Zigbee */
++&uart4 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&uart4_pins>;
++	uart-has-rtscts;
++	status = "okay";
++};
++
++/* uart5 default Debug UART */
++&uart5 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&uart5_pins>;
++	status = "okay";
++};
++
 +&vc4 {
 +	status = "okay";
 +};
@@ -293,16 +339,17 @@ index 0000000000000..f92936d7cf16b
 +#include "bcm2711-rpi-ds.dtsi"
 +#include "bcm283x-rpi-csi0-2lane.dtsi"
 +#include "bcm283x-rpi-csi1-4lane.dtsi"
-+#include "bcm283x-rpi-i2c0mux_0_44.dtsi"
 +
 +/ {
 +	chosen {
 +		bootargs = "coherent_pool=1M 8250.nr_uarts=1 snd_bcm2835.enable_headphones=0";
++		stdout-path = "serial5:115200n8";
 +	};
 +
 +	aliases {
-+		serial0 = &uart1;
-+		serial1 = &uart0;
++		serial0 = &uart0;
++		serial1 = &uart4;
++		serial2 = &uart5;
 +		mmc0 = &emmc2;
 +		mmc1 = &mmcnr;
 +		mmc2 = &sdhost;
@@ -316,6 +363,8 @@ index 0000000000000..f92936d7cf16b
 +		spi4 = &spi4;
 +		spi5 = &spi5;
 +		spi6 = &spi6;
++		bluetooth = &uart1;
++
 +		/delete-property/ intc;
 +	};
 +
@@ -330,12 +379,22 @@ index 0000000000000..f92936d7cf16b
 +};
 +
 +&uart0 {
-+	pinctrl-0 = <&uart0_pins &bt_pins>;
++	pinctrl-0 = <&uart0_pins>;
 +	status = "okay";
 +};
 +
 +&uart1 {
-+	pinctrl-0 = <&uart1_pins>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&uart1_bt_pins>;
++	status = "okay";
++};
++
++&bt {
++	status = "disabled";
++};
++
++&minibt {
++	status = "okay";
 +};
 +
 +&spi0 {
@@ -361,6 +420,12 @@ index 0000000000000..f92936d7cf16b
 +};
 +
 +&gpio {
++	gpio_button_pins: gpio_button_pins {
++		brcm,pins = <26 27>;
++		brcm,function = <BCM2835_FSEL_GPIO_IN>;
++		brcm,pull = <BCM2835_PUD_UP>;
++	};
++
 +	spi0_pins: spi0_pins {
 +		brcm,pins = <9 10 11>;
 +		brcm,function = <BCM2835_FSEL_ALT0>;
@@ -466,15 +531,21 @@ index 0000000000000..f92936d7cf16b
 +	};
 +
 +	uart0_pins: uart0_pins {
-+		brcm,pins = <32 33>;
-+		brcm,function = <BCM2835_FSEL_ALT3>;
-+		brcm,pull = <0 2>;
-+	};
-+
-+	uart1_pins: uart1_pins {
 +		brcm,pins;
 +		brcm,function;
 +		brcm,pull;
++	};
++
++	uart1_pins: uart1_pins {
++		brcm,pins = <32 33>;
++		brcm,function = <BCM2835_FSEL_ALT5>; /* alt5=UART1 */
++		brcm,pull = <0 2>;
++	};
++
++	uart1_bt_pins: uart1_bt_pins {
++		brcm,pins = <32 33 30 31>;
++		brcm,function = <BCM2835_FSEL_ALT5>; /* alt5=UART1 */
++		brcm,pull = <0 2 2 0>;
 +	};
 +
 +	uart2_pins: uart2_pins {
@@ -490,9 +561,9 @@ index 0000000000000..f92936d7cf16b
 +	};
 +
 +	uart4_pins: uart4_pins {
-+		brcm,pins = <8 9>;
++		brcm,pins = <8 9 10 11>;
 +		brcm,function = <BCM2835_FSEL_ALT4>;
-+		brcm,pull = <0 2>;
++		brcm,pull = <0 2 2 0>;
 +	};
 +
 +	uart5_pins: uart5_pins {
@@ -512,9 +583,31 @@ index 0000000000000..f92936d7cf16b
 +	clock-frequency = <100000>;
 +};
 +
++&i2c6 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&i2c6_pins>;
++	status = "okay";
++
++	card_codec: pcm5121@4c {
++		#sound-dai-cells = <0>;
++		compatible = "ti,pcm5121";
++		reg = <0x4c>;
++		AVDD-supply = <&vdd_3v3_reg>;
++		DVDD-supply = <&vdd_3v3_reg>;
++		CPVDD-supply = <&vdd_3v3_reg>;
++		status = "okay";
++	};
++
++	pcf85063a: rtc@51 {
++		compatible = "nxp,pcf85063a";
++		reg = <0x51>;
++	};
++};
++
 +&i2s {
 +	pinctrl-names = "default";
 +	pinctrl-0 = <&i2s_pins>;
++	status = "okay";
 +};
 +
 +// =============================================
@@ -526,6 +619,15 @@ index 0000000000000..f92936d7cf16b
 +
 +&sdhost {
 +	status = "disabled";
++};
++
++&usb {
++	compatible = "brcm,bcm2835-usb";
++	dr_mode = "otg";
++	g-np-tx-fifo-size = <32>;
++	g-rx-fifo-size = <558>;
++	g-tx-fifo-size = <512 512 512 512 512 256 256>;
++	status = "okay";
 +};
 +
 +&phy1 {
@@ -541,22 +643,45 @@ index 0000000000000..f92936d7cf16b
 +
 +&leds {
 +	act_led: led-act {
-+		label = "led0";
++		label = "act";
 +		default-state = "off";
-+		linux,default-trigger = "mmc0";
++		linux,default-trigger = "activity";
 +		gpios = <&gpio 42 GPIO_ACTIVE_HIGH>;
 +	};
 +
 +	pwr_led: led-pwr {
-+		label = "led1";
++		label = "pwr";
 +		default-state = "off";
 +		linux,default-trigger = "default-on";
 +		gpios = <&expgpio 2 GPIO_ACTIVE_LOW>;
++	};
++
++	usr_led: led-usr {
++		label = "usr";
++		linux,default-trigger = "heartbeat";
++		default-state = "off";
++		panic-indicator;
++		gpios = <&gpio 44 GPIO_ACTIVE_LOW>;
 +	};
 +};
 +
 +&pwm1 {
 +	status = "disabled";
++};
++
++&sound {
++	compatible = "simple-audio-card";
++	simple-audio-card,format = "i2s";
++	simple-audio-card,name = "pcm5121-sound";
++	status = "okay";
++
++	simple-audio-card,cpu {
++		sound-dai = <&i2s>;
++	};
++
++	dailink0_slave: simple-audio-card,codec {
++		sound-dai = <&card_codec>;
++	};
 +};
 +
 +&vchiq {
@@ -572,13 +697,12 @@ index 0000000000000..f92936d7cf16b
 +	__overrides__ {
 +		audio = <&chosen>,"bootargs{on='snd_bcm2835.enable_hdmi=1',off='snd_bcm2835.enable_hdmi=0'}";
 +
-+		act_led_gpio = <&act_led>,"gpios:4";
-+		act_led_activelow = <&act_led>,"gpios:8";
 +		act_led_trigger = <&act_led>,"linux,default-trigger";
 +
-+		pwr_led_gpio = <&pwr_led>,"gpios:4";
 +		pwr_led_activelow = <&pwr_led>,"gpios:8";
 +		pwr_led_trigger = <&pwr_led>,"linux,default-trigger";
++
++		usr_led_trigger = <&usr_led>,"linux,default-trigger";
 +
 +		eth_led0 = <&phy1>,"led-modes:0";
 +		eth_led1 = <&phy1>,"led-modes:4";
@@ -606,10 +730,12 @@ index 0000000000000..f92936d7cf16b
 +		cam1_reg = <&cam1_reg>,"status";
 +		cam1_reg_gpio = <&cam1_reg>,"gpio:4",
 +				  <&cam1_reg>,"gpio:0=", <&gpio>;
++
++		krnbt = <&minibt>,"status";
 +	};
 +};
 diff --git a/arch/arm64/boot/dts/broadcom/Makefile b/arch/arm64/boot/dts/broadcom/Makefile
-index 25e4178447368..1388cc1164f96 100644
+index 25e417844736..1388cc1164f9 100644
 --- a/arch/arm64/boot/dts/broadcom/Makefile
 +++ b/arch/arm64/boot/dts/broadcom/Makefile
 @@ -22,6 +22,7 @@ dtb-$(CONFIG_ARCH_BCM2835) += bcm2710-rpi-3-b-plus.dtb
@@ -622,7 +748,7 @@ index 25e4178447368..1388cc1164f96 100644
  dtb-$(CONFIG_ARCH_BCM2835) += bcm2712d0-rpi-5-b.dtb
 diff --git a/arch/arm64/boot/dts/broadcom/bcm2711-rpi-cm4-ha-yellow.dts b/arch/arm64/boot/dts/broadcom/bcm2711-rpi-cm4-ha-yellow.dts
 new file mode 100644
-index 0000000000000..97ff67ade14d9
+index 000000000000..97ff67ade14d
 --- /dev/null
 +++ b/arch/arm64/boot/dts/broadcom/bcm2711-rpi-cm4-ha-yellow.dts
 @@ -0,0 +1 @@
