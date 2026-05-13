@@ -1,0 +1,67 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Jan=20=C4=8Cerm=C3=A1k?= <sairon@sairon.cz>
+Date: Tue, 12 May 2026 11:48:07 +0200
+Subject: [PATCH] mmc: bcmstb: Fix non-removable check in bcm2712 init
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+sdhci_brcmstb_init_2712() reads host->mmc->host_caps to decide whether
+to force card-detect for a non-removable eMMC, or to route the CD signal
+for a removable SD card. At the time this function runs from
+sdhci_bcmstb_probe(), however, host->mmc->host_caps is still zero, that
+field is only populated later by the MMC uclass, after the driver's
+probe returns. mmc_of_parse() has already filled plat->cfg.host_caps
+from the device tree by this point, so check that field instead.
+
+Without the fix, every BCM2712 SDHCI instance takes the else branch and
+writes SDIO_CFG_SD_PIN_SEL = SDIO_CFG_SD_PIN_SEL_CARD (0x02), including
+the non-removable eMMC on boards such as CM5 on Home Assistant Yellow.
+The SDIO_CFG block lies outside the SDHCI core's reset scope, so this
+value persists across SDHCI_RESET_ALL into the next stage. On the
+BCM2712, having SD_PIN_SEL set to "SD" when the Linux kernel performs
+its first set_power(MMC_POWER_UP) write racily prevents the SDHCI
+POWER_ON bit from latching (see [1] for the whole backstory) - the
+voltage bits stick but POWER_ON drops - which wedges the first CMD0 the
+full 10 s software timeout. On Home Assistant Yellow this manifested as
+a ~20 s eMMC probe delay on roughly one in two Linux boots when U-Boot
+was the previous stage. Booting directly from the Pi firmware (no U-Boot
+in between) left SD_PIN_SEL at its default and did not exhibit the race.
+
+Reading plat->cfg.host_caps lets init_2712 see the "non-removable"
+property and take the correct branch, leaving SD_PIN_SEL untouched for
+the eMMC.
+
+[1] https://github.com/home-assistant/operating-system/pull/3700#issuecomment-4430229511
+
+Fixes: 10127cdbab64 ("mmc: bcmstb: Add support for bcm2712 SD controller")
+Signed-off-by: Jan Čermák <sairon@sairon.cz>
+Upstream: https://patchwork.ozlabs.org/project/uboot/patch/20260512122435.1118557-1-sairon@sairon.cz/
+---
+ drivers/mmc/bcmstb_sdhci.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/mmc/bcmstb_sdhci.c b/drivers/mmc/bcmstb_sdhci.c
+index 7bddbebb162..f27b84a6ee4 100644
+--- a/drivers/mmc/bcmstb_sdhci.c
++++ b/drivers/mmc/bcmstb_sdhci.c
+@@ -56,7 +56,7 @@ struct sdhci_brcmstb_dev_priv {
+ 
+ static int sdhci_brcmstb_init_2712(struct udevice *dev)
+ {
+-	struct sdhci_host *host = dev_get_priv(dev);
++	struct sdhci_bcmstb_plat *plat = dev_get_plat(dev);
+ 	void *cfg_regs;
+ 	u32 reg;
+ 
+@@ -65,8 +65,8 @@ static int sdhci_brcmstb_init_2712(struct udevice *dev)
+ 	if (!cfg_regs)
+ 		return -ENOENT;
+ 
+-	if ((host->mmc->host_caps & MMC_CAP_NONREMOVABLE) ||
+-	    (host->mmc->host_caps & MMC_CAP_NEEDS_POLL)) {
++	if ((plat->cfg.host_caps & MMC_CAP_NONREMOVABLE) ||
++	    (plat->cfg.host_caps & MMC_CAP_NEEDS_POLL)) {
+ 		/* Force presence */
+ 		reg = readl(cfg_regs + SDIO_CFG_CTRL);
+ 		reg &= ~SDIO_CFG_CTRL_SDCD_N_TEST_LEV;

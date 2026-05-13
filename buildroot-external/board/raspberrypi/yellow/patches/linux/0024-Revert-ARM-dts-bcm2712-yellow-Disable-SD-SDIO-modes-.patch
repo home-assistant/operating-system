@@ -1,0 +1,36 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Jan=20=C4=8Cerm=C3=A1k?= <sairon@sairon.cz>
+Date: Tue, 12 May 2026 16:56:52 +0200
+Subject: [PATCH] Revert "ARM: dts: bcm2712: yellow: Disable SD/SDIO modes on
+ eMMC interface"
+
+This reverts commit d7d55cabc452f1c03c4191412d3f3edde8d701d2.
+
+This is no longer needed with U-Boot fix of sdhci_brcmstb_init_2712.
+---
+ .../boot/dts/broadcom/bcm2712-rpi-cm5-ha-yellow.dts  | 12 ------------
+ 1 file changed, 12 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/broadcom/bcm2712-rpi-cm5-ha-yellow.dts b/arch/arm64/boot/dts/broadcom/bcm2712-rpi-cm5-ha-yellow.dts
+index 1db56db1e95f..0dbb19898636 100644
+--- a/arch/arm64/boot/dts/broadcom/bcm2712-rpi-cm5-ha-yellow.dts
++++ b/arch/arm64/boot/dts/broadcom/bcm2712-rpi-cm5-ha-yellow.dts
+@@ -106,18 +106,6 @@ &rp1_usb1 {
+ 	status = "disabled";
+ };
+ 
+-/*
+- * Yellow doesn't need to use eMMC interface as SD/SDIO, disable those
+- * modes to speed up boot. This is particularly handy to work around
+- * an issue with eMMC initialization but won't harm in general.
+- */
+-&sdio1 {
+-	no-sdio;
+-	no-sd;
+-
+-	/delete-property/ supports-cqe;
+-};
+-
+ &leds {
+ 	led_act: led-act {
+ 		label = "act";
