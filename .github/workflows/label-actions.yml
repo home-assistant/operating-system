@@ -14,4 +14,4 @@ jobs:
   action:
     runs-on: ubuntu-latest
     steps:
-      - uses: dessant/label-actions@9e5fd757ffe1e065abf55e9f74d899dbe012922a # v5.0.0
+      - uses: dessant/label-actions@809e0f9bc11ce08744e7ccac7cd10621d00aba2f # v5.0.2
