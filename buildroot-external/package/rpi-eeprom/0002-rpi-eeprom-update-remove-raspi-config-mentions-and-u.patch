@@ -18,7 +18,7 @@ Upstream: not applicable
  1 file changed, 3 insertions(+), 7 deletions(-)
 
 diff --git a/rpi-eeprom-update b/rpi-eeprom-update
-index 66ca8b4..095cd30 100755
+index e371897..354344c 100755
 --- a/rpi-eeprom-update
 +++ b/rpi-eeprom-update
 @@ -30,7 +30,6 @@ FIRMWARE_RELEASE_STATUS=${FIRMWARE_RELEASE_STATUS:-default}
@@ -29,7 +29,7 @@ index 66ca8b4..095cd30 100755
  
  # Self-update is preferred to using recovery.bin because it avoids modifiy the
  # boot partition in order to rename recovery.bin after use. Since the 2711 ROM
-@@ -315,7 +314,7 @@ applyRecoveryUpdate()
+@@ -314,7 +313,7 @@ applyRecoveryUpdate()
     echo "EEPROM updates pending. Please reboot to apply the update."
  
     if [ "${RPI_EEPROM_USE_FLASHROM}" = 0 ]; then
@@ -38,7 +38,7 @@ index 66ca8b4..095cd30 100755
     fi
  }
  
-@@ -634,7 +633,7 @@ To update the configuration file in an EEPROM image:
+@@ -640,7 +639,7 @@ To update the configuration file in an EEPROM image:
     rpi-eeprom-config pieeprom.bin --config bootconf.txt --out pieeprom-new.bin
  
  To flash the new image:
@@ -47,7 +47,7 @@ index 66ca8b4..095cd30 100755
  
  The syntax is the same as config.txt See online documentation for the list of parameters.
  
-@@ -694,7 +693,6 @@ printVersions()
+@@ -700,7 +699,6 @@ printVersions()
     echo "   CURRENT: $(date -u "-d@${BOOTLOADER_CURRENT_VERSION}") (${BOOTLOADER_CURRENT_VERSION})"
     echo "    LATEST: $(date -u "-d@${BOOTLOADER_UPDATE_VERSION}") (${BOOTLOADER_UPDATE_VERSION})"
     echo "   RELEASE: ${FIRMWARE_RELEASE_STATUS} (${FIRMWARE_IMAGE_DIR})"
@@ -55,7 +55,7 @@ index 66ca8b4..095cd30 100755
  
     if [ "${BCM_CHIP}" = 2711 ]; then
        echo ""
-@@ -899,9 +897,7 @@ checkVersion()
+@@ -905,9 +903,7 @@ checkVersion()
     if [ "${ACTION_UPDATE_BOOTLOADER}" = 1 ] || [ "${ACTION_UPDATE_VL805}" = 1 ]; then
        echo "*** UPDATE AVAILABLE ***"
        echo ""

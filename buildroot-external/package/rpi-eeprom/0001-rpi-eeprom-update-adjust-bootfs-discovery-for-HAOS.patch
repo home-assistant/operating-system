@@ -19,10 +19,10 @@ Upstream: not applicable
  1 file changed, 8 insertions(+), 13 deletions(-)
 
 diff --git a/rpi-eeprom-update b/rpi-eeprom-update
-index 4087ce6..66ca8b4 100755
+index 8eaaaeb..e371897 100755
 --- a/rpi-eeprom-update
 +++ b/rpi-eeprom-update
-@@ -725,20 +725,14 @@ findBootFS()
+@@ -731,20 +731,14 @@ findBootFS()
     # If ${BOOTFS} is not writable OR is not on /dev/mmcblk0 then error because the ROM
     # can only load recovery.bin from the on-board SD-CARD slot or the EEPROM.
  
@@ -50,7 +50,7 @@ index 4087ce6..66ca8b4 100755
     fi
  
     # If BOOTFS is not a directory or doesn't contain any .elf files then
-@@ -986,6 +980,7 @@ while getopts A:abdhilf:m:ju:rs option; do
+@@ -992,6 +986,7 @@ while getopts A:abdhilf:m:ju:rs option; do
        AUTO_UPDATE_VL805=1
        ;;
     b)
