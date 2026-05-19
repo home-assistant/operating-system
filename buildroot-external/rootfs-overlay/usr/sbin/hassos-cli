@@ -58,7 +58,6 @@ case $? in
     # 143 graceful termination (SIGTERM). Most likely a proper shutdown.
     # Just sleep for a while until actual systemd shutdown gets invoked.
     printf "\nHome Assistant CLI has been terminated.\n"
-    sleep 30
     ;;
   *)
     printf "\nHA CLI failed with error code: %s\n" "$?"

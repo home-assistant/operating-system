@@ -15,7 +15,12 @@ Restart=always
 RestartSec=5s
 ExecStartPre=-/usr/bin/docker stop hassio_supervisor
 ExecStart=/usr/sbin/hassos-supervisor
-ExecStop=-/usr/bin/docker stop hassio_supervisor
+# This unit is ordered After=docker.service, so on host shutdown it is
+# stopped before Docker tears containers down. Supervisor handles the
+# SIGTERM from "docker stop" by gracefully stopping Home Assistant Core,
+# apps and plugins; allow ample time for that to complete.
+ExecStop=-/usr/bin/docker stop -t 420 hassio_supervisor
+TimeoutStopSec=450s
 
 [Install]
 WantedBy=multi-user.target
