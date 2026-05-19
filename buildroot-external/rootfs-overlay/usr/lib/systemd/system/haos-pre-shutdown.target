@@ -1,0 +1,7 @@
+[Unit]
+Description=Home Assistant OS pre-shutdown phase
+# Started explicitly by Supervisor before an API-triggered reboot/shutdown so
+# that units conflicting with it (e.g. ha-cli@.service) are stopped cleanly
+# before Supervisor stops the matching plugin containers.
+DefaultDependencies=no
+RefuseManualStop=yes

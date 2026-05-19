@@ -2,12 +2,12 @@
 Description=Home Assistant CLI
 Wants=hassos-supervisor.service
 After=systemd-user-sessions.service plymouth-quit-wait.service getty-pre.target hassos-supervisor.service
-Conflicts=getty@%i.service
+Conflicts=getty@%i.service haos-pre-shutdown.target
 
 # If additional gettys are spawned during boot then we should make
 # sure that this is synchronized before getty.target, even though
 # getty.target didn't actually pull it in.
-Before=getty.target
+Before=getty.target haos-pre-shutdown.target
 
 # IgnoreOnIsolate causes issues with sulogin, if someone isolates
 # rescue.target or starts rescue.service from multi-user.target or

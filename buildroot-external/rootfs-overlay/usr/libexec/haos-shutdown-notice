@@ -1,0 +1,26 @@
+#!/bin/sh
+# ==============================================================================
+# Display a shutdown notice on the console.
+#
+# Started via haos-pre-shutdown.target when a reboot or power off is triggered
+# via API. The Home Assistant CLI on default tty is stopped at that point, so
+# without this the console would just show a blinking cursor.
+# ==============================================================================
+
+# Move to the top, clear the screen and hide the cursor.
+printf '\033[H\033[2J\033[?25l'
+
+cat <<'EOF'
+
+
+    Home Assistant is shutting down...
+
+    This can take a moment, the system will power off or restart shortly.
+
+EOF
+
+# Keep the service alive so the notice stays on screen until Systemd kills
+# this service and starts printing its messages.
+while true; do
+    sleep 3600
+done

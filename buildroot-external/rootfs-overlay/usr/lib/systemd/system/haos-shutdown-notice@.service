@@ -1,0 +1,20 @@
+[Unit]
+Description=Home Assistant OS console shutdown notice on %I
+DefaultDependencies=no
+ConditionPathExists=/dev/%i
+# Take over the console once the Home Assistant CLI instance has been stopped,
+# and have the notice up before the pre-shutdown phase completes so there is no
+# blank gap. Enabled via ha-cli@.service's "Also=".
+After=ha-cli@%i.service
+Before=haos-pre-shutdown.target
+
+[Service]
+Type=simple
+ExecStart=/usr/libexec/haos-shutdown-notice
+TTYPath=/dev/%i
+TTYReset=yes
+StandardOutput=tty
+StandardError=journal
+
+[Install]
+WantedBy=haos-pre-shutdown.target
