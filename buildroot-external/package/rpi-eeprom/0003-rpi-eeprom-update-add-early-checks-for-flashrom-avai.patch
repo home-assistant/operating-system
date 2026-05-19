@@ -1,0 +1,113 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Jan=20=C4=8Cerm=C3=A1k?= <sairon@sairon.cz>
+Date: Mon, 18 May 2026 15:47:24 +0200
+Subject: [PATCH] rpi-eeprom-update: add early checks for flashrom availability
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Add check if flashrom needs to be used before it's actually attempted
+and print the result in the version output, along with flashrom
+availability. This makes it easier to check version and offer available
+updates as Home Assistant update entities.
+
+Signed-off-by: Jan Čermák <sairon@sairon.cz>
+Upstream: not applicable
+---
+ rpi-eeprom-update | 57 +++++++++++++++++++++++++++++++++++++++--------
+ 1 file changed, 48 insertions(+), 9 deletions(-)
+
+diff --git a/rpi-eeprom-update b/rpi-eeprom-update
+index 354344c..82832a8 100755
+--- a/rpi-eeprom-update
++++ b/rpi-eeprom-update
+@@ -78,6 +78,10 @@ ACTION_UPDATE_BOOTLOADER=0
+ ACTION_UPDATE_VL805=0
+ CHECKSUMS=''
+ 
++# Set by checkUpdateMethod: 1 when the current boot device cannot apply an
++# EEPROM update (not booting from SD card and flashrom is not usable).
++UPDATE_BLOCKED=0
++
+ cleanup() {
+    if [ -f "${CHECKSUMS}" ]; then
+       rm -f "${CHECKSUMS}"
+@@ -440,12 +444,9 @@ checkDependencies() {
+ 
+    # Default to off - in the future Raspberry Pi 5 may default to using flashrom if
+    # flashrom is available.
+-   if [ "${AUTO_UPDATE_BOOTLOADER}" = 1 ] || [ -n "${BOOTLOADER_UPDATE_IMAGE}" ]; then
+-      [ -z "${RPI_EEPROM_USE_FLASHROM}" ] && RPI_EEPROM_USE_FLASHROM=0
+-      if [ "${RPI_EEPROM_USE_FLASHROM}" -eq 1 ] && ! command -v flashrom > /dev/null; then
+-         warn "WARNING: flashrom not found. Setting RPI_EEPROM_USE_FLASHROM to 0"
+-         RPI_EEPROM_USE_FLASHROM=0
+-      fi
++   [ -z "${RPI_EEPROM_USE_FLASHROM}" ] && RPI_EEPROM_USE_FLASHROM=0
++   if [ "${RPI_EEPROM_USE_FLASHROM}" -eq 1 ] && ! command -v flashrom > /dev/null; then
++      die "flashrom not found but RPI_EEPROM_USE_FLASHROM is set to 1."
+    fi
+ 
+    FIRMWARE_IMAGE_DIR="${FIRMWARE_ROOT}-${BCM_CHIP}/${FIRMWARE_RELEASE_STATUS}"
+@@ -720,6 +721,41 @@ printVersions()
+       echo "   CURRENT: ${VL805_CURRENT_VERSION}"
+       echo "    LATEST: ${VL805_UPDATE_VERSION}"
+    fi
++
++   echo ""
++   if [ "${RPI_EEPROM_USE_FLASHROM}" = 1 ]; then
++      echo "  FLASHROM: yes"
++   else
++      echo "  FLASHROM: no"
++   fi
++
++   checkUpdateMethod
++   if [ "${UPDATE_BLOCKED}" = 1 ]; then
++      echo "   BLOCKED: yes"
++   else
++      echo "   BLOCKED: no"
++   fi
++}
++
++# checkUpdateMethod is the non-fatal counterpart of findBootFS: it checks
++# whether a pending EEPROM update could actually be applied on this device,
++# without mounting anything or aborting, and records the result in
++# UPDATE_BLOCKED. This lets the version-check output report the boot-device
++# status inline instead of only failing once an update is attempted.
++checkUpdateMethod()
++{
++   if blkid | grep -qE "/dev/mmcblk0p1.*LABEL_FATBOOT.*hassos-boot.*TYPE.*vfat"; then
++      # Booting from the SD card - recovery.bin can be staged on /mnt/boot.
++      UPDATE_BLOCKED=0
++   elif [ -n "${BOOTFS}" ]; then
++      # BOOTFS explicitly provided via /etc/default/rpi-eeprom-update
++      UPDATE_BLOCKED=0
++   elif [ "${RPI_EEPROM_USE_FLASHROM}" = "1" ]; then
++      # flashrom writes the SPI EEPROM directly, no boot partition required
++      UPDATE_BLOCKED=0
++   else
++      UPDATE_BLOCKED=1
++   fi
+ }
+ 
+ findBootFS()
+@@ -729,14 +765,17 @@ findBootFS()
+    # If ${BOOTFS} is not writable OR is not on /dev/mmcblk0 then error because the ROM
+    # can only load recovery.bin from the on-board SD-CARD slot or the EEPROM.
+ 
++   checkUpdateMethod
++   if [ "${UPDATE_BLOCKED}" = 1 ]; then
++      die "rpi-eeprom-update is only available when booting from an SD card or if flashrom can be used."
++   fi
++
+    if blkid | grep -qE "/dev/mmcblk0p1.*LABEL_FATBOOT.*hassos-boot.*TYPE.*vfat"; then
+       # use HAOS default bootfs location if booting from SD card
+       BOOTFS="/mnt/boot"
+-   elif [ -z "$BOOTFS" ] && [ "${RPI_EEPROM_USE_FLASHROM}" = "1" ]; then
++   elif [ -z "$BOOTFS" ]; then
+       # image for flashrom will created in bootfs
+       BOOTFS="/mnt/boot"
+-   elif [ -z "$BOOTFS" ]; then
+-      die "rpi-eeprom-update is only available when booting from an SD card or if flashrom can be used."
+    fi
+ 
+    # If BOOTFS is not a directory or doesn't contain any .elf files then
