@@ -7,20 +7,14 @@
 # without this the console would just show a blinking cursor.
 # ==============================================================================
 
-# Move to the top, clear the screen and hide the cursor.
-printf '\033[H\033[2J\033[?25l'
+# Move to the top and clear the screen.
+printf '\033[H\033[2J'
 
 cat <<'EOF'
 
 
     Home Assistant is shutting down...
 
-    This can take a moment, the system will power off or restart shortly.
+    This can take a moment, the system will power off or reboot shortly.
 
 EOF
-
-# Keep the service alive so the notice stays on screen until Systemd kills
-# this service and starts printing its messages.
-while true; do
-    sleep 3600
-done

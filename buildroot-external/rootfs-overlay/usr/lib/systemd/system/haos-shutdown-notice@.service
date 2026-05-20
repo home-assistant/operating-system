@@ -9,7 +9,8 @@ After=ha-cli@%i.service
 Before=haos-pre-shutdown.target
 
 [Service]
-Type=simple
+Type=oneshot
+RemainAfterExit=yes
 ExecStart=/usr/libexec/haos-shutdown-notice
 TTYPath=/dev/%i
 TTYReset=yes
