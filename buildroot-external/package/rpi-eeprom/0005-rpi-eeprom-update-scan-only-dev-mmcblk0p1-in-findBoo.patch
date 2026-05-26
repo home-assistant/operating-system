@@ -1,0 +1,43 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Jan=20=C4=8Cerm=C3=A1k?= <sairon@sairon.cz>
+Date: Tue, 26 May 2026 11:31:16 +0200
+Subject: [PATCH] rpi-eeprom-update: scan only /dev/mmcblk0p1 in findBootFS
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Make findBootFS check faster by scanning only the device that it looks
+for. Running blkid without argument can block for several seconds if any
+of the devices is busy and if the device doesn't exist, the command
+returns immediately. The regular expression already constrains the
+output to match only one device, so scanning all superblocks is
+wasteful.
+
+Signed-off-by: Jan Čermák <sairon@sairon.cz>
+Upstream: https://github.com/raspberrypi/rpi-eeprom/pull/840
+---
+ rpi-eeprom-update | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/rpi-eeprom-update b/rpi-eeprom-update
+index 609072d..e3324a2 100755
+--- a/rpi-eeprom-update
++++ b/rpi-eeprom-update
+@@ -746,7 +746,7 @@ checkUpdateMethod()
+ {
+    if [ "${UPDATE_BLOCKED}" = 1 ]; then
+       return
+-   elif blkid | grep -qE "/dev/mmcblk0p1.*LABEL_FATBOOT.*hassos-boot.*TYPE.*vfat"; then
++   elif blkid /dev/mmcblk0p1 | grep -qE "/dev/mmcblk0p1.*LABEL_FATBOOT.*hassos-boot.*TYPE.*vfat"; then
+       # Booting from the SD card - recovery.bin can be staged on /mnt/boot.
+       UPDATE_BLOCKED=0
+    elif [ -n "${BOOTFS}" ]; then
+@@ -772,7 +772,7 @@ findBootFS()
+       die "rpi-eeprom-update is only available when booting from an SD card or if flashrom can be used."
+    fi
+ 
+-   if blkid | grep -qE "/dev/mmcblk0p1.*LABEL_FATBOOT.*hassos-boot.*TYPE.*vfat"; then
++   if blkid /dev/mmcblk0p1 | grep -qE "/dev/mmcblk0p1.*LABEL_FATBOOT.*hassos-boot.*TYPE.*vfat"; then
+       # use HAOS default bootfs location if booting from SD card
+       BOOTFS="/mnt/boot"
+    elif [ -z "$BOOTFS" ]; then

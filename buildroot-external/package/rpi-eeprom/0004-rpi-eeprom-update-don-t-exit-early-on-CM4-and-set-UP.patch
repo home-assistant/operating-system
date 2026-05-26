@@ -1,0 +1,50 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Jan=20=C4=8Cerm=C3=A1k?= <sairon@sairon.cz>
+Date: Tue, 26 May 2026 11:12:26 +0200
+Subject: [PATCH] rpi-eeprom-update: don't exit early on CM4 and set
+ UPDATE_BLOCKED
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+On CM4, the script exits early and only prints hints how to update. We
+don't want that behavior to get the EEPROM info in OS Agent, instead set
+the UPDATE_BLOCKED flag. We can still show the hints for CLI usage.
+
+Signed-off-by: Jan Čermák <sairon@sairon.cz>
+Upstream: not applicable
+---
+ rpi-eeprom-update | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/rpi-eeprom-update b/rpi-eeprom-update
+index 82832a8..609072d 100755
+--- a/rpi-eeprom-update
++++ b/rpi-eeprom-update
+@@ -460,6 +460,7 @@ checkDependencies() {
+    BOARD_REVISION=$((0x$BOARD_INFO & 0xf))
+ 
+    if ([ ${BOARD_TYPE} -eq 20 ] || [ ${BOARD_TYPE} -eq 21 ]) && [ "${CM4_ENABLE_RPI_EEPROM_UPDATE}" != '1' ]; then
++      UPDATE_BLOCKED=1
+       # For CM4/CM4S, USB device boot is the recommended method for EEPROM updates.
+       echo "rpi-eeprom-update is not enabled by default on CM4(S)."
+       echo "The recommended method for flashing the EEPROM is rpiboot."
+@@ -482,7 +483,6 @@ checkDependencies() {
+          echo "dtoverlay=audremap"
+          echo "dtoverlay=spi-gpio40-45"
+       echo
+-      exit ${EXIT_SUCCESS}
+    fi
+ 
+    if [ ${BOARD_TYPE} -eq 17 ] && [ ${BOARD_REVISION} -lt 4 ]; then
+@@ -744,7 +744,9 @@ printVersions()
+ # status inline instead of only failing once an update is attempted.
+ checkUpdateMethod()
+ {
+-   if blkid | grep -qE "/dev/mmcblk0p1.*LABEL_FATBOOT.*hassos-boot.*TYPE.*vfat"; then
++   if [ "${UPDATE_BLOCKED}" = 1 ]; then
++      return
++   elif blkid | grep -qE "/dev/mmcblk0p1.*LABEL_FATBOOT.*hassos-boot.*TYPE.*vfat"; then
+       # Booting from the SD card - recovery.bin can be staged on /mnt/boot.
+       UPDATE_BLOCKED=0
+    elif [ -n "${BOOTFS}" ]; then
