@@ -8,19 +8,19 @@ board.
 
 Signed-off-by: Stefan Agner <stefan@agner.ch>
 ---
- .../broadcom/bcm2711-rpi-cm4-ha-yellow.dts    | 713 ++++++++++++++++++
+ .../broadcom/bcm2711-rpi-cm4-ha-yellow.dts    | 714 ++++++++++++++++++
  arch/arm64/boot/dts/broadcom/Makefile         |   1 +
  .../broadcom/bcm2711-rpi-cm4-ha-yellow.dts    |   1 +
- 3 files changed, 715 insertions(+)
+ 3 files changed, 716 insertions(+)
  create mode 100644 arch/arm/boot/dts/broadcom/bcm2711-rpi-cm4-ha-yellow.dts
  create mode 100644 arch/arm64/boot/dts/broadcom/bcm2711-rpi-cm4-ha-yellow.dts
 
 diff --git a/arch/arm/boot/dts/broadcom/bcm2711-rpi-cm4-ha-yellow.dts b/arch/arm/boot/dts/broadcom/bcm2711-rpi-cm4-ha-yellow.dts
 new file mode 100644
-index 000000000000..1aaadaa8e1bf
+index 000000000000..ac0c32fa3c8e
 --- /dev/null
 +++ b/arch/arm/boot/dts/broadcom/bcm2711-rpi-cm4-ha-yellow.dts
-@@ -0,0 +1,713 @@
+@@ -0,0 +1,714 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/dts-v1/;
 +#define BCM2711
@@ -269,6 +269,7 @@ index 000000000000..1aaadaa8e1bf
 +	phy1: ethernet-phy@0 {
 +		/* No PHY interrupt */
 +		reg = <0x0>;
++		brcm,powerdown-enable;
 +	};
 +};
 +
@@ -735,17 +736,17 @@ index 000000000000..1aaadaa8e1bf
 +	};
 +};
 diff --git a/arch/arm64/boot/dts/broadcom/Makefile b/arch/arm64/boot/dts/broadcom/Makefile
-index 25e417844736..1388cc1164f9 100644
+index ec59cc4a4524..d76f23ca2f68 100644
 --- a/arch/arm64/boot/dts/broadcom/Makefile
 +++ b/arch/arm64/boot/dts/broadcom/Makefile
-@@ -22,6 +22,7 @@ dtb-$(CONFIG_ARCH_BCM2835) += bcm2710-rpi-3-b-plus.dtb
- dtb-$(CONFIG_ARCH_BCM2835) += bcm2710-rpi-cm0.dtb
- dtb-$(CONFIG_ARCH_BCM2835) += bcm2710-rpi-cm3.dtb
- dtb-$(CONFIG_ARCH_BCM2835) += bcm2711-rpi-cm4.dtb
-+dtb-$(CONFIG_ARCH_BCM2835) += bcm2711-rpi-cm4-ha-yellow.dtb
- dtb-$(CONFIG_ARCH_BCM2835) += bcm2711-rpi-cm4s.dtb
- dtb-$(CONFIG_ARCH_BCM2835) += bcm2712-rpi-5-b.dtb
- dtb-$(CONFIG_ARCH_BCM2835) += bcm2712d0-rpi-5-b.dtb
+@@ -23,6 +23,7 @@ dtb-$(CONFIG_ARCH_BCM2835) += bcm2710-rpi-zero-2.dtb \
+ 			      bcm2710-rpi-cm0.dtb \
+ 			      bcm2710-rpi-cm3.dtb \
+ 			      bcm2711-rpi-cm4.dtb \
++			      bcm2711-rpi-cm4-ha-yellow.dtb \
+ 			      bcm2711-rpi-cm4s.dtb \
+ 			      bcm2712-rpi-5-b.dtb \
+ 			      bcm2712d0-rpi-5-b.dtb \
 diff --git a/arch/arm64/boot/dts/broadcom/bcm2711-rpi-cm4-ha-yellow.dts b/arch/arm64/boot/dts/broadcom/bcm2711-rpi-cm4-ha-yellow.dts
 new file mode 100644
 index 000000000000..97ff67ade14d
