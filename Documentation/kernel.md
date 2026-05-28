@@ -24,7 +24,7 @@ The following boards are using [Raspberry Pi's Linux fork](https://github.com/ra
 
 | Board | Version |
 |-------|---------|
-| Home Assistant Yellow | 6.12.75 |
-| Raspberry Pi 3 | 6.12.75 |
-| Raspberry Pi 4 | 6.12.75 |
-| Raspberry Pi 5 | 6.12.75 |
+| Home Assistant Yellow | 6.18.32 |
+| Raspberry Pi 3 | 6.18.32 |
+| Raspberry Pi 4 | 6.18.32 |
+| Raspberry Pi 5 | 6.18.32 |
