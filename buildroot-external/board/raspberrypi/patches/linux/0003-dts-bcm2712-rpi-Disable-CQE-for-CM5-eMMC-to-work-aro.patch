@@ -18,10 +18,10 @@ Signed-off-by: Jan Čermák <sairon@sairon.cz>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/arch/arm64/boot/dts/broadcom/bcm2712-rpi-cm5.dtsi b/arch/arm64/boot/dts/broadcom/bcm2712-rpi-cm5.dtsi
-index e35d3abba20bc..4ef2f264f9b52 100644
+index dfad85a666a8..74382c535d48 100644
 --- a/arch/arm64/boot/dts/broadcom/bcm2712-rpi-cm5.dtsi
 +++ b/arch/arm64/boot/dts/broadcom/bcm2712-rpi-cm5.dtsi
-@@ -301,7 +301,7 @@ &sdio1 {
+@@ -300,7 +300,7 @@ &sdio1 {
  	mmc-hs400-1_8v;
  	mmc-hs400-enhanced-strobe;
  	broken-cd;

@@ -16,7 +16,7 @@ Signed-off-by: Stefan Agner <stefan@agner.ch>
  2 files changed, 5 insertions(+), 5 deletions(-)
 
 diff --git a/arch/arm/boot/dts/broadcom/bcm2711.dtsi b/arch/arm/boot/dts/broadcom/bcm2711.dtsi
-index bb137d8da1a82..cd03157437780 100644
+index bb137d8da1a8..cd0315743778 100644
 --- a/arch/arm/boot/dts/broadcom/bcm2711.dtsi
 +++ b/arch/arm/boot/dts/broadcom/bcm2711.dtsi
 @@ -128,7 +128,7 @@ rng@7e104000 {
@@ -56,7 +56,7 @@ index bb137d8da1a82..cd03157437780 100644
  			interrupts = <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>;
  			clocks = <&clocks BCM2835_CLOCK_UART>,
 diff --git a/arch/arm/boot/dts/broadcom/bcm283x.dtsi b/arch/arm/boot/dts/broadcom/bcm283x.dtsi
-index 562c4e9d08cc0..d10e441b0df53 100644
+index 562c4e9d08cc..d10e441b0df5 100644
 --- a/arch/arm/boot/dts/broadcom/bcm283x.dtsi
 +++ b/arch/arm/boot/dts/broadcom/bcm283x.dtsi
 @@ -302,7 +302,7 @@ uart1_ctsrts_gpio42: uart1-ctsrts-gpio42 {

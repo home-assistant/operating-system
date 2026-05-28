@@ -16,7 +16,7 @@ Signed-off-by: Jan Čermák <sairon@sairon.cz>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/usb/storage/usb.c b/drivers/usb/storage/usb.c
-index d36f3b6992bbd..f976f074350bc 100644
+index 152ee3376550..6ffc1cc5553f 100644
 --- a/drivers/usb/storage/usb.c
 +++ b/drivers/usb/storage/usb.c
 @@ -165,7 +165,7 @@ static const struct kernel_param_ops delay_use_ops = {

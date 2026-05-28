@@ -20,66 +20,66 @@ Signed-off-by: Jan Čermák <sairon@sairon.cz>
  3 files changed, 7 insertions(+), 7 deletions(-)
 
 diff --git a/arch/arm/boot/dts/broadcom/bcm270x.dtsi b/arch/arm/boot/dts/broadcom/bcm270x.dtsi
-index ccc203e3131fa..dcbe0ca57d286 100644
+index a3cb24cdcdb3..dcbe0ca57d28 100644
 --- a/arch/arm/boot/dts/broadcom/bcm270x.dtsi
 +++ b/arch/arm/boot/dts/broadcom/bcm270x.dtsi
 @@ -239,7 +239,7 @@ dpi_16bit_cpadhi_gpio2: dpi_16bit_cpadhi_gpio2 {
  };
  
  &uart0 {
--	compatible = "arm,pl011-axi";
+-	compatible = "arm,pl011-axi", "arm,pl011", "arm,primecell";
 +	compatible = "arm,pl011-axi", "brcm,bcm2835-pl011", "arm,pl011", "arm,primecell";
  	/* Enable CTS bug workaround */
  	cts-event-workaround;
  };
 diff --git a/arch/arm/boot/dts/broadcom/bcm2711-rpi-ds.dtsi b/arch/arm/boot/dts/broadcom/bcm2711-rpi-ds.dtsi
-index 8cc1ef5bf6d0c..c9429e7cb86bf 100644
+index e498c634fb72..23b7b276f7ff 100644
 --- a/arch/arm/boot/dts/broadcom/bcm2711-rpi-ds.dtsi
 +++ b/arch/arm/boot/dts/broadcom/bcm2711-rpi-ds.dtsi
-@@ -510,29 +510,29 @@ &spi6 {
+@@ -509,29 +509,29 @@ &spi6 {
  };
  
  &uart0 {
--	compatible = "arm,pl011-axi";
+-	compatible = "arm,pl011-axi", "arm,pl011", "arm,primecell";
 +	compatible = "arm,pl011-axi", "brcm,bcm2835-pl011", "arm,pl011", "arm,primecell";
  };
  
  &uart2 {
--	compatible = "arm,pl011-axi";
+-	compatible = "arm,pl011-axi", "arm,pl011", "arm,primecell";
 +	compatible = "arm,pl011-axi", "brcm,bcm2835-pl011", "arm,pl011", "arm,primecell";
  	pinctrl-0 = <&uart2_pins>;
  	pinctrl-names = "default";
  };
  
  &uart3 {
--	compatible = "arm,pl011-axi";
+-	compatible = "arm,pl011-axi", "arm,pl011", "arm,primecell";
 +	compatible = "arm,pl011-axi", "brcm,bcm2835-pl011", "arm,pl011", "arm,primecell";
  	pinctrl-0 = <&uart3_pins>;
  	pinctrl-names = "default";
  };
  
  &uart4 {
--	compatible = "arm,pl011-axi";
+-	compatible = "arm,pl011-axi", "arm,pl011", "arm,primecell";
 +	compatible = "arm,pl011-axi", "brcm,bcm2835-pl011", "arm,pl011", "arm,primecell";
  	pinctrl-0 = <&uart4_pins>;
  	pinctrl-names = "default";
  };
  
  &uart5 {
--	compatible = "arm,pl011-axi";
+-	compatible = "arm,pl011-axi", "arm,pl011", "arm,primecell";
 +	compatible = "arm,pl011-axi", "brcm,bcm2835-pl011", "arm,pl011", "arm,primecell";
  	pinctrl-0 = <&uart5_pins>;
  	pinctrl-names = "default";
  };
 diff --git a/arch/arm64/boot/dts/broadcom/bcm2712-ds.dtsi b/arch/arm64/boot/dts/broadcom/bcm2712-ds.dtsi
-index 98b0e9452e367..f03b4c2bf66b4 100644
+index 32a40daba68a..ae3ef81f8513 100644
 --- a/arch/arm64/boot/dts/broadcom/bcm2712-ds.dtsi
 +++ b/arch/arm64/boot/dts/broadcom/bcm2712-ds.dtsi
-@@ -430,7 +430,7 @@ &gicv2 {
+@@ -411,7 +411,7 @@ &gicv2 {
  };
  
  &uart10 {
--	compatible = "arm,pl011-axi";
+-	compatible = "arm,pl011-axi", "arm,pl011", "arm,primecell";
 +	compatible = "arm,pl011-axi", "brcm,bcm2835-pl011", "arm,pl011", "arm,primecell";
  };
  
