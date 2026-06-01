@@ -11,7 +11,7 @@ BLUETOOTH_RTL8723_SITE = $(BR2_EXTERNAL_HAOS_PATH)/package/bluetooth-rtl8723
 BLUETOOTH_RTL8723_SITE_METHOD = local
 
 define BLUETOOTH_RTL8723_BUILD_CMDS
-	curl -L -o $(@D)/rtl8723bs_config.bin https://raw.githubusercontent.com/home-assistant/hassos-blobs/e0c8b7aebb626694cf5c017a9e03068aee2bc604/rtl_bt/rtl8723b_config.bin
+	curl -L -o $(@D)/rtl8723bs_config.bin https://raw.githubusercontent.com/home-assistant/operating-system-blobs/e0c8b7aebb626694cf5c017a9e03068aee2bc604/rtl_bt/rtl8723b_config.bin
 endef
 
 define BLUETOOTH_RTL8723_INSTALL_TARGET_CMDS
