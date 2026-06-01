@@ -2,7 +2,7 @@
 Description=Kernel persistent modprobe.d
 Requires=mnt-overlay.mount
 After=mnt-overlay.mount
-Before=systemd-modules-load.service hassos-config.service
+Before=systemd-modules-load.service haos-config.service
 
 [Mount]
 What=/mnt/overlay/etc/modprobe.d

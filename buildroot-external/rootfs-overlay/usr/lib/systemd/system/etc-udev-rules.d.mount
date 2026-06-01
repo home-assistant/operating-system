@@ -2,7 +2,7 @@
 Description=Udev persistent rules.d
 Requires=mnt-overlay.mount
 After=mnt-overlay.mount
-Before=hassos-config.service
+Before=haos-config.service
 
 [Mount]
 What=/mnt/overlay/etc/udev/rules.d
