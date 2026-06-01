@@ -1,0 +1,9 @@
+config BR2_PACKAGE_HAILO10H_PCI
+	bool "Hailo-10H PCIe Driver"
+	depends on BR2_LINUX_KERNEL
+	help
+	  Kernel driver for interacting with Hailo-10H
+	  devices over PCIe. Builds the hailo1x_pci module
+	  from the hailort-drivers repository (master branch,
+	  v5.x series). Supports Hailo-10H, Hailo-15L, and
+	  Hailo-12L (Mars) device families.

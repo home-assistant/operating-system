@@ -1,0 +1,24 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Mike <mikehailodev@users.noreply.github.com>
+Date: Wed, 7 May 2026 00:00:00 +0000
+Subject: [PATCH] Fix build with Linux 6.16+ (del_timer_sync removal)
+
+del_timer_sync() was removed from the kernel API in Linux 6.16.
+Use timer_delete_sync() which has been available since Linux 6.2
+and is the canonical replacement.
+
+Signed-off-by: Mike <mikehailodev@users.noreply.github.com>
+---
+ linux/vdma/monitor.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/linux/vdma/monitor.c b/linux/vdma/monitor.c
+--- a/linux/vdma/monitor.c
++++ b/linux/vdma/monitor.c
+@@ -50,5 +50,5 @@ long hailo_vdma_monitor_start(struct hailo_vdma_monitor *moni
+ 
+ void hailo_vdma_monitor_stop(struct hailo_vdma_monitor *monitor)
+ {
+-    del_timer_sync(&monitor->timer);
++    timer_delete_sync(&monitor->timer);
+ }
