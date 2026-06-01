@@ -15,7 +15,7 @@ def test_init(shell):
     shell.run_check(
         "jq '.auto_update = false' /mnt/data/supervisor/updater.json > /tmp/updater.json"
         " && mv /tmp/updater.json /mnt/data/supervisor/updater.json"
-        " && systemctl restart hassos-supervisor.service"
+        " && systemctl restart haos-supervisor.service"
     )
 
     def check_container_running(container_name):

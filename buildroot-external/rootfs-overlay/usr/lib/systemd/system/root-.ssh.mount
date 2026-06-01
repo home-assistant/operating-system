@@ -11,4 +11,4 @@ Type=None
 Options=bind
 
 [Install]
-WantedBy=hassos-bind.target
+WantedBy=haos-bind.target

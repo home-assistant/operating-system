@@ -1,8 +1,8 @@
 [Unit]
-Description=HassOS supervisor
+Description=HAOS supervisor
 Requires=docker.service rauc.service dbus.socket
-Wants=network-online.target hassos-apparmor.service time-sync.target systemd-journal-gatewayd.socket
-After=docker.service rauc.service dbus.socket network-online.target hassos-apparmor.service time-sync.target systemd-journal-gatewayd.socket
+Wants=network-online.target haos-apparmor.service time-sync.target systemd-journal-gatewayd.socket
+After=docker.service rauc.service dbus.socket network-online.target haos-apparmor.service time-sync.target systemd-journal-gatewayd.socket
 RequiresMountsFor=/mnt/data /mnt/boot /mnt/overlay
 StartLimitIntervalSec=30m
 StartLimitBurst=3
@@ -14,7 +14,7 @@ Type=simple
 Restart=always
 RestartSec=5s
 ExecStartPre=-/usr/bin/docker stop hassio_supervisor
-ExecStart=/usr/sbin/hassos-supervisor
+ExecStart=/usr/sbin/haos-supervisor
 # This unit is ordered After=docker.service, so on host shutdown it is
 # stopped before Docker tears containers down. Supervisor handles the
 # SIGTERM from "docker stop" by gracefully stopping Home Assistant Core,

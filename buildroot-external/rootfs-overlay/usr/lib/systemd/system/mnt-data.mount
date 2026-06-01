@@ -1,8 +1,8 @@
 [Unit]
 Description=HassOS data partition
-Wants=hassos-expand.service
+Wants=haos-expand.service
 DefaultDependencies=no
-After=hassos-expand.service
+After=haos-expand.service
 Before=umount.target local-fs.target
 Conflicts=umount.target
 After=systemd-fsck@dev-disk-by\x2dlabel-hassos\x2ddata.service

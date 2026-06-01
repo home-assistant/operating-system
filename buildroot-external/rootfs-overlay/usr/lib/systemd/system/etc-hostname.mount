@@ -1,7 +1,7 @@
 [Unit]
 Description=Hostname persistent configuration
 Requires=mnt-overlay.mount
-After=mnt-overlay.mount hassos-overlay.service
+After=mnt-overlay.mount haos-overlay.service
 Before=network.target
 
 [Mount]
@@ -11,4 +11,4 @@ Type=none
 Options=bind
 
 [Install]
-WantedBy=hassos-bind.target
+WantedBy=haos-bind.target

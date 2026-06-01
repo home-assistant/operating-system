@@ -1,5 +1,5 @@
 [Unit]
-Description=HassOS zram targets
+Description=HAOS zram targets
 Documentation=man:systemd.target(5)
 
 [Install]

@@ -9,4 +9,4 @@ ExecCondition=/bin/sh -c '[ "$(cat /proc/device-tree/$(cat /proc/device-tree/ali
 ExecStart=/usr/bin/btuart
 
 [Install]
-WantedBy=hassos-hardware.target
+WantedBy=haos-hardware.target

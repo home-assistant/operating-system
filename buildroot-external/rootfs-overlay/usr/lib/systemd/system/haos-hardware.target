@@ -1,7 +1,6 @@
 [Unit]
-Description=HassOS overlay targets
+Description=HAOS hardware targets
 Documentation=man:systemd.target(5)
-Before=sysinit.target
 
 [Install]
 WantedBy=multi-user.target

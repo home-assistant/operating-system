@@ -7,9 +7,9 @@ RefuseManualStop=true
 
 [Service]
 Type=oneshot
-ExecStart=/usr/libexec/hassos-zram -t fs -m var -s 32M
+ExecStart=/usr/libexec/haos-zram -t fs -m var -s 32M
 RemainAfterExit=true
 StandardOutput=null
 
 [Install]
-WantedBy=hassos-zram.target
+WantedBy=haos-zram.target

@@ -1,7 +1,7 @@
 [Unit]
 Description=NetworkManager persistent data
 Requires=mnt-overlay.mount
-After=mnt-overlay.mount hassos-overlay.service
+After=mnt-overlay.mount haos-overlay.service
 Before=NetworkManager.service
 
 [Mount]
@@ -12,4 +12,4 @@ Options=bind
 LazyUnmount=yes
 
 [Install]
-WantedBy=hassos-bind.target
+WantedBy=haos-bind.target

@@ -12,4 +12,4 @@ Options=bind
 LazyUnmount=yes
 
 [Install]
-WantedBy=hassos-bind.target
+WantedBy=haos-bind.target

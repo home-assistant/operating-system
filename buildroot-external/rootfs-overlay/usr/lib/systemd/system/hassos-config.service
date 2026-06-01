@@ -1,6 +1,6 @@
 [Unit]
 Description=HassOS Configuration Manager
-After=hassos-bind.target network.target
+After=haos-bind.target network.target
 
 [Service]
 Type=oneshot

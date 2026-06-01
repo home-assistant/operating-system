@@ -1,5 +1,5 @@
 [Unit]
-Description=HassOS data resizing
+Description=HAOS data resizing
 DefaultDependencies=no
 Before=mnt-data.mount
 RefuseManualStart=true
@@ -9,7 +9,7 @@ After=dev-disk-by\x2dlabel-hassos\x2ddata.device systemd-fsck@dev-disk-by\x2dlab
 
 [Service]
 Type=oneshot
-ExecStart=/usr/libexec/hassos-expand
+ExecStart=/usr/libexec/haos-expand
 
 [Install]
 WantedBy=local-fs.target

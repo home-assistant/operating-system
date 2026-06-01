@@ -11,4 +11,4 @@ ExecCondition=/bin/sh -c 'test $((16#$(xxd -p -g4 /proc/device-tree/chosen/rpi-b
 ExecStart=/bin/sh -c 'echo "serial0-0" > /sys/bus/serial/drivers/hci_uart_bcm/unbind'
 
 [Install]
-WantedBy=hassos-hardware.target
+WantedBy=haos-hardware.target
