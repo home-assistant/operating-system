@@ -55,15 +55,15 @@ def test_os_update(shell, shell_json, target):
 
     # Core (and maybe Supervisor) might be downloaded at this point, so we need to keep trying
     while True:
-        output = "\n".join(shell.run_check(f"ha os update --no-progress --version {stable_version} || true", timeout=120))
-        if "Don't have an URL for OTA updates" in output:
-            shell.run_check("ha su reload --no-progress")
-        elif "Command completed successfully" in output:
+        shell.console.sendline(f"ha os update --no-progress --version {stable_version} || true")
+        # a successful update may reboot the system immediately, so wait for the new slot to boot
+        index, *_ = shell.console.expect(["Booting `Slot ", "Don't have an URL for OTA updates"], timeout=120)
+        # matched on "Booting `Slot "
+        if index == 0:
             break
-
+        # no timeout -> matched on the second pattern
+        shell.run_check("ha su reload --no-progress")
         sleep(5)
-
-    shell.console.expect("Booting `Slot ", timeout=60)
 
     # reactivate ShellDriver to handle login again
     target.deactivate(shell)
