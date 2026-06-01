@@ -2,11 +2,11 @@
 # shellcheck disable=SC1090,SC1091
 set -e
 
-SCRIPT_DIR=${BR2_EXTERNAL_HASSOS_PATH}/scripts
+SCRIPT_DIR=${BR2_EXTERNAL_HAOS_PATH}/scripts
 BOARD_DIR=${2}
 HOOK_FILE=${3}
 
-. "${BR2_EXTERNAL_HASSOS_PATH}/meta"
+. "${BR2_EXTERNAL_HAOS_PATH}/meta"
 . "${BOARD_DIR}/meta"
 
 . "${SCRIPT_DIR}/hdd-image.sh"

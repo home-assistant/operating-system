@@ -6,8 +6,8 @@
 
 HASSIO_VERSION = 1.0.0
 HASSIO_LICENSE = Apache License 2.0
-# HASSIO_LICENSE_FILES = $(BR2_EXTERNAL_HASSOS_PATH)/../LICENSE
-HASSIO_SITE = $(BR2_EXTERNAL_HASSOS_PATH)/package/hassio
+# HASSIO_LICENSE_FILES = $(BR2_EXTERNAL_HAOS_PATH)/../LICENSE
+HASSIO_SITE = $(BR2_EXTERNAL_HAOS_PATH)/package/hassio
 HASSIO_SITE_METHOD = local
 HASSIO_VERSION_URL = "https://version.home-assistant.io/"
 ifeq ($(BR2_PACKAGE_HASSIO_CHANNEL_STABLE),y)
@@ -29,7 +29,7 @@ define HASSIO_BUILD_CMDS
 	$(Q)mkdir -p $(@D)/images
 	$(Q)mkdir -p $(HASSIO_DL_DIR)
 	$(foreach image,$(HASSIO_CONTAINER_IMAGES_ARCH),\
-		$(BR2_EXTERNAL_HASSOS_PATH)/package/hassio/fetch-container-image.sh \
+		$(BR2_EXTERNAL_HAOS_PATH)/package/hassio/fetch-container-image.sh \
 			$(BR2_PACKAGE_HASSIO_ARCH) $(BR2_PACKAGE_HASSIO_MACHINE) $(@D)/version.json $(image) "$(HASSIO_DL_DIR)" "$(@D)/images"
 	)
 endef
@@ -37,7 +37,7 @@ endef
 HASSIO_INSTALL_IMAGES = YES
 
 define HASSIO_INSTALL_IMAGES_CMDS
-	$(BR2_EXTERNAL_HASSOS_PATH)/package/hassio/create-data-partition.sh "$(@D)" "$(BINARIES_DIR)" "$(HASSIO_VERSION_CHANNEL)" "$(DOCKER_ENGINE_VERSION)"
+	$(BR2_EXTERNAL_HAOS_PATH)/package/hassio/create-data-partition.sh "$(@D)" "$(BINARIES_DIR)" "$(HASSIO_VERSION_CHANNEL)" "$(DOCKER_ENGINE_VERSION)"
 endef
 
 $(eval $(generic-package))

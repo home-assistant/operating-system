@@ -8,7 +8,7 @@ function prepare_rauc_signing() {
 
     if [ ! -f "${key}" ]; then
         echo "Generating a self-signed certificate for development"
-        "${BR2_EXTERNAL_HASSOS_PATH}"/scripts/generate-signing-key.sh "${cert}" "${key}"
+        "${BR2_EXTERNAL_HAOS_PATH}"/scripts/generate-signing-key.sh "${cert}" "${key}"
     fi
 }
 
@@ -24,7 +24,7 @@ function write_rauc_config() {
 
     (
         "${HOST_DIR}/bin/tempio" \
-            -template "${BR2_EXTERNAL_HASSOS_PATH}/ota/system.conf.gtpl"
+            -template "${BR2_EXTERNAL_HAOS_PATH}/ota/system.conf.gtpl"
     ) > "${TARGET_DIR}/etc/rauc/system.conf"
 }
 
@@ -34,14 +34,14 @@ function install_rauc_certs() {
 
     if [ "${DEPLOYMENT}" == "development" ]; then
         # Contains development and release certificate
-        cp "${BR2_EXTERNAL_HASSOS_PATH}/ota/dev-ca.pem" "${TARGET_DIR}/etc/rauc/keyring.pem"
+        cp "${BR2_EXTERNAL_HAOS_PATH}/ota/dev-ca.pem" "${TARGET_DIR}/etc/rauc/keyring.pem"
     else
-        cp "${BR2_EXTERNAL_HASSOS_PATH}/ota/rel-ca.pem" "${TARGET_DIR}/etc/rauc/keyring.pem"
+        cp "${BR2_EXTERNAL_HAOS_PATH}/ota/rel-ca.pem" "${TARGET_DIR}/etc/rauc/keyring.pem"
     fi
 
     # Add local self-signed certificate (if not trusted by the dev or release
     # certificate it is a self-signed certificate, dev-ca.pem contains both)
-    if ! openssl verify -CAfile "${BR2_EXTERNAL_HASSOS_PATH}/ota/dev-ca.pem" -no-CApath "${cert}"; then
+    if ! openssl verify -CAfile "${BR2_EXTERNAL_HAOS_PATH}/ota/dev-ca.pem" -no-CApath "${cert}"; then
         echo "Adding self-signed certificate to keyring."
         openssl x509 -in "${cert}" -text >> "${TARGET_DIR}/etc/rauc/keyring.pem"
     fi
@@ -57,6 +57,6 @@ function install_bootloader_config() {
     # Fix MBR
     if [ "${PARTITION_TABLE_TYPE}" == "mbr" ]; then
         mkdir -p "${TARGET_DIR}/usr/lib/udev/rules.d"
-        cp -f "${BR2_EXTERNAL_HASSOS_PATH}/bootloader/mbr-part.rules" "${TARGET_DIR}/usr/lib/udev/rules.d/"
+        cp -f "${BR2_EXTERNAL_HAOS_PATH}/bootloader/mbr-part.rules" "${TARGET_DIR}/usr/lib/udev/rules.d/"
     fi
 }

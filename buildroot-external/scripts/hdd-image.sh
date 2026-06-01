@@ -25,7 +25,7 @@ function create_disk_image() {
     export ota_compatible ota_version
     # variables used in genimage configs
     export BOOTSTATE_SIZE SYSTEM_SIZE KERNEL_SIZE OVERLAY_SIZE DATA_SIZE
-    RAUC_MANIFEST=$(tempio -template "${BR2_EXTERNAL_HASSOS_PATH}/ota/manifest.raucm.gtpl")
+    RAUC_MANIFEST=$(tempio -template "${BR2_EXTERNAL_HAOS_PATH}/ota/manifest.raucm.gtpl")
     IMAGE_NAME="$(haos_image_basename)"
     BOOT_SPL_TYPE=$(test "$BOOT_SPL" == "true" && echo "spl" || echo "nospl")
     export RAUC_MANIFEST IMAGE_NAME BOOT_SPL_TYPE
@@ -41,7 +41,7 @@ function create_disk_image() {
     genimage \
       --rootpath "$(path_boot_dir)" \
       --configdump - \
-      --includepath "${BOARD_DIR}:${BR2_EXTERNAL_HASSOS_PATH}/genimage" \
+      --includepath "${BOARD_DIR}:${BR2_EXTERNAL_HAOS_PATH}/genimage" \
       --config images-boot.cfg
 
     rm -rf "${GENIMAGE_TMPPATH}"
@@ -49,7 +49,7 @@ function create_disk_image() {
     genimage \
       --rootpath "${ROOTPATH_TMP}" \
       --configdump - \
-      --includepath "${BOARD_DIR}:${BR2_EXTERNAL_HASSOS_PATH}/genimage"
+      --includepath "${BOARD_DIR}:${BR2_EXTERNAL_HAOS_PATH}/genimage"
 }
 
 function convert_disk_image_virtual() {
