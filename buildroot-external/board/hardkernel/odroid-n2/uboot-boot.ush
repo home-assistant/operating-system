@@ -22,7 +22,7 @@ test -n "${BOOT_B_LEFT}" || setenv BOOT_B_LEFT 3
 test -n "${MACHINE_ID}" || setenv BOOT_CONDITION "systemd.condition-first-boot=true"
 
 # HAOS bootargs
-setenv bootargs_hassos "zram.enabled=1 zram.num_devices=3 systemd.machine_id=${MACHINE_ID} fsck.repair=yes ${BOOT_CONDITION}"
+setenv bootargs_haos "zram.enabled=1 zram.num_devices=3 systemd.machine_id=${MACHINE_ID} fsck.repair=yes ${BOOT_CONDITION}"
 
 # HAOS system A/B
 setenv bootargs_a "root=PARTUUID=48617373-06 ro rootwait"
@@ -80,7 +80,7 @@ for BOOT_SLOT in "${BOOT_ORDER}"; do
       setexpr BOOT_A_LEFT ${BOOT_A_LEFT} - 1
       echo "Trying to boot slot A, ${BOOT_A_LEFT} attempts remaining. Loading kernel ..."
       if load mmc ${devnum}:5 ${kernel_addr_r} Image; then
-          setenv bootargs "${bootargs_hassos} ${bootargs_a} rauc.slot=A ${cmdline}"
+          setenv bootargs "${bootargs_haos} ${bootargs_a} rauc.slot=A ${cmdline}"
       fi
     fi
   elif test "x${BOOT_SLOT}" = "xB"; then
@@ -88,7 +88,7 @@ for BOOT_SLOT in "${BOOT_ORDER}"; do
       setexpr BOOT_B_LEFT ${BOOT_B_LEFT} - 1
       echo "Trying to boot slot B, ${BOOT_B_LEFT} attempts remaining. Loading kernel ..."
       if load mmc ${devnum}:7 ${kernel_addr_r} Image; then
-          setenv bootargs "${bootargs_hassos} ${bootargs_b} rauc.slot=B ${cmdline}"
+          setenv bootargs "${bootargs_haos} ${bootargs_b} rauc.slot=B ${cmdline}"
       fi
     fi
   fi

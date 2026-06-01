@@ -21,7 +21,7 @@ test -n "${BOOT_B_LEFT}" || setenv BOOT_B_LEFT 3
 test -n "${MACHINE_ID}" || setenv BOOT_CONDITION "systemd.condition-first-boot=true"
 
 # HAOS bootargs
-setenv bootargs_hassos "zram.enabled=1 zram.num_devices=3 rootwait systemd.machine_id=${MACHINE_ID} cgroup_enable=memory fsck.repair=yes ${BOOT_CONDITION}"
+setenv bootargs_haos "zram.enabled=1 zram.num_devices=3 rootwait systemd.machine_id=${MACHINE_ID} cgroup_enable=memory fsck.repair=yes ${BOOT_CONDITION}"
 
 # HAOS system A/B
 setenv bootargs_a "root=PARTUUID=8d3d53e3-6d49-4c38-8349-aff6859e82fd ro"
@@ -42,7 +42,7 @@ for BOOT_SLOT in "${BOOT_ORDER}"; do
       setexpr BOOT_A_LEFT ${BOOT_A_LEFT} - 1
       echo "Trying to boot slot A, ${BOOT_A_LEFT} attempts remaining. Loading kernel ..."
       if load ${devtype} ${devnum}:2 ${kernel_addr_r} Image; then
-          setenv bootargs "${bootargs_rpi} ${bootargs_hassos} ${bootargs_a} rauc.slot=A"
+          setenv bootargs "${bootargs_rpi} ${bootargs_haos} ${bootargs_a} rauc.slot=A"
       fi
     fi
   elif test "x${BOOT_SLOT}" = "xB"; then
@@ -50,7 +50,7 @@ for BOOT_SLOT in "${BOOT_ORDER}"; do
       setexpr BOOT_B_LEFT ${BOOT_B_LEFT} - 1
       echo "Trying to boot slot B, ${BOOT_B_LEFT} attempts remaining. Loading kernel ..."
       if load ${devtype} ${devnum}:4 ${kernel_addr_r} Image; then
-          setenv bootargs "${bootargs_rpi} ${bootargs_hassos} ${bootargs_b} rauc.slot=B"
+          setenv bootargs "${bootargs_rpi} ${bootargs_haos} ${bootargs_b} rauc.slot=B"
       fi
     fi
   fi
