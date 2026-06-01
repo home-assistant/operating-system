@@ -1,5 +1,5 @@
 [Unit]
-Description=HassOS ZRAM var
+Description=HAOS ZRAM var
 DefaultDependencies=no
 Requires=zram-var.service
 After=zram-var.service

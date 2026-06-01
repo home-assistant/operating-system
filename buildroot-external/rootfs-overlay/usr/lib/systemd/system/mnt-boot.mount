@@ -1,5 +1,5 @@
 [Unit]
-Description=HassOS boot partition
+Description=HAOS boot partition
 DefaultDependencies=no
 Before=umount.target local-fs.target
 After=systemd-fsck@dev-disk-by\x2dlabel-hassos\x2dboot.service

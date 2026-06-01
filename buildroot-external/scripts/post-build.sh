@@ -13,7 +13,7 @@ BOARD_DIR=${2}
 . "${SCRIPT_DIR}/rauc.sh"
 
 
-# HassOS tasks
+# HAOS tasks
 fix_rootfs
 install_tini_docker
 setup_localtime

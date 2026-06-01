@@ -1,5 +1,5 @@
 [Unit]
-Description=HassOS data partition
+Description=HAOS data partition
 Wants=haos-expand.service
 DefaultDependencies=no
 After=haos-expand.service

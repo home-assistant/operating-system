@@ -24,7 +24,7 @@ test -n "${BOOT_B_LEFT}" || setenv BOOT_B_LEFT 3
 # Allows ConditionFirstBoot=
 test -n "${MACHINE_ID}" || setenv BOOT_CONDITION "systemd.condition-first-boot=true"
 
-# HassOS bootargs
+# HAOS bootargs
 setenv bootargs_hassos "zram.enabled=1 zram.num_devices=3 rootwait systemd.machine_id=${MACHINE_ID} fsck.repair=yes ${BOOT_CONDITION}"
 
 i2c dev 0
@@ -57,7 +57,7 @@ while test ${counter} -lt 2; do
   fi
 done
 
-# HassOS system A/B
+# HAOS system A/B
 setenv bootargs_a "root=PARTUUID=8d3d53e3-6d49-4c38-8349-aff6859e82fd ro"
 setenv bootargs_b "root=PARTUUID=a3ec664e-32ce-4665-95ea-7ae90ce9aa20 ro"
 

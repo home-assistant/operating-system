@@ -1,5 +1,5 @@
 [Unit]
-Description=HassOS overlay partition
+Description=HAOS overlay partition
 DefaultDependencies=no
 Before=umount.target local-fs.target
 Conflicts=umount.target
