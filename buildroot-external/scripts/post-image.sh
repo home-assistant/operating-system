@@ -20,10 +20,10 @@ rm -rf "$(path_boot_dir)"
 mkdir -p "$(path_boot_dir)"
 
 # Hook pre image build stuff
-hassos_pre_image
+haos_pre_image
 
 # Disk & OTA
 create_disk_image
 
 # Hook post image build stuff
-hassos_post_image
+haos_post_image

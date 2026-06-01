@@ -2,7 +2,7 @@ VERSION_MAJOR="18"
 VERSION_MINOR="0"
 VERSION_SUFFIX="dev0"
 
-HASSOS_NAME="Home Assistant OS"
-HASSOS_ID="haos"
+HAOS_NAME="Home Assistant OS"
+HAOS_ID="haos"
 
 DEPLOYMENT="development"

@@ -22,14 +22,14 @@ setup_vconsole
 # Write os-release
 # shellcheck disable=SC2153
 (
-    echo "NAME=\"${HASSOS_NAME}\""
-    echo "VERSION=\"$(hassos_version) (${BOARD_NAME})\""
-    echo "ID=${HASSOS_ID}"
-    echo "VERSION_ID=$(hassos_version)"
-    echo "PRETTY_NAME=\"${HASSOS_NAME} $(hassos_version)\""
-    echo "CPE_NAME=cpe:2.3:o:home-assistant:${HASSOS_ID}:$(hassos_version):*:${DEPLOYMENT}:*:*:*:${BOARD_ID}:*"
+    echo "NAME=\"${HAOS_NAME}\""
+    echo "VERSION=\"$(haos_version) (${BOARD_NAME})\""
+    echo "ID=${HAOS_ID}"
+    echo "VERSION_ID=$(haos_version)"
+    echo "PRETTY_NAME=\"${HAOS_NAME} $(haos_version)\""
+    echo "CPE_NAME=cpe:2.3:o:home-assistant:${HAOS_ID}:$(haos_version):*:${DEPLOYMENT}:*:*:*:${BOARD_ID}:*"
     echo "HOME_URL=https://www.home-assistant.io/"
-    echo "VARIANT=\"${HASSOS_NAME} ${BOARD_NAME}\""
+    echo "VARIANT=\"${HAOS_NAME} ${BOARD_NAME}\""
     echo "VARIANT_ID=${BOARD_ID}"
     echo "SUPERVISOR_MACHINE=${SUPERVISOR_MACHINE}"
     echo "SUPERVISOR_ARCH=${SUPERVISOR_ARCH}"

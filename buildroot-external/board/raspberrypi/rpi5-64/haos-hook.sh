@@ -1,7 +1,7 @@
 #!/bin/bash
 # shellcheck disable=SC2155
 
-function hassos_pre_image() {
+function haos_pre_image() {
     local BOOT_DATA="$(path_boot_dir)"
 
     mkdir -p "${BOOT_DATA}/slot-A/"
@@ -18,7 +18,7 @@ function hassos_pre_image() {
 }
 
 
-function hassos_post_image() {
+function haos_post_image() {
     convert_disk_image_xz
 }
 

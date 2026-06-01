@@ -17,7 +17,7 @@ function write_rauc_config() {
     mkdir -p "${TARGET_DIR}/etc/rauc"
 
     local ota_compatible
-    ota_compatible="$(hassos_rauc_compatible)"
+    ota_compatible="$(haos_rauc_compatible)"
 
     export ota_compatible
     export BOOTLOADER PARTITION_TABLE_TYPE BOOT_SPL
