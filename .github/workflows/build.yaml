@@ -206,6 +206,16 @@ jobs:
           buildroot-external/scripts/generate-signing-key.sh cert.pem key.pem
           echo "self_signed_cert=true" >> $GITHUB_OUTPUT
 
+      - name: Check signing certificate validity
+        env:
+          RAUC_CERTIFICATE: ${{ secrets.RAUC_CERTIFICATE }}
+        if: env.RAUC_CERTIFICATE != ''
+        run: |
+          echo -e "-----BEGIN CERTIFICATE-----\n${RAUC_CERTIFICATE}\n-----END CERTIFICATE-----" > signing-cert.pem
+          # 760 days ~ 25 months (the OS support window, with margin)
+          scripts/check-signing-validity.sh signing-cert.pem buildroot-external/ota/rel-ca.pem 760
+          rm -f signing-cert.pem
+
       - name: Create signing key
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: steps.generate_signing_key.outcome == 'success'
