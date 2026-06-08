@@ -59,4 +59,4 @@ if too_soon "$CERT"; then
   fail "Signing certificate expires $(enddate "$CERT") (within ${MIN_DAYS} days, before ${THRESHOLD_DATE}). A new leaf certificate needs to be generated and the CI signing key updated."
 fi
 
-echo "Signing certificate and CA chain are valid for at least ${MIN_DAYS} days (past ${THRESHOLD_DATE})."
+echo "Signing certificate and CA chain (in total $((hops + 1)) certificates) are valid for at least ${MIN_DAYS} days (past ${THRESHOLD_DATE})."
