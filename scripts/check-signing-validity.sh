@@ -25,17 +25,28 @@ too_soon()  { [ "$(date -u -d "$(enddate "$1")" +%s)" -lt "$THRESHOLD" ]; }
 # certs (kept in the keyring for downgrades) are ignored.
 tmp=$(mktemp -d); trap 'rm -rf "$tmp"' EXIT
 awk -v d="$tmp" '/-----BEGIN CERTIFICATE-----/{n++} {print > (d"/"n".pem")}' "$KEYRING"
-declare -A by_subject
-for f in "$tmp"/*.pem; do
-  by_subject["$(openssl x509 -in "$f" -noout -subject_hash)"]="$f"
-done
+
+# Issuer of $1 within the keyring, picked by signature (not just subject name) so
+# same-subject certs - e.g. a future same-CN key rotation - are disambiguated.
+find_issuer() {
+  local cand ih
+  ih=$(openssl x509 -in "$1" -noout -issuer_hash)
+  for cand in "$tmp"/*.pem; do
+    # Narrow by subject name, then confirm by signature (-partial_chain treats
+    # the candidate as a standalone anchor, -no_check_time leaves expiry to us).
+    # Only the real signer verifies, so same-subject siblings are disambiguated.
+    [ "$(openssl x509 -in "$cand" -noout -subject_hash)" = "$ih" ] || continue
+    openssl verify -partial_chain -no_check_time -CAfile "$cand" "$1" >/dev/null 2>&1 \
+      && { printf '%s\n' "$cand"; return 0; }
+  done
+  return 1
+}
 
 cur="$CERT"; hops=0
 while :; do
   [ "$(openssl x509 -in "$cur" -noout -subject_hash)" = \
     "$(openssl x509 -in "$cur" -noout -issuer_hash)" ] && break   # self-signed root
-  next="${by_subject[$(openssl x509 -in "$cur" -noout -issuer_hash)]:-}"
-  [ -n "$next" ] || fail "Issuer of '$(subject "$cur")' not found in ${KEYRING} - the signing certificate does not chain to this keyring."
+  next=$(find_issuer "$cur") || fail "Issuer of '$(subject "$cur")' not found in ${KEYRING} - the signing certificate does not chain to this keyring."
   if too_soon "$next"; then
     fail "CA certificate '$(subject "$next")' expires $(enddate "$next") (within ${MIN_DAYS} days, before ${THRESHOLD_DATE}). A new CA should be generated, the keyrings (buildroot-external/ota/*-ca.pem) updated, and the cross-signed intermediate added to the bundle."
   fi
