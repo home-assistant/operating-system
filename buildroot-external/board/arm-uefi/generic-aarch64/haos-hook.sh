@@ -19,6 +19,14 @@ function haos_pre_image() {
 
 
 function haos_post_image() {
+    local hdd_img="$(haos_image_name img)"
+    local hdd_img_orig="$(haos_image_name img.orig)"
+
+    # Resize for VM images, preserving original
+    cp "$hdd_img" "$hdd_img_orig"
+    resize_disk_image_virtual 32G
+
+    # Create VM archives
     convert_disk_image_virtual vmdk
     convert_disk_image_virtual vdi
     convert_disk_image_virtual qcow2
@@ -27,5 +35,7 @@ function haos_post_image() {
     convert_disk_image_zip vdi
     convert_disk_image_xz qcow2
 
+    # Use unresized image for .img.xz
+    mv "$hdd_img_orig" "$hdd_img"
     convert_disk_image_xz
 }

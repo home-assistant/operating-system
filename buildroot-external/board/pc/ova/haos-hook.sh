@@ -22,6 +22,8 @@ function haos_post_image() {
     local hdd_img="$(haos_image_name img)"
 
     # Virtual Disk images
+    resize_disk_image_virtual 32G
+
     convert_disk_image_virtual vmdk
     convert_disk_image_virtual vhdx
     convert_disk_image_virtual vdi

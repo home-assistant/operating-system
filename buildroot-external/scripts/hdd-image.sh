@@ -4,7 +4,6 @@ BOOTSTATE_SIZE=8M
 SYSTEM_SIZE=256M
 KERNEL_SIZE=24M
 OVERLAY_SIZE=96M
-DATA_SIZE=1280M
 
 function create_disk_image() {
     if [ -f "${BOARD_DIR}/genimage.cfg" ]; then
@@ -24,7 +23,7 @@ function create_disk_image() {
     ota_version="$(haos_version)"
     export ota_compatible ota_version
     # variables used in genimage configs
-    export BOOTSTATE_SIZE SYSTEM_SIZE KERNEL_SIZE OVERLAY_SIZE DATA_SIZE
+    export BOOTSTATE_SIZE SYSTEM_SIZE KERNEL_SIZE OVERLAY_SIZE
     RAUC_MANIFEST=$(tempio -template "${BR2_EXTERNAL_HAOS_PATH}/ota/manifest.raucm.gtpl")
     IMAGE_NAME="$(haos_image_basename)"
     BOOT_SPL_TYPE=$(test "$BOOT_SPL" == "true" && echo "spl" || echo "nospl")
@@ -50,6 +49,14 @@ function create_disk_image() {
       --rootpath "${ROOTPATH_TMP}" \
       --configdump - \
       --includepath "${BOARD_DIR}:${BR2_EXTERNAL_HAOS_PATH}/genimage"
+}
+
+function resize_disk_image_virtual() {
+    local size="${1}"
+    local hdd_img
+    hdd_img="$(haos_image_name img)"
+
+    qemu-img resize -q -f raw "${hdd_img}" "${size}"
 }
 
 function convert_disk_image_virtual() {

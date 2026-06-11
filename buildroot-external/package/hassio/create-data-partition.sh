@@ -42,3 +42,17 @@ curl -fsL -o "${data_dir}/supervisor/apparmor/hassio-supervisor" "${APPARMOR_URL
 # Persist build-time updater channel
 jq -n --arg channel "${channel}" '{"channel": \$channel}' > "${data_dir}/supervisor/updater.json"
 EOF
+
+# Tear down docker and unmount the data partition before shrinking
+docker rm -f "${container}" > /dev/null
+sudo umount "${data_dir}"
+trap - ERR EXIT
+
+# Shrink the filesystem to its minimum size
+e2fsck -f -y "${data_img}"
+resize2fs -M "${data_img}"
+
+# Truncate image file to match the filesystem size
+block_count=$(dumpe2fs -h "${data_img}" 2>/dev/null | awk '/^Block count:/{print $3}')
+block_size=$(dumpe2fs -h "${data_img}" 2>/dev/null | awk '/^Block size:/{print $3}')
+truncate --size="$((block_count * block_size))" "${data_img}"
