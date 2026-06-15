@@ -146,6 +146,28 @@ jobs:
             fi
           fi
 
+      - name: Validate deployment against publish channel
+        if: ${{ steps.check_publish.outputs.publish_build == 'true' }}
+        env:
+          CHANNEL: ${{ steps.channel.outputs.channel }}
+        run: |
+          . "${GITHUB_WORKSPACE}/buildroot-external/meta"
+          case "${DEPLOYMENT}" in
+            development) expected_channel="dev" ;;
+            staging) expected_channel="beta" ;;
+            production) expected_channel="stable" ;;
+            *)
+              echo "::error::Refusing to publish a build from an unknown '${DEPLOYMENT}' deployment." \
+                "DEPLOYMENT in buildroot-external/meta must be 'development', 'staging' or 'production'."
+              exit 1
+              ;;
+          esac
+          if [ "${CHANNEL}" != "${expected_channel}" ]; then
+            echo "::error::Channel mismatch: publishing to '${CHANNEL}' but DEPLOYMENT='${DEPLOYMENT}'" \
+              "expects '${expected_channel}'. Check the meta DEPLOYMENT and the GitHub release label."
+            exit 1
+          fi
+
       - name: Create build matrix
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         id: generate_matrix
