@@ -146,25 +146,30 @@ jobs:
             fi
           fi
 
-      - name: Validate deployment against publish channel
+      - name: Validate deployment and version against publish channel
         if: ${{ steps.check_publish.outputs.publish_build == 'true' }}
         env:
           CHANNEL: ${{ steps.channel.outputs.channel }}
+          VERSION_FULL: ${{ steps.version.outputs.version_full }}
         run: |
           . "${GITHUB_WORKSPACE}/buildroot-external/meta"
-          case "${DEPLOYMENT}" in
-            development) expected_channel="dev" ;;
-            staging) expected_channel="beta" ;;
-            production) expected_channel="stable" ;;
+          case "${CHANNEL}" in
+            dev)    expected_deployment="development"; version_re='^[0-9]+\.[0-9]+\.dev[0-9]+$' ;;
+            beta)   expected_deployment="staging";     version_re='^[0-9]+\.[0-9]+\.rc[0-9]+$' ;;
+            stable) expected_deployment="production";  version_re='^[0-9]+\.[0-9]+$' ;;
             *)
-              echo "::error::Refusing to publish a build from an unknown '${DEPLOYMENT}' deployment." \
-                "DEPLOYMENT in buildroot-external/meta must be 'development', 'staging' or 'production'."
+              echo "::error::Refusing to publish to an unknown '${CHANNEL}' channel." \
+                "Channel must be 'dev', 'beta' or 'stable'."
               exit 1
               ;;
           esac
-          if [ "${CHANNEL}" != "${expected_channel}" ]; then
-            echo "::error::Channel mismatch: publishing to '${CHANNEL}' but DEPLOYMENT='${DEPLOYMENT}'" \
-              "expects '${expected_channel}'. Check the meta DEPLOYMENT and the GitHub release label."
+          if [ "${DEPLOYMENT}" != "${expected_deployment}" ]; then
+            echo "::error::Deployment mismatch: publishing to '${CHANNEL}' requires DEPLOYMENT='${expected_deployment}'" \
+              "but buildroot-external/meta has DEPLOYMENT='${DEPLOYMENT}'."
+            exit 1
+          fi
+          if [[ ! "${VERSION_FULL}" =~ ${version_re} ]]; then
+            echo "::error::Version '${VERSION_FULL}' does not match the '${CHANNEL}' channel format ${version_re}."
             exit 1
           fi
 
