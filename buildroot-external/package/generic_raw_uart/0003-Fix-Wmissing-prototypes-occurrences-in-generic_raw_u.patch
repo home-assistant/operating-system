@@ -1,0 +1,51 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Jan=20=C4=8Cerm=C3=A1k?= <sairon@sairon.cz>
+Date: Wed, 17 Jun 2026 18:16:32 +0200
+Subject: [PATCH] Fix -Wmissing-prototypes occurrences in generic_raw_uart
+ module
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Some functions used only within generic_raw_uart.c were missing static
+declaration and raised missing-prototypes warnings. This breaks
+compilation of the module e.g. in recent Buildroot which enables
+-Werror, treating these warnings as errors as well.
+
+Signed-off-by: Jan Čermák <sairon@sairon.cz>
+Upstream: https://github.com/alexreinert/piVCCU/pull/589
+---
+ kernel/generic_raw_uart.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/kernel/generic_raw_uart.c b/kernel/generic_raw_uart.c
+index 2d48e0a..4a62b31 100644
+--- a/kernel/generic_raw_uart.c
++++ b/kernel/generic_raw_uart.c
+@@ -933,7 +933,7 @@ static int generic_raw_uart_proc_open(struct inode *inode, struct file *file)
+ }
+ #endif /*PROC_DEBUG*/
+ 
+-int generic_raw_uart_get_gpio_index(struct device *dev, char *con_id, unsigned int idx)
++static int generic_raw_uart_get_gpio_index(struct device *dev, char *con_id, unsigned int idx)
+ {
+   int res;
+   struct gpio_desc *gpiod = gpiod_get_index(dev, con_id, idx, GPIOD_ASIS);
+@@ -948,7 +948,7 @@ int generic_raw_uart_get_gpio_index(struct device *dev, char *con_id, unsigned i
+   return res;
+ }
+ 
+-int generic_raw_uart_get_led_gpio_index(struct generic_raw_uart_instance *instance, struct device *dev, enum generic_raw_uart_led led)
++static int generic_raw_uart_get_led_gpio_index(struct generic_raw_uart_instance *instance, struct device *dev, enum generic_raw_uart_led led)
+ {
+   if (instance->driver->get_led_gpio_index == 0)
+   {
+@@ -1084,7 +1084,7 @@ static inline bool i2c_client_has_driver(struct i2c_client *client)
+ }
+ #endif
+ 
+-int generic_raw_uart_probe_rtc_device(struct device *dev, bool *rtc_detected)
++static int generic_raw_uart_probe_rtc_device(struct device *dev, bool *rtc_detected)
+ {
+   int err = 0;
+ 
