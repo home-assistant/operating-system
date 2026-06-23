@@ -1,0 +1,64 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Stefan Agner <stefan@agner.ch>
+Date: Mon, 23 Jun 2026 12:00:00 +0200
+Subject: [PATCH] rpi-eeprom-update: read config via flashrom when blconfig is
+ unavailable
+
+On BCM2712 the live bootloader configuration is only available through the
+blconfig nvmem device; vcgencmd bootloader_config is not implemented and
+fails with "ioctl_set_msg failed:-1".
+
+On firmware older than pieeprom-2025-02-11 the blconfig nvmem device does
+not appear: the bootloader fills the reserved-memory reg using #size-cells=1,
+while the kernel DTB now declares #size-cells=2, so the region cannot be
+parsed and nvmem-rmem never binds (see raspberrypi/linux@527d7643ec01).
+
+When that happens getBootloaderConfig returns nothing, prepareImage trips
+its "fewer than 3 lines" guard, sets OVERWRITE_CONFIG=1 and flashes the new
+image with its default config - silently resetting BOOT_ORDER to the SD-first
+default (home-assistant/operating-system#4811).
+
+Since the EEPROM update on BCM2712 uses flashrom anyway, read the current
+configuration straight from the SPI EEPROM as a last resort. This lets the
+update migrate the existing config (including BOOT_ORDER) even when booting
+from old firmware. The result is cached to avoid repeated SPI reads.
+
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+Upstream: not applicable
+---
+--- a/rpi-eeprom-update
++++ b/rpi-eeprom-update
+@@ -142,9 +142,31 @@
+ 
+    if [ -n "${blconfig_nvmem_path}" ]; then
+       cat "${blconfig_nvmem_path}"/nvmem
+-   else
+-      vcgencmd bootloader_config
++      return 0
+    fi
++
++   # On BCM2712 vcgencmd bootloader_config is not implemented, and on firmware
++   # older than pieeprom-2025-02-11 the blconfig nvmem device is missing because
++   # the bootloader writes the reserved-memory reg with the wrong #size-cells.
++   # As a last resort read the current configuration directly from the SPI
++   # EEPROM via flashrom so that an update can still migrate the existing config
++   # instead of falling back to the image default.
++   if [ "${BCM_CHIP}" = 2712 ] && command -v flashrom > /dev/null 2>&1; then
++      if [ -z "${BOOTLOADER_CONFIG_FLASHROM}" ]; then
++         local tmp_eeprom
++         tmp_eeprom="$(mktemp)"
++         if flashrom -p "linux_spi:dev=${SPIDEV},spispeed=16000" -r "${tmp_eeprom}" > /dev/null 2>&1; then
++            BOOTLOADER_CONFIG_FLASHROM="$("${script_dir}/rpi-eeprom-config" "${tmp_eeprom}" 2>/dev/null)"
++         fi
++         rm -f "${tmp_eeprom}"
++      fi
++      if [ -n "${BOOTLOADER_CONFIG_FLASHROM}" ]; then
++         printf '%s\n' "${BOOTLOADER_CONFIG_FLASHROM}"
++         return 0
++      fi
++   fi
++
++   vcgencmd bootloader_config
+ }
+ 
+ prepareImage()
