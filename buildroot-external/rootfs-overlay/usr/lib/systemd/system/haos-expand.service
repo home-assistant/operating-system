@@ -9,6 +9,11 @@ After=dev-disk-by\x2dlabel-hassos\x2ddata.device systemd-fsck@dev-disk-by\x2dlab
 
 [Service]
 Type=oneshot
+# Resizing the data partition can take a long time on slow or previously used
+# disks. There is no point in aborting it after the default start timeout: if
+# the resize fails the system is unusable anyway, so let it run for as long as
+# it needs instead of failing the boot. See #3365.
+TimeoutStartSec=infinity
 ExecStart=/usr/libexec/haos-expand
 
 [Install]
