@@ -72,11 +72,13 @@ fi
 # 8. SystemB
 # 9. BootInfo
 setenv bootargs
+setenv boot_attempted
 for BOOT_SLOT in "${BOOT_ORDER}"; do
   if test "x${bootargs}" != "x"; then
-    # skip remaining slots
+    # A bootable slot has already been selected, skip the remaining ones.
   elif test "x${BOOT_SLOT}" = "xA"; then
     if test ${BOOT_A_LEFT} -gt 0; then
+      setenv boot_attempted "true"
       setexpr BOOT_A_LEFT ${BOOT_A_LEFT} - 1
       echo "Trying to boot slot A, ${BOOT_A_LEFT} attempts remaining. Loading kernel ..."
       if load mmc ${devnum}:5 ${kernel_addr_r} Image; then
@@ -85,6 +87,7 @@ for BOOT_SLOT in "${BOOT_ORDER}"; do
     fi
   elif test "x${BOOT_SLOT}" = "xB"; then
     if test ${BOOT_B_LEFT} -gt 0; then
+      setenv boot_attempted "true"
       setexpr BOOT_B_LEFT ${BOOT_B_LEFT} - 1
       echo "Trying to boot slot B, ${BOOT_B_LEFT} attempts remaining. Loading kernel ..."
       if load mmc ${devnum}:7 ${kernel_addr_r} Image; then
@@ -94,19 +97,28 @@ for BOOT_SLOT in "${BOOT_ORDER}"; do
   fi
 done
 
+# Persist the (possibly decremented) attempt counters in *all* cases. This way a
+# failed kernel *load* consumes an attempt just like a hang/crash after booti,
+# so repeated load failures count down and we eventually fall back to the other
+# slot instead of looping forever with the counters pinned (see issue #4788).
+run storebootstate
+
 if test -n "${bootargs}"; then
-  run storebootstate
-else
-  echo "No valid slot found, resetting tries to 3"
-  setenv BOOT_A_LEFT 3
-  setenv BOOT_B_LEFT 3
-  run storebootstate
+  printenv bootargs
+  echo "Starting kernel"
+  booti ${kernel_addr_r} - ${fdt_addr_r}
+  echo "Boot failed, resetting..."
   reset
 fi
 
-printenv bootargs
-echo "Starting kernel"
-booti ${kernel_addr_r} - ${fdt_addr_r}
-
-echo "Boot failed, resetting..."
+# No slot could be loaded. Only when no slot had any attempts left (or
+# BOOT_ORDER was invalid) do we re-arm as a last resort, instead of bricking.
+echo "No bootable slot found."
+if test "x${boot_attempted}" = "x"; then
+  echo "All slots exhausted, restoring default boot order and tries"
+  setenv BOOT_ORDER "A B"
+  setenv BOOT_A_LEFT 3
+  setenv BOOT_B_LEFT 3
+  run storebootstate
+fi
 reset
