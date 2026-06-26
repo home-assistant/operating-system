@@ -97,9 +97,14 @@ done
 if test -n "${bootargs}"; then
   run storebootstate
 else
-  echo "No valid slot found, resetting tries to 3"
-  setenv BOOT_A_LEFT 3
-  setenv BOOT_B_LEFT 3
+  # A failed kernel load must consume a boot attempt too, otherwise the counters
+  # never count down and we never fall back. Persist the decremented counters
+  # and only re-arm once both slots are exhausted, not on every failure (#4788).
+  if test ${BOOT_A_LEFT} -le 0 && test ${BOOT_B_LEFT} -le 0; then
+    echo "No valid slot found, resetting tries to 3"
+    setenv BOOT_A_LEFT 3
+    setenv BOOT_B_LEFT 3
+  fi
   run storebootstate
   reset
 fi
