@@ -1,0 +1,33 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Stefan Agner <stefan@agner.ch>
+Date: Fri, 4 Jul 2026 00:00:00 +0000
+Subject: [PATCH] Revert "mmc: meson_gx_mmc: reduce maximum frequency"
+
+This reverts upstream commit 8fa0db145f6b38341ac939c1e768ca37446bbaf8.
+
+That commit lowered the meson-gx eMMC maximum frequency from 100 MHz to
+40 MHz "to be compatible with more eMMC". On ODROID-N2 this interacts
+badly with the HAOS f_max HACK (patch 0001): that patch caps the first
+init attempt to 24 MHz and, for modules that fail at 24 MHz (Kingston
+class S922X eMMC), disables the cap and falls back to cfg->f_max. With
+the reduced 40 MHz ceiling those modules only partially initialize (small
+reads such as boot.scr and the boot env succeed, but large reads and
+partition enumeration fail), soft-bricking the device after the HAOS 18
+update (see #4788). Restoring the previous 100 MHz ceiling brings back the
+working fallback that shipped in HAOS 14.0.
+
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+---
+ drivers/mmc/meson_gx_mmc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/mmc/meson_gx_mmc.c b/drivers/mmc/meson_gx_mmc.c
+index 76af3873e157..d1558ebe3a24 100644
+--- a/drivers/mmc/meson_gx_mmc.c
++++ b/drivers/mmc/meson_gx_mmc.c
+@@ -336,4 +336,4 @@ static int meson_mmc_probe(struct udevice *dev)
+ 	cfg->f_min = DIV_ROUND_UP(SD_EMMC_CLKSRC_24M, CLK_MAX_DIV);
+-	cfg->f_max = 40000000; /* 40 MHz */
++	cfg->f_max = 100000000; /* 100 MHz */
+ 	cfg->b_max = 511; /* max 512 - 1 blocks */
+ 	cfg->name = dev->name;
