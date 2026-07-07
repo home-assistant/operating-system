@@ -5,7 +5,7 @@ Wants=network-online.target haos-apparmor.service time-sync.target systemd-journ
 After=docker.service rauc.service dbus.socket network-online.target haos-apparmor.service time-sync.target systemd-journal-gatewayd.socket
 RequiresMountsFor=/mnt/data /mnt/boot /mnt/overlay
 StartLimitIntervalSec=30m
-StartLimitBurst=3
+StartLimitBurst=5
 ConditionPathExists=/run/dbus/system_bus_socket
 ConditionPathExists=/run/docker.sock
 

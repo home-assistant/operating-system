@@ -28,10 +28,12 @@ if [ -f "${SUPERVISOR_STARTUP_MARKER}" ]; then
 
     # Make sure we delete all supervisor images
     SUPERVISOR_IMAGE_IDS=$(docker images --no-trunc --filter "reference=${SUPERVISOR_IMAGE}" --format "{{.ID}}" | sort | uniq || echo "")
-    # Intended splitting of SUPERVISOR_IMAGE_IDS
-    # Busybox sh doesn't support arrays
-    # shellcheck disable=SC2086
-    docker image rm --force ${SUPERVISOR_IMAGE_IDS} || true
+    if [ -n "${SUPERVISOR_IMAGE_IDS}" ]; then
+        # Intended splitting of SUPERVISOR_IMAGE_IDS
+        # Busybox sh doesn't support arrays
+        # shellcheck disable=SC2086
+        docker image rm --force ${SUPERVISOR_IMAGE_IDS} || true
+    fi
     SUPERVISOR_IMAGE_ID=""
 fi
 
@@ -46,9 +48,12 @@ if [ -z "${SUPERVISOR_IMAGE_ID}" ]; then
     SUPERVISOR_VERSION=$(jq -r '.supervisor // "stable"' "${SUPERVISOR_DATA}/updater.json" || echo "stable")
 
     # Get version from stable channel in case we have no local version
-    # information.
+    # information. Retry for a while: especially on first boot after a data
+    # wipe this can race with time synchronization (TLS fails until the
+    # clock is correct) or run before the network is fully up.
     if [ "${SUPERVISOR_VERSION}" = "stable" ]; then
-        SUPERVISOR_VERSION="$(curl -s --location https://version.home-assistant.io/stable.json | jq -e -r '.supervisor')"
+        STABLE_JSON="$(curl -fSs --retry 5 --retry-delay 10 --retry-all-errors --max-time 30 --location https://version.home-assistant.io/stable.json)"
+        SUPERVISOR_VERSION="$(printf '%s' "${STABLE_JSON}" | jq -e -r '.supervisor')"
     fi
 
     echo "[WARNING] Supervisor image missing, downloading a fresh one: ${SUPERVISOR_VERSION}"

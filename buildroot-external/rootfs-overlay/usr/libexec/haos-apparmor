@@ -5,12 +5,22 @@ APPARMOR_URL="https://version.home-assistant.io/apparmor.txt"
 PROFILES_DIR="/mnt/data/supervisor/apparmor"
 CACHE_DIR="${PROFILES_DIR}/cache"
 
-# Check folder structure
-if [ ! -d "${PROFILES_DIR}" ]; then
+# Check for the Supervisor profile itself: the directory might exist while
+# the profile is missing, e.g. when a previous download attempt failed.
+if [ ! -f "${PROFILES_DIR}/hassio-supervisor" ]; then
     echo "[INFO]: AppArmor profile missing, downloading..."
     mkdir -p "${PROFILES_DIR}"
     systemctl start network-online.target
-    curl -sL -o "${PROFILES_DIR}"/hassio-supervisor "${APPARMOR_URL}"
+    # Download to a temporary file and move into place only on success, so
+    # a partial download never ends up at the final location. The dot file
+    # is also ignored by the profile loading below.
+    if ! curl -fSsL --retry 5 --retry-delay 10 --retry-all-errors --max-time 30 \
+            -o "${PROFILES_DIR}/.hassio-supervisor.tmp" "${APPARMOR_URL}"; then
+        rm -f "${PROFILES_DIR}/.hassio-supervisor.tmp"
+        echo "[ERROR]: Failed to download AppArmor profile!"
+        exit 1
+    fi
+    mv "${PROFILES_DIR}/.hassio-supervisor.tmp" "${PROFILES_DIR}/hassio-supervisor"
 fi
 mkdir -p "${CACHE_DIR}"
 
