@@ -52,8 +52,8 @@ if [ -z "${SUPERVISOR_IMAGE_ID}" ]; then
     # wipe this can race with time synchronization (TLS fails until the
     # clock is correct) or run before the network is fully up.
     if [ "${SUPERVISOR_VERSION}" = "stable" ]; then
-        stable_json="$(curl -fSs --retry 5 --retry-delay 10 --retry-all-errors --max-time 30 --location https://version.home-assistant.io/stable.json)"
-        SUPERVISOR_VERSION="$(printf '%s' "${stable_json}" | jq -e -r '.supervisor')"
+        STABLE_JSON="$(curl -fSs --retry 5 --retry-delay 10 --retry-all-errors --max-time 30 --location https://version.home-assistant.io/stable.json)"
+        SUPERVISOR_VERSION="$(printf '%s' "${STABLE_JSON}" | jq -e -r '.supervisor')"
     fi
 
     echo "[WARNING] Supervisor image missing, downloading a fresh one: ${SUPERVISOR_VERSION}"
