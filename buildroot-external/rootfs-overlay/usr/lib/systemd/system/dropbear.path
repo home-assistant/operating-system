@@ -1,0 +1,17 @@
+[Unit]
+Description=Watch SSH authorized_keys for debug SSH access
+# The watch must be armed on the bind-mounted directory (inotify events do
+# not cross mount points), and before haos-config potentially imports keys.
+RequiresMountsFor=/root/.ssh
+Before=haos-config.service
+
+[Path]
+# Edge-triggered on purpose: PathExists= pointed at a oneshot unit that does
+# not consume the file would re-trigger until the start rate limit is hit.
+# Presence of keys at boot is instead handled by dropbear.service itself,
+# which is enabled and gated by ConditionFileNotEmpty.
+PathChanged=/root/.ssh/authorized_keys
+Unit=dropbear-lifecycle.service
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,10 @@
+[Unit]
+Description=Start or stop dropbear based on SSH authorized_keys
+RequiresMountsFor=/root/.ssh
+
+[Service]
+# Idempotent on purpose: the path unit may fire for any change in the watched
+# directory (e.g. temporary files from atomic writes), so this must converge
+# rather than toggle.
+Type=oneshot
+ExecStart=/bin/sh -c 'if [ -s /root/.ssh/authorized_keys ]; then systemctl start dropbear.service; else systemctl stop dropbear.service; fi'

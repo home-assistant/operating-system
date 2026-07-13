@@ -76,13 +76,10 @@ if [ -f "${CONFIG_DIR}/authorized_keys" ]; then
 
     cp -f ${CONFIG_DIR}/authorized_keys /root/.ssh/authorized_keys
     chmod 600 /root/.ssh/authorized_keys
-
-    systemctl start dropbear > /dev/null 2>&1
 else
     echo "[Info] Stop SSH debug access"
 
     rm -f /root/.ssh/authorized_keys
-    systemctl stop dropbear > /dev/null 2>&1
 fi
 
 ##
