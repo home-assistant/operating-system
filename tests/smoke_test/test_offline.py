@@ -7,11 +7,30 @@ from labgrid.driver import ExecutionError
 _LOGGER = logging.getLogger(__name__)
 
 
+def _has_fancy_ping(shell):
+    """Detect the fancy busybox ping applet (CONFIG_FEATURE_FANCY_PING).
+
+    The minimal applet (HAOS <= 18.1) only understands `ping HOST`, sends a
+    single probe and prints "HOST is alive!"; it rejects flags like -c. The
+    fancy applet (enabled since HAOS 18.2) behaves like iputils ping: it keeps
+    pinging until a count is given, so a bare `ping HOST` never returns.
+    """
+    try:
+        shell.run_check("ping -c 1 -W 1 127.0.0.1")
+        return True
+    except ExecutionError:
+        return False
+
+
 def _check_connectivity(shell, *, connected):
+    # Bound the run: the fancy applet needs an explicit count or it never
+    # returns; the minimal one rejects -c and does a single probe anyway.
+    ping = "ping -c 1 -W 2" if _has_fancy_ping(shell) else "ping"
     for target in ["home-assistant.io", "1.1.1.1"]:
         try:
-            output = shell.run_check(f"ping {target}")
-            if f"{target} is alive!" in output:
+            output = " ".join(shell.run_check(f"{ping} {target}"))
+            # minimal applet: "HOST is alive!"; fancy applet: ping statistics
+            if f"{target} is alive!" in output or " 0% packet loss" in output:
                 if connected:
                     return True
                 else:
@@ -21,7 +40,8 @@ def _check_connectivity(shell, *, connected):
                 stdout = "\n".join(exc.stdout)
                 assert ("Network is unreachable" in stdout
                         or "bad address" in stdout
-                        or "No response" in stdout)
+                        or "No response" in stdout
+                        or "100% packet loss" in stdout)
 
     if connected:
         raise AssertionError(f"expecting connected but all targets are down")
