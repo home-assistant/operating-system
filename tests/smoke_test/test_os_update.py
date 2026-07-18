@@ -57,16 +57,22 @@ def test_os_update(shell, shell_json, target):
     # longer reboots automatically: it installs the bundle to the other slot,
     # marks it pending (exposed as "version_pending", see #7006) and raises a
     # reboot-required repair issue. Right after boot the OTA URL might not be
-    # available yet, so keep retrying until the update is installed as pending.
-    # Once it is, re-requesting the same version is rejected, so we stop then.
-    while True:
-        shell.run_check(f"ha os update --no-progress --version {stable_version} || true", timeout=300)
-        os_info = shell_json("ha os info --no-progress --raw-json")["data"]
-        if os_info["version_pending"] == stable_version:
+    # available yet, so retry (bounded) until the update is installed as
+    # pending. Once it is, re-requesting the same version is rejected, so stop.
+    for _ in range(10):
+        update_output = "\n".join(
+            shell.run_check(f"ha os update --no-progress --version {stable_version} || true", timeout=300)
+        )
+        # tolerate a transient CLI failure (e.g. Supervisor busy) like test_init
+        os_info = "\n".join(shell.run_check("ha os info --no-progress --raw-json || true"))
+        os_info = json.loads(os_info)["data"] if os_info.startswith("{") else {}
+        if os_info.get("version_pending") == stable_version:
             break
         # OTA info not ready yet (e.g. no URL for OTA updates); refresh and retry
         shell.run_check("ha su reload --no-progress")
         sleep(5)
+    else:
+        raise AssertionError(f"OS update did not reach pending state:\n{update_output}")
 
     # The update is installed but inactive; apply it by rebooting into the new
     # slot (rauc already marked it as the primary boot slot on install).
@@ -95,7 +101,7 @@ def test_os_update(shell, shell_json, target):
     # check the updated version is now running and no update is pending anymore
     os_info = shell_json("ha os info --no-progress --raw-json")["data"]
     assert os_info["version"] == stable_version, "OS did not update successfully"
-    assert not os_info["version_pending"], "OS update still pending after reboot"
+    assert not os_info.get("version_pending"), "OS update still pending after reboot"
 
 
 @pytest.mark.dependency(depends=["test_os_update"])
