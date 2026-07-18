@@ -53,17 +53,25 @@ def test_os_update(shell, shell_json, target):
     # update OS to latest stable - in tests it should never be the same version
     stable_version = shell_json("curl -sSL https://version.home-assistant.io/stable.json")["hassos"]["ova"]
 
-    # Core (and maybe Supervisor) might be downloaded at this point, so we need to keep trying
+    # Since Supervisor 2026.07 (home-assistant/supervisor#6982) an OS update no
+    # longer reboots automatically: it installs the bundle to the other slot,
+    # marks it pending (exposed as "version_pending", see #7006) and raises a
+    # reboot-required repair issue. Right after boot the OTA URL might not be
+    # available yet, so keep retrying until the update is installed as pending.
+    # Once it is, re-requesting the same version is rejected, so we stop then.
     while True:
-        shell.console.sendline(f"ha os update --no-progress --version {stable_version} || true")
-        # a successful update may reboot the system immediately, so wait for the new slot to boot
-        index, *_ = shell.console.expect(["Booting `Slot ", "Don't have an URL for OTA updates"], timeout=120)
-        # matched on "Booting `Slot "
-        if index == 0:
+        shell.run_check(f"ha os update --no-progress --version {stable_version} || true", timeout=300)
+        os_info = shell_json("ha os info --no-progress --raw-json")["data"]
+        if os_info["version_pending"] == stable_version:
             break
-        # no timeout -> matched on the second pattern
+        # OTA info not ready yet (e.g. no URL for OTA updates); refresh and retry
         shell.run_check("ha su reload --no-progress")
         sleep(5)
+
+    # The update is installed but inactive; apply it by rebooting into the new
+    # slot (rauc already marked it as the primary boot slot on install).
+    shell.console.sendline("ha host reboot --no-progress || true")
+    shell.console.expect("Booting `Slot ", timeout=120)
 
     # reactivate ShellDriver to handle login again
     target.deactivate(shell)
@@ -84,9 +92,10 @@ def test_os_update(shell, shell_json, target):
 
         sleep(1)
 
-    # check the updated version
-    os_info = shell_json("ha os info --no-progress --raw-json")
-    assert os_info["data"]["version"] == stable_version, "OS did not update successfully"
+    # check the updated version is now running and no update is pending anymore
+    os_info = shell_json("ha os info --no-progress --raw-json")["data"]
+    assert os_info["version"] == stable_version, "OS did not update successfully"
+    assert not os_info["version_pending"], "OS update still pending after reboot"
 
 
 @pytest.mark.dependency(depends=["test_os_update"])
