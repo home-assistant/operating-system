@@ -59,13 +59,14 @@ def test_os_update(shell, shell_json, target):
     # reboot-required repair issue. Right after boot the OTA URL might not be
     # available yet, so retry (bounded) until the update is installed as
     # pending. Once it is, re-requesting the same version is rejected, so stop.
-    for _ in range(10):
+    for _ in range(4):
         update_output = "\n".join(
-            shell.run_check(f"ha os update --no-progress --version {stable_version} || true", timeout=300)
+            shell.run_check(f"ha os update --no-progress --version {stable_version} || true", timeout=120)
         )
-        # tolerate a transient CLI failure (e.g. Supervisor busy) like test_init
-        os_info = "\n".join(shell.run_check("ha os info --no-progress --raw-json || true"))
-        os_info = json.loads(os_info)["data"] if os_info.startswith("{") else {}
+        # tolerate a transient CLI failure (e.g. Supervisor busy) like test_init;
+        # "data" is null on an error result, so coerce it to an empty dict
+        raw_info = "\n".join(shell.run_check("ha os info --no-progress --raw-json || true"))
+        os_info = (json.loads(raw_info).get("data") or {}) if raw_info.startswith("{") else {}
         if os_info.get("version_pending") == stable_version:
             break
         # OTA info not ready yet (e.g. no URL for OTA updates); refresh and retry
