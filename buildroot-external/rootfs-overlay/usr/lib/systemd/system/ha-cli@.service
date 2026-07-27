@@ -1,6 +1,5 @@
 [Unit]
 Description=Home Assistant CLI
-Wants=haos-supervisor.service
 After=systemd-user-sessions.service plymouth-quit-wait.service getty-pre.target haos-supervisor.service
 Conflicts=getty@%i.service
 
