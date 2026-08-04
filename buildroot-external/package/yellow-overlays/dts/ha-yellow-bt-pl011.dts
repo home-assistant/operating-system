@@ -1,0 +1,62 @@
+// SPDX-License-Identifier: GPL-2.0
+// Route the Home Assistant Yellow (CM4) Bluetooth HCI UART through the
+// PL011 (uart0) instead of the mini-UART (uart1).
+//
+// The mini-UART has a small FIFO and no flow control, so under load its
+// RX FIFO can overrun during HCI traffic. There is no recovery path: once
+// the BCM43455 has been switched to a higher baud rate, re-initialization
+// at the default 115200 keeps failing until the chip is power-cycled
+// (see home-assistant/operating-system#4898).
+//
+// The BCM43455 UART lines (GPIO 30-33) can be muxed to either UART; this
+// overlay muxes them to the PL011 (ALT3), which has a fixed clock and
+// CTS/RTS hardware flow control, and runs the HCI link at 3 Mbps.
+//
+// Trade-off: the PL011 is normally routed to the J11 pin header, so with
+// this overlay the J11 UART is not functional. Only use it when no UART
+// extension board (e.g. RaZberry, HM-MOD-RPI-PCB) is connected to J11.
+//
+// CM4 only - the CM5 Bluetooth is connected to the BCM2712's own UART
+// and is not affected.
+
+/dts-v1/;
+/plugin/;
+
+/ {
+	compatible = "raspberrypi,4-compute-module-ha-yellow";
+
+	fragment@0 {
+		target = <&uart0>;
+		__overlay__ {
+			pinctrl-0 = <&uart0_gpio32 &uart0_ctsrts_gpio30>;
+		};
+	};
+
+	fragment@1 {
+		target = <&bt>;
+		__overlay__ {
+			status = "okay";
+		};
+	};
+
+	fragment@2 {
+		target = <&uart1>;
+		__overlay__ {
+			status = "disabled";
+		};
+	};
+
+	fragment@3 {
+		target = <&minibt>;
+		__overlay__ {
+			status = "disabled";
+		};
+	};
+
+	fragment@4 {
+		target-path = "/aliases";
+		__overlay__ {
+			bluetooth = "/soc/serial@7e201000";
+		};
+	};
+};

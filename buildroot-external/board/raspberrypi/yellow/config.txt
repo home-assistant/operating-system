@@ -31,6 +31,13 @@ gpu_mem=32
 [cm4]
 device_tree=bcm2711-rpi-cm4-ha-yellow.dtb
 
+# Uncomment this to route Bluetooth through the PL011 (uart0) instead of
+# the mini-UART, working around unrecoverable HCI failures caused by
+# mini-UART FIFO overruns (#4898). Note: this disables the UART on the
+# J11 pin header, so it cannot be used together with UART extension
+# boards (e.g. RaZberry, HM-MOD-RPI-PCB).
+#dtoverlay=ha-yellow-bt-pl011
+
 [cm5]
 device_tree=bcm2712-rpi-cm5-ha-yellow.dtb
 

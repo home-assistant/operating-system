@@ -1,0 +1,11 @@
+config BR2_PACKAGE_YELLOW_OVERLAYS
+	bool "Home Assistant Yellow device tree overlays"
+	help
+	  Optional device tree overlays for Home Assistant Yellow,
+	  applied by the user via dtoverlay= entries in config.txt.
+
+	  ha-yellow-bt-pl011 (CM4 only): route the Bluetooth HCI UART
+	  through the PL011 (uart0, fixed clock, hardware flow control)
+	  instead of the mini-UART. Workaround for unrecoverable HCI
+	  failures caused by mini-UART FIFO overruns. Disables the
+	  UART on the J11 pin header.
