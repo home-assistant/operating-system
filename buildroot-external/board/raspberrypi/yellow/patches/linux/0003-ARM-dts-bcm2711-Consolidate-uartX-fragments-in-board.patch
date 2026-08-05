@@ -1,0 +1,130 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Jan=20=C4=8Cerm=C3=A1k?= <sairon@sairon.cz>
+Date: Wed, 5 Aug 2026 16:31:58 +0200
+Subject: [PATCH] ARM: dts: bcm2711: Consolidate uartX fragments in
+ board-specific block
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+The uartX nodes fragments scattered over the (already downstream) DTS
+make it confusing to understand the setup. Also, the comments about the
+purpose of uart0 and uart1 were incorrect. Consolidate the changes in
+the board-specific section.
+
+Signed-off-by: Jan Čermák <sairon@sairon.cz>
+---
+ .../broadcom/bcm2711-rpi-cm4-ha-yellow.dts    | 86 ++++++++-----------
+ 1 file changed, 38 insertions(+), 48 deletions(-)
+
+diff --git a/arch/arm/boot/dts/broadcom/bcm2711-rpi-cm4-ha-yellow.dts b/arch/arm/boot/dts/broadcom/bcm2711-rpi-cm4-ha-yellow.dts
+index ac0c32fa3c8e..88699a9bb6a4 100644
+--- a/arch/arm/boot/dts/broadcom/bcm2711-rpi-cm4-ha-yellow.dts
++++ b/arch/arm/boot/dts/broadcom/bcm2711-rpi-cm4-ha-yellow.dts
+@@ -261,35 +261,6 @@ pci@0,0 {
+ 	};
+ };
+ 
+-/* uart0 communicates with the BT module */
+-&uart0 {
+-	pinctrl-names = "default";
+-	pinctrl-0 = <&uart0_ctsrts_gpio30 &uart0_gpio32>;
+-	uart-has-rtscts;
+-};
+-
+-/* uart1 is mapped to the pin header */
+-&uart1 {
+-	pinctrl-names = "default";
+-	pinctrl-0 = <&uart1_gpio14>;
+-	status = "okay";
+-};
+-
+-/* uart4 for Zigbee */
+-&uart4 {
+-	pinctrl-names = "default";
+-	pinctrl-0 = <&uart4_pins>;
+-	uart-has-rtscts;
+-	status = "okay";
+-};
+-
+-/* uart5 default Debug UART */
+-&uart5 {
+-	pinctrl-names = "default";
+-	pinctrl-0 = <&uart5_pins>;
+-	status = "okay";
+-};
+-
+ &vc4 {
+ 	status = "okay";
+ };
+@@ -356,25 +327,6 @@ &mmcnr {
+ 	status = "okay";
+ };
+ 
+-&uart0 {
+-	pinctrl-0 = <&uart0_pins>;
+-	status = "okay";
+-};
+-
+-&uart1 {
+-	pinctrl-names = "default";
+-	pinctrl-0 = <&uart1_bt_pins>;
+-	status = "okay";
+-};
+-
+-&bt {
+-	status = "disabled";
+-};
+-
+-&minibt {
+-	status = "okay";
+-};
+-
+ &spi0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&spi0_pins &spi0_cs_pins>;
+@@ -612,6 +564,44 @@ &phy1 {
+ 	led-modes = <0x00 0x08>; /* link/activity link */
+ };
+ 
++/* uart0 is mapped to the J11 pin header (muxed by FW) */
++&uart0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&uart0_pins>;
++	uart-has-rtscts;
++	status = "okay";
++};
++
++/* uart1 communicates with the BT module */
++&uart1 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&uart1_bt_pins>;
++	status = "okay";
++};
++
++/* uart4 for Zigbee */
++&uart4 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&uart4_pins>;
++	uart-has-rtscts;
++	status = "okay";
++};
++
++/* uart5 for debug UART (available via USB-C) */
++&uart5 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&uart5_pins>;
++	status = "okay";
++};
++
++&bt {
++	status = "disabled";
++};
++
++&minibt {
++	status = "okay";
++};
++
+ &gpio {
+ 	audio_pins: audio_pins {
+ 		brcm,pins = <>;
