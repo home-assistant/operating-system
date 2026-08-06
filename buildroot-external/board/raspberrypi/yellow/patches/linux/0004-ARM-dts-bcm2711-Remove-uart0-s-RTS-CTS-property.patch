@@ -1,0 +1,31 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Jan=20=C4=8Cerm=C3=A1k?= <sairon@sairon.cz>
+Date: Wed, 5 Aug 2026 16:40:02 +0200
+Subject: [PATCH] ARM: dts: bcm2711: Remove uart0's RTS/CTS property
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Remove property indicating flow control support on uart0. It's
+incorrect, as uart0's CTS/RTS can be multiplexed only on pins 16/17,
+which are not available on Yellow. However, as pin muxing isn't
+configured, this did no harm, but for correctness the property should be
+removed.
+
+Signed-off-by: Jan Čermák <sairon@sairon.cz>
+---
+ arch/arm/boot/dts/broadcom/bcm2711-rpi-cm4-ha-yellow.dts | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/arch/arm/boot/dts/broadcom/bcm2711-rpi-cm4-ha-yellow.dts b/arch/arm/boot/dts/broadcom/bcm2711-rpi-cm4-ha-yellow.dts
+index 88699a9bb6a4..845a23f0bc9a 100644
+--- a/arch/arm/boot/dts/broadcom/bcm2711-rpi-cm4-ha-yellow.dts
++++ b/arch/arm/boot/dts/broadcom/bcm2711-rpi-cm4-ha-yellow.dts
+@@ -568,7 +568,6 @@ &phy1 {
+ &uart0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&uart0_pins>;
+-	uart-has-rtscts;
+ 	status = "okay";
+ };
+ 
