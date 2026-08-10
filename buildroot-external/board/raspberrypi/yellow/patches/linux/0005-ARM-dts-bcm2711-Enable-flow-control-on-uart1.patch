@@ -1,0 +1,32 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Jan=20=C4=8Cerm=C3=A1k?= <sairon@sairon.cz>
+Date: Mon, 10 Aug 2026 17:43:24 +0200
+Subject: [PATCH] ARM: dts: bcm2711: Enable flow control on uart1
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Indicate RTS/CTS support on uart1 (mini UART) to enable hardware flow
+control, implemented in [1]. Without the patch, the driver ignores the
+property, so the new device tree still works with older/unpatched
+kernel.
+
+[1] https://lore.kernel.org/linux-serial/cover.1786030659.git.sairon@sairon.cz/
+
+Signed-off-by: Jan Čermák <sairon@sairon.cz>
+---
+ arch/arm/boot/dts/broadcom/bcm2711-rpi-cm4-ha-yellow.dts | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm/boot/dts/broadcom/bcm2711-rpi-cm4-ha-yellow.dts b/arch/arm/boot/dts/broadcom/bcm2711-rpi-cm4-ha-yellow.dts
+index 845a23f0bc9a..c60a0136fdc7 100644
+--- a/arch/arm/boot/dts/broadcom/bcm2711-rpi-cm4-ha-yellow.dts
++++ b/arch/arm/boot/dts/broadcom/bcm2711-rpi-cm4-ha-yellow.dts
+@@ -575,6 +575,7 @@ &uart0 {
+ &uart1 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&uart1_bt_pins>;
++	uart-has-rtscts;
+ 	status = "okay";
+ };
+ 
