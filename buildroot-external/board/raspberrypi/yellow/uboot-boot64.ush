@@ -93,6 +93,10 @@ else
   reset
 fi
 
+# Relocate the FDT below the firmware-provided one, otherwise it ends up just
+# below 512 MiB and fragments the CMA alloc-range (first 768 MiB on BCM2711)
+setenv fdt_high ${fdt_org}
+
 echo "Starting kernel"
 booti ${kernel_addr_r} - ${fdt_org}
 
