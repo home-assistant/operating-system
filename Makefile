@@ -13,6 +13,11 @@ O := $(BUILDDIR)/output
 else
 override O := $(BUILDDIR)/$(O)
 endif
+# We may not have permission to create it inside the container.
+# Even if we had, the ownership could end up wrong.
+ifeq ($(wildcard $(O)),)
+$(error The build output directory $(O) does not exist)
+endif
 
 ################################################################################
 

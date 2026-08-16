@@ -29,6 +29,7 @@ if [ -t 0 ]; then
   TTY_OPTS="-it"
 fi
 
+mkdir -p -v "$(pwd)/output"
 docker run --rm --privileged \
   ${TTY_OPTS} \
   -v "$(pwd):/build" -v "${CACHE_DIR}:/cache" \
