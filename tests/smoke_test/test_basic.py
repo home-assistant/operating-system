@@ -75,8 +75,17 @@ def test_supervisor_logs(shell):
 
 @pytest.mark.dependency(depends=["test_init"])
 def test_landing_page(shell):
-    web_index = shell.run_check("curl http://localhost:8123")
+    web_index = shell.run_check("curl http://localhost")
     assert "</html>" in " ".join(web_index)
+
+
+@pytest.mark.dependency(depends=["test_init"])
+def test_landing_page_legacy_port_redirect(shell):
+    redirect = shell.run_check(
+        "curl --silent --show-error --output /dev/null "
+        "--write-out '%{http_code} %{redirect_url}' http://localhost:8123"
+    )
+    assert " ".join(redirect) == "302 http://localhost/"
 
 
 def test_systemctl_status(shell):

@@ -81,5 +81,5 @@ def test_ha_runs_offline(shell):
         shell.run_check("docker logs hassio_supervisor")
         raise AssertionError("homeassistant or hassio_cli not running after 60s")
 
-    web_index = shell.run_check("curl http://localhost:8123")
+    web_index = shell.run_check("curl http://localhost")
     assert "</html>" in " ".join(web_index)
