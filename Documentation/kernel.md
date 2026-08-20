@@ -7,16 +7,16 @@ The following boards are using [mainline Linux kernel](https://git.kernel.org/pu
 
 | Board | Version |
 |-------|---------|
-| Generic aarch64 | 6.18.44 |
-| Generic x86-64 | 6.18.44 |
-| Home Assistant Green | 6.18.44 |
-| Khadas VIM3 | 6.18.44 |
-| ODROID-C2 | 6.18.44 |
-| ODROID-C4 | 6.18.44 |
-| ODROID-M1 | 6.18.44 |
-| ODROID-M1S | 6.18.44 |
-| ODROID-N2 | 6.18.44 |
-| Open Virtual Appliance | 6.18.44 |
+| Generic aarch64 | 6.18.45 |
+| Generic x86-64 | 6.18.45 |
+| Home Assistant Green | 6.18.45 |
+| Khadas VIM3 | 6.18.45 |
+| ODROID-C2 | 6.18.45 |
+| ODROID-C4 | 6.18.45 |
+| ODROID-M1 | 6.18.45 |
+| ODROID-M1S | 6.18.45 |
+| ODROID-N2 | 6.18.45 |
+| Open Virtual Appliance | 6.18.45 |
 
 ## Raspberry Pi Linux
 
