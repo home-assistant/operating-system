@@ -1,0 +1,11 @@
+# assumed -zlz4hc,12:lzma,9 for optimal compression
+16384   1 usr/lib/firmware/
+16384   1 usr/lib/modules/
+# Long-running daemons: decompressed once per boot, so the slower lzma
+# only affects service startup. Patterns are regexes, $ avoids matching
+# other binaries with the same prefix (e.g. containerd-shim-runc-v2).
+262144  1 usr/bin/dockerd$
+262144  1 usr/bin/containerd$
+262144  1 usr/bin/containerd-shim-runc-v2$
+262144  1 usr/bin/docker-proxy$
+262144  1 usr/bin/os-agent$
