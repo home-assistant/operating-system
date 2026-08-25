@@ -18,4 +18,4 @@ mkdir -m 0710 "${DOCKER_DIR}"
 
 # Leftovers are removed by docker-prepare if this is interrupted
 echo "[INFO] Removing old Docker storage"
-rm -rf "${DOCKER_DIR}".wiped*
+rm -rf "${DOCKER_DIR}".wipe.*

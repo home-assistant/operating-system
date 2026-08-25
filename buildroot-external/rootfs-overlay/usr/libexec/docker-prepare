@@ -3,7 +3,7 @@
 set -e
 
 # Remove leftovers of an interrupted Docker storage reset
-rm -rf /mnt/data/docker.wipe*
+rm -rf /mnt/data/docker.wipe.*
 
 if [ ! -d /mnt/data/docker ] || [ -z "$(ls -A /mnt/data/docker)" ]; then
     echo "[INFO] Docker data is wiped, creating containerd snapshotter flag"
