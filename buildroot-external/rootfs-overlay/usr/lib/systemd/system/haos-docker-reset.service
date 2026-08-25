@@ -1,0 +1,16 @@
+[Unit]
+Description=Reset Docker Storage
+DefaultDependencies=no
+RefuseManualStart=true
+RefuseManualStop=true
+RequiresMountsFor=/mnt/data
+Before=var-lib-docker.mount docker-prepare.service docker.service containerd.service
+ConditionPathExists=/mnt/data/docker/.wipe-scheduled
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/libexec/haos-docker-reset
+
+[Install]
+WantedBy=multi-user.target
