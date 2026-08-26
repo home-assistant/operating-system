@@ -1,0 +1,19 @@
+#!/bin/sh
+set -e
+
+DOCKER_DIR="/mnt/data/docker"
+
+if findmnt /var/lib/docker > /dev/null; then
+    echo "[ERROR] Unable to reset Docker storage while /var/lib/docker is mounted"
+    exit 1
+fi
+
+if [ -e "${DOCKER_DIR}" ]; then
+    WIPED_DIR="${DOCKER_DIR}.wipe.$(date +%s)"
+    echo "[INFO] Moving Docker storage to ${WIPED_DIR}"
+    mv "${DOCKER_DIR}" "${WIPED_DIR}"
+fi
+
+# Leftovers are removed by docker-prepare if this is interrupted
+echo "[INFO] Removing old Docker storage"
+rm -rf "${DOCKER_DIR}".wipe.*
