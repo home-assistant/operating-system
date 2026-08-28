@@ -14,9 +14,19 @@ if [ ! -f /mnt/overlay/etc/hosts ]; then
 fi
 
 # TimeSync
-if [ ! -f /mnt/overlay/etc/systemd/timesyncd.conf ]; then
-    mkdir -p /mnt/overlay/etc/systemd
-    cp -fp /etc/systemd/timesyncd.conf /mnt/overlay/etc/systemd/timesyncd.conf
+TIMESYNCD_CONF_DIR=/mnt/overlay/etc/systemd/timesyncd.conf.d
+mkdir -p "${TIMESYNCD_CONF_DIR}"
+
+# Move settings from a persisted copy of timesyncd.conf into a drop-in,
+# can be removed in OS 19.0
+if [ -f /mnt/overlay/etc/systemd/timesyncd.conf ]; then
+    # Drop the section header, the shipped defaults, comments and blank lines
+    SETTINGS=$(grep -Ev '^(\[Time\]|FallbackNTP=time\.cloudflare\.com|ConnectionRetrySec=10|[[:space:]]*#.*|[[:space:]]*)$' \
+        /mnt/overlay/etc/systemd/timesyncd.conf)
+    if [ -n "${SETTINGS}" ] && [ ! -f "${TIMESYNCD_CONF_DIR}/20-custom.conf" ]; then
+        printf '[Time]\n%s\n' "${SETTINGS}" > "${TIMESYNCD_CONF_DIR}/20-custom.conf"
+    fi
+    rm -f /mnt/overlay/etc/systemd/timesyncd.conf
 fi
 
 if [ ! -L /mnt/overlay/etc/localtime ]; then
