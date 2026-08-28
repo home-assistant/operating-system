@@ -5,8 +5,8 @@ After=mnt-overlay.mount haos-overlay.service
 Before=systemd-timesyncd.service
 
 [Mount]
-What=/mnt/overlay/etc/systemd/timesyncd.conf
-Where=/etc/systemd/timesyncd.conf
+What=/mnt/overlay/etc/systemd/timesyncd.conf.d
+Where=/etc/systemd/timesyncd.conf.d
 Type=none
 Options=bind
 
