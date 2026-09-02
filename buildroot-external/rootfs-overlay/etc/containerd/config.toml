@@ -7,3 +7,12 @@ disabled_plugins = [
   "io.containerd.tracing.processor.v1.otlp",
   "io.containerd.internal.v1.tracing"
 ]
+
+# containerd only fsyncs its metadata database, not unpacked layer content, so
+# a power loss shortly after an image pull leaves layers with zero-byte files
+# while the snapshot is durably recorded as valid. Such corruption survives
+# delete/re-pull since existing snapshots are never re-verified. Force a
+# syncfs(2) after each applied layer to make unpacked data as durable as the
+# metadata that references it.
+[plugins."io.containerd.service.v1.diff-service"]
+  sync_fs = true
