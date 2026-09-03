@@ -25,7 +25,7 @@ function path_boot_dir() {
 }
 
 function path_data_img() {
-    echo "${BINARIES_DIR}/data.ext4"
+    echo "${BINARIES_DIR}/data.f2fs"
 }
 
 function path_rootfs_img() {
