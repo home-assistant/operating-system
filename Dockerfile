@@ -33,6 +33,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         bzip2 \
         cpio \
         e2fsprogs \
+        f2fs-tools-udeb \
         file \
         git \
         graphviz \

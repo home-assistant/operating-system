@@ -21,10 +21,10 @@ elif findmnt "$PARTITION_DATA" > /dev/null; then
 fi
 
 echo "[INFO] Wiping data partition"
-mkfs.ext4 -L "hassos-data" -E lazy_itable_init=0,lazy_journal_init=0 "$PARTITION_DATA"
+mkfs.f2fs -l "hassos-data" -O extra_attr,inode_checksum,sb_checksum,flexible_inline_xattr "$PARTITION_DATA"
 
 echo "[INFO] Wiping overlay partition"
-mkfs.ext4 -L "hassos-overlay" -I 256 -E lazy_itable_init=0,lazy_journal_init=0 "$PARTITION_OVERLAY"
+mkfs.f2fs -l "hassos-overlay" -O extra_attr,inode_checksum,sb_checksum,flexible_inline_xattr "$PARTITION_OVERLAY"
 
 echo "[INFO] Removing wipe flag from cmdline.txt"
 /usr/bin/sed -i 's/\s*haos.wipe=1//g' /mnt/boot/cmdline.txt

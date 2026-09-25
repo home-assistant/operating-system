@@ -9,7 +9,7 @@ Wants=systemd-fsck@dev-disk-by\x2dlabel-hassos\x2doverlay.service
 [Mount]
 What=/dev/disk/by-label/hassos-overlay
 Where=/mnt/overlay
-Type=ext4
+Type=auto
 
 [Install]
 WantedBy=local-fs.target
