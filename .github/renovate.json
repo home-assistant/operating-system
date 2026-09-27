@@ -52,6 +52,28 @@
       "matchStrings": ["OS_AGENT_VERSION = (?<currentValue>\\S+)"],
       "depNameTemplate": "home-assistant/os-agent",
       "datasourceTemplate": "github-releases"
+    },
+    {
+      "customType": "regex",
+      "description": "tempio",
+      "managerFilePatterns": [
+        "/^buildroot-external/package/tempio/tempio\\.mk$/"
+      ],
+      "matchStrings": ["TEMPIO_VERSION = (?<currentValue>\\S+)"],
+      "depNameTemplate": "home-assistant/tempio",
+      "datasourceTemplate": "github-releases",
+      "versioningTemplate": "loose"
+    },
+    {
+      "customType": "regex",
+      "description": "XenServer guest utilities",
+      "managerFilePatterns": [
+        "/^buildroot-external/package/xe-guest-utilities/xe-guest-utilities\\.mk$/"
+      ],
+      "matchStrings": ["XE_GUEST_UTILITIES_VERSION = (?<currentValue>\\S+)"],
+      "depNameTemplate": "xenserver/xe-guest-utilities",
+      "datasourceTemplate": "github-tags",
+      "extractVersionTemplate": "^v(?<version>.+)$"
     }
   ],
 
