@@ -1,4 +1,4 @@
-From f6f8b309322869c1e2cb7d7c847b1eb8fb67ed80 Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Stefan Agner <stefan@agner.ch>
 Date: Tue, 10 Mar 2026 23:29:13 +0100
 Subject: [PATCH] bridge: protect bridge subnet from direct external access in
@@ -39,7 +39,7 @@ Signed-off-by: Stefan Agner <stefan@agner.ch>
  5 files changed, 74 insertions(+), 138 deletions(-)
 
 diff --git a/daemon/libnetwork/drivers/bridge/internal/iptabler/cleaner.go b/daemon/libnetwork/drivers/bridge/internal/iptabler/cleaner.go
-index 1de527b08b..9f702a5ec7 100644
+index 3da6b18212..6961c1f1c8 100644
 --- a/daemon/libnetwork/drivers/bridge/internal/iptabler/cleaner.go
 +++ b/daemon/libnetwork/drivers/bridge/internal/iptabler/cleaner.go
 @@ -81,17 +81,9 @@ func (ic iptablesCleaner) DelNetwork(ctx context.Context, nc firewaller.NetworkC
@@ -67,7 +67,7 @@ diff --git a/daemon/libnetwork/drivers/bridge/internal/iptabler/endpoint.go b/da
 index 69a5bbc4d2..af8ff3c83c 100644
 --- a/daemon/libnetwork/drivers/bridge/internal/iptabler/endpoint.go
 +++ b/daemon/libnetwork/drivers/bridge/internal/iptabler/endpoint.go
-@@ -5,74 +5,12 @@ package iptabler
+@@ -5,74 +5,12 @@
  import (
  	"context"
  	"net/netip"
@@ -146,7 +146,7 @@ index 69a5bbc4d2..af8ff3c83c 100644
 +	return nil
  }
 diff --git a/daemon/libnetwork/drivers/bridge/internal/iptabler/network.go b/daemon/libnetwork/drivers/bridge/internal/iptabler/network.go
-index 5eef4d6690..7ff03f4249 100644
+index 67700a5a54..b42c34f028 100644
 --- a/daemon/libnetwork/drivers/bridge/internal/iptabler/network.go
 +++ b/daemon/libnetwork/drivers/bridge/internal/iptabler/network.go
 @@ -97,6 +97,13 @@ func (n *network) setupIPTables(ctx context.Context, ipVersion iptables.IPVersio
@@ -210,12 +210,12 @@ index 5eef4d6690..7ff03f4249 100644
 +
  func setIcc(ctx context.Context, version iptables.IPVersion, bridgeIface string, iccEnable, internal, insert bool) error {
  	args := []string{"-i", bridgeIface, "-o", bridgeIface, "-j"}
- 	acceptRule := iptables.Rule{IPVer: version, Table: iptables.Filter, Chain: DockerForwardChain, Args: append(args, "ACCEPT")}
+ 	acceptRule := iptables.Rule{IPVer: version, Table: iptables.Filter, Chain: dockerForwardChain, Args: append(args, "ACCEPT")}
 diff --git a/daemon/libnetwork/drivers/bridge/internal/nftabler/endpoint.go b/daemon/libnetwork/drivers/bridge/internal/nftabler/endpoint.go
 index cfb45186d2..02b8dbcda1 100644
 --- a/daemon/libnetwork/drivers/bridge/internal/nftabler/endpoint.go
 +++ b/daemon/libnetwork/drivers/bridge/internal/nftabler/endpoint.go
-@@ -4,76 +4,16 @@ package nftabler
+@@ -4,76 +4,16 @@
  
  import (
  	"context"
@@ -295,10 +295,10 @@ index cfb45186d2..02b8dbcda1 100644
 +	return nil
  }
 diff --git a/daemon/libnetwork/drivers/bridge/internal/nftabler/network.go b/daemon/libnetwork/drivers/bridge/internal/nftabler/network.go
-index dc77c33c1a..9a10d491c2 100644
+index 4ef375bdbd..4f7e27b2f8 100644
 --- a/daemon/libnetwork/drivers/bridge/internal/nftabler/network.go
 +++ b/daemon/libnetwork/drivers/bridge/internal/nftabler/network.go
-@@ -174,6 +174,24 @@ func (n *network) configure(ctx context.Context, table nftables.Table, conf fire
+@@ -174,6 +174,24 @@ func (n *network) configure(ctx context.Context, table *nftables.Table, conf fir
  			})
  		}
  
@@ -323,6 +323,3 @@ index dc77c33c1a..9a10d491c2 100644
  		// ICMP
  		if conf.Routed {
  			rule := "ip protocol icmp"
--- 
-2.53.0
-
