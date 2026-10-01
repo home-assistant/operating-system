@@ -34,6 +34,7 @@ on:
 
 env:
   PYTHON_VERSION: "3.13"
+  COSIGN_VERSION: "v3.1.3"
 
 jobs:
   prepare:
@@ -256,6 +257,7 @@ jobs:
     name: Build for ${{ matrix.board.id }}
     permissions:
       contents: write  # for actions/upload-release-asset to upload release asset
+      id-token: write  # for cosign keyless signing
     needs: prepare
     strategy:
       fail-fast: ${{ github.event_name == 'release' }}
@@ -349,6 +351,20 @@ jobs:
           image: ${{ needs.prepare.outputs.build_container_image }}
           command: |
             make BR2_CHECK_DOTCONFIG_OPTS="--github-format --strip-path-prefix=/build/" linux-check-dotconfig
+
+      - name: Install Cosign
+        if: ${{ github.event_name == 'release' || needs.prepare.outputs.publish_build == 'true' }}
+        uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6 # v4.1.2
+        with:
+          cosign-release: ${{ env.COSIGN_VERSION }}
+
+      - name: Sign images
+        if: ${{ github.event_name == 'release' || needs.prepare.outputs.publish_build == 'true' }}
+        working-directory: output/images/
+        run: |
+          for image in haos_*; do
+            cosign sign-blob --yes "${image}" --bundle "${image}.sigstore.json"
+          done
 
       - name: Upload artifacts
         if: ${{ github.event_name != 'release' && needs.prepare.outputs.publish_build == 'true' }}
