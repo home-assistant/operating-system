@@ -1,0 +1,124 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended", "helpers:pinGitHubActionDigests"],
+
+  "enabledManagers": ["custom.regex", "github-actions", "pip_requirements"],
+  "ignorePaths": [],
+
+  "semanticCommits": "disabled",
+  "labels": ["dependencies"],
+
+  "customDatasources": {
+    "kernel-org": {
+      "description": "Latest release of each stable and longterm kernel series, as published by kernel.org",
+      "defaultRegistryUrlTemplate": "https://www.kernel.org/releases.json",
+      "transformTemplates": [
+        "{\"releases\": releases[moniker in [\"stable\", \"longterm\"]].{\"version\": version, \"releaseTimestamp\": released.isodate}}"
+      ]
+    }
+  },
+
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "Mainline kernel version of the boards that build from kernel.org",
+      "managerFilePatterns": ["/^buildroot-external/configs/[^/]+_defconfig$/"],
+      "matchStrings": [
+        "BR2_LINUX_KERNEL_CUSTOM_VERSION_VALUE=\"(?<currentValue>\\d+\\.\\d+\\.\\d+)\""
+      ],
+      "depNameTemplate": "linux",
+      "datasourceTemplate": "custom.kernel-org",
+      "versioningTemplate": "loose"
+    },
+    {
+      "customType": "regex",
+      "description": "Mainline kernel versions in the documentation, kept in sync with the defconfigs. The Raspberry Pi section is left alone, as those boards build from the Raspberry Pi kernel fork.",
+      "managerFilePatterns": ["/^Documentation/kernel\\.md$/"],
+      "matchStringsStrategy": "recursive",
+      "matchStrings": [
+        "## Mainline Linux[\\s\\S]*?## Raspberry Pi Linux",
+        "\\| (?<currentValue>\\d+\\.\\d+\\.\\d+) \\|"
+      ],
+      "depNameTemplate": "linux",
+      "datasourceTemplate": "custom.kernel-org",
+      "versioningTemplate": "loose"
+    },
+    {
+      "customType": "regex",
+      "description": "Home Assistant OS Agent",
+      "managerFilePatterns": [
+        "/^buildroot-external/package/os-agent/os-agent\\.mk$/"
+      ],
+      "matchStrings": ["OS_AGENT_VERSION = (?<currentValue>\\S+)"],
+      "depNameTemplate": "home-assistant/os-agent",
+      "datasourceTemplate": "github-releases"
+    },
+    {
+      "customType": "regex",
+      "description": "tempio",
+      "managerFilePatterns": [
+        "/^buildroot-external/package/tempio/tempio\\.mk$/"
+      ],
+      "matchStrings": ["TEMPIO_VERSION = (?<currentValue>\\S+)"],
+      "depNameTemplate": "home-assistant/tempio",
+      "datasourceTemplate": "github-releases",
+      "versioningTemplate": "loose"
+    }
+  ],
+
+  "packageRules": [
+    {
+      "description": "Label GitHub Actions updates like Dependabot did, and keep them weekly",
+      "matchManagers": ["github-actions"],
+      "addLabels": ["github_actions"],
+      "schedule": ["before 8am on monday"]
+    },
+    {
+      "description": "Leave runner labels and action version inputs alone, Dependabot never updated those",
+      "matchManagers": ["github-actions"],
+      "matchDepTypes": ["github-runner", "uses-with"],
+      "enabled": false
+    },
+    {
+      "description": "Our own actions that follow a branch (like home-assistant/actions@master) float on purpose. Pinning them would open a digest PR in every repository for each change to them. Our own actions on a version tag are pinned like any other.",
+      "matchManagers": ["github-actions"],
+      "matchPackageNames": ["home-assistant/**"],
+      "matchCurrentValue": "/^(dev|main|master)$/",
+      "pinDigests": false
+    },
+    {
+      "description": "Group the actions/cache subactions into one PR (they share a release)",
+      "matchPackageNames": ["/^actions\\/cache(?:\\/|$)/"],
+      "groupName": "actions/cache",
+      "groupSlug": "actions-cache"
+    },
+    {
+      "description": "Mainline kernel: one PR for all boards and the documentation, in the same format as the manual kernel updates",
+      "matchDatasources": ["custom.kernel-org"],
+      "groupName": "Linux kernel",
+      "groupSlug": "linux-kernel",
+      "commitMessagePrefix": "Linux:",
+      "commitMessageAction": "Update",
+      "commitMessageTopic": "kernel",
+      "commitMessageExtra": "to {{newVersion}}",
+      "prBodyNotes": [
+        "* https://cdn.kernel.org/pub/linux/kernel/v{{newMajor}}.x/ChangeLog-{{newVersion}}"
+      ],
+      "addLabels": ["board/generic-aarch64", "board/generic-x86-64", "board/green", "board/khadas", "board/odroid", "board/ova", "linux"]
+    },
+    {
+      "description": "Stay on the kernel series the boards are on. Moving to a new series is a deliberate change.",
+      "matchDatasources": ["custom.kernel-org"],
+      "matchUpdateTypes": ["major", "minor"],
+      "enabled": false
+    },
+    {
+      "description": "OS Agent, in the same format as the manual updates",
+      "matchPackageNames": ["home-assistant/os-agent"],
+      "commitMessageTopic": "OS Agent",
+      "commitMessageAction": "Bump",
+      "commitMessageExtra": "to v{{newVersion}}",
+      "addLabels": ["os"]
+    }
+  ]
+}
