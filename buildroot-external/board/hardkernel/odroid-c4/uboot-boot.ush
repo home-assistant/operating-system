@@ -56,6 +56,25 @@ if test "${overlay_error}" = "true"; then
   fatload mmc ${devnum}:1 ${fdt_addr_r} ${fdtfile}
 fi
 
+# Refill the tries when no slot in BOOT_ORDER has any left
+setenv BOOT_TRIES_LEFT
+for BOOT_SLOT in "${BOOT_ORDER}"; do
+  if test "x${BOOT_SLOT}" = "xA"; then
+    if test ${BOOT_A_LEFT} -gt 0; then
+      setenv BOOT_TRIES_LEFT 1
+    fi
+  elif test "x${BOOT_SLOT}" = "xB"; then
+    if test ${BOOT_B_LEFT} -gt 0; then
+      setenv BOOT_TRIES_LEFT 1
+    fi
+  fi
+done
+if test -z "${BOOT_TRIES_LEFT}"; then
+  echo "No slot has tries left, resetting tries to 3"
+  setenv BOOT_A_LEFT 3
+  setenv BOOT_B_LEFT 3
+fi
+
 # logical volumes get numbered after physical ones.
 # 1. boot
 # 2. Extended partition
@@ -92,9 +111,7 @@ done
 if test -n "${bootargs}"; then
   run storebootstate
 else
-  echo "No valid slot found, resetting tries to 3"
-  setenv BOOT_A_LEFT 3
-  setenv BOOT_B_LEFT 3
+  echo "Failed to load kernel from any slot, resetting..."
   run storebootstate
   reset
 fi
