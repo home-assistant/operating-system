@@ -63,17 +63,6 @@
       "depNameTemplate": "home-assistant/tempio",
       "datasourceTemplate": "github-releases",
       "versioningTemplate": "loose"
-    },
-    {
-      "customType": "regex",
-      "description": "XenServer guest utilities",
-      "managerFilePatterns": [
-        "/^buildroot-external/package/xe-guest-utilities/xe-guest-utilities\\.mk$/"
-      ],
-      "matchStrings": ["XE_GUEST_UTILITIES_VERSION = (?<currentValue>\\S+)"],
-      "depNameTemplate": "xenserver/xe-guest-utilities",
-      "datasourceTemplate": "github-tags",
-      "extractVersionTemplate": "^v(?<version>.+)$"
     }
   ],
 
@@ -115,7 +104,7 @@
       "prBodyNotes": [
         "* https://cdn.kernel.org/pub/linux/kernel/v{{newMajor}}.x/ChangeLog-{{newVersion}}"
       ],
-      "addLabels": ["linux"]
+      "addLabels": ["board/generic-aarch64", "board/generic-x86-64", "board/green", "board/khadas", "board/odroid", "board/ova", "linux"]
     },
     {
       "description": "Stay on the kernel series the boards are on. Moving to a new series is a deliberate change.",
