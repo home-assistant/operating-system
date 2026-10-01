@@ -56,6 +56,32 @@ if test "${overlay_error}" = "true"; then
   fatload ${devtype} ${devnum}:1 ${fdt_addr_r} ${fdtfile}
 fi
 
+# Refill the tries when no slot in BOOT_ORDER has any left
+setenv BOOT_TRIES_LEFT
+setenv BOOT_HAS_A
+setenv BOOT_HAS_B
+for BOOT_SLOT in "${BOOT_ORDER}"; do
+  if test "x${BOOT_SLOT}" = "xA"; then
+    setenv BOOT_HAS_A 1
+    if test ${BOOT_A_LEFT} -gt 0; then
+      setenv BOOT_TRIES_LEFT 1
+    fi
+  elif test "x${BOOT_SLOT}" = "xB"; then
+    setenv BOOT_HAS_B 1
+    if test ${BOOT_B_LEFT} -gt 0; then
+      setenv BOOT_TRIES_LEFT 1
+    fi
+  fi
+done
+if test -z "${BOOT_TRIES_LEFT}"; then
+  echo "No slot has tries left, resetting tries to 3"
+  setenv BOOT_A_LEFT 3
+  setenv BOOT_B_LEFT 3
+  # Append slots that RAUC removed from BOOT_ORDER when marking them bad
+  test -n "${BOOT_HAS_A}" || setenv BOOT_ORDER "${BOOT_ORDER} A"
+  test -n "${BOOT_HAS_B}" || setenv BOOT_ORDER "${BOOT_ORDER} B"
+fi
+
 # logical volumes get numbered after physical ones.
 # 1. boot
 # 2. Extended partition
@@ -92,9 +118,7 @@ done
 if test -n "${bootargs}"; then
   run storebootstate
 else
-  echo "No valid slot found, resetting tries to 3"
-  setenv BOOT_A_LEFT 3
-  setenv BOOT_B_LEFT 3
+  echo "Failed to load kernel from any slot, resetting..."
   run storebootstate
   reset
 fi
