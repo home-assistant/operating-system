@@ -24,4 +24,3 @@ jobs:
       boards: ova
       publish: false
       run_tests: true
-    secrets: inherit
