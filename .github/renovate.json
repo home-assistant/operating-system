@@ -106,7 +106,7 @@
         "* https://cdn.kernel.org/pub/linux/kernel/v{{newMajor}}.x/ChangeLog-{{newVersion}}"
       ],
       "commitBody": "* https://cdn.kernel.org/pub/linux/kernel/v{{newMajor}}.x/ChangeLog-{{newVersion}}",
-      "addLabels": ["board/generic-aarch64", "board/generic-x86-64", "board/green", "board/khadas", "board/odroid", "board/ova", "linux"]
+      "addLabels": ["board/generic-aarch64", "board/generic-x86-64", "board/green", "board/khadas", "board/odroid", "board/ova", "linux", "run-ova-test"]
     },
     {
       "description": "Stay on the kernel series the boards are on. Moving to a new series is a deliberate change.",
@@ -122,19 +122,21 @@
       "commitMessageExtra": "to v{{newVersion}}",
       "fetchChangeLogs": "branch",
       "commitBody": "Full changelog:\n{{#if logJSON.versions}}{{#each logJSON.versions}}* https://github.com/home-assistant/os-agent/releases/tag/{{version}}\n{{/each}}{{else}}* https://github.com/home-assistant/os-agent/releases/tag/{{newVersion}}{{/if}}",
-      "addLabels": ["os"]
+      "addLabels": ["os", "run-ova-test"]
     },
     {
       "description": "tempio, with links to the release notes",
       "matchPackageNames": ["home-assistant/tempio"],
       "fetchChangeLogs": "branch",
-      "commitBody": "Full changelog:\n{{#if logJSON.versions}}{{#each logJSON.versions}}* https://github.com/home-assistant/tempio/releases/tag/{{version}}\n{{/each}}{{else}}* https://github.com/home-assistant/tempio/releases/tag/{{newVersion}}{{/if}}"
+      "commitBody": "Full changelog:\n{{#if logJSON.versions}}{{#each logJSON.versions}}* https://github.com/home-assistant/tempio/releases/tag/{{version}}\n{{/each}}{{else}}* https://github.com/home-assistant/tempio/releases/tag/{{newVersion}}{{/if}}",
+      "addLabels": ["os", "run-ova-test"]
     },
     {
       "description": "labgrid, with links to the release notes. Its release tags have a v prefix.",
       "matchPackageNames": ["labgrid"],
       "fetchChangeLogs": "branch",
-      "commitBody": "Full changelog:\n{{#if logJSON.versions}}{{#each logJSON.versions}}* https://github.com/labgrid-project/labgrid/releases/tag/v{{version}}\n{{/each}}{{else}}* https://github.com/labgrid-project/labgrid/releases/tag/v{{newVersion}}{{/if}}"
+      "commitBody": "Full changelog:\n{{#if logJSON.versions}}{{#each logJSON.versions}}* https://github.com/labgrid-project/labgrid/releases/tag/v{{version}}\n{{/each}}{{else}}* https://github.com/labgrid-project/labgrid/releases/tag/v{{newVersion}}{{/if}}",
+      "addLabels": ["build", "run-ova-test"]
     }
   ]
 }
