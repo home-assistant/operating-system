@@ -7,6 +7,7 @@
 
   "semanticCommits": "disabled",
   "labels": ["dependencies"],
+  "commitMessageExtra": "to {{#if isPinDigest}}{{{newDigestShort}}}{{else}}{{#if isSingleVersion}}{{prettyNewVersion}}{{else}}{{#if newValue}}{{{newValue}}}{{else}}{{{newDigestShort}}}{{/if}}{{/if}}{{/if}}",
 
   "customDatasources": {
     "kernel-org": {
