@@ -1,0 +1,26 @@
+# Build and test the OVA image for pull requests with the run-ova-test label
+
+name: OS build (PR)
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, labeled]
+
+jobs:
+  build:
+    name: Build OVA
+    # Fork PRs get a read-only token and can't push the builder image.
+    # Renovate adds labels after opening the PR, so a newly opened PR gets its build from the labeled event.
+    if: >-
+      github.event.pull_request.head.repo.full_name == github.repository && (
+      (github.event.action == 'labeled' && github.event.label.name == 'run-ova-test') ||
+      (github.event.action != 'labeled' && contains(github.event.pull_request.labels.*.name, 'run-ova-test')))
+    permissions:
+      contents: write
+      packages: write
+      pull-requests: read
+    uses: ./.github/workflows/build.yaml
+    with:
+      boards: ova
+      publish: false
+      run_tests: true
