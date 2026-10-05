@@ -98,6 +98,7 @@
       "matchDatasources": ["custom.kernel-org"],
       "groupName": "Linux kernel",
       "groupSlug": "linux-kernel",
+      "rebaseWhen": "never",
       "commitMessagePrefix": "Linux:",
       "commitMessageAction": "Update",
       "commitMessageTopic": "kernel",
