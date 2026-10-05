@@ -104,6 +104,7 @@
       "prBodyNotes": [
         "* https://cdn.kernel.org/pub/linux/kernel/v{{newMajor}}.x/ChangeLog-{{newVersion}}"
       ],
+      "commitBody": "* https://cdn.kernel.org/pub/linux/kernel/v{{newMajor}}.x/ChangeLog-{{newVersion}}",
       "addLabels": ["board/generic-aarch64", "board/generic-x86-64", "board/green", "board/khadas", "board/odroid", "board/ova", "linux"]
     },
     {
@@ -118,6 +119,8 @@
       "commitMessageTopic": "OS Agent",
       "commitMessageAction": "Bump",
       "commitMessageExtra": "to v{{newVersion}}",
+      "fetchChangeLogs": "branch",
+      "commitBody": "Full changelog:\n{{#if logJSON.versions}}{{#each logJSON.versions}}* https://github.com/home-assistant/os-agent/releases/tag/{{version}}\n{{/each}}{{else}}* https://github.com/home-assistant/os-agent/releases/tag/{{newVersion}}{{/if}}",
       "addLabels": ["os"]
     }
   ]
