@@ -122,6 +122,18 @@
       "fetchChangeLogs": "branch",
       "commitBody": "Full changelog:\n{{#if logJSON.versions}}{{#each logJSON.versions}}* https://github.com/home-assistant/os-agent/releases/tag/{{version}}\n{{/each}}{{else}}* https://github.com/home-assistant/os-agent/releases/tag/{{newVersion}}{{/if}}",
       "addLabels": ["os"]
+    },
+    {
+      "description": "tempio, with links to the release notes",
+      "matchPackageNames": ["home-assistant/tempio"],
+      "fetchChangeLogs": "branch",
+      "commitBody": "Full changelog:\n{{#if logJSON.versions}}{{#each logJSON.versions}}* https://github.com/home-assistant/tempio/releases/tag/{{version}}\n{{/each}}{{else}}* https://github.com/home-assistant/tempio/releases/tag/{{newVersion}}{{/if}}"
+    },
+    {
+      "description": "labgrid, with links to the release notes. Its release tags have a v prefix.",
+      "matchPackageNames": ["labgrid"],
+      "fetchChangeLogs": "branch",
+      "commitBody": "Full changelog:\n{{#if logJSON.versions}}{{#each logJSON.versions}}* https://github.com/labgrid-project/labgrid/releases/tag/v{{version}}\n{{/each}}{{else}}* https://github.com/labgrid-project/labgrid/releases/tag/v{{newVersion}}{{/if}}"
     }
   ]
 }
