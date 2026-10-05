@@ -127,8 +127,17 @@
     {
       "description": "tempio, with links to the release notes",
       "matchPackageNames": ["home-assistant/tempio"],
+      "commitMessageTopic": "tempio",
       "fetchChangeLogs": "branch",
       "commitBody": "Full changelog:\n{{#if logJSON.versions}}{{#each logJSON.versions}}* https://github.com/home-assistant/tempio/releases/tag/{{version}}\n{{/each}}{{else}}* https://github.com/home-assistant/tempio/releases/tag/{{newVersion}}{{/if}}"
+    },
+    {
+      "description": "Python packages of the tests, in the same format as the manual updates",
+      "matchManagers": ["pip_requirements"],
+      "matchFileNames": ["tests/**"],
+      "commitMessagePrefix": "Tests:",
+      "commitMessageAction": "update",
+      "commitMessageTopic": "{{depName}}"
     },
     {
       "description": "labgrid, with links to the release notes. Its release tags have a v prefix.",
