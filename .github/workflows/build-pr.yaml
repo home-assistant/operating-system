@@ -17,6 +17,7 @@ jobs:
       (github.event.action != 'labeled' && contains(github.event.pull_request.labels.*.name, 'run-ova-test')))
     permissions:
       contents: write
+      id-token: write
       packages: write
       pull-requests: read
     uses: ./.github/workflows/build.yaml
