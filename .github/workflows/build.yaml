@@ -554,7 +554,10 @@ jobs:
         uses: shogo82148/actions-upload-release-asset@aaba0f56bdbc1071f4af234d5cb16055e8a400de # v1.10.4
         with:
           upload_url: ${{ github.event.release.upload_url }}
-          asset_path: SHA256SUMS*
+          overwrite: true
+          asset_path: |
+            SHA256SUMS
+            SHA256SUMS.sigstore.json
 
   update_index:
     name: Update artifacts index
@@ -575,7 +578,7 @@ jobs:
     name: Bump ${{ needs.prepare.outputs.channel }} channel version
     if: ${{ github.repository == 'home-assistant/operating-system' && needs.prepare.outputs.publish_build == 'true' && (needs.prepare.outputs.channel != 'dev' || github.ref == 'refs/heads/dev') }}
     environment: ${{ needs.prepare.outputs.channel }}
-    needs: [ build, prepare ]
+    needs: [ build, sign, prepare ]
     runs-on: ubuntu-22.04
 
     steps:
