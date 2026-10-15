@@ -1,6 +1,6 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Jan=20=C4=8Cerm=C3=A1k?= <sairon@sairon.cz>
-Date: Tue, 4 Aug 2026 20:25:20 +0200
+Date: Thu, 1 Oct 2026 11:04:32 +0200
 Subject: [PATCH] serial: 8250_bcm2835aux: Add support for RTS/CTS auto flow
  control
 MIME-Version: 1.0
@@ -16,34 +16,36 @@ made use of it. Wire it up:
   declaring the "uart-has-rtscts" property, advertised via
   UPF_HARD_FLOW.
 
-- Gate the AUTORTS function on TIOCM_RTS in set_mctrl() so that
-  clearing RTS (port close, TIOCMBIC, B0) actually de-asserts the pin
-  while auto flow control is active.
+- Gate the AUTORTS function on TIOCM_RTS in set_mctrl() so that clearing
+  RTS (port close, TIOCMBIC, B0) actually de-asserts the pin while auto
+  flow control is active.
 
 - Implement throttle()/unthrottle() by disabling the RX interrupts and
-  letting the FIFO fill up, making the hardware de-assert RTS - the
-  same approach as in 8250_omap. Re-sync this state on termios and
-  rs485 changes, as those paths may re-enable the RX interrupts (or
-  leave them disabled) behind the throttle's back.
+  letting the FIFO fill up, making the hardware de-assert RTS - the same
+  approach as in 8250_omap. Re-sync this state on termios and rs485
+  changes, as those paths may re-enable the RX interrupts (or leave them
+  disabled) behind the throttle's back.
 
-- Never enable auto flow control together with rs485, which uses RTS
-  as the transceiver direction control. As the software CTS fallback
-  of the serial core cannot work without a modem status interrupt,
-  strip CRTSCTS whenever it cannot be handled in hardware.
+- Never enable auto flow control together with rs485, which uses RTS as
+  the transceiver direction control. As the software CTS fallback of the
+  serial core cannot work without a modem status interrupt, strip
+  CRTSCTS whenever it cannot be handled in hardware. Keep it when a CTS
+  GPIO is present, as the serial core's mctrl_gpio handling then
+  delivers the interrupt and the software fallback keeps working.
 
-- Restore RXEN when rs485 is disabled, as the emulation may be torn
-  down without the rs485_stop_tx() callback ever being called, which
-  would leave the receiver disabled.
+- Restore RXEN when rs485 is disabled, as the emulation may be torn down
+  without the rs485_stop_tx() callback ever being called, which would
+  leave the receiver disabled.
 
 Assisted-by: Claude:claude-fable-5
 Signed-off-by: Jan Čermák <sairon@sairon.cz>
-Upstream: https://lore.kernel.org/linux-serial/cover.1786030659.git.sairon@sairon.cz/
+Upstream: https://lore.kernel.org/linux-serial/20261001090432.1045270-1-sairon@sairon.cz/
 ---
- drivers/tty/serial/8250/8250_bcm2835aux.c | 160 +++++++++++++++++++++-
- 1 file changed, 156 insertions(+), 4 deletions(-)
+ drivers/tty/serial/8250/8250_bcm2835aux.c | 167 +++++++++++++++++++++-
+ 1 file changed, 163 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/tty/serial/8250/8250_bcm2835aux.c b/drivers/tty/serial/8250/8250_bcm2835aux.c
-index ece629bdd700..728d0f787d53 100644
+index ece629bdd700..9cd81003a48c 100644
 --- a/drivers/tty/serial/8250/8250_bcm2835aux.c
 +++ b/drivers/tty/serial/8250/8250_bcm2835aux.c
 @@ -7,9 +7,9 @@
@@ -86,15 +88,19 @@ index ece629bdd700..728d0f787d53 100644
  /**
   * struct bcm2835aux_data - driver private data of BCM2835 auxiliary UART
   * @clk: clock producer of the port's uartclk
-@@ -46,6 +59,139 @@ struct bcm2835aux_data {
+@@ -46,6 +59,146 @@ struct bcm2835aux_data {
  	u32 cntl;
  };
  
 +static bool bcm2835aux_tty_throttled(struct uart_port *port)
 +{
-+	struct tty_struct *tty = port->state ? port->state->port.tty : NULL;
++	if (!port->state)
++		return false;
 +
-+	return tty && tty_throttled(tty);
++	scoped_guard(tty_port_tty, &port->state->port)
++		return tty_throttled(scoped_tty());
++
++	return false;
 +}
 +
 +/* Program the CNTL auto flow bits from port->status and mctrl */
@@ -164,13 +170,16 @@ index ece629bdd700..728d0f787d53 100644
 +				   struct ktermios *termios,
 +				   const struct ktermios *old)
 +{
++	struct uart_8250_port *up = up_to_u8250p(port);
++	bool hw_flow = (port->flags & UPF_HARD_FLOW) &&
++		       !(port->rs485.flags & SER_RS485_ENABLED);
++
 +	/*
 +	 * Strip CRTSCTS when the hardware auto flow-control cannot be
 +	 * used, as the serial core's software CTS fallback cannot work
-+	 * without a modem status interrupt.
++	 * without a modem status interrupt. A CTS GPIO provides one.
 +	 */
-+	if (!(port->flags & UPF_HARD_FLOW) ||
-+	    (port->rs485.flags & SER_RS485_ENABLED))
++	if (!hw_flow && !mctrl_gpio_to_gpiod(up->gpios, UART_GPIO_CTS))
 +		termios->c_cflag &= ~CRTSCTS;
 +
 +	serial8250_do_set_termios(port, termios, old);
@@ -226,7 +235,7 @@ index ece629bdd700..728d0f787d53 100644
  static void bcm2835aux_rs485_start_tx(struct uart_8250_port *up, bool toggle_ier)
  {
  	if (!(up->port.rs485.flags & SER_RS485_RX_DURING_TX)) {
-@@ -99,7 +245,11 @@ static int bcm2835aux_serial_probe(struct platform_device *pdev)
+@@ -99,7 +252,11 @@ static int bcm2835aux_serial_probe(struct platform_device *pdev)
  	up.port.dev = &pdev->dev;
  	up.port.type = PORT_16550;
  	up.port.flags = UPF_FIXED_PORT | UPF_FIXED_TYPE | UPF_SKIP_TEST | UPF_IOREMAP;
@@ -239,7 +248,7 @@ index ece629bdd700..728d0f787d53 100644
  	up.port.rs485_supported = serial8250_em485_supported;
  	up.bugs |= UART_BUG_NOMSI;
  	up.rs485_start_tx = bcm2835aux_rs485_start_tx;
-@@ -135,6 +285,8 @@ static int bcm2835aux_serial_probe(struct platform_device *pdev)
+@@ -135,6 +292,8 @@ static int bcm2835aux_serial_probe(struct platform_device *pdev)
  	ret = uart_read_port_properties(&up.port);
  	if (ret)
  		goto rm_swnode;
