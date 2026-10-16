@@ -19,7 +19,7 @@ Home Assistant Operating System uses Docker as its container engine. By default 
 The list of supported hardware is defined by [ADR-0015](https://github.com/home-assistant/architecture/blob/master/adr/0015-home-assistant-os.md).
 Every new hardware addition must meet at least requirements defined in [ADR-0017](https://github.com/home-assistant/architecture/blob/master/adr/0017-hardware-screening-os.md) and pass through an architecture design proposal.
 
-For documentation explaining details of the individual supported boards, see [Board support](https://developers.home-assistant.io/docs/operating-system/boards/overview) section of the Home Assistant Developer Docs.
+For documentation explaining details of the individual supported boards, see [Board support](https://contributors.home-assistant.io/os/operating-system/boards/) section of the Home Assistant contributor docs.
 
 ## Getting Started
 
@@ -31,7 +31,7 @@ If you're interested in finding out more about Home Assistant Operating System a
 
 If you don't have experience with embedded systems, Buildroot or the build process for Linux distributions it is recommended to read up on these topics first (e.g. [Bootlin](https://bootlin.com/docs/) has excellent resources).
 
-The Home Assistant Operating System documentation can be found on the [Home Assistant Developer Docs website](https://developers.home-assistant.io/docs/operating-system).
+The Home Assistant Operating System documentation can be found on the [Home Assistant contributors website](https://contributors.home-assistant.io/os/operating-system/).
 
 ### Components
 
