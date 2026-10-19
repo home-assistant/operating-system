@@ -1,0 +1,56 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Miguel Jesus Seron Gonzalez <info@gluon.es>
+Date: Mon, 19 Oct 2026 15:04:23 +0200
+Subject: [PATCH] arm64: dts: rockchip: odroid-m1: use rgmii-id for gmac0
+
+The gmac0 node uses phy-mode "rgmii" with the MAC delays
+tx_delay = <0x4f> and rx_delay = <0x2d>. On some boards this TX delay
+does not work at 1000 Mbit/s. Dongjin Kim reported iperf3 throughput
+below 200 Mbit/s on REV 1.0 20220613 boards. On a REV 1.0 20211112
+board, TX from the board stalls completely in iperf3 and ping loss
+grows with frame size (5% at 56 bytes, 20% at 1472 bytes), while RX is
+unaffected. Other boards work with the current value, so it seems to
+be marginal rather than wrong everywhere.
+
+Instead of tuning the MAC TX delay again, switch to phy-mode
+"rgmii-id", so that the RTL8211F PHY adds both RGMII delays, and drop
+the MAC delay properties, as suggested by Chukun Pan. Dongjin
+confirmed in the same thread that rgmii-id works.
+
+With this change, on the REV 1.0 20211112 board at 1000 Mbit/s full
+duplex, there were 3 retransmitted TCP segments out of 24929 (0.012%)
+over almost four hours, no RX/TX errors and no ping loss.
+
+Fixes: fd3583267703 ("arm64: dts: rockchip: Add Hardkernel ODROID-M1 board")
+Link: https://lore.kernel.org/r/20250819075522.2238643-1-tobetter@gmail.com
+Suggested-by: Chukun Pan <amadeus@jmu.edu.cn>
+Assisted-by: Claude:claude-opus-5-5
+Signed-off-by: Miguel Jesus Seron Gonzalez <info@gluon.es>
+Upstream: https://lore.kernel.org/linux-rockchip/20261019192254.6933-1-info@gluon.es/
+---
+ arch/arm64/boot/dts/rockchip/rk3568-odroid-m1.dts | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/rockchip/rk3568-odroid-m1.dts b/arch/arm64/boot/dts/rockchip/rk3568-odroid-m1.dts
+index 442a2bc43..a3cd21aa0 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3568-odroid-m1.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3568-odroid-m1.dts
+@@ -200,7 +200,7 @@ &gmac0 {
+ 	assigned-clock-rates = <0>, <125000000>;
+ 	clock_in_out = "output";
+ 	phy-handle = <&rgmii_phy0>;
+-	phy-mode = "rgmii";
++	phy-mode = "rgmii-id";
+ 	phy-supply = <&vcc3v3_sys>;
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&gmac0_miim
+@@ -209,9 +209,6 @@ &gmac0_rx_bus2
+ 		     &gmac0_rgmii_clk
+ 		     &gmac0_rgmii_bus>;
+ 	status = "okay";
+-
+-	tx_delay = <0x4f>;
+-	rx_delay = <0x2d>;
+ };
+ 
+ &gpu {
