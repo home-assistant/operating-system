@@ -1,0 +1,49 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Miguel Jesus Seron Gonzalez <info@gluon.es>
+Date: Mon, 19 Oct 2026 15:04:23 +0200
+Subject: [PATCH] arm64: dts: rockchip: odroid-m1: keep vcc3v3_pcie enabled
+ from boot
+
+The 3.3V supply of the M.2 slot is a GPIO-controlled fixed regulator
+without regulator-boot-on. When the regulator driver probes, it
+requests the enable GPIO as low, cutting power to an NVMe drive that
+the bootloader has already powered up and used. When the PCIe
+controller is built in, it probes a few milliseconds later and
+re-enables the supply. The drive therefore sees a brief power glitch
+without enough time to fully discharge.
+
+Some drives do not survive this. With a DRAM-less Transcend MTE110S
+(TS128GMTE110S), the board froze during NVMe probe in roughly half of
+the cold boots, before the display came up. Kernels that probe PCIe
+later (e.g. as modules, ~3.7 s after boot) are not affected, because
+the drive stays off long enough to reset cleanly.
+
+Mark the regulator as boot-on, so that the regulator driver keeps the
+enable GPIO high when it probes and the supply is never toggled after
+the bootloader has enabled it. The PCIe controller then takes it as
+its vpcie3v3-supply, which keeps it enabled afterwards.
+
+With this change, 5 out of 5 cold boots after power cuts of 2, 6, 30
+and 60 seconds succeeded. Afterwards the supply remained enabled with
+one user, with no NVMe or regulator errors and NVMe reads at 1.2 GB/s.
+
+Fixes: 35b28582aa3d ("arm64: dts: rockchip: Add PCIEe v3 nodes to ODROID-M1")
+Assisted-by: Claude:claude-opus-5-5
+Signed-off-by: Miguel Jesus Seron Gonzalez <info@gluon.es>
+Upstream: https://lore.kernel.org/linux-rockchip/20261019132458.855-1-info@gluon.es/
+---
+ arch/arm64/boot/dts/rockchip/rk3568-odroid-m1.dts | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm64/boot/dts/rockchip/rk3568-odroid-m1.dts b/arch/arm64/boot/dts/rockchip/rk3568-odroid-m1.dts
+index 442a2bc43..6d29fa926 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3568-odroid-m1.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3568-odroid-m1.dts
+@@ -106,6 +106,7 @@ simple-audio-card,codec {
+ 	vcc3v3_pcie: regulator-vcc3v3-pcie {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vcc3v3_pcie";
++		regulator-boot-on;
+ 		enable-active-high;
+ 		gpio = <&gpio4 RK_PA7 GPIO_ACTIVE_HIGH>;
+ 		pinctrl-names = "default";
