@@ -1,0 +1,77 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Junjie Cao <junjie.cao@intel.com>
+Date: Sun, 20 Sep 2026 10:02:27 +0800
+Subject: [PATCH] Bluetooth: btusb: drop BROKEN_EXT_SCAN quirk for 0bda:a728
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Commit 5ead2063611a ("Bluetooth: btrtl: fix RTL8761B/BU broken LE
+extended scan") set HCI_QUIRK_BROKEN_EXT_SCAN on every RTL8761B, and
+commit ca0583c24661 ("Bluetooth: btusb: limit RTL8761B BROKEN_EXT_SCAN
+quirk to 0bda:a728") kept it on 0bda:a728 on the assumption that the
+USB id separates dongles with broken extended scan from those with a
+broken legacy scan path. It does not. An 0bda:a728 unit (RTL8761BUV,
+fw 0xdfc6d922) on 6.18.51 fails the same way the UB500 and 0bda:8771
+did: LE Set Scan Enable (0x200c) times out with -110 and btusb resets
+the device. With the flag removed from the table entry, scanning works
+on that unit.
+
+Two dongles with the same USB id need opposite settings, so the device
+table cannot key the quirk either. The costs are not symmetric. Without
+the quirk, the unit it was written for gets -EBUSY on LE Set Extended
+Scan Enable (0x2042) while a connection is up. With it, 0x200c times
+out and btusb resets the device on three reported units, two of them in
+a re-enumeration loop.
+
+Remove the flag and the table entry. 0bda:a728 matches the generic
+Realtek entry again and runs without the quirk, as before v7.2.
+
+Reported-by: Andy Tsvetinskiy <andrew.tsvetinskiy@gmail.com>
+Closes: https://lore.kernel.org/all/CAE4bxw+ofDFVx0aTHqCrzns9oP1CRQDm_wzeyHPeMBYOhSpcuA@mail.gmail.com/
+Fixes: 5ead2063611a ("Bluetooth: btrtl: fix RTL8761B/BU broken LE extended scan")
+Fixes: ca0583c24661 ("Bluetooth: btusb: limit RTL8761B BROKEN_EXT_SCAN quirk to 0bda:a728")
+Cc: stable@vger.kernel.org
+Signed-off-by: Junjie Cao <junjie.cao@intel.com>
+Signed-off-by: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
+[ Jan: Backported to 6.18.y. The driver is drivers/bluetooth/btusb.c and
+  BTUSB_QUALCOMM does not exist. ]
+Signed-off-by: Jan Čermák <sairon@sairon.cz>
+Upstream: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/patch/?id=df5e35f1663abc2702cf9f9e7eba024129ac5df1
+---
+ drivers/bluetooth/btusb.c | 8 --------
+ 1 file changed, 8 deletions(-)
+
+diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+index 59fff918fd2de..70eb48753ffd7 100644
+--- a/drivers/bluetooth/btusb.c
++++ b/drivers/bluetooth/btusb.c
+@@ -67,7 +67,6 @@ static struct usb_driver btusb_driver;
+ #define BTUSB_INTEL_NO_WBS_SUPPORT	BIT(26)
+ #define BTUSB_ACTIONS_SEMI		BIT(27)
+ #define BTUSB_BARROT			BIT(28)
+-#define BTUSB_BROKEN_EXT_SCAN		BIT(29)
+ 
+ static const struct usb_device_id btusb_table[] = {
+ 	/*
+@@ -633,10 +632,6 @@ static const struct usb_device_id quirks_table[] = {
+ 	{ USB_DEVICE(0x0489, 0xe130), .driver_info = BTUSB_REALTEK |
+ 						     BTUSB_WIDEBAND_SPEECH },
+ 
+-	/* Realtek 8761BU Bluetooth devices */
+-	{ USB_DEVICE(0x0bda, 0xa728), .driver_info = BTUSB_REALTEK |
+-						     BTUSB_BROKEN_EXT_SCAN },
+-
+ 	/* Realtek Bluetooth devices */
+ 	{ USB_VENDOR_AND_INTERFACE_INFO(0x0bda, 0xe0, 0x01, 0x01),
+ 	  .driver_info = BTUSB_REALTEK },
+@@ -4349,9 +4344,6 @@ static int btusb_probe(struct usb_interface *intf,
+ 	if (id->driver_info & BTUSB_INVALID_LE_STATES)
+ 		hci_set_quirk(hdev, HCI_QUIRK_BROKEN_LE_STATES);
+ 
+-	if (id->driver_info & BTUSB_BROKEN_EXT_SCAN)
+-		hci_set_quirk(hdev, HCI_QUIRK_BROKEN_EXT_SCAN);
+-
+ 	if (id->driver_info & BTUSB_DIGIANSWER) {
+ 		data->cmdreq_type = USB_TYPE_VENDOR;
+ 		hci_set_quirk(hdev, HCI_QUIRK_RESET_ON_CLOSE);
