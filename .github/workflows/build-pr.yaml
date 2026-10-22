@@ -1,20 +1,23 @@
-# Build and test the OVA image for pull requests with the run-ova-test label
+# Build and test the OVA image for Renovate PRs that update the kernel, OS Agent, tempio or the test requirements
 
 name: OS build (PR)
 
 on:
   pull_request:
-    types: [opened, synchronize, reopened, labeled]
+    types: [opened, synchronize, reopened]
+    paths:
+      - "buildroot-external/configs/*_defconfig"
+      - "buildroot-external/package/os-agent/os-agent.mk"
+      - "buildroot-external/package/tempio/tempio.mk"
+      - "tests/requirements.txt"
 
 jobs:
   build:
     name: Build OVA
     # Fork PRs get a read-only token and can't push the builder image.
-    # Renovate adds labels after opening the PR, so a newly opened PR gets its build from the labeled event.
     if: >-
-      github.event.pull_request.head.repo.full_name == github.repository && (
-      (github.event.action == 'labeled' && github.event.label.name == 'run-ova-test') ||
-      (github.event.action != 'labeled' && contains(github.event.pull_request.labels.*.name, 'run-ova-test')))
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      startsWith(github.event.pull_request.head.ref, 'renovate/')
     permissions:
       contents: write
       id-token: write
