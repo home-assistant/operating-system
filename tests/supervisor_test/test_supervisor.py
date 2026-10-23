@@ -102,7 +102,13 @@ def test_update_components(shell_json, component):
         logger.info("%s is already up to date", component)
         pytest.skip(f"{component} is already up to date")
     else:
-        result = shell_json(f"ha {component} update --no-progress --raw-json")
+        try:
+            result = shell_json(f"ha {component} update --no-progress --raw-json")
+        except ExecutionError:
+            if component != "cli":
+                raise
+            # The CLI update stops the container the command runs in
+            result = {"result": "ok"}
         if result.get("result") == "error" and "Another job is running" in result.get("message"):
             pass
         else:
