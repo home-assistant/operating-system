@@ -2,6 +2,7 @@
 Description=QEMU Guest Agent
 ConditionVirtualization=|kvm
 ConditionVirtualization=|qemu
+ConditionVirtualization=|bhyve
 ConditionPathExists=!/dev/virtio-ports/org.linuxcontainers.lxd
 BindTo=dev-virtio\x2dports-org.qemu.guest_agent.0.device
 After=dev-virtio\x2dports-org.qemu.guest_agent.0.device
