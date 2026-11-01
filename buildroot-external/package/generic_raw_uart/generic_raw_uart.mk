@@ -23,7 +23,7 @@ GENERIC_RAW_UART_MODULE_SUBDIRS = kernel
 # only build the required modules, and the SoC specific raw uart
 # drivers (pl011/dw_apb/meson) only if the target kernel supports the SoC
 GENERIC_RAW_UART_MODULE_MAKE_OPTS = \
-	PIVCCU_MODULES="generic_raw_uart pl011_raw_uart dw_apb_raw_uart meson_raw_uart rpi_rf_mod_led dummy_rx8130 hb_rf_usb hb_rf_usb_2 hb_rf_eth" \
+	PIVCCU_MODULES="generic_raw_uart pl011_raw_uart dw_apb_raw_uart meson_raw_uart rpi_rf_mod_led rpi_rf_mod_rgb dummy_rx8130 hb_rf_usb hb_rf_usb_2 hb_rf_eth" \
 	PIVCCU_SOC_UART_AUTO=y
 
 $(eval $(kernel-module))
