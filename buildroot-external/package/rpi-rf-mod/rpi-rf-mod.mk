@@ -20,6 +20,9 @@ RPI_RF_MOD_SOURCE = LICENSE
 RPI_RF_MOD_LICENSE = Apache-2.0
 RPI_RF_MOD_LICENSE_FILES = LICENSE
 RPI_RF_MOD_DEPENDENCIES = host-dtc
+# The file names do not change between revisions, so each revision gets its
+# own download directory to never reuse a cached file of another revision.
+RPI_RF_MOD_DL_SUBDIR = rpi-rf-mod/$(RPI_RF_MOD_VERSION)
 
 ifeq ($(BR2_PACKAGE_RPI_RF_MOD_DTS_RPI),y)
   # RaspberryPi DTS file
