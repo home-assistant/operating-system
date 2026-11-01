@@ -15,6 +15,9 @@ EQ3_CHAR_LOOP_SITE = https://raw.githubusercontent.com/OpenCCU/OpenCCU-Base/$(EQ
 EQ3_CHAR_LOOP_SOURCE = eq3_char_loop.c
 EQ3_CHAR_LOOP_LICENSE = GPL-2.0+
 EQ3_CHAR_LOOP_LICENSE_FILES = eq3_char_loop.c
+# The file name does not change between revisions, so each revision gets its
+# own download directory to never reuse a cached file of another revision.
+EQ3_CHAR_LOOP_DL_SUBDIR = eq3_char_loop/$(EQ3_CHAR_LOOP_VERSION)
 
 define EQ3_CHAR_LOOP_EXTRACT_CMDS
 	cp $(EQ3_CHAR_LOOP_DL_DIR)/$(EQ3_CHAR_LOOP_SOURCE) $(@D)/
