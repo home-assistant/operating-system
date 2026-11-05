@@ -3,6 +3,22 @@ set -e
 
 USER="root"
 
+loop_devices_usable() {
+  local capeff
+
+  # Opening /dev/loop-control fails without --privileged and in rootless Docker or Podman
+  : 2> /dev/null < /dev/loop-control || return 1
+
+  # Mounting a loop device needs CAP_SYS_ADMIN, which is bit 21 of CapEff
+  capeff="$(awk '/^CapEff:/ {print $2}' /proc/self/status)"
+  (( 0x${capeff} >> 21 & 1 ))
+}
+
+if ! loop_devices_usable; then
+  echo "WARNING: Loop devices are not usable, building the data partition will fail."
+  echo "Make sure the container runs with --privileged in rootful Docker and the loop module is loaded."
+fi
+
 # Run dockerd
 dockerd -s vfs &> /dev/null &
 
