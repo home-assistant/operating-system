@@ -5,3 +5,4 @@ config BR2_PACKAGE_GENERIC_RAW_UART
 
 	  Alexander Reinert <alex@areinert.de>
 	  https://github.com/alexreinert/piVCCU/tree/master/kernel
+	  https://github.com/OpenCCU/piVCCU/tree/master/kernel
