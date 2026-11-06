@@ -18,6 +18,15 @@ mkfs.ext4 -L "hassos-data" -E lazy_itable_init=0,lazy_journal_init=0 "${data_img
 
 # Mount / init file structs
 mkdir -p "${data_dir}"
+# losetup -f may return a loop device the kernel has just created.
+# Docker doesn't add new devices to the container's /dev, so create the node.
+loopdev=$(sudo losetup -f)
+# Strip the " (lost)" suffix that losetup adds when the node is missing
+loopdev=${loopdev%% *}
+if [ ! -b "${loopdev}" ]; then
+    devnum=$(cat "/sys/block/${loopdev#/dev/}/dev")
+    sudo mknod "${loopdev}" b "${devnum%%:*}" "${devnum#*:}"
+fi
 sudo mount -o loop,discard "${data_img}" "${data_dir}"
 
 trap 'docker rm -f ${container} > /dev/null; sudo umount ${data_dir} || true' ERR EXIT
