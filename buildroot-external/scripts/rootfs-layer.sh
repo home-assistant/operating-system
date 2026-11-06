@@ -63,10 +63,14 @@ function prune_unused_firmware() {
     fi
 
     # Firmware declared by the drivers via MODULE_FIRMWARE()
-    declared_firmware=$(
+    if ! declared_firmware=$(
+        set -o pipefail
         find "${TARGET_DIR}/usr/lib/modules" \( -name "*.ko" -o -name "modules.builtin.modinfo" \) -exec cat {} + \
             | tr '\0' '\n' | sed -n 's/^\([[:alnum:]_-]*\.\)\{0,1\}firmware=//p' | sort -u
-    )
+    ); then
+        echo "ERROR: Cannot read firmware declared by kernel modules" >&2
+        return 1
+    fi
 
     prune_firmware_rtw89 "${declared_firmware}"
 }
