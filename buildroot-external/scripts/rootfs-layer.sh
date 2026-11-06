@@ -62,10 +62,15 @@ function prune_unused_firmware() {
         return 1
     fi
 
+    if ! [ -f "${kernel_dirs[0]}/modules.builtin.modinfo" ]; then
+        echo "ERROR: Missing modules.builtin.modinfo in ${kernel_dirs[0]}" >&2
+        return 1
+    fi
+
     # Firmware declared by the drivers via MODULE_FIRMWARE()
     if ! declared_firmware=$(
         set -o pipefail
-        find "${TARGET_DIR}/usr/lib/modules" \( -name "*.ko" -o -name "modules.builtin.modinfo" \) -exec cat {} + \
+        find "${kernel_dirs[0]}" \( -name "*.ko" -o -name "modules.builtin.modinfo" \) -exec cat {} + \
             | tr '\0' '\n' | sed -n 's/^\([[:alnum:]_-]*\.\)\{0,1\}firmware=//p' | sort -u
     ); then
         echo "ERROR: Cannot read firmware declared by kernel modules" >&2
