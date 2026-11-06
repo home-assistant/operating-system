@@ -15,6 +15,7 @@ BOARD_DIR=${2}
 
 # HAOS tasks
 fix_rootfs
+prune_unused_firmware
 install_tini_docker
 setup_localtime
 setup_vconsole
