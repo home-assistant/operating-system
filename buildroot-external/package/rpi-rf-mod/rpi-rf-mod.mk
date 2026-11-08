@@ -14,7 +14,7 @@
 # Only the license and the device tree overlay source for the selected
 # platform are downloaded at the pinned OpenCCU revision instead of the
 # whole OpenCCU repository.
-RPI_RF_MOD_VERSION = 392759206d11864d4108a211da007868ec4f55e2
+RPI_RF_MOD_VERSION = 74fc097dc37fdb1e965b8287775809af3bc1856b
 RPI_RF_MOD_SITE = https://raw.githubusercontent.com/OpenCCU/OpenCCU/$(RPI_RF_MOD_VERSION)/buildroot-external/package/rpi-rf-mod
 RPI_RF_MOD_SOURCE = LICENSE
 RPI_RF_MOD_LICENSE = Apache-2.0

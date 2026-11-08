@@ -1,9 +1,9 @@
 # Locally computed
 sha256  b40930bbcf80744c86c46a12bc9da056641d722716c378f5659b9e555ef833e1  LICENSE
 sha256  48ae18e5bb271e9eb18a0671db1467e2f28ea209c6aea7144d1b96181bfc0999  rpi-rf-mod.dts
-sha256  260d850a22194dda3fcce2691707623c7e3a54c244f511d897df0ab219f92748  rpi-rf-mod-odroid-c2.dts
-sha256  d72b30517325e0309a192517ec13b0914e07d5829bf9723c1a4cdaeaf30ce696  rpi-rf-mod-odroid-c4.dts
-sha256  a9adbab3e670292789d7ab14544a5de9f31b9ee57ebab90f7b87d4f75559bc34  rpi-rf-mod-odroid-n2.dts
+sha256  ea746c3215a3496c4dce09facee2d68810512f3f13bf6a2e4a3864eeed0e9b26  rpi-rf-mod-odroid-c2.dts
+sha256  28a8b303bfcc1dc91aa032d67dae9fcda07a60da867494ce8fe1eb1b95f0de59  rpi-rf-mod-odroid-c4.dts
+sha256  cd41f2c16d2338d19538435ccd53ea023618616a0f10253bd2cff07279fe3a1d  rpi-rf-mod-odroid-n2.dts
 sha256  acc67b0a46ee50cb096f66ea641bbad1007abda8b763b0ed864cc01c90309878  rpi-rf-mod-tinker.dts
 sha256  6e482f8899ec0044c96f513e31b91fcaa03928c2b6c10bfa0362dd1402822267  rpi-rf-mod-tinker2.dts
 sha256  6d7b55bee30253e4caddceb9feb97bc47c96b36ca815aa5bb3777523a3b18a07  rpi-rf-mod-yellow.dts
