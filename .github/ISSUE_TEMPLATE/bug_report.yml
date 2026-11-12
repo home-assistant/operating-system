@@ -102,7 +102,8 @@ body:
         then choose `Host` in the top right. Alternatively enter `ha host logs` in the Home Assistant CLI.
 
         **Please post the full log, not only the lines that look relevant.** Errors that seem unrelated
-        often point to the cause. If the log is too long to paste, attach it as a file to the issue instead.
+        often point to the cause. If the log is too long to paste, attach the full log as a file in
+        **Additional information** below.
       render: txt
   - type: textarea
     attributes:
