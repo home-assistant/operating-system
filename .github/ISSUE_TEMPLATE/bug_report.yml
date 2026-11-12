@@ -26,6 +26,7 @@ body:
       options:
         - generic-x86-64 (Generic UEFI capable x86-64 systems)
         - generic-aarch64 (Generic UEFI capable aarch64 systems)
+        - green (Home Assistant Green)
         - khadas-vim3 (Khadas VIM3)
         - odroid-c2 (Hardkernel ODROID-C2)
         - odroid-c4 (Hardkernel ODROID-C4)
@@ -37,7 +38,6 @@ body:
         - rpi4-64  (Raspberry Pi 4/400 64-bit OS)
         - rpi5-64  (Raspberry Pi 5 64-bit OS)
         - yellow (Home Assistant Yellow)
-        - green (Home Assistant Green)
       description: >
         Can be found in [Settings -> System -> Repairs -> System Information](https://my.home-assistant.io/redirect/system_health/). It is listed as the `Board` value.
 
