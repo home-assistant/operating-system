@@ -70,6 +70,6 @@ for cfg in "$@"; do
 done
 
 if [ "$rc" -ne 0 ]; then
-    echo "Regenerate the defconfig with \"make savedefconfig\" to fix the reported lines." >&2
+    echo "Regenerate the defconfig with \"make savedefconfig\" to fix the reported lines."
 fi
 exit "$rc"
