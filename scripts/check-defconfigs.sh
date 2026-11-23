@@ -32,12 +32,14 @@ br_make() {
 rc=0
 for cfg in "$@"; do
     saved="$out/saved"
+    failed=0
+    echo "Checking ${cfg}"
     br_make BR2_DEFCONFIG="$(realpath "$cfg")" defconfig
     br_make BR2_DEFCONFIG="$saved" savedefconfig
 
     # Lines of the defconfig that savedefconfig moved or dropped
     while IFS=: read -r line text; do
-        rc=1
+        failed=1
         if [ -z "$text" ]; then
             report "$cfg" "$line" "Blank line is dropped by savedefconfig"
         elif target=$(grep -nFx -m1 -- "$text" "$saved"); then
@@ -55,10 +57,16 @@ for cfg in "$@"; do
     # Lines that savedefconfig added
     while IFS= read -r text; do
         if ! grep -qFx -- "$text" "$cfg"; then
-            rc=1
+            failed=1
             report "$cfg" 1 "${text} is missing, savedefconfig adds it"
         fi
     done < <(diff --old-line-format='' --new-line-format='%L' --unchanged-line-format='' "$cfg" "$saved" || true)
+
+    if [ "$failed" -eq 0 ]; then
+        echo "  OK"
+    else
+        rc=1
+    fi
 done
 
 if [ "$rc" -ne 0 ]; then
