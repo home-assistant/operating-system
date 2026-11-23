@@ -37,6 +37,15 @@ for cfg in "$@"; do
     br_make BR2_DEFCONFIG="$(realpath "$cfg")" defconfig
     br_make BR2_DEFCONFIG="$saved" savedefconfig
 
+    # The loops below read newline-terminated records, so terminate the last line
+    current="$out/current"
+    cp "$cfg" "$current"
+    if [ -n "$(tail -c1 "$cfg")" ]; then
+        failed=1
+        report "$cfg" "$(grep -c '' "$cfg")" "Newline at the end of the file is missing"
+        echo >> "$current"
+    fi
+
     # Lines of the defconfig that savedefconfig moved or dropped
     while IFS=: read -r line text; do
         failed=1
@@ -52,7 +61,7 @@ for cfg in "$@"; do
         else
             report "$cfg" "$line" "${text} is dropped by savedefconfig, the value is the default or the symbol is unknown"
         fi
-    done < <(diff --old-line-format='%dn:%L' --new-line-format='' --unchanged-line-format='' "$cfg" "$saved" || true)
+    done < <(diff --old-line-format='%dn:%L' --new-line-format='' --unchanged-line-format='' "$current" "$saved" || true)
 
     # Lines that savedefconfig added
     while IFS= read -r text; do
@@ -60,7 +69,7 @@ for cfg in "$@"; do
             failed=1
             report "$cfg" 1 "${text} is missing, savedefconfig adds it"
         fi
-    done < <(diff --old-line-format='' --new-line-format='%L' --unchanged-line-format='' "$cfg" "$saved" || true)
+    done < <(diff --old-line-format='' --new-line-format='%L' --unchanged-line-format='' "$current" "$saved" || true)
 
     if [ "$failed" -eq 0 ]; then
         echo "  OK"
