@@ -620,14 +620,14 @@ jobs:
         persist-credentials: false
 
     - name: Initialize git
-      uses: home-assistant/actions/helpers/git-init@86d4564712fa02543c808e3a693dd04f9d3f8361 # master
+      uses: home-assistant/actions/helpers/git-init@07f46fd2e19967768b5fd3000f91f857452b767c # master
       with:
         name: ${{ secrets.GIT_NAME }}
         email: ${{ secrets.GIT_EMAIL }}
         token: ${{ secrets.GIT_TOKEN }}
 
     - name: Bump Home Assistant OS ${{ needs.prepare.outputs.channel }} channel version
-      uses: home-assistant/actions/helpers/version-push@86d4564712fa02543c808e3a693dd04f9d3f8361 # master
+      uses: home-assistant/actions/helpers/version-push@07f46fd2e19967768b5fd3000f91f857452b767c # master
       with:
         key: "hassos[]"
         key-description: "Home Assistant OS"
@@ -636,7 +636,7 @@ jobs:
 
     - name: Bump Home Assistant OS beta channel version on stable release
       if: ${{ needs.prepare.outputs.channel == 'stable' }}
-      uses: home-assistant/actions/helpers/version-push@86d4564712fa02543c808e3a693dd04f9d3f8361 # master
+      uses: home-assistant/actions/helpers/version-push@07f46fd2e19967768b5fd3000f91f857452b767c # master
       with:
         key: "hassos[]"
         key-description: "Home Assistant OS"
