@@ -1,0 +1,60 @@
+From a09e5f553768889056de49793744b226092580e1 Mon Sep 17 00:00:00 2001
+From: Jan Leon <jan@leoncode.de>
+Date: Sun, 25 Oct 2026 14:37:45 +0100
+Subject: [PATCH] resolved: don't send conflict advisories on mDNS scopes
+
+dns_scope_check_conflicts() is shared by LLMNR and mDNS. When a reply
+carries a record whose key is already cached from a different sender
+with different data, it queues an advisory query with the "C" bit set.
+That mechanism only exists in LLMNR (RFC 4795, section 4.2).
+
+On mDNS the "C" bit is the AA bit, which must be zero in queries
+(RFC 6762, section 18.4), and several responders legitimately answer
+for the same name with differing data, e.g. the SRP advertising proxies
+of multiple Thread border routers publishing NSEC records with
+different type bitmaps. Every responder answers the advisory, the
+differing answers are taken as yet another conflict, and resolved keeps
+sending queries. On a network with eleven Apple Thread border routers
+this resulted in about 60 queries per second, each answered by every
+border router.
+
+Restrict the cache based conflict check to LLMNR. Conflicts with our
+own records are still detected via the zone check for both protocols.
+
+Upstream: https://github.com/systemd/systemd/commit/a09e5f553768889056de49793744b226092580e1
+[Stefan: backport to v256, drop test-dns-scope unit test]
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+---
+ src/resolve/resolved-dns-scope.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/src/resolve/resolved-dns-scope.c b/src/resolve/resolved-dns-scope.c
+index a632409..ad458d3 100644
+--- a/src/resolve/resolved-dns-scope.c
++++ b/src/resolve/resolved-dns-scope.c
+@@ -1268,6 +1268,7 @@ int dns_scope_notify_conflict(DnsScope *scope, DnsResourceRecord *rr) {
+         int r;
+ 
+         assert(scope);
++        assert(scope->protocol == DNS_PROTOCOL_LLMNR);
+         assert(rr);
+ 
+         /* We don't send these queries immediately. Instead, we queue
+@@ -1351,6 +1352,14 @@ void dns_scope_check_conflicts(DnsScope *scope, DnsPacket *p) {
+                 if (r != 0)
+                         continue;
+ 
++                /* Advisory conflict queries only exist in LLMNR (RFC 4795, section 4.2). In mDNS several
++                 * responders may legitimately answer for the same name (e.g. the SRP advertising proxies
++                 * of Thread border routers), only conflicts with our own records matter (RFC 6762,
++                 * section 9), and queries must not have the AA bit set (RFC 6762, section 18.4). Every
++                 * responder would answer the advisory again, which we'd take as yet another conflict. */
++                if (scope->protocol != DNS_PROTOCOL_LLMNR)
++                        continue;
++
+                 /* Check for conflicts against the local cache. If so,
+                  * send out an advisory query, to inform everybody */
+                 r = dns_cache_check_conflicts(&scope->cache, rr, p->family, &p->sender);
+-- 
+2.51.0
+
