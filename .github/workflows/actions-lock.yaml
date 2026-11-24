@@ -1,0 +1,50 @@
+name: Verify actions lockfile
+
+on:
+  push:
+    branches:
+      - dev
+    paths:
+      - ".github/actions/**"
+      - ".github/workflows/**"
+  pull_request:
+    branches:
+      - dev
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Verify actions lockfile
+    runs-on: ubuntu-latest
+    env:
+      GH_ACTIONS_LOCK_VERSION: v0.5.1
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Check that branch refs are pinned to a commit
+        run: |
+          # artifacts-index.yaml follows dev, so release branch builds use the index logic from dev
+          if grep -rnE --include='*.yml' --include='*.yaml' 'uses:\s*[^ #]+@(main|master|dev)\b' .github \
+              | grep -vF 'uses: home-assistant/operating-system/.github/workflows/artifacts-index.yaml@dev'; then
+            echo "::error::Pin branch refs as @<sha> # <branch>, actions.lock would freeze them"
+            exit 1
+          fi
+
+      - name: Install gh-actions-lock
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh extension install github/gh-actions-lock --pin "${GH_ACTIONS_LOCK_VERSION}"
+
+      - name: Verify lockfile
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh actions-lock --verify

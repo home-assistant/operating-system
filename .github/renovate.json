@@ -1,6 +1,6 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:recommended", "helpers:pinGitHubActionDigests"],
+  "extends": ["config:recommended"],
 
   "enabledManagers": ["custom.regex", "github-actions", "pip_requirements"],
   "ignorePaths": [],
@@ -17,6 +17,10 @@
         "{\"releases\": releases[moniker in [\"stable\", \"longterm\"]].{\"version\": version, \"releaseTimestamp\": released.isodate}}"
       ]
     }
+  },
+
+  "constraints": {
+    "ghActionsLock": "v0.5.1"
   },
 
   "customManagers": [
@@ -64,6 +68,20 @@
       "depNameTemplate": "home-assistant/tempio",
       "datasourceTemplate": "github-releases",
       "versioningTemplate": "loose"
+    },
+    {
+      "customType": "regex",
+      "description": "Keep gh-actions-lock in CI and Renovate's lockfile generator on the same version",
+      "managerFilePatterns": [
+        "/^\\.github/workflows/actions-lock\\.yaml$/",
+        "/^\\.github/renovate\\.json$/"
+      ],
+      "matchStrings": [
+        "GH_ACTIONS_LOCK_VERSION: (?<currentValue>v\\d+\\.\\d+\\.\\d+)",
+        "\"ghActionsLock\": \"(?<currentValue>v\\d+\\.\\d+\\.\\d+)\""
+      ],
+      "depNameTemplate": "github/gh-actions-lock",
+      "datasourceTemplate": "github-releases"
     }
   ],
 
@@ -79,13 +97,6 @@
       "matchManagers": ["github-actions"],
       "matchDepTypes": ["github-runner", "uses-with"],
       "enabled": false
-    },
-    {
-      "description": "Our own actions that follow a branch (like home-assistant/actions@master) float on purpose. Pinning them would open a digest PR in every repository for each change to them. Our own actions on a version tag are pinned like any other.",
-      "matchManagers": ["github-actions"],
-      "matchPackageNames": ["home-assistant/**"],
-      "matchCurrentValue": "/^(dev|main|master)$/",
-      "pinDigests": false
     },
     {
       "description": "Group the actions/cache subactions into one PR (they share a release)",

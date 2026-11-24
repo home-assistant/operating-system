@@ -21,11 +21,12 @@ body:
     validations:
       required: true
     attributes:
+      multiple: true # forces to select option - without multiple, first value is pre-selected
       label: What operating system image do you use?
-      default: 0
       options:
         - generic-x86-64 (Generic UEFI capable x86-64 systems)
         - generic-aarch64 (Generic UEFI capable aarch64 systems)
+        - green (Home Assistant Green)
         - khadas-vim3 (Khadas VIM3)
         - odroid-c2 (Hardkernel ODROID-C2)
         - odroid-c4 (Hardkernel ODROID-C4)
@@ -37,7 +38,6 @@ body:
         - rpi4-64  (Raspberry Pi 4/400 64-bit OS)
         - rpi5-64  (Raspberry Pi 5 64-bit OS)
         - yellow (Home Assistant Yellow)
-        - green (Home Assistant Green)
       description: >
         Can be found in [Settings -> System -> Repairs -> System Information](https://my.home-assistant.io/redirect/system_health/). It is listed as the `Board` value.
 
@@ -55,7 +55,6 @@ body:
       required: true
     attributes:
       label: Did the problem occur after upgrading the Operating System?
-      default: 0
       options:
         - "No"
         - "Yes"
@@ -86,7 +85,7 @@ body:
     validations:
       required: true
     attributes:
-      label: Anything in the Supervisor logs that might be useful for us?
+      label: Supervisor logs
       description: >
         Supervisor Logs can be found in [Settings -> System -> Logs](https://my.home-assistant.io/redirect/logs/?provider=supervisor)
         then choose `Supervisor` in the top right. Alternatively enter `ha supervisor logs` in the Home Assistant CLI.
@@ -97,10 +96,14 @@ body:
     validations:
       required: true
     attributes:
-      label: Anything in the Host logs that might be useful for us?
+      label: Host logs
       description: >
         Host Logs can be found in [Settings -> System -> Logs](https://my.home-assistant.io/redirect/logs/?provider=host)
         then choose `Host` in the top right. Alternatively enter `ha host logs` in the Home Assistant CLI.
+
+        **Please post the full log, not only the lines that look relevant.** Errors that seem unrelated
+        often point to the cause. If the log is too long to paste, attach the full log as a file in
+        **Additional information** below.
       render: txt
   - type: textarea
     attributes:
