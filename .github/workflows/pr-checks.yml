@@ -32,3 +32,6 @@ jobs:
     - name: Check buildroot-external packages
       run: |
         buildroot/utils/check-package --exclude PackageHeader --exclude Upstream --br2-external buildroot-external/package/*/*
+
+    - name: Check defconfigs
+      run: scripts/check-defconfigs.sh
